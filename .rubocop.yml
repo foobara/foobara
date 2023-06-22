@@ -65,6 +65,9 @@ Style/ClassAndModuleChildren:
 Style/Documentation:
   Enabled: false
 
+Style/EmptyMethod:
+  Enabled: false
+
 Style/GuardClause:
   Enabled: false
 
