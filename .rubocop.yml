@@ -1,6 +1,8 @@
 require:
-  - rubocop-rspec
   - rubocop-rake
+
+inherit_from:
+  - ./lint/rubocop/*
 
 AllCops:
   TargetRubyVersion: 3.2
@@ -50,12 +52,6 @@ Naming/PredicateName:
   Enabled: false
 
 Naming/VariableNumber:
-  Enabled: false
-
-RSpec/MultipleExpectations:
-  Enabled: false
-
-RSpec/MultipleMemoizedHelpers:
   Enabled: false
 
 Style/BlockComments:

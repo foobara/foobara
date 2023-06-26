@@ -1,0 +1,8 @@
+require:
+  - rubocop-rspec
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
