@@ -52,6 +52,12 @@ Naming/PredicateName:
 Naming/VariableNumber:
   Enabled: false
 
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
 Style/BlockComments:
   Enabled: false
 
@@ -66,7 +72,11 @@ Style/Documentation:
   Enabled: false
 
 Style/EmptyMethod:
-  Enabled: false
+  EnforcedStyle: expanded
+
+Style/FrozenStringLiteralComment:
+  SafeAutoCorrect: true
+  Enabled: true
 
 Style/GuardClause:
   Enabled: false
