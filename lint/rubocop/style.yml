@@ -16,7 +16,7 @@ Style/EmptyMethod:
 
 Style/FrozenStringLiteralComment:
   SafeAutoCorrect: true
-  Enabled: true
+  EnforcedStyle: never
 
 Style/GuardClause:
   Enabled: false
