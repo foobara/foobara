@@ -49,5 +49,33 @@ RSpec.describe Foobara::Models::Schema do
         it { is_expected.not_to be_valid }
       end
     end
+
+    context "with attributes" do
+      let(:schema) { described_class.new(type:, schemas:) }
+
+      let(:type) { :attributes }
+      let(:schemas) {
+        {
+          base: 2,
+          exponent: 3
+        }
+      }
+
+      it { is_expected.to be_valid }
+
+      it "has the correct type" do
+        expect(schema.type).to eq(type)
+      end
+
+      context "when using sugar syntax" do
+        let(:schema) { described_class.new(schemas) }
+
+        it { is_expected.to be_valid }
+
+        it "has the correct type" do
+          expect(schema.type).to eq(type)
+        end
+      end
+    end
   end
 end

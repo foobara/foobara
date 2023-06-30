@@ -26,9 +26,15 @@ module Foobara
         self.strict_schema = case raw_schema
                              when Symbol
                                { type: raw_schema }
-                             else
-                               raw_schema
+                             when Hash
+                               if !raw_schema.key?(:type) && !raw_schema.key?(:schemas) && raw_schema.keys.all? do |key|
+                                    key.is_a?(Symbol)
+                                  end
+                                 { type: :attributes, schemas: raw_schema }
+                               end
                              end
+
+        self.strict_schema ||= raw_schema
       end
 
       def validate
@@ -40,6 +46,16 @@ module Foobara
 
         unless Models.types.key?(type)
           errors << "Unknown type: #{type}"
+        end
+
+        if type == :attributes
+          schemas = strict_schema[:schemas]
+
+          if schemas.blank?
+            errors << "attributes type must have a schemas entry"
+          elsif schemas.keys.any? { |key| !key.is_a?(Symbol) }
+            errors << "Attributes must have all symbolic keys"
+          end
         end
       end
 

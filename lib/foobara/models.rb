@@ -1,5 +1,6 @@
-require "foobara/models/types/integer_type"
 require "active_support/core_ext/string/inflections"
+require "foobara/models/types/attributes_type"
+require "foobara/models/types/integer_type"
 
 module Foobara
   module Models
@@ -14,5 +15,6 @@ module Foobara
     self.types = {}
 
     register_type(Types::IntegerType)
+    register_type(Types::AttributesType)
   end
 end
