@@ -2,9 +2,9 @@ require "foobara/models/schema"
 
 RSpec.describe Foobara::Models::Schema do
   describe ".new" do
-    context "with nothing but a primitive type" do
-      subject { schema }
+    subject { schema }
 
+    context "with nothing but a primitive type" do
       let(:schema) { described_class.new(type:) }
 
       context "with a valid type" do
@@ -12,8 +12,18 @@ RSpec.describe Foobara::Models::Schema do
 
         it { is_expected.to be_valid }
 
-        it "returns a schema matching that type" do
+        it "has the correct type" do
           expect(schema.type).to eq(type)
+        end
+
+        context "when using sugar syntax" do
+          let(:schema) { described_class.new(type) }
+
+          it { is_expected.to be_valid }
+
+          it "has the correct type" do
+            expect(schema.type).to eq(type)
+          end
         end
       end
 

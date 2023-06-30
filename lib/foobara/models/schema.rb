@@ -8,8 +8,6 @@ module Foobara
       def initialize(raw_schema)
         self.errors = []
         self.raw_schema = raw_schema
-
-        desugarize!
       end
 
       def valid?
@@ -19,20 +17,30 @@ module Foobara
       end
 
       def type
+        validate unless validated?
+
         strict_schema[:type]
       end
 
-      def desugarize!
-        # TODO: need a real implementation
-        self.strict_schema = raw_schema
+      def desugarize
+        self.strict_schema = case raw_schema
+                             when Symbol
+                               { type: raw_schema }
+                             else
+                               raw_schema
+                             end
       end
 
       def validate
+        self.has_been_validated = true
+
+        desugarize
+
+        return unless valid?
+
         unless Models.types.key?(type)
           errors << "Unknown type: #{type}"
         end
-
-        self.has_been_validated = true
       end
 
       def apply(_object)
