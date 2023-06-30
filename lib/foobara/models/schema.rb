@@ -43,8 +43,12 @@ module Foobara
         end
       end
 
-      def apply(_object)
-        raise "not yet implemented"
+      def type_class
+        Models.types[type]
+      end
+
+      def apply(object)
+        type_class.cast_from(object)
       end
 
       def validated?

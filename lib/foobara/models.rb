@@ -13,6 +13,6 @@ module Foobara
 
     self.types = {}
 
-    register_type(Types::Integer)
+    register_type(Types::IntegerType)
   end
 end

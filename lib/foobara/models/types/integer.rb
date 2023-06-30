@@ -1,10 +1,19 @@
+require "foobara/models/type"
+
 module Foobara
   module Models
     module Types
-      class Integer
+      class IntegerType < Type
         class << self
-          def symbol
-            name.demodulize.downcase.to_sym
+          def cast_from(object)
+            case object
+            when Integer
+              object
+            when /^\d+$/
+              object.to_i
+            else
+              raise_type_conversion_error
+            end
           end
         end
       end

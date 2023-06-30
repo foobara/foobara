@@ -25,6 +25,22 @@ RSpec.describe Foobara::Models::Schema do
             expect(schema.type).to eq(type)
           end
         end
+
+        describe "#apply" do
+          subject { schema.apply(object) }
+
+          context "when cast is not required" do
+            let(:object) { 123 }
+
+            it { is_expected.to eq(123) }
+          end
+
+          context "when cast is required" do
+            let(:object) { "123" }
+
+            it { is_expected.to eq(123) }
+          end
+        end
       end
 
       context "with an invalid type" do
