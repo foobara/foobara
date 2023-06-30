@@ -12,7 +12,7 @@ module Foobara
             when /^\d+$/
               object.to_i
             else
-              raise_type_conversion_error
+              raise_type_conversion_error(object)
             end
           end
         end
