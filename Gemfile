@@ -4,6 +4,7 @@ source "https://rubygems.org"
 gemspec
 
 # Development dependencies go here
+gem "guard-rspec"
 gem "rake"
 gem "rspec"
 gem "rubocop-rake"
