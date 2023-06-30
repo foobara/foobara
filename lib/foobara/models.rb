@@ -1,4 +1,4 @@
-require "foobara/models/types/integer"
+require "foobara/models/types/integer_type"
 require "active_support/core_ext/string/inflections"
 
 module Foobara
