@@ -1,4 +1,4 @@
-RSpec.describe Foobara::Commands::Command do
+RSpec.describe Foobara::Command do
   context "with simple command" do
     let(:command_class) {
       Class.new(described_class) do
