@@ -16,6 +16,9 @@ module Foobara
           name.demodulize.underscore.gsub(/_type$/, "").to_sym
         end
 
+        def schema_validation_errors_for(strict_schema)
+        end
+
         def raise_type_conversion_error(object)
           error = Error.new(
             :"cannot_cast_to_#{symbol}",

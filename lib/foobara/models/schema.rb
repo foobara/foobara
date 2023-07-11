@@ -1,7 +1,7 @@
 module Foobara
   module Models
     class Schema
-      attr_accessor :raw_schema, :strict_schema, :errors, :has_been_validated
+      attr_accessor :raw_schema, :strict_schema, :errors, :schema_has_been_validated
 
       def initialize(raw_schema)
         self.errors = []
@@ -9,13 +9,13 @@ module Foobara
       end
 
       def valid?
-        validate unless validated?
+        validate_schema unless schema_validated?
 
         errors.empty?
       end
 
       def type
-        validate unless validated?
+        validate_schema unless schema_validated?
 
         strict_schema[:type]
       end
@@ -35,25 +35,21 @@ module Foobara
         self.strict_schema ||= raw_schema
       end
 
-      def validate
-        self.has_been_validated = true
+      def validate_schema
+        self.schema_has_been_validated = true
 
         desugarize
 
         return unless valid?
 
-        unless Models.types.key?(type)
-          errors << "Unknown type: #{type}"
-        end
+        if Models.types.key?(type)
+          schema_errors = type_class.schema_validation_errors_for(strict_schema)
 
-        if type == :attributes
-          schemas = strict_schema[:schemas]
-
-          if schemas.blank?
-            errors << "attributes type must have a schemas entry"
-          elsif schemas.keys.any? { |key| !key.is_a?(Symbol) }
-            errors << "Attributes must have all symbolic keys"
+          if schema_errors.present?
+            schema_errors.each { |error| errors << error }
           end
+        else
+          errors << "Unknown type: #{type}"
         end
       end
 
@@ -72,8 +68,8 @@ module Foobara
         type_class.cast_from(object)
       end
 
-      def validated?
-        has_been_validated
+      def schema_validated?
+        schema_has_been_validated
       end
     end
   end
