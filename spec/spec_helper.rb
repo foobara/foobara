@@ -2,7 +2,7 @@ require "pry"
 require "pry-byebug"
 require "rspec/its"
 
-require_relative "../load_everything"
+require "commands"
 
 RSpec.configure do |config|
   config.filter_run_when_matching :focus
