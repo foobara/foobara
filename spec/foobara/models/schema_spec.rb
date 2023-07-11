@@ -1,5 +1,3 @@
-require "foobara/models/schema"
-
 RSpec.describe Foobara::Models::Schema do
   describe ".new" do
     subject { schema }

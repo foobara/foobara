@@ -1,5 +1,3 @@
-require "foobara/models/type"
-
 module Foobara
   module Models
     module Types

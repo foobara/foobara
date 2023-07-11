@@ -1,7 +1,3 @@
-require "active_support/core_ext/string/inflections"
-require "foobara/models/types/attributes_type"
-require "foobara/models/types/integer_type"
-
 module Foobara
   module Models
     class << self

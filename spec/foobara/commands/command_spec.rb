@@ -1,4 +1,3 @@
-require "foobara/command"
 
 RSpec.describe Foobara::Command do
   context "with simple command" do

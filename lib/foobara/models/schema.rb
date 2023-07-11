@@ -1,5 +1,3 @@
-require "foobara/models"
-
 module Foobara
   module Models
     class Schema
