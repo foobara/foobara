@@ -30,7 +30,9 @@ RSpec.describe Foobara::Models::Schema do
           context "when cast is not required" do
             let(:object) { 123 }
 
-            it { is_expected.to eq(123) }
+            it { expect(subject).to be_success }
+
+            its(:result) { is_expected.to eq(123) }
           end
 
           context "when cast is required" do

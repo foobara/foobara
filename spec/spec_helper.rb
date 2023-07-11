@@ -1,4 +1,6 @@
 require "pry"
+require "pry-byebug"
+require "rspec/its"
 
 require_relative "../load_everything"
 
