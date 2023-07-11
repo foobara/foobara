@@ -14,5 +14,5 @@ RSpec/MultipleMemoizedHelpers:
 RSpec/NestedGroups:
   Enabled: false
 
-Rspec/Focus:
+RSpec/Focus:
   Enabled: <%= ENV["CI"] == "true" %>
