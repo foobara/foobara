@@ -62,6 +62,13 @@ module Foobara
       end
 
       def apply(object)
+        casted_result = apply!(object)
+        Outcome.success(casted_result)
+      rescue Type::TypeConversionError => e
+        Outcome.errors(e.errors)
+      end
+
+      def apply!(object)
         type_class.cast_from(object)
       end
 
