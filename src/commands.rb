@@ -6,13 +6,15 @@ require "active_support/core_ext/string/inflections"
 
 require "foobara/models/type"
 
-pattern = File.join(__dir__, "**", "*.rb")
+load_files = lambda { |*path|
+  pattern = File.join(__dir__, *path, "**", "*.rb")
+  files = Dir[pattern].sort_by(&:length).reverse
 
-files = Dir[pattern].sort_by(&:length).reverse
+  files.each { |f| require f }
+}
 
-files.each do |path|
-  require path
-end
+load_files.call("..", "lib")
+load_files.call
 
 module Commands
 end
