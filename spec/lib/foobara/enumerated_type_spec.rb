@@ -44,10 +44,6 @@ RSpec.describe Foobara::EnumeratedType do
     end
 
     context "when invalid value" do
-      def is_expected_to_raise(error_class)
-        expect { subject }.to raise_error(error_class)
-      end
-
       let(:value) { "not a member of the enum" }
 
       it { is_expected_to_raise(Foobara::EnumeratedType::ValueNotAllowed) }

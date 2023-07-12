@@ -19,3 +19,8 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 end
+
+pattern = File.join(__dir__, "support", "**", "*.rb")
+files = Dir[pattern].sort_by(&:length).reverse
+
+files.each { |f| require f }
