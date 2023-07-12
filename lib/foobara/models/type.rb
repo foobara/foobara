@@ -1,16 +1,6 @@
 module Foobara
   module Models
     class Type
-      class TypeConversionError < StandardError
-        attr_accessor :errors
-
-        def initialize(errors)
-          self.errors = Array.wrap(errors)
-
-          super(self.errors.map(&:message).join(", "))
-        end
-      end
-
       class << self
         def symbol
           name.demodulize.underscore.gsub(/_type$/, "").to_sym
@@ -19,15 +9,15 @@ module Foobara
         def schema_validation_errors_for(strict_schema)
         end
 
-        def raise_type_conversion_error(object)
-          error = Error.new(
-            :"cannot_cast_to_#{symbol}",
-            "Could not cast #{object.inspect} to #{symbol}",
-            cast_to: symbol,
-            value: object
-          )
-
-          raise TypeConversionError, error
+        def casting_errors(object)
+          unless can_cast?(object)
+            Error.new(
+              :"cannot_cast_to_#{symbol}",
+              "Could not cast #{object.inspect} to #{symbol}",
+              cast_to: symbol,
+              value: object.inspect
+            )
+          end
         end
       end
     end

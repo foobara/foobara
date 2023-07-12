@@ -3,6 +3,8 @@ module Foobara
     module Runtime
       extend ActiveSupport::Concern
 
+      class Halt < StandardError; end
+
       class_methods do
         def run(inputs)
           new(inputs).run
@@ -24,37 +26,64 @@ module Foobara
       def run
         self.runtime_status = :started
 
+        validate_schema
+        cast_inputs
         validate_inputs
+        load_records
+        validate_records
 
-        if success?
-          load_records
-          validate_records
-          outcome.result = execute
-        end
+        validate
 
+        halt! unless success?
+
+        outcome.result = execute
+
+        outcome
+      rescue Halt
         outcome
       end
 
       delegate :add_error, :success?, to: :outcome
 
-      def validate_inputs
-        outcome = input_schema.apply(raw_inputs)
+      def validate_schema
+        halt! unless success?
 
-        if outcome.success?
-          self.inputs = outcome.result
-        else
-          outcome.each_error do |error|
-            add_error(error)
-          end
+        input_schema.schema_validation_errors.each do |error|
+          add_error(error)
         end
       end
 
+      def cast_inputs
+        halt! unless success?
+
+        Array.wrap(input_schema.casting_errors(raw_inputs)).each do |error|
+          add_error(error)
+        end
+
+        self.inputs = input_schema.cast_from(raw_inputs)
+      end
+
+      def validate_inputs
+        halt! unless success?
+        # TODO: check various validations like required, blank, etc
+      end
+
       def load_records
+        halt! unless success?
         # noop
       end
 
       def validate_records
+        halt! unless success?
         # noop
+      end
+
+      def validate
+        # can override if desired, default is a no-op
+      end
+
+      def halt!
+        raise Halt
       end
     end
   end
