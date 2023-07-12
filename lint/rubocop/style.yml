@@ -18,6 +18,9 @@ Style/FrozenStringLiteralComment:
   SafeAutoCorrect: true
   EnforcedStyle: never
 
+Style/HashSyntax:
+  EnforcedStyle: ruby19
+
 Style/GuardClause:
   Enabled: false
 

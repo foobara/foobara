@@ -28,7 +28,11 @@ module Foobara
     end
 
     def success?
-      error_hash.empty?
+      !has_errors?
+    end
+
+    def has_errors?
+      error_hash.present?
     end
 
     def result
@@ -44,16 +48,16 @@ module Foobara
     end
 
     def has_error?(error)
-      case error
-      when Error
-        error.symbol
-      when Symbol
-        error
-      when String
-        error.to_sym
-      end
+      symbol = case error
+               when Error
+                 error.symbol
+               when Symbol
+                 error
+               when String
+                 error.to_sym
+               end
 
-      error_hash.key?(error)
+      error_hash.key?(symbol)
     end
 
     def add_error(*args)

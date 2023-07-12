@@ -43,7 +43,7 @@ module Foobara
         outcome
       end
 
-      delegate :add_error, :success?, to: :outcome
+      delegate :add_error, :success?, :has_errors?, to: :outcome
 
       def validate_schema
         halt! unless success?
