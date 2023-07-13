@@ -10,7 +10,7 @@ module Foobara
     class MissingTerminalStates < StandardError; end
 
     attr_accessor :transitions, :initial_state, :states, :non_terminal_states, :terminal_states, :transition_map,
-                  :raw_transition_map
+                  :raw_transition_map, :state, :transition
 
     def initialize(transition_map, initial_state: nil, states: nil, terminal_states: nil, transitions: nil)
       self.raw_transition_map = transition_map
@@ -22,6 +22,7 @@ module Foobara
 
       desugarize_transition_map
       determine_states_and_transitions
+      create_enums
     end
 
     private
@@ -29,8 +30,8 @@ module Foobara
     def desugarize_transition_map
       self.transition_map = {}.with_indifferent_access
 
-      raw_transition_map.each_pair do |state, transitions|
-        Array.wrap(state).each do |state|
+      raw_transition_map.each_pair do |from_state, transitions|
+        Array.wrap(from_state).each do |state|
           transitions.each_pair do |transition, next_state|
             transitions_for_state = transition_map[state] ||= {}.with_indifferent_access
 
@@ -49,7 +50,6 @@ module Foobara
     def determine_states_and_transitions
       computed_non_terminal_states = transition_map.keys.map(&:to_sym).uniq
       computed_terminal_states = []
-      computed_states = []
       computed_transitions = []
 
       transition_map.each_value do |transitions|
@@ -152,6 +152,11 @@ module Foobara
         raise ExtraTransitions,
               "#{extra_transitions} appeared in the transition map but were not explicitly declared as transitions"
       end
+    end
+
+    def create_enums
+      self.state = Enumerated::Values.new(states)
+      self.transition = Enumerated::Values.new(transitions)
     end
   end
 end
