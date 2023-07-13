@@ -70,7 +70,7 @@ module Foobara
         # User has marked states as explicitly terminal even though they might have transitions
         # This is allowed. So fix any such computations.
         computed_non_terminal_states -= terminal_states
-        computed_terminal_states &= terminal_states
+        computed_terminal_states |= terminal_states
       else
         self.terminal_states = computed_terminal_states.freeze
       end
@@ -126,6 +126,7 @@ module Foobara
       missing_states = states - computed_states
 
       if missing_states.present?
+        binding.pry
         raise MissingStates,
               "#{missing_states} is/are explicitly declared as states but do(es)n't appear in the transition map"
       end
