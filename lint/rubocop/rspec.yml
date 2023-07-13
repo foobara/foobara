@@ -5,6 +5,9 @@ require:
 RSpec/FilePath:
   Enabled: false
 
+RSpec/Focus:
+  Enabled: <%= ENV["CI"] == "true" %>
+
 RSpec/MultipleExpectations:
   Enabled: false
 
@@ -14,5 +17,6 @@ RSpec/MultipleMemoizedHelpers:
 RSpec/NestedGroups:
   Enabled: false
 
-RSpec/Focus:
-  Enabled: <%= ENV["CI"] == "true" %>
+RSpec/NoExpectationExample:
+  AllowedPatterns:
+    - ^is_expected_
