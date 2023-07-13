@@ -28,12 +28,17 @@ module Foobara
     private
 
     def desugarize_transition_map
-      self.transition_map = {}.with_indifferent_access
+      self.transition_map = {}
 
       raw_transition_map.each_pair do |from_state, transitions|
         Array.wrap(from_state).each do |state|
+          state = state.to_sym
+
           transitions.each_pair do |transition, next_state|
-            transitions_for_state = transition_map[state] ||= {}.with_indifferent_access
+            transition = transition.to_sym
+            next_state = next_state.to_sym
+
+            transitions_for_state = transition_map[state] ||= {}
 
             if transitions_for_state.key?(transition)
               raise TransitionAlreadyDefinedError, "There's already a #{transition} for #{state}"
@@ -48,14 +53,12 @@ module Foobara
     end
 
     def determine_states_and_transitions
-      computed_non_terminal_states = transition_map.keys.map(&:to_sym).uniq
+      computed_non_terminal_states = transition_map.keys.uniq
       computed_terminal_states = []
       computed_transitions = []
 
       transition_map.each_value do |transitions|
         transitions.each_pair do |transition, to_state|
-          transition = transition.to_sym
-
           computed_transitions << transition unless computed_transitions.include?(transition)
 
           if !computed_non_terminal_states.include?(to_state) && !computed_terminal_states.include?(to_state)

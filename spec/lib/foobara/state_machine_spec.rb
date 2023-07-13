@@ -37,10 +37,10 @@ RSpec.describe Foobara::StateMachine do
       its(:transitions) { is_expected.to eq(%i[start fail succeed]) }
 
       its(:transition_map) {
-        is_expected.to eq({
+        is_expected.to eq(
           running: { fail: :failed, succeed: :succeeded },
           unexecuted: { start: :running }
-        }.with_indifferent_access)
+        )
       }
 
       context "with sugary transition map" do
@@ -79,10 +79,10 @@ RSpec.describe Foobara::StateMachine do
         end
 
         its(:transition_map) {
-          is_expected.to eq({
+          is_expected.to eq(
             running: { fail: :failed, succeed: :succeeded },
             unexecuted: { fail: :failed, start: :running }
-          }.with_indifferent_access)
+          )
         }
       end
     end
