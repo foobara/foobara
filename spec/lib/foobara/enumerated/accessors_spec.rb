@@ -1,4 +1,4 @@
-RSpec.describe Enumerated::Accessors do
+RSpec.describe Foobara::Enumerated::Accessors do
   let(:enum_module) do
     Module.new.tap do |m|
       m.const_set(:FOO, :foo)
@@ -8,7 +8,7 @@ RSpec.describe Enumerated::Accessors do
   end
   let(:klass) do
     Class.new do
-      include Enumerated::Accessors
+      include Foobara::Enumerated::Accessors
 
       enumerated :some_enum, EnumModule
     end
@@ -46,7 +46,7 @@ RSpec.describe Enumerated::Accessors do
     context "when invalid value" do
       let(:value) { "not a member of the enum" }
 
-      it { is_expected_to_raise(Enumerated::Accessors::ValueNotAllowed) }
+      it { is_expected_to_raise(Foobara::Enumerated::Accessors::ValueNotAllowed) }
     end
   end
 
@@ -60,7 +60,7 @@ RSpec.describe Enumerated::Accessors do
 
       values = meta[:values]
 
-      expect(values).to be_a(Enumerated::Values)
+      expect(values).to be_a(Foobara::Enumerated::Values)
       expect(values.all).to eq(BAR: :bar, BAZ: :baz, FOO: :foo)
 
       expect(values.BAR).to be(:bar)
@@ -72,7 +72,7 @@ RSpec.describe Enumerated::Accessors do
   describe "automatic enumeration module discovery" do
     let(:klass) do
       Class.new do
-        include Enumerated::Accessors
+        include Foobara::Enumerated::Accessors
 
         enumerated :some_enum
       end
@@ -93,7 +93,7 @@ RSpec.describe Enumerated::Accessors do
 
           values = meta[:values]
 
-          expect(values).to be_a(Enumerated::Values)
+          expect(values).to be_a(Foobara::Enumerated::Values)
           expect(values.all).to eq(BAR: :bar, BAZ: :baz, FOO: :foo)
 
           expect(values.BAR).to be(:bar)
@@ -108,7 +108,7 @@ RSpec.describe Enumerated::Accessors do
         Class.new do
           const_set("SomeEnum", EnumModule)
 
-          include Enumerated::Accessors
+          include Foobara::Enumerated::Accessors
 
           enumerated :some_enum
         end
@@ -124,7 +124,7 @@ RSpec.describe Enumerated::Accessors do
 
           values = meta[:values]
 
-          expect(values).to be_a(Enumerated::Values)
+          expect(values).to be_a(Foobara::Enumerated::Values)
           expect(values.all).to eq(BAR: :bar, BAZ: :baz, FOO: :foo)
 
           expect(values.BAR).to be(:bar)
@@ -149,7 +149,7 @@ RSpec.describe Enumerated::Accessors do
             end
           end
 
-          include Enumerated::Accessors
+          include Foobara::Enumerated::Accessors
 
           enumerated :some_enum
         end
@@ -169,7 +169,7 @@ RSpec.describe Enumerated::Accessors do
 
           values = meta[:values]
 
-          expect(values).to be_a(Enumerated::Values)
+          expect(values).to be_a(Foobara::Enumerated::Values)
           expect(values.all).to eq(BAR: :bar, BAZ: :baz, FOO: :foo)
 
           expect(values.BAR).to be(:bar)

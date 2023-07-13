@@ -1,72 +1,74 @@
-module Enumerated
-  module Accessors
-    class ValueNotAllowed < StandardError; end
-    class CannotDetermineModuleAutomatically; end
+module Foobara
+  module Enumerated
+    module Accessors
+      class ValueNotAllowed < StandardError; end
+      class CannotDetermineModuleAutomatically; end
 
-    class << self
-      def const_get_up_hierarchy(mod, name)
-        mod.const_get(name)
-      rescue NameError
-        raise if mod == Object
+      class << self
+        def const_get_up_hierarchy(mod, name)
+          mod.const_get(name)
+        rescue NameError
+          raise if mod == Object
 
-        mod_name = mod.name
+          mod_name = mod.name
 
-        mod = if mod_name
-                mod_name[/(.*)::/, 1].constantize
-              else
-                Object
-              end
+          mod = if mod_name
+                  mod_name[/(.*)::/, 1].constantize
+                else
+                  Object
+                end
 
-        const_get_up_hierarchy(mod, name)
+          const_get_up_hierarchy(mod, name)
+        end
       end
-    end
 
-    extend ActiveSupport::Concern
+      extend ActiveSupport::Concern
 
-    class_methods do
-      def enumerated(attribute_name, values_source = nil)
-        original_values_source = values_source
+      class_methods do
+        def enumerated(attribute_name, values_source = nil)
+          original_values_source = values_source
 
-        if values_source.nil?
-          module_name = attribute_name.to_s.classify
+          if values_source.nil?
+            module_name = attribute_name.to_s.classify
 
-          values_source = begin
-            Accessors.const_get_up_hierarchy(self, module_name)
-          rescue NameError
-            raise CannotDetermineModuleAutomatically,
-                  "could not find a module for #{module_name}. Maybe consider passing it in explicitly."
-          end
-        end
-
-        values = Values.new(values_source)
-
-        attribute_name = attribute_name.to_sym
-
-        unless respond_to?(:enumerated_type_metadata)
-          class << self
-            attr_accessor :enumerated_type_metadata
+            values_source = begin
+              Accessors.const_get_up_hierarchy(self, module_name)
+            rescue NameError
+              raise CannotDetermineModuleAutomatically,
+                    "could not find a module for #{module_name}. Maybe consider passing it in explicitly."
+            end
           end
 
-          self.enumerated_type_metadata = {}
-        end
+          values = Values.new(values_source)
 
-        attr_reader attribute_name
+          attribute_name = attribute_name.to_sym
 
-        define_method "#{attribute_name}=" do |value|
-          value = Values.normalize_value(value)
+          unless respond_to?(:enumerated_type_metadata)
+            class << self
+              attr_accessor :enumerated_type_metadata
+            end
 
-          if !value.nil? && !values.all_values.include?(value)
-            raise ValueNotAllowed, "Received #{value} for #{attribute_name} but expected one of #{values.all_values}"
+            self.enumerated_type_metadata = {}
           end
 
-          instance_variable_set("@#{attribute_name}", value)
-        end
+          attr_reader attribute_name
 
-        enumerated_type_metadata[attribute_name] = {
-          original_values_source:,
-          values_source:,
-          values:
-        }
+          define_method "#{attribute_name}=" do |value|
+            value = Values.normalize_value(value)
+
+            if !value.nil? && !values.all_values.include?(value)
+              raise ValueNotAllowed, "Received #{value} for #{attribute_name} but expected one of #{values.all_values}"
+            end
+
+            instance_variable_set("@#{attribute_name}", value)
+          end
+
+          enumerated_type_metadata[attribute_name] = {
+            original_values_source:,
+            values_source:,
+            values:
+          }
+        end
       end
     end
   end
