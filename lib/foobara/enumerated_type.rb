@@ -13,24 +13,40 @@ module Foobara
       def valid_constant_value_type?(value)
         value.is_a?(String) || value.is_a?(Symbol)
       end
+
+      def const_get_up_hierarchy(mod, name)
+        mod.const_get(name)
+      rescue NameError
+        raise if mod == Object
+
+        mod_name = mod.name
+
+        mod = if mod_name
+                mod_name[/(.*)::/, 1].constantize
+              else
+                Object
+              end
+
+        const_get_up_hierarchy(mod, name)
+      end
     end
 
     extend ActiveSupport::Concern
 
     class_methods do
       def enumerated(attribute_name, constants_module = nil)
-        attribute_name = attribute_name.to_sym
-
         unless constants_module
-          module_name = attribute_name.classify
+          module_name = attribute_name.to_s.classify
 
           constants_module = begin
-            const_get(module_name)
+            EnumeratedType.const_get_up_hierarchy(self, module_name)
           rescue NameError
             raise CannotDetermineModuleAutomatically,
                   "could not find a module for #{module_name}. Maybe consider passing it in explicitly."
           end
         end
+
+        attribute_name = attribute_name.to_sym
 
         unless respond_to?(:enumerated_type_metadata)
           class << self

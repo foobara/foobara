@@ -65,4 +65,76 @@ RSpec.describe Foobara::EnumeratedType do
       )
     end
   end
+
+  describe "automatic enumeration module discovery" do
+    let(:klass) do
+      Class.new do
+        include Foobara::EnumeratedType
+
+        enumerated :some_enum
+      end
+    end
+
+    context "when at top-level with expected name" do
+      before do
+        stub_const("SomeEnum", EnumModule)
+      end
+
+      describe ".enumerated_type_metadata" do
+        it "has the right module" do
+          expect(klass.enumerated_type_metadata[:some_enum][:constants_module]).to eq(EnumModule)
+        end
+      end
+    end
+
+    context "when in class itself" do
+      let(:klass) do
+        Class.new do
+          const_set("SomeEnum", EnumModule)
+
+          include Foobara::EnumeratedType
+
+          enumerated :some_enum
+        end
+      end
+
+      describe ".enumerated_type_metadata" do
+        it "has the right module" do
+          expect(klass.enumerated_type_metadata[:some_enum][:constants_module]).to eq(EnumModule)
+        end
+      end
+    end
+
+    context "when in heirarchy" do
+      let(:mod) do
+        Module.new do
+          const_set("SomeEnum", EnumModule)
+        end
+      end
+
+      let(:klass) do
+        Class.new do
+          class << self
+            def name
+              "Mod::Klass"
+            end
+          end
+
+          include Foobara::EnumeratedType
+
+          enumerated :some_enum
+        end
+      end
+
+      before do
+        stub_const("Mod", mod)
+      end
+
+      describe ".enumerated_type_metadata" do
+        it "has the right module" do
+          expect(klass.enumerated_type_metadata[:some_enum][:constants_module]).to eq(EnumModule)
+        end
+      end
+    end
+  end
 end
