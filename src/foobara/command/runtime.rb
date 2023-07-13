@@ -38,19 +38,25 @@ module Foobara
 
         outcome.result = execute
 
+        state_machine.execute!
+        success? ? state_machine.succeed! : state_machine.fail!
+
         outcome
       rescue Halt
         outcome
+      rescue
+        state_machine.error!
+        raise
       end
 
       delegate :add_error, :success?, :has_errors?, to: :outcome
 
       def validate_schema
-        halt! unless success?
-
         input_schema.schema_validation_errors.each do |error|
           add_error(error)
         end
+
+        success? ? state_machine.validate_schema! : halt!
       end
 
       def cast_inputs
@@ -61,25 +67,28 @@ module Foobara
         end
 
         self.inputs = input_schema.cast_from(raw_inputs)
+
+        success? ? state_machine.cast_inputs! : halt!
       end
 
       def validate_inputs
-        halt! unless success?
         # TODO: check various validations like required, blank, etc
+        success? ? state_machine.validate_inputs! : halt!
       end
 
       def load_records
-        halt! unless success?
+        success? ? state_machine.load_records! : halt!
         # noop
       end
 
       def validate_records
-        halt! unless success?
+        success? ? state_machine.validate_records! : halt!
         # noop
       end
 
       def validate
         # can override if desired, default is a no-op
+        success? ? state_machine.validate! : halt!
       end
 
       def halt!
