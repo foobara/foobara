@@ -19,6 +19,8 @@ module Foobara
 
     class_methods do
       def enumerated(attribute_name, constants_module = nil)
+        attribute_name = attribute_name.to_sym
+
         unless constants_module
           module_name = attribute_name.classify
 
@@ -28,6 +30,14 @@ module Foobara
             raise CannotDetermineModuleAutomatically,
                   "could not find a module for #{module_name}. Maybe consider passing it in explicitly."
           end
+        end
+
+        unless respond_to?(:enumerated_type_metadata)
+          class << self
+            attr_accessor :enumerated_type_metadata
+          end
+
+          self.enumerated_type_metadata = {}
         end
 
         attr_reader attribute_name
@@ -64,6 +74,12 @@ module Foobara
 
           instance_variable_set("@#{attribute_name}", value)
         end
+
+        enumerated_type_metadata[attribute_name] = {
+          constants_module:,
+          allowed_values: allowed_values.to_a.sort,
+          constants_map:
+        }
       end
     end
   end

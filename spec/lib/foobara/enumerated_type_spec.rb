@@ -53,4 +53,16 @@ RSpec.describe Foobara::EnumeratedType do
       it { is_expected_to_raise(Foobara::EnumeratedType::ValueNotAllowed) }
     end
   end
+
+  describe ".enumerated_type_metadata" do
+    it "gives the reflection information" do
+      expect(klass.enumerated_type_metadata).to eq(
+        some_enum: {
+          allowed_values: %i[bar baz foo],
+          constants_map: { "BAR" => :bar, "BAZ" => :baz, "FOO" => :foo },
+          constants_module: EnumModule
+        }
+      )
+    end
+  end
 end
