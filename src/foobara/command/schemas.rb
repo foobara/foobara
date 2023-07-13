@@ -33,8 +33,8 @@ module Foobara
       end
     end
 
-    def respond_to_missing?(method_name, _private = false)
-      inputs.key?(method_name)
+    def respond_to_missing?(method_name, private = false)
+      inputs.key?(method_name) || super
     end
   end
 end

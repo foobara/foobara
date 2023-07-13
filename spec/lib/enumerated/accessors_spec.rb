@@ -1,4 +1,4 @@
-RSpec.describe Foobara::EnumeratedType do
+RSpec.describe Enumerated::Accessors do
   let(:enum_module) do
     Module.new.tap do |m|
       m.const_set(:FOO, :foo)
@@ -8,7 +8,7 @@ RSpec.describe Foobara::EnumeratedType do
   end
   let(:klass) do
     Class.new do
-      include Foobara::EnumeratedType
+      include Enumerated::Accessors
 
       enumerated :some_enum, EnumModule
     end
@@ -46,26 +46,33 @@ RSpec.describe Foobara::EnumeratedType do
     context "when invalid value" do
       let(:value) { "not a member of the enum" }
 
-      it { is_expected_to_raise(Foobara::EnumeratedType::ValueNotAllowed) }
+      it { is_expected_to_raise(Enumerated::Accessors::ValueNotAllowed) }
     end
   end
 
   describe ".enumerated_type_metadata" do
     it "gives the reflection information" do
-      expect(klass.enumerated_type_metadata).to eq(
-        some_enum: {
-          allowed_values: %i[bar baz foo],
-          constants_map: { "BAR" => :bar, "BAZ" => :baz, "FOO" => :foo },
-          constants_module: EnumModule
-        }
-      )
+      meta = klass.enumerated_type_metadata[:some_enum]
+
+      expect(meta.keys).to match_array(%i[values original_values_source values_source])
+      expect(meta[:original_values_source]).to be(EnumModule)
+      expect(meta[:values_source]).to be(EnumModule)
+
+      values = meta[:values]
+
+      expect(values).to be_a(Enumerated::Values)
+      expect(values.all).to eq(BAR: :bar, BAZ: :baz, FOO: :foo)
+
+      expect(values.BAR).to be(:bar)
+      expect(values.BAZ).to be(:baz)
+      expect(values.FOO).to be(:foo)
     end
   end
 
   describe "automatic enumeration module discovery" do
     let(:klass) do
       Class.new do
-        include Foobara::EnumeratedType
+        include Enumerated::Accessors
 
         enumerated :some_enum
       end
@@ -78,7 +85,20 @@ RSpec.describe Foobara::EnumeratedType do
 
       describe ".enumerated_type_metadata" do
         it "has the right module" do
-          expect(klass.enumerated_type_metadata[:some_enum][:constants_module]).to eq(EnumModule)
+          meta = klass.enumerated_type_metadata[:some_enum]
+
+          expect(meta.keys).to match_array(%i[values original_values_source values_source])
+          expect(meta[:original_values_source]).to be_nil
+          expect(meta[:values_source]).to be(EnumModule)
+
+          values = meta[:values]
+
+          expect(values).to be_a(Enumerated::Values)
+          expect(values.all).to eq(BAR: :bar, BAZ: :baz, FOO: :foo)
+
+          expect(values.BAR).to be(:bar)
+          expect(values.BAZ).to be(:baz)
+          expect(values.FOO).to be(:foo)
         end
       end
     end
@@ -88,7 +108,7 @@ RSpec.describe Foobara::EnumeratedType do
         Class.new do
           const_set("SomeEnum", EnumModule)
 
-          include Foobara::EnumeratedType
+          include Enumerated::Accessors
 
           enumerated :some_enum
         end
@@ -96,7 +116,20 @@ RSpec.describe Foobara::EnumeratedType do
 
       describe ".enumerated_type_metadata" do
         it "has the right module" do
-          expect(klass.enumerated_type_metadata[:some_enum][:constants_module]).to eq(EnumModule)
+          meta = klass.enumerated_type_metadata[:some_enum]
+
+          expect(meta.keys).to match_array(%i[values original_values_source values_source])
+          expect(meta[:original_values_source]).to be_nil
+          expect(meta[:values_source]).to be(EnumModule)
+
+          values = meta[:values]
+
+          expect(values).to be_a(Enumerated::Values)
+          expect(values.all).to eq(BAR: :bar, BAZ: :baz, FOO: :foo)
+
+          expect(values.BAR).to be(:bar)
+          expect(values.BAZ).to be(:baz)
+          expect(values.FOO).to be(:foo)
         end
       end
     end
@@ -116,7 +149,7 @@ RSpec.describe Foobara::EnumeratedType do
             end
           end
 
-          include Foobara::EnumeratedType
+          include Enumerated::Accessors
 
           enumerated :some_enum
         end
@@ -128,7 +161,20 @@ RSpec.describe Foobara::EnumeratedType do
 
       describe ".enumerated_type_metadata" do
         it "has the right module" do
-          expect(klass.enumerated_type_metadata[:some_enum][:constants_module]).to eq(EnumModule)
+          meta = klass.enumerated_type_metadata[:some_enum]
+
+          expect(meta.keys).to match_array(%i[values original_values_source values_source])
+          expect(meta[:original_values_source]).to be_nil
+          expect(meta[:values_source]).to be(EnumModule)
+
+          values = meta[:values]
+
+          expect(values).to be_a(Enumerated::Values)
+          expect(values.all).to eq(BAR: :bar, BAZ: :baz, FOO: :foo)
+
+          expect(values.BAR).to be(:bar)
+          expect(values.BAZ).to be(:baz)
+          expect(values.FOO).to be(:foo)
         end
       end
     end

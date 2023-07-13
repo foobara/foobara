@@ -27,6 +27,9 @@ Style/GuardClause:
 Style/IfUnlessModifier:
   Enabled: false
 
+Style/Next:
+  Enabled: false
+
 Style/NumericPredicate:
   Enabled: false
 
