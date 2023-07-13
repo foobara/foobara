@@ -1,5 +1,7 @@
 module Foobara
   class StateMachine
+    LogEntry = Struct.new(:from_state, :transition, :to_state)
+
     class TransitionAlreadyDefinedError < StandardError; end
     class UnexpectedTerminalStates < StandardError; end
     class MissingStates < StandardError; end
@@ -10,9 +12,11 @@ module Foobara
     class MissingTerminalStates < StandardError; end
 
     attr_accessor :transitions, :initial_state, :states, :non_terminal_states, :terminal_states, :transition_map,
-                  :raw_transition_map, :state, :transition
+                  :raw_transition_map, :state, :transition, :current_state, :log
 
     def initialize(transition_map, initial_state: nil, states: nil, terminal_states: nil, transitions: nil)
+      self.log = []
+
       self.raw_transition_map = transition_map
 
       self.initial_state = initial_state
@@ -22,7 +26,12 @@ module Foobara
 
       desugarize_transition_map
       determine_states_and_transitions
+
+      self.current_state = self.initial_state
+
       create_enums
+      create_state_predicate_methods
+      create_transition_methods
     end
 
     private
@@ -129,7 +138,6 @@ module Foobara
       missing_states = states - computed_states
 
       if missing_states.present?
-        binding.pry
         raise MissingStates,
               "#{missing_states} is/are explicitly declared as states but do(es)n't appear in the transition map"
       end
@@ -161,6 +169,45 @@ module Foobara
     def create_enums
       self.state = Enumerated::Values.new(states)
       self.transition = Enumerated::Values.new(transitions)
+    end
+
+    def perform_transition!(transition)
+      unless  transition_map[current_state].key?(transition)
+        raise InvalidTransition,
+              "Cannot perform #{transition} from #{current_state}. Expected one of #{allowed_transitions}."
+      end
+
+      next_state = transition_map[current_state][transition]
+      log << LogEntry.new(current_state, transition, next_state)
+      self.current_state = next_state
+    end
+
+    def allowed_transitions
+      transition_map[current_state].keys
+    end
+
+    def can?(transition)
+      transition_map[current_state].key?(transition)
+    end
+
+    def create_state_predicate_methods
+      states.each do |state|
+        singleton_class.define_method "currently_#{state}?" do
+          current_state == state
+        end
+
+        singleton_class.define_method "ever_#{state}?" do
+          current_state == state || log.any? { |log_entry| log_entry.from_state == state }
+        end
+      end
+    end
+
+    def create_transition_methods
+      transitions.each do |transition|
+        singleton_class.define_method "#{transition}!" do
+          perform_transition!(transition)
+        end
+      end
     end
   end
 end

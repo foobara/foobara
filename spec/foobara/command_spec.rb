@@ -31,6 +31,7 @@ RSpec.describe Foobara::Command do
     let(:base) { 4 }
     let(:exponent) { 3 }
     let(:command) { command_class.new(base:, exponent:) }
+    let(:state_machine) { command.state_machine }
 
     describe ".run!" do
       let(:outcome) { command.run }
@@ -39,6 +40,12 @@ RSpec.describe Foobara::Command do
       it "is success" do
         expect(outcome).to be_success
         expect(result).to eq(64)
+        expect(state_machine).to be_currently_succeeded
+        expect(state_machine).to be_ever_succeeded
+        expect(state_machine).to be_ever_initialized
+        non_happy_path_transitions = %i[error fail reset]
+        happy_path_transitions = state_machine.transitions - non_happy_path_transitions
+        expect(state_machine.log.map(&:transition)).to match_array(happy_path_transitions)
       end
     end
 
