@@ -15,10 +15,9 @@ module Foobara
         end
       end
 
-      attr_accessor :runtime_status, :raw_inputs, :inputs, :outcome
+      attr_accessor :raw_inputs, :inputs, :outcome
 
       def initialize(inputs)
-        self.runtime_status = :unexecuted
         self.raw_inputs = inputs
         self.outcome = Outcome.new
       end

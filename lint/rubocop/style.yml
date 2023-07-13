@@ -49,3 +49,6 @@ Style/StringLiterals:
 Style/StringLiteralsInInterpolation:
   Enabled: true
   EnforcedStyle: double_quotes
+
+Style/CaseEquality:
+  Enabled: false

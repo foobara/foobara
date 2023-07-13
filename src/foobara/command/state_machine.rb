@@ -2,21 +2,7 @@ module Foobara
   class Command
     module StateMachine
       extend ActiveSupport::Concern
-=begin
-      events = %i[
-        initialized
-        validated_schema
-        casted_inputs
-        validated_inputs
-        loaded_records
-        validated_records
-        validated_execution
-        succeeded
-        errored
-        failed
-        reset
-      ].freeze
-=end
+
       def state_machine
         @state_machine ||= begin
           transitions = %i[

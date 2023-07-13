@@ -34,7 +34,7 @@ module Foobara
     end
 
     def respond_to_missing?(method_name, private = false)
-      inputs.key?(method_name) || super
+      inputs&.key?(method_name) || super
     end
   end
 end

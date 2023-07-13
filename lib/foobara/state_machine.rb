@@ -10,6 +10,7 @@ module Foobara
     class ExtraTransitions < StandardError; end
     class BadInitialState < StandardError; end
     class MissingTerminalStates < StandardError; end
+    class InvalidTransition < StandardError; end
 
     attr_accessor :transitions, :initial_state, :states, :non_terminal_states, :terminal_states, :transition_map,
                   :raw_transition_map, :state, :transition, :current_state, :log
@@ -32,6 +33,14 @@ module Foobara
       create_enums
       create_state_predicate_methods
       create_transition_methods
+    end
+
+    def allowed_transitions
+      transition_map[current_state].keys
+    end
+
+    def can?(transition)
+      transition_map[current_state].key?(transition)
     end
 
     private
@@ -180,14 +189,6 @@ module Foobara
       next_state = transition_map[current_state][transition]
       log << LogEntry.new(current_state, transition, next_state)
       self.current_state = next_state
-    end
-
-    def allowed_transitions
-      transition_map[current_state].keys
-    end
-
-    def can?(transition)
-      transition_map[current_state].key?(transition)
     end
 
     def create_state_predicate_methods
