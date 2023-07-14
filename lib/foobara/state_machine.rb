@@ -13,10 +13,11 @@ module Foobara
     class InvalidTransition < StandardError; end
 
     attr_accessor :transitions, :initial_state, :states, :non_terminal_states, :terminal_states, :transition_map,
-                  :raw_transition_map, :state, :transition, :current_state, :log
+                  :raw_transition_map, :state, :transition, :current_state, :log, :callbacks
 
     def initialize(transition_map, initial_state: nil, states: nil, terminal_states: nil, transitions: nil)
       self.log = []
+      self.callbacks = {}
 
       self.raw_transition_map = transition_map
 
@@ -35,6 +36,48 @@ module Foobara
       create_transition_methods
     end
 
+    def perform_transition!(transition, successful_if: nil, allowed_error_classes: [])
+      from = current_state
+
+      unless  transition_map[current_state].key?(transition)
+        raise InvalidTransition,
+              "Cannot perform #{transition} from #{current_state}. Expected one of #{allowed_transitions}."
+      end
+
+      to = transition_map[current_state][transition]
+
+      if block_given?
+        run_before_callbacks(from, transition, to)
+        run_around_callbacks(from, transition, to) do
+          begin
+            yield
+          rescue => e
+            if allowed_error_classes.none? { |klass| klass === e }
+              run_error_callbacks(e, from, transition, to)
+            else
+              update_current_state(from, transition, to)
+            end
+
+            raise
+          end
+
+          if successful_if.nil? || successful_if.call
+            update_current_state(from, transition, to)
+          else
+            run_failure_callbacks(from, transition, to)
+          end
+        end
+      else
+        # TODO: raise better errors
+        raise if successful_if
+        raise if allowed_error_classes.present?
+        raise if has_before_callbacks?(from, transition, to)
+        raise if has_around_callbacks?(from, transition, to)
+
+        update_current_state(from, transition, to)
+      end
+    end
+
     def allowed_transitions
       transition_map[current_state].keys
     end
@@ -43,7 +86,188 @@ module Foobara
       transition_map[current_state].key?(transition)
     end
 
+    # nil versus not-nil for the various callback-scope options
+    #
+    #      type     from transition   to notes
+    #      ----     ---- ----------   -- -----
+    # *     nil      nil        nil  nil # illegal! must have at least type
+    # 0 :before      nil        nil  nil # before any transition
+    # 1 :before      nil        nil :ran # before any transition to :ran
+    # 2 :before      nil       :run  nil # before :run transition from any state to any state
+    # 3 :before      nil       :run :ran # before any transition from any state to :ran
+    # 4 :before :pending        nil  nil # before any transition from the :pending state
+    # 5 :before :pending        nil :ran # before any transition from :pending and to :ran
+    # 6 :before :pending       :run  nil # before :run transition from :pending and to any state
+    # 7 :before :pending       :run :ran # illegal! dont use all three!
+    #
+    # So there are 7 legal transition callback scopes corresponding to the above
+    # 0 before_any_transition
+    # 1 before_transition_to_<state>
+    # 2 before_transition_from_<state>
+    # 3 before_transition_from_<state>_to_<state>
+    # 4 before_<transition>_transition
+    # 5 before_<transition>_transition_to_<state>
+    # 6 before_<transition>_transition_from_<state>
+    def register_transition_callback(type, from: nil, to: nil, transition: nil, &block)
+      type = type.to_sym
+      transition = transition.to_sym
+      from = from.to_sym
+      to = to.to_sym
+
+      allowed_callback_types = %i[before after around]
+
+      raise "bad type #{type} expected one of #{allowed_callback_types}" unless types.include?
+
+      if transition && !transitions.include?(transition)
+        raise "bad transition #{transition} expected one of #{transitions}"
+      end
+
+      if from && !states.include?(from)
+        raise "bad from state #{from} expected one of #{states}"
+      end
+
+      if to && !states.include?(to)
+        raise "bad to state #{to} expected one of #{states}"
+      end
+
+      if type == :around
+        if block.arity != 1
+          raise "around callbacks must take exactly one argument which will be the perform_transition proc"
+        end
+      elsif block.arity != 0
+        raise "#{type} callback should take exactly 0 arguments"
+      end
+      type_callbacks = callbacks[type] ||= {}
+      triple_callbacks = type_callbacks[triple] ||= []
+
+      triple_callbacks << block
+    end
+
     private
+
+    def has_before_callbacks?(from, transition, to)
+      callbacks_for(:before, from, transition, to).present?
+    end
+
+    def has_after_callbacks?(from, transition, to)
+      callbacks_for(:after, from, transition, to).present?
+    end
+
+    def has_around_callbacks?(from, transition, to)
+      callbacks_for(:around, from, transition, to).present?
+    end
+
+    def has_error_callbacks?(from: nil, transition: nil, to: nil)
+      callbacks_for(:error, from, transition, to).present?
+    end
+
+    def has_failure_callbacks?(from: nil, transition: nil, to: nil)
+      callbacks_for(:failure, from, transition, to).present?
+    end
+
+    def run_before_callbacks(from, transition, to)
+      callbacks_for(:before, from, transition, to) do |callback|
+        callback.call(from:, transition:, to:, state_machine: self)
+      end
+    end
+
+    def run_after_callbacks(from, transition, to)
+      callbacks_for(:after, from, transition, to) do |callback|
+        callback.call(from:, transition:, to:, state_machine: self)
+      end
+    end
+
+    def run_failure_callbacks(from, transition, to)
+      callbacks_for(:failure, from, transition, to) do |callback|
+        callback.call(from:, transition:, to:, state_machine: self)
+      end
+    end
+
+    def run_error_callbacks(error, from, transition, to)
+      callbacks_for(:error, from, transition, to).each do |callback|
+        callback.call(error:, from:, transition:, to:)
+      end
+    end
+
+    def run_around_callbacks(from, transition, to, &block)
+      around_callbacks = callbacks_for(:around, from, transition, to)
+
+      if around_callbacks.blank?
+        yield
+      else
+        around_callbacks.reduce(block) do |nested_proc, callback|
+          proc do
+            callback.call(nested_proc, transition:, to:, state_machine: self)
+          end
+        end
+      end
+    end
+
+    def callbacks_for(type, from, transition, to)
+      raise unless type.present?
+      raise unless from.present?
+      raise unless transition.present?
+      raise unless to.present?
+
+      callbacks_for_type = callbacks[type]
+
+      return [] if callbacks_for_type.blank?
+
+      all_callbacks = []
+
+      # 0
+      triple = [nil, nil, nil]
+      scoped_callbacks = callbacks_for_type[triple]
+      all_callbacks += scoped_callbacks if scoped_callbacks.present?
+
+      # 1
+      triple[2] = to
+      scoped_callbacks = callbacks_for_type[triple]
+      all_callbacks += scoped_callbacks if scoped_callbacks.present?
+
+      # 2
+      triple[1] = transition
+      triple[2] = nil
+      scoped_callbacks = callbacks_for_type[triple]
+      all_callbacks += scoped_callbacks if scoped_callbacks.present?
+
+      # 4
+      triple[0] = from
+      triple[1] = nil
+      scoped_callbacks = callbacks_for_type[triple]
+      all_callbacks += scoped_callbacks if scoped_callbacks.present?
+
+      # 3
+      triple[0] = nil
+      triple[1] = transition
+      triple[2] = to
+      scoped_callbacks = callbacks_for_type[triple]
+      all_callbacks += scoped_callbacks if scoped_callbacks.present?
+
+      # 5
+      triple[0] = from
+      triple[1] = nil
+      scoped_callbacks = callbacks_for_type[triple]
+      all_callbacks += scoped_callbacks if scoped_callbacks.present?
+
+      # 6
+      triple[1] = transition
+      triple[2] = nil
+      scoped_callbacks = callbacks_for_type[triple]
+      all_callbacks += scoped_callbacks if scoped_callbacks.present?
+
+      all_callbacks # should we reverse these?
+    end
+
+    def update_current_state(from, transition, to)
+      self.current_state = to
+      log << LogEntry.new(from, transition, to)
+      run_after_callbacks(from, transition, to)
+    end
+
+    def callback_lookup(type, triple)
+      callbacks[type]&.[](triple)
+    end
 
     def desugarize_transition_map
       self.transition_map = {}
@@ -178,17 +402,6 @@ module Foobara
     def create_enums
       self.state = Enumerated::Values.new(states)
       self.transition = Enumerated::Values.new(transitions)
-    end
-
-    def perform_transition!(transition)
-      unless  transition_map[current_state].key?(transition)
-        raise InvalidTransition,
-              "Cannot perform #{transition} from #{current_state}. Expected one of #{allowed_transitions}."
-      end
-
-      next_state = transition_map[current_state][transition]
-      log << LogEntry.new(current_state, transition, next_state)
-      self.current_state = next_state
     end
 
     def create_state_predicate_methods
