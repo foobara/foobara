@@ -405,19 +405,19 @@ module Foobara
 
     def run_before_callbacks(from, transition, to)
       callbacks_for(:before, from, transition, to) do |callback|
-        callback.call(from:, transition:, to:, state_machine: self)
+        callback.call(from:, transition:, to:)
       end
     end
 
     def run_after_callbacks(from, transition, to)
       callbacks_for(:after, from, transition, to) do |callback|
-        callback.call(from:, transition:, to:, state_machine: self)
+        callback.call(from:, transition:, to:)
       end
     end
 
     def run_failure_callbacks(from, transition, to)
       callbacks_for(:failure, from, transition, to) do |callback|
-        callback.call(from:, transition:, to:, state_machine: self)
+        callback.call(from:, transition:, to:)
       end
     end
 
@@ -435,7 +435,7 @@ module Foobara
       else
         around_callbacks.reduce(block) do |nested_proc, callback|
           proc do
-            callback.call(nested_proc, transition:, to:, state_machine: self)
+            callback.call(nested_proc, transition:, to:)
           end
         end
       end
