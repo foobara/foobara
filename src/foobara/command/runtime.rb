@@ -23,25 +23,20 @@ module Foobara
       end
 
       def run
-        self.runtime_status = :started
+        outcome.result = invoke_with_callbacks_and_transition(%i[
+                                                                validate_schema
+                                                                cast_inputs
+                                                                validate_inputs
+                                                                load_records
+                                                                validate_records
+                                                                validate
+                                                                execute
+                                                              ])
 
-        validate_schema
-        cast_inputs
-        validate_inputs
-        load_records
-        validate_records
-
-        validate
-
-        halt! unless success?
-
-        outcome.result = execute
-
-        state_machine.execute!
-        success? ? state_machine.succeed! : state_machine.fail!
-
+        state_machine.succeed!
         outcome
       rescue Halt
+        state_machine.fail!
         outcome
       rescue
         state_machine.error!
@@ -54,40 +49,49 @@ module Foobara
         input_schema.schema_validation_errors.each do |error|
           add_error(error)
         end
+      end
 
-        success? ? state_machine.validate_schema! : halt!
+      def invoke_with_callbacks_and_transition(transition_or_transitions)
+        result = nil
+
+        if transition_or_transitions.is_a?(Array)
+          transition_or_transitions.each do |transition|
+            result = invoke_with_callbacks_and_transition(transition)
+          end
+        else
+          transition = transition_or_transitions
+
+          state_machine.perform_transition!(transition) do
+            result = send(transition)
+            halt! unless success?
+          end
+        end
+
+        result
       end
 
       def cast_inputs
-        halt! unless success?
-
         Array.wrap(input_schema.casting_errors(raw_inputs)).each do |error|
           add_error(error)
         end
 
         self.inputs = input_schema.cast_from(raw_inputs)
-
-        success? ? state_machine.cast_inputs! : halt!
       end
 
       def validate_inputs
         # TODO: check various validations like required, blank, etc
-        success? ? state_machine.validate_inputs! : halt!
       end
 
       def load_records
-        success? ? state_machine.load_records! : halt!
         # noop
       end
 
       def validate_records
-        success? ? state_machine.validate_records! : halt!
         # noop
       end
 
       def validate
         # can override if desired, default is a no-op
-        success? ? state_machine.validate! : halt!
       end
 
       def halt!
