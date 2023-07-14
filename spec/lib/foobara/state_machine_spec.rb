@@ -1,15 +1,21 @@
 RSpec.describe Foobara::StateMachine do
-  describe ".new" do
-    subject { state_machine }
+  describe ".set_transition_map" do
+    subject { state_machine_class }
+
+    let(:state_machine_class) do
+      Class.new(described_class).tap do |klass|
+        klass.set_transition_map(
+          transition_map,
+          states:,
+          initial_state:,
+          terminal_states:,
+          transitions:
+        )
+      end
+    end
 
     let(:state_machine) {
-      described_class.new(
-        transition_map,
-        states:,
-        initial_state:,
-        terminal_states:,
-        transitions:
-      )
+      state_machine_class.new
     }
 
     let(:states) { nil }
@@ -66,15 +72,15 @@ RSpec.describe Foobara::StateMachine do
 
         describe "#state" do
           it "is the expected enum" do
-            expect(state_machine.state.all_values).to match_array(state_machine.states)
-            expect(state_machine.state.FAILED).to eq(:failed)
+            expect(state_machine_class.state.all_values).to match_array(state_machine_class.states)
+            expect(state_machine_class.state.FAILED).to eq(:failed)
           end
         end
 
         describe "#transition" do
           it "is the expected enum" do
-            expect(state_machine.transition.all_values).to match_array(state_machine.transitions)
-            expect(state_machine.transition.FAIL).to eq(:fail)
+            expect(state_machine_class.transition.all_values).to match_array(state_machine_class.transitions)
+            expect(state_machine_class.transition.FAIL).to eq(:fail)
           end
         end
 

@@ -14,35 +14,272 @@ module Foobara
     class MissingTerminalStates < StandardError; end
     class InvalidTransition < StandardError; end
 
-    attr_accessor :transitions, :initial_state, :states, :non_terminal_states, :terminal_states, :transition_map,
-                  :raw_transition_map, :state, :transition, :current_state, :log, :callbacks
+    class << self
+      attr_accessor :transitions, :initial_state, :states, :non_terminal_states, :terminal_states, :transition_map,
+                    :raw_transition_map, :state, :transition
 
-    def initialize(transition_map, initial_state: nil, states: nil, terminal_states: nil, transitions: nil)
-      self.log = []
-      self.callbacks = {}
+      def set_transition_map(transition_map, initial_state: nil, states: nil, terminal_states: nil, transitions: nil)
+        self.raw_transition_map = transition_map
 
-      self.raw_transition_map = transition_map
+        self.initial_state = initial_state
+        self.states = states
+        self.terminal_states = terminal_states
+        self.transitions = transitions
 
-      self.initial_state = initial_state
-      self.states = states
-      self.terminal_states = terminal_states
-      self.transitions = transitions
+        desugarize_transition_map
+        determine_states_and_transitions
 
-      desugarize_transition_map
-      determine_states_and_transitions
+        create_enums
+        create_state_predicate_methods
+        create_transition_methods
+        create_register_callback_methods
+      end
 
-      self.current_state = self.initial_state
+      private
 
-      create_enums
-      create_state_predicate_methods
-      create_transition_methods
-      create_register_callback_methods
+      def desugarize_transition_map
+        self.transition_map = {}
+
+        raw_transition_map.each_pair do |from_state, transitions|
+          Array.wrap(from_state).each do |state|
+            state = state.to_sym
+
+            transitions.each_pair do |transition, next_state|
+              transition = transition.to_sym
+              next_state = next_state.to_sym
+
+              transitions_for_state = transition_map[state] ||= {}
+
+              if transitions_for_state.key?(transition)
+                raise TransitionAlreadyDefinedError, "There's already a #{transition} for #{state}"
+              end
+
+              transitions_for_state[transition] = next_state
+            end
+          end
+        end
+
+        transition_map.freeze
+      end
+
+      def determine_states_and_transitions
+        computed_non_terminal_states = transition_map.keys.uniq
+        computed_terminal_states = []
+        computed_transitions = []
+
+        transition_map.each_value do |transitions|
+          transitions.each_pair do |transition, to_state|
+            computed_transitions << transition unless computed_transitions.include?(transition)
+
+            if !computed_non_terminal_states.include?(to_state) && !computed_terminal_states.include?(to_state)
+              computed_terminal_states << to_state
+            end
+          end
+        end
+
+        if terminal_states
+          all_states = computed_non_terminal_states + computed_terminal_states
+          validate_terminal_states(computed_terminal_states, all_states)
+          # User has marked states as explicitly terminal even though they might have transitions
+          # This is allowed. So fix any such computations.
+          computed_non_terminal_states -= terminal_states
+          computed_terminal_states |= terminal_states
+        else
+          self.terminal_states = computed_terminal_states.freeze
+        end
+
+        self.non_terminal_states = computed_non_terminal_states.freeze
+
+        computed_states = computed_non_terminal_states + computed_terminal_states
+
+        if states
+          validate_states(computed_states)
+        else
+          self.states = computed_states.freeze
+        end
+
+        if transitions
+          validate_transitions(computed_transitions)
+        else
+          self.transitions = computed_transitions.freeze
+        end
+
+        if initial_state
+          unless states.include?(initial_state)
+            raise BadInitialState, "Initial state explicitly set to #{
+              initial_state
+            } but should have been one of #{states}"
+          end
+        else
+          self.initial_state = states.first
+        end
+      end
+
+      def validate_terminal_states(computed_terminal_states, all_states)
+        unexpected_terminal_states = computed_terminal_states - terminal_states
+
+        if unexpected_terminal_states.present?
+          raise UnexpectedTerminalStates, "#{
+            unexpected_terminal_states
+          } do(es) not have transitions even though they are not in the explicit list of terminal states #{
+            terminal_states
+          }"
+        end
+
+        missing_terminal_states = terminal_states - all_states
+
+        if missing_terminal_states.present?
+          raise MissingTerminalStates, "#{
+            missing_terminal_states
+          } was/were included explicitly in terminal_states but didn't appear in the transition map"
+        end
+      end
+
+      def validate_states(computed_states)
+        missing_states = states - computed_states
+
+        if missing_states.present?
+          raise MissingStates,
+                "#{missing_states} is/are explicitly declared as states but do(es)n't appear in the transition map"
+        end
+
+        extra_states = computed_states - states
+
+        if extra_states.present?
+          raise ExtraStates, "#{extra_states} appeared in the transition map but were not explicitly declared as states"
+        end
+      end
+
+      def validate_transitions(computed_transitions)
+        missing_transitions = transitions - computed_transitions
+
+        if missing_transitions.present?
+          raise MissingTransitions, "#{
+            missing_transitions
+          } is/are explicitly declared as transitions but do(es)n't appear in the transition map"
+        end
+
+        extra_transitions = computed_transitions - transitions
+
+        if extra_transitions.present?
+          raise ExtraTransitions,
+                "#{extra_transitions} appeared in the transition map but were not explicitly declared as transitions"
+        end
+      end
+
+      def create_enums
+        self.state = Enumerated::Values.new(states)
+        self.transition = Enumerated::Values.new(transitions)
+      end
+
+      def create_state_predicate_methods
+        states.each do |state|
+          define_method "currently_#{state}?" do
+            current_state == state
+          end
+
+          define_method "ever_#{state}?" do
+            current_state == state || log.any? { |log_entry| log_entry.from_state == state }
+          end
+        end
+      end
+
+      def create_transition_methods
+        transitions.each do |transition|
+          define_method "#{transition}!" do
+            perform_transition!(transition)
+          end
+        end
+      end
+
+      # TODO: figure out a way to not have to declare these for every instance of the state machine, wtf
+      def create_register_callback_methods
+        # 0 before_any_transition
+        # 1 before_transition_to_<state>
+        # 2 before_transition_from_<state>
+        # 3 before_transition_from_<state>_to_<state>
+        # 4 before_<transition>_transition
+        # 5 before_<transition>_transition_to_<state>
+        # 6 before_<transition>_transition_from_<state>
+
+        tos = Set.new
+        froms = Set.new
+
+        froms_to_tos = Set.new
+        transitions_to_tos = Set.new
+        froms_to_transitions = Set.new
+
+        # ALLOWED_CALLBACK_TYPES = %i[before after around failure error]
+        transition_map.each_pair do |from, to_map|
+          froms << from
+          to_map.each_pair do |transition, to|
+            tos << to
+            froms_to_tos << [from, to]
+            transitions_to_tos << [transition, to]
+            froms_to_transitions << [from, transition]
+          end
+        end
+
+        ALLOWED_CALLBACK_TYPES.each do |type|
+          froms.each do |from|
+            define_method "#{type}_transition_from_#{from}" do |&block|
+              register_transition_callback(type, from:, &block)
+            end
+          end
+
+          tos.each do |to|
+            define_method "#{type}_transition_to_#{to}" do |&block|
+              register_transition_callback(type, to:, &block)
+            end
+          end
+
+          froms_to_tos.each do |(from, to)|
+            define_method "#{type}_transition_from_#{from}_to_#{to}" do |&block|
+              register_transition_callback(type, to:, from:, &block)
+            end
+          end
+
+          transitions_to_tos.each do |(transition, to)|
+            define_method "#{type}_#{transition}_to_#{to}" do |&block|
+              register_transition_callback(type, transition:, to:, &block)
+            end
+          end
+
+          froms_to_transitions.each do |(from, transition)|
+            define_method "#{type}_#{transition}_from_#{from}" do |&block|
+              register_transition_callback(type, transition:, from:, &block)
+            end
+          end
+        end
+      end
+
+      def callback_lookup(type, triple)
+        callbacks[type]&.[](triple)
+      end
     end
+
+    attr_accessor :log, :current_state, :callbacks
+
+    def initialize
+      self.callbacks = {}
+      self.log = []
+      self.current_state = self.class.initial_state
+    end
+
+    delegate :has_before_callbacks?,
+             :has_after_callbacks?,
+             :has_around_callbacks?,
+             :has_error_callbacks?,
+             :has_failure_callbacks?,
+             :callbacks_for,
+             to: :class
 
     def perform_transition!(transition, successful_if: nil, allowed_error_classes: [])
       from = current_state
 
-      unless  transition_map[current_state].key?(transition)
+      transition_map = self.class.transition_map
+
+      unless transition_map[current_state].key?(transition)
         raise InvalidTransition,
               "Cannot perform #{transition} from #{current_state}. Expected one of #{allowed_transitions}."
       end
@@ -166,26 +403,6 @@ module Foobara
 
     private
 
-    def has_before_callbacks?(from, transition, to)
-      callbacks_for(:before, from, transition, to).present?
-    end
-
-    def has_after_callbacks?(from, transition, to)
-      callbacks_for(:after, from, transition, to).present?
-    end
-
-    def has_around_callbacks?(from, transition, to)
-      callbacks_for(:around, from, transition, to).present?
-    end
-
-    def has_error_callbacks?(from: nil, transition: nil, to: nil)
-      callbacks_for(:error, from, transition, to).present?
-    end
-
-    def has_failure_callbacks?(from: nil, transition: nil, to: nil)
-      callbacks_for(:failure, from, transition, to).present?
-    end
-
     def run_before_callbacks(from, transition, to)
       callbacks_for(:before, from, transition, to) do |callback|
         callback.call(from:, transition:, to:, state_machine: self)
@@ -222,6 +439,12 @@ module Foobara
           end
         end
       end
+    end
+
+    def update_current_state(from, transition, to)
+      self.current_state = to
+      log << LogEntry.new(from, transition, to)
+      run_after_callbacks(from, transition, to)
     end
 
     def callbacks_for(type, from, transition, to)
@@ -280,230 +503,24 @@ module Foobara
       all_callbacks # should we reverse these?
     end
 
-    def update_current_state(from, transition, to)
-      self.current_state = to
-      log << LogEntry.new(from, transition, to)
-      run_after_callbacks(from, transition, to)
+    def has_before_callbacks?(from, transition, to)
+      callbacks_for(:before, from, transition, to).present?
     end
 
-    def callback_lookup(type, triple)
-      callbacks[type]&.[](triple)
+    def has_after_callbacks?(from, transition, to)
+      callbacks_for(:after, from, transition, to).present?
     end
 
-    def desugarize_transition_map
-      self.transition_map = {}
-
-      raw_transition_map.each_pair do |from_state, transitions|
-        Array.wrap(from_state).each do |state|
-          state = state.to_sym
-
-          transitions.each_pair do |transition, next_state|
-            transition = transition.to_sym
-            next_state = next_state.to_sym
-
-            transitions_for_state = transition_map[state] ||= {}
-
-            if transitions_for_state.key?(transition)
-              raise TransitionAlreadyDefinedError, "There's already a #{transition} for #{state}"
-            end
-
-            transitions_for_state[transition] = next_state
-          end
-        end
-      end
-
-      transition_map.freeze
+    def has_around_callbacks?(from, transition, to)
+      callbacks_for(:around, from, transition, to).present?
     end
 
-    def determine_states_and_transitions
-      computed_non_terminal_states = transition_map.keys.uniq
-      computed_terminal_states = []
-      computed_transitions = []
-
-      transition_map.each_value do |transitions|
-        transitions.each_pair do |transition, to_state|
-          computed_transitions << transition unless computed_transitions.include?(transition)
-
-          if !computed_non_terminal_states.include?(to_state) && !computed_terminal_states.include?(to_state)
-            computed_terminal_states << to_state
-          end
-        end
-      end
-
-      if terminal_states
-        all_states = computed_non_terminal_states + computed_terminal_states
-        validate_terminal_states(computed_terminal_states, all_states)
-        # User has marked states as explicitly terminal even though they might have transitions
-        # This is allowed. So fix any such computations.
-        computed_non_terminal_states -= terminal_states
-        computed_terminal_states |= terminal_states
-      else
-        self.terminal_states = computed_terminal_states.freeze
-      end
-
-      self.non_terminal_states = computed_non_terminal_states.freeze
-
-      computed_states = computed_non_terminal_states + computed_terminal_states
-
-      if states
-        validate_states(computed_states)
-      else
-        self.states = computed_states.freeze
-      end
-
-      if transitions
-        validate_transitions(computed_transitions)
-      else
-        self.transitions = computed_transitions.freeze
-      end
-
-      if initial_state
-        unless states.include?(initial_state)
-          raise BadInitialState, "Initial state explicitly set to #{
-            initial_state
-          } but should have been one of #{states}"
-        end
-      else
-        self.initial_state = states.first
-      end
+    def has_error_callbacks?(from: nil, transition: nil, to: nil)
+      callbacks_for(:error, from, transition, to).present?
     end
 
-    def validate_terminal_states(computed_terminal_states, all_states)
-      unexpected_terminal_states = computed_terminal_states - terminal_states
-
-      if unexpected_terminal_states.present?
-        raise UnexpectedTerminalStates, "#{
-          unexpected_terminal_states
-        } do(es) not have transitions even though they are not in the explicit list of terminal states #{
-          terminal_states
-        }"
-      end
-
-      missing_terminal_states = terminal_states - all_states
-
-      if missing_terminal_states.present?
-        raise MissingTerminalStates, "#{
-          missing_terminal_states
-        } was/were included explicitly in terminal_states but didn't appear in the transition map"
-      end
-    end
-
-    def validate_states(computed_states)
-      missing_states = states - computed_states
-
-      if missing_states.present?
-        raise MissingStates,
-              "#{missing_states} is/are explicitly declared as states but do(es)n't appear in the transition map"
-      end
-
-      extra_states = computed_states - states
-
-      if extra_states.present?
-        raise ExtraStates, "#{extra_states} appeared in the transition map but were not explicitly declared as states"
-      end
-    end
-
-    def validate_transitions(computed_transitions)
-      missing_transitions = transitions - computed_transitions
-
-      if missing_transitions.present?
-        raise MissingTransitions, "#{
-        missing_transitions
-      } is/are explicitly declared as transitions but do(es)n't appear in the transition map"
-      end
-
-      extra_transitions = computed_transitions - transitions
-
-      if extra_transitions.present?
-        raise ExtraTransitions,
-              "#{extra_transitions} appeared in the transition map but were not explicitly declared as transitions"
-      end
-    end
-
-    def create_enums
-      self.state = Enumerated::Values.new(states)
-      self.transition = Enumerated::Values.new(transitions)
-    end
-
-    def create_state_predicate_methods
-      states.each do |state|
-        singleton_class.define_method "currently_#{state}?" do
-          current_state == state
-        end
-
-        singleton_class.define_method "ever_#{state}?" do
-          current_state == state || log.any? { |log_entry| log_entry.from_state == state }
-        end
-      end
-    end
-
-    def create_transition_methods
-      transitions.each do |transition|
-        singleton_class.define_method "#{transition}!" do
-          perform_transition!(transition)
-        end
-      end
-    end
-
-    # TODO: figure out a way to not have to declare these for every instance of the state machine, wtf
-    def create_register_callback_methods
-      # 0 before_any_transition
-      # 1 before_transition_to_<state>
-      # 2 before_transition_from_<state>
-      # 3 before_transition_from_<state>_to_<state>
-      # 4 before_<transition>_transition
-      # 5 before_<transition>_transition_to_<state>
-      # 6 before_<transition>_transition_from_<state>
-
-      tos = Set.new
-      froms = Set.new
-
-      froms_to_tos = Set.new
-      transitions_to_tos = Set.new
-      froms_to_transitions = Set.new
-
-      # ALLOWED_CALLBACK_TYPES = %i[before after around failure error]
-      transition_map.each_pair do |from, to_map|
-        froms << from
-        to_map.each_pair do |transition, to|
-          tos << to
-          froms_to_tos << [from, to]
-          transitions_to_tos << [transition, to]
-          froms_to_transitions << [from, transition]
-        end
-      end
-
-      ALLOWED_CALLBACK_TYPES.each do |type|
-        froms.each do |from|
-          singleton_class.define_method "#{type}_transition_from_#{from}" do |&block|
-            register_transition_callback(type, from:, &block)
-          end
-        end
-
-        tos.each do |to|
-          singleton_class.define_method "#{type}_transition_to_#{to}" do |&block|
-            register_transition_callback(type, to:, &block)
-          end
-        end
-
-        froms_to_tos.each do |(from, to)|
-          singleton_class.define_method "#{type}_transition_from_#{from}_to_#{to}" do |&block|
-            register_transition_callback(type, to:, from:, &block)
-          end
-        end
-
-        transitions_to_tos.each do |(transition, to)|
-          singleton_class.define_method "#{type}_#{transition}_to_#{to}" do |&block|
-            register_transition_callback(type, transition:, to:, &block)
-          end
-        end
-
-        froms_to_transitions.each do |(from, transition)|
-          singleton_class.define_method "#{type}_#{transition}_from_#{from}" do |&block|
-            register_transition_callback(type, transition:, from:, &block)
-          end
-        end
-      end
+    def has_failure_callbacks?(from: nil, transition: nil, to: nil)
+      callbacks_for(:failure, from, transition, to).present?
     end
   end
 end
