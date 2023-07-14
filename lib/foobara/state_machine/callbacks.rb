@@ -87,6 +87,7 @@ module Foobara
         register_transition_callback(:around, &)
       end
 
+      # these two seem to have awkward names
       def failure_any_transition(&)
         register_transition_callback(:failure, &)
       end
