@@ -36,7 +36,12 @@ module Foobara
         state_machine.succeed!
         outcome
       rescue Halt
-        state_machine.fail!
+        if success?
+          state_machine.succeed!
+        else
+          state_machine.fail!
+        end
+
         outcome
       rescue
         state_machine.error!
