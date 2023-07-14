@@ -2,7 +2,7 @@ module Foobara
   class StateMachine
     LogEntry = Struct.new(:from_state, :transition, :to_state)
 
-    ALLOWED_CALLBACK_TYPES = %i[before after around failure error]
+    ALLOWED_CALLBACK_TYPES = %i[before after around failure error].freeze
 
     class TransitionAlreadyDefinedError < StandardError; end
     class UnexpectedTerminalStates < StandardError; end
@@ -503,10 +503,6 @@ module Foobara
             register_transition_callback(type, transition:, from:, &block)
           end
         end
-      end
-
-      def before_any_transition(&)
-        register_transition_callback(:before, &)
       end
     end
   end
