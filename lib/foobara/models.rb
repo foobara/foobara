@@ -10,7 +10,7 @@ module Foobara
 
     self.types = {}
 
-    register_type(Types::IntegerType)
-    register_type(Types::AttributesType)
+    register_type(Types::IntegerType.new)
+    register_type(Types::AttributesType.new)
   end
 end
