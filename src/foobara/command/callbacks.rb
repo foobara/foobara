@@ -7,6 +7,8 @@ module Foobara
         def callback_state_machine_target
           StateMachine
         end
+
+        delegate :remove_all_callbacks, to: :callback_state_machine_target
       end
 
       def initialize(*)
@@ -29,8 +31,8 @@ module Foobara
 
           target.define_method "around_#{transition}" do |&block|
             callback_state_machine_target.register_transition_callback(
-              :around)
-            do |do_transition_block, state_machine:, **_|
+              :around
+            ) do |do_transition_block, state_machine:, **_|
               block.call(do_transition_block, command: state_machine.owner)
             end
           end

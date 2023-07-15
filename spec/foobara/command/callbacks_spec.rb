@@ -28,11 +28,14 @@ RSpec.describe Foobara::Command::Callbacks do
         end
       end
     }
-
     let(:base) { 4 }
     let(:exponent) { 3 }
     let(:command) { command_class.new(base:, exponent:) }
     let(:state_machine) { command.state_machine }
+
+    after do
+      command_class.remove_all_callbacks
+    end
 
     describe ".run!" do
       let(:outcome) { command.run }

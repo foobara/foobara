@@ -96,6 +96,10 @@ module Foobara
           @class_callback_registry ||= CallbackRegistry.new
         end
 
+        def remove_all_callbacks
+          @class_callback_registry = nil
+        end
+
         def validate_and_normalize_register_callback_options(type, from: nil, to: nil, transition: nil)
           type = type.to_sym
           transition = transition&.to_sym
