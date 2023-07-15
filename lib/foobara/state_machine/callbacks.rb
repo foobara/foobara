@@ -12,14 +12,6 @@ module Foobara
         self.callbacks = {}
       end
 
-      delegate :has_before_callbacks?,
-               :has_after_callbacks?,
-               :has_around_callbacks?,
-               :has_error_callbacks?,
-               :has_failure_callbacks?,
-               :callbacks_for,
-               to: :class
-
       # nil versus not-nil for the various callback-scope options
       #
       #      type     from transition   to notes
@@ -275,8 +267,6 @@ module Foobara
           end
         end
 
-        def callback_lookup(type, triple)
-          callbacks[type]&.[](triple)
         end
       end
     end
