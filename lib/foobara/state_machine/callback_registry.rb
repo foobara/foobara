@@ -99,6 +99,47 @@ module Foobara
 
         all_callbacks # should we reverse these?
       end
+
+      def before_any_transition(&)
+        register_transition_callback(:before, &)
+      end
+
+      def after_any_transition(&)
+        register_transition_callback(:after, &)
+      end
+
+      def around_any_transition(&)
+        register_transition_callback(:around, &)
+      end
+
+      # these two seem to have awkward names
+      def failure_any_transition(&)
+        register_transition_callback(:failure, &)
+      end
+
+      def error_any_transition(&)
+        register_transition_callback(:error, &)
+      end
+
+      def has_before_callbacks?(from, transition, to)
+        callbacks_for(:before, from, transition, to).present?
+      end
+
+      def has_after_callbacks?(from, transition, to)
+        callbacks_for(:after, from, transition, to).present?
+      end
+
+      def has_around_callbacks?(from, transition, to)
+        callbacks_for(:around, from, transition, to).present?
+      end
+
+      def has_error_callbacks?(from: nil, transition: nil, to: nil)
+        callbacks_for(:error, from, transition, to).present?
+      end
+
+      def has_failure_callbacks?(from: nil, transition: nil, to: nil)
+        callbacks_for(:failure, from, transition, to).present?
+      end
     end
   end
 end

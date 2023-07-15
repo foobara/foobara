@@ -11,77 +11,47 @@ module Foobara
         self.callback_registry = CallbackRegistry.new
       end
 
-      delegate :callbacks_for, to: :callback_registry
+      delegate :before_any_transition,
+               :after_any_transition,
+               :around_any_transition,
+               :failure_any_transition,
+               :error_any_transition,
+               to: :callback_registry
 
-      def before_any_transition(&)
-        register_transition_callback(:before, &)
-      end
-
-      def register_transition_callback(type, from: nil, to: nil, transition: nil, &block)
-        type = type.to_sym
-        transition = transition&.to_sym
-        from = from&.to_sym
-        to = to&.to_sym
-
-        raise "bad type #{type} expected one of #{ALLOWED_CALLBACK_TYPES}" unless ALLOWED_CALLBACK_TYPES.include?(type)
-
-        transitions = self.class.transitions
-
-        if transition && !transitions.include?(transition)
-          raise "bad transition #{transition} expected one of #{transitions}"
-        end
-
-        if from && !states.include?(from)
-          raise "bad from state #{from} expected one of #{states}"
-        end
-
-        if to && !states.include?(to)
-          raise "bad to state #{to} expected one of #{states}"
-        end
-
-        callback_registry.register_transition_callback(type, from:, to:, transition:, &block)
-      end
-
-      def after_any_transition(&)
-        register_transition_callback(:after, &)
-      end
-
-      def around_any_transition(&)
-        register_transition_callback(:around, &)
-      end
-
-      # these two seem to have awkward names
-      def failure_any_transition(&)
-        register_transition_callback(:failure, &)
-      end
-
-      def error_any_transition(&)
-        register_transition_callback(:error, &)
+      def register_transition_callback(*args, **options, &)
+        type, from, transition, to = self.class.validate_and_normalize_register_callback_options(*args, **options)
+        callback_registry.register_transition_callback(type, from:, to:, transition:, &)
       end
 
       private
 
+      delegate :class_callback_registry, to: :class
+
+      def callbacks_for(*args)
+        callback_registry.callbacks_for(*args) + class_callback_registry.callbacks_for(*args)
+      end
+
       def run_before_callbacks(from, transition, to)
         callbacks_for(:before, from, transition, to).each do |callback|
-          callback.call(from:, transition:, to:)
+          callback.call(from:, transition:, to:, state_machine: self)
         end
       end
 
       def run_after_callbacks(from, transition, to)
         callbacks_for(:after, from, transition, to).each do |callback|
-          callback.call(from:, transition:, to:)
+          callback.call(from:, transition:, to:, state_machine: self)
         end
       end
 
       def run_failure_callbacks(from, transition, to)
         callbacks_for(:failure, from, transition, to).each do |callback|
-          callback.call(from:, transition:, to:)
+          callback.call(from:, transition:, to:, state_machine: self)
         end
       end
 
       def run_error_callbacks(error, from, transition, to)
         callbacks_for(:error, from, transition, to).each do |callback|
-          callback.call(error:, from:, transition:, to:)
+          callback.call(error:, from:, transition:, to:, state_machine: self)
         end
       end
 
@@ -93,33 +63,67 @@ module Foobara
         else
           around_callbacks.reduce(block) do |nested_proc, callback|
             proc do
-              callback.call(nested_proc, transition:, to:)
+              callback.call(nested_proc, transition:, to:, state_machine: self)
             end
           end
         end
       end
 
       def has_before_callbacks?(from, transition, to)
-        callbacks_for(:before, from, transition, to).present?
+        callback_registry.callbacks_for(:before, from, transition, to).present?
       end
 
       def has_after_callbacks?(from, transition, to)
-        callbacks_for(:after, from, transition, to).present?
+        callback_registry.callbacks_for(:after, from, transition, to).present?
       end
 
       def has_around_callbacks?(from, transition, to)
-        callbacks_for(:around, from, transition, to).present?
+        callback_registry.callbacks_for(:around, from, transition, to).present?
       end
 
       def has_error_callbacks?(from: nil, transition: nil, to: nil)
-        callbacks_for(:error, from, transition, to).present?
+        callback_registry.callbacks_for(:error, from, transition, to).present?
       end
 
       def has_failure_callbacks?(from: nil, transition: nil, to: nil)
-        callbacks_for(:failure, from, transition, to).present?
+        callback_registry.callbacks_for(:failure, from, transition, to).present?
       end
 
       class_methods do
+        def class_callback_registry
+          @class_callback_registry ||= CallbackRegistry.new
+        end
+
+        def validate_and_normalize_register_callback_options(type, from: nil, to: nil, transition: nil)
+          type = type.to_sym
+          transition = transition&.to_sym
+          from = from&.to_sym
+          to = to&.to_sym
+
+          unless ALLOWED_CALLBACK_TYPES.include?(type)
+            raise "bad type #{type} expected one of #{ALLOWED_CALLBACK_TYPES}"
+          end
+
+          if transition && !transitions.include?(transition)
+            raise "bad transition #{transition} expected one of #{transitions}"
+          end
+
+          if from && !states.include?(from)
+            raise "bad from state #{from} expected one of #{states}"
+          end
+
+          if to && !states.include?(to)
+            raise "bad to state #{to} expected one of #{states}"
+          end
+
+          [type, from, transition, to]
+        end
+
+        def register_transition_callback(*args, **options, &)
+          type, from, transition, to = validate_and_normalize_register_callback_options(*args, **options)
+          class_callback_registry.register_transition_callback(type, from:, to:, transition:, &)
+        end
+
         def create_register_callback_methods
           # 0 before_any_transition
           # 1 before_transition_to_<state>
@@ -177,8 +181,6 @@ module Foobara
               end
             end
           end
-        end
-
         end
       end
     end
