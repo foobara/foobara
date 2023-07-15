@@ -9,6 +9,7 @@ module Foobara
             @input_schema
           else
             raw_input_schema = args.first
+            # TODO: make sure input schema is attributes
             @input_schema = Foobara::Models::Schema.new(raw_input_schema)
           end
         end
@@ -16,14 +17,10 @@ module Foobara
         def raw_input_schema
           input_schema.raw_schema
         end
-
-        def strict_input_schema
-          input_schema.strict_schema
-        end
       end
     end
 
-    delegate :input_schema, :raw_input_schema, :strict_input_Schema, to: :class
+    delegate :input_schema, :raw_input_schema, to: :class
 
     def method_missing(method_name, *args, &)
       if respond_to_missing_for_input_schema?(method_name)
