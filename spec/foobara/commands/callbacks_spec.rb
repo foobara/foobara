@@ -41,8 +41,28 @@ RSpec.describe Foobara::Command::Callbacks do
       context "when there are various instance callbacks" do
         before do
           @before_execute_called = false
-          command.before_execute do |c|
-            expect(c).to be(command)
+          command.before_execute do |**args|
+            expect(args[:command]).to be(command)
+            @before_execute_called = true
+          end
+        end
+
+        context "when success" do
+          before do
+            expect(outcome).to be_success
+          end
+
+          it "runs callbacks" do
+            expect(@before_execute_called).to be(true)
+          end
+        end
+      end
+
+      context "when there are various class callbacks" do
+        before do
+          @before_execute_called = false
+          command_class.before_execute do |**args|
+            expect(args[:command]).to be(command)
             @before_execute_called = true
           end
         end

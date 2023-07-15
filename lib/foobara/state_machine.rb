@@ -31,7 +31,7 @@ module Foobara
 
     attr_accessor :current_state
 
-    def initialize
+    def initialize(*args, **options)
       super
 
       self.current_state = self.class.initial_state

@@ -5,7 +5,8 @@ module Foobara
     include Callbacks
 
     def state_machine
-      @state_machine ||= StateMachine.new
+      # It makes me nervous to pass self around. Seems like a design smell.
+      @state_machine ||= StateMachine.new(owner: self)
     end
   end
 end

@@ -3,68 +3,45 @@ module Foobara
     module Callbacks
       extend ActiveSupport::Concern
 
-      def initialize(*)
-        super
-        setup_callbacks
+      class_methods do
+        def callback_state_machine_target
+          StateMachine
+        end
       end
 
-      # TODO: maybe support class-level callbacks in state machine so we don't do this in two places here
-      def setup_callbacks
-        self.class.callbacks.each_pair do |type, transition_map|
-          transition_map.each_pair do |transition, blocks|
-            blocks.each do |block|
-              state_machine.register_transition_callback(type, transition:) do
-                block.call(self)
-              end
-            end
-          end
-        end
+      def initialize(*)
+        super
+      end
+
+      def callback_state_machine_target
+        state_machine
       end
 
       Foobara::Command::StateMachine.transitions.each do |transition|
-        %i[before after around].each do |type|
-          define_method "#{type}_#{transition}" do |&block|
-            state_machine.register_transition_callback(type, transition:) do
-              block.call(self)
+        [self, self.class].each do |target|
+          %i[before after].each do |type|
+            target.define_method "#{type}_#{transition}" do |&block|
+              callback_state_machine_target.register_transition_callback(type, transition:) do |state_machine:, **_|
+                block.call(command: state_machine.owner)
+              end
             end
           end
-        end
 
-        %i[failure error].each do |type|
-          define_method "#{type}_any_transition" do |&block|
-            state_machine.register_transition_callback(type) do
-              block.call(self)
+          target.define_method "around_#{transition}" do |&block|
+            callback_state_machine_target.register_transition_callback(
+              :around)
+            do |do_transition_block, state_machine:, **_|
+              block.call(do_transition_block, command: state_machine.owner)
             end
           end
-        end
-      end
 
-      class_methods do
-        def callbacks
-          @callbacks ||= {}
-        end
-
-        %i[before after around].each do |type|
-          Foobara::Command::StateMachine.transitions.each do |transition|
-            define_method "#{type}_#{transition}" do |&block|
-              add_callback(type, transition, block)
+          %i[failure error].each do |type|
+            target.define_method "#{type}_any_transition" do |&block|
+              callback_state_machine_target.register_transition_callback(type) do |state_machine:|
+                block.call(command: state_machine.owner)
+              end
             end
           end
-        end
-
-        %i[failure error].each do |type|
-          define_method "#{type}_any_transition" do |&block|
-            add_callback(type, transition, block)
-          end
-        end
-
-        def add_callback(type, transition, block)
-          type = type.to_sym
-          transition = transition&.to_sym
-
-          type_callbacks = callbacks[type] ||= {}
-          transition_callbacks = type_callbacks[transition] ||= []
-          transition_callbacks << block
         end
       end
     end

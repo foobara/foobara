@@ -7,3 +7,6 @@ Lint/EmptyClass:
 
 Lint/Loop:
   Enabled: false
+
+Lint/UnusedMethodArgument:
+  AutoCorrect: false

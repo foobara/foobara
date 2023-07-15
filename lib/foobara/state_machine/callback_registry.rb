@@ -30,11 +30,14 @@ module Foobara
       # 5 before_<transition>_transition_to_<state>
       # 6 before_<transition>_transition_from_<state>
       def register_transition_callback(type, from: nil, to: nil, transition: nil, &block)
+        required_non_keyword_arity = block.parameters.count { |(param_type, _name)| param_type == :req }
+
         if type == :around
-          if block.arity != 1
+          # must have exactly one non-keyword required parameter to accept the perform_transition proc
+          if required_non_keyword_arity != 1
             raise "around callbacks must take exactly one argument which will be the perform_transition proc"
           end
-        elsif block.arity != 0
+        elsif required_non_keyword_arity != 0
           raise "#{type} callback should take exactly 0 arguments"
         end
 

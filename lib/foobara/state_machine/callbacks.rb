@@ -5,9 +5,11 @@ module Foobara
 
       ALLOWED_CALLBACK_TYPES = %i[before after around failure error].freeze
 
-      attr_accessor :callback_registry
+      # owner helps with determining the relevant object when running class-registered state transition callbacks
+      attr_accessor :callback_registry, :owner
 
-      def initialize
+      def initialize(owner:)
+        self.owner = owner
         self.callback_registry = CallbackRegistry.new
       end
 
