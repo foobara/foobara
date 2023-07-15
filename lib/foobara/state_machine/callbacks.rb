@@ -44,11 +44,13 @@ module Foobara
       # 6 before_<transition>_transition_from_<state>
       def register_transition_callback(type, from: nil, to: nil, transition: nil, &block)
         type = type.to_sym
-        transition = transition.to_sym
-        from = from.to_sym
-        to = to.to_sym
+        transition = transition&.to_sym
+        from = from&.to_sym
+        to = to&.to_sym
 
-        raise "bad type #{type} expected one of #{ALLOWED_CALLBACK_TYPES}" unless types.include?
+        raise "bad type #{type} expected one of #{ALLOWED_CALLBACK_TYPES}" unless ALLOWED_CALLBACK_TYPES.include?(type)
+
+        transitions = self.class.transitions
 
         if transition && !transitions.include?(transition)
           raise "bad transition #{transition} expected one of #{transitions}"
@@ -69,10 +71,11 @@ module Foobara
         elsif block.arity != 0
           raise "#{type} callback should take exactly 0 arguments"
         end
-        type_callbacks = callbacks[type] ||= {}
-        triple_callbacks = type_callbacks[triple] ||= []
 
-        triple_callbacks << block
+        callbacks_for_triple = callbacks[type] ||= {}
+        blocks = callbacks_for_triple[[from, transition, to]] ||= []
+
+        blocks << block
       end
 
       def before_any_transition(&)
@@ -99,19 +102,19 @@ module Foobara
       private
 
       def run_before_callbacks(from, transition, to)
-        callbacks_for(:before, from, transition, to) do |callback|
+        callbacks_for(:before, from, transition, to).each do |callback|
           callback.call(from:, transition:, to:)
         end
       end
 
       def run_after_callbacks(from, transition, to)
-        callbacks_for(:after, from, transition, to) do |callback|
+        callbacks_for(:after, from, transition, to).each do |callback|
           callback.call(from:, transition:, to:)
         end
       end
 
       def run_failure_callbacks(from, transition, to)
-        callbacks_for(:failure, from, transition, to) do |callback|
+        callbacks_for(:failure, from, transition, to).each do |callback|
           callback.call(from:, transition:, to:)
         end
       end

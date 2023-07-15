@@ -24,7 +24,7 @@ module Foobara
       Foobara::Command::StateMachine.transitions.each do |transition|
         %i[before after around].each do |type|
           define_method "#{type}_#{transition}" do |&block|
-            state_machine.register_transition_callback(type, transition) do
+            state_machine.register_transition_callback(type, transition:) do
               block.call(self)
             end
           end
@@ -54,9 +54,7 @@ module Foobara
 
         %i[failure error].each do |type|
           define_method "#{type}_any_transition" do |&block|
-            state_machine.register_transition_callback(type) do
-              add_callback(type, nil, block)
-            end
+            add_callback(type, transition, block)
           end
         end
 
