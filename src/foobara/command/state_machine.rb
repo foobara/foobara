@@ -12,10 +12,11 @@ module Foobara
         succeed
         error
         fail
+        abandon
         reset
       ]
 
-      terminal_states = %i[succeeded errored failed]
+      terminal_states = %i[succeeded errored failed abandoned]
 
       states = %i[
         initialized
@@ -42,7 +43,8 @@ module Foobara
         terminal_states => { reset: :initialized },
         can_fail_states => {
           error: :errored,
-          fail: :failed
+          fail: :failed,
+          abandon: :abandoned
         }
       }
 

@@ -37,7 +37,7 @@ module Foobara
         outcome
       rescue Halt
         if success?
-          state_machine.succeed!
+          raise CannotHaltWithoutAddingErrors, "Cannot halt without adding errors first"
         else
           state_machine.fail!
         end
@@ -101,6 +101,11 @@ module Foobara
 
       def halt!
         raise Halt
+      end
+
+      def abandon!
+        state_machine.abandon!
+        halt!
       end
     end
   end
