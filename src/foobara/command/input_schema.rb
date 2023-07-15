@@ -26,7 +26,7 @@ module Foobara
     delegate :input_schema, :raw_input_schema, :strict_input_Schema, to: :class
 
     def method_missing(method_name, *args, &)
-      if respond_to_missing?(method_name)
+      if respond_to_missing_for_input_schema?(method_name)
         inputs[method_name]
       else
         super
@@ -34,7 +34,11 @@ module Foobara
     end
 
     def respond_to_missing?(method_name, private = false)
-      inputs&.key?(method_name) || super
+      respond_to_missing_for_input_schema?(method_name, private) || super
+    end
+
+    def respond_to_missing_for_input_schema?(method_name, _private = false)
+      inputs&.key?(method_name)
     end
   end
 end
