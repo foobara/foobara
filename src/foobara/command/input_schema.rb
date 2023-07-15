@@ -1,6 +1,6 @@
 module Foobara
   class Command
-    module Schemas
+    module InputSchema
       extend ActiveSupport::Concern
 
       class_methods do

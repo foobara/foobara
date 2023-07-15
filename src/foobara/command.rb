@@ -1,6 +1,6 @@
 module Foobara
   class Command
-    include Schemas
+    include InputSchema
     include Runtime
     include Callbacks
 
