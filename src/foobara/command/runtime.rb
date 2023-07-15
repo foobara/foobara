@@ -33,7 +33,11 @@ module Foobara
                                                                 execute
                                                               ])
 
+        cast_result_using_result_schema
+        validate_result_using_result_schema
+
         state_machine.succeed!
+
         outcome
       rescue Halt
         if success?
@@ -106,6 +110,32 @@ module Foobara
       def abandon!
         state_machine.abandon!
         halt!
+      end
+
+      private
+
+      def cast_result_using_result_schema
+        return unless result_schema.present?
+
+        result = outcome.result
+
+        Array.wrap(result_schema.casting_errors(result)).each do |error|
+          add_error(error)
+        end
+
+        halt! unless success?
+
+        outcome.result = result_schema.cast_from(result)
+      end
+
+      def validate_result_using_result_schema
+        return unless result_schema.present?
+
+        Array.wrap(result_schema.validation_errors(outcome.result)).each do |error|
+          add_error(error)
+        end
+
+        halt! unless success?
       end
     end
   end

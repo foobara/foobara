@@ -9,7 +9,6 @@ module Foobara
             @result_schema
           else
             raw_result_schema = args.first
-            # TODO: make sure result schema is attributes
             @result_schema = Foobara::Models::Schema.new(raw_result_schema)
           end
         end

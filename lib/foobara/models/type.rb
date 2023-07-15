@@ -15,9 +15,14 @@ module Foobara
               :"cannot_cast_to_#{symbol}",
               "Could not cast #{object.inspect} to #{symbol}",
               cast_to: symbol,
-              value: object.inspect
+              value: object
             )
           end
+        end
+
+        def validation_errors(_object)
+          # TODO: override this in relevant base types
+          []
         end
       end
     end

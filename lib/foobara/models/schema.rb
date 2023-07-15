@@ -43,7 +43,7 @@ module Foobara
         Models.types[type]
       end
 
-      delegate :can_cast?, :cast_from, :casting_errors, to: :type_class
+      delegate :can_cast?, :cast_from, :casting_errors, :validation_errors, to: :type_class
 
       def schema_validated?
         schema_has_been_validated
