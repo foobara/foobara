@@ -6,15 +6,18 @@ module Foobara
       end
 
       def schema_validation_errors_for(strict_schema)
+        # hmmmm do we need this??
       end
 
       def casting_errors(object)
         unless can_cast?(object)
           Error.new(
-            :"cannot_cast_to_#{symbol}",
-            "Could not cast #{object.inspect} to #{symbol}",
-            cast_to: symbol,
-            value: object
+            symbol: :cannot_cast,
+            message: "Could not cast #{object.inspect} to #{symbol}",
+            context: {
+              cast_to: symbol,
+              value: object
+            }
           )
         end
       end

@@ -3,6 +3,9 @@ module Foobara
     module Runtime
       extend ActiveSupport::Concern
 
+      class CouldNotCastResult < StandardError; end
+      class CannotHaltWithoutAddingErrors < StandardError; end
+      # TODO: can/should use throw/catch instead?
       class Halt < StandardError; end
 
       class_methods do
@@ -15,48 +18,97 @@ module Foobara
         end
       end
 
-      attr_accessor :raw_inputs, :inputs, :outcome
+      attr_reader :raw_inputs, :inputs, :outcome, :error_collection, :exception
 
       def initialize(inputs)
-        self.raw_inputs = inputs
-        self.outcome = Outcome.new
+        @raw_inputs = inputs
+        @error_collection = ErrorCollection.new
       end
 
       def run
-        outcome.result = invoke_with_callbacks_and_transition(%i[
-                                                                validate_schema
-                                                                cast_inputs
-                                                                validate_inputs
-                                                                load_records
-                                                                validate_records
-                                                                validate
-                                                                execute
-                                                              ])
+        result = invoke_with_callbacks_and_transition(%i[
+                                                        cast_inputs
+                                                        validate_inputs
+                                                        load_records
+                                                        validate_records
+                                                        validate
+                                                        execute
+                                                      ])
 
-        cast_result_using_result_schema
-        validate_result_using_result_schema
+        result = cast_result_using_result_schema(result)
+        validate_result_using_result_schema(result)
 
         state_machine.succeed!
 
-        outcome
+        @outcome = Outcome.success(result)
       rescue Halt
-        if success?
+        if error_collection.empty?
           raise CannotHaltWithoutAddingErrors, "Cannot halt without adding errors first"
-        else
-          state_machine.fail!
         end
 
-        outcome
-      rescue
+        state_machine.fail!
+
+        @outcome = Outcome.errors(error_collection)
+      rescue => e
+        @exception = e
         state_machine.error!
         raise
       end
 
-      delegate :add_error, :success?, :has_errors?, to: :outcome
+      delegate :has_errors?, to: :error_collection
 
-      def validate_schema
-        input_schema.schema_validation_errors.each do |error|
-          add_error(error)
+      def success?
+        outcome&.success?
+      end
+
+      def add_input_error(**args)
+        error = InputError.new(**args)
+        outcome.add_error(error)
+        validate_error(error)
+      end
+
+      def add_runtime_error(**args)
+        error = RuntimeError.new(**args)
+        outcome.add_error(error)
+        validate_error(error)
+        halt!
+      end
+
+      def validate_error(error)
+        symbol = error.symbol
+        message = error.message
+        context = error.context
+
+        if !message.is_a?(String) || message.empty?
+          raise "Bad error message, expected a string"
+        end
+
+        map = self.class.error_context_schema_map
+
+        map = case error
+              when RuntimeError
+                map[:runtime]
+              when InputError
+                input = error.input
+
+                map[:input][input]
+              else
+                raise "Unexpected error type for #{error}"
+              end
+
+        possible_error_symbols = map.keys
+        context_schema = map[symbol]
+
+        unless possible_error_symbols.include?(symbol)
+          raise "Invalid error symbol #{symbol} expected one of #{possible_error_symbols}"
+        end
+
+        if context_schema.present?
+          errors = context_schema.validation_errors(context.presence || {})
+          # TODO: make real error class
+          raise "Invalid context schema #{context}: #{errors}"
+        elsif context.present?
+          raise "There's no context schema declared for #{symbol}"
         end
       end
 
@@ -72,7 +124,7 @@ module Foobara
 
           state_machine.perform_transition!(transition) do
             result = send(transition)
-            halt! unless success?
+            halt! if has_errors?
           end
         end
 
@@ -81,10 +133,16 @@ module Foobara
 
       def cast_inputs
         Array.wrap(input_schema.casting_errors(raw_inputs)).each do |error|
-          add_error(error)
+          symbol = error.symbol
+          message = error.message
+          context = error.context
+
+          input = context[:cast_to]
+
+          add_input_error(input:, symbol:, message:, context:)
         end
 
-        self.inputs = input_schema.cast_from(raw_inputs)
+        @inputs = input_schema.cast_from(raw_inputs)
       end
 
       def validate_inputs
@@ -114,28 +172,32 @@ module Foobara
 
       private
 
-      def cast_result_using_result_schema
-        return unless result_schema.present?
+      def cast_result_using_result_schema(result)
+        return result  unless result_schema.present?
 
-        result = outcome.result
+        casting_errors = Array.wrap(result_schema.casting_errors(result))
 
-        Array.wrap(result_schema.casting_errors(result)).each do |error|
-          add_error(error)
+        if casting_errors.present?
+          message = casting_errors.map do |error|
+            "#{error.message}\n#{error.context.inspect}"
+          end.join("\n\n")
+
+          raise CouldNotCastResult, message
         end
 
-        halt! unless success?
-
-        outcome.result = result_schema.cast_from(result)
+        result_schema.cast_from(result)
       end
 
-      def validate_result_using_result_schema
+      def validate_result_using_result_schema(result)
         return unless result_schema.present?
 
-        Array.wrap(result_schema.validation_errors(outcome.result)).each do |error|
-          add_error(error)
-        end
+        Array.wrap(result_schema.validation_errors(result)).each do |error|
+          symbol = error.symbol
+          message = error.message
+          context = error.context
 
-        halt! unless success?
+          add_runtime_error(symbol:, message:, context:)
+        end
       end
     end
   end

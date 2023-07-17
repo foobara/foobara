@@ -77,10 +77,12 @@ module Foobara
           type_class.schema_validation_errors_for(strict_schema)
         else
           Error.new(
-            :"unknown_type_#{type}",
-            "Unknown type #{type}",
-            raw_schema:,
-            strict_schema:
+            symbol: :"unknown_type_#{type}",
+            message: "Unknown type #{type}",
+            context: {
+              raw_schema:,
+              strict_schema:
+            }
           )
         end
       end

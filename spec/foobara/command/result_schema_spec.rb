@@ -45,16 +45,12 @@ RSpec.describe Foobara::Command do
       end
 
       context "when invalid result" do
-        let(:to_be_result) { "asdf" }
+        let(:to_be_result) { "not an integer" }
 
-        it "is not success" do
-          expect(outcome).not_to be_success
-          expect(error.symbol).to eq(:cannot_cast_to_integer)
-          expect(error.message).to be_a(String)
-          expect(error.context).to eq(
-            cast_to: :integer,
-            value: to_be_result
-          )
+        it "raises" do
+          expect { command.run }.to raise_error(Foobara::Command::Runtime::CouldNotCastResult)
+          expect(command.outcome).to be_nil
+          expect(command).to_not be_success
         end
       end
     end

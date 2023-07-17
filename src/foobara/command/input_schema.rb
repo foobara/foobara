@@ -11,6 +11,24 @@ module Foobara
             raw_input_schema = args.first
             # TODO: make sure input schema is attributes
             @input_schema = Foobara::Models::Schema.new(raw_input_schema)
+
+            errors = input_schema.schema_validation_errors
+
+            if errors.present?
+              raise "Schema is not valid!! #{errors.map(&:message).join(", ")}"
+            end
+
+            # This isn't a sustainable approach
+            input_schema.strict_schema[:schemas].each_pair do |input, schema|
+              schema[:type]
+
+              possible_input_error(
+                input,
+                :cannot_cast,
+                cast_to: :symbol,
+                value: :duck
+              )
+            end
           end
         end
 

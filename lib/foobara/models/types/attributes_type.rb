@@ -20,18 +20,22 @@ module Foobara
 
           if schemas.blank?
             Error.new(
-              :missing_schemas_key_for_attributes,
-              "Attributes must always have schemas present",
-              strict_schema
+              symbol: :missing_schemas_key_for_attributes,
+              message: "Attributes must always have schemas present",
+              context: {
+                schema: strict_schema
+              }
             )
           else
             non_symbolic = schemas.keys.reject { |key| key.is_a?(Symbol) }
 
             if non_symbolic.present?
               Error.new(
-                :non_symbolic_attribute_keys_given,
-                "Attributes must have all symbolic keys but #{non_symbolic} were given instead",
-                non_symbolic:
+                symbol: :non_symbolic_attribute_keys_given,
+                message: "Attributes must have all symbolic keys but #{non_symbolic} were given instead",
+                context: {
+                  non_symbolic:
+                }
               )
             end
 
