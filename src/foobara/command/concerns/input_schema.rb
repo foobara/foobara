@@ -38,25 +38,7 @@ module Foobara
           end
         end
 
-        attr_reader :inputs
-
         delegate :input_schema, :raw_input_schema, to: :class
-
-        def method_missing(method_name, *args, &)
-          if respond_to_missing_for_input_schema?(method_name)
-            inputs[method_name]
-          else
-            super
-          end
-        end
-
-        def respond_to_missing?(method_name, private = false)
-          respond_to_missing_for_input_schema?(method_name, private) || super
-        end
-
-        def respond_to_missing_for_input_schema?(method_name, _private = false)
-          inputs&.key?(method_name)
-        end
       end
     end
   end

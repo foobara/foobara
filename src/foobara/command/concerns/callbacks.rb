@@ -8,14 +8,10 @@ module Foobara
 
         class_methods do
           def callback_state_machine_target
-            StateMachine
+            Foobara::Command::StateMachine
           end
 
           delegate :remove_all_callbacks, to: :callback_state_machine_target
-        end
-
-        def callback_state_machine_target
-          state_machine
         end
 
         Foobara::Command::StateMachine.transitions.each do |transition|
@@ -44,6 +40,12 @@ module Foobara
               end
             end
           end
+        end
+
+        private
+
+        def callback_state_machine_target
+          state_machine
         end
       end
     end

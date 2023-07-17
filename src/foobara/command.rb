@@ -3,19 +3,20 @@ module Foobara
     include Concerns::InputSchema
     include Concerns::ErrorSchema
     include Concerns::ResultSchema
+
+    include Concerns::Inputs
+    include Concerns::Errors
+    include Concerns::Result
+
     include Concerns::Runtime
     include Concerns::Callbacks
+    include Concerns::StateMachine
 
     attr_reader :raw_inputs
 
     def initialize(inputs)
       @raw_inputs = inputs
       super()
-    end
-
-    def state_machine
-      # It makes me nervous to pass self around. Seems like a design smell.
-      @state_machine ||= StateMachine.new(owner: self)
     end
   end
 end
