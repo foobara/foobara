@@ -2,7 +2,6 @@ module Foobara
   class Command
     class StateMachine < Foobara::StateMachine
       transitions = %i[
-        validate_schema
         cast_inputs
         validate_inputs
         load_records
@@ -20,7 +19,6 @@ module Foobara
 
       states = %i[
         initialized
-        validated_schema
         casted_inputs
         validated_inputs
         loaded_records
@@ -32,8 +30,7 @@ module Foobara
       can_fail_states = states - terminal_states
 
       transition_map = {
-        initialized: { validate_schema: :validated_schema },
-        validated_schema: { cast_inputs: :casted_inputs },
+        initialized: { cast_inputs: :casted_inputs },
         casted_inputs: { validate_inputs: :validated_inputs },
         validated_inputs: { load_records: :loaded_records },
         loaded_records: { validate_records: :validated_records },

@@ -82,11 +82,11 @@ module Foobara
     end
 
     def allowed_transitions
-      transition_map[current_state].keys
+      self.class.transition_map[current_state].keys
     end
 
     def can?(transition)
-      transition_map[current_state].key?(transition)
+      self.class.transition_map[current_state].key?(transition)
     end
 
     def update_current_state(from, transition, to)
