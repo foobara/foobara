@@ -1,7 +1,7 @@
-RSpec.describe Foobara::Command do
+RSpec.describe Foobara::Command::Concerns::ResultSchema do
   context "with simple command" do
     let(:command_class) {
-      Class.new(described_class) do
+      Class.new(Foobara::Command) do
         input_schema to_be_result: :duck
         result_schema :integer
 
@@ -48,7 +48,7 @@ RSpec.describe Foobara::Command do
         let(:to_be_result) { "not an integer" }
 
         it "raises" do
-          expect { command.run }.to raise_error(Foobara::Command::Runtime::CouldNotCastResult)
+          expect { command.run }.to raise_error(described_class::CouldNotCastResult)
           expect(command.outcome).to be_nil
           expect(command).to_not be_success
         end

@@ -1,10 +1,10 @@
 module Foobara
   class Command
-    include InputSchema
-    include ErrorSchema
-    include ResultSchema
-    include Runtime
-    include Callbacks
+    include Concerns::InputSchema
+    include Concerns::ErrorSchema
+    include Concerns::ResultSchema
+    include Concerns::Runtime
+    include Concerns::Callbacks
 
     attr_reader :raw_inputs
 
