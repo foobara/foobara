@@ -38,6 +38,8 @@ module Foobara
       end
     end
 
+    attr_reader :inputs
+
     delegate :input_schema, :raw_input_schema, to: :class
 
     def method_missing(method_name, *args, &)

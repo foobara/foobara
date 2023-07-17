@@ -18,12 +18,13 @@ module Foobara
         end
       end
 
-      attr_reader :raw_inputs, :inputs, :outcome, :error_collection, :exception
+      attr_reader :outcome, :error_collection, :exception
 
-      def initialize(inputs)
-        @raw_inputs = inputs
+      def initialize
         @error_collection = ErrorCollection.new
       end
+
+      delegate :has_errors?, :add_error, to: :error_collection
 
       def run
         result = invoke_with_callbacks_and_transition(%i[
@@ -55,21 +56,19 @@ module Foobara
         raise
       end
 
-      delegate :has_errors?, to: :error_collection
-
       def success?
         outcome&.success?
       end
 
       def add_input_error(**args)
         error = InputError.new(**args)
-        outcome.add_error(error)
+        add_error(error)
         validate_error(error)
       end
 
       def add_runtime_error(**args)
         error = RuntimeError.new(**args)
-        outcome.add_error(error)
+        add_error(error)
         validate_error(error)
         halt!
       end
@@ -95,6 +94,8 @@ module Foobara
               else
                 raise "Unexpected error type for #{error}"
               end
+
+        binding.pry
 
         possible_error_symbols = map.keys
         context_schema = map[symbol]

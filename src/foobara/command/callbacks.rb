@@ -11,10 +11,6 @@ module Foobara
         delegate :remove_all_callbacks, to: :callback_state_machine_target
       end
 
-      def initialize(*)
-        super
-      end
-
       def callback_state_machine_target
         state_machine
       end
