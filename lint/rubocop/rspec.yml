@@ -14,6 +14,9 @@ RSpec/FilePath:
 RSpec/Focus:
   Enabled: <%= ENV["CI"] == "true" %>
 
+RSpec/IndexedLet:
+  Enabled: false
+
 RSpec/InstanceVariable:
   Enabled: false
 
@@ -29,3 +32,6 @@ RSpec/NestedGroups:
 RSpec/NoExpectationExample:
   AllowedPatterns:
     - ^is_expected_
+
+RSpec/NotToNot:
+  EnforcedStyle: to_not

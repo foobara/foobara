@@ -51,7 +51,7 @@ RSpec.describe Foobara::Models::Schema do
       context "with an invalid type" do
         let(:type) { :not_a_real_type }
 
-        it { is_expected.not_to be_valid }
+        it { is_expected.to_not be_valid }
       end
     end
 
