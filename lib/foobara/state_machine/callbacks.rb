@@ -10,7 +10,7 @@ module Foobara
 
       def initialize(owner:)
         self.owner = owner
-        self.callback_registry = CallbackRegistry.new(ALLOWED_CALLBACK_CONDITIONS)
+        self.callback_registry = Callback::Registry.new(ALLOWED_CALLBACK_CONDITIONS)
       end
 
       delegate :before_any_transition,
@@ -97,7 +97,7 @@ module Foobara
 
       class_methods do
         def class_callback_registry
-          @class_callback_registry ||= CallbackRegistry.new(ALLOWED_CALLBACK_CONDITIONS)
+          @class_callback_registry ||= Callback::Registry.new(ALLOWED_CALLBACK_CONDITIONS)
         end
 
         def remove_all_callbacks
@@ -158,7 +158,7 @@ module Foobara
             end
           end
 
-          Foobara::CallbackRegistry::ALLOWED_CALLBACK_TYPES.each do |type|
+          Foobara::Callback::Registry::ALLOWED_CALLBACK_TYPES.each do |type|
             froms.each do |from|
               define_method "#{type}_transition_from_#{from}" do |&block|
                 register_transition_callback(type, from:, &block)
