@@ -11,6 +11,7 @@ module Foobara
     include Concerns::Runtime
     include Concerns::Callbacks
     include Concerns::StateMachine
+    include Concerns::Subcommands
 
     attr_reader :raw_inputs
 
