@@ -57,7 +57,8 @@ module Foobara
                 end
 
           possible_error_symbols = map.keys
-          context_schema = map[symbol]
+          # TODO: probably should store the schema objects and not the hashes?
+          context_schema = Foobara::Models::Schema.new(map[symbol])
 
           unless possible_error_symbols.include?(symbol)
             raise "Invalid error symbol #{symbol} expected one of #{possible_error_symbols}"
@@ -65,8 +66,7 @@ module Foobara
 
           if context_schema.present?
             errors = context_schema.validation_errors(context.presence || {})
-            # TODO: make real error class
-            raise "Invalid context schema #{context}: #{errors}"
+            raise "Invalid context schema #{context}: #{errors}" if errors.present?
           elsif context.present?
             raise "There's no context schema declared for #{symbol}"
           end
