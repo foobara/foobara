@@ -10,14 +10,21 @@ module Foobara
 
       def initialize(owner:)
         self.owner = owner
-        self.callback_registry = Callback::Registry.new(ALLOWED_CALLBACK_CONDITIONS)
+        self.callback_registry = Callback::ChainedRegistry.new(self.class.class_callback_registry)
       end
 
-      delegate :before_any_transition,
+      delegate :callbacks_for,
+               :before_any_transition,
                :after_any_transition,
                :around_any_transition,
                :failure_any_transition,
                :error_any_transition,
+               :has_callbacks?,
+               :has_before_callbacks?,
+               :has_after_callbacks?,
+               :has_around_callbacks?,
+               :has_error_callbacks?,
+               :has_failure_callbacks?,
                to: :callback_registry
 
       def register_transition_callback(type, **conditions, &)
@@ -26,12 +33,6 @@ module Foobara
       end
 
       private
-
-      delegate :class_callback_registry, to: :class
-
-      def callbacks_for(type, **conditions)
-        callback_registry.callbacks_for(type, **conditions) + self.class.callbacks_for(type, **conditions)
-      end
 
       def run_before_callbacks(**conditions)
         callbacks_for(:before, **conditions).each do |callback|
@@ -63,36 +64,13 @@ module Foobara
         if around_callbacks.blank?
           yield
         else
+          # TODO: this never gets invoked?
           around_callbacks.reduce(block) do |nested_proc, callback|
             proc do
               callback.call(nested_proc, conditions.merge(state_machine: self))
             end
           end
         end
-      end
-
-      def has_callbacks?(type, **conditions)
-        callback_registry.has_callbacks?(type, **conditions) || self.class.has_callbacks?(type, **conditions)
-      end
-
-      def has_before_callbacks?(**conditions)
-        has_callbacks?(:before, **conditions)
-      end
-
-      def has_after_callbacks?(**conditions)
-        has_callbacks?(:after, **conditions)
-      end
-
-      def has_around_callbacks?(**conditions)
-        has_callbacks?(:around, **conditions)
-      end
-
-      def has_error_callbacks?(**conditions)
-        has_callbacks?(:error, **conditions)
-      end
-
-      def has_failure_callbacks?(**conditions)
-        has_callbacks?(:failure, **conditions)
       end
 
       class_methods do
@@ -103,8 +81,6 @@ module Foobara
         def remove_all_callbacks
           @class_callback_registry = nil
         end
-
-        delegate :callbacks_for, :has_callbacks?, to: :class_callback_registry
 
         def validate_and_normalize_register_callback_options(type, from: nil, to: nil, transition: nil)
           type = type.to_sym
