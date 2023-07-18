@@ -8,5 +8,8 @@ Lint/EmptyClass:
 Lint/Loop:
   Enabled: false
 
+Lint/UnusedBlockArgument:
+  AutoCorrect: false
+
 Lint/UnusedMethodArgument:
   AutoCorrect: false
