@@ -21,12 +21,12 @@ module Foobara
 
               # This isn't a sustainable approach
               input_schema.strict_schema[:schemas].each_pair do |input, schema|
-                schema[:type]
+                cast_to = schema[:type]
 
                 possible_input_error(
                   input,
                   :cannot_cast,
-                  cast_to: :symbol,
+                  cast_to:,
                   value: :duck
                 )
               end
