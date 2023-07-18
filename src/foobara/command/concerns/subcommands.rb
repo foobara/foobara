@@ -9,14 +9,14 @@ module Foobara
 
         attr_accessor :is_subcommand
 
+        delegate :verify_depends_on!, to: :class
+
         def sub_command?
           is_subcommand
         end
 
         def run_subcommand!(subcommand_class, inputs)
-          unless self.class.depends_on?(subcommand_class)
-            raise SubcommandNotRegistered, "Need to declare #{subcommand_class} on #{self.class} with .depends_on"
-          end
+          verify_depends_on!(subcommand_class)
 
           subcommand = subcommand_class.new(inputs)
           subcommand.is_subcommand = true
@@ -67,6 +67,12 @@ module Foobara
 
           def possible_error_symbol_for(command_class)
             "could_not_#{command_class.name.demodulize.underscore}".to_sym
+          end
+
+          def verify_depends_on!(subcommand_class)
+            unless depends_on?(subcommand_class)
+              raise SubcommandNotRegistered, "Need to declare #{subcommand_class} on #{self} with .depends_on"
+            end
           end
         end
       end
