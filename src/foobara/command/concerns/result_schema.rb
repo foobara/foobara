@@ -10,7 +10,7 @@ module Foobara
               @result_schema
             else
               raw_result_schema = args.first
-              @result_schema = Foobara::Models::Schema.new(raw_result_schema)
+              @result_schema = Foobara::Model::Schema.new(raw_result_schema)
             end
           end
 

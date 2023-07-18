@@ -1,4 +1,4 @@
-RSpec.describe Foobara::Models::Schema do
+RSpec.describe Foobara::Model::Schema do
   describe ".new" do
     subject { schema }
 

@@ -1,5 +1,5 @@
 module Foobara
-  module Models
+  module Model
     class Schema
       attr_accessor :raw_schema, :errors, :schema_has_been_validated
 
@@ -29,7 +29,7 @@ module Foobara
       end
 
       def type_class
-        Models.types[type]
+        Model.types[type]
       end
 
       delegate :can_cast?, :cast_from, :casting_errors, :validation_errors, to: :type_class
@@ -73,7 +73,7 @@ module Foobara
       end
 
       def build_schema_validation_errors
-        if Models.types.key?(type)
+        if Model.types.key?(type)
           type_class.schema_validation_errors_for(strict_schema)
         else
           Error.new(

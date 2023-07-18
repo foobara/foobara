@@ -1,5 +1,5 @@
 module Foobara
-  module Models
+  module Model
     module Types
       class IntegerType < Type
         INTEGER_REGEX = /^-?\d+$/

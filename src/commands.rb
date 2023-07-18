@@ -4,7 +4,7 @@ require "active_support/core_ext/hash/indifferent_access"
 require "active_support/core_ext/module/delegation"
 require "active_support/core_ext/string/inflections"
 
-require "foobara/models/type"
+require "foobara/model/type"
 
 load_files = lambda { |*path|
   pattern = File.join(__dir__, *path, "**", "*.rb")

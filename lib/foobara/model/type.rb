@@ -1,5 +1,5 @@
 module Foobara
-  module Models
+  module Model
     class Type
       def symbol
         self.class.name.demodulize.underscore.gsub(/_type$/, "").to_sym

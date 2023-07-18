@@ -1,5 +1,5 @@
 module Foobara
-  module Models
+  module Model
     class << self
       attr_accessor :types
 
