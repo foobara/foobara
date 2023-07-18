@@ -14,11 +14,6 @@ module Foobara
       end
 
       delegate :callbacks_for,
-               :before_any_transition,
-               :after_any_transition,
-               :around_any_transition,
-               :failure_any_transition,
-               :error_any_transition,
                :has_callbacks?,
                :has_before_callbacks?,
                :has_after_callbacks?,
@@ -108,14 +103,19 @@ module Foobara
           class_callback_registry.register_callback(type, **conditions, &)
         end
 
+        attr_reader :register_callback_methods
+
+        # 0 before_any_transition
+        # 1 before_transition_to_<state>
+        # 2 before_transition_from_<state>
+        # 3 before_transition_from_<state>_to_<state>
+        # 4 before_<transition>_transition
+        # 5 before_<transition>_transition_to_<state>
+        # 6 before_<transition>_transition_from_<state>
         def create_register_callback_methods
-          # 0 before_any_transition
-          # 1 before_transition_to_<state>
-          # 2 before_transition_from_<state>
-          # 3 before_transition_from_<state>_to_<state>
-          # 4 before_<transition>_transition
-          # 5 before_<transition>_transition_to_<state>
-          # 6 before_<transition>_transition_from_<state>
+          raise "Do not create register callback methods twice" if register_callback_methods
+
+          callback_methods = @register_callback_methods = []
 
           tos = Set.new
           froms = Set.new
@@ -135,32 +135,54 @@ module Foobara
           end
 
           Foobara::Callback::Registry::ALLOWED_CALLBACK_TYPES.each do |type|
+            method_name = "#{type}_any_transition"
+            callback_methods << method_name
+
+            define_method method_name do |&block|
+              register_transition_callback(type, &block)
+            end
+
             froms.each do |from|
-              define_method "#{type}_transition_from_#{from}" do |&block|
+              method_name = "#{type}_transition_from_#{from}"
+              callback_methods << method_name
+
+              define_method method_name do |&block|
                 register_transition_callback(type, from:, &block)
               end
             end
 
             tos.each do |to|
-              define_method "#{type}_transition_to_#{to}" do |&block|
+              method_name = "#{type}_transition_to_#{to}"
+              callback_methods << method_name
+
+              define_method method_name do |&block|
                 register_transition_callback(type, to:, &block)
               end
             end
 
             froms_to_tos.each do |(from, to)|
-              define_method "#{type}_transition_from_#{from}_to_#{to}" do |&block|
+              method_name = "#{type}_transition_from_#{from}_to_#{to}"
+              callback_methods << method_name
+
+              define_method method_name do |&block|
                 register_transition_callback(type, to:, from:, &block)
               end
             end
 
             transitions_to_tos.each do |(transition, to)|
-              define_method "#{type}_#{transition}_to_#{to}" do |&block|
+              method_name = "#{type}_#{transition}_to_#{to}"
+              callback_methods << method_name
+
+              define_method method_name do |&block|
                 register_transition_callback(type, transition:, to:, &block)
               end
             end
 
             froms_to_transitions.each do |(from, transition)|
-              define_method "#{type}_#{transition}_from_#{from}" do |&block|
+              method_name = "#{type}_#{transition}_from_#{from}"
+              callback_methods << method_name
+
+              define_method method_name do |&block|
                 register_transition_callback(type, transition:, from:, &block)
               end
             end
