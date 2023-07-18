@@ -11,8 +11,8 @@ module Foobara
         self.log = []
       end
 
-      def log_transition(from, transition, to)
-        log << LogEntry.new(from, transition, to)
+      def log_transition(**conditions)
+        log << LogEntry.new(**conditions)
       end
     end
   end

@@ -72,24 +72,28 @@ module Foobara
       register_callback(:error, **conditions, &)
     end
 
+    def has_callbacks?(type, **conditions)
+      callbacks_for(type, **conditions).present?
+    end
+
     def has_before_callbacks?(**conditions)
-      callbacks_for(:before, **conditions).present?
+      has_callbacks?(:before, **conditions)
     end
 
     def has_after_callbacks?(**conditions)
-      callbacks_for(:after, **conditions).present?
+      has_callbacks?(:after, **conditions)
     end
 
     def has_around_callbacks?(**conditions)
-      callbacks_for(:around, **conditions).present?
+      has_callbacks?(:around, **conditions)
     end
 
     def has_error_callbacks?(**conditions)
-      callbacks_for(:error, **conditions).present?
+      has_callbacks?(:error, **conditions)
     end
 
     def has_failure_callbacks?(**conditions)
-      callbacks_for(:failure, **conditions).present?
+      has_callbacks?(:failure, **conditions)
     end
 
     private

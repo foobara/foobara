@@ -97,7 +97,7 @@ module Foobara
             end
 
             define_method "ever_#{state}?" do
-              current_state == state || log.any? { |log_entry| log_entry.from_state == state }
+              current_state == state || log.any? { |log_entry| log_entry.from == state }
             end
           end
         end
