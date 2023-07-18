@@ -50,8 +50,6 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
 
   describe ".context_error_map" do
     it "contains subcommand error information" do
-      puts command_class.error_context_schema_map.inspect
-
       expect(command_class.error_context_schema_map).to eq(
         input: {
           should_fail: {

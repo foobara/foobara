@@ -1,5 +1,8 @@
 module Foobara
   module Callback
+    # TODO: should allow a simpler callback setup where instead of a list of condition keys that can have different
+    # values, it is just a list of conditions.
+    # Also, should allow validations of condition values to be expressed so that calling code doesn't have to validate.
     class Registry
       attr_accessor :callbacks, :possible_conditions
 

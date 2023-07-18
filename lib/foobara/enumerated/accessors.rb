@@ -13,7 +13,7 @@ module Foobara
           mod_name = mod.name
 
           mod = if mod_name
-                  mod_name[/(.*)::/, 1].constantize
+                  Foobara::Util.module_for(mod)
                 else
                   Object
                 end
