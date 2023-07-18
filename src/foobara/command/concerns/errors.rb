@@ -12,6 +12,10 @@ module Foobara
 
         delegate :has_errors?, to: :error_collection
 
+        def error_hash
+          error_collection.to_h
+        end
+
         private
 
         def add_error(error)

@@ -8,6 +8,10 @@ module Foobara
 
         self.input = input
       end
+
+      def to_h
+        super.merge(input:)
+      end
     end
   end
 end

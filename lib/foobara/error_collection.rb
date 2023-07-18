@@ -5,7 +5,7 @@ module Foobara
     attr_reader :error_hash
 
     def initialize
-      @error_hash = {}.with_indifferent_access
+      @error_hash = {}
     end
 
     def success?
@@ -56,6 +56,10 @@ module Foobara
       end
 
       error_hash[symbol] = error
+    end
+
+    def to_h
+      error_hash.transform_values(&:to_h)
     end
   end
 end
