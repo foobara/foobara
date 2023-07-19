@@ -7,21 +7,21 @@ module Foobara
         extend ActiveSupport::Concern
 
         class_methods do
-          def code_callbacks
-            @code_callbacks ||= Foobara::Callback::ActionRegistry.new(:subclass_defined)
+          def subclass_defined_callbacks
+            @subclass_defined_callbacks ||= Foobara::Callback::SingleEventRegistry.new
           end
 
           def inherited(subclass)
             super
 
-            callbacks = code_callbacks.callbacks_for(:after, :subclass_defined)
+            callbacks = subclass_defined_callbacks.callbacks_for(:after)
 
             return if callbacks.blank?
 
             TracePoint.trace(:end) do |tp|
               # we really shouldn't have to do this for the singleton class...
               # this unfortunately comes up in the test suite
-              # TODO: figure out a solution to this even if it's not using anonymous classes in the test suitegitk
+              # TODO: figure out a solution to this even if it's not using anonymous classes in the test suite
               if tp.self == subclass || tp.self == subclass.singleton_class
                 tp.disable
                 callbacks.each do |callback|
@@ -32,7 +32,7 @@ module Foobara
           end
 
           def after_subclass_defined(&)
-            code_callbacks.register_callback(:after, :subclass_defined, &)
+            subclass_defined_callbacks.register_callback(:after, &)
           end
 
           def callback_state_machine_target
