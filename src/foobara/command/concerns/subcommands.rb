@@ -15,7 +15,7 @@ module Foobara
           is_subcommand
         end
 
-        def run_subcommand!(subcommand_class, inputs)
+        def run_subcommand!(subcommand_class, inputs = {})
           verify_depends_on!(subcommand_class)
 
           subcommand = subcommand_class.new(inputs)

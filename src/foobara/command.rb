@@ -15,7 +15,7 @@ module Foobara
 
     attr_reader :raw_inputs
 
-    def initialize(inputs)
+    def initialize(inputs = {})
       @raw_inputs = inputs
       super()
     end

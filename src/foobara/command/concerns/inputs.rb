@@ -25,6 +25,11 @@ module Foobara
         private
 
         def cast_inputs
+          if input_schema.blank? && raw_inputs.blank?
+            @inputs = {}
+            return
+          end
+
           Array.wrap(input_schema.casting_errors(raw_inputs)).each do |error|
             symbol = error.symbol
             message = error.message

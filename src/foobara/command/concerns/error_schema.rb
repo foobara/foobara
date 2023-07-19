@@ -13,7 +13,7 @@ module Foobara
 
           def error_context_schema_map
             @error_context_schema_map ||= {
-              input: input_schema.strict_schema[:schemas].keys.to_h { |k| [k, {}] },
+              input: input_schema ? input_schema.strict_schema[:schemas].keys.to_h { |k| [k, {}] } : {},
               runtime: {}
             }
           end
