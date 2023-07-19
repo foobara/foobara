@@ -134,19 +134,11 @@ module Foobara
           non_nil_indices << index if condition_value
         end
 
-        power_set(non_nil_indices).map do |indices_to_exclude|
+        Util.power_set(non_nil_indices).map do |indices_to_exclude|
           indices_to_exclude.each_with_object(full_callback_key.dup) do |index, condition_key|
             condition_key[index] = nil
           end
         end
-      end
-
-      def power_set(array)
-        return [[]] if array.empty?
-
-        head, *tail = array
-        subsets = power_set(tail)
-        subsets + subsets.map { |subset| [head, *subset] }
       end
     end
   end
