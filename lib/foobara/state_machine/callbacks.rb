@@ -3,8 +3,6 @@ module Foobara
     module Callbacks
       extend ActiveSupport::Concern
 
-      ALLOWED_CALLBACK_CONDITIONS = %i[from transition to].freeze
-
       # owner helps with determining the relevant object when running class-registered state transition callbacks
       attr_accessor :callback_registry, :owner
 
@@ -23,7 +21,6 @@ module Foobara
                to: :callback_registry
 
       def register_transition_callback(type, **conditions, &)
-        type, conditions = self.class.validate_and_normalize_register_callback_options(type, **conditions)
         callback_registry.register_callback(type, **conditions, &)
       end
 
@@ -70,36 +67,18 @@ module Foobara
 
       class_methods do
         def class_callback_registry
-          @class_callback_registry ||= Callback::Registry.new(ALLOWED_CALLBACK_CONDITIONS)
+          @class_callback_registry ||= Callback::ConditionsRegistry.new(
+            from: states,
+            transition: transitions,
+            to: states
+          )
         end
 
         def remove_all_callbacks
           @class_callback_registry = nil
         end
 
-        def validate_and_normalize_register_callback_options(type, from: nil, to: nil, transition: nil)
-          type = type.to_sym
-          transition = transition&.to_sym
-          from = from&.to_sym
-          to = to&.to_sym
-
-          if transition && !transitions.include?(transition)
-            raise "bad transition #{transition} expected one of #{transitions}"
-          end
-
-          if from && !states.include?(from)
-            raise "bad from state #{from} expected one of #{states}"
-          end
-
-          if to && !states.include?(to)
-            raise "bad to state #{to} expected one of #{states}"
-          end
-
-          [type, { from:, transition:, to: }]
-        end
-
         def register_transition_callback(type, **conditions, &)
-          type, conditions = validate_and_normalize_register_callback_options(type, **conditions)
           class_callback_registry.register_callback(type, **conditions, &)
         end
 
@@ -134,7 +113,7 @@ module Foobara
             end
           end
 
-          Foobara::Callback::Registry::ALLOWED_CALLBACK_TYPES.each do |type|
+          Foobara::Callback::ALLOWED_CALLBACK_TYPES.each do |type|
             method_name = "#{type}_any_transition"
             callback_methods << method_name
 

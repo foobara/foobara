@@ -5,8 +5,6 @@ module Foobara
 
       class InvalidConditions < StandardError; end
 
-      ALLOWED_CALLBACK_TYPES = %i[before after around failure error].freeze
-
       delegate :possible_conditions,
                :register_callback,
                :before,
@@ -23,7 +21,7 @@ module Foobara
                to: :first_registry
 
       def initialize(other_registry)
-        self.registries = [Registry.new(other_registry.possible_conditions), other_registry]
+        self.registries = [ConditionsRegistry.new(other_registry.possible_conditions), other_registry]
       end
 
       def first_registry

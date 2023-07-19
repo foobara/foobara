@@ -8,12 +8,15 @@ module Foobara
 
         class_methods do
           def code_callbacks
-            @code_callbacks ||= Foobara::Callback::Registry.new(:state)
+            @code_callbacks ||= Foobara::Callback::Registry.new(:subclass_defined)
           end
 
           def inherited(subclass)
             super
-            return unless code_callbacks.has_callbacks?(:after, state: :subclass_defined)
+
+            callbacks = code_callbacks.callbacks_for(:after, :subclass_defined)
+
+            return if callbacks.blank?
 
             TracePoint.trace(:end) do |tp|
               # we really shouldn't have to do this for the singleton class...
@@ -21,19 +24,15 @@ module Foobara
               # TODO: figure out a solution to this even if it's not using anonymous classes in the test suitegitk
               if tp.self == subclass || tp.self == subclass.singleton_class
                 tp.disable
-                Foobara::Command.run_defined_callbacks(subclass)
+                callbacks.each do |callback|
+                  callback.call(subclass)
+                end
               end
             end
           end
 
           def after_subclass_defined(&)
-            code_callbacks.register_callback(:after, state: :subclass_defined, &)
-          end
-
-          def run_defined_callbacks(subclass)
-            code_callbacks.callbacks_for(:after, state: :subclass_defined).each do |callback|
-              callback.call(subclass)
-            end
+            code_callbacks.register_callback(:after, :subclass_defined, &)
           end
 
           def callback_state_machine_target
