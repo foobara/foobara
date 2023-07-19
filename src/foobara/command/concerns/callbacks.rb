@@ -14,9 +14,7 @@ module Foobara
           def inherited(subclass)
             super
 
-            callbacks = subclass_defined_callbacks.callbacks_for(:after)
-
-            return if callbacks.blank?
+            return unless subclass_defined_callbacks.has_callbacks?(:after)
 
             TracePoint.trace(:end) do |tp|
               # we really shouldn't have to do this for the singleton class...
@@ -24,9 +22,8 @@ module Foobara
               # TODO: figure out a solution to this even if it's not using anonymous classes in the test suite
               if tp.self == subclass || tp.self == subclass.singleton_class
                 tp.disable
-                callbacks.each do |callback|
-                  callback.call(subclass)
-                end
+                # TODO: make this a cleaner interface
+                subclass_defined_callbacks.execute_with_callbacks(callback_data: subclass)
               end
             end
           end

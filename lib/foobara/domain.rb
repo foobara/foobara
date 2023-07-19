@@ -8,6 +8,7 @@ module Foobara
     def initialize
       self.command_classes = []
 
+      # TODO: in the test suite this leads to lots and lots of callbacks registered. How can we clean those up?
       Foobara::Command.after_subclass_defined do |subclass|
         if subclass.domain == self.class
           command_classes << subclass

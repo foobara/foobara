@@ -7,6 +7,39 @@ module Foobara
         self.callbacks = {}
       end
 
+      # how to specify payload to callbacks??
+      def execute_with_callbacks(callback_data:, lookup_args: [], lookup_opts: {}, &do_it)
+        if block_given?
+          callbacks_for(:before, *lookup_args, **lookup_opts).each do |callback|
+            callback.call(callback_data)
+          end
+
+          begin
+            callbacks_for(:around, *lookup_args, **lookup_opts).reduce(do_it) do |nested_proc, callback|
+              proc do
+                callback.call(nested_proc, callback_data)
+              end
+            end
+          rescue => e
+            # TODO: should we support error and failure callbacks?
+            # I guess let's just do error for now in case of yagni
+            callbacks_for(:error, *lookup_args, **lookup_opts).each do |callback|
+              callback.call(e, callback_data)
+            end
+
+            raise
+          end
+        else
+          # TODO: raise better errors
+          raise if has_before_callbacks?(*lookup_args, **lookup_opts)
+          raise if has_around_callbacks?(*lookup_args, **lookup_opts)
+        end
+
+        callbacks_for(:after, *lookup_args, **lookup_opts).each do |callback|
+          callback.call(callback_data)
+        end
+      end
+
       def register_callback(_type, *_args, **_opts, &)
         raise "subclass responsibility"
       end
