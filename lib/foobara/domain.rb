@@ -23,9 +23,7 @@ module Foobara
       domain_name = domain_name.name if domain_name.is_a?(Class)
       domain_name = domain_name.to_sym
 
-      depends_on.include?(domain_name.to_sym) || depends_on.any? do |depend_on|
-        const_get(depend_on).depends_on?(domain_name)
-      end
+      depends_on.include?(domain_name.to_sym)
     end
 
     def depends_on(*domain_classes)
