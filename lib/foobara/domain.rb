@@ -9,7 +9,7 @@ module Foobara
       self.command_classes = []
 
       Foobara::Command.after_subclass_defined do |subclass|
-        if subclass.domain == self
+        if subclass.domain == self.class
           command_classes << subclass
         end
       end
