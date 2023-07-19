@@ -1,33 +1,26 @@
+require "foobara/callback/basic_registry"
+
 module Foobara
   module Callback
-    class ActionRegistry
-      attr_accessor :callbacks, :possible_actions
+    class ActionRegistry < BasicRegistry
+      attr_accessor :possible_actions
 
       class InvalidAction < StandardError; end
 
       def initialize(*possible_actions)
+        super()
+
         if possible_actions.length == 1 && possible_actions.first.is_a?(Array)
           possible_actions = possible_actions.first
         end
 
         self.possible_actions = possible_actions.map(&:to_s).sort.map(&:to_sym)
-        self.callbacks = {}
       end
 
       def register_callback(type, action, &callback_block)
         validate_type!(type)
         validate_action!(action)
-
-        required_non_keyword_arity = callback_block.parameters.count { |(param_type, _name)| param_type == :req }
-
-        if type == :around
-          # must have exactly one non-keyword required parameter to accept the do_it proc
-          if required_non_keyword_arity != 1
-            raise "around callbacks must take exactly one argument which will be the do_it proc"
-          end
-        elsif required_non_keyword_arity != 0
-          raise "#{type} callback should take exactly 0 arguments"
-        end
+        validate_block!(type, callback_block)
 
         callbacks_for_action = callbacks[type] ||= {}
         callback_blocks = callbacks_for_action[action] ||= []
@@ -97,12 +90,6 @@ module Foobara
       end
 
       private
-
-      def validate_type!(type)
-        unless ALLOWED_CALLBACK_TYPES.include?(type)
-          raise "bad type #{type} expected one of #{ALLOWED_CALLBACK_TYPES}"
-        end
-      end
 
       def validate_action!(action)
         if !action.nil? && !action.is_a?(Symbol)

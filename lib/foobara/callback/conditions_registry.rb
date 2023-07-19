@@ -1,30 +1,22 @@
+require "foobara/callback/basic_registry"
+
 module Foobara
   module Callback
-    class ConditionsRegistry
-      attr_accessor :callbacks, :possible_conditions, :possible_condition_keys
+    class ConditionsRegistry < BasicRegistry
+      attr_accessor :possible_conditions, :possible_condition_keys
 
       class InvalidConditions < StandardError; end
 
       def initialize(possible_conditions)
+        super()
         self.possible_conditions = possible_conditions
         self.possible_condition_keys = possible_conditions.keys.map(&:to_s).sort.map(&:to_sym)
-        self.callbacks = {}
       end
 
       def register_callback(type, **conditions, &callback_block)
         validate_type!(type)
         validate_conditions!(**conditions)
-
-        required_non_keyword_arity = callback_block.parameters.count { |(param_type, _name)| param_type == :req }
-
-        if type == :around
-          # must have exactly one non-keyword required parameter to accept the do_it proc
-          if required_non_keyword_arity != 1
-            raise "around callbacks must take exactly one argument which will be the do_it proc"
-          end
-        elsif required_non_keyword_arity != 0
-          raise "#{type} callback should take exactly 0 arguments"
-        end
+        validate_block!(type, callback_block)
 
         key = condition_hash_to_callback_key(conditions)
         callbacks_for_key = callbacks[type] ||= {}
@@ -93,12 +85,6 @@ module Foobara
       end
 
       private
-
-      def validate_type!(type)
-        unless ALLOWED_CALLBACK_TYPES.include?(type)
-          raise "bad type #{type} expected one of #{ALLOWED_CALLBACK_TYPES}"
-        end
-      end
 
       def validate_conditions!(**conditions)
         raise InvalidConditions, "Expected a hash" unless conditions.is_a?(Hash)
