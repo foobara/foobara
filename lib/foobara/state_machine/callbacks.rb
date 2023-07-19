@@ -38,12 +38,6 @@ module Foobara
         end
       end
 
-      def run_failure_callbacks(**conditions)
-        callbacks_for(:failure, **conditions).each do |callback|
-          callback.call(conditions.merge(state_machine: self))
-        end
-      end
-
       def run_error_callbacks(error, **conditions)
         callbacks_for(:error, **conditions).each do |callback|
           callback.call(conditions.merge(error:, state_machine: self))

@@ -57,10 +57,10 @@ module Foobara
               end
             end
 
-            %i[failure error].each do |type|
+            %i[error].each do |type|
               target.define_method "#{type}_any_transition" do |&block|
-                callback_state_machine_target.register_transition_callback(type) do |state_machine:|
-                  block.call(command: state_machine.owner)
+                callback_state_machine_target.register_transition_callback(type) do |error:, state_machine:|
+                  block.call(error:, command: state_machine.owner)
                 end
               end
             end

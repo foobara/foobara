@@ -60,11 +60,6 @@ module Foobara
         register_callback(:around, *args, **opts, &)
       end
 
-      # these two seem to have awkward names
-      def failure(*args, **opts, &)
-        register_callback(:failure, *args, **opts, &)
-      end
-
       def error(*args, **opts, &)
         register_callback(:error, *args, **opts, &)
       end
@@ -87,10 +82,6 @@ module Foobara
 
       def has_error_callbacks?(*args, **opts)
         has_callbacks?(:error, *args, **opts)
-      end
-
-      def has_failure_callbacks?(*args, **opts)
-        has_callbacks?(:failure, *args, **opts)
       end
 
       private
