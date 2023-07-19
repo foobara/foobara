@@ -1,8 +1,8 @@
-require "foobara/callback/basic_registry"
+require "foobara/callback/abstract_registry"
 
 module Foobara
   module Callback
-    class ConditionsRegistry < BasicRegistry
+    class ConditionsRegistry < AbstractRegistry
       attr_accessor :possible_conditions, :possible_condition_keys
 
       class InvalidConditions < StandardError; end

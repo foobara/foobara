@@ -1,8 +1,6 @@
-require "foobara/callback/basic_registry"
-
 module Foobara
   module Callback
-    class ActionRegistry < BasicRegistry
+    class ActionRegistry < AbstractRegistry
       attr_accessor :possible_actions
 
       class InvalidAction < StandardError; end

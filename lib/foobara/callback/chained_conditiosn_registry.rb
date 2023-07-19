@@ -1,52 +1,21 @@
+require "foobara/callback/conditions_registry"
+
 module Foobara
   module Callback
-    class ChainedConditionsRegistry
-      attr_accessor :callbacks, :possible_conditions, :registries
+    class ChainedConditionsRegistry < ConditionsRegistry
+      attr_accessor :other_conditions_registry
 
       class InvalidConditions < StandardError; end
 
-      delegate :possible_conditions,
-               :register_callback,
-               :before,
-               :after,
-               :around,
-               :failure,
-               :error,
-               :has_callbacks?,
-               :has_before_callbacks?,
-               :has_after_callbacks?,
-               :has_around_callbacks?,
-               :has_error_callbacks?,
-               :has_failure_callbacks?,
-               to: :first_registry
+      delegate :possible_conditions, :possible_condition_keys, to: :other_conditions_registry
 
-      def initialize(other_registry)
-        self.registries = [ConditionsRegistry.new(other_registry.possible_conditions), other_registry]
-      end
-
-      def first_registry
-        registries.first
+      def initialize(other_conditions_registry)
+        self.other_conditions_registry = other_conditions_registry
+        super(possible_conditions)
       end
 
       def callbacks_for(type, **conditions)
-        registries.map do |registry|
-          registry.callbacks_for(type, **conditions)
-        end.flatten
-      end
-
-      %i[
-        has_callbacks?
-        has_before_callbacks?
-        has_after_callbacks?
-        has_around_callbacks?
-        has_error_callbacks?
-        has_failure_callbacks?
-      ].each do |method_name|
-        define_method method_name do |*args, **conditions|
-          registries.any? do |registry|
-            registry.send(method_name, *args, **conditions)
-          end
-        end
+        super + other_conditions_registry.callbacks_for(type, **conditions)
       end
     end
   end

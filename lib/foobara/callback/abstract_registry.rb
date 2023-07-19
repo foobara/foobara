@@ -1,29 +1,22 @@
 module Foobara
   module Callback
-    class BasicRegistry
+    class AbstractRegistry
       attr_accessor :callbacks
 
       def initialize
         self.callbacks = {}
       end
 
-      def register_callback(type, &callback_block)
-        validate_type!(type)
-        validate_block!(type, callback_block)
-
-        callback_blocks = callbacks[type] ||= []
-
-        callback_blocks << callback_block
+      def register_callback(_type, *_args, **_opts, &)
+        raise "subclass responsibility"
       end
 
-      def callbacks_for(type)
-        validate_type!(type)
-
-        callbacks[type].presence || []
+      def callbacks_for(_type, *_args, **_opts)
+        raise "subclass_responsibility"
       end
 
       def before(*args, **opts, &)
-        register_callback(:before,  *args, **opts, &)
+        register_callback(:before, *args, **opts, &)
       end
 
       def after(*args, **opts, &)
