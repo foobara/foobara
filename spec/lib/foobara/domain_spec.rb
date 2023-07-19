@@ -23,6 +23,7 @@ RSpec.describe Foobara::Domain do
     before do
       stub_const(domain_class.name, domain_class)
       expect(domain_class.instance).to be_a(domain_class)
+      domain_class.register_command(command_class)
       stub_const(command_class.name, command_class)
     end
 

@@ -7,55 +7,61 @@ module Foobara
 
     def initialize
       self.command_classes = []
+    end
 
-      # TODO: in the test suite this leads to lots and lots of callbacks registered. How can we clean those up?
-      Foobara::Command.after_subclass_defined do |subclass|
-        if subclass.domain == self.class
-          command_classes << subclass
-        end
+    def register_commands(command_classes)
+      command_classes.each do |command_class|
+        register_command(command_class)
+      end
+    end
+
+    def register_command(command_class)
+      @command_classes << command_class
+    end
+
+    def depends_on?(domain_name)
+      domain_name = domain_name.name if domain_name.is_a?(Class)
+      domain_name = domain_name.to_sym
+
+      depends_on.include?(domain_name.to_sym) || depends_on.any? do |depend_on|
+        const_get(depend_on).depends_on?(domain_name)
+      end
+    end
+
+    def depends_on(*domain_classes)
+      return @depends_on ||= Set.new if domain_classes.empty?
+
+      if domain_classes.length == 1
+        domain_classes = Array.wrap(domain_classes.first)
       end
 
-      # TODO: this is pretty nasty... figure out the proper place for this load order to be resolved
-      Foobara::Command.include(Foobara::Domain::CommandExtension)
+      domain_classes.each do |domain_class|
+        domain_name = domain_class.name.to_sym
+
+        if depends_on.include?(domain_name)
+          raise AlreadyRegisteredDomainDependency, "Already registered #{domain_class} as a dependency of #{self}"
+        end
+
+        depends_on << domain_name
+      end
+    end
+
+    def verify_depends_on!(domain_class)
+      unless depends_on?(domain_class)
+        raise DomainDependencyNotRegistered, "Need to declare #{domain_class} on #{self} with .depends_on"
+      end
     end
 
     class << self
+      def install!
+        Foobara::Command.include(Foobara::Domain::CommandExtension)
+      end
+
       def instance
         @instance ||= new
       end
 
-      def depends_on?(domain_name)
-        domain_name = domain_name.name if domain_name.is_a?(Class)
-        domain_name = domain_name.to_sym
-
-        depends_on.include?(domain_name.to_sym) || depends_on.any? do |depend_on|
-          const_get(depend_on).depends_on?(domain_name)
-        end
-      end
-
-      def depends_on(*domain_classes)
-        return @depends_on ||= Set.new if domain_classes.empty?
-
-        if domain_classes.length == 1
-          domain_classes = Array.wrap(domain_classes.first)
-        end
-
-        domain_classes.each do |domain_class|
-          domain_name = domain_class.name.to_sym
-
-          if depends_on.include?(domain_name)
-            raise AlreadyRegisteredDomainDependency, "Already registered #{domain_class} as a dependency of #{self}"
-          end
-
-          depends_on << domain_name
-        end
-      end
-
-      def verify_depends_on!(domain_class)
-        unless depends_on?(domain_class)
-          raise DomainDependencyNotRegistered, "Need to declare #{domain_class} on #{self} with .depends_on"
-        end
-      end
+      delegate :depends_on, :depends_on?, :register_command, :register_commands, to: :instance
     end
   end
 end

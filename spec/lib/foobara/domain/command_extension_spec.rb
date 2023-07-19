@@ -1,5 +1,17 @@
 RSpec.describe Foobara::Domain::CommandExtension do
   describe "#run_subcommand!" do
+    before do
+      Foobara::Domain.install!
+      [domain_class1, domain_class2].each do |domain_class|
+        stub_const(domain_class.name, domain_class)
+        expect(domain_class.instance).to be_a(domain_class)
+      end
+
+      [command_class1, command_class2].each do |command_class|
+        stub_const(command_class.name, command_class)
+      end
+    end
+
     let(:domain_class1) {
       Class.new(Foobara::Domain) do
         class << self
@@ -53,17 +65,6 @@ RSpec.describe Foobara::Domain::CommandExtension do
     let(:command) { command_class1.new }
     let(:outcome) { command.run }
     let(:result) { outcome.result }
-
-    before do
-      [domain_class1, domain_class2].each do |domain_class|
-        stub_const(domain_class.name, domain_class)
-        expect(domain_class.instance).to be_a(domain_class)
-      end
-
-      [command_class1, command_class2].each do |command_class|
-        stub_const(command_class.name, command_class)
-      end
-    end
 
     context "when neither is in a domain" do
       let(:command_class1_name) { "SomeCommand1" }
