@@ -22,49 +22,49 @@ module Foobara
         callbacks[type].presence || []
       end
 
-      def before(&)
-        register_callback(:before,  &)
+      def before(*args, **opts, &)
+        register_callback(:before,  *args, **opts, &)
       end
 
-      def after(&)
-        register_callback(:after, &)
+      def after(*args, **opts, &)
+        register_callback(:after, *args, **opts, &)
       end
 
-      def around(&)
-        register_callback(:around, &)
+      def around(*args, **opts, &)
+        register_callback(:around, *args, **opts, &)
       end
 
       # these two seem to have awkward names
-      def failure(&)
-        register_callback(:failure, &)
+      def failure(*args, **opts, &)
+        register_callback(:failure, *args, **opts, &)
       end
 
-      def error(&)
-        register_callback(:error, &)
+      def error(*args, **opts, &)
+        register_callback(:error, *args, **opts, &)
       end
 
-      def has_callbacks?(type)
-        callbacks_for(type).present?
+      def has_callbacks?(type, *args, **opts)
+        callbacks_for(type, *args, **opts).present?
       end
 
-      def has_before_callbacks?
-        has_callbacks?(:before)
+      def has_before_callbacks?(*args, **opts)
+        has_callbacks?(:before, *args, **opts)
       end
 
-      def has_after_callbacks?
-        has_callbacks?(:after)
+      def has_after_callbacks?(*args, **opts)
+        has_callbacks?(:after, *args, **opts)
       end
 
-      def has_around_callbacks?
-        has_callbacks?(:around)
+      def has_around_callbacks?(*args, **opts)
+        has_callbacks?(:around, *args, **opts)
       end
 
-      def has_error_callbacks?
-        has_callbacks?(:error)
+      def has_error_callbacks?(*args, **opts)
+        has_callbacks?(:error, *args, **opts)
       end
 
-      def has_failure_callbacks?
-        has_callbacks?(:failure)
+      def has_failure_callbacks?(*args, **opts)
+        has_callbacks?(:failure, *args, **opts)
       end
 
       private

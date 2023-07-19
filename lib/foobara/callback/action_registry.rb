@@ -44,51 +44,6 @@ module Foobara
         [*callbacks_for_action, *callbacks_for_any].compact
       end
 
-      def before(action, &)
-        register_callback(:before, action, &)
-      end
-
-      def after(action, &)
-        register_callback(:after, action, &)
-      end
-
-      def around(action, &)
-        register_callback(:around, action, &)
-      end
-
-      # these two seem to have awkward names
-      def failure(action, &)
-        register_callback(:failure, action, &)
-      end
-
-      def error(action, &)
-        register_callback(:error, action, &)
-      end
-
-      def has_callbacks?(type, action)
-        callbacks_for(type, action).present?
-      end
-
-      def has_before_callbacks?(action)
-        has_callbacks?(:before, action)
-      end
-
-      def has_after_callbacks?(action)
-        has_callbacks?(:after, action)
-      end
-
-      def has_around_callbacks?(action)
-        has_callbacks?(:around, action)
-      end
-
-      def has_error_callbacks?(action)
-        has_callbacks?(:error, action)
-      end
-
-      def has_failure_callbacks?(action)
-        has_callbacks?(:failure, action)
-      end
-
       private
 
       def validate_action!(action)

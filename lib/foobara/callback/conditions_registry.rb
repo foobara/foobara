@@ -39,51 +39,6 @@ module Foobara
         end.compact.flatten
       end
 
-      def before(**conditions, &)
-        register_callback(:before, **conditions, &)
-      end
-
-      def after(**conditions, &)
-        register_callback(:after, **conditions, &)
-      end
-
-      def around(**conditions, &)
-        register_callback(:around, **conditions, &)
-      end
-
-      # these two seem to have awkward names
-      def failure(**conditions, &)
-        register_callback(:failure, **conditions, &)
-      end
-
-      def error(**conditions, &)
-        register_callback(:error, **conditions, &)
-      end
-
-      def has_callbacks?(type, **conditions)
-        callbacks_for(type, **conditions).present?
-      end
-
-      def has_before_callbacks?(**conditions)
-        has_callbacks?(:before, **conditions)
-      end
-
-      def has_after_callbacks?(**conditions)
-        has_callbacks?(:after, **conditions)
-      end
-
-      def has_around_callbacks?(**conditions)
-        has_callbacks?(:around, **conditions)
-      end
-
-      def has_error_callbacks?(**conditions)
-        has_callbacks?(:error, **conditions)
-      end
-
-      def has_failure_callbacks?(**conditions)
-        has_callbacks?(:failure, **conditions)
-      end
-
       private
 
       def validate_conditions!(**conditions)
