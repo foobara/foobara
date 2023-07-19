@@ -1,6 +1,6 @@
 module Foobara
   module Callback
-    class ChainedRegistry
+    class ChainedConditionsRegistry
       attr_accessor :callbacks, :possible_conditions, :registries
 
       class InvalidConditions < StandardError; end

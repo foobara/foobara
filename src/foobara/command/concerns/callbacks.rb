@@ -8,7 +8,7 @@ module Foobara
 
         class_methods do
           def code_callbacks
-            @code_callbacks ||= Foobara::Callback::Registry.new(:subclass_defined)
+            @code_callbacks ||= Foobara::Callback::ActionRegistry.new(:subclass_defined)
           end
 
           def inherited(subclass)

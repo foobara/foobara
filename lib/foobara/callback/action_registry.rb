@@ -1,6 +1,6 @@
 module Foobara
   module Callback
-    class Registry
+    class ActionRegistry
       attr_accessor :callbacks, :possible_actions
 
       class InvalidAction < StandardError; end
