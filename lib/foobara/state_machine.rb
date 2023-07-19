@@ -37,7 +37,7 @@ module Foobara
       self.current_state = self.class.initial_state
     end
 
-    def perform_transition!(transition, successful_if: nil, allowed_error_classes: [])
+    def perform_transition!(transition, &block)
       from = current_state
 
       transition_map = self.class.transition_map
@@ -51,34 +51,11 @@ module Foobara
 
       conditions = { from:, transition:, to: }
 
-      if block_given?
-        run_before_callbacks(**conditions)
-        run_around_callbacks(**conditions) do
-          begin
-            yield
-          rescue => e
-            if allowed_error_classes.none? { |klass| klass === e }
-              run_error_callbacks(e, **conditions)
-            else
-              update_current_state(**conditions)
-            end
-
-            raise
-          end
-
-          if successful_if.nil? || successful_if.call
-            update_current_state(**conditions)
-          else
-            run_failure_callbacks(**conditions)
-          end
-        end
-      else
-        # TODO: raise better errors
-        raise if successful_if
-        raise if allowed_error_classes.present?
-        raise if has_before_callbacks?(**conditions)
-        raise if has_around_callbacks?(**conditions)
-
+      callback_registry.execute_with_callbacks(
+        callback_data: { state_machine: self },
+        lookup_opts: conditions
+      ) do
+        block.call if block_given?
         update_current_state(**conditions)
       end
     end
@@ -94,7 +71,6 @@ module Foobara
     def update_current_state(**conditions)
       self.current_state = conditions[:to]
       log_transition(**conditions)
-      run_after_callbacks(**conditions)
     end
   end
 end

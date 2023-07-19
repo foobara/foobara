@@ -11,20 +11,20 @@ module Foobara
       def execute_with_callbacks(callback_data:, lookup_args: [], lookup_opts: {}, &do_it)
         if block_given?
           callbacks_for(:before, *lookup_args, **lookup_opts).each do |callback|
-            callback.call(callback_data)
+            callback.call(**callback_data)
           end
 
           begin
             callbacks_for(:around, *lookup_args, **lookup_opts).reduce(do_it) do |nested_proc, callback|
               proc do
-                callback.call(nested_proc, callback_data)
+                callback.call(nested_proc, **callback_data)
               end
-            end
+            end.call(**callback_data)
           rescue => e
             # TODO: should we support error and failure callbacks?
             # I guess let's just do error for now in case of yagni
             callbacks_for(:error, *lookup_args, **lookup_opts).each do |callback|
-              callback.call(e, callback_data)
+              callback.call(e, **callback_data)
             end
 
             raise

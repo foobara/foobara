@@ -24,41 +24,6 @@ module Foobara
         callback_registry.register_callback(type, **conditions, &)
       end
 
-      private
-
-      def run_before_callbacks(**conditions)
-        callbacks_for(:before, **conditions).each do |callback|
-          callback.call(**conditions.merge(state_machine: self))
-        end
-      end
-
-      def run_after_callbacks(**conditions)
-        callbacks_for(:after, **conditions).each do |callback|
-          callback.call(conditions.merge(state_machine: self))
-        end
-      end
-
-      def run_error_callbacks(error, **conditions)
-        callbacks_for(:error, **conditions).each do |callback|
-          callback.call(conditions.merge(error:, state_machine: self))
-        end
-      end
-
-      def run_around_callbacks(**conditions, &block)
-        around_callbacks = callbacks_for(:around, **conditions)
-
-        if around_callbacks.blank?
-          yield
-        else
-          # TODO: this never gets invoked?
-          around_callbacks.reduce(block) do |nested_proc, callback|
-            proc do
-              callback.call(nested_proc, conditions.merge(state_machine: self))
-            end
-          end
-        end
-      end
-
       class_methods do
         def class_callback_registry
           @class_callback_registry ||= Callback::ConditionsRegistry.new(
