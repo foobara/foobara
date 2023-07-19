@@ -3,40 +3,34 @@ require "foobara/callback/abstract_registry"
 module Foobara
   module Callback
     class ConditionsRegistry < AbstractRegistry
-      attr_accessor :possible_conditions, :possible_condition_keys
+      attr_accessor :possible_conditions, :possible_condition_keys, :callback_sets
 
       class InvalidConditions < StandardError; end
 
       def initialize(possible_conditions)
         super()
+        self.callback_sets = {}
         self.possible_conditions = possible_conditions
         self.possible_condition_keys = possible_conditions.keys.map(&:to_s).sort.map(&:to_sym)
       end
 
-      def register_callback(type, **conditions, &callback_block)
-        validate_type!(type)
-        validate_conditions!(**conditions)
-        validate_block!(type, callback_block)
-
+      def specific_callback_set_for(**conditions)
+        validate_conditions!(**conditions) # TODO: don't always have to validate this...
         key = condition_hash_to_callback_key(conditions)
-        callbacks_for_key = callbacks[type] ||= {}
-        callback_blocks = callbacks_for_key[key] ||= []
-
-        callback_blocks << callback_block
+        callback_sets[key] ||= Callback::Set.new
       end
 
-      def callbacks_for(type, **conditions)
-        validate_type!(type)
-        validate_conditions!(**conditions)
+      def unioned_callback_set_for(**conditions)
+        any_set = specific_callback_set_for
 
-        callbacks_for_type = callbacks[type]
-
-        return [] if callbacks_for_type.blank?
+        return set if conditions.blank?
 
         full_callback_key = condition_hash_to_callback_key(conditions)
-        callback_key_permutations(full_callback_key).map do |callback_key|
-          callbacks_for_type[callback_key]
-        end.compact.flatten
+        all_sets = callback_key_permutations(full_callback_key).map do |callback_key|
+          callback_sets[callback_key]
+        end.compact
+
+        all_sets.inject(any_set) { |unioned, set| unioned.union(set) }
       end
 
       private

@@ -1,21 +1,17 @@
 module Foobara
   module Callback
     class AbstractRegistry
-      attr_accessor :callbacks
-
-      def initialize
-        self.callbacks = {}
-      end
-
       # how to specify payload to callbacks??
       def execute_with_callbacks(callback_data:, lookup_args: [], lookup_opts: {}, &do_it)
+        callback_set = unioned_callback_set_for(*lookup_args, **lookup_opts)
+
         if block_given?
-          callbacks_for(:before, *lookup_args, **lookup_opts).each do |callback|
+          callback_set.each_before do |callback|
             callback.call(**callback_data)
           end
 
           begin
-            callbacks_for(:around, *lookup_args, **lookup_opts).reduce(do_it) do |nested_proc, callback|
+            callback_set.around.inject(do_it) do |nested_proc, callback|
               proc do
                 callback.call(nested_proc, **callback_data)
               end
@@ -23,7 +19,7 @@ module Foobara
           rescue => e
             # TODO: should we support error and failure callbacks?
             # I guess let's just do error for now in case of yagni
-            callbacks_for(:error, *lookup_args, **lookup_opts).each do |callback|
+            callback_set.each_error do |callback|
               callback.call(e, **callback_data)
             end
 
@@ -35,17 +31,26 @@ module Foobara
           raise if has_around_callbacks?(*lookup_args, **lookup_opts)
         end
 
-        callbacks_for(:after, *lookup_args, **lookup_opts).each do |callback|
+        callback_set.each_after do |callback|
           callback.call(callback_data)
         end
       end
 
-      def register_callback(_type, *_args, **_opts, &)
+      def register_callback(type, *args, **opts, &callback_block)
+        validate_type!(type)
+        validate_block!(type, callback_block)
+
+        set = specific_callback_set_for(*args, **opts)
+
+        set[type] << callback_block
+      end
+
+      def specific_callback_set_for(*_args, **_opts)
         raise "subclass responsibility"
       end
 
-      def callbacks_for(_type, *_args, **_opts)
-        raise "subclass_responsibility"
+      def unioned_callback_set_for(*_args, **_opts)
+        raise "subclass responsibility"
       end
 
       def before(*args, **opts, &)
@@ -65,7 +70,7 @@ module Foobara
       end
 
       def has_callbacks?(type, *args, **opts)
-        callbacks_for(type, *args, **opts).present?
+        unioned_callback_set_for(*args, **opts)[type].present?
       end
 
       def has_before_callbacks?(*args, **opts)

@@ -1,19 +1,12 @@
 module Foobara
   module Callback
     class SingleEventRegistry < AbstractRegistry
-      def register_callback(type, &callback_block)
-        validate_type!(type)
-        validate_block!(type, callback_block)
-
-        callback_blocks = callbacks[type] ||= []
-
-        callback_blocks << callback_block
+      def specific_callback_set_for
+        @specific_callback_set_for ||= Callback::Set.new
       end
 
-      def callbacks_for(type)
-        validate_type!(type)
-
-        callbacks[type].presence || []
+      def unioned_callback_set_for
+        specific_callback_set_for
       end
     end
   end

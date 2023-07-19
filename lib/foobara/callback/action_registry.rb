@@ -1,12 +1,14 @@
 module Foobara
   module Callback
     class ActionRegistry < AbstractRegistry
-      attr_accessor :possible_actions
+      attr_accessor :callback_sets, :possible_actions
 
       class InvalidAction < StandardError; end
 
       def initialize(*possible_actions)
         super()
+
+        self.callback_sets = {}
 
         if possible_actions.length == 1 && possible_actions.first.is_a?(Array)
           possible_actions = possible_actions.first
@@ -15,31 +17,14 @@ module Foobara
         self.possible_actions = possible_actions.map(&:to_s).sort.map(&:to_sym)
       end
 
-      def register_callback(type, action, &callback_block)
-        validate_type!(type)
+      def specific_callback_set_for(action)
         validate_action!(action)
-        validate_block!(type, callback_block)
-
-        callbacks_for_action = callbacks[type] ||= {}
-        callback_blocks = callbacks_for_action[action] ||= []
-
-        callback_blocks << callback_block
+        callback_sets[action] ||= Callback::Set.new
       end
 
-      def callbacks_for(type, action)
-        validate_type!(type)
-        validate_action!(action)
-
-        callbacks_for_type = callbacks[type]
-
-        return [] if callbacks_for_type.blank?
-
-        callbacks_for_any = callbacks_for_type[nil]
-        callbacks_for_action = if action
-                                 callbacks_for_type[action]
-                               end
-
-        [*callbacks_for_action, *callbacks_for_any].compact
+      def unioned_callback_set_for(action)
+        set = specific_callback_set_for(nil)
+        action ? set.union(specific_callback_set_for(action)) : set
       end
 
       private
