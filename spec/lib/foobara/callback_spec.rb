@@ -109,6 +109,38 @@ RSpec.describe Foobara::Callback do
             )
           end
         end
+
+        context "when error occurs" do
+          let(:kaboom) { Class.new(StandardError) }
+
+          it "calls the any callback on any action" do
+            expect {
+              runner.run do
+                raise kaboom, "Kaboom!"
+              end
+            }.to raise_error(kaboom)
+
+            puts calls
+
+            expect(calls.keys).to eq([:walk])
+            walk = calls[:walk]
+            expect(walk.keys).to eq(%i[before around error])
+
+            expect(walk[:before]).to eq([{ foo: :bar }])
+            expect(walk[:around]).to eq([{ foo: :bar }])
+            errors = walk[:error]
+
+            expect(errors.length).to eq(1)
+            error = errors.first
+
+            expect(error).to be_a(runner.class::UnexpectedErrorWhileRunningCallback)
+            expect(error.cause).to be_a(kaboom)
+            expect(error.callback_data).to eq(foo: :bar)
+            expect(error.message).to eq("Kaboom!")
+            expect(error.cause).to be_a(kaboom)
+            expect(error.cause.message).to eq("Kaboom!")
+          end
+        end
       end
     end
   end
