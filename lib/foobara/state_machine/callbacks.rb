@@ -72,7 +72,7 @@ module Foobara
             end
           end
 
-          Foobara::Callback::ALLOWED_CALLBACK_TYPES.each do |type|
+          Foobara::Callback::Block.types.each do |type|
             method_name = "#{type}_any_transition"
             callback_methods << method_name
 

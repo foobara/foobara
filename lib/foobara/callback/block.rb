@@ -1,7 +1,21 @@
+Dir["#{__dir__}/block/**/*.rb"].sort_by(&:length).reverse.each do |f|
+  require f
+end
+
 module Foobara
   module Callback
     class Block
+      include Concerns::Type
+
       class << self
+        def types_to_subclasses
+          @types_to_subclasses ||= subclasses.to_h { |klass| [klass.type, klass] }
+        end
+
+        def types
+          @types ||= types_to_subclasses.keys
+        end
+
         def for(type, callback)
           const_get(type.to_s.classify).new(callback)
         end
@@ -14,9 +28,7 @@ module Foobara
         validate_original_block!
       end
 
-      def type
-        @type ||= self.class.name.gsub(/Block$/, "").underscore
-      end
+      delegate :type, to: :class
 
       def call(...)
         to_proc.call(...)

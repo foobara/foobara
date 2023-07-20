@@ -30,7 +30,7 @@ module Foobara
         send(type)
       end
 
-      Foobara::Callback::ALLOWED_CALLBACK_TYPES.each do |type|
+      Block.types.each do |type|
         define_method type do
           callbacks[type] ||= []
         end

@@ -67,8 +67,8 @@ module Foobara
         private
 
         def validate_type!(type)
-          unless ALLOWED_CALLBACK_TYPES.include?(type)
-            raise "bad type #{type} expected one of #{ALLOWED_CALLBACK_TYPES}"
+          unless Block.types.include?(type)
+            raise "bad type #{type} expected one of #{Block.types}"
           end
         end
       end
