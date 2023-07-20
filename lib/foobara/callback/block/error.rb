@@ -2,8 +2,8 @@ module Foobara
   module Callback
     class Block
       class Error < Block
-        include SingleArgumentBlock
-        include BlockParameterNotAllowed
+        include Concerns::SingleArgumentBlock
+        include Concerns::BlockParameterNotAllowed
       end
     end
   end

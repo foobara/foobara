@@ -2,8 +2,8 @@ module Foobara
   module Callback
     class Block
       class Around < Block
-        include KeywordArgumentableBlock
-        include BlockParameterRequired
+        include Concerns::KeywordArgumentableBlock
+        include Concerns::BlockParameterRequired
       end
     end
   end
