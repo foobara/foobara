@@ -62,11 +62,8 @@ module Foobara
       end
 
       def run_callback(callback, extra_args: [])
-        if callback_data.is_a?(Hash) && callback.parameters.first&.first == :keyreq
-          callback.call(*extra_args, **callback_data)
-        else
-          callback.call(*extra_args, callback_data)
-        end
+        args = [*extra_args, callback_data]
+        callback.call(*args)
       end
     end
   end
