@@ -100,20 +100,76 @@ module Foobara
       end
 
       def validate_block!(type, callback_block)
-        required_non_keyword_arity = callback_block.parameters.count { |(param_type, _name)| param_type == :req }
+        if takes_block?(callback_block)
+          if type != :around
+            raise "#{type} callback block cannot accept a block"
+          end
+        elsif type == :around
+          raise "Around callback must take a block argument to receive the do_it block"
+        end
 
-        if callback_block.parameters.any? { |(type, _name)| type == :block }
+        if has_keyword_args?(callback_block)
+          if type == :error
+            raise "Expect error block to only receive one argument which is the UnexpectedErrorWhileRunningCallback. " \
+                  "It cannot take keyword arguments."
+          end
+
+          if has_positional_args?(callback_block)
+            raise "Callback block can't both accept keyword arguments and also a positional argument"
+          end
+        elsif !has_one_or_zero_positional_args?(callback_block)
+          raise "Can't pass multiple arguments to a callback. Only 1 or 0 arguments."
+        end
+      end
+
+      def validate_error_block!(callback_block)
+        if takes_block?(callback_block)
           raise "callback block can't take a block"
         end
+      end
 
-        if type == :around
-          # must have exactly one non-keyword required parameter to accept the do_it proc
-          if required_non_keyword_arity != 1
-            raise "around callbacks must take exactly one argument which will be the do_it proc"
-          end
-        elsif required_non_keyword_arity != 0
-          raise "#{type} callback should take exactly 0 arguments"
-        end
+      def takes_block?(callback_block)
+        callback_block.parameters.last&.first&.==(:block)
+      end
+
+      def has_no_args_ignoring_block(callback_block)
+        param_types_ignoring_block(callback_block).empty?
+      end
+
+      def has_one_or_zero_positional_args?(callback_block)
+        positional_args_count(callback_block) <= 1
+      end
+
+      def has_one_positional_arg?(callback_block)
+        positional_args_count(callback_block) == 1
+      end
+
+      def has_positional_args?(callback_block)
+        !positional_args_count(callback_block).zero?
+      end
+
+      def has_keyword_args?(callback_block)
+        param_types(callback_block).any? { |type| %i[keyreq keyrest].include?(type) }
+      end
+
+      def param_types_ignoring_block(callback_block)
+        param_types(callback_block).reject { |type| type == :block }
+      end
+
+      def param_types(callback_block)
+        callback_block.parameters.map(&:first)
+      end
+
+      def optional_positional_args_count(callback_block)
+        callback_block.parameters.map(&:first).count { |type| type == :opt }
+      end
+
+      def required_positional_args_count(callback_block)
+        callback_block.parameters.map(&:first).count { |type| type == :req }
+      end
+
+      def positional_args_count(callback_block)
+        optional_positional_args_count(callback_block) + required_positional_args_count(callback_block)
       end
     end
   end

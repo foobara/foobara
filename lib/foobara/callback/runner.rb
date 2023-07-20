@@ -47,7 +47,7 @@ module Foobara
 
           around_callback = callback_set.around.inject(do_it) do |nested_proc, callback|
             proc do
-              run_callback(callback, extra_args: [nested_proc])
+              run_callback(callback, &nested_proc)
             end
           end
 
@@ -64,7 +64,7 @@ module Foobara
       rescue => real_error
         begin
           raise UnexpectedErrorWhileRunningCallback.new(callback_data, real_error)
-          # this non-sense is just to set the # cause properly
+          # this non-sense is just to set the Error#cause properly
         rescue UnexpectedErrorWhileRunningCallback => e
           self.error = e
 
@@ -76,12 +76,11 @@ module Foobara
         raise
       end
 
-      def run_callback(callback, extra_args: [])
+      def run_callback(callback, &)
         if error.present?
           callback.call(error)
         else
-          args = [*extra_args, callback_data]
-          callback.call(*args)
+          callback.call(callback_data, &)
         end
       end
     end

@@ -41,7 +41,7 @@ module Foobara
             target.define_method "around_#{transition}" do |&block|
               callback_state_machine_target.register_transition_callback(
                 :around
-              ) do |do_transition_block, state_machine:, **_|
+              ) do |state_machine:, **_, &do_transition_block|
                 block.call(do_transition_block, command: state_machine.owner)
               end
             end
