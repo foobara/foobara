@@ -1,7 +1,17 @@
 module Foobara
   module Callback
     class Runner
-      attr_accessor :callback_set
+      class UnexpectedErrorWhileRunningCallback < StandardError
+        attr_accessor :callback_data
+
+        def initialize(callback_data, error)
+          super(error.message)
+
+          self.callback_data = callback_data
+        end
+      end
+
+      attr_accessor :callback_set, :error
       attr_writer :callback_data
 
       def initialize(callback_set)
@@ -35,21 +45,13 @@ module Foobara
             run_callback(callback)
           end
 
-          begin
-            around_callback = callback_set.around.inject(do_it) do |nested_proc, callback|
-              proc do
-                run_callback(callback, extra_args: [nested_proc])
-              end
+          around_callback = callback_set.around.inject(do_it) do |nested_proc, callback|
+            proc do
+              run_callback(callback, extra_args: [nested_proc])
             end
-
-            run_callback(around_callback)
-          rescue => e
-            callback_set.each_error do |callback|
-              run_callback(callback, extra_args: [e])
-            end
-
-            raise
           end
+
+          run_callback(around_callback)
         else
           # TODO: raise better errors
           raise if callback_set.has_before_callbacks?
@@ -59,11 +61,28 @@ module Foobara
         callback_set.each_after do |callback|
           run_callback(callback)
         end
+      rescue => real_error
+        begin
+          raise UnexpectedErrorWhileRunningCallback.new(callback_data, real_error)
+          # this non-sense is just to set the # cause properly
+        rescue UnexpectedErrorWhileRunningCallback => e
+          self.error = e
+
+          callback_set.each_error do |callback|
+            run_callback(callback)
+          end
+        end
+
+        raise
       end
 
       def run_callback(callback, extra_args: [])
-        args = [*extra_args, callback_data]
-        callback.call(*args)
+        if error.present?
+          callback.call(error)
+        else
+          args = [*extra_args, callback_data]
+          callback.call(*args)
+        end
       end
     end
   end
