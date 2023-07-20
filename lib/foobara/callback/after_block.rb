@@ -1,6 +1,6 @@
 module Foobara
   module Callback
-    class ErrorBlock < SingleArgumentBlock
+    class AfterBlock < KeywordArgumentableBlock
     end
   end
 end

@@ -1,58 +1,38 @@
 module Foobara
   module Callback
-    class Block
-      attr_accessor :original_block, :type
+    class BaseBlock
+      attr_accessor :original_block
 
-      def initialize(type, original_block)
-        self.type = type # TODO: eliminate this with classes
+      def initialize(original_block)
         self.original_block = original_block
         validate_original_block!
       end
 
-      def to_proc
-        @to_proc ||= if has_keyword_args?
-                       proc do |*args|
-                         keyword_args = args.reduce(:merge)
-
-                         original_block.call(**keyword_args)
-                       end
-                     else
-                       original_block
-                     end
+      def type
+        @type ||= self.class.name.gsub(/Block$/, "").underscore
       end
 
       def call(...)
         to_proc.call(...)
       end
 
+      def to_proc
+        @to_proc ||= original_block
+      end
+
       private
 
       def validate_original_block!
-        if takes_block?
-          if type != :around
-            raise "#{type} callback block cannot accept a block"
-          end
-        elsif type == :around
-          raise "Around callback must take a block argument to receive the do_it block"
-        end
+        validate_block_arguments_of_original_block!
 
-        if has_keyword_args?
-          if type == :error
-            raise "Expect error block to only receive one argument which is the UnexpectedErrorWhileRunningCallback. " \
-                  "It cannot take keyword arguments."
-          end
-
-          if has_positional_args?
-            raise "Callback block can't both accept keyword arguments and also a positional argument"
-          end
-        elsif !has_one_or_zero_positional_args?
+        unless has_one_or_zero_positional_args?
           raise "Can't pass multiple arguments to a callback. Only 1 or 0 arguments."
         end
       end
 
-      def validate_error_block!
+      def validate_block_arguments_of_original_block!
         if takes_block?
-          raise "callback block can't take a block"
+          raise "#{type} callback block cannot accept a block"
         end
       end
 
@@ -60,28 +40,12 @@ module Foobara
         @takes_block ||= original_block.parameters.last&.first&.==(:block)
       end
 
-      def has_no_args_ignoring_block
-        @has_no_args_ignoring_block ||= param_types_ignoring_block.empty?
-      end
-
       def has_one_or_zero_positional_args?
         @has_one_or_zero_positional_args ||= positional_args_count <= 1
       end
 
-      def has_one_positional_arg?
-        @has_one_positional_arg ||= positional_args_count == 1
-      end
-
-      def has_positional_args?
-        @has_positional_args ||= !positional_args_count.zero?
-      end
-
       def has_keyword_args?
         @has_keyword_args ||= param_types.any? { |type| %i[keyreq keyrest].include?(type) }
-      end
-
-      def param_types_ignoring_block
-        @param_types_ignoring_block ||= param_types.reject { |type| type == :block }
       end
 
       def param_types
