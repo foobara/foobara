@@ -1,39 +1,14 @@
 module Foobara
   module Callback
     class AbstractRegistry
-      # how to specify payload to callbacks??
       def execute_with_callbacks(callback_data:, lookup_args: [], lookup_opts: {}, &do_it)
         callback_set = unioned_callback_set_for(*lookup_args, **lookup_opts)
 
-        if block_given?
-          callback_set.each_before do |callback|
-            callback.call(**callback_data)
-          end
+        callback_set.execute_with_callbacks(callback_data, &do_it)
+      end
 
-          begin
-            callback_set.around.inject(do_it) do |nested_proc, callback|
-              proc do
-                callback.call(nested_proc, **callback_data)
-              end
-            end.call(**callback_data)
-          rescue => e
-            # TODO: should we support error and failure callbacks?
-            # I guess let's just do error for now in case of yagni
-            callback_set.each_error do |callback|
-              callback.call(e, **callback_data)
-            end
-
-            raise
-          end
-        else
-          # TODO: raise better errors
-          raise if has_before_callbacks?(*lookup_args, **lookup_opts)
-          raise if has_around_callbacks?(*lookup_args, **lookup_opts)
-        end
-
-        callback_set.each_after do |callback|
-          callback.call(callback_data)
-        end
+      def runner(*args, **opts)
+        Runner.new(unioned_callback_set_for(*args, **opts))
       end
 
       def register_callback(type, *args, **opts, &callback_block)

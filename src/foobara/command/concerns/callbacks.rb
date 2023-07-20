@@ -14,7 +14,7 @@ module Foobara
           def inherited(subclass)
             super
 
-            subclass_defined_callbacks.execute_with_callbacks(callback_data: subclass)
+            subclass_defined_callbacks.runner.callback_data(subclass).run
           end
 
           def after_subclass_defined(&)

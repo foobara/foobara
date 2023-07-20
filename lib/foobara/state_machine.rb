@@ -51,10 +51,7 @@ module Foobara
 
       conditions = { from:, transition:, to: }
 
-      callback_registry.execute_with_callbacks(
-        callback_data: { state_machine: self },
-        lookup_opts: conditions
-      ) do
+      callback_registry.runner(**conditions).callback_data(state_machine: self).run do
         block.call if block_given?
         update_current_state(**conditions)
       end

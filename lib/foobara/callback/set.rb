@@ -30,17 +30,21 @@ module Foobara
         send(type)
       end
 
-      Foobara::Callback::ALLOWED_CALLBACK_TYPES.each do |method_name|
-        define_method method_name do
-          callbacks[method_name] ||= []
+      Foobara::Callback::ALLOWED_CALLBACK_TYPES.each do |type|
+        define_method type do
+          callbacks[type] ||= []
         end
 
-        define_method "#{method_name}=" do |blocks|
-          callbacks[method_name] ||= blocks
+        define_method "#{type}=" do |blocks|
+          callbacks[type] ||= blocks
         end
 
-        define_method "each_#{method_name}" do |&block|
-          send(method_name).each(&block)
+        define_method "each_#{type}" do |&block|
+          send(type).each(&block)
+        end
+
+        define_method "has_#{type}_callbacks?" do
+          send(type).present?
         end
       end
     end
