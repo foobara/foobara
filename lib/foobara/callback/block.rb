@@ -29,16 +29,8 @@ module Foobara
       private
 
       def validate_original_block!
-        validate_block_arguments_of_original_block!
-
         unless has_one_or_zero_positional_args?
           raise "Can't pass multiple arguments to a callback. Only 1 or 0 arguments."
-        end
-      end
-
-      def validate_block_arguments_of_original_block!
-        if takes_block?
-          raise "#{type} callback block cannot accept a block"
         end
       end
 
@@ -52,6 +44,10 @@ module Foobara
 
       def has_keyword_args?
         @has_keyword_args ||= param_types.any? { |type| %i[keyreq keyrest].include?(type) }
+      end
+
+      def has_positional_args?
+        @has_positional_args ||= positional_args_count > 0
       end
 
       def param_types

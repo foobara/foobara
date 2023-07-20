@@ -3,9 +3,11 @@ module Foobara
     module BlockParameterRequired
       private
 
-      def validate_block_arguments_of_original_block!
+      def validate_original_block!
+        super
+
         unless takes_block?
-          raise "#{type} callback must take a block argument to receive the do_it block"
+          raise "#{type} callback must take a block argument"
         end
       end
     end
