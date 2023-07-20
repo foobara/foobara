@@ -17,34 +17,15 @@ module Foobara
 
         set = specific_callback_set_for(*args, **opts)
 
-        argument_count = callback_block.parameters.count
-        ending_keyword_count = ending_keyword_argument_count(callback_block)
-        positional_argument_count = argument_count - ending_keyword_count
+        set[type] << if has_keyword_args?(callback_block)
+                       proc do |*args, &block|
+                         keyword_args = args.reduce(:merge)
 
-        set[type] << if ending_keyword_count > 0
-                       proc do |*args|
-                         positional_args = args[0...positional_argument_count]
-                         keyword_args = args[positional_argument_count..].reduce(:merge)
-
-                         callback_block.call(*positional_args, **keyword_args)
+                         callback_block.call(**keyword_args, &block)
                        end
                      else
                        callback_block
                      end
-      end
-
-      def ending_keyword_argument_count(block)
-        count = 0
-
-        block.parameters.reverse.each do |(type, _name)|
-          if %i[keyreq keyrest].include?(type)
-            count += 1
-          else
-            break
-          end
-        end
-
-        count
       end
 
       def specific_callback_set_for(*_args, **_opts)
