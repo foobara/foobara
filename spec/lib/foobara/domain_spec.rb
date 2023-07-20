@@ -1,4 +1,9 @@
 RSpec.describe Foobara::Domain do
+  before do
+    described_class.reset_unprocessed_command_classes
+    described_class.install!
+  end
+
   context "with simple command" do
     let(:domain_class) {
       Class.new(described_class) do
@@ -23,7 +28,6 @@ RSpec.describe Foobara::Domain do
     before do
       stub_const(domain_class.name, domain_class)
       expect(domain_class.instance).to be_a(domain_class)
-      domain_class.register_command(command_class)
       stub_const(command_class.name, command_class)
     end
 

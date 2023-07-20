@@ -3,10 +3,13 @@ module Foobara
     class AlreadyRegisteredDomainDependency < StandardError; end
     class DomainDependencyNotRegistered < StandardError; end
 
-    attr_accessor :command_classes
-
     def initialize
-      self.command_classes = []
+      @command_classes = []
+    end
+
+    def command_classes
+      Domain.process_command_classes
+      @command_classes
     end
 
     def register_commands(command_classes)
@@ -51,8 +54,33 @@ module Foobara
     end
 
     class << self
+      def unprocessed_command_classes
+        @unprocessed_command_classes ||= []
+      end
+
+      def process_command_classes
+        until unprocessed_command_classes.empty?
+          command_class = unprocessed_command_classes.pop
+
+          command_class = const_get(command_class) unless command_class.is_a?(Class)
+          domain = command_class.domain
+
+          domain&.register_command(command_class)
+        end
+      end
+
+      def reset_unprocessed_command_classes
+        @unprocessed_command_classes = nil
+      end
+
       def install!
+        return if @installed
+
+        @installed = true
         Foobara::Command.include(Foobara::Domain::CommandExtension)
+        Foobara::Command.after_subclass_defined do |subclass|
+          unprocessed_command_classes << subclass
+        end
       end
 
       def instance

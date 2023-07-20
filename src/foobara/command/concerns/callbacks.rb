@@ -7,6 +7,20 @@ module Foobara
         extend ActiveSupport::Concern
 
         class_methods do
+          def subclass_defined_callbacks
+            @subclass_defined_callbacks ||= Foobara::Callback::SingleEventRegistry.new
+          end
+
+          def inherited(subclass)
+            super
+
+            subclass_defined_callbacks.execute_with_callbacks(callback_data: subclass)
+          end
+
+          def after_subclass_defined(&)
+            subclass_defined_callbacks.register_callback(:after, &)
+          end
+
           def callback_state_machine_target
             Foobara::Command::StateMachine
           end
