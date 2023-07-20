@@ -1,6 +1,12 @@
 module Foobara
   module Callback
-    class BaseBlock
+    class Block
+      class << self
+        def for(type, callback)
+          Callback.const_get("#{type.to_s.classify}Block").new(callback)
+        end
+      end
+
       attr_accessor :original_block
 
       def initialize(original_block)

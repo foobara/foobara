@@ -16,7 +16,7 @@ module Foobara
 
         set = specific_callback_set_for(*args, **opts)
 
-        set[type] << Foobara::Callback.block_class_for(type).new(callback_block)
+        set[type] << Block.for(type, callback_block)
       end
 
       def specific_callback_set_for(*_args, **_opts)

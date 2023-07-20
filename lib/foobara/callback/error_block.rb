@@ -1,6 +1,6 @@
 module Foobara
   module Callback
-    class ErrorBlock < BaseBlock
+    class ErrorBlock < Block
       include SingleArgumentBlock
       include BlockParameterNotAllowed
     end

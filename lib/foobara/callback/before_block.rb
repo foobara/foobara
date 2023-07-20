@@ -1,8 +1,8 @@
-require "foobara/callback/base_block"
+require "foobara/callback/block"
 
 module Foobara
   module Callback
-    class BeforeBlock < BaseBlock
+    class BeforeBlock < Block
       include KeywordArgumentableBlock
       include BlockParameterNotAllowed
     end
