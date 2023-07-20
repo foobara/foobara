@@ -1,8 +1,6 @@
-require "foobara/callback/base_block"
-
 module Foobara
   module Callback
-    class KeywordArgumentableBlock < BaseBlock
+    module KeywordArgumentableBlock
       def to_proc
         @to_proc ||= if has_keyword_args?
                        proc do |*args, &block|

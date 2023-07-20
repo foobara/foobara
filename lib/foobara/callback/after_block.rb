@@ -1,6 +1,8 @@
 module Foobara
   module Callback
-    class AfterBlock < KeywordArgumentableBlock
+    class AfterBlock < BaseBlock
+      include KeywordArgumentableBlock
+      include BlockParameterNotAllowed
     end
   end
 end

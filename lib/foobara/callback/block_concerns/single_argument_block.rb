@@ -1,6 +1,6 @@
 module Foobara
   module Callback
-    class SingleArgumentBlock < BaseBlock
+    module SingleArgumentBlock
       private
 
       def validate_original_block!
