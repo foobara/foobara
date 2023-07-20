@@ -33,7 +33,7 @@ module Foobara
         def validate_action!(action)
           if !action.nil? && !action.is_a?(Symbol)
             raise InvalidAction,
-                  "Invalid condition value #{condition_value}: expected Symbol or nil but got #{condition_value.class}"
+                  "Invalid action #{action}: expected Symbol or nil but got #{action.class}"
           end
         end
       end

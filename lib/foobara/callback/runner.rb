@@ -18,6 +18,10 @@ module Foobara
         self.callback_set = callback_set
       end
 
+      def has_callback_data?
+        defined?(@callback_data)
+      end
+
       def callback_data(*args, **opts)
         return @callback_data if args.blank? && opts.blank?
 
@@ -79,8 +83,10 @@ module Foobara
       def run_callback(callback, &)
         if error.present?
           callback.call(error)
-        else
+        elsif has_callback_data?
           callback.call(callback_data, &)
+        else
+          callback.call(&)
         end
       end
     end

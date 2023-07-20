@@ -9,7 +9,7 @@ module Foobara
         self.callbacks = {}
 
         callback_hash.each do |type, blocks|
-          send("#{type}=", blocks)
+          send("#{type}=", blocks.dup)
         end
       end
 
