@@ -1,5 +1,5 @@
 module Foobara
-  module Model
+  class Model
     module Types
       class AttributesType < Type
         def cast_from(object)
@@ -38,7 +38,6 @@ module Foobara
                 }
               )
             end
-
           end
         end
       end

@@ -1,14 +1,12 @@
 module Foobara
-  module Model
+  class Model
     class << self
-      attr_accessor :types
-
-      def register_type(type)
-        types[type.symbol] = type
+      def global_registry
+        @global_registry ||= Registry.new
       end
-    end
 
-    self.types = {}
+      delegate :register_type, :types, to: :global_registry
+    end
 
     register_type(Types::IntegerType.new)
     register_type(Types::AttributesType.new)

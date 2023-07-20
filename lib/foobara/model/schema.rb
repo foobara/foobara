@@ -1,6 +1,16 @@
 module Foobara
-  module Model
+  class Model
     class Schema
+      class InvalidSchema < StandardError
+        attr_accessor :schema_validation_errors
+
+        def initialize(schema_validation_errors)
+          self.schema_validation_errors = Array.wrap(schema_validation_errors)
+
+          super(schema_validation_errors.map(&:message).join(", "))
+        end
+      end
+
       attr_accessor :raw_schema, :errors, :schema_has_been_validated
 
       def initialize(raw_schema)
@@ -26,6 +36,12 @@ module Foobara
         validate_schema unless schema_validated?
 
         errors
+      end
+
+      def validate!
+        unless valid?
+          raise InvalidSchema, schema_validation_errors
+        end
       end
 
       def type_class
