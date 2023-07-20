@@ -8,7 +8,7 @@ module Foobara
 
       def initialize(owner:)
         self.owner = owner
-        self.callback_registry = Callback::ChainedConditionsRegistry.new(self.class.class_callback_registry)
+        self.callback_registry = Callback::Registry::ChainedConditioned.new(self.class.class_callback_registry)
       end
 
       delegate :callbacks_for,
@@ -26,7 +26,7 @@ module Foobara
 
       class_methods do
         def class_callback_registry
-          @class_callback_registry ||= Callback::ConditionsRegistry.new(
+          @class_callback_registry ||= Callback::Registry::Conditioned.new(
             from: states,
             transition: transitions,
             to: states

@@ -3,7 +3,7 @@ module Foobara
     class Block
       class << self
         def for(type, callback)
-          Callback.const_get("#{type.to_s.classify}Block").new(callback)
+          const_get(type.to_s.classify).new(callback)
         end
       end
 
