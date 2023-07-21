@@ -21,7 +21,7 @@ module Foobara
             raise CouldNotCastResult, message
           end
 
-          result_schema.cast_from(result)
+          result_schema.cast_from!(result)
         end
 
         def validate_result_using_result_schema(result)

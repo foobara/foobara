@@ -4,19 +4,25 @@ module Foobara
       class Integer < Type
         INTEGER_REGEX = /^-?\d+$/
 
-        def cast_from(object)
-          case object
-          when ::Integer
-            object
-          when INTEGER_REGEX
-            object.to_i
-          else
-            raise "There must but a bug in can_cast? for #{symbol} #{object.inspect}"
-          end
-        end
+        def cast_from(value)
+          outcome = super
 
-        def can_cast?(object)
-          object.is_a?(::Integer) || (object.is_a?(::String) && INTEGER_REGEX.match?(object))
+          return outcome if outcome.success?
+
+          if value.is_a?(::String) && value =~ INTEGER_REGEX
+            Outcome.success(value.to_i)
+          else
+            Outcome.errors(*outcome.errors,
+                           Error.new(
+                             symbol: :cannot_cast,
+                             message: "#{value} is not a string matching #{INTEGER_REGEX}",
+                             context: {
+                               cast_to_type: symbol,
+                               cast_to_ruby_class: ruby_class,
+                               value:
+                             }
+                           ))
+          end
         end
       end
     end

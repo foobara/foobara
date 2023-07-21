@@ -26,7 +26,7 @@ RSpec.describe Foobara::Model::Schema do
 
         describe "#casting" do
           let(:can_cast) { schema.can_cast?(object) }
-          let(:casted_value) { schema.cast_from(object) }
+          let(:casted_value) { schema.cast_from!(object) }
 
           context "when cast is not required" do
             let(:object) { 123 }

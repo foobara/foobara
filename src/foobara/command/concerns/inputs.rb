@@ -40,7 +40,11 @@ module Foobara
             add_input_error(input:, symbol:, message:, context:)
           end
 
-          @inputs = input_schema.cast_from(raw_inputs)
+          outcome = input_schema.cast_from(raw_inputs)
+
+          if outcome.success?
+            @inputs = outcome.result
+          end
         end
 
         def validate_inputs
