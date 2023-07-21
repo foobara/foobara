@@ -113,9 +113,7 @@ module Foobara
       end
 
       def build_schema_validation_errors
-        if Model.types.key?(type)
-          type_class.schema_validation_errors_for(strict_schema)
-        else
+        unless Model.types.key?(type)
           Error.new(
             symbol: :"unknown_type_#{type}",
             message: "Unknown type #{type}",
