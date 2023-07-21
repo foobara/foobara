@@ -1,6 +1,4 @@
-Dir["#{__dir__}/block/**/*.rb"].sort_by(&:length).reverse.each do |f|
-  require f
-end
+Foobara::Util.require_directory("#{__dir__}/block")
 
 module Foobara
   module Callback
