@@ -36,7 +36,9 @@ module Foobara
     def require_pattern(glob)
       files = Dir[glob].sort_by(&:length).reverse
 
-      raise "Didn't find anything to require for #{glob}" if files.empty?
+      if files.empty?
+        raise "Didn't find anything to require for #{glob}"
+      end
 
       files.each do |f|
         require f
