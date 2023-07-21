@@ -7,25 +7,65 @@ module Foobara
         def initialize(schema_validation_errors)
           self.schema_validation_errors = Array.wrap(schema_validation_errors)
 
-          super(schema_validation_errors.map(&:message).join(", "))
+          super(self.schema_validation_errors.map(&:message).join(", "))
+        end
+      end
+
+      class << self
+        def register_schema(schema)
+          schema_classes << schema
+        end
+
+        def schema_classes
+          @schema_classes ||= []
+        end
+
+        def type
+          name.demodulize.gsub(/Schema$/, "").underscore.to_sym
+        end
+
+        def for(sugary_schema)
+          return sugary_schema if sugary_schema.is_a?(Schema)
+
+          schema_type = nil
+
+          if sugary_schema.is_a?(Hash) && sugary_schema.key?(:type)
+            type = sugary_schema[:type]
+
+            schema_type = schema_classes.find { |klass| klass.type == type }
+          end
+
+          schema_type ||= schema_classes.find { |klass| klass.can_handle?(sugary_schema) }
+
+          unless schema_type
+            raise InvalidSchema, Error.new(
+              symbol: :could_not_determine_schema_type,
+              message: "Could not determine schema type for #{sugary_schema}",
+              context: {
+                raw_schema: sugary_schema
+              }
+            )
+          end
+
+          schema_type.new(sugary_schema)
         end
       end
 
       attr_accessor :raw_schema, :errors, :schema_has_been_validated
+      attr_reader :strict_schema
 
       def initialize(raw_schema)
         raise "must give a schema" unless raw_schema
 
         self.errors = []
         self.raw_schema = raw_schema
+        @strict_schema = desugarize
       end
 
-      def type
-        strict_schema[:type]
-      end
+      delegate :type, to: :class
 
-      def strict_schema
-        @strict_schema ||= desugarize
+      def to_h
+        strict_schema
       end
 
       def valid?
@@ -57,23 +97,7 @@ module Foobara
       private
 
       def desugarize
-        case raw_schema
-        when Symbol
-          { type: raw_schema }
-        when Hash
-          if !raw_schema.key?(:type) && !raw_schema.key?(:schemas) && raw_schema.keys.all? do |key|
-            key.is_a?(Symbol)
-          end
-            schemas = raw_schema.transform_values do |schema|
-              Schema.new(schema).strict_schema
-            end
-
-            {
-              type: :attributes,
-              schemas:
-            }
-          end
-        end || raw_schema
+        raise "Subclass responsibility"
       end
 
       def validate_schema

@@ -10,5 +10,9 @@ module Foobara
 
     register_type(Types::IntegerType.new)
     register_type(Types::AttributesType.new)
+
+    Schema.register_schema(IntegerSchema)
+    Schema.register_schema(DuckSchema)
+    Schema.register_schema(AttributesSchema)
   end
 end

@@ -1,9 +1,9 @@
 RSpec.describe Foobara::Model::Schema do
-  describe ".new" do
+  describe ".for" do
     subject { schema }
 
     context "with nothing but a primitive type" do
-      let(:schema) { described_class.new(type:) }
+      let(:schema) { described_class.for(type:) }
 
       context "with a valid type" do
         let(:type) { :integer }
@@ -15,7 +15,7 @@ RSpec.describe Foobara::Model::Schema do
         end
 
         context "when using sugar syntax" do
-          let(:schema) { described_class.new(type) }
+          let(:schema) { described_class.for(type) }
 
           it { is_expected.to be_valid }
 
@@ -51,18 +51,18 @@ RSpec.describe Foobara::Model::Schema do
       context "with an invalid type" do
         let(:type) { :not_a_real_type }
 
-        it { is_expected.to_not be_valid }
+        it { is_expected_to_raise(described_class::InvalidSchema) }
       end
     end
 
     context "with attributes" do
-      let(:schema) { described_class.new(type:, schemas:) }
+      let(:schema) { described_class.for(type:, schemas:) }
 
       let(:type) { :attributes }
       let(:schemas) {
         {
-          base: 2,
-          exponent: 3
+          base: :integer,
+          exponent: :integer
         }
       }
 
@@ -73,7 +73,7 @@ RSpec.describe Foobara::Model::Schema do
       end
 
       context "when using sugar syntax" do
-        let(:schema) { described_class.new(schemas) }
+        let(:schema) { described_class.for(schemas) }
 
         it { is_expected.to be_valid }
 
