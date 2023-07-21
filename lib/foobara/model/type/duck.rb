@@ -1,7 +1,7 @@
 module Foobara
   class Model
-    module Types
-      class DuckType < Type
+    class Type
+      class Duck < Type
         class << self
           def cast_from(object)
             object

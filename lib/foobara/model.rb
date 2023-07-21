@@ -8,9 +8,9 @@ module Foobara
       delegate :register_type, :types, to: :global_registry
     end
 
-    register_type(Types::IntegerType)
-    register_type(Types::AttributesType)
-    register_type(Types::DuckType)
+    register_type(Type::Integer)
+    register_type(Type::Attributes)
+    register_type(Type::Duck)
 
     Schema.register_schema(IntegerSchema)
     Schema.register_schema(DuckSchema)

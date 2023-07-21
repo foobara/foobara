@@ -3,7 +3,7 @@ module Foobara
     class Type
       class << self
         def symbol
-          name.demodulize.underscore.gsub(/_type$/, "").to_sym
+          name.demodulize.underscore.to_sym
         end
 
         def schema_validation_errors_for(strict_schema)

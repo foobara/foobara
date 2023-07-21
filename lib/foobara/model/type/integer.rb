@@ -1,19 +1,23 @@
 module Foobara
   class Model
-    module Types
-      class AttributesType < Type
+    class Type
+      class Integer < Type
         class << self
+          INTEGER_REGEX = /^-?\d+$/
+
           def cast_from(object)
             case object
-            when Hash
-              object.with_indifferent_access
+            when ::Integer
+              object
+            when INTEGER_REGEX
+              object.to_i
             else
               raise "There must but a bug in can_cast? for #{symbol} #{object.inspect}"
             end
           end
 
           def can_cast?(object)
-            object.is_a?(Hash)
+            object.is_a?(::Integer) || (object.is_a?(::String) && INTEGER_REGEX.match?(object))
           end
         end
       end
