@@ -6,6 +6,10 @@ module Foobara
       def type
         name.demodulize.underscore.gsub(/_error$/, "").to_sym
       end
+
+      def merge(errors)
+        MultipleError.new(errors)
+      end
     end
 
     def initialize(symbol:, message:, context: nil)

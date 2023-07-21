@@ -7,20 +7,31 @@ module Foobara
         end
       end
 
-      def errors(error_collection)
-        if error_collection.is_a?(Array)
-          new.tap do |outcome|
-            error_collection.each do |error|
-              outcome.add_error(error)
-            end
-          end
-        else
-          new(error_collection:)
+      def errors(*errors)
+        if errors.length == 1
+          errors = errors.first
+
+          errors = if errors.is_a?(ErrorCollection)
+                     errors.errors
+                   else
+                     Array.wrap(errors.first)
+                   end
+
+        end
+
+        raise "No errors given" if errors.empty?
+
+        new.tap do |outcome|
+          errors.each { |error| outcome.add_error(error) }
         end
       end
 
       def error(error)
         errors(Array.wrap(error))
+      end
+
+      def raise!
+        raise "kaboom" unless success?
       end
     end
 
