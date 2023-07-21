@@ -15,9 +15,6 @@ module Foobara
 
       def caster
         @caster ||= begin
-          # TODO: this is crazy to do this here. Make this not necessary.
-          Util.require_pattern("#{__dir__}/type/*/casters/*.rb")
-
           direct_caster = Foobara::Model::Type::Casters::DirectTypeMatchCaster.new(
             type_symbol: symbol,
             ruby_class:
