@@ -22,20 +22,27 @@ module Foobara
         end
       end
 
-      def initialize
-        # lame to put this here...
-        # TODO: fix this dependency issue
-        # require "foobara/model/type/caster"
-        Util.require_pattern("#{__dir__}/type/*/casters/*.rb")
+      def caster
+        @caster ||= begin
+          Util.require_pattern("#{__dir__}/type/*/casters/*.rb")
 
-        casters_module = Util.constant_value(self.class, :Casters)
+          casters_module = Util.constant_value(self.class, :Casters)
 
-        casters = casters_module ? Util.constant_values(casters_module, Class) : []
-        # TODO: see if this passing of self can be eliminated
-        @all_casters = [Casters::DirectTypeMatchCaster.new(self), *casters.map(&:instance)]
+          casters = casters_module ? Util.constant_values(casters_module, Class) : []
+          # TODO: see if this passing of self can be eliminated
+          direct_caster = Casters::DirectTypeMatchCaster.new(self)
+
+          if casters.empty?
+            direct_caster
+          else
+            CasterCollection.new(direct_caster, *casters.map(&:instance))
+          end
+        end
       end
 
-      attr_reader :all_casters
+      def cast_from(value)
+        caster.cast_from(value)
+      end
 
       def ruby_class
         @ruby_class ||= Object.const_get(self.class.name.demodulize)
@@ -43,18 +50,6 @@ module Foobara
 
       def symbol
         @symbol ||= self.class.name.demodulize.underscore.to_sym
-      end
-
-      def cast_from(value)
-        error_outcomes = all_casters.map do |caster|
-          outcome = caster.cast_from(value)
-
-          return outcome if outcome.success?
-
-          outcome
-        end
-
-        Outcome.merge(error_outcomes)
       end
 
       # Do we really need this method?
