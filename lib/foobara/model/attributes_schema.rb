@@ -1,5 +1,3 @@
-require "foobara/model/schema"
-
 module Foobara
   class Model
     # TODO: combine concept of schemas and types??

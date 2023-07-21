@@ -1,5 +1,3 @@
-require "foobara/error"
-
 module Foobara
   class Model
     class Type

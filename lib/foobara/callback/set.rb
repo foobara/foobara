@@ -1,5 +1,3 @@
-require "foobara/callback"
-
 module Foobara
   module Callback
     class Set

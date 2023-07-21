@@ -1,6 +1,3 @@
-require "foobara/outcome"
-require "foobara/util"
-
 module Foobara
   class Model
     # A type contains the following key information about a "type"

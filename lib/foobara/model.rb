@@ -1,7 +1,3 @@
-require "foobara/util"
-require "foobara/model/registry"
-require "foobara/model/type"
-
 module Foobara
   class Model
     class << self
