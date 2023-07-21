@@ -16,7 +16,7 @@ module Foobara
     end
 
     def constant_value(mod, constant)
-      if mod.constants(false).include?(constant)
+      if mod.constants(false).include?(constant.to_sym)
         mod.const_get(constant, false)
       end
     end
