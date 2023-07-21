@@ -84,11 +84,16 @@ module Foobara
         end
       end
 
-      def type_class
+      def type_instance
         Model.type_for(type)
       end
 
-      delegate :can_cast?, :cast_from, :cast_from!, :casting_errors, :validation_errors, to: :type_class
+      delegate :can_cast?,
+               :cast_from,
+               :cast_from!,
+               :casting_errors,
+               :validation_errors,
+               to: :type_instance
 
       def schema_validated?
         schema_has_been_validated

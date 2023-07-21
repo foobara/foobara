@@ -12,6 +12,10 @@ module Foobara
     # So it seems like an attributes type would be an instance of a type. So we can't use singletons like this
     # and need to go back to non-singletons. Primitives would have singletons. But Attributes can't.
     # They need to be initialized from outside using objects build from Schema objects.
+    #
+    # And what does a Schema contain?
+    # Just expressions for expressing types?
+    # So we ask the schema to give us a type??
     class Type
       class << self
         def instance
