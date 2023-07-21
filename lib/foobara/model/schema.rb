@@ -16,6 +16,10 @@ module Foobara
           schema_classes << schema
         end
 
+        def valid_schema_type?(symbol)
+          Schema.schema_classes.any? { |klass| klass.type == symbol }
+        end
+
         def schema_classes
           @schema_classes ||= []
         end
@@ -62,7 +66,7 @@ module Foobara
         @strict_schema = desugarize
       end
 
-      delegate :type, to: :class
+      delegate :type, :valid_schema_type?, to: :class
 
       def to_h
         strict_schema
@@ -84,8 +88,14 @@ module Foobara
         end
       end
 
+      # TODO: maybe this can live elsewhere higher up?
       def type_instance
-        Model.type_for(type)
+        case type
+        when :attributes
+          AttributesTypeBuilder.new(self)
+        else
+          PrimitiveTypeBuilder.new(type)
+        end.to_type
       end
 
       delegate :can_cast?,
@@ -118,7 +128,7 @@ module Foobara
       end
 
       def build_schema_validation_errors
-        unless Model.type_symbol?(type)
+        unless valid_schema_type?(type)
           Error.new(
             symbol: :"unknown_type_#{type}",
             message: "Unknown type #{type}",

@@ -1,5 +1,6 @@
 module Foobara
   class Model
+=begin
     class << self
       def global_registry
         @global_registry ||= Registry.new
@@ -15,9 +16,10 @@ module Foobara
     register_type(Type::Attributes)
     register_type(Type::Duck)
 
+=end
+
     # TODO: make this not necessary!
     Util.require_pattern("#{__dir__}/model/*_schema.rb")
-
     Schema.register_schema(IntegerSchema)
     Schema.register_schema(DuckSchema)
     Schema.register_schema(AttributesSchema)

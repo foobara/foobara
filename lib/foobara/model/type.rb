@@ -17,53 +17,13 @@ module Foobara
     # Just expressions for expressing types?
     # So we ask the schema to give us a type??
     class Type
-      class << self
-        def instance
-          @instance ||= new(
-            caster: implied_caster,
-            symbol: implied_symbol
-          )
-        end
+      attr_accessor :caster, :symbol, :ruby_class
 
-        def implied_symbol
-          @implied_symbol = name.demodulize.underscore.to_sym
-        end
-
-        def implied_caster
-          @implied_caster ||= begin
-            direct_caster = Casters::DirectTypeMatchCaster.new(
-              type_symbol: implied_symbol,
-              ruby_class:
-            )
-
-            casters = begin
-              # TODO: this is crazy to do this here. Make this not necessary.
-              Util.require_pattern("#{__dir__}/type/*/casters/*.rb")
-
-              casters_module = Util.constant_value(self, :Casters)
-
-              if casters_module
-                Util.constant_values(casters_module, Class)
-              end
-            end
-
-            if casters.blank?
-              direct_caster
-            else
-              CasterCollection.new(direct_caster, *casters.map(&:instance))
-            end
-          end
-        end
-      end
-
-      attr_accessor :caster, :symbol
-
-      def initialize(caster:, symbol:)
+      def initialize(caster:, symbol:, ruby_class:)
         self.caster = caster
         self.symbol = symbol
+        self.ruby_class = ruby_class
       end
-
-      delegate :ruby_class, to: :class
 
       def cast_from(value)
         caster.cast_from(value)
