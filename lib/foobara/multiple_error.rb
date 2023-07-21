@@ -15,10 +15,10 @@ module Foobara
       end
 
       context = if merge_contexts
-                  errors.inject({}) do |context, error|
+                  errors.each_with_object({}) do |error, context|
                     error.context.each_pair do |key, value|
                       value_array = context[key] ||= []
-                      array.wrap(value).each { |v| value_array << v }
+                      Array.wrap(value).each { |v| value_array << v }
                     end
                   end
                 else
