@@ -13,28 +13,26 @@ module Foobara
     # and need to go back to non-singletons. Primitives would have singletons. But Attributes can't.
     # They need to be initialized from outside using objects build from Schema objects.
     class Type
-      class << self
-        def symbol
-          name.demodulize.underscore.to_sym
-        end
+      def symbol
+        self.class.name.demodulize.underscore.to_sym
+      end
 
-        def casting_errors(object)
-          unless can_cast?(object)
-            Error.new(
-              symbol: :cannot_cast,
-              message: "Could not cast #{object.inspect} to #{symbol}",
-              context: {
-                cast_to: symbol,
-                value: object
-              }
-            )
-          end
+      def casting_errors(object)
+        unless can_cast?(object)
+          Error.new(
+            symbol: :cannot_cast,
+            message: "Could not cast #{object.inspect} to #{symbol}",
+            context: {
+              cast_to: symbol,
+              value: object
+            }
+          )
         end
+      end
 
-        def validation_errors(_object)
-          # TODO: override this in relevant base types
-          []
-        end
+      def validation_errors(_object)
+        # TODO: override this in relevant base types
+        []
       end
     end
   end
