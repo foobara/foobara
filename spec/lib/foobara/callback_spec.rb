@@ -120,8 +120,6 @@ RSpec.describe Foobara::Callback do
               end
             }.to raise_error(kaboom)
 
-            puts calls
-
             expect(calls.keys).to eq([:walk])
             walk = calls[:walk]
             expect(walk.keys).to eq(%i[before around error])

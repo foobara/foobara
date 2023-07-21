@@ -8,40 +8,33 @@ module Foobara
           end
         end
 
-        def initialize(type_symbol = nil)
-          if type_symbol.is_a?(Type)
-            @type = type_symbol
-          elsif type_symbol.is_a?(Symbol)
-            @type_symbol = type_symbol
-          end
-        end
-
-        def type
-          @type ||= unless @type_symbol
-                      @type_symbol ||= begin
-                        parent = Util.module_for(self.class)
-
-                        if parent.name.demodulize == "Casters"
-                          Util.module_for(parent).name.demodulize.underscore.to_sym
-                        end
-                      end
-
-                      raise "could not infer type symbol" unless @type_symbol
-
-                      Model.type_for(type_symbol)
-                    end
-        end
-
-        def type_symbol
-          @type_symbol || type.symbol
-        end
-
-        delegate :symbol, :ruby_class, to: :type
-
         class << self
           def instance
-            @instance ||= new
+            @instance ||= new(type_symbol: implied_type_symbol, ruby_class: implied_ruby_class)
           end
+
+          def implied_type_symbol
+            parent = Util.module_for(self)
+            if parent.name == "Casters"
+              grandparent = Util.module_for(parent)
+              unless grandparent == Type
+                grandparent.name.demodulize.underscore.to_sym
+              end
+            end
+          end
+
+          def implied_ruby_class
+            if implied_type_symbol
+              Object.get(implied_type_symbol.to_s.classify)
+            end
+          end
+        end
+
+        attr_accessor :type_symbol, :ruby_class
+
+        def initialize(type_symbol: nil, ruby_class: nil)
+          self.type_symbol = type_symbol
+          self.ruby_class = ruby_class
         end
       end
     end

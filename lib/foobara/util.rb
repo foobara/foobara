@@ -44,5 +44,10 @@ module Foobara
         require f
       end
     end
+
+    # TODO: this should probably be moved somewhere else like Model...
+    def implied_symbol(mod)
+      mod.name.demodulize.underscore.to_sym
+    end
   end
 end

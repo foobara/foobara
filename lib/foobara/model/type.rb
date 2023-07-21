@@ -19,38 +19,54 @@ module Foobara
     class Type
       class << self
         def instance
-          @instance ||= new
+          @instance ||= new(
+            caster: implied_caster,
+            symbol: implied_symbol
+          )
         end
-      end
 
-      def caster
-        @caster ||= begin
-          Util.require_pattern("#{__dir__}/type/*/casters/*.rb")
+        def implied_symbol
+          @implied_symbol = name.demodulize.underscore.to_sym
+        end
 
-          casters_module = Util.constant_value(self.class, :Casters)
+        def implied_caster
+          @implied_caster ||= begin
+            direct_caster = Casters::DirectTypeMatchCaster.new(
+              type_symbol: implied_symbol,
+              ruby_class:
+            )
 
-          casters = casters_module ? Util.constant_values(casters_module, Class) : []
-          # TODO: see if this passing of self can be eliminated
-          direct_caster = Casters::DirectTypeMatchCaster.new(self)
+            casters = begin
+              # TODO: this is crazy to do this here. Make this not necessary.
+              Util.require_pattern("#{__dir__}/type/*/casters/*.rb")
 
-          if casters.empty?
-            direct_caster
-          else
-            CasterCollection.new(direct_caster, *casters.map(&:instance))
+              casters_module = Util.constant_value(self, :Casters)
+
+              if casters_module
+                Util.constant_values(casters_module, Class)
+              end
+            end
+
+            if casters.blank?
+              direct_caster
+            else
+              CasterCollection.new(direct_caster, *casters.map(&:instance))
+            end
           end
         end
       end
 
+      attr_accessor :caster, :symbol
+
+      def initialize(caster:, symbol:)
+        self.caster = caster
+        self.symbol = symbol
+      end
+
+      delegate :ruby_class, to: :class
+
       def cast_from(value)
         caster.cast_from(value)
-      end
-
-      def ruby_class
-        @ruby_class ||= Object.const_get(self.class.name.demodulize)
-      end
-
-      def symbol
-        @symbol ||= self.class.name.demodulize.underscore.to_sym
       end
 
       # Do we really need this method?
