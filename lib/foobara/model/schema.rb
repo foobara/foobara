@@ -85,7 +85,7 @@ module Foobara
       end
 
       def type_class
-        Model.types[type]
+        Model.type_for(type)
       end
 
       delegate :can_cast?, :cast_from, :cast_from!, :casting_errors, :validation_errors, to: :type_class
@@ -113,7 +113,7 @@ module Foobara
       end
 
       def build_schema_validation_errors
-        unless Model.types.key?(type)
+        unless Model.type_symbol?(type)
           Error.new(
             symbol: :"unknown_type_#{type}",
             message: "Unknown type #{type}",

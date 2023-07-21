@@ -1,3 +1,7 @@
+require "foobara/util"
+require "foobara/model/registry"
+require "foobara/model/type"
+
 module Foobara
   class Model
     class << self
@@ -5,12 +9,18 @@ module Foobara
         @global_registry ||= Registry.new
       end
 
-      delegate :register_type, :types, to: :global_registry
+      delegate :register_type, :type_for, :type_symbol?, to: :global_registry
     end
 
-    register_type(Type::Integer.instance)
-    register_type(Type::Attributes.instance)
-    register_type(Type::Duck.instance)
+    # TODO: make this not necessary!
+    Util.require_pattern("#{__dir__}/model/type/*.rb")
+
+    register_type(Type::Integer)
+    register_type(Type::Attributes)
+    register_type(Type::Duck)
+
+    # TODO: make this not necessary!
+    Util.require_pattern("#{__dir__}/model/*_schema.rb")
 
     Schema.register_schema(IntegerSchema)
     Schema.register_schema(DuckSchema)
