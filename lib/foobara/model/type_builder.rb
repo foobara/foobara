@@ -4,8 +4,7 @@ module Foobara
       def to_type
         Type.new(
           caster:,
-          symbol:,
-          ruby_class:
+          symbol:
         )
       end
 
@@ -17,7 +16,7 @@ module Foobara
         @caster ||= begin
           direct_caster = Foobara::Model::Type::Casters::DirectTypeMatchCaster.new(
             type_symbol: symbol,
-            ruby_class:
+            ruby_class: # how to handle type :boolean with TrueClass and FalseClass? We need two of these for that.
           )
 
           casters = if casters_module

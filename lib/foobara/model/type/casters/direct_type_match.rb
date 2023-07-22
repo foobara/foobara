@@ -32,7 +32,6 @@ module Foobara
                   message: "#{value} is not a #{ruby_class}",
                   context: {
                     cast_to_type: type_symbol,
-                    cast_to_ruby_class: ruby_class,
                     value:
                   }
                 )

@@ -17,12 +17,11 @@ module Foobara
     # Just expressions for expressing types?
     # So we ask the schema to give us a type??
     class Type
-      attr_accessor :caster, :symbol, :ruby_class
+      attr_accessor :caster, :symbol
 
-      def initialize(caster:, symbol:, ruby_class:)
+      def initialize(caster:, symbol:)
         self.caster = caster
         self.symbol = symbol
-        self.ruby_class = ruby_class
       end
 
       def cast_from(value)
