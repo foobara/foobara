@@ -25,7 +25,7 @@ RSpec.describe Foobara::Model::Schema do
         end
 
         describe "casting" do
-          let(:type_instance) { Foobara::Model::SchemaTypeBuilder.for(schema) }
+          let(:type_instance) { Foobara::Model::TypeBuilder.for(schema) }
 
           let(:can_cast) { type_instance.can_cast?(object) }
           let(:casted_value) { type_instance.cast_from!(object) }

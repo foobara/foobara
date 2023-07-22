@@ -1,6 +1,28 @@
 module Foobara
   class Model
     class TypeBuilder
+      class << self
+        def for(schema)
+          type_symbol = schema.type
+
+          direct_cast_ruby_classes = case type_symbol
+                                     when :attributes
+                                       ::Hash
+                                     when :boolean
+                                       [TrueClass, FalseClass]
+                                     end
+
+          new(schema, direct_cast_ruby_classes:).to_type
+        end
+      end
+
+      attr_accessor :schema, :direct_cast_ruby_classes
+
+      def initialize(schema, direct_cast_ruby_classes: nil)
+        self.schema = schema
+        self.direct_cast_ruby_classes = direct_cast_ruby_classes || Object.const_get(symbol.to_s.classify)
+      end
+
       def to_type
         Type.new(
           caster:,
@@ -8,8 +30,8 @@ module Foobara
         )
       end
 
-      def direct_cast_ruby_classes
-        @direct_cast_ruby_classes ||= Object.const_get(symbol.to_s.classify)
+      def symbol
+        @symbol ||= schema.type
       end
 
       def caster

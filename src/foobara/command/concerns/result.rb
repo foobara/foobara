@@ -7,7 +7,7 @@ module Foobara
         class CouldNotCastResult < StandardError; end
 
         def result_type
-          @result_type ||= Model::SchemaTypeBuilder.for(result_schema)
+          @result_type ||= Model::TypeBuilder.for(result_schema)
         end
 
         private
