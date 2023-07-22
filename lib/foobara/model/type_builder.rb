@@ -28,7 +28,7 @@ module Foobara
             direct_caster
           else
             casters = casters.map do |caster_class|
-              caster_class.new(type_symbol: symbol, ruby_class:)
+              caster_class.new(type_symbol: symbol)
             end
 
             Type::CasterCollection.new(direct_caster, *casters)

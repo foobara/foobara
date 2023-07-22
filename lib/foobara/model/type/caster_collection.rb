@@ -15,7 +15,7 @@ module Foobara
           self.casters = casters
         end
 
-        delegate :symbol, :ruby_class, to: :type
+        delegate :symbol, to: :type
 
         def type
           @type ||= begin

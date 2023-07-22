@@ -15,7 +15,6 @@ module Foobara
                     message: "#{value} is not a string matching #{INTEGER_REGEX}",
                     context: {
                       cast_to_type: type_symbol,
-                      cast_to_ruby_class: ruby_class,
                       value:
                     }
                   )

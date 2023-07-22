@@ -10,7 +10,7 @@ module Foobara
 
         class << self
           def instance
-            @instance ||= new(type_symbol: implied_type_symbol, ruby_class: implied_ruby_class)
+            @instance ||= new(type_symbol: implied_type_symbol)
           end
 
           def implied_type_symbol
@@ -24,11 +24,10 @@ module Foobara
           end
         end
 
-        attr_accessor :type_symbol, :ruby_class
+        attr_accessor :type_symbol
 
-        def initialize(type_symbol: nil, ruby_class: nil)
+        def initialize(type_symbol: nil)
           self.type_symbol = type_symbol
-          self.ruby_class = ruby_class
         end
 
         delegate :implied_type_symbol, to: :class

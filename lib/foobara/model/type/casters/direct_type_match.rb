@@ -20,7 +20,7 @@ module Foobara
 
             self.ruby_class = ruby_class || implied_ruby_class
 
-            super(type_symbol: self.type_symbol, ruby_class: self.ruby_class)
+            super(type_symbol: self.type_symbol)
           end
 
           def cast_from(value)
