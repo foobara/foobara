@@ -3,7 +3,7 @@ require "foobara/model/schema_type_builder"
 module Foobara
   class Model
     class AttributesTypeBuilder < SchemaTypeBuilder
-      def ruby_class
+      def direct_cast_ruby_classes
         ::Hash
       end
     end

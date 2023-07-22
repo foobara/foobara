@@ -11,7 +11,13 @@ module Foobara
         attr_accessor :casters
 
         def initialize(*casters)
+          if casters.size == 1 && casters.first.is_a?(Array)
+            casters = casters.first
+
+          end
+
           super()
+
           self.casters = casters
         end
 

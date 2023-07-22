@@ -8,29 +8,31 @@ module Foobara
         )
       end
 
-      def ruby_class
-        @ruby_class ||= Object.const_get(symbol.to_s.classify)
+      def direct_cast_ruby_classes
+        @direct_cast_ruby_classes ||= Object.const_get(symbol.to_s.classify)
       end
 
       def caster
         @caster ||= begin
-          direct_caster = Foobara::Model::Type::Casters::DirectTypeMatchCaster.new(
-            type_symbol: symbol,
-            ruby_class: # how to handle type :boolean with TrueClass and FalseClass? We need two of these for that.
-          )
+          casters = []
 
-          casters = if casters_module
-                      Util.constant_values(casters_module, Class)
-                    end
+          Array.wrap(direct_cast_ruby_classes).each do |ruby_class|
+            casters << Foobara::Model::Type::Casters::DirectTypeMatchCaster.new(
+              type_symbol: symbol,
+              ruby_class:
+            )
+          end
 
-          if casters.blank?
-            direct_caster
-          else
-            casters = casters.map do |caster_class|
-              caster_class.new(type_symbol: symbol)
+          if casters_module
+            Util.constant_values(casters_module, Class).each do |caster_class|
+              casters << caster_class.new(type_symbol: symbol)
             end
+          end
 
-            Type::CasterCollection.new(direct_caster, *casters)
+          if casters.size == 1
+            casters.first
+          else
+            Type::CasterCollection.new(casters)
           end
         end
       end
