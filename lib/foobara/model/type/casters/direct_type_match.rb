@@ -15,7 +15,7 @@ module Foobara
                 raise "Cannot infer type_symbol or ruby_class and so must pass one or both of them in."
               end
 
-              self.type_symbol = ruby_class.giname.demodulize.downcase.to_sym
+              self.type_symbol = ruby_class.name.demodulize.downcase.to_sym
             end
 
             self.ruby_class = ruby_class || implied_ruby_class
