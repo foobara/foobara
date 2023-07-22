@@ -22,6 +22,10 @@ module Foobara
           inputs&.key?(method_name)
         end
 
+        def input_type
+          @input_type ||= Model::SchemaTypeBuilder.for(input_schema)
+        end
+
         private
 
         def cast_inputs
@@ -30,7 +34,7 @@ module Foobara
             return
           end
 
-          Array.wrap(input_schema.type_instance.casting_errors(raw_inputs)).each do |error|
+          Array.wrap(input_type.casting_errors(raw_inputs)).each do |error|
             symbol = error.symbol
             message = error.message
             context = error.context
@@ -40,7 +44,7 @@ module Foobara
             add_input_error(input:, symbol:, message:, context:)
           end
 
-          outcome = input_schema.type_instance.cast_from(raw_inputs)
+          outcome = input_type.cast_from(raw_inputs)
 
           if outcome.success?
             @inputs = outcome.result

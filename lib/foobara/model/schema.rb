@@ -88,16 +88,6 @@ module Foobara
         end
       end
 
-      # TODO: maybe this can live elsewhere higher up?
-      def type_instance
-        case type
-        when :attributes
-          AttributesTypeBuilder.new(self)
-        else
-          PrimitiveTypeBuilder.new(type)
-        end.to_type
-      end
-
       def schema_validated?
         schema_has_been_validated
       end
