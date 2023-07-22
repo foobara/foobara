@@ -30,7 +30,7 @@ module Foobara
             return
           end
 
-          Array.wrap(input_schema.casting_errors(raw_inputs)).each do |error|
+          Array.wrap(input_schema.type_instance.casting_errors(raw_inputs)).each do |error|
             symbol = error.symbol
             message = error.message
             context = error.context
@@ -40,7 +40,7 @@ module Foobara
             add_input_error(input:, symbol:, message:, context:)
           end
 
-          outcome = input_schema.cast_from(raw_inputs)
+          outcome = input_schema.type_instance.cast_from(raw_inputs)
 
           if outcome.success?
             @inputs = outcome.result

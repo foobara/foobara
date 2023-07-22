@@ -65,7 +65,7 @@ module Foobara
           end
 
           if context_schema.present?
-            errors = context_schema.validation_errors(context.presence || {})
+            errors = context_schema.type_instance.validation_errors(context.presence || {})
             raise "Invalid context schema #{context}: #{errors}" if errors.present?
           elsif context.present?
             raise "There's no context schema declared for #{symbol}"

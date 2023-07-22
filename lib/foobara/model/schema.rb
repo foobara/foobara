@@ -98,13 +98,6 @@ module Foobara
         end.to_type
       end
 
-      delegate :can_cast?,
-               :cast_from,
-               :cast_from!,
-               :casting_errors,
-               :validation_errors,
-               to: :type_instance
-
       def schema_validated?
         schema_has_been_validated
       end

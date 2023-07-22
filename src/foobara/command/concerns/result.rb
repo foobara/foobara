@@ -11,7 +11,7 @@ module Foobara
         def cast_result_using_result_schema(result)
           return result  unless result_schema.present?
 
-          casting_errors = Array.wrap(result_schema.casting_errors(result))
+          casting_errors = Array.wrap(result_schema.type_instance.casting_errors(result))
 
           if casting_errors.present?
             message = casting_errors.map do |error|
@@ -21,13 +21,13 @@ module Foobara
             raise CouldNotCastResult, message
           end
 
-          result_schema.cast_from!(result)
+          result_schema.type_instance.cast_from!(result)
         end
 
         def validate_result_using_result_schema(result)
           return unless result_schema.present?
 
-          Array.wrap(result_schema.validation_errors(result)).each do |error|
+          Array.wrap(result_schema.type_instance.validation_errors(result)).each do |error|
             symbol = error.symbol
             message = error.message
             context = error.context
