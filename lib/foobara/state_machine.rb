@@ -1,3 +1,5 @@
+Foobara::Util.require_directory("#{__dir__}/state_machine")
+
 module Foobara
   class StateMachine
     include Sugar

@@ -9,29 +9,13 @@ module Commands
 end
 
 # TODO: break these out into separate gems instead of simulating it here
-
 require "foobara"
-
-require "foobara/util"
-
-require "foobara/error"
-require "foobara/error_collection"
-require "foobara/multiple_error"
-
-require "foobara/outcome"
-
-Foobara::Util.require_directory("#{__dir__}/../lib/foobara/enumerated")
-
+require "foobara/enumerated"
 require "foobara/callback"
-Foobara::Util.require_directory("#{__dir__}/../lib/foobara/callback")
-
-Foobara::Util.require_directory("#{__dir__}/../lib/foobara/state_machine")
 require "foobara/state_machine"
-
-Foobara::Util.require_directory("#{__dir__}/../lib/foobara/model")
 require "foobara/model"
 
 Foobara::Util.require_directory("#{__dir__}/../src/")
 
+# would have made more sense for domain to have been the top of this monorepo. Oh well, can break everything out later.
 require "foobara/domain"
-Foobara::Util.require_directory("#{__dir__}/../lib/foobara/domain")

@@ -1,3 +1,5 @@
+Foobara::Util.require_directory("#{__dir__}/domain")
+
 module Foobara
   class Domain
     class AlreadyRegisteredDomainDependency < StandardError; end
