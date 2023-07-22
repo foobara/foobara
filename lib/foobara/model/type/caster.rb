@@ -22,12 +22,6 @@ module Foobara
               end
             end
           end
-
-          def implied_ruby_class
-            if implied_type_symbol
-              Object.get(implied_type_symbol.to_s.classify)
-            end
-          end
         end
 
         attr_accessor :type_symbol, :ruby_class
@@ -36,6 +30,8 @@ module Foobara
           self.type_symbol = type_symbol
           self.ruby_class = ruby_class
         end
+
+        delegate :implied_type_symbol, to: :class
       end
     end
   end
