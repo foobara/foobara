@@ -11,7 +11,7 @@ module Foobara
             else
               raw_input_schema = args.first
 
-              @input_schema = Foobara::Model::AttributesSchema.new(raw_input_schema)
+              @input_schema = Foobara::Model::Schema::Attributes.new(raw_input_schema)
 
               errors = input_schema.schema_validation_errors
 

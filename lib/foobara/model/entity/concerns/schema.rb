@@ -9,7 +9,7 @@ module Foobara
             def schema(*args)
               return @schema if args.empty?
 
-              @schema = Foobara::Model::AttributesSchema.new(args.first)
+              @schema = Foobara::Model::Schema::Attributes.new(args.first)
               type = schema.type
 
               unless type == :attributes

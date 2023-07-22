@@ -58,7 +58,7 @@ module Foobara
 
           possible_error_symbols = map.keys
           # TODO: probably should store the schema objects and not the hashes?
-          context_schema = Foobara::Model::AttributesSchema.new(map[symbol])
+          context_schema = Foobara::Model::Schema::Attributes.new(map[symbol])
 
           unless possible_error_symbols.include?(symbol)
             raise "Invalid error symbol #{symbol} expected one of #{possible_error_symbols}"

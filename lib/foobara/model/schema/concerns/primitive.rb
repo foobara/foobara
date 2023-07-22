@@ -2,7 +2,7 @@ module Foobara
   class Model
     class Schema
       module Concerns
-        module PrimitiveSchema
+        module Primitive
           extend ActiveSupport::Concern
 
           class_methods do

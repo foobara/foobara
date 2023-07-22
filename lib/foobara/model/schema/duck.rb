@@ -1,7 +1,9 @@
 module Foobara
   class Model
-    class DuckSchema < Schema
-      include Schema::Concerns::PrimitiveSchema
+    class Schema
+      class Duck < Schema
+        include Schema::Concerns::Primitive
+      end
     end
   end
 end

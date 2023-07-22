@@ -1,7 +1,9 @@
 module Foobara
   class Model
-    class IntegerSchema < Schema
-      include Schema::Concerns::PrimitiveSchema
+    class Schema
+      class Integer < Schema
+        include Schema::Concerns::Primitive
+      end
     end
   end
 end
