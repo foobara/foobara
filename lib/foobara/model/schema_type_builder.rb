@@ -5,13 +5,13 @@ module Foobara
     class SchemaTypeBuilder < TypeBuilder
       class << self
         def for(schema)
-          type = schema.type
+          type_symbol = schema.type
 
-          case type
+          case type_symbol
           when :attributes
             AttributesTypeBuilder.new(schema)
           else
-            PrimitiveTypeBuilder.new(type)
+            PrimitiveTypeBuilder.new(type_symbol)
           end.to_type
         end
       end

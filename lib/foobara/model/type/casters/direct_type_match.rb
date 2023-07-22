@@ -4,7 +4,7 @@ module Foobara
   class Model
     class Type
       module Casters
-        class DirectTypeMatchCaster < Caster
+        class DirectTypeMatch < Caster
           attr_accessor :ruby_class
 
           def initialize(type_symbol: nil, ruby_class: nil)
