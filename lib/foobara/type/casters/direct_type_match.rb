@@ -7,19 +7,17 @@ module Foobara
         attr_accessor :ruby_class
 
         def initialize(type_symbol: nil, ruby_class: nil)
-          self.type_symbol = type_symbol || implied_type_symbol
-
-          unless self.type_symbol
+          unless type_symbol
             unless ruby_class
               raise "Cannot infer type_symbol or ruby_class and so must pass one or both of them in."
             end
 
-            self.type_symbol = ruby_class.name.demodulize.downcase.to_sym
+            type_symbol = ruby_class.name.demodulize.downcase.to_sym
           end
 
-          self.ruby_class = ruby_class || implied_ruby_class
-
           super(type_symbol: self.type_symbol)
+
+          self.ruby_class = ruby_class || implied_ruby_class
         end
 
         def cast_from(value)
@@ -27,7 +25,7 @@ module Foobara
             Outcome.success(value)
           else
             Outcome.errors(
-              CannotCastError.new(
+              Type::CannotCastError.new(
                 message: "#{value} is not a #{ruby_class}",
                 context: {
                   cast_to_type: type_symbol,
