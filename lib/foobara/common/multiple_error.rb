@@ -1,3 +1,5 @@
+require "foobara/common/error"
+
 module Foobara
   class MultipleError < Error
     def initialize(errors, symbol: nil)

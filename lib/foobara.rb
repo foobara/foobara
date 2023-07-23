@@ -1,7 +1,3 @@
-require "foobara/util"
+require "foobara/common/util"
 
-require "foobara/error"
-require "foobara/error_collection"
-require "foobara/multiple_error"
-
-require "foobara/outcome"
+Foobara::Util.require_directory("#{__dir__}/foobara/common")
