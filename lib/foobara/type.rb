@@ -1,3 +1,5 @@
+Foobara::Util.require_directory("#{__dir__}/type")
+
 module Foobara
   # A type contains the following key information about a "type"
   # * The Ruby class associated with this type which is the class of a value of this type

@@ -39,7 +39,7 @@ module Foobara
           casters = []
 
           Array.wrap(direct_cast_ruby_classes).each do |ruby_class|
-            casters << Foobara::Model::Type::Casters::DirectTypeMatch.new(
+            casters << Foobara::Type::Casters::DirectTypeMatch.new(
               type_symbol: symbol,
               ruby_class:
             )
@@ -61,7 +61,7 @@ module Foobara
 
       def casters_module
         @casters_module ||= begin
-          type_module = Util.constant_value(Foobara::Model::Type, symbol.to_s.classify)
+          type_module = Util.constant_value(Foobara::Type, symbol.to_s.classify)
 
           if type_module
             Util.constant_value(type_module, :Casters)
