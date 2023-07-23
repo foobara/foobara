@@ -17,7 +17,7 @@ module Foobara
       def direct_cast_ruby_classes
         @direct_cast_ruby_classes ||= {
           duck: ::Object,
-          attributes: ::Hash,
+          attributes: [],
           map: ::Hash,
           boolean: [::TrueClass, ::FalseClass]
         }[symbol] || Object.const_get(symbol.to_s.camelize)

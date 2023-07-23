@@ -43,8 +43,10 @@ module Foobara
           merged_errors = unmerged_errors.group_by(&:symbol).values.map do |errors|
             if errors.length > 1
               MultipleError.new(errors)
+            else
+              errors.first
             end
-          end.flatten
+          end
 
           Outcome.errors(merged_errors)
         else
