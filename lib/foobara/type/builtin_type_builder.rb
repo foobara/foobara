@@ -1,11 +1,10 @@
 module Foobara
   class Type
     class BuiltinTypeBuilder
-      attr_accessor :direct_cast_ruby_classes, :symbol
+      attr_accessor :symbol
 
-      def initialize(symbol, direct_cast_ruby_classes: nil)
+      def initialize(symbol)
         self.symbol = symbol
-        self.direct_cast_ruby_classes = direct_cast_ruby_classes || Object.const_get(symbol.to_s.classify)
       end
 
       def to_args
@@ -13,6 +12,15 @@ module Foobara
           casters:,
           symbol:
         }
+      end
+
+      def direct_cast_ruby_classes
+        @direct_cast_ruby_classes ||= {
+          duck: ::Object,
+          attributes: ::Hash,
+          map: ::Hash,
+          boolean: [::TrueClass, ::FalseClass]
+        }[symbol] || Object.const_get(symbol.to_s.classify)
       end
 
       def casters

@@ -28,13 +28,7 @@ module Foobara
       end
 
       def register_builtin(symbol)
-        direct_cast_ruby_classes = {
-          duck: ::Object,
-          attributes: ::Hash,
-          boolean: [::TrueClass, ::FalseClass]
-        }[symbol]
-
-        build_and_register(symbol:, **BuiltinTypeBuilder.new(symbol, direct_cast_ruby_classes:).to_args)
+        build_and_register(symbol:, **BuiltinTypeBuilder.new(symbol).to_args)
       end
 
       def types
@@ -103,6 +97,7 @@ module Foobara
 
     register_builtin(:duck)
     register_builtin(:integer)
+    register_builtin(:map)
     # TODO: eliminate attributes as a built-in
     register_builtin(:attributes)
   end
