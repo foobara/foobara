@@ -18,15 +18,11 @@ module Foobara
   # Just expressions for expressing types?
   # So we ask the schema to give us a type??
   class Type
-    attr_accessor :caster, :symbol
+    attr_accessor :casters, :symbol
 
-    def initialize(caster:, symbol:)
-      self.caster = caster
+    def initialize(symbol:, casters: [])
+      self.casters = Array.wrap(casters)
       self.symbol = symbol
-    end
-
-    def cast_from(value)
-      caster.cast_from(value)
     end
 
     # Do we really need this method?
@@ -53,6 +49,18 @@ module Foobara
     def validation_errors(_value)
       # TODO: override this in relevant base types
       []
+    end
+
+    def cast_from(value)
+      error_outcomes = casters.map do |caster|
+        outcome = caster.cast_from(value)
+
+        return outcome if outcome.success?
+
+        outcome
+      end
+
+      Outcome.merge(error_outcomes)
     end
   end
 end

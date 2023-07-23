@@ -25,7 +25,7 @@ module Foobara
 
       def to_type
         Type.new(
-          caster:,
+          casters:,
           symbol:
         )
       end
@@ -34,8 +34,8 @@ module Foobara
         @symbol ||= schema.type
       end
 
-      def caster
-        @caster ||= begin
+      def casters
+        @casters ||= begin
           casters = []
 
           Array.wrap(direct_cast_ruby_classes).each do |ruby_class|
@@ -51,11 +51,7 @@ module Foobara
             end
           end
 
-          if casters.size == 1
-            casters.first
-          else
-            Type::CasterCollection.new(casters)
-          end
+          casters
         end
       end
 
