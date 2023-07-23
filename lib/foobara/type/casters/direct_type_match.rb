@@ -39,7 +39,7 @@ module Foobara
         private
 
         def implied_ruby_class
-          Object.const_get(type_symbol.to_s.classify)
+          Object.const_get(type_symbol.to_s.camelize)
         end
       end
     end

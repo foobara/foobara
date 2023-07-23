@@ -15,7 +15,7 @@ module Foobara
         end
 
         def for(type, callback)
-          const_get(type.to_s.classify).new(callback)
+          const_get(type.to_s.camelize).new(callback)
         end
       end
 

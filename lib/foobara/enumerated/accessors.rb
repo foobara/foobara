@@ -29,7 +29,7 @@ module Foobara
           original_values_source = values_source
 
           if values_source.nil?
-            module_name = attribute_name.to_s.classify
+            module_name = attribute_name.to_s.camelize
 
             values_source = begin
               Accessors.const_get_up_hierarchy(self, module_name)

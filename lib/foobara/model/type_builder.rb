@@ -17,7 +17,7 @@ module Foobara
 
       def initialize(schema, direct_cast_ruby_classes: nil)
         self.schema = schema
-        self.direct_cast_ruby_classes = direct_cast_ruby_classes || Object.const_get(symbol.to_s.classify)
+        self.direct_cast_ruby_classes = direct_cast_ruby_classes || Object.const_get(symbol.to_s.camelize)
       end
 
       def to_args
@@ -54,7 +54,7 @@ module Foobara
 
       def casters_module
         @casters_module ||= begin
-          type_module = Util.constant_value(Foobara::Type, symbol.to_s.classify)
+          type_module = Util.constant_value(Foobara::Type, symbol.to_s.camelize)
 
           if type_module
             Util.constant_value(type_module, :Casters)

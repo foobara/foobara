@@ -20,7 +20,7 @@ module Foobara
           attributes: ::Hash,
           map: ::Hash,
           boolean: [::TrueClass, ::FalseClass]
-        }[symbol] || Object.const_get(symbol.to_s.classify)
+        }[symbol] || Object.const_get(symbol.to_s.camelize)
       end
 
       def casters
@@ -46,7 +46,7 @@ module Foobara
 
       def casters_module
         @casters_module ||= begin
-          type_module = Util.constant_value(Foobara::Type, symbol.to_s.classify)
+          type_module = Util.constant_value(Foobara::Type, symbol.to_s.camelize)
 
           if type_module
             Util.constant_value(type_module, :Casters)
