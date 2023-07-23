@@ -1,22 +1,10 @@
 module Foobara
-  class Model
-    class TypeBuilder
-      class << self
-        def for(schema)
-          type_symbol = schema.type
+  class Type
+    class BuiltinTypeBuilder
+      attr_accessor :direct_cast_ruby_classes, :symbol
 
-          type = Type[type_symbol]
-
-          return type if type
-
-          Type.new(symbol:, **new(schema).to_args)
-        end
-      end
-
-      attr_accessor :schema, :direct_cast_ruby_classes
-
-      def initialize(schema, direct_cast_ruby_classes: nil)
-        self.schema = schema
+      def initialize(symbol, direct_cast_ruby_classes: nil)
+        self.symbol = symbol
         self.direct_cast_ruby_classes = direct_cast_ruby_classes || Object.const_get(symbol.to_s.classify)
       end
 
@@ -25,10 +13,6 @@ module Foobara
           casters:,
           symbol:
         }
-      end
-
-      def symbol
-        @symbol ||= schema.type
       end
 
       def casters

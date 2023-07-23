@@ -18,8 +18,37 @@ module Foobara
   # Just expressions for expressing types?
   # So we ask the schema to give us a type??
   class Type
+    class << self
+      def build_and_register(symbol:, **args)
+        types[symbol] = new(symbol:, **args)
+      end
+
+      def register(symbol, type)
+        types[symbol] = type
+      end
+
+      def register_builtin(symbol)
+        direct_cast_ruby_classes = {
+          duck: ::Object,
+          attributes: ::Hash,
+          boolean: [::TrueClass, ::FalseClass]
+        }[symbol]
+
+        build_and_register(symbol:, **BuiltinTypeBuilder.new(symbol, direct_cast_ruby_classes:).to_args)
+      end
+
+      def types
+        @types ||= {}
+      end
+
+      def [](symbol)
+        types[symbol]
+      end
+    end
+
     attr_accessor :symbol, :extends
 
+    # Can we eliminate symbol here or no?
     def initialize(symbol:, casters: [], extends: nil)
       self.extends = extends
       @local_casters = Array.wrap(casters)
@@ -71,5 +100,10 @@ module Foobara
 
       Outcome.merge(error_outcomes)
     end
+
+    register_builtin(:duck)
+    register_builtin(:integer)
+    # TODO: eliminate attributes as a built-in
+    register_builtin(:attributes)
   end
 end
