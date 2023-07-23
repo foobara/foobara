@@ -15,7 +15,7 @@ module Foobara
             type_symbol = ruby_class.name.demodulize.downcase.to_sym
           end
 
-          super(type_symbol: self.type_symbol)
+          super(type_symbol:)
 
           self.ruby_class = ruby_class || implied_ruby_class
         end
