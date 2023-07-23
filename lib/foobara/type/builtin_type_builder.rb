@@ -45,13 +45,7 @@ module Foobara
       end
 
       def casters_module
-        @casters_module ||= begin
-          type_module = Util.constant_value(Foobara::Type, symbol.to_s.camelize)
-
-          if type_module
-            Util.constant_value(type_module, :Casters)
-          end
-        end
+        @casters_module ||= Util.constant_value(Foobara::Type::Casters, symbol.to_s.camelize)
       end
     end
   end

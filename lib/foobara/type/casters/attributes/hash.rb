@@ -2,8 +2,8 @@ require "foobara/type/caster"
 
 module Foobara
   class Type
-    class Attributes < Type
-      module Casters
+    module Casters
+      module Attributes
         class Hash < Caster
           def applicable?(value)
             value.is_a?(::Hash)

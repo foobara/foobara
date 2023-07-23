@@ -1,7 +1,7 @@
 module Foobara
   class Type
-    class Integer < Type
-      module Casters
+    module Casters
+      module Integer
         class String < Caster
           INTEGER_REGEX = /^-?\d+$/
 
