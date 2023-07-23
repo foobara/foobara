@@ -18,11 +18,20 @@ module Foobara
   # Just expressions for expressing types?
   # So we ask the schema to give us a type??
   class Type
-    attr_accessor :casters, :symbol
+    attr_accessor :symbol, :extends
 
-    def initialize(symbol:, casters: [])
-      self.casters = Array.wrap(casters)
+    def initialize(symbol:, casters: [], extends: nil)
+      self.extends = extends
+      @local_casters = Array.wrap(casters)
       self.symbol = symbol
+    end
+
+    def casters(inherits = false)
+      @casters ||= if !inherits || extends.blank?
+                     @local_casters
+                   else
+                     @local_casters + extends.casters
+                   end
     end
 
     # Do we really need this method?
