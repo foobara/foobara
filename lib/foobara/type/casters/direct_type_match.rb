@@ -20,20 +20,12 @@ module Foobara
           self.ruby_class = ruby_class || implied_ruby_class
         end
 
+        def applicable?(value)
+          value.is_a?(ruby_class)
+        end
+
         def cast_from(value)
-          if value.is_a?(ruby_class)
-            Outcome.success(value)
-          else
-            Outcome.errors(
-              Type::CannotCastError.new(
-                message: "#{value} is not a #{ruby_class}",
-                context: {
-                  cast_to_type: type_symbol,
-                  value:
-                }
-              )
-            )
-          end
+          Outcome.success(value)
         end
 
         private

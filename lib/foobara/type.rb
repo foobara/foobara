@@ -84,15 +84,21 @@ module Foobara
     end
 
     def cast_from(value)
-      error_outcomes = casters.map do |caster|
-        outcome = caster.cast_from(value)
+      caster = casters.find { |caster| caster.applicable?(value) }
 
-        return outcome if outcome.success?
-
-        outcome
+      if caster
+        caster.cast_from(value)
+      else
+        Outcome.error(
+          CannotCastError.new(
+            message: "Could not find any applicable casters to cast from #{value} to #{symbol}",
+            context: {
+              cast_to_type: symbol,
+              value:
+            }
+          )
+        )
       end
-
-      Outcome.merge(error_outcomes)
     end
 
     register_builtin(:duck)

@@ -5,16 +5,20 @@ module Foobara
         class String < Caster
           INTEGER_REGEX = /^-?\d+$/
 
-          def cast_from(value)
-            if value.is_a?(::String) && value =~ INTEGER_REGEX
-              Outcome.success(value.to_i)
+          def applicable?(value)
+            value.is_a?(::String)
+          end
+
+          def cast_from(string)
+            if string =~ INTEGER_REGEX
+              Outcome.success(string.to_i)
             else
               Outcome.errors(
                 CannotCastError.new(
-                  message: "#{value} is not a string matching #{INTEGER_REGEX}",
+                  message: "#{string} is not a string matching #{INTEGER_REGEX}",
                   context: {
                     cast_to_type: type_symbol,
-                    value:
+                    value: string
                   }
                 )
               )
