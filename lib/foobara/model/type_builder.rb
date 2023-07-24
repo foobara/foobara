@@ -34,7 +34,7 @@ module Foobara
       end
 
       def to_type
-        Foobara::Type.new(**to_args)
+        Foobara::Type[symbol] || Foobara::Type.new(**to_args)
       end
 
       def to_args

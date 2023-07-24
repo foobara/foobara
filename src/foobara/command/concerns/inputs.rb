@@ -34,17 +34,21 @@ module Foobara
             return
           end
 
-          Array.wrap(input_type.casting_errors(raw_inputs)).each do |error|
-            symbol = error.symbol
-            message = error.message
-            context = error.context
+          outcome = input_type.process(raw_inputs)
 
-            input = context[:cast_to]
+          if outcome.success?
+            @inputs = outcome.result
+          else
+            outcome.errors.each do |error|
+              symbol = error.symbol
+              message = error.message
+              context = error.context
 
-            add_input_error(input:, symbol:, message:, context:)
+              input = context[:cast_to]
+
+              add_input_error(input:, symbol:, message:, context:)
+            end
           end
-
-          outcome = input_type.cast_from(raw_inputs)
 
           if outcome.success?
             @inputs = outcome.result

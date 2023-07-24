@@ -13,19 +13,19 @@ module Foobara
         private
 
         def cast_result_using_result_schema(result)
-          return result  unless result_schema.present?
+          return result unless result_schema.present?
 
-          casting_errors = Array.wrap(result_type.casting_errors(result))
+          outcome = result_type.process(result)
 
-          if casting_errors.present?
-            message = casting_errors.map do |error|
+          if outcome.success?
+            outcome.result
+          else
+            message = outcome.errors.map do |error|
               "#{error.message}\n#{error.context.inspect}"
             end.join("\n\n")
 
             raise CouldNotCastResult, message
           end
-
-          result_type.cast_from!(result)
         end
 
         def validate_result_using_result_schema(result)

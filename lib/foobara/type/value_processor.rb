@@ -1,13 +1,11 @@
 module Foobara
   class Type
     class ValueProcessor
-      attr_accessor :outcome
-
-      def initialize(outcome)
-        self.outcome = outcome
+      def applicable?(_value)
+        true
       end
 
-      def process
+      def process(_value)
         raise "subclass responsibility"
       end
 

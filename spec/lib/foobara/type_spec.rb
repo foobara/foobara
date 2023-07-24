@@ -5,7 +5,7 @@ RSpec.describe Foobara::Type do
     let(:type_symbol) { :attributes }
 
     describe "#cast_from" do
-      let(:outcome) { type.cast_from(hash) }
+      let(:outcome) { type.process(hash) }
       let(:result) { outcome.result }
       let(:errors) { outcome.errors }
 

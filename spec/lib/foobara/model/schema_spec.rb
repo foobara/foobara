@@ -25,27 +25,20 @@ RSpec.describe Foobara::Model::Schema do
         end
 
         describe "casting" do
-          let(:type_instance) { Foobara::Model::TypeBuilder.type_for(schema) }
+          subject { type_instance.process!(object) }
 
-          let(:can_cast) { type_instance.can_cast?(object) }
-          let(:casted_value) { type_instance.cast_from!(object) }
+          let(:type_instance) { Foobara::Model::TypeBuilder.type_for(schema) }
 
           context "when cast is not required" do
             let(:object) { 123 }
 
-            specify {
-              expect(can_cast).to be true
-              expect(casted_value).to eq(123)
-            }
+            it { is_expected.to be(object) }
           end
 
           context "when cast is required" do
             let(:object) { "123" }
 
-            specify {
-              expect(can_cast).to be true
-              expect(casted_value).to eq(123)
-            }
+            it { is_expected.to eq(123) }
           end
         end
       end

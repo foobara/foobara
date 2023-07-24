@@ -89,6 +89,8 @@ module Foobara
       self.symbol = symbol
     end
 
+    private
+
     # Do we really need this method?
     def can_cast?(value)
       cast_from(value).success?
@@ -116,17 +118,11 @@ module Foobara
       if caster
         caster.cast_from(value)
       else
-        Outcome.error(
-          CannotCastError.new(
-            message: "Could not find any applicable casters to cast from #{value} to #{symbol}",
-            context: {
-              cast_to_type: symbol,
-              value:
-            }
-          )
-        )
+        Outcome.success(value)
       end
     end
+
+    public
 
     def process(value)
       cast_outcome = cast_from(value)
@@ -138,6 +134,8 @@ module Foobara
       value = cast_outcome.result
 
       value_processors.each do |value_processor|
+        next unless value_processor.applicable?(value)
+
         processor_outcome = value_processor.process(value)
 
         if processor_outcome.success?
@@ -147,9 +145,7 @@ module Foobara
             outcome.add_error(error)
           end
 
-          if processor.error_halts_processing?
-            break
-          end
+          break if value_processor.error_halts_processing?
         end
       end
 
@@ -160,13 +156,30 @@ module Foobara
       outcome
     end
 
+    def process!(value)
+      outcome = process(value)
+
+      if outcome.success?
+        outcome.result
+      else
+        outcome.raise!
+      end
+    end
+
     def validation_errors(_value)
-      # TODO: actually return something of interest here!
+      # TODO: actually return something of interest here! Or delete this.
       []
     end
 
-    register_builtin(:duck)
-    register_builtin(:integer)
+    register(:duck, Type.new(symbol: :duck))
+    # register_builtin(:duck)
+    register(:integer, Type.new(
+                         symbol: :integer,
+                         value_processors: [
+                           Type::ValueProcessors::Integer::CastFromString.new
+                         ]
+                       ))
+    # register_builtin(:integer)
     register_builtin(:map)
     # TODO: eliminate attributes as a built-in
     register_builtin(:attributes)
