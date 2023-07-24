@@ -26,11 +26,10 @@ module Foobara
         end
       end
 
-      attr_accessor :schema, :direct_cast_ruby_classes
+      attr_accessor :schema
 
-      def initialize(schema, direct_cast_ruby_classes: nil)
+      def initialize(schema)
         self.schema = schema
-        self.direct_cast_ruby_classes ||= direct_cast_ruby_classes || Object.const_get(symbol.to_s.camelize)
       end
 
       def to_type
