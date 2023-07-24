@@ -14,6 +14,10 @@ module Foobara
           strict_schema[:schemas]
         end
 
+        def defaults
+          strict_schema[:defaults] || {}
+        end
+
         def valid_attribute_name?(attribute_name)
           valid_attribute_names.include?(attribute_name)
         end
@@ -42,8 +46,38 @@ module Foobara
                   non_symbolic:
                 }
               )
+            else
+              default_validation_errors
             end
           end || []
+        end
+
+        def default_validation_errors
+          if defaults.present?
+            if defaults.is_a?(Hash) && defaults.keys.all? { |key| key.is_a?(Symbol) }
+              defaults.keys.map do |key|
+                unless valid_attribute_names.include?(key)
+                  Error.new(
+                    symbol: :invalid_default_value_given,
+                    message: "#{key} is not a valid default key, expected one of #{valid_attribute_names}",
+                    context: {
+                      invalid_key: key,
+                      valid_attribute_names:,
+                      defaults:
+                    }
+                  )
+                end
+              end.compact.presence
+            else
+              Error.new(
+                symbol: :invalid_default_values_given,
+                message: "defaults should be a hash with symbolic keys",
+                context: {
+                  defaults:
+                }
+              )
+            end
+          end
         end
 
         def to_h
@@ -67,12 +101,12 @@ module Foobara
             return
           end
 
-          hash = if raw_schema.keys.length == 2 && raw_schema.key?(:type) && raw_schema.key?(:schemas)
-                   raw_schema
+          hash = if strictish_schema?
+                   raw_schema.dup
                  else
                    {
                      type: :attributes,
-                     schemas: raw_schema
+                     schemas: raw_schema.dup
                    }
                  end
 
@@ -87,8 +121,30 @@ module Foobara
             return
           end
 
+          hash = desugarize_defaults(hash)
+
           hash[:schemas] = hash[:schemas].transform_values do |attribute_schema|
             Schema.for(attribute_schema)
+          end
+
+          hash
+        end
+
+        def strictish_schema?
+          raw_schema.key?(:type) && raw_schema.key?(:schemas) &&
+            raw_schema.keys - %i[type schemas defaults required] == []
+        end
+
+        def desugarize_defaults(hash)
+          hash[:defaults] ||= {}
+
+          schemas = hash[:schemas]
+          schemas.each_pair do |attribute_name, attribute_schema|
+            if attribute_schema.is_a?(Hash) && attribute_schema.key?(:default)
+              default = attribute_schema[:default]
+              schemas[attribute_name] = attribute_schema.except(:default)
+              hash[:defaults] = hash[:defaults].merge(attribute_name => default)
+            end
           end
 
           hash

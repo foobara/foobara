@@ -47,7 +47,7 @@ module Foobara
       end
 
       def casters
-        raise "needs work"
+        raise "subclass responsibility"
       end
 
       builder_registry[:attributes] = TypeBuilder::Attributes
