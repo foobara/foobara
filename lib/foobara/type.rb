@@ -1,3 +1,5 @@
+require "active_support/core_ext/array/conversions"
+
 Foobara::Util.require_directory("#{__dir__}/type")
 
 module Foobara
@@ -27,10 +29,6 @@ module Foobara
         types[symbol] = type
       end
 
-      def register_builtin(symbol)
-        build_and_register(symbol:, **BuiltinTypeBuilder.new(symbol).to_args)
-      end
-
       def types
         @types ||= {}
       end
@@ -42,7 +40,7 @@ module Foobara
 
     # TODO: we seem to have symbol here for error reporting. Can we eliminate it?
     # TODO: eliminate castors
-    attr_accessor :symbol, :casters, :value_processors
+    attr_accessor :symbol, :casters, :value_processors, :casted_class
 
     # Can we eliminate symbol here or no?
     # Has a collection of transformers and validators.
@@ -83,9 +81,10 @@ module Foobara
     # max_length (string validation at attribute level)
     # max (integer validation at attribute level)
     # matches (string against a regex)
-    def initialize(symbol:, casters: [], value_processors: [])
-      self.value_processors = value_processors
+    def initialize(symbol:, casters: [], casted_class: nil, value_processors: [])
+      self.casted_class = casted_class
       self.casters = Array.wrap(casters)
+      self.value_processors = value_processors
       self.symbol = symbol
     end
 
@@ -116,9 +115,20 @@ module Foobara
       caster = casters.find { |c| c.applicable?(value) }
 
       if caster
-        caster.cast_from(value)
+        Outcome.success(caster.cast(value))
       else
-        Outcome.success(value)
+        applies_messages = casters.map(&:applies_message).flatten
+        applies_message = applies_messages.to_sentence(words_connector: ", ", last_word_connector: ", or ")
+
+        Outcome.error(
+          CannotCastError.new(
+            message: "Cannot cast #{value}. Expected it to #{applies_message}",
+            context: {
+              cast_to_type: symbol,
+              value:
+            }
+          )
+        )
       end
     end
 
@@ -129,11 +139,25 @@ module Foobara
 
       return cast_outcome unless cast_outcome.success?
 
-      outcome = Outcome.new
-
       value = cast_outcome.result
 
-      value_processors.each do |value_processor|
+      processors = if casted_class.present?
+                     if casted_class.is_a?(CastedValueValidator)
+                       [casted_class, *value_processors]
+                     else
+                       [CastedValueValidator.new(
+                         casters:,
+                         type_symbol: symbol,
+                         allowed_classes: casted_class
+                       ), *value_processors]
+                     end
+                   else
+                     value_processors
+                   end
+
+      outcome = Outcome.new
+
+      processors.each do |value_processor|
         next unless value_processor.applicable?(value)
 
         processor_outcome = value_processor.process(value)
@@ -171,17 +195,36 @@ module Foobara
       []
     end
 
-    register(:duck, Type.new(symbol: :duck))
-    # register_builtin(:duck)
-    register(:integer, Type.new(
-                         symbol: :integer,
-                         value_processors: [
-                           Type::ValueProcessors::Integer::CastFromString.new
-                         ]
-                       ))
-    # register_builtin(:integer)
-    register_builtin(:map)
-    # TODO: eliminate attributes as a built-in
-    register_builtin(:attributes)
+    register(
+      :duck,
+      Type.new(
+        symbol: :duck,
+        casters: [
+          Type::Casters::DirectTypeMatch.new(::Object)
+        ],
+        casted_class: ::Object,
+        value_processors: []
+      )
+    )
+    register(
+      :integer,
+      Type.new(
+        symbol: :integer,
+        casters: [
+          Type::Casters::DirectTypeMatch.new(::Integer),
+          Type::ValueProcessors::Integer::CastFromString.new
+        ],
+        casted_class: ::Integer,
+        value_processors: []
+      )
+    )
+    register(
+      :attributes,
+      Type.new(
+        symbol: :attributes,
+        casters: Type::Casters::Attributes::Hash.new,
+        casted_class: ::Hash
+      )
+    )
   end
 end

@@ -4,34 +4,25 @@ module Foobara
   class Type
     module Casters
       class DirectTypeMatch < Caster
-        attr_accessor :ruby_class
+        attr_accessor :ruby_classes
 
-        def initialize(type_symbol: nil, ruby_class: nil)
-          unless type_symbol
-            unless ruby_class
-              raise "Cannot infer type_symbol or ruby_class and so must pass one or both of them in."
-            end
-
-            type_symbol = ruby_class.name.demodulize.downcase.to_sym
-          end
-
-          super(type_symbol:)
-
-          self.ruby_class = ruby_class || implied_ruby_class
+        def initialize(ruby_classes)
+          super()
+          self.ruby_classes = Array.wrap(ruby_classes)
         end
 
         def applicable?(value)
-          value.is_a?(ruby_class)
+          ruby_classes.any? { |klass| value.is_a?(klass) }
         end
 
-        def cast_from(value)
-          Outcome.success(value)
+        def cast(value)
+          value
         end
 
-        private
-
-        def implied_ruby_class
-          Object.const_get(type_symbol.to_s.camelize)
+        def applies_message
+          ruby_classes.map do |klass|
+            "be a ::#{klass.name}"
+          end
         end
       end
     end

@@ -6,27 +6,21 @@ module Foobara
       module Attributes
         class Hash < Caster
           def applicable?(value)
-            value.is_a?(::Hash)
+            value.is_a?(::Hash) && value.keys.all? { |key| key.is_a?(Symbol) || key.is_a?(String) }
           end
 
-          def cast_from(hash)
+          def applies_message
+            "be a hash with symbolizeable keys"
+          end
+
+          def cast(hash)
             keys = hash.keys
             non_symbolic_keys = keys.reject { |key| key.is_a?(Symbol) }
 
             if non_symbolic_keys.empty?
-              Outcome.success(hash)
-            elsif non_symbolic_keys.all? { |key| key.is_a?(String) }
-              Outcome.success(hash.symbolize_keys)
+              hash
             else
-              Outcome.errors(
-                CannotCastError.new(
-                  message: "#{hash} contains keys that are not symbolizable: #{non_symbolic_keys}",
-                  context: {
-                    cast_to_type: type_symbol,
-                    value: hash
-                  }
-                )
-              )
+              hash.symbolize_keys
             end
           end
         end

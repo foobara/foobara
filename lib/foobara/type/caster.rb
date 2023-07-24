@@ -1,17 +1,21 @@
+require "foobara/type/value_transformer"
+
 module Foobara
   class Type
-    class Caster
-      attr_accessor :type_symbol
-
-      def initialize(type_symbol: nil)
-        self.type_symbol = type_symbol
-      end
-
+    class Caster < ValueTransformer
       def applicable?(_value)
         raise "subclass responsibility"
       end
 
-      def cast_from(_value)
+      def cast(_value)
+        raise "subclass responsibility"
+      end
+
+      def transform(value)
+        cast_from(value)
+      end
+
+      def applies_message(_value)
         raise "subclass responsibility"
       end
     end
