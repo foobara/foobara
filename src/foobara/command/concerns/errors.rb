@@ -52,9 +52,9 @@ module Foobara
                   input = error.input
 
                   map[:input][input]
-                else
-                  raise "Unexpected error type for #{error}"
                 end
+
+          raise "Unexpected error type for #{error}" unless map
 
           possible_error_symbols = map.keys
           # TODO: probably should store the schema objects and not the hashes?

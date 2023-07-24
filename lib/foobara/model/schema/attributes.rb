@@ -156,7 +156,7 @@ module Foobara
         end
 
         def desugarize_required(hash)
-          hash[:required] ||= []
+          hash[:required] = Array.wrap(hash[:required])
 
           schemas = hash[:schemas]
           schemas.each_pair do |attribute_name, attribute_schema|
