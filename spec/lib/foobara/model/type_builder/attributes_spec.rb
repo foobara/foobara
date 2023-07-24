@@ -56,4 +56,73 @@ RSpec.describe Foobara::Model::TypeBuilder::Attributes do
       end
     end
   end
+
+  describe "required attributes" do
+    context "when schema has top-level required array" do
+      let(:schema_hash) do
+        {
+          type: :attributes,
+          schemas: {
+            a: :integer,
+            b: :integer,
+            c: :integer
+          },
+          required: %i[a c]
+        }
+      end
+
+      it "gives errors when required fields missing" do
+        outcome = type.process(a: 100, b: 200, c: "300")
+        expect(outcome).to be_success
+
+        outcome = type.process(a: 100, c: "300")
+        expect(outcome).to be_success
+
+        outcome = type.process(b: 100, c: "300")
+        expect(outcome).to_not be_success
+        expect(outcome.errors.map(&:symbol)).to eq(%i[missing_a])
+
+        outcome = type.process(b: 100)
+        expect(outcome).to_not be_success
+        expect(outcome.errors.map(&:symbol)).to eq(%i[missing_a missing_c])
+
+        outcome = type.process({})
+        expect(outcome).to_not be_success
+        expect(outcome.errors.map(&:symbol)).to eq(%i[missing_a missing_c])
+      end
+    end
+
+    context "when schema has per-attribute required flag" do
+      let(:schema_hash) do
+        {
+          type: :attributes,
+          schemas: {
+            a: { type: :integer, required: true },
+            b: { type: :integer, required: false },
+            c: { type: :integer, required: true }
+          }
+        }
+      end
+
+      it "gives errors when required fields missing" do
+        outcome = type.process(a: 100, b: 200, c: "300")
+        expect(outcome).to be_success
+
+        outcome = type.process(a: 100, c: "300")
+        expect(outcome).to be_success
+
+        outcome = type.process(b: 100, c: "300")
+        expect(outcome).to_not be_success
+        expect(outcome.errors.map(&:symbol)).to eq(%i[missing_a])
+
+        outcome = type.process(b: 100)
+        expect(outcome).to_not be_success
+        expect(outcome.errors.map(&:symbol)).to eq(%i[missing_a missing_c])
+
+        outcome = type.process({})
+        expect(outcome).to_not be_success
+        expect(outcome.errors.map(&:symbol)).to eq(%i[missing_a missing_c])
+      end
+    end
+  end
 end

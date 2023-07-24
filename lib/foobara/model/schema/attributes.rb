@@ -18,6 +18,10 @@ module Foobara
           strict_schema[:defaults] || {}
         end
 
+        def required
+          strict_schema[:required] || []
+        end
+
         def valid_attribute_name?(attribute_name)
           valid_attribute_names.include?(attribute_name)
         end
@@ -122,6 +126,7 @@ module Foobara
           end
 
           hash = desugarize_defaults(hash)
+          hash = desugarize_required(hash)
 
           hash[:schemas] = hash[:schemas].transform_values do |attribute_schema|
             Schema.for(attribute_schema)
@@ -144,6 +149,23 @@ module Foobara
               default = attribute_schema[:default]
               schemas[attribute_name] = attribute_schema.except(:default)
               hash[:defaults] = hash[:defaults].merge(attribute_name => default)
+            end
+          end
+
+          hash
+        end
+
+        def desugarize_required(hash)
+          hash[:required] ||= []
+
+          schemas = hash[:schemas]
+          schemas.each_pair do |attribute_name, attribute_schema|
+            if attribute_schema.is_a?(Hash) && attribute_schema.key?(:required)
+              required = attribute_schema[:required]
+              if required # required: false is a no-op as it's the default
+                schemas[attribute_name] = attribute_schema.except(:required)
+                hash[:required] += [attribute_name]
+              end
             end
           end
 

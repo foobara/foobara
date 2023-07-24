@@ -15,13 +15,20 @@ module Foobara
 
         def value_processors
           [
-            *default_transformers
+            *default_transformers,
+            *required_field_validators
           ]
         end
 
         def default_transformers
           schema.defaults.map do |(attribute_name, default_value)|
             Transformers::Attribute::AddDefault.new(attribute_name:, default_value:)
+          end
+        end
+
+        def required_field_validators
+          schema.required.map do |attribute_name|
+            Validators::Attribute::ValidateRequiredAttributesPresent.new(attribute_name:)
           end
         end
 
