@@ -2,6 +2,14 @@ require "active_support/core_ext/array/conversions"
 
 Foobara::Util.require_directory("#{__dir__}/type")
 
+# some concepts that are kind of hard to keep straight...
+# 1) There's the schema type which describes the structure and how to process that structure of the schema hash.
+#    That is unrelated to the type/ directory of this monorepo.
+# 2) There is the target Ruby class(es) of a value.
+# 3) There is the symbol of a Type which is hard to define. It seems to be a base type from which other types
+#    could be composed. But those composed types often need to be anonymous.  This is the most confusing of the
+#    types and currently seems to only serve the purpose of being passed through to error contexts.
+#    Can we eliminate this symbol from the type instance??
 module Foobara
   # A type contains the following key information about a "type"
   # * The Ruby class associated with this type which is the class of a value of this type
