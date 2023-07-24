@@ -44,6 +44,8 @@ module Foobara
         end
       end
 
+      # Why do we have this method in two places??
+      # TODO: fix this
       def casters_module
         @casters_module ||= Util.constant_value(Foobara::Type::Casters, symbol.to_s.camelize)
       end

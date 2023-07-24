@@ -7,11 +7,11 @@ module Foobara
         self.type_symbol = type_symbol
       end
 
-      def applicable?
+      def applicable?(_value)
         raise "subclass responsibility"
       end
 
-      def cast_from(value)
+      def cast_from(_value)
         raise "subclass responsibility"
       end
     end

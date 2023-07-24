@@ -40,12 +40,14 @@ module Foobara
       end
     end
 
+    # TODO: we seem to have symbol here for error reporting. Can we eliminate it?
     attr_accessor :symbol, :extends
 
     # Can we eliminate symbol here or no?
-    def initialize(symbol:, casters: [], extends: nil)
+    def initialize(symbol:, casters: [], validators: [], extends: nil)
       self.extends = extends
       @local_casters = Array.wrap(casters)
+      @local_validators = Array.wrap(validators)
       self.symbol = symbol
     end
 
@@ -55,6 +57,14 @@ module Foobara
                    else
                      @local_casters + extends.casters
                    end
+    end
+
+    def validators(inherits = false)
+      @validators ||= if !inherits || extends.blank?
+                        @local_validators
+                      else
+                        @local_validators + extends.validators
+                      end
     end
 
     # Do we really need this method?
@@ -78,13 +88,12 @@ module Foobara
       end
     end
 
-    def validation_errors(_value)
-      # TODO: override this in relevant base types
-      []
+    def validation_errors(value)
+      validate(value).errors
     end
 
     def cast_from(value)
-      caster = casters.find { |caster| caster.applicable?(value) }
+      caster = casters(true).find { |c| c.applicable?(value) }
 
       if caster
         caster.cast_from(value)
@@ -98,6 +107,25 @@ module Foobara
             }
           )
         )
+      end
+    end
+
+    def validate(value)
+      error_outcomes = []
+
+      validators(true).each do |validator|
+        outcome = validator.validate(value)
+        if outcome.success?
+          value = outcome.result
+        else
+          error_outcomes << outcome
+        end
+      end
+
+      if error_outcomes.empty?
+        Outcome.success(value)
+      else
+        Outcome.merge(error_outcomes)
       end
     end
 

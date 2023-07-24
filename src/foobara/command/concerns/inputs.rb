@@ -23,7 +23,7 @@ module Foobara
         end
 
         def input_type
-          @input_type ||= Model::TypeBuilder.for(input_schema)
+          @input_type ||= Model::TypeBuilder.type_for(input_schema)
         end
 
         private
