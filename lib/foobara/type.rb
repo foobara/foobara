@@ -41,7 +41,8 @@ module Foobara
     end
 
     # TODO: we seem to have symbol here for error reporting. Can we eliminate it?
-    attr_accessor :symbol, :extends
+    # TODO: eliminate castors
+    attr_accessor :symbol, :casters
 
     # Can we eliminate symbol here or no?
     # Has a collection of transformers and validators.
@@ -82,18 +83,9 @@ module Foobara
     # max_length (string validation at attribute level)
     # max (integer validation at attribute level)
     # matches (string against a regex)
-    def initialize(symbol:, casters: [], extends: nil)
-      self.extends = extends
-      @local_casters = Array.wrap(casters)
+    def initialize(symbol:, casters: [])
+      self.casters = Array.wrap(casters)
       self.symbol = symbol
-    end
-
-    def casters(inherits = false)
-      @casters ||= if !inherits || extends.blank?
-                     @local_casters
-                   else
-                     @local_casters + extends.casters
-                   end
     end
 
     # Do we really need this method?
