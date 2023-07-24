@@ -1,6 +1,12 @@
 module Foobara
   class Type
     class ValueProcessor
+      attr_accessor :type_symbol
+
+      def initialize(type_symbol: nil)
+        self.type_symbol = type_symbol || :custom
+      end
+
       def applicable?(_value)
         true
       end

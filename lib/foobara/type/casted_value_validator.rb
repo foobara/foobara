@@ -3,12 +3,11 @@ require "foobara/type/value_validator"
 module Foobara
   class Type
     class CastedValueValidator < ValueValidator
-      attr_accessor :allowed_classes, :casters, :type_symbol
+      attr_accessor :allowed_classes, :casters
 
-      def initialize(type_symbol:, allowed_classes:, casters:)
-        super()
+      def initialize(allowed_classes:, casters:, type_symbol: nil)
+        super(type_symbol:)
 
-        self.type_symbol = type_symbol
         self.casters = casters
         self.allowed_classes = Array.wrap(allowed_classes)
       end

@@ -29,10 +29,6 @@ module Foobara
   # So we ask the schema to give us a type??
   class Type
     class << self
-      def build_and_register(symbol:, **args)
-        types[symbol] = new(symbol:, **args)
-      end
-
       def register(symbol, type)
         types[symbol] = type
       end
@@ -48,7 +44,7 @@ module Foobara
 
     # TODO: we seem to have symbol here for error reporting. Can we eliminate it?
     # TODO: eliminate castors
-    attr_accessor :symbol, :casters, :value_processors, :casted_class
+    attr_accessor :casters, :value_processors
 
     # Can we eliminate symbol here or no?
     # Has a collection of transformers and validators.
@@ -89,11 +85,9 @@ module Foobara
     # max_length (string validation at attribute level)
     # max (integer validation at attribute level)
     # matches (string against a regex)
-    def initialize(symbol:, casters: [], casted_class: nil, value_processors: [])
-      self.casted_class = casted_class
+    def initialize(casters: [], value_processors: [])
       self.casters = Array.wrap(casters)
       self.value_processors = value_processors
-      self.symbol = symbol
     end
 
     private
@@ -132,7 +126,7 @@ module Foobara
           CannotCastError.new(
             message: "Cannot cast #{value}. Expected it to #{applies_message}",
             context: {
-              cast_to_type: symbol,
+              cast_to_type: casters.first.type_symbol,
               value:
             }
           )
@@ -149,23 +143,9 @@ module Foobara
 
       value = cast_outcome.result
 
-      processors = if casted_class.present?
-                     if casted_class.is_a?(CastedValueValidator)
-                       [casted_class, *value_processors]
-                     else
-                       [CastedValueValidator.new(
-                         casters:,
-                         type_symbol: symbol,
-                         allowed_classes: casted_class
-                       ), *value_processors]
-                     end
-                   else
-                     value_processors
-                   end
-
       outcome = Outcome.new
 
-      processors.each do |value_processor|
+      value_processors.each do |value_processor|
         next unless value_processor.applicable?(value)
 
         processor_outcome = value_processor.process(value)
@@ -206,32 +186,26 @@ module Foobara
     register(
       :duck,
       Type.new(
-        symbol: :duck,
         casters: [
-          Type::Casters::DirectTypeMatch.new(::Object)
+          Type::Casters::DirectTypeMatch.new(type_symbol: :duck, ruby_classes: ::Object)
         ],
-        casted_class: ::Object,
         value_processors: []
       )
     )
     register(
       :integer,
       Type.new(
-        symbol: :integer,
         casters: [
-          Type::Casters::DirectTypeMatch.new(::Integer),
+          Type::Casters::DirectTypeMatch.new(type_symbol: :integer, ruby_classes: ::Integer),
           Type::ValueProcessors::Integer::CastFromString.new
         ],
-        casted_class: ::Integer,
         value_processors: []
       )
     )
     register(
       :attributes,
       Type.new(
-        symbol: :attributes,
-        casters: Type::Casters::Attributes::Hash.new,
-        casted_class: ::Hash
+        casters: Type::Casters::Attributes::Hash.new(type_symbol: :attributes)
       )
     )
   end

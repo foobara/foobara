@@ -6,8 +6,8 @@ module Foobara
       class DirectTypeMatch < Caster
         attr_accessor :ruby_classes
 
-        def initialize(ruby_classes)
-          super()
+        def initialize(ruby_classes:, type_symbol: nil)
+          super(type_symbol:)
           self.ruby_classes = Array.wrap(ruby_classes)
         end
 
