@@ -82,10 +82,9 @@ module Foobara
     # max_length (string validation at attribute level)
     # max (integer validation at attribute level)
     # matches (string against a regex)
-    def initialize(symbol:, casters: [], validators: [], extends: nil)
+    def initialize(symbol:, casters: [], extends: nil)
       self.extends = extends
       @local_casters = Array.wrap(casters)
-      @local_validators = Array.wrap(validators)
       self.symbol = symbol
     end
 
@@ -95,14 +94,6 @@ module Foobara
                    else
                      @local_casters + extends.casters
                    end
-    end
-
-    def validators(inherits = false)
-      @validators ||= if !inherits || extends.blank?
-                        @local_validators
-                      else
-                        @local_validators + extends.validators
-                      end
     end
 
     # Do we really need this method?
@@ -126,10 +117,6 @@ module Foobara
       end
     end
 
-    def validation_errors(value)
-      validate(value).errors
-    end
-
     def cast_from(value)
       caster = casters(true).find { |c| c.applicable?(value) }
 
@@ -148,23 +135,9 @@ module Foobara
       end
     end
 
-    def validate(value)
-      error_outcomes = []
-
-      validators(true).each do |validator|
-        outcome = validator.validate(value)
-        if outcome.success?
-          value = outcome.result
-        else
-          error_outcomes << outcome
-        end
-      end
-
-      if error_outcomes.empty?
-        Outcome.success(value)
-      else
-        Outcome.merge(error_outcomes)
-      end
+    def validation_errors(value)
+      # TODO: actually return something of interest here!
+      []
     end
 
     register_builtin(:duck)
