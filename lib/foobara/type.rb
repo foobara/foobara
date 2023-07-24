@@ -42,7 +42,7 @@ module Foobara
 
     # TODO: we seem to have symbol here for error reporting. Can we eliminate it?
     # TODO: eliminate castors
-    attr_accessor :symbol, :casters
+    attr_accessor :symbol, :casters, :value_processors
 
     # Can we eliminate symbol here or no?
     # Has a collection of transformers and validators.
@@ -83,7 +83,8 @@ module Foobara
     # max_length (string validation at attribute level)
     # max (integer validation at attribute level)
     # matches (string against a regex)
-    def initialize(symbol:, casters: [])
+    def initialize(symbol:, casters: [], value_processors: [])
+      self.value_processors = value_processors
       self.casters = Array.wrap(casters)
       self.symbol = symbol
     end
@@ -110,7 +111,7 @@ module Foobara
     end
 
     def cast_from(value)
-      caster = casters(true).find { |c| c.applicable?(value) }
+      caster = casters.find { |c| c.applicable?(value) }
 
       if caster
         caster.cast_from(value)
@@ -127,7 +128,39 @@ module Foobara
       end
     end
 
-    def validation_errors(value)
+    def process(value)
+      cast_outcome = cast_from(value)
+
+      return cast_outcome unless cast_outcome.success?
+
+      outcome = Outcome.new
+
+      value = cast_outcome.result
+
+      value_processors.each do |value_processor|
+        processor_outcome = value_processor.process(value)
+
+        if processor_outcome.success?
+          value = processor_outcome.result
+        else
+          processor_outcome.errors.each do |error|
+            outcome.add_error(error)
+          end
+
+          if processor.error_halts_processing?
+            break
+          end
+        end
+      end
+
+      if outcome.success?
+        outcome.result = value
+      end
+
+      outcome
+    end
+
+    def validation_errors(_value)
       # TODO: actually return something of interest here!
       []
     end

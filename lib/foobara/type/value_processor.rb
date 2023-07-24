@@ -10,6 +10,10 @@ module Foobara
       def process
         raise "subclass responsibility"
       end
+
+      def error_halts_processing?
+        false
+      end
     end
   end
 end
