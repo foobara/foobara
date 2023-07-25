@@ -188,8 +188,16 @@ module Foobara
       Type.new(
         casters: [
           Type::Casters::DirectTypeMatch.new(type_symbol: :duck, ruby_classes: ::Object)
-        ],
-        value_processors: []
+        ]
+      )
+    )
+    register(
+      :symbol,
+      Type.new(
+        casters: [
+          Type::Casters::DirectTypeMatch.new(type_symbol: :symbol, ruby_classes: ::Symbol),
+          Type::Casters::Symbol::String.new
+        ]
       )
     )
     register(
@@ -198,8 +206,7 @@ module Foobara
         casters: [
           Type::Casters::DirectTypeMatch.new(type_symbol: :integer, ruby_classes: ::Integer),
           Type::ValueProcessors::Integer::CastFromString.new
-        ],
-        value_processors: []
+        ]
       )
     )
     register(
