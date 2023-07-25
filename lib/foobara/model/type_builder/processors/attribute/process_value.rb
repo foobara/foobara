@@ -23,13 +23,14 @@ module Foobara
 
               value = attributes_hash[attribute_name]
 
-              cast_outcome = attribute_type.cast_from(value)
+              process_outcome = attribute_type.process(value)
 
-              if cast_outcome.success?
-                outcome.result = attributes_hash.merge(attribute_name => cast_outcome.result)
+              if process_outcome.success?
+                outcome.result = attributes_hash.merge(attribute_name => process_outcome.result)
               else
-                cast_outcome.errors.each do |error|
-                  outcome.add_error(error)
+                process_outcome.errors.each do |error|
+                  attribute_error = AttributeError.new(attribute_name:, **error.to_h.slice(:symbol, :message, :context))
+                  outcome.add_error(attribute_error)
                 end
               end
             end
