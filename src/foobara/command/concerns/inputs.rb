@@ -44,9 +44,7 @@ module Foobara
               message = error.message
               context = error.context
 
-              input = context[:cast_to]
-
-              add_input_error(input:, symbol:, message:, context:)
+              add_input_error(attribute_name: error.attribute_name, symbol:, message:, context:)
             end
           end
 

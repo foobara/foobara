@@ -2,43 +2,34 @@ module Foobara
   class ErrorCollection
     class ErrorAlreadySetError < StandardError; end
 
-    attr_reader :error_hash
+    attr_reader :error_array
 
     def initialize
-      @error_hash = {}
+      @error_array = []
     end
 
     def success?
-      !has_errors?
+      empty?
     end
 
     def has_errors?
-      error_hash.present?
+      !empty?
     end
 
-    def empty?
-      error_hash.blank?
-    end
+    delegate :empty?, :partition, to: :error_array
 
     def errors
-      error_hash.values
+      error_array
     end
 
     def each_error(&)
-      error_hash.each_value(&)
+      error_array.each(&)
     end
 
     def has_error?(error)
-      symbol = case error
-               when Error
-                 error.symbol
-               when Symbol
-                 error
-               when String
-                 error.to_sym
-               end
+      raise ArgumentError unless error.is_a?(Error)
 
-      error_hash.key?(symbol)
+      error_array.include?(error)
     end
 
     def add_error(*args)
@@ -49,17 +40,11 @@ module Foobara
                 Error.new(symbol:, message:, context:)
               end
 
-      symbol = error.symbol
-
-      if has_error?(symbol)
-        raise ErrorAlreadySetError, "cannot set #{symbol} more than once"
+      if has_error?(error)
+        raise ErrorAlreadySetError, "cannot set #{error} more than once"
       end
 
-      error_hash[symbol] = error
-    end
-
-    def to_h
-      error_hash.transform_values(&:to_h)
+      error_array << error
     end
   end
 end

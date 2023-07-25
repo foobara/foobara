@@ -104,7 +104,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
         error = errors.first
         expect(error.symbol).to eq(:could_not_run_some_subcommand)
         expect(error.message).to eq("Failed to execute RunSomeSubcommand")
-        expect(error.context).to eq(
+        expect(error.context[:runtime]).to eq(
           it_failed: {
             type: :runtime,
             symbol: :it_failed,

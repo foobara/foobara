@@ -22,6 +22,16 @@ module Foobara
 
     delegate :type, to: :class
 
+    def ==(other)
+      equal?(other) || eql?(other)
+    end
+
+    def eql?(other)
+      return false unless other.is_a?(Error)
+
+      symbol == other.symbol
+    end
+
     def to_h
       {
         type:,

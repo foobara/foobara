@@ -13,7 +13,11 @@ module Foobara
 
               @input_schema = Foobara::Model::Schema::Attributes.new(raw_input_schema)
 
-              errors = input_schema.schema_validation_errors
+              errors = if input_schema.has_errors?
+                         input_schema.errors
+                       else
+                         input_schema.schema_validation_errors
+                       end
 
               if errors.present?
                 raise "Schema is not valid!! #{errors.map(&:message).join(", ")}"

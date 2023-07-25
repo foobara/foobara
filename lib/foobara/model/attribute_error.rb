@@ -1,17 +1,19 @@
 module Foobara
-  class Command
-    class InputError < Error
-      attr_accessor :input
+  class AttributeError < Error
+    attr_accessor :attribute_name
 
-      def initialize(input:, **data)
-        super(**data)
+    def initialize(attribute_name:, **data)
+      super(**data)
 
-        self.input = input
-      end
+      self.attribute_name = attribute_name
+    end
 
-      def to_h
-        super.merge(input:)
-      end
+    def eql?(other)
+      super && other.is_a?(AttributeError) && attribute_name == other.attribute_name
+    end
+
+    def to_h
+      super.merge(attribute_name:)
     end
   end
 end

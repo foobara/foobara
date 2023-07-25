@@ -15,12 +15,10 @@ module Foobara
 
             def validation_errors(attributes_hash)
               unless attributes_hash.key?(attribute_name)
-                Error.new(
+                AttributeError.new(
+                  attribute_name:,
                   symbol: :missing_required_attribute,
-                  message: "Missing required attribute #{attribute_name}",
-                  context: {
-                    attribute_name:
-                  }
+                  message: "Missing required attribute #{attribute_name}"
                 )
               end
             end

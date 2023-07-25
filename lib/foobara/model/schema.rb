@@ -72,6 +72,10 @@ module Foobara
         strict_schema
       end
 
+      def has_errors?
+        errors.present?
+      end
+
       def valid?
         schema_validation_errors.empty?
       end

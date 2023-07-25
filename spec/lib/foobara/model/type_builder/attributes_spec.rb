@@ -80,15 +80,31 @@ RSpec.describe Foobara::Model::TypeBuilder::Attributes do
 
         outcome = type.process(b: 100, c: "300")
         expect(outcome).to_not be_success
-        expect(outcome.errors.map(&:symbol)).to eq(%i[missing_a])
+        expect(outcome.errors.map { |e| [e.attribute_name, e.symbol] }).to eq([
+                                                                                %i[
+                                                                                  a missing_required_attribute
+                                                                                ]
+                                                                              ])
 
         outcome = type.process(b: 100)
         expect(outcome).to_not be_success
-        expect(outcome.errors.map(&:symbol)).to eq(%i[missing_a missing_c])
+        expect(outcome.errors.map { |e| [e.attribute_name, e.symbol] }).to eq([
+                                                                                %i[
+                                                                                  a missing_required_attribute
+                                                                                ],
+                                                                                %i[c
+                                                                                   missing_required_attribute]
+                                                                              ])
 
         outcome = type.process({})
         expect(outcome).to_not be_success
-        expect(outcome.errors.map(&:symbol)).to eq(%i[missing_a missing_c])
+        expect(outcome.errors.map { |e| [e.attribute_name, e.symbol] }).to eq([
+                                                                                %i[
+                                                                                  a missing_required_attribute
+                                                                                ],
+                                                                                %i[c
+                                                                                   missing_required_attribute]
+                                                                              ])
       end
     end
 
@@ -113,15 +129,31 @@ RSpec.describe Foobara::Model::TypeBuilder::Attributes do
 
         outcome = type.process(b: 100, c: "300")
         expect(outcome).to_not be_success
-        expect(outcome.errors.map(&:symbol)).to eq(%i[missing_a])
+        expect(outcome.errors.map { |e| [e.attribute_name, e.symbol] }).to eq([
+                                                                                %i[
+                                                                                  a missing_required_attribute
+                                                                                ]
+                                                                              ])
 
         outcome = type.process(b: 100)
         expect(outcome).to_not be_success
-        expect(outcome.errors.map(&:symbol)).to eq(%i[missing_a missing_c])
+        expect(outcome.errors.map { |e| [e.attribute_name, e.symbol] }).to eq([
+                                                                                %i[
+                                                                                  a missing_required_attribute
+                                                                                ],
+                                                                                %i[c
+                                                                                   missing_required_attribute]
+                                                                              ])
 
         outcome = type.process({})
         expect(outcome).to_not be_success
-        expect(outcome.errors.map(&:symbol)).to eq(%i[missing_a missing_c])
+        expect(outcome.errors.map { |e| [e.attribute_name, e.symbol] }).to eq([
+                                                                                %i[
+                                                                                  a missing_required_attribute
+                                                                                ],
+                                                                                %i[c
+                                                                                   missing_required_attribute]
+                                                                              ])
       end
     end
   end

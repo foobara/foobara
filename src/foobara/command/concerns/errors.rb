@@ -13,7 +13,11 @@ module Foobara
         delegate :has_errors?, to: :error_collection
 
         def error_hash
-          error_collection.to_h
+          runtime_errors, input_errors = error_collection.partition { |e| e.is_a?(RuntimeError) }
+          {
+            runtime: runtime_errors.to_h { |error| [error.symbol, error.to_h] },
+            input: input_errors.group_by(&:input).transform_values(&:to_h)
+          }
         end
 
         private
@@ -24,7 +28,7 @@ module Foobara
         end
 
         def add_input_error(**args)
-          error = InputError.new(**args)
+          error = AttributeError.new(**args)
           add_error(error)
         end
 
@@ -48,10 +52,10 @@ module Foobara
           map = case error
                 when RuntimeError
                   map[:runtime]
-                when InputError
-                  input = error.input
+                when AttributeError
+                  attribute_name = error.attribute_name
 
-                  map[:input][input]
+                  map[:input][attribute_name]
                 end
 
           raise "Unexpected error type for #{error}" unless map
