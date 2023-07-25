@@ -51,7 +51,7 @@ module Foobara
                 }
               )
             else
-              default_validation_errors
+              Array.wrap(default_validation_errors) + Array.wrap(required_attribute_validation_errors)
             end
           end || []
         end
@@ -78,6 +78,34 @@ module Foobara
                 message: "defaults should be a hash with symbolic keys",
                 context: {
                   defaults:
+                }
+              )
+            end
+          end
+        end
+
+        def required_attribute_validation_errors
+          if required.present?
+            if required.is_a?(Array) && required.all? { |key| key.is_a?(::Symbol) }
+              required.map do |key|
+                unless valid_attribute_names.include?(key)
+                  Error.new(
+                    symbol: :invalid_required_attribute_name_given,
+                    message: "#{key} is not a valid default key, expected one of #{valid_attribute_names}",
+                    context: {
+                      invalid_required_attribute_name: key,
+                      valid_attribute_names:,
+                      required:
+                    }
+                  )
+                end
+              end.compact.presence
+            else
+              Error.new(
+                symbol: :invalid_required_attributes_values_given,
+                message: "required should be an array of symbols",
+                context: {
+                  required:
                 }
               )
             end
