@@ -11,7 +11,7 @@ module Foobara
         true
       end
 
-      def process(_value)
+      def process_outcome(_outcome)
         raise "subclass responsibility"
       end
 

@@ -20,15 +20,15 @@ RSpec.describe Foobara::Model::TypeBuilder::Attributes do
         }
       end
 
-      it "applies defaults when expected" do
+      it "applies defaults when expected and casts where expected" do
         attributes = type.process!(a: 100, b: 200, c: "300")
-        expect(attributes).to eq(a: 100, b: 200, c: "300")
+        expect(attributes).to eq(a: 100, b: 200, c: 300)
 
         attributes = type.process!(a: 100, c: "300")
-        expect(attributes).to eq(a: 100, b: 1, c: "300")
+        expect(attributes).to eq(a: 100, b: 1, c: 300)
 
         attributes = type.process!(a: 100)
-        expect(attributes).to eq(a: 100, b: 1, c: "2")
+        expect(attributes).to eq(a: 100, b: 1, c: 2)
       end
     end
 
@@ -46,13 +46,13 @@ RSpec.describe Foobara::Model::TypeBuilder::Attributes do
 
       it "applies defaults when expected" do
         attributes = type.process!(a: 100, b: 200, c: "300")
-        expect(attributes).to eq(a: 100, b: 200, c: "300")
+        expect(attributes).to eq(a: 100, b: 200, c: 300)
 
         attributes = type.process!(a: 100, c: "300")
-        expect(attributes).to eq(a: 100, b: 1, c: "300")
+        expect(attributes).to eq(a: 100, b: 1, c: 300)
 
         attributes = type.process!(a: 100)
-        expect(attributes).to eq(a: 100, b: 1, c: "2")
+        expect(attributes).to eq(a: 100, b: 1, c: 2)
       end
     end
   end

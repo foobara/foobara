@@ -5,13 +5,11 @@ module Foobara
         raise "subclass responsibility"
       end
 
-      def process(value)
-        errors = validation_errors(value)
+      def process_outcome(outcome)
+        errors = validation_errors(outcome.result)
 
-        if errors.blank?
-          Outcome.success(value)
-        else
-          Outcome.errors(errors)
+        Array.wrap(errors).each do |error|
+          outcome.add_error(error)
         end
       end
     end

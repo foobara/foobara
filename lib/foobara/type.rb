@@ -90,8 +90,6 @@ module Foobara
       self.value_processors = value_processors
     end
 
-    private
-
     # Do we really need this method?
     def can_cast?(value)
       cast_from(value).success?
@@ -120,7 +118,12 @@ module Foobara
         Outcome.success(caster.cast(value))
       else
         applies_messages = casters.map(&:applies_message).flatten
-        applies_message = applies_messages.to_sentence(words_connector: ", ", last_word_connector: ", or ")
+        connector = ", or "
+        applies_message = applies_messages.to_sentence(
+          words_connector: ", ",
+          last_word_connector: connector,
+          two_words_connector: connector
+        )
 
         Outcome.error(
           CannotCastError.new(
@@ -134,35 +137,20 @@ module Foobara
       end
     end
 
-    public
-
     def process(value)
       cast_outcome = cast_from(value)
 
       return cast_outcome unless cast_outcome.success?
 
-      value = cast_outcome.result
-
-      outcome = Outcome.new
+      outcome = Outcome.new(keep_result_even_if_not_success: true)
+      outcome.result = cast_outcome.result
 
       value_processors.each do |value_processor|
-        next unless value_processor.applicable?(value)
+        next unless value_processor.applicable?(outcome.result)
 
-        processor_outcome = value_processor.process(value)
+        value_processor.process_outcome(outcome)
 
-        if processor_outcome.success?
-          value = processor_outcome.result
-        else
-          processor_outcome.errors.each do |error|
-            outcome.add_error(error)
-          end
-
-          break if value_processor.error_halts_processing?
-        end
-      end
-
-      if outcome.success?
-        outcome.result = value
+        break if value_processor.error_halts_processing? && !outcome.success?
       end
 
       outcome

@@ -7,8 +7,8 @@ module Foobara
         raise "subclass responsibility"
       end
 
-      def process(value)
-        Outcome.success(transform(value))
+      def process_outcome(outcome)
+        outcome.result = transform(outcome.result)
       end
     end
   end
