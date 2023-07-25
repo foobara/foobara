@@ -54,7 +54,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
         input: {
           should_fail: {
             cannot_cast: {
-              cast_to: :integer,
+              cast_to: :duck,
               value: :duck
             }
           },
@@ -70,7 +70,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
             input: {
               should_fail: {
                 cannot_cast: {
-                  cast_to: :integer,
+                  cast_to: :duck,
                   value: :duck
                 }
               },

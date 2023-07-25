@@ -41,13 +41,11 @@ module Foobara
           end
 
           def register_cannot_cast_errors
-            input_schema.schemas.each_pair do |input, schema|
-              cast_to = schema.type
-
+            input_schema.schemas.each_key do |input|
               possible_input_error(
                 input,
                 :cannot_cast,
-                cast_to:,
+                cast_to: :duck,
                 value: :duck
               )
             end
