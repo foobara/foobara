@@ -19,7 +19,7 @@ module Foobara
         end
 
         def respond_to_missing_for_inputs?(method_name, _private = false)
-          inputs&.key?(method_name)
+          input_schema.schemas.key?(method_name)
         end
 
         def input_type

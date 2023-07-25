@@ -69,7 +69,7 @@ module Foobara
       delegate :type, :valid_schema_type?, to: :class
 
       def to_h
-        strict_schema
+        { type: }
       end
 
       def has_errors?

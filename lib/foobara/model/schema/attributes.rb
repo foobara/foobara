@@ -6,7 +6,7 @@ module Foobara
           def can_handle?(sugary_schema)
             return false unless sugary_schema.is_a?(Hash)
 
-            sugary_schema.keys.all? { |key| key.is_a?(Symbol) }
+            sugary_schema.keys.all? { |key| key.is_a?(::Symbol) }
           end
         end
 
@@ -40,7 +40,7 @@ module Foobara
               }
             )
           else
-            non_symbolic = schemas.keys.reject { |key| key.is_a?(Symbol) }
+            non_symbolic = schemas.keys.reject { |key| key.is_a?(::Symbol) }
 
             if non_symbolic.present?
               Error.new(
@@ -58,7 +58,7 @@ module Foobara
 
         def default_validation_errors
           if defaults.present?
-            if defaults.is_a?(Hash) && defaults.keys.all? { |key| key.is_a?(Symbol) }
+            if defaults.is_a?(Hash) && defaults.keys.all? { |key| key.is_a?(::Symbol) }
               defaults.keys.map do |key|
                 unless valid_attribute_names.include?(key)
                   Error.new(
@@ -85,10 +85,11 @@ module Foobara
         end
 
         def to_h
-          {
-            type:,
-            schemas: schemas.transform_values(&:to_h)
-          }
+          super.merge(
+            schemas: schemas.transform_values(&:to_h),
+            required:,
+            defaults:
+          )
         end
 
         private
@@ -106,15 +107,15 @@ module Foobara
           end
 
           hash = if strictish_schema?
-                   raw_schema.dup
+                   raw_schema.deep_dup
                  else
                    {
                      type: :attributes,
-                     schemas: raw_schema.dup
+                     schemas: raw_schema.deep_dup
                    }
                  end
 
-          unless hash[:schemas].keys.all? { |attribute_name| attribute_name.is_a?(Symbol) }
+          unless hash[:schemas].keys.all? { |attribute_name| attribute_name.is_a?(::Symbol) }
             errors << Error.new(
               symbol: :expected_a_hash,
               message: "Attributes must be a hash",

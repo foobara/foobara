@@ -1,5 +1,6 @@
 require "foobara/type/caster"
 
+# TODO: move this to casters directory
 module Foobara
   class Type
     module ValueProcessors
@@ -9,10 +10,6 @@ module Foobara
 
           def applicable?(value)
             value.is_a?(::String) && value =~ INTEGER_REGEX
-          end
-
-          def error_halts_processing?
-            true
           end
 
           def applies_message

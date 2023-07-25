@@ -6,7 +6,7 @@ module Foobara
       module Attributes
         class Hash < Caster
           def applicable?(value)
-            value.is_a?(::Hash) && value.keys.all? { |key| key.is_a?(Symbol) || key.is_a?(String) }
+            value.is_a?(::Hash) && value.keys.all? { |key| key.is_a?(::Symbol) || key.is_a?(String) }
           end
 
           def applies_message
@@ -15,7 +15,7 @@ module Foobara
 
           def cast(hash)
             keys = hash.keys
-            non_symbolic_keys = keys.reject { |key| key.is_a?(Symbol) }
+            non_symbolic_keys = keys.reject { |key| key.is_a?(::Symbol) }
 
             if non_symbolic_keys.empty?
               hash
