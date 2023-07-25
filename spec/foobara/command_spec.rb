@@ -85,5 +85,37 @@ RSpec.describe Foobara::Command do
         expect(error.context).to eq(attribute_name: :extra_junk, value: 123)
       end
     end
+
+    context "when sub-attribute is not valid" do
+      let(:command_class2) do
+        Class.new(command_class) do
+          input_schema(
+            type: :attributes,
+            schemas: {
+              exponent: :integer,
+              base: { type: :integer, required: true },
+              foo: {
+                bar: { type: :integer, max: 10 }
+              }
+            },
+            required: :exponent
+          )
+        end
+      end
+
+      let(:command) { command_class2.new(base: 2, exponent: 3, foo: { bar: "asdf" }) }
+
+      let(:outcome) { command.run }
+      let(:errors) { outcome.errors }
+      let(:error) { outcome.errors.first }
+
+      it "is not success and has expected error" do
+        expect(outcome).to_not be_success
+        expect(errors.size).to be(1)
+        # TODO: this feels very wrong...
+        expect(error.attribute_name).to eq(:foo)
+        expect(error.symbol).to eq(:cannot_cast)
+      end
+    end
   end
 end
