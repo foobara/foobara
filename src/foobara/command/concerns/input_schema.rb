@@ -34,8 +34,10 @@ module Foobara
           private
 
           def register_possible_errors
+            # These should be derived somehow from the validators
             register_cannot_cast_errors
             register_missing_required_attribute_errors
+            register_unexpected_attribute_errors
           end
 
           def register_cannot_cast_errors
@@ -59,6 +61,15 @@ module Foobara
                 attribute_name: :symbol
               )
             end
+          end
+
+          def register_unexpected_attribute_errors
+            possible_input_error(
+              :_unexpected_attribute,
+              :unexpected_attributes,
+              attribute_name: :symbol,
+              value: :duck
+            )
           end
         end
 

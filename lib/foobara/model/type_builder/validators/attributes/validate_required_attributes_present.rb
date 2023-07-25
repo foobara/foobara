@@ -6,7 +6,7 @@ module Foobara
           class ValidateRequiredAttributesPresent < Foobara::Type::ValueValidator
             attr_accessor :attribute_name, :default_value
 
-            def initialize(attribute_name:)
+            def initialize(attribute_name)
               super()
 
               self.attribute_name = attribute_name
@@ -18,7 +18,10 @@ module Foobara
                 AttributeError.new(
                   attribute_name:,
                   symbol: :missing_required_attribute,
-                  message: "Missing required attribute #{attribute_name}"
+                  message: "Missing required attribute #{attribute_name}",
+                  context: {
+                    attribute_name:
+                  }
                 )
               end
             end

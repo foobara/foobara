@@ -14,6 +14,7 @@ module Foobara
 
         def error_hash
           runtime_errors, input_errors = error_collection.partition { |e| e.is_a?(RuntimeError) }
+
           {
             runtime: runtime_errors.to_h { |error| [error.symbol, error.to_h] },
             input: input_errors.group_by(&:input).transform_values(&:to_h)
@@ -27,8 +28,11 @@ module Foobara
           validate_error(error)
         end
 
-        def add_input_error(**args)
-          error = AttributeError.new(**args)
+        def add_input_error(symbol:, **args)
+          # TODO: a way to eliminate this check?
+          klass = symbol == :unexpected_attributes ? UnexpectedAttributeError : AttributeError
+
+          error = klass.new(symbol:, **args)
           add_error(error)
         end
 
@@ -52,6 +56,8 @@ module Foobara
           map = case error
                 when RuntimeError
                   map[:runtime]
+                when UnexpectedAttributeError
+                  map[:input][:_unexpected_attribute]
                 when AttributeError
                   attribute_name = error.attribute_name
 

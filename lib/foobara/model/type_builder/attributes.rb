@@ -16,7 +16,8 @@ module Foobara
         def value_processors
           [
             *default_transformers,
-            *required_field_validators
+            *required_field_validators,
+            unexpected_attributes_validator
           ]
         end
 
@@ -28,8 +29,12 @@ module Foobara
 
         def required_field_validators
           schema.required.map do |attribute_name|
-            Validators::Attribute::ValidateRequiredAttributesPresent.new(attribute_name:)
+            Validators::Attribute::ValidateRequiredAttributesPresent.new(attribute_name)
           end
+        end
+
+        def unexpected_attributes_validator
+          Validators::Attribute::ValidateAllAttributesExpected.new(schema.valid_attribute_names)
         end
 
         def base_type

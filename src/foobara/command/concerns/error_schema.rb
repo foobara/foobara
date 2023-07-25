@@ -13,7 +13,9 @@ module Foobara
 
           def error_context_schema_map
             @error_context_schema_map ||= {
-              input: input_schema ? input_schema.valid_attribute_names.to_h { |k| [k, {}] } : {},
+              input: (input_schema ? input_schema.valid_attribute_names.to_h { |k| [k, {}] } : {}).merge(
+                _unexpected_attribute: {}
+              ),
               runtime: {}
             }
           end

@@ -1,4 +1,5 @@
 module Foobara
+  # TODO: this is the wrong namespace! fix this
   class AttributeError < Error
     attr_accessor :attribute_name
 

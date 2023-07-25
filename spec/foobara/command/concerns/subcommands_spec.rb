@@ -57,6 +57,12 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
               cast_to: :integer,
               value: :duck
             }
+          },
+          _unexpected_attribute: {
+            unexpected_attributes: {
+              attribute_name: :symbol,
+              value: :duck
+            }
           }
         },
         runtime: {
@@ -65,6 +71,12 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
               should_fail: {
                 cannot_cast: {
                   cast_to: :integer,
+                  value: :duck
+                }
+              },
+              _unexpected_attribute: {
+                unexpected_attributes: {
+                  attribute_name: :symbol,
                   value: :duck
                 }
               }

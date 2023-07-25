@@ -42,6 +42,8 @@ RSpec.describe Foobara::Command do
 
     let(:outcome) { command.run }
     let(:result) { outcome.result }
+    let(:errors) { outcome.errors }
+    let(:error) { errors.first }
 
     describe ".run!" do
       it "is success" do
@@ -62,16 +64,26 @@ RSpec.describe Foobara::Command do
       it "is gives relevant errors" do
         expect(outcome).to_not be_success
         # TODO: let's make this input instead of attribute_name somehow...
-        expect(outcome.errors.map { |e| [e.attribute_name, e.symbol] }).to eq([
-                                                                                %i[
-                                                                                  exponent missing_required_attribute
-                                                                                ],
-                                                                                %i[base
-                                                                                   missing_required_attribute]
-                                                                              ])
+        expect(errors.map { |e| [e.attribute_name, e.symbol] }).to eq([
+                                                                        %i[
+                                                                          exponent missing_required_attribute
+                                                                        ],
+                                                                        %i[base
+                                                                           missing_required_attribute]
+                                                                      ])
       end
     end
 
-    context "input doesn't exist", skip: "todo"
+    context "when given an unexpected input" do
+      let(:command) { command_class.new(base:, exponent:, extra_junk: 123) }
+
+      it "gives relevant errors" do
+        expect(outcome).to_not be_success
+        expect(errors.size).to be(1)
+        expect(error.symbol).to eq(:unexpected_attributes)
+        expect(error.attribute_name).to eq(:extra_junk)
+        expect(error.context).to eq(attribute_name: :extra_junk, value: 123)
+      end
+    end
   end
 end
