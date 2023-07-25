@@ -124,7 +124,8 @@ module Foobara
 
         def desugarize
           unless raw_schema.is_a?(Hash)
-            errors << Error.new(
+            errors << SchemaError.new(
+              path:,
               symbol: :expected_a_hash,
               message: "Attributes must be a hash",
               context: {
@@ -144,7 +145,8 @@ module Foobara
                  end
 
           unless hash[:schemas].keys.all? { |attribute_name| attribute_name.is_a?(::Symbol) }
-            errors << Error.new(
+            errors << SchemaError.new(
+              path:,
               symbol: :expected_a_hash,
               message: "Attributes must be a hash",
               context: {
@@ -157,8 +159,8 @@ module Foobara
           hash = desugarize_defaults(hash)
           hash = desugarize_required(hash)
 
-          hash[:schemas] = hash[:schemas].transform_values do |attribute_schema|
-            Schema.for(attribute_schema)
+          hash[:schemas] = hash[:schemas].to_h do |attribute_name, attribute_schema|
+            [attribute_name, Schema.for(attribute_schema, [*path, attribute_name])]
           end
 
           hash

@@ -1,11 +1,12 @@
 module Foobara
   # TODO: this is the wrong namespace! fix this
   class AttributeError < Error
-    attr_accessor :attribute_name
+    attr_accessor :attribute_name, :path
 
-    def initialize(attribute_name:, **data)
+    def initialize(attribute_name:, path:, **data)
       super(**data)
 
+      self.path = path
       self.attribute_name = attribute_name
     end
 

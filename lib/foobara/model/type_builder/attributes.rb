@@ -2,6 +2,13 @@ module Foobara
   class Model
     class TypeBuilder
       class Attributes < TypeBuilder
+        attr_accessor :path
+
+        def initialize(schema)
+          super(schema)
+          self.path = path
+        end
+
         delegate :schemas, to: :schema
 
         def to_type
@@ -33,18 +40,21 @@ module Foobara
 
         def required_field_validators
           schema.required.map do |attribute_name|
-            Validators::Attribute::ValidateRequiredAttributesPresent.new(attribute_name)
+            Validators::Attribute::ValidateRequiredAttributesPresent.new(attribute_name:, path: [*path, attribute_name])
           end
         end
 
         def unexpected_attributes_validator
-          Validators::Attribute::ValidateAllAttributesExpected.new(schema.valid_attribute_names)
+          Validators::Attribute::ValidateAllAttributesExpected.new(
+            allowed_attribute_names: schema.valid_attribute_names,
+            path:
+          )
         end
 
         def cast_value_processors
           schemas.map do |(attribute_name, schema)|
             attribute_type = TypeBuilder.type_for(schema)
-            Processors::Attribute::CastValue.new(attribute_name:, attribute_type:)
+            Processors::Attribute::CastValue.new(attribute_name:, attribute_type:, path: [*path, attribute_name])
           end
         end
 

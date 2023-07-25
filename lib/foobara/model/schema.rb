@@ -28,7 +28,7 @@ module Foobara
           name.demodulize.gsub(/Schema$/, "").underscore.to_sym
         end
 
-        def for(sugary_schema)
+        def for(sugary_schema, path = [])
           return sugary_schema if sugary_schema.is_a?(Schema)
 
           schema_type = nil
@@ -42,7 +42,8 @@ module Foobara
           schema_type ||= schema_classes.find { |klass| klass.can_handle?(sugary_schema) }
 
           unless schema_type
-            raise InvalidSchema, Error.new(
+            raise InvalidSchema, SchemaError.new(
+              path:,
               symbol: :could_not_determine_schema_type,
               message: "Could not determine schema type for #{sugary_schema}",
               context: {
@@ -51,16 +52,17 @@ module Foobara
             )
           end
 
-          schema_type.new(sugary_schema)
+          schema_type.new(sugary_schema, path)
         end
       end
 
-      attr_accessor :raw_schema, :errors, :schema_has_been_validated
+      attr_accessor :raw_schema, :errors, :schema_has_been_validated, :path
       attr_reader :strict_schema
 
-      def initialize(raw_schema)
+      def initialize(raw_schema, path = [])
         raise "must give a schema" unless raw_schema
 
+        self.path = path
         self.errors = []
         self.raw_schema = raw_schema
         @strict_schema = desugarize

@@ -4,11 +4,12 @@ module Foobara
       module Processors
         module Attribute
           class CastValue < Foobara::Type::ValueProcessor
-            attr_accessor :attribute_name, :attribute_type
+            attr_accessor :attribute_name, :attribute_type, :path
 
-            def initialize(attribute_name:, attribute_type:)
+            def initialize(attribute_name:, attribute_type:, path:)
               super()
 
+              self.path = path
               self.attribute_name = attribute_name
               self.attribute_type = attribute_type
             end
@@ -29,7 +30,12 @@ module Foobara
                 outcome.result = attributes_hash.merge(attribute_name => process_outcome.result)
               else
                 process_outcome.errors.each do |error|
-                  attribute_error = AttributeError.new(attribute_name:, **error.to_h.slice(:symbol, :message, :context))
+                  attribute_error = AttributeError.new(
+                    path:,
+                    attribute_name:,
+                    **error.to_h.slice(:symbol, :message, :context)
+                  )
+
                   outcome.add_error(attribute_error)
                 end
               end

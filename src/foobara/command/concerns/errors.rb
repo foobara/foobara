@@ -28,11 +28,11 @@ module Foobara
           validate_error(error)
         end
 
-        def add_input_error(symbol:, **args)
+        def add_input_error(symbol:, attribute_name:, path: [attribute_name], **args)
           # TODO: a way to eliminate this check?
           klass = symbol == :unexpected_attributes ? UnexpectedAttributeError : AttributeError
 
-          error = klass.new(symbol:, **args)
+          error = klass.new(symbol:, path:, attribute_name:, **args)
           add_error(error)
         end
 
