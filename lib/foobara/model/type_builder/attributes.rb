@@ -21,7 +21,8 @@ module Foobara
             *required_field_validators,
             unexpected_attributes_validator,
             *cast_value_processors,
-            Processors::HaltUnlessSuccess.new
+            Processors::HaltUnlessSuccess.new,
+            *processors_for_each_attribute
           ]
         end
 
@@ -44,11 +45,19 @@ module Foobara
           )
         end
 
-        # TODO: rename
+        # TODO: rename/delete
         def cast_value_processors
           schemas.map do |(attribute_name, schema)|
             attribute_type = TypeBuilder.type_for(schema)
             Processors::Attribute::CastValue.new(attribute_name:, attribute_type:, path: [*path, attribute_name])
+          end
+        end
+
+        def processors_for_each_attribute
+          schemas.map do |(attribute_name, schema)|
+            attribute_type = TypeBuilder.type_for(schema)
+            attribute_type.value_processors
+            # Processors::Attribute::CastValue.new(attribute_name:, attribute_type:, path: [*path, attribute_name])
           end
         end
 

@@ -14,6 +14,7 @@ module Foobara
               self.attribute_type = attribute_type
             end
 
+            # can this be split into validators and transformers?
             def process_outcome(outcome)
               attributes_hash = outcome.result
 
@@ -24,6 +25,8 @@ module Foobara
 
               value = attributes_hash[attribute_name]
 
+              # instead of this let's just grab all the processors from the attribute type in advance so we can build
+              # error schemas out of it
               process_outcome = attribute_type.process(value)
 
               if process_outcome.success?

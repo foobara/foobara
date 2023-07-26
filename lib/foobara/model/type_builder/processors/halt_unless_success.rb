@@ -7,6 +7,7 @@ module Foobara
             true
           end
 
+          # can we do this some other way??
           def process_outcome(outcome)
             outcome
           end

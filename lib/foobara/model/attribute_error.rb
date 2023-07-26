@@ -11,7 +11,7 @@ module Foobara
     end
 
     def eql?(other)
-      super && other.is_a?(AttributeError) && attribute_name == other.attribute_name
+      super && other.is_a?(AttributeError) && attribute_name == other.attribute_name && path == other.path
     end
 
     def to_h

@@ -7,19 +7,26 @@ module Foobara
         class_methods do
           attr_accessor :error_context_schema_map
 
-          def possible_input_error(input, symbol, context_schema = nil)
-            error_context_schema_map[:input][input][symbol] = context_schema.presence
+          def possible_input_error(path, symbol, context_schema = nil)
+            path = Array.wrap(path)
+
+            h = error_context_schema_map[:input]
+
+            path.each do |path_part|
+              h = h[path_part] ||= {}
+            end
+
+            h[symbol] = context_schema.presence
           end
 
           def error_context_schema_map
             @error_context_schema_map ||= {
-              input: (input_schema ? input_schema.valid_attribute_names.to_h { |k| [k, {}] } : {}).merge(
-                _unexpected_attribute: {}
-              ),
+              input: {},
               runtime: {}
             }
           end
 
+          # TODO: delete this?
           def possible_input_errors(inputs_to_possible_errors)
             inputs_to_possible_errors.each_pair do |input, possible_errors|
               Array.wrap(possible_errors).each do |possible_error|

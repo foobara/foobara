@@ -33,6 +33,12 @@ module Foobara
 
           private
 
+          def register_all_possible_errors
+            input_type.value_processors.each do |value_processor|
+            end
+          end
+
+          # TODO: how to make this work with input paths??
           def register_possible_errors
             # These should be derived somehow from the validators
             register_cannot_cast_errors
@@ -41,6 +47,7 @@ module Foobara
           end
 
           def register_cannot_cast_errors
+            binding.pry
             input_schema.schemas.each_key do |input|
               possible_input_error(
                 input,

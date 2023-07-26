@@ -17,11 +17,26 @@ module Foobara
 
           {
             runtime: runtime_errors.to_h { |error| [error.symbol, error.to_h] },
-            input: input_errors.group_by(&:input).transform_values(&:to_h)
+            input: structured_input_errors
           }
         end
 
         private
+
+        def structured_input_errors
+          hash = {}
+
+          input_errors.each do |error|
+            h = hash
+            error.path.each do |path_part|
+              h = h[path_part] ||= {}
+            end
+
+            h[error.symbol] = error
+          end
+
+          hash
+        end
 
         def add_error(error)
           error_collection.add_error(error)
