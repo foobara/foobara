@@ -28,6 +28,7 @@ module Foobara
 
         private
 
+        # TODO: change this name
         def cast_inputs
           if input_schema.blank? && raw_inputs.blank?
             @inputs = {}
@@ -43,8 +44,11 @@ module Foobara
               symbol = error.symbol
               message = error.message
               context = error.context
+              path = error.path
+              attribute_name = error.attribute_name
 
-              add_input_error(attribute_name: error.attribute_name, symbol:, message:, context:)
+              # TODO: why are we unpacking everything instead of just using AttributeError?
+              add_input_error(attribute_name:, path:, symbol:, message:, context:)
             end
           end
 

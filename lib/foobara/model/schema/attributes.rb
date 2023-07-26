@@ -116,7 +116,8 @@ module Foobara
           super.merge(
             schemas: schemas.transform_values(&:to_h),
             required:,
-            defaults:
+            defaults:,
+            path:
           )
         end
 

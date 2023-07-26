@@ -64,6 +64,7 @@ module Foobara
                   map[:input][attribute_name]
                 end
 
+          binding.pry unless map
           raise "Unexpected error type for #{error}" unless map
 
           possible_error_symbols = map.keys

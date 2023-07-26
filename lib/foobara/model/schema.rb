@@ -47,7 +47,8 @@ module Foobara
               symbol: :could_not_determine_schema_type,
               message: "Could not determine schema type for #{sugary_schema}",
               context: {
-                raw_schema: sugary_schema
+                raw_schema: sugary_schema,
+                path:
               }
             )
           end
@@ -70,6 +71,7 @@ module Foobara
 
       delegate :type, :valid_schema_type?, to: :class
 
+      # TODO: this probably should be a subclass responsibility
       def to_h
         { type: }
       end

@@ -1,6 +1,6 @@
 RSpec.describe Foobara::Model::TypeBuilder::Attributes do
   let(:schema) { Foobara::Model::Schema.for(schema_hash) }
-  let(:type_builder) { Foobara::Model::TypeBuilder.builder_for(schema) }
+  let(:type_builder) { Foobara::Model::TypeBuilder.builder_for(schema, path = []) }
   let(:type) { type_builder.to_type }
 
   describe "defaults" do

@@ -30,13 +30,15 @@ module Foobara
                 outcome.result = attributes_hash.merge(attribute_name => process_outcome.result)
               else
                 process_outcome.errors.each do |error|
-                  attribute_error = AttributeError.new(
-                    path:,
-                    attribute_name:,
-                    **error.to_h.slice(:symbol, :message, :context)
-                  )
+                  unless error.is_a?(AttributeError)
+                    error = AttributeError.new(
+                      path:,
+                      attribute_name:,
+                      **error.to_h.slice(:symbol, :message, :context)
+                    )
+                  end
 
-                  outcome.add_error(attribute_error)
+                  outcome.add_error(error)
                 end
               end
             end

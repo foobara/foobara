@@ -15,7 +15,7 @@ module Foobara
     end
 
     def to_h
-      super.merge(attribute_name:)
+      super.merge(attribute_name:, path:)
     end
   end
 end

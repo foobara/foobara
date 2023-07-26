@@ -2,13 +2,6 @@ module Foobara
   class Model
     class TypeBuilder
       class Attributes < TypeBuilder
-        attr_accessor :path
-
-        def initialize(schema)
-          super(schema)
-          self.path = path
-        end
-
         delegate :schemas, to: :schema
 
         def to_type
@@ -51,6 +44,7 @@ module Foobara
           )
         end
 
+        # TODO: rename
         def cast_value_processors
           schemas.map do |(attribute_name, schema)|
             attribute_type = TypeBuilder.type_for(schema)

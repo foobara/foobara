@@ -109,11 +109,11 @@ RSpec.describe Foobara::Command do
       let(:errors) { outcome.errors }
       let(:error) { outcome.errors.first }
 
-      it "is not success and has expected error" do
+      it "is not success and has expected error", :focus do
         expect(outcome).to_not be_success
         expect(errors.size).to be(1)
-        # TODO: this feels very wrong...
-        expect(error.attribute_name).to eq(:foo)
+        expect(error.path).to eq(%i[foo bar])
+        expect(error.attribute_name).to eq(:bar)
         expect(error.symbol).to eq(:cannot_cast)
       end
     end
