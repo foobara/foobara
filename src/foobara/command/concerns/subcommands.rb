@@ -1,3 +1,5 @@
+require "foobara/command/runtime_error"
+
 module Foobara
   class Command
     module Concerns
@@ -6,6 +8,16 @@ module Foobara
 
         class AlreadyRegisteredSubcommand < StandardError; end
         class SubcommandNotRegistered < StandardError; end
+
+        class FailedToExecuteSubcommand < Foobara::Command::RuntimeError
+          attr_accessor :causes
+
+          def initialize(causes:, **args)
+            super(**args)
+
+            self.causes = causes
+          end
+        end
 
         attr_accessor :is_subcommand
 
@@ -26,9 +38,12 @@ module Foobara
             outcome.result
           else
             add_runtime_error(
-              symbol: self.class.possible_error_symbol_for(subcommand_class),
-              message: "Failed to execute #{subcommand_class.name}",
-              context: subcommand.error_hash
+              FailedToExecuteSubcommand.new(
+                symbol: self.class.possible_error_symbol_for(subcommand_class),
+                message: "Failed to execute #{subcommand_class.name}",
+                context: subcommand.error_hash,
+                causes: outcome.errors
+              )
             )
           end
         end
