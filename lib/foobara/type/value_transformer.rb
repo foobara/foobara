@@ -6,10 +6,6 @@ module Foobara
       def transform(_value)
         raise "subclass responsibility"
       end
-
-      def process_outcome(outcome)
-        outcome.result = transform(outcome.result)
-      end
     end
   end
 end

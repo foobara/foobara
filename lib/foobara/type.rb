@@ -138,23 +138,57 @@ module Foobara
     end
 
     def process(value)
+      if value.is_a?(Array) || value.is_a?(Hash)
+        value = value.deep_dup
+      end
+
+      # why do we need this? Can't casters just be another type of transformer/processor?
       cast_outcome = cast_from(value)
 
       return cast_outcome unless cast_outcome.success?
 
-      outcome = Outcome.new(keep_result_even_if_not_success: true)
-      outcome.result = cast_outcome.result
+      value = cast_outcome.result
+
+      outcome = Outcome.new
 
       value_processors.each do |value_processor|
-        next unless value_processor.applicable?(outcome.result)
+        path = value_processor.path
+        old_value = path_read(value, path)
 
-        value_processor.process_outcome(outcome)
+        next unless value_processor.applicable?(old_value)
 
-        break if value_processor.error_halts_processing? && !outcome.success?
+        case value_processor
+        when ValueValidator
+          errors = value_processor.validation_errors(old_value)
+
+          errors.each do |error|
+            error.path = path
+            outcome.add_error(error)
+          end
+
+          break if errors.present? && value_processor.error_halts_processing?
+        when ValueTransformer
+          new_value = value_processor.transform(old_value)
+
+          if path.present?
+            path_write!(value, path, new_value)
+          else
+            value = new_value
+          end
+        else
+          raise "Was not expecting #{value_processor}"
+        end
+      end
+
+      if outcome.success?
+        outcome.result = value
       end
 
       outcome
     end
+
+    delegate :path_read, :path_write!, to: Foobara::Util
+    # move this somewhere?
 
     def process!(value)
       outcome = process(value)

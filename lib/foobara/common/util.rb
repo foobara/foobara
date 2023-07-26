@@ -49,5 +49,21 @@ module Foobara
     def implied_symbol(mod)
       mod.name.demodulize.underscore.to_sym
     end
+
+    def path_read(traversable, path)
+      if path.present?
+        path.each do |path_part|
+          traversable = traversable[path_part]
+        end
+      end
+
+      traversable
+    end
+
+    def path_write!(traversable, path, value)
+      *parent_path, key = path
+      parent = path_read(traversable, parent_path)
+      parent[key] = value
+    end
   end
 end

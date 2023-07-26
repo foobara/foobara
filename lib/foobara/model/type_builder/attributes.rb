@@ -57,7 +57,6 @@ module Foobara
           schemas.map do |(attribute_name, schema)|
             attribute_type = TypeBuilder.type_for(schema)
             attribute_type.value_processors
-            # Processors::Attribute::CastValue.new(attribute_name:, attribute_type:, path: [*path, attribute_name])
           end
         end
 

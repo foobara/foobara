@@ -55,6 +55,9 @@ module Foobara
         raise "subclass responsibility"
       end
 
+      # builder_registry[:duck] = TypeBuilder::Duck
+      # builder_registry[:symbol] = TypeBuilder::Symbol
+      # builder_registry[:integer] = TypeBuilder::Integer
       builder_registry[:attributes] = TypeBuilder::Attributes
     end
   end
