@@ -4,6 +4,12 @@ module Foobara
       module Inputs
         extend ActiveSupport::Concern
 
+        class_methods do
+          def inputs_type
+            @inputs_type ||= Model::TypeBuilder.type_for(input_schema)
+          end
+        end
+
         attr_reader :inputs
 
         def method_missing(method_name, *args, &)
@@ -22,11 +28,7 @@ module Foobara
           input_schema.schemas.key?(method_name)
         end
 
-        def input_type
-          @input_type ||= Model::TypeBuilder.type_for(input_schema)
-        end
-
-        private
+        delegate :inputs_type, to: :class
 
         def cast_inputs
           if input_schema.blank? && raw_inputs.blank?
@@ -34,7 +36,7 @@ module Foobara
             return
           end
 
-          outcome = input_type.process(raw_inputs)
+          outcome = inputs_type.process(raw_inputs)
 
           if outcome.success?
             @inputs = outcome.result
