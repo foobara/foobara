@@ -11,8 +11,15 @@ module Foobara
         def to_args
           {
             casters:,
-            value_processors:
+            value_processors:,
+            children_types:
           }
+        end
+
+        def children_types
+          @children_types ||= schemas.transform_values do |schema|
+            TypeBuilder.type_for(schema)
+          end
         end
 
         def value_processors
@@ -20,7 +27,8 @@ module Foobara
             *default_transformers,
             *required_field_validators,
             unexpected_attributes_validator,
-            *cast_value_processors,
+            # attribute_processor,
+            # *cast_value_processors,
             Processors::HaltUnlessSuccess.new
           ]
         end
@@ -33,6 +41,7 @@ module Foobara
 
         def required_field_validators
           schema.required.map do |attribute_name|
+            # we need to get paths into here... not attribute_name specifically
             Validators::Attribute::ValidateRequiredAttributesPresent.new(attribute_name)
           end
         end

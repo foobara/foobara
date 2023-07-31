@@ -42,9 +42,9 @@ module Foobara
       end
     end
 
-    # TODO: we seem to have symbol here for error reporting. Can we eliminate it?
-    # TODO: eliminate castors
-    attr_accessor :casters, :value_processors
+    # TODO: eliminate castors (or not?)
+    # TODO: eliminate children_types by using classes?
+    attr_accessor :casters, :value_processors, :children_types
 
     # Can we eliminate symbol here or no?
     # Has a collection of transformers and validators.
@@ -85,9 +85,14 @@ module Foobara
     # max_length (string validation at attribute level)
     # max (integer validation at attribute level)
     # matches (string against a regex)
-    def initialize(casters: [], value_processors: [])
+    def initialize(casters: [], value_processors: [], children_types: nil)
+      self.children_types = children_types
       self.casters = Array.wrap(casters)
       self.value_processors = value_processors
+    end
+
+    def value_validators
+      value_processors.select { |processor| processor.is_a?(ValueValidator) }
     end
 
     # Do we really need this method?
@@ -137,7 +142,7 @@ module Foobara
       end
     end
 
-    def process(value)
+    def process(value, path = [])
       cast_outcome = cast_from(value)
 
       return cast_outcome unless cast_outcome.success?
@@ -148,9 +153,53 @@ module Foobara
       value_processors.each do |value_processor|
         next unless value_processor.applicable?(outcome.result)
 
-        value_processor.process_outcome(outcome)
+        value_processor.process_outcome(outcome, path)
 
-        break if value_processor.error_halts_processing? && !outcome.success?
+        return outcome if value_processor.error_halts_processing? && !outcome.success?
+      end
+
+      if children_types.is_a?(Hash)
+        value = outcome.result
+
+        value.each_key do |attribute_name|
+          attribute_type = children_types[attribute_name]
+          attribute_outcome = attribute_type.process(value[attribute_name], [*path, attribute_name])
+
+          if attribute_outcome.success?
+            value[attribute_name] = attribute_outcome.result
+          else
+            attribute_outcome.errors.each do |error|
+              if error.is_a?(CannotCastError)
+                error_hash = error.to_h.except(:type) # why do we have type here? TODO: fix
+                error_hash[:context][:attribute_name] = attribute_name
+
+                # Do we really need this translation?? #TODO eliminate somehow
+                error = AttributeError.new(path: [*path, attribute_name], **error_hash)
+              end
+
+              outcome.add_error(error)
+            end
+          end
+        end
+      elsif children_types.is_a?(Array) # TODO: we probably need classes if we want to support arrays and tuples
+        if children_types.size != 1
+          raise "not sure how to handle more than one element type for an array"
+        end
+
+        child_type = children_types.first
+
+        value.each.with_index do |child, index|
+          child_outcome = child_type.process(child)
+
+          if child_outcome.success?
+            value[index] = child_outcome.result
+          else
+            child_outcome.errors.each do |error|
+              error.path = [path, index, *error.path]
+              outcome.add_error(error)
+            end
+          end
+        end
       end
 
       outcome

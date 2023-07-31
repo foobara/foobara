@@ -3,7 +3,8 @@ module Foobara
     class TypeBuilder
       module Processors
         module Attribute
-          class CastValue < Foobara::Type::ValueProcessor
+          # Do we use this at all? Can we delete it?
+          class ProcessValue < Foobara::Type::ValueProcessor
             attr_accessor :attribute_name, :attribute_type
 
             def initialize(attribute_name:, attribute_type:)

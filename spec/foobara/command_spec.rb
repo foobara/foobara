@@ -95,7 +95,7 @@ RSpec.describe Foobara::Command do
               exponent: :integer,
               base: { type: :integer, required: true },
               foo: {
-                bar: { type: :integer, max: 10 }
+                bar: { type: :integer, max: 10, required: true }
               }
             },
             required: :exponent
@@ -113,7 +113,8 @@ RSpec.describe Foobara::Command do
         expect(outcome).to_not be_success
         expect(errors.size).to be(1)
         # TODO: this feels very wrong...
-        expect(error.attribute_name).to eq(:foo)
+        expect(error.attribute_name).to eq(:bar)
+        expect(error.path).to eq(%i[foo bar])
         expect(error.symbol).to eq(:cannot_cast)
       end
     end

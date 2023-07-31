@@ -7,7 +7,8 @@ module Foobara
             true
           end
 
-          def process_outcome(outcome)
+          # TODO: can we eliminate this processor somehow??
+          def process_outcome(outcome, _path)
             outcome
           end
         end

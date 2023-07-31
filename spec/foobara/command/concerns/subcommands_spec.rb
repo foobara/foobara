@@ -49,18 +49,20 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
   end
 
   describe ".context_error_map" do
+    # TODO: unexpected_attributes should go at the top path
+    # TODO: encapsulate sub command errors into a simpler construct?
     it "contains subcommand error information" do
       expect(command_class.error_context_schema_map).to eq(
         input: {
-          should_fail: {
-            cannot_cast: {
-              cast_to: :duck,
-              value: :duck
+          [] => {},
+          [:_unexpected_attributes] => {
+            unexpected_attributes: {
+              attribute_name: :symbol
             }
           },
-          _unexpected_attribute: {
-            unexpected_attributes: {
-              attribute_name: :symbol,
+          [:should_fail] => {
+            cannot_cast: {
+              cast_to: :duck,
               value: :duck
             }
           }
@@ -68,15 +70,15 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
         runtime: {
           could_not_run_some_subcommand: {
             input: {
-              should_fail: {
-                cannot_cast: {
-                  cast_to: :duck,
-                  value: :duck
+              [] => {},
+              [:_unexpected_attributes] => {
+                unexpected_attributes: {
+                  attribute_name: :symbol
                 }
               },
-              _unexpected_attribute: {
-                unexpected_attributes: {
-                  attribute_name: :symbol,
+              [:should_fail] => {
+                cannot_cast: {
+                  cast_to: :duck,
                   value: :duck
                 }
               }

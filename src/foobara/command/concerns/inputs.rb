@@ -42,11 +42,12 @@ module Foobara
             @inputs = outcome.result
           else
             outcome.errors.each do |error|
-              symbol = error.symbol
-              message = error.message
-              context = error.context
-
-              add_input_error(attribute_name: error.attribute_name, symbol:, message:, context:)
+              if error.is_a?(AttributeError)
+                add_input_error(error)
+              else
+                # TODO: fix this
+                raise "wtf"
+              end
             end
           end
 

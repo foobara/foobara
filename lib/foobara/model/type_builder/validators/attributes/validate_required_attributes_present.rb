@@ -1,29 +1,47 @@
+require "foobara/model/attribute_error"
+
 module Foobara
   class Model
     class TypeBuilder
       module Validators
         module Attribute
           class ValidateRequiredAttributesPresent < Foobara::Type::ValueValidator
-            attr_accessor :attribute_name, :default_value
+            class MissingRequiredAttributeError < Foobara::AttributeError
+              class << self
+                def symbol
+                  :missing_required_attribute
+                end
+              end
+            end
+
+            attr_accessor :attribute_name
 
             def initialize(attribute_name)
               super()
 
               self.attribute_name = attribute_name
-              self.default_value = default_value
             end
 
             def validation_errors(attributes_hash)
-              unless attributes_hash.key?(attribute_name)
-                AttributeError.new(
-                  attribute_name:,
-                  symbol: :missing_required_attribute,
-                  message: "Missing required attribute #{attribute_name}",
-                  context: {
-                    attribute_name:
-                  }
-                )
-              end
+              build_error unless attributes_hash.key?(attribute_name)
+            end
+
+            def error_class
+              MissingRequiredAttributeError
+            end
+
+            def error_path
+              [attribute_name]
+            end
+
+            def error_message
+              "Missing required attribute #{attribute_name}"
+            end
+
+            def error_context
+              {
+                attribute_name:
+              }
             end
           end
         end

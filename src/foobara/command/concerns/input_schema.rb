@@ -33,41 +33,22 @@ module Foobara
 
           private
 
-          def register_possible_errors
-            # These should be derived somehow from the validators
-            register_cannot_cast_errors
-            register_missing_required_attribute_errors
-            register_unexpected_attribute_errors
-          end
+          def register_possible_errors(path = [], type = inputs_type)
+            type.value_validators.each do |validator|
+              symbol = validator.error_symbol
+              context_schema = validator.error_context_schema
 
-          def register_cannot_cast_errors
-            input_schema.schemas.each_key do |input|
-              possible_input_error(
-                input,
-                :cannot_cast,
-                cast_to: :duck,
-                value: :duck
-              )
+              possible_input_error([*path, validator.attribute_name], symbol, context_schema)
             end
-          end
 
-          def register_missing_required_attribute_errors
-            input_schema.required.each do |required_attribute|
-              possible_input_error(
-                required_attribute,
-                :missing_required_attribute,
-                attribute_name: :symbol
-              )
+            if type.children_types.present?
+              type.children_types.each_pair do |attribute_name, attribute_type|
+                child_path = [*path, attribute_name]
+
+                possible_input_error(child_path, :cannot_cast, cast_to: :duck, value: :duck)
+                register_possible_errors(child_path, attribute_type)
+              end
             end
-          end
-
-          def register_unexpected_attribute_errors
-            possible_input_error(
-              :_unexpected_attribute,
-              :unexpected_attributes,
-              attribute_name: :symbol,
-              value: :duck
-            )
           end
         end
 

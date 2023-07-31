@@ -16,9 +16,8 @@ module Foobara
               unexpected_attributes = attributes_hash.keys - allowed_attribute_names
 
               unexpected_attributes.map do |unexpected_attribute_name|
-                UnexpectedAttributeError.new(
-                  attribute_name: unexpected_attribute_name,
-                  symbol: :unexpected_attributes,
+                build_error(
+                  path: [unexpected_attribute_name],
                   message: "Unexpected attributes #{
                     unexpected_attribute_name
                   }. Expected only #{allowed_attribute_names}",
@@ -28,6 +27,15 @@ module Foobara
                   }
                 )
               end
+            end
+
+            # TODO: this is here for compatibility elsewhere... can this be cleaned up somehow?
+            def attribute_name
+              :_unexpected_attributes
+            end
+
+            def error_class
+              UnexpectedAttributeError
             end
           end
         end

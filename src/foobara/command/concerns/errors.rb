@@ -13,7 +13,7 @@ module Foobara
         delegate :has_errors?, to: :error_collection
 
         def error_hash
-          runtime_errors, input_errors = error_collection.partition { |e| e.is_a?(RuntimeError) }
+          runtime_errors, input_errors = error_collection.partition { |e| e.is_a?(Foobara::Command::RuntimeError) }
 
           {
             runtime: runtime_errors.to_h { |error| [error.symbol, error.to_h] },
@@ -28,21 +28,61 @@ module Foobara
           validate_error(error)
         end
 
-        def add_input_error(symbol:, **args)
-          # TODO: a way to eliminate this check?
-          klass = symbol == :unexpected_attributes ? UnexpectedAttributeError : AttributeError
+        def add_input_error(*args, **opts)
+          error = if args.size == 1 && opts.empty?
+                    error = args.first
 
-          error = klass.new(symbol:, **args)
+                    unless error.is_a?(AttributeError)
+                      raise ArgumentError, "expected an AttributeError or keyword arguments to construct one"
+                    end
+
+                    error
+                  elsif args.empty? || (args.size == 1 && args.first.is_a?(Hash))
+                    error_args = opts.merge(args.first || {})
+                    symbol = error_args[:symbol]
+
+                    raise "missing error symbol" unless symbol
+
+                    # TODO: a way to eliminate this check?
+                    klass = symbol == :unexpected_attributes ? UnexpectedAttributeError : AttributeError
+
+                    klass.new(**error_args)
+                  else
+                    raise ArgumentError, "Invalid arguments given. Expected an error or keyword args for an error"
+                  end
+
           add_error(error)
         end
 
-        def add_runtime_error(**args)
-          error = RuntimeError.new(**args)
+        def add_runtime_error(*args, **opts)
+          error = if args.size == 1 && opts.empty?
+                    error = args.first
+
+                    unless error.is_a?(Foobara::Command::RuntimeError)
+                      raise ArgumentError,
+                            "expected a Foobara::Command::RuntimeError or keyword arguments to construct one"
+                    end
+
+                    error
+                  elsif args.empty? || (args.size == 1 && args.first.is_a?(Hash))
+                    error_args = opts.merge(args.first || {})
+                    symbol = error_args[:symbol]
+
+                    raise "missing error symbol" unless symbol
+
+                    Foobara::Command::RuntimeError.new(**error_args)
+                  else
+                    raise ArgumentError, "Invalid arguments given. Expected an error or keyword args for an error"
+                  end
+
           add_error(error)
           halt!
         end
 
         def validate_error(error)
+          # it has already been validated when it ran in the sub command
+          return true if error.is_a?(Subcommands::FailedToExecuteSubcommand)
+
           symbol = error.symbol
           message = error.message
           context = error.context
@@ -54,19 +94,21 @@ module Foobara
           map = self.class.error_context_schema_map
 
           map = case error
-                when RuntimeError
+                when Foobara::Command::RuntimeError
                   map[:runtime]
                 when UnexpectedAttributeError
-                  map[:input][:_unexpected_attribute]
+                  # TODO: This seems unnecessary... can't just put it at path?
+                  # we'e swapping out the last position of the path with _unexpected_attributes because
+                  # we dont know before runtime what the unexpected attribute will have been
+                  map[:input][[*error.path[0..-2], :_unexpected_attributes]]
                 when AttributeError
-                  attribute_name = error.attribute_name
-
-                  map[:input][attribute_name]
+                  map[:input][error.path]
                 end
 
           raise "Unexpected error type for #{error}" unless map
 
           possible_error_symbols = map.keys
+
           # TODO: probably should store the schema objects and not the hashes?
           context_schema = Foobara::Model::Schema::Attributes.new(map[symbol])
 

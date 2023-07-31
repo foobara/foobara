@@ -4,6 +4,7 @@ module Foobara
       attr_accessor :type_symbol
 
       def initialize(type_symbol: nil)
+        # TODO: eliminate this type symbol thingy. Shouldn't be needed.
         self.type_symbol = type_symbol || :custom
       end
 
@@ -11,7 +12,7 @@ module Foobara
         true
       end
 
-      def process_outcome(_outcome)
+      def process_outcome(_outcome, _path)
         raise "subclass responsibility"
       end
 
