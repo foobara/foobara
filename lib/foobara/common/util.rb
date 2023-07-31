@@ -37,17 +37,13 @@ module Foobara
       files = Dir[glob].sort_by(&:length).reverse
 
       if files.empty?
+        # TODO: raise real error
         raise "Didn't find anything to require for #{glob}"
       end
 
       files.each do |f|
         require f
       end
-    end
-
-    # TODO: this should probably be moved somewhere else like Model...
-    def implied_symbol(mod)
-      mod.name.demodulize.underscore.to_sym
     end
   end
 end
