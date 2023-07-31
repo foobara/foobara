@@ -1,3 +1,5 @@
+require "foobara/type/value_processor"
+
 module Foobara
   class Type
     class ValueValidator < ValueProcessor

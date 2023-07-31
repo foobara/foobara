@@ -1,11 +1,12 @@
 require "foobara/type/value_validator"
+require "foobara/type/attribute_error"
 
 module Foobara
   class Type
     module Validators
       module Integer
-        class Max < Foobara::Type::ValueValidator
-          class MaxExceededError < Foobara::Type::AttributeError
+        class MaxExceeded < Foobara::Type::ValueValidator
+          class Error < Foobara::Type::AttributeError
             class << self
               def symbol
                 :max_exceeded
@@ -42,7 +43,7 @@ module Foobara
           end
 
           def error_class
-            MaxExceededError
+            Error
           end
 
           def error_message

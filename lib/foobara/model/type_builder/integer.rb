@@ -27,7 +27,7 @@ module Foobara
           processors = base_type.value_processors
 
           if max.present?
-            [*processors, Type::Validators::Integer::Max.new(max)]
+            [*processors, Type::Validators::Integer::MaxExceeded.new(max)]
           else
             processors
           end
