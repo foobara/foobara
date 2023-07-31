@@ -38,10 +38,6 @@ module Foobara
             end
           end
 
-          def error_class
-            Error
-          end
-
           def error_message
             "Max exceeded. Should not have been larger than: #{max}"
           end

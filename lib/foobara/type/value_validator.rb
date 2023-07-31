@@ -17,7 +17,7 @@ module Foobara
       end
 
       def error_class
-        raise "subclass responsibility"
+        Util.constant_value(self.class, :Error)
       end
 
       def build_error(message: error_message, context: error_context, path: error_path, **args)
