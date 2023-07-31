@@ -27,8 +27,6 @@ module Foobara
             *default_transformers,
             *required_field_validators,
             unexpected_attributes_validator,
-            # attribute_processor,
-            # *cast_value_processors,
             Processors::HaltUnlessSuccess.new
           ]
         end
@@ -48,13 +46,6 @@ module Foobara
 
         def unexpected_attributes_validator
           Validators::Attribute::ValidateAllAttributesExpected.new(schema.valid_attribute_names)
-        end
-
-        def cast_value_processors
-          schemas.map do |(attribute_name, schema)|
-            attribute_type = TypeBuilder.type_for(schema)
-            Processors::Attribute::CastValue.new(attribute_name:, attribute_type:)
-          end
         end
 
         def base_type
