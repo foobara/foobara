@@ -10,11 +10,14 @@ module Foobara
 
         # how can we build this in a cleaner way so that validators can be more easily registered on types
         def to_h
-          if max.present?
-            super.merge(max:)
-          else
-            super
+          h = super
+
+          Schema.validators_for_type(:integer).each_key do |validator_symbol|
+            value = strict_schema[validator_symbol]
+            h = h.merge(validator_symbol => value)
           end
+
+          h
         end
       end
     end
