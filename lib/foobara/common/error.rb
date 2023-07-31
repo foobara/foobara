@@ -3,7 +3,7 @@ module Foobara
     attr_accessor :symbol, :message, :context
 
     class << self
-      def type
+      def symbol
         name.demodulize.underscore.gsub(/_error$/, "").to_sym
       end
 
@@ -13,17 +13,10 @@ module Foobara
       end
     end
 
-    def initialize(message:, symbol: nil, context: {})
+    def initialize(message:, symbol: self.class.symbol, context: {})
       super(message)
 
-      self.symbol = if symbol
-                      symbol
-                    elsif self.class.respond_to?(:symbol)
-                      self.class.symbol
-                    else
-                      raise ArgumentError, "No error symbol given"
-                    end
-
+      self.symbol =  symbol
       self.message = message
       self.context = context
     end
@@ -42,7 +35,6 @@ module Foobara
 
     def to_h
       {
-        type:, # TODO: what is the difference between type and symbol??
         symbol:,
         message:,
         context:
