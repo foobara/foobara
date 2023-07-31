@@ -12,10 +12,17 @@ module Foobara
       end
     end
 
-    def initialize(symbol:, message:, context: nil)
+    def initialize(message:, symbol: nil, context: {})
       super(message)
 
-      self.symbol = symbol
+      self.symbol = if symbol
+                      symbol
+                    elsif self.class.respond_to?(:symbol)
+                      self.class.symbol
+                    else
+                      raise NoErrorSymbolGiven, "No error symbol given"
+                    end
+
       self.message = message
       self.context = context
     end
