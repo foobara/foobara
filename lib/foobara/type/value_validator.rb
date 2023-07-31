@@ -32,7 +32,11 @@ module Foobara
       end
 
       def error_path
-        raise "subclass responsibility"
+        []
+      end
+
+      def attribute_name
+        nil
       end
 
       def error_message
