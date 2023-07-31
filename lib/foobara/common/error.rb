@@ -6,11 +6,6 @@ module Foobara
       def symbol
         name.demodulize.underscore.gsub(/_error$/, "").to_sym
       end
-
-      def merge(errors)
-        # TODO: are we actually using Multiple error?
-        MultipleError.new(errors)
-      end
     end
 
     def initialize(message:, symbol: self.class.symbol, context: {})

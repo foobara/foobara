@@ -32,27 +32,6 @@ module Foobara
       def raise!
         raise "kaboom" unless success?
       end
-
-      def merge(outcomes)
-        raise unless outcomes.present?
-
-        success_outcomes, error_outcomes = outcomes.partition(&:success?)
-
-        if error_outcomes.any?
-          unmerged_errors = error_outcomes.map(&:errors).flatten
-          merged_errors = unmerged_errors.group_by(&:symbol).values.map do |errors|
-            if errors.length > 1
-              MultipleError.new(errors)
-            else
-              errors.first
-            end
-          end
-
-          Outcome.errors(merged_errors)
-        else
-          Outcome.success(success_outcomes.map(&:result))
-        end
-      end
     end
 
     attr_writer :result
