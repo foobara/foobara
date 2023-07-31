@@ -22,22 +22,24 @@ module Foobara
         end
 
         def unioned_callback_set_for(**conditions)
-          any_set = specific_callback_set_for
-
-          return set if conditions.blank?
+          return specific_callback_set_for if conditions.blank?
 
           full_callback_key = condition_hash_to_callback_key(conditions)
           all_sets = callback_key_permutations(full_callback_key).map do |callback_key|
             callback_sets[callback_key]
           end.compact
 
-          all_sets.inject(any_set) { |unioned, set| unioned.union(set) }
+          all_sets.inject { |unioned, set| unioned.union(set) } || Callback::Set.new
         end
 
         private
 
         def validate_conditions!(**conditions)
-          raise InvalidConditions, "Expected a hash" unless conditions.is_a?(Hash)
+          unless conditions.is_a?(Hash)
+            # :nocov:
+            raise InvalidConditions, "Expected a hash"
+            # :nocov:
+          end
 
           conditions.each_pair do |condition_name, condition_value|
             unless possible_condition_keys.include?(condition_name)
