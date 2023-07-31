@@ -24,10 +24,9 @@ module Foobara
 
         def value_processors
           [
-            *default_transformers,
-            *required_field_validators,
             unexpected_attributes_validator,
-            Processors::HaltUnlessSuccess.new
+            *default_transformers,
+            *required_field_validators
           ]
         end
 

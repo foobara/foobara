@@ -153,6 +153,8 @@ module Foobara
       value_processors.each do |value_processor|
         next unless value_processor.applicable?(outcome.result)
 
+        return outcome if value_processor.halt_if_already_not_success? && !outcome.success?
+
         value_processor.process_outcome(outcome, path)
 
         return outcome if value_processor.error_halts_processing? && !outcome.success?

@@ -12,6 +12,10 @@ module Foobara
               self.allowed_attribute_names = allowed_attribute_names
             end
 
+            def error_halts_processing?
+              true
+            end
+
             def validation_errors(attributes_hash)
               unexpected_attributes = attributes_hash.keys - allowed_attribute_names
 
