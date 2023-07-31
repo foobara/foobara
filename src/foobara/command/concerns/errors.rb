@@ -100,10 +100,11 @@ module Foobara
                   map[:runtime]
                 when Type::AttributeError
                   map[:input][error.path]
+                else
+                  # :nocov:
+                  raise ArgumentError, "Unexpected error type for #{error}"
+                  # :nocov:
                 end
-
-          # TODO: raise a real error
-          raise "Unexpected error type for #{error}" unless map
 
           possible_error_symbols = map.keys
 
