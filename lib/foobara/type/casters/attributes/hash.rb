@@ -10,7 +10,7 @@ module Foobara
           end
 
           def applies_message
-            "be a hash with symbolizeable keys"
+            "be a hash with symbolizable keys"
           end
 
           def cast(hash)
