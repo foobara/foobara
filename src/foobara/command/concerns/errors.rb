@@ -59,8 +59,10 @@ module Foobara
                     error = args.first
 
                     unless error.is_a?(Foobara::Command::RuntimeError)
+                      # :nocov:
                       raise ArgumentError,
                             "expected a Foobara::Command::RuntimeError or keyword arguments to construct one"
+                      # :nocov:
                     end
 
                     error
