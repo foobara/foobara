@@ -96,8 +96,6 @@ module Foobara
           map = case error
                 when Command::RuntimeError
                   map[:runtime]
-                when Type::UnexpectedAttributeError
-                  map[:input][error.path[0..-2]]
                 when Type::AttributeError
                   map[:input][error.path]
                 end

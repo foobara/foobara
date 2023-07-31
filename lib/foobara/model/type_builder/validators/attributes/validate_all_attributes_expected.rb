@@ -22,7 +22,6 @@ module Foobara
 
               unexpected_attributes.map do |unexpected_attribute_name|
                 build_error(
-                  path: [unexpected_attribute_name],
                   message: "Unexpected attributes #{
                     unexpected_attribute_name
                   }. Expected only #{allowed_attribute_names}",
@@ -32,6 +31,13 @@ module Foobara
                   }
                 )
               end
+            end
+
+            # We put the error on the parent object since we cannot anticipate in advance
+            # what the unexpected attribute will be. This simplifies things elsewhere to consider the
+            # attributes hash itself as invalid instead of the unexpected attribute as invalid
+            def error_path
+              []
             end
 
             # TODO: this is here for compatibility elsewhere... can this be cleaned up somehow?
