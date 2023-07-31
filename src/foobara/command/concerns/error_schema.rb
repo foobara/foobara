@@ -36,46 +36,8 @@ module Foobara
             end
           end
 
-          def possible_input_errors(inputs_to_possible_errors)
-            inputs_to_possible_errors.each_pair do |input, possible_errors|
-              Array.wrap(possible_errors).each do |possible_error|
-                case possible_error
-                when Symbol
-                  possible_input_error(input, arg)
-                when Hash
-                  arg.each_pair do |symbols, context_schema|
-                    Array.wrap(symbols).each do |symbol|
-                      possible_input_error(input, symbol, context_schema)
-                    end
-                  end
-                else
-                  raise ArgumentError, "expected symbols and hashes"
-                end
-              end
-            end
-          end
-
           def possible_error(symbol, context_schema = nil)
             error_context_schema_map[:runtime][symbol] = context_schema.presence
-          end
-
-          def possible_errors(*args)
-            raise ArgumentError, "at least one argument" if args.empty?
-
-            args.each do |arg|
-              case arg
-              when Symbol
-                possible_error(arg)
-              when Hash
-                arg.each_pair do |symbols, context_schema|
-                  Array.wrap(symbols).each do |symbol|
-                    possible_error(symbol, context_schema)
-                  end
-                end
-              else
-                raise ArgumentError, "expected symbols and hashes"
-              end
-            end
           end
         end
       end
