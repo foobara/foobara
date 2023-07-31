@@ -19,6 +19,12 @@ module Foobara
             end
           end
 
+          class << self
+            def validator_symbol
+              :max
+            end
+          end
+
           attr_accessor :max
 
           def initialize(max)

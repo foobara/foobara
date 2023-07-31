@@ -24,13 +24,15 @@ module Foobara
         end
 
         def value_processors
-          processors = base_type.value_processors
+          processors = base_type.value_processors.dup
 
-          if max.present?
-            [*processors, Type::Validators::Integer::MaxExceeded.new(max)]
-          else
-            processors
+          Schema.validators_for_type(:integer).each_pair do |validator_symbol, validator_class|
+            if schema.strict_schema.key?(validator_symbol)
+              processors << validator_class.new(schema.strict_schema[validator_symbol])
+            end
           end
+
+          processors
         end
       end
     end

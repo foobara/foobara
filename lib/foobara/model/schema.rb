@@ -28,6 +28,18 @@ module Foobara
           name.demodulize.gsub(/Schema$/, "").underscore.to_sym
         end
 
+        def register_validator(type_symbol, validator_class)
+          validators = @validators ||= {}
+
+          for_type = validators[type_symbol] ||= {}
+
+          for_type[validator_class.validator_symbol] = validator_class
+        end
+
+        def validators_for_type(type_symbol)
+          @validators[type_symbol]
+        end
+
         def for(sugary_schema)
           return sugary_schema if sugary_schema.is_a?(Schema)
 
@@ -117,6 +129,8 @@ module Foobara
           )
         end
       end
+
+      register_validator(:integer, Type::Validators::Integer::MaxExceeded)
     end
   end
 end
