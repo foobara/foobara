@@ -4,9 +4,7 @@ module Foobara
   class Type
     class Caster < ValueTransformer
       def type_symbol
-        # :nocov:
-        raise "subclass responsibility"
-        # :nocov:
+        @type_symbol ||= module_for(module_for(self.class)).name.underscore.to_sym
       end
 
       def applicable?(_value)

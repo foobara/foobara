@@ -18,10 +18,6 @@ module Foobara
           def cast(string)
             string.to_i
           end
-
-          def type_symbol
-            :integer
-          end
         end
       end
     end
