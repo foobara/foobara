@@ -147,7 +147,7 @@ module Foobara
 
       return cast_outcome unless cast_outcome.success?
 
-      outcome = Outcome.new(keep_result_even_if_not_success: true)
+      outcome = OutcomeWithResultEvenIfNotSuccess.new
       outcome.result = cast_outcome.result
 
       value_processors.each do |value_processor|

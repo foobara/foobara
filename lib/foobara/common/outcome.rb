@@ -57,10 +57,8 @@ module Foobara
 
     attr_writer :result
     attr_reader :error_collection
-    attr_accessor :keep_result_even_if_not_success
 
-    def initialize(error_collection: ErrorCollection.new, keep_result_even_if_not_success: false)
-      self.keep_result_even_if_not_success = keep_result_even_if_not_success
+    def initialize(error_collection: ErrorCollection.new)
       @error_collection = error_collection
     end
 
@@ -71,9 +69,7 @@ module Foobara
     end
 
     def result
-      if success? || keep_result_even_if_not_success
-        @result
-      end
+      @result if success?
     end
   end
 end

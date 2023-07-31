@@ -1,6 +1,7 @@
 require "foobara/common/error"
 
 module Foobara
+  # TODO: this seems unused... should we delete it?
   class MultipleError < Error
     def initialize(errors, symbol: nil)
       if symbol.nil?
