@@ -22,8 +22,7 @@ module Foobara
 
         def run
           result = invoke_with_callbacks_and_transition(%i[
-                                                          cast_inputs
-                                                          validate_inputs
+                                                          cast_and_validate_inputs
                                                           load_records
                                                           validate_records
                                                           validate

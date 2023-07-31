@@ -30,7 +30,7 @@ module Foobara
 
         delegate :inputs_type, to: :class
 
-        def cast_inputs
+        def cast_and_validate_inputs
           if input_schema.blank? && raw_inputs.blank?
             @inputs = {}
             return
@@ -45,7 +45,7 @@ module Foobara
               if error.is_a?(Type::AttributeError)
                 add_input_error(error)
               else
-                # TODO: fix this
+                # TODO: raise a real error
                 raise "wtf"
               end
             end
@@ -54,10 +54,6 @@ module Foobara
           if outcome.success?
             @inputs = outcome.result
           end
-        end
-
-        def validate_inputs
-          # TODO: check various validations like required, blank, etc
         end
       end
     end
