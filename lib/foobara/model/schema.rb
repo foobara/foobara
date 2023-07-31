@@ -55,15 +55,18 @@ module Foobara
         end
       end
 
-      attr_accessor :raw_schema, :errors, :schema_has_been_validated
+      attr_accessor :raw_schema, :schema_validation_errors
       attr_reader :strict_schema
 
       def initialize(raw_schema)
-        raise "must give a schema" unless raw_schema
+        raise ArgumentError, "must give a schema" unless raw_schema
 
-        self.errors = []
+        self.schema_validation_errors = []
         self.raw_schema = raw_schema
+
         @strict_schema = desugarize
+
+        validate_schema
       end
 
       delegate :type, :valid_schema_type?, to: :class
@@ -73,27 +76,17 @@ module Foobara
       end
 
       def has_errors?
-        errors.present?
+        schema_validation_errors.present?
       end
 
       def valid?
         schema_validation_errors.empty?
       end
 
-      def schema_validation_errors
-        validate_schema unless schema_validated?
-
-        errors
-      end
-
       def validate!
         unless valid?
           raise InvalidSchema, schema_validation_errors
         end
-      end
-
-      def schema_validated?
-        schema_has_been_validated
       end
 
       private
@@ -103,15 +96,13 @@ module Foobara
       end
 
       def validate_schema
-        self.schema_has_been_validated = true
-
-        return errors if errors.present?
+        return schema_validation_errors if schema_validation_errors.present?
 
         Array.wrap(build_schema_validation_errors).each do |error|
-          errors << error
+          schema_validation_errors << error
         end
 
-        errors
+        schema_validation_errors
       end
 
       def build_schema_validation_errors
