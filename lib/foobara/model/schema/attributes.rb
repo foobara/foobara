@@ -199,8 +199,10 @@ module Foobara
           schemas.each_pair do |attribute_name, attribute_schema|
             if attribute_schema.is_a?(Hash) && attribute_schema.key?(:required)
               required = attribute_schema[:required]
+              schemas[attribute_name] = attribute_schema.except(:required)
+
+              # TODO: is false a good no-op? Maybe make required true the default and add a :foo? convention/sugar?
               if required # required: false is a no-op as it's the default
-                schemas[attribute_name] = attribute_schema.except(:required)
                 hash[:required] += [attribute_name]
               end
             end
