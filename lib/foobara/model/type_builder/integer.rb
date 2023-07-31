@@ -2,8 +2,6 @@ module Foobara
   class Model
     class TypeBuilder
       class Integer < TypeBuilder
-        delegate :max, to: :schema
-
         def to_type
           Type.new(**to_args)
         end

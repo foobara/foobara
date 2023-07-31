@@ -4,10 +4,6 @@ module Foobara
       class Integer < Schema
         include Schema::Concerns::Primitive
 
-        def max
-          strict_schema[:max]
-        end
-
         # how can we build this in a cleaner way so that validators can be more easily registered on types
         def to_h
           h = super
