@@ -3,14 +3,6 @@ require "foobara/type/type_error"
 module Foobara
   class Type
     class AttributeError < Type::TypeError
-      class << self
-        def context_schema
-          {
-            attribute_name: :symbol
-          }
-        end
-      end
-
       attr_accessor :path
 
       def initialize(context:, path: [], **data)
@@ -25,13 +17,6 @@ module Foobara
         # TODO: feels awkward... something is not right
         # how is path actually set?
         path.last || context[:attribute_name]
-      end
-
-      def context_schema
-        {
-          path: :duck, # TODO: fix this up once there's an array type
-          attribute_name: :symbol
-        }
       end
 
       def eql?(other)

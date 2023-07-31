@@ -57,7 +57,8 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
           [] => {},
           [:_unexpected_attributes] => {
             unexpected_attributes: {
-              attribute_name: :symbol
+              attribute_name: :symbol,
+              path: :duck
             }
           },
           [:should_fail] => {
@@ -73,7 +74,8 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
               [] => {},
               [:_unexpected_attributes] => {
                 unexpected_attributes: {
-                  attribute_name: :symbol
+                  attribute_name: :symbol,
+                  path: :duck
                 }
               },
               [:should_fail] => {

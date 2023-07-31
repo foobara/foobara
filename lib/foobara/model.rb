@@ -10,3 +10,20 @@ module Foobara
     Schema.register_schema(Schema::Attributes)
   end
 end
+
+# Here we are adding extensions to Foobara::Type but probably a better approach is to
+# combine and couple the two projects. Going to keep this separated for now though to
+# try to benefit from the separation of concerns longer but should someday merge these projects.
+# TODO: merge these projects
+Foobara::Type::AttributeError.class_eval do
+  class << self
+    def context_schema
+      {
+        path: :duck, # TODO: fix this up once there's an array type
+        attribute_name: :symbol
+      }
+    end
+  end
+
+  delegate :context_schema, to: :class
+end
