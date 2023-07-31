@@ -5,14 +5,8 @@ module Foobara
     class TypeBuilder
       module Validators
         module Attribute
-          class ValidateRequiredAttributePresent < Foobara::Type::ValueValidator
-            class MissingRequiredAttributeError < Foobara::Type::AttributeError
-              class << self
-                def symbol
-                  :missing_required_attribute
-                end
-              end
-            end
+          class MissingRequiredAttribute < Foobara::Type::ValueValidator
+            class Error < Foobara::Type::ValidatorError; end
 
             attr_accessor :attribute_name
 
@@ -23,11 +17,6 @@ module Foobara
 
             def validation_errors(attributes_hash)
               build_error(attributes_hash) unless attributes_hash.key?(attribute_name)
-            end
-
-            # TODO: eliminate
-            def error_class
-              MissingRequiredAttributeError
             end
 
             def error_message(_value)
