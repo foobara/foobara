@@ -80,6 +80,36 @@ RSpec.describe Foobara::Command::Concerns::Callbacks do
           end
         end
       end
+
+      context "when given a callback with no conditions" do
+        before do
+          @around_any_transitions = []
+          command_class.around_any_transition do |transition:, **args, &do_it|
+            expect(args[:command]).to be(command)
+
+            do_it.call
+
+            @around_any_transitions << transition
+          end
+        end
+
+        context "when success" do
+          before do
+            expect(outcome).to be_success
+          end
+
+          it "runs callbacks" do
+            expect(@around_any_transitions).to eq(
+              %i[cast_and_validate_inputs
+                 load_records
+                 validate_records
+                 validate
+                 execute
+                 succeed]
+            )
+          end
+        end
+      end
     end
   end
 end
