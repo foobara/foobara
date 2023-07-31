@@ -1,5 +1,17 @@
 module Foobara
   class Outcome
+    class UnsuccessfulOutcomeError < StandardError
+      attr_accessor :errors
+
+      def initialize(errors)
+        self.errors = errors
+
+        message = errors.map(&:message).join
+
+        super(message)
+      end
+    end
+
     class << self
       def success(result)
         new.tap do |outcome|
@@ -28,10 +40,6 @@ module Foobara
       def error(error)
         errors(Array.wrap(error))
       end
-
-      def raise!
-        raise "kaboom" unless success?
-      end
     end
 
     attr_writer :result
@@ -49,6 +57,16 @@ module Foobara
 
     def result
       @result if success?
+    end
+
+    def raise!
+      return  if success?
+
+      if errors.size == 1
+        raise errors.first
+      else
+        raise UnsuccessfulOutcomeError, errors
+      end
     end
   end
 end
