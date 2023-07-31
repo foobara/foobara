@@ -31,9 +31,11 @@ module Foobara
         end
 
         def schema_validation_errors
+          errors = Array.wrap(super)
+
           if schemas.blank?
             # TODO: should probably be some kind of schema validation error instead of Error
-            Error.new(
+            errors << Error.new(
               symbol: :missing_schemas_key_for_attributes,
               message: "Attributes must always have schemas present",
               context: {
@@ -44,7 +46,7 @@ module Foobara
             non_symbolic = schemas.keys.reject { |key| key.is_a?(::Symbol) }
 
             if non_symbolic.present?
-              Error.new(
+              errors << Error.new(
                 symbol: :non_symbolic_attribute_keys_given,
                 message: "Attributes must have all symbolic keys but #{non_symbolic} were given instead",
                 context: {
@@ -54,9 +56,11 @@ module Foobara
             else
               # TODO: having defaults and required hard-coded here is probably fine but does make it less likely
               # to have a system where extensions can easily be added at the attributes level.
-              Array.wrap(default_validation_errors) + Array.wrap(required_attribute_validation_errors)
+              errors += Array.wrap(default_validation_errors) + Array.wrap(required_attribute_validation_errors)
             end
-          end || []
+          end
+
+          errors
         end
 
         def default_validation_errors

@@ -15,6 +15,34 @@ module Foobara
 
           h
         end
+
+        def schema_validation_errors
+          errors = Array.wrap(super)
+
+          validators = Schema.validators_for_type(:integer)
+          allowed_keys = [*validators.keys, :type]
+
+          strict_schema.each_pair do |key, value|
+            next if key == :type
+
+            if allowed_keys.include?(key)
+              validator = validators[key]
+
+              outcome = TypeBuilder.type_for(Schema.for(validator.data_schema)).process(value)
+
+              unless outcome.success?
+                errors += outcome.errors
+              end
+            else
+              errors << Error.new(
+                symbol: :invalid_schema_element,
+                message: "Found #{key} but expected one of #{allowed_keys}"
+              )
+            end
+          end
+
+          errors
+        end
       end
     end
   end

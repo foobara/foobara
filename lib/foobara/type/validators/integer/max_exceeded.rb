@@ -23,6 +23,10 @@ module Foobara
             def validator_symbol
               :max
             end
+
+            def data_schema
+              :integer
+            end
           end
 
           attr_accessor :max
@@ -36,7 +40,6 @@ module Foobara
           def validation_errors(value)
             unless value <= max
               build_error(value)
-
             end
           end
 

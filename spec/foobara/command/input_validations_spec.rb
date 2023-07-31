@@ -66,6 +66,20 @@ RSpec.describe Foobara::Command do
           expect(error.attribute_name).to eq(:exponent)
         end
       end
+
+      context "when input validator data doesn't match expected data type" do
+        let(:exponent) { "asdf" }
+
+        it "is not success" do
+          expect(outcome).to_not be_success
+          expect(errors.size).to eq(1)
+          expect(error.context).to eq(attribute_name: :exponent, value: exponent, cast_to: :integer)
+          expect(error.message).to be_a(String)
+          expect(error.symbol).to eq(:cannot_cast)
+          expect(error.path).to eq([:exponent])
+          expect(error.attribute_name).to eq(:exponent)
+        end
+      end
     end
   end
 end
