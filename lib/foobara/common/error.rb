@@ -8,6 +8,7 @@ module Foobara
       end
 
       def merge(errors)
+        # TODO: are we actually using Multiple error?
         MultipleError.new(errors)
       end
     end
@@ -20,7 +21,7 @@ module Foobara
                     elsif self.class.respond_to?(:symbol)
                       self.class.symbol
                     else
-                      raise NoErrorSymbolGiven, "No error symbol given"
+                      raise ArgumentError, "No error symbol given"
                     end
 
       self.message = message
@@ -41,7 +42,7 @@ module Foobara
 
     def to_h
       {
-        type:,
+        type:, # TODO: what is the difference between type and symbol??
         symbol:,
         message:,
         context:

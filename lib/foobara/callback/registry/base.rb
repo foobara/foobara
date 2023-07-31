@@ -68,6 +68,7 @@ module Foobara
 
         def validate_type!(type)
           unless Block.types.include?(type)
+            # TODO: raise a real error
             raise "bad type #{type} expected one of #{Block.types}"
           end
         end

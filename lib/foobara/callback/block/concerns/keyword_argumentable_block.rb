@@ -18,6 +18,7 @@ module Foobara
           super
 
           if has_keyword_args? && has_positional_args?
+            # TODO: raise a real error
             raise "Expect #{type} block to either take a positional arg or keyword args but not both"
           end
         end
