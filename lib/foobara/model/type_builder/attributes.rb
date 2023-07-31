@@ -39,7 +39,7 @@ module Foobara
         def required_field_validators
           schema.required.map do |attribute_name|
             # we need to get paths into here... not attribute_name specifically
-            Validators::Attribute::ValidateRequiredAttributesPresent.new(attribute_name)
+            Validators::Attribute::ValidateRequiredAttributePresent.new(attribute_name)
           end
         end
 

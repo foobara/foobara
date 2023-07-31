@@ -5,7 +5,7 @@ module Foobara
     class TypeBuilder
       module Validators
         module Attribute
-          class ValidateRequiredAttributesPresent < Foobara::Type::ValueValidator
+          class ValidateRequiredAttributePresent < Foobara::Type::ValueValidator
             class MissingRequiredAttributeError < Foobara::AttributeError
               class << self
                 def symbol
