@@ -5,6 +5,9 @@ Style/BlockDelimiters:
   Exclude:
     - 'spec/**/*'
 
+Style/CaseEquality:
+  Enabled: false
+
 Style/ClassAndModuleChildren:
   Enabled: false
 
@@ -18,11 +21,11 @@ Style/FrozenStringLiteralComment:
   SafeAutoCorrect: true
   EnforcedStyle: never
 
-Style/HashSyntax:
-  EnforcedStyle: ruby19
-
 Style/GuardClause:
   Enabled: false
+
+Style/HashSyntax:
+  EnforcedStyle: ruby19
 
 Style/IfUnlessModifier:
   Enabled: false
@@ -49,6 +52,3 @@ Style/StringLiterals:
 Style/StringLiteralsInInterpolation:
   Enabled: true
   EnforcedStyle: double_quotes
-
-Style/CaseEquality:
-  Enabled: false
