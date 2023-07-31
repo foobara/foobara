@@ -29,8 +29,7 @@ module Foobara
                                                           execute
                                                         ])
 
-          result = cast_result_using_result_schema(result)
-          validate_result_using_result_schema(result)
+          result = process_result_using_result_schema(result)
 
           state_machine.succeed!
 

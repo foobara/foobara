@@ -24,8 +24,8 @@ module Foobara
         private
 
         def add_error(error)
+          error = process_error(error)
           error_collection.add_error(error)
-          validate_error(error)
         end
 
         def add_input_error(*args, **opts)
@@ -81,9 +81,9 @@ module Foobara
           halt!
         end
 
-        def validate_error(error)
-          # it has already been validated when it ran in the sub command
-          return true if error.is_a?(Subcommands::FailedToExecuteSubcommand)
+        def process_error(error)
+          # it has already been processed when it ran in the sub command
+          return error if error.is_a?(Subcommands::FailedToExecuteSubcommand)
 
           symbol = error.symbol
           message = error.message
@@ -108,18 +108,19 @@ module Foobara
 
           possible_error_symbols = map.keys
 
-          context_schema = Foobara::Model::Schema::Attributes.new(map[symbol])
-
           unless possible_error_symbols.include?(symbol)
             raise "Invalid error symbol #{symbol} expected one of #{possible_error_symbols}"
           end
 
+          context_schema = Foobara::Model::Schema::Attributes.new(map[symbol])
+
           if context_schema.present?
-            errors = Model::TypeBuilder.type_for(context_schema).validation_errors(context.presence || {})
-            raise "Invalid context schema #{context}: #{errors}" if errors.present?
+            error.context = Model::TypeBuilder.type_for(context_schema).process!(context || {})
           elsif context.present?
             raise "There's no context schema declared for #{symbol}"
           end
+
+          error
         end
       end
     end

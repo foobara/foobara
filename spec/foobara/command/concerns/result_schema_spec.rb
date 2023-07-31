@@ -48,7 +48,7 @@ RSpec.describe Foobara::Command::Concerns::ResultSchema do
         let(:to_be_result) { "not an integer" }
 
         it "raises" do
-          expect { command.run }.to raise_error(Foobara::Command::Concerns::Result::CouldNotCastResult)
+          expect { command.run }.to raise_error(Foobara::Command::Concerns::Result::CouldNotProcessResult)
           expect(command.outcome).to be_nil
           expect(command).to_not be_success
         end

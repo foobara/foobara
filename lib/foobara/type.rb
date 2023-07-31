@@ -95,53 +95,6 @@ module Foobara
       value_processors.select { |processor| processor.is_a?(ValueValidator) }
     end
 
-    # Do we really need this method?
-    def can_cast?(value)
-      cast_from(value).success?
-    end
-
-    # Do we really need this method?
-    def casting_errors(value)
-      cast_from(value).errors
-    end
-
-    # Do we really need this method?
-    def cast_from!(value)
-      outcome = cast_from(value)
-
-      if outcome.success?
-        outcome.result
-      else
-        outcome.raise!
-      end
-    end
-
-    def cast_from(value)
-      caster = casters.find { |c| c.applicable?(value) }
-
-      if caster
-        Outcome.success(caster.cast(value))
-      else
-        applies_messages = casters.map(&:applies_message).flatten
-        connector = ", or "
-        applies_message = applies_messages.to_sentence(
-          words_connector: ", ",
-          last_word_connector: connector,
-          two_words_connector: connector
-        )
-
-        Outcome.error(
-          CannotCastError.new(
-            message: "Cannot cast #{value}. Expected it to #{applies_message}",
-            context: {
-              cast_to_type: casters.first.type_symbol,
-              value:
-            }
-          )
-        )
-      end
-    end
-
     def process(value, path = [])
       cast_outcome = cast_from(value)
 
@@ -218,9 +171,32 @@ module Foobara
       end
     end
 
-    def validation_errors(_value)
-      # TODO: actually return something of interest here! Or delete this.
-      []
+    private
+
+    def cast_from(value)
+      caster = casters.find { |c| c.applicable?(value) }
+
+      if caster
+        Outcome.success(caster.cast(value))
+      else
+        applies_messages = casters.map(&:applies_message).flatten
+        connector = ", or "
+        applies_message = applies_messages.to_sentence(
+          words_connector: ", ",
+          last_word_connector: connector,
+          two_words_connector: connector
+        )
+
+        Outcome.error(
+          CannotCastError.new(
+            message: "Cannot cast #{value}. Expected it to #{applies_message}",
+            context: {
+              cast_to: casters.first.type_symbol,
+              value:
+            }
+          )
+        )
+      end
     end
 
     register(
