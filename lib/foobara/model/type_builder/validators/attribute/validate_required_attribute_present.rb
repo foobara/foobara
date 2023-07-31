@@ -22,9 +22,10 @@ module Foobara
             end
 
             def validation_errors(attributes_hash)
-              build_error unless attributes_hash.key?(attribute_name)
+              build_error(attributes_hash) unless attributes_hash.key?(attribute_name)
             end
 
+            # TODO: eliminate
             def error_class
               MissingRequiredAttributeError
             end
@@ -33,11 +34,11 @@ module Foobara
               [attribute_name]
             end
 
-            def error_message
+            def error_message(_value)
               "Missing required attribute #{attribute_name}"
             end
 
-            def error_context
+            def error_context(_value)
               {
                 attribute_name:
               }

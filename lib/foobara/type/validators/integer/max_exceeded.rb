@@ -29,17 +29,20 @@ module Foobara
 
           def validation_errors(value)
             unless value <= max
-              build_error(
-                context: {
-                  value:,
-                  max:
-                }
-              )
+              build_error(value)
+
             end
           end
 
-          def error_message
-            "Max exceeded. Should not have been larger than: #{max}"
+          def error_message(value)
+            "Max exceeded. #{value} is larger than #{max}"
+          end
+
+          def error_context(value)
+            {
+              value:,
+              max:
+            }
           end
         end
       end

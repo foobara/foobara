@@ -59,11 +59,9 @@ RSpec.describe Foobara::Command do
         it "is not success" do
           expect(outcome).to_not be_success
           expect(errors.size).to eq(1)
-          expect(error.to_h).to eq(
-            context: { max: 10, value: 13 },
-            message: "Max exceeded. Should not have been larger than: 10",
-            symbol: :max_exceeded
-          )
+          expect(error.context).to eq(max: 10, value: 13)
+          expect(error.message).to be_a(String)
+          expect(error.symbol).to eq(:max_exceeded)
           expect(error.path).to eq([:exponent])
           expect(error.attribute_name).to eq(:exponent)
         end

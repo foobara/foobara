@@ -20,7 +20,7 @@ module Foobara
         Util.constant_value(self.class, :Error)
       end
 
-      def build_error(message: error_message, context: error_context, path: error_path, **args)
+      def build_error(value, message: error_message(value), context: error_context(value), path: error_path, **args)
         error_class.new(
           path:,
           message:,
@@ -41,11 +41,11 @@ module Foobara
         nil
       end
 
-      def error_message
+      def error_message(_value)
         raise "subclass responsibility"
       end
 
-      def error_context
+      def error_context(_value)
         raise "subclass responsibility"
       end
 
