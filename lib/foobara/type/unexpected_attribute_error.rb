@@ -1,11 +1,12 @@
-require "foobara/model/attribute_error"
+require "foobara/type/attribute_error"
 
 module Foobara
-  # TODO: this is the wrong namespace! fix this
-  class UnexpectedAttributeError < AttributeError
-    class << self
-      def symbol
-        :unexpected_attributes
+  class Type
+    class UnexpectedAttributeError < AttributeError
+      class << self
+        def symbol
+          :unexpected_attributes
+        end
       end
     end
   end

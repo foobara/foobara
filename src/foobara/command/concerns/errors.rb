@@ -32,7 +32,7 @@ module Foobara
           error = if args.size == 1 && opts.empty?
                     error = args.first
 
-                    unless error.is_a?(AttributeError)
+                    unless error.is_a?(Type::AttributeError)
                       raise ArgumentError, "expected an AttributeError or keyword arguments to construct one"
                     end
 
@@ -94,14 +94,14 @@ module Foobara
           map = self.class.error_context_schema_map
 
           map = case error
-                when Foobara::Command::RuntimeError
+                when Command::RuntimeError
                   map[:runtime]
-                when UnexpectedAttributeError
+                when Type::UnexpectedAttributeError
                   # TODO: This seems unnecessary... can't just put it at path?
                   # we'e swapping out the last position of the path with _unexpected_attributes because
                   # we dont know before runtime what the unexpected attribute will have been
                   map[:input][[*error.path[0..-2], :_unexpected_attributes]]
-                when AttributeError
+                when Type::AttributeError
                   map[:input][error.path]
                 end
 

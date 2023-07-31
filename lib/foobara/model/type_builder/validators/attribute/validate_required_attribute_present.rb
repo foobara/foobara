@@ -1,4 +1,4 @@
-require "foobara/model/attribute_error"
+require "foobara/type/attribute_error"
 
 module Foobara
   class Model
@@ -6,7 +6,7 @@ module Foobara
       module Validators
         module Attribute
           class ValidateRequiredAttributePresent < Foobara::Type::ValueValidator
-            class MissingRequiredAttributeError < Foobara::AttributeError
+            class MissingRequiredAttributeError < Foobara::Type::AttributeError
               class << self
                 def symbol
                   :missing_required_attribute
