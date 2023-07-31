@@ -1,5 +1,6 @@
 module Foobara
   class Domain
+    # TODO: should we just couple domain project and commands project to simplify this connection?
     module CommandExtension
       extend ActiveSupport::Concern
 

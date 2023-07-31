@@ -4,9 +4,7 @@ module Foobara
       class Attributes < Schema
         class << self
           def can_handle?(sugary_schema)
-            return false unless sugary_schema.is_a?(Hash)
-
-            sugary_schema.keys.all? { |key| key.is_a?(::Symbol) }
+            sugary_schema.is_a?(Hash) && sugary_schema.keys.all? { |key| key.is_a?(::Symbol) }
           end
         end
 
@@ -14,6 +12,8 @@ module Foobara
           strict_schema[:schemas]
         end
 
+        # TODO: having defaults and required hard-coded here is probably fine but does make it less likely
+        # to have a system where extensions can easily be added at the attributes level.
         def defaults
           strict_schema[:defaults] || {}
         end
@@ -32,6 +32,7 @@ module Foobara
 
         def schema_validation_errors
           if schemas.blank?
+            # TODO: should probably be some kind of schema validation error instead of Error
             Error.new(
               symbol: :missing_schemas_key_for_attributes,
               message: "Attributes must always have schemas present",
@@ -51,6 +52,8 @@ module Foobara
                 }
               )
             else
+              # TODO: having defaults and required hard-coded here is probably fine but does make it less likely
+              # to have a system where extensions can easily be added at the attributes level.
               Array.wrap(default_validation_errors) + Array.wrap(required_attribute_validation_errors)
             end
           end || []
@@ -154,6 +157,8 @@ module Foobara
             return
           end
 
+          # TODO: having defaults and required hard-coded here is probably fine but does make it less likely
+          # to have a system where extensions can easily be added at the attributes level.
           hash = desugarize_defaults(hash)
           hash = desugarize_required(hash)
 
