@@ -112,7 +112,6 @@ RSpec.describe Foobara::Command do
       it "is not success and has expected error" do
         expect(outcome).to_not be_success
         expect(errors.size).to be(1)
-        # TODO: this feels very wrong...
         expect(error.attribute_name).to eq(:bar)
         expect(error.path).to eq(%i[foo bar])
         expect(error.symbol).to eq(:cannot_cast)

@@ -22,7 +22,4 @@ RSpec.configure do |config|
   end
 end
 
-pattern = File.join(__dir__, "support", "**", "*.rb")
-files = Dir[pattern].sort_by(&:length).reverse
-
-files.each { |f| require f }
+Foobara::Util.require_directory("#{__dir__}/support")
