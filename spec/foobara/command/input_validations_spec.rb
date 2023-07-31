@@ -5,7 +5,7 @@ RSpec.describe Foobara::Command do
         input_schema(
           type: :attributes,
           schemas: {
-            exponent: { type: :integer, max: 10 },
+            exponent: { type: :integer, max: 10, min: 0 },
             base: { type: :integer, required: true }
           },
           required: :exponent

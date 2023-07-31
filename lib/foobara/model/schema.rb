@@ -108,18 +108,18 @@ module Foobara
       end
 
       def validate_schema
-        return schema_validation_errors if schema_validation_errors.present?
+        return schema_validation_errors if @schema_validated
 
-        Array.wrap(build_schema_validation_errors).each do |error|
-          schema_validation_errors << error
-        end
+        build_schema_validation_errors
+
+        @schema_validated = true
 
         schema_validation_errors
       end
 
       def build_schema_validation_errors
         unless valid_schema_type?(type)
-          Error.new(
+          schema_validation_errors << Error.new(
             symbol: :"unknown_type_#{type}",
             message: "Unknown type #{type}",
             context: {
