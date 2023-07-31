@@ -44,7 +44,7 @@ module Foobara
         end
 
         def unexpected_attributes_validator
-          Validators::Attribute::ValidateAllAttributesExpected.new(schema.valid_attribute_names)
+          Validators::Attribute::UnexpectedAttribute.new(schema.valid_attribute_names)
         end
 
         def base_type

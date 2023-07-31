@@ -44,7 +44,7 @@ module Foobara
                     raise "missing error symbol" unless symbol
 
                     # TODO: a way to eliminate this check?
-                    klass = symbol == :unexpected_attributes ? UnexpectedAttributeError : AttributeError
+                    klass = symbol == :unexpected_attribute ? UnexpectedAttributeError : AttributeError
 
                     klass.new(**error_args)
                   else

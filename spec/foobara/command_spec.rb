@@ -80,7 +80,7 @@ RSpec.describe Foobara::Command do
       it "gives relevant errors" do
         expect(outcome).to_not be_success
         expect(errors.size).to be(1)
-        expect(error.symbol).to eq(:unexpected_attributes)
+        expect(error.symbol).to eq(:unexpected_attribute)
         expect(error.attribute_name).to eq(:extra_junk)
         expect(error.context).to eq(attribute_name: :extra_junk, value: 123)
       end

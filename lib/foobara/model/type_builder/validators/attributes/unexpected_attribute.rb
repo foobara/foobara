@@ -4,7 +4,9 @@ module Foobara
       module Validators
         # TODO: move to Type project
         module Attribute
-          class ValidateAllAttributesExpected < Foobara::Type::ValueValidator
+          class UnexpectedAttribute < Foobara::Type::ValueValidator
+            class Error < Foobara::Type::ValidatorError; end
+
             attr_accessor :allowed_attribute_names
 
             def initialize(allowed_attribute_names)
@@ -31,11 +33,6 @@ module Foobara
                   }
                 )
               end
-            end
-
-            # TODO: eliminate
-            def error_class
-              Foobara::Type::UnexpectedAttributeError
             end
           end
         end

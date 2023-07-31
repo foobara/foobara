@@ -5,7 +5,7 @@ module Foobara
     class UnexpectedAttributeError < AttributeError
       class << self
         def symbol
-          :unexpected_attributes
+          :unexpected_attribute
         end
       end
     end
