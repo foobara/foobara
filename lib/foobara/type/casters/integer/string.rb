@@ -1,11 +1,10 @@
 require "foobara/type/caster"
 
-# TODO: move this to casters directory
 module Foobara
   class Type
     module ValueProcessors
       module Integer
-        class CastFromString < Caster
+        class String < Caster
           INTEGER_REGEX = /^-?\d+$/
 
           def applicable?(value)
