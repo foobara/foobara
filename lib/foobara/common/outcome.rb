@@ -40,6 +40,10 @@ module Foobara
       def error(error)
         errors(Array.wrap(error))
       end
+
+      def raise!(errors)
+        self.errors(errors).raise! if errors.present?
+      end
     end
 
     attr_writer :result

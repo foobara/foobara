@@ -5,7 +5,7 @@ RSpec.describe Foobara::Command do
         input_schema(
           type: :attributes,
           schemas: {
-            exponent: { type: :integer, max: 10, min: 0 },
+            exponent: { type: :integer, max: 10 },
             base: { type: :integer, required: true }
           },
           required: :exponent
@@ -78,6 +78,29 @@ RSpec.describe Foobara::Command do
           expect(error.symbol).to eq(:cannot_cast)
           expect(error.path).to eq([:exponent])
           expect(error.attribute_name).to eq(:exponent)
+        end
+      end
+
+      context "when unknown validator is applied" do
+        let(:command_class2) {
+          Class.new(command_class) do
+            input_schema(
+              type: :attributes,
+              schemas: {
+                exponent: { type: :integer, max: 10, not_valid: :whatever },
+                base: { type: :integer, required: true }
+              },
+              required: :exponent
+            )
+          end
+        }
+
+        let(:command) { command_class2.new(base:, exponent:) }
+
+        it "is raises" do
+          expect {
+            outcome
+          }.to raise_error(Foobara::Model::Schema::InvalidSchemaError, /\bnot_valid\b/)
         end
       end
     end

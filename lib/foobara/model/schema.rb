@@ -1,6 +1,10 @@
 module Foobara
   class Model
     class Schema
+      # TODO: eliminate one of these error classes
+      class InvalidSchemaError < Foobara::Error
+      end
+
       class InvalidSchema < StandardError
         attr_accessor :schema_validation_errors
 
@@ -78,7 +82,7 @@ module Foobara
 
         @strict_schema = desugarize
 
-        validate_schema
+        validate_schema!
       end
 
       delegate :type, :valid_schema_type?, to: :class
@@ -115,6 +119,12 @@ module Foobara
         @schema_validated = true
 
         schema_validation_errors
+      end
+
+      def validate_schema!
+        validate_schema
+
+        Outcome.raise!(schema_validation_errors)
       end
 
       def build_schema_validation_errors

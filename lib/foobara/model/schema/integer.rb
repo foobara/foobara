@@ -34,7 +34,7 @@ module Foobara
                 self.schema_validation_errors += outcome.errors
               end
             else
-              schema_validation_errors << Error.new(
+              schema_validation_errors << InvalidSchemaError.new(
                 symbol: :invalid_schema_element,
                 message: "Found #{key} but expected one of #{allowed_keys}"
               )
