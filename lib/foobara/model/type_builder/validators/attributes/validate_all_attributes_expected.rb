@@ -33,20 +33,6 @@ module Foobara
               end
             end
 
-            # We put the error on the parent object since we cannot anticipate in advance
-            # what the unexpected attribute will be. This simplifies things elsewhere to consider the
-            # attributes hash itself as invalid instead of the unexpected attribute as invalid
-            # TODO: eliminate this is the default
-            def error_path
-              []
-            end
-
-            # TODO: this is here for compatibility elsewhere... can this be cleaned up somehow?
-            # TODO: elimiinate this is the default
-            def attribute_name
-              nil
-            end
-
             # TODO: eliminate
             def error_class
               Foobara::Type::UnexpectedAttributeError

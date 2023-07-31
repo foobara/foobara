@@ -34,7 +34,7 @@ module Foobara
       end
 
       def error_path
-        []
+        [attribute_name].compact
       end
 
       def attribute_name

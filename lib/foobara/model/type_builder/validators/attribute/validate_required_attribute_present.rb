@@ -30,10 +30,6 @@ module Foobara
               MissingRequiredAttributeError
             end
 
-            def error_path
-              [attribute_name]
-            end
-
             def error_message(_value)
               "Missing required attribute #{attribute_name}"
             end
