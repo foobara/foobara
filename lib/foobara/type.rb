@@ -228,7 +228,7 @@ module Foobara
     register(
       :attributes,
       Type.new(
-        casters: Type::Casters::Attributes::Hash.new(type_symbol: :attributes)
+        casters: Type::Casters::Attributes::Hash.new
       )
     )
   end

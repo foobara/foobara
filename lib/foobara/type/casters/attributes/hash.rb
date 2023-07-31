@@ -23,6 +23,10 @@ module Foobara
               hash.symbolize_keys
             end
           end
+
+          def type_symbol
+            :attributes
+          end
         end
       end
     end

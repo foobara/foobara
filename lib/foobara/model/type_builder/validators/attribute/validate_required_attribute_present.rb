@@ -18,7 +18,6 @@ module Foobara
 
             def initialize(attribute_name)
               super()
-
               self.attribute_name = attribute_name
             end
 

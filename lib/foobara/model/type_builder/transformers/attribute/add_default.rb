@@ -6,9 +6,8 @@ module Foobara
           class AddDefault < Foobara::Type::ValueTransformer
             attr_accessor :attribute_name, :default_value
 
-            def initialize(attribute_name:, default_value:, type_symbol: nil)
-              super(type_symbol:)
-
+            def initialize(attribute_name:, default_value:)
+              super()
               self.attribute_name = attribute_name
               self.default_value = default_value
             end

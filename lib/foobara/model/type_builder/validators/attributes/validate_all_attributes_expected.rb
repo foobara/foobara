@@ -9,7 +9,6 @@ module Foobara
 
             def initialize(allowed_attribute_names)
               super()
-
               self.allowed_attribute_names = allowed_attribute_names
             end
 

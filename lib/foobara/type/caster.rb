@@ -3,6 +3,12 @@ require "foobara/type/value_transformer"
 module Foobara
   class Type
     class Caster < ValueTransformer
+      def type_symbol
+        # :nocov:
+        raise "subclass responsibility"
+        # :nocov:
+      end
+
       def applicable?(_value)
         # :nocov:
         raise "subclass responsibility"

@@ -16,6 +16,10 @@ module Foobara
           def cast(string)
             string.to_sym
           end
+
+          def type_symbol
+            :symbol
+          end
         end
       end
     end
