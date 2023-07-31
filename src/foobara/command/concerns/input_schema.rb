@@ -46,7 +46,7 @@ module Foobara
               type.children_types.each_pair do |attribute_name, attribute_type|
                 child_path = [*path, attribute_name]
 
-                possible_input_error(child_path, :cannot_cast, cast_to: :duck, value: :duck)
+                possible_input_error(child_path, :cannot_cast, cast_to: :duck, value: :duck, attribute_name: :symbol)
                 register_possible_errors(child_path, attribute_type)
               end
             end

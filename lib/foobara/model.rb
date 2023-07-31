@@ -20,7 +20,8 @@ Foobara::Type::AttributeError.class_eval do
     def context_schema
       {
         path: :duck, # TODO: fix this up once there's an array type
-        attribute_name: :symbol
+        attribute_name: :symbol,
+        value: :duck
       }
     end
   end

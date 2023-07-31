@@ -57,13 +57,15 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
           [] => {
             unexpected_attributes: {
               attribute_name: :symbol,
-              path: :duck
+              path: :duck,
+              value: :duck
             }
           },
           [:should_fail] => {
             cannot_cast: {
               cast_to: :duck,
-              value: :duck
+              value: :duck,
+              attribute_name: :symbol
             }
           }
         },
@@ -73,13 +75,15 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
               [] => {
                 unexpected_attributes: {
                   attribute_name: :symbol,
-                  path: :duck
+                  path: :duck,
+                  value: :duck
                 }
               },
               [:should_fail] => {
                 cannot_cast: {
                   cast_to: :duck,
-                  value: :duck
+                  value: :duck,
+                  attribute_name: :symbol
                 }
               }
             },
