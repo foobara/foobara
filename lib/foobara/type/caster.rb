@@ -4,19 +4,21 @@ module Foobara
   class Type
     class Caster < ValueTransformer
       def applicable?(_value)
+        # :nocov:
         raise "subclass responsibility"
+        # :nocov:
       end
 
       def cast(_value)
+        # :nocov:
         raise "subclass responsibility"
-      end
-
-      def transform(value)
-        cast_from(value)
+        # :nocov:
       end
 
       def applies_message(_value)
+        # :nocov:
         raise "subclass responsibility"
+        # :nocov:
       end
     end
   end

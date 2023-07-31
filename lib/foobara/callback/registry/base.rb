@@ -2,12 +2,6 @@ module Foobara
   module Callback
     module Registry
       class Base
-        def execute_with_callbacks(callback_data:, lookup_args: [], lookup_opts: {}, &do_it)
-          callback_set = unioned_callback_set_for(*lookup_args, **lookup_opts)
-
-          callback_set.execute_with_callbacks(callback_data, &do_it)
-        end
-
         def runner(*args, **opts)
           Runner.new(unioned_callback_set_for(*args, **opts))
         end
@@ -21,11 +15,15 @@ module Foobara
         end
 
         def specific_callback_set_for(*_args, **_opts)
+          # :nocov:
           raise "subclass responsibility"
+          # :nocov:
         end
 
         def unioned_callback_set_for(*_args, **_opts)
+          # :nocov:
           raise "subclass responsibility"
+          # :nocov:
         end
 
         def before(*args, **opts, &)
