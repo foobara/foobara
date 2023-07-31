@@ -97,19 +97,16 @@ module Foobara
                 when Command::RuntimeError
                   map[:runtime]
                 when Type::UnexpectedAttributeError
-                  # TODO: This seems unnecessary... can't just put it at path?
-                  # we'e swapping out the last position of the path with _unexpected_attributes because
-                  # we dont know before runtime what the unexpected attribute will have been
-                  map[:input][[*error.path[0..-2], :_unexpected_attributes]]
+                  map[:input][error.path[0..-2]]
                 when Type::AttributeError
                   map[:input][error.path]
                 end
 
+          # TODO: raise a real error
           raise "Unexpected error type for #{error}" unless map
 
           possible_error_symbols = map.keys
 
-          # TODO: probably should store the schema objects and not the hashes?
           context_schema = Foobara::Model::Schema::Attributes.new(map[symbol])
 
           unless possible_error_symbols.include?(symbol)

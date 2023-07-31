@@ -27,8 +27,6 @@ module Foobara
               map[path] = {}
 
               if schema_to_process.is_a?(Foobara::Model::Schema::Attributes)
-                map[[*path, :_unexpected_attributes]] = {}
-
                 schema_to_process.schemas.each_pair do |attribute_name, schema|
                   attribute_path = [*path, attribute_name]
 

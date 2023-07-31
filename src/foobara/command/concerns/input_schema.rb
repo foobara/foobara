@@ -38,7 +38,8 @@ module Foobara
               symbol = validator.error_symbol
               context_schema = validator.error_context_schema
 
-              possible_input_error([*path, validator.attribute_name], symbol, context_schema)
+              # TODO: figure out how to eliminate this .compact, perhaps by putting path on the validator
+              possible_input_error([*path, validator.attribute_name].compact, symbol, context_schema)
             end
 
             if type.children_types.present?

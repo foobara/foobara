@@ -36,7 +36,7 @@ module Foobara
 
             # TODO: this is here for compatibility elsewhere... can this be cleaned up somehow?
             def attribute_name
-              :_unexpected_attributes
+              nil
             end
 
             def error_class

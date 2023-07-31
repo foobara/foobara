@@ -54,8 +54,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
     it "contains subcommand error information" do
       expect(command_class.error_context_schema_map).to eq(
         input: {
-          [] => {},
-          [:_unexpected_attributes] => {
+          [] => {
             unexpected_attributes: {
               attribute_name: :symbol,
               path: :duck
@@ -71,8 +70,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
         runtime: {
           could_not_run_some_subcommand: {
             input: {
-              [] => {},
-              [:_unexpected_attributes] => {
+              [] => {
                 unexpected_attributes: {
                   attribute_name: :symbol,
                   path: :duck

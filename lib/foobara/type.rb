@@ -176,7 +176,8 @@ module Foobara
                 error_hash[:context][:attribute_name] = attribute_name
 
                 # Do we really need this translation?? #TODO eliminate somehow
-                error = AttributeError.new(path: [*path, attribute_name], **error_hash)
+                # TODO: figure out how to eliminate this .compact, perhaps by putting path on the validator
+                error = AttributeError.new(path: [*path, attribute_name].compact, **error_hash)
               end
 
               outcome.add_error(error)
