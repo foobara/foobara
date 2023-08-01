@@ -5,6 +5,8 @@ module Foobara
     module Casters
       module Attributes
         class Hash < Caster
+          include Singleton
+
           def applicable?(value)
             value.is_a?(::Hash) && value.keys.all? { |key| key.is_a?(::Symbol) || key.is_a?(String) }
           end

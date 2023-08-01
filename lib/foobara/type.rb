@@ -1,4 +1,5 @@
 require "active_support/core_ext/array/conversions"
+require "singleton"
 
 Foobara::Util.require_directory("#{__dir__}/type")
 
@@ -240,7 +241,7 @@ module Foobara
       :duck,
       Type.new(
         casters: [
-          Type::Casters::DirectTypeMatch.new(type_symbol: :duck, ruby_classes: ::Object)
+          Type::Casters::Duck::Object.instance
         ]
       )
     )
@@ -248,8 +249,8 @@ module Foobara
       :symbol,
       Type.new(
         casters: [
-          Type::Casters::DirectTypeMatch.new(type_symbol: :symbol, ruby_classes: ::Symbol),
-          Type::Casters::Symbol::String.new
+          Type::Casters::Symbol::Symbol.instance,
+          Type::Casters::Symbol::String.instance
         ]
       )
     )
@@ -257,15 +258,15 @@ module Foobara
       :integer,
       Type.new(
         casters: [
-          Type::Casters::DirectTypeMatch.new(type_symbol: :integer, ruby_classes: ::Integer),
-          Type::Casters::Integer::String.new
+          Type::Casters::Integer::Integer.instance,
+          Type::Casters::Integer::String.instance
         ]
       )
     )
     register_primitive_type(
       :attributes,
       Type.new(
-        casters: Type::Casters::Attributes::Hash.new
+        casters: Type::Casters::Attributes::Hash.instance
       )
     )
 
