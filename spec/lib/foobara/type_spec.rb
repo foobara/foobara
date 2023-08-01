@@ -37,4 +37,12 @@ RSpec.describe Foobara::Type do
       end
     end
   end
+
+  describe ".[]" do
+    context "when looking up a primitive" do
+      it "returns a primitive" do
+        expect(described_class[:integer]).to be_a(Foobara::Type::PrimitiveType)
+      end
+    end
+  end
 end

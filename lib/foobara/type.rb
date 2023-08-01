@@ -4,10 +4,10 @@ require "singleton"
 Foobara::Util.require_directory("#{__dir__}/type")
 
 # notes:
-# * A schema hash is a hash representation of a type which comes in a two forms
+# * A "schema hash" is a hash representation of a type which comes in a two forms
 # ** sugary schema hash. Good for humans expressing types to the machine and possibly each other
 # ** strict schema hash. Predictable and formal. Good for processing programmatically to accomplish interesting things.
-# * a schema is an object representing what was/can be declared in a schema hash.
+# * a "schema" is an object representing what was/can be declared in a schema hash.
 # * a "type" is a collection of value casters, value transformers, and value validators. It is used to process values.
 #    Does this need a better name? It also has a corresponding ruby class or ruby classes to represent an instance
 #    of the type at runtime and give it additional value.
@@ -60,7 +60,7 @@ module Foobara
           raise CannotRegisterPrimitive, "Primitives cannot be registered. Register a custom type instead."
         end
 
-        type = Type.new(casters: casters_for_primitive(symbol))
+        type = PrimitiveType.new(casters: casters_for_primitive(symbol))
 
         global_registry.register(symbol, type)
       end
