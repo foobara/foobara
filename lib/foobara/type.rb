@@ -2,6 +2,29 @@ require "active_support/core_ext/array/conversions"
 
 Foobara::Util.require_directory("#{__dir__}/type")
 
+# notes:
+# * A schema hash is a hash representation of a type which comes in a two forms
+# ** sugary schema hash. Good for humans expressing types to the machine and possibly each other
+# ** strict schema hash. Predictable and formal. Good for processing programmatically to accomplish interesting things.
+# * a schema is an object representing what was/can be declared in a schema hash.
+# * a "type" is a collection of value casters, value transformers, and value validators. It is used to process values.
+#    Does this need a better name? It also has a corresponding ruby class or ruby classes to represent an instance
+#    of the type at runtime and give it additional value.
+# * a "registered type" is a type with a symbolic name and can be represented by that name instead of repeating the type
+# * a "primitive type" is a registered type which has no application-programmer-defined behavior at all and is
+#   registered in the global registry automatically.
+# * an "attributes type" is an important primitive type representing an associative array where the keys are
+#   symbols that give the attribute names and the values are types.
+# * a "custom type" is a registered type defined by and registered by the application programmer but does not have
+#   business meaning.
+# * an "anonymous type" is a user-defined type but is not registered.
+# * a "model" is an a custom type that does have business meaning. By convention it has an upper-case name.
+# * a "value model" is a model which can have programmer defined equality or by default is equal if all the attributes
+#   are equal
+# * an "entity" is a "model" which is an attributes type, has a with a primary key attribute, and can be represented by
+#   its primary key alone. An instance of an entity is called a "record." These records are read from/written to a
+#   "store." Two entities are equal if they have the same primary key.
+
 # some concepts that are kind of hard to keep straight...
 # 1) There's the schema type which describes the structure and how to process that structure of the schema hash.
 #    That is unrelated to the type/ directory of this monorepo.
@@ -29,17 +52,15 @@ module Foobara
   # So we ask the schema to give us a type??
   class Type
     class << self
-      def register(symbol, type)
-        types[symbol] = type
+      def global_registry
+        @global_registry ||= Registry.new
       end
 
-      def types
-        @types ||= {}
+      def register_primitive_type(symbol, type)
+        global_registry.register(symbol, type)
       end
 
-      def [](symbol)
-        types[symbol]
-      end
+      delegate :[], to: :global_registry
     end
 
     # TODO: eliminate castors (or not?)
@@ -199,7 +220,7 @@ module Foobara
       end
     end
 
-    register(
+    register_primitive_type(
       :duck,
       Type.new(
         casters: [
@@ -207,7 +228,7 @@ module Foobara
         ]
       )
     )
-    register(
+    register_primitive_type(
       :symbol,
       Type.new(
         casters: [
@@ -216,7 +237,7 @@ module Foobara
         ]
       )
     )
-    register(
+    register_primitive_type(
       :integer,
       Type.new(
         casters: [
@@ -225,7 +246,7 @@ module Foobara
         ]
       )
     )
-    register(
+    register_primitive_type(
       :attributes,
       Type.new(
         casters: Type::Casters::Attributes::Hash.new
