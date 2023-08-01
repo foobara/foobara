@@ -11,6 +11,7 @@ module Foobara
             else
               raw_input_schema = args.first
 
+              # TODO: need to pass in schema registries here
               @input_schema = Foobara::Model::Schema::Attributes.new(raw_input_schema)
 
               errors = if input_schema.has_errors?

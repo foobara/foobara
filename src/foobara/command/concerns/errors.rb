@@ -112,6 +112,7 @@ module Foobara
             raise "Invalid error symbol #{symbol} expected one of #{possible_error_symbols}"
           end
 
+          # TODO: need to pass in schema registries here
           context_schema = Foobara::Model::Schema::Attributes.new(map[symbol])
 
           if context_schema.present?

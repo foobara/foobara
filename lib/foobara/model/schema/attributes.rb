@@ -166,7 +166,7 @@ module Foobara
           hash = desugarize_required(hash)
 
           hash[:schemas] = hash[:schemas].transform_values do |attribute_schema|
-            Schema.for(attribute_schema)
+            Schema.for(attribute_schema, schema_registries:)
           end
 
           hash

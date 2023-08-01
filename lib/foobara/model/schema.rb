@@ -17,21 +17,20 @@ module Foobara
 
       class << self
         def register_schema(schema)
-          schema_classes << schema
+          Schema.global_schema_registry.register(schema)
         end
 
-        def valid_schema_type?(symbol)
-          Schema.schema_classes.any? { |klass| klass.type == symbol }
-        end
-
-        def schema_classes
-          @schema_classes ||= []
+        def valid_schema_type?(symbol_or_schema, schema_registries: nil)
+          [*schema_registries, Schema.global_schema_registry].uniq.any? do |registry|
+            registry.registered?(symbol_or_schema)
+          end
         end
 
         def type
           name.demodulize.gsub(/Schema$/, "").underscore.to_sym
         end
 
+        # Problematic that this is on this class
         def register_validator(type_symbol, validator_class)
           validators = @validators ||= {}
 
@@ -44,20 +43,41 @@ module Foobara
           @validators[type_symbol]
         end
 
-        def for(sugary_schema)
+        def for(sugary_schema, schema_registries: nil)
+          schema_registries = [*schema_registries, Schema.global_schema_registry].compact.uniq
+
           return sugary_schema if sugary_schema.is_a?(Schema)
 
-          schema_type = nil
+          schema = nil
 
           if sugary_schema.is_a?(Hash) && sugary_schema.key?(:type)
             type = sugary_schema[:type]
 
-            schema_type = schema_classes.find { |klass| klass.type == type }
+            schema = nil
+
+            # Should we delete this method of finding a schema? Could prevent other schemas from claiming things with
+            # type in it.
+            schema_registries.each do |registry|
+              if registry.registered?(type)
+                schema = registry[type]
+                break
+              end
+            end
           end
 
-          schema_type ||= schema_classes.find { |klass| klass.can_handle?(sugary_schema) }
+          unless schema
+            schema_registries.each do |registry|
+              registry.each_schema do |schema_class|
+                if schema_class.can_handle?(sugary_schema)
+                  schema = schema_class
+                  break
+                end
+              end
+              break if schema
+            end
+          end
 
-          unless schema_type
+          unless schema
             raise InvalidSchema, Error.new(
               symbol: :could_not_determine_schema_type,
               message: "Could not determine schema type for #{sugary_schema}",
@@ -67,16 +87,21 @@ module Foobara
             )
           end
 
-          schema_type.new(sugary_schema)
+          schema.new(sugary_schema, schema_registries:)
+        end
+
+        def global_schema_registry
+          @global_schema_registry ||= Registry.new
         end
       end
 
-      attr_accessor :raw_schema, :schema_validation_errors
+      attr_accessor :raw_schema, :schema_validation_errors, :schema_registries
       attr_reader :strict_schema
 
-      def initialize(raw_schema)
+      def initialize(raw_schema, schema_registries: nil)
         raise ArgumentError, "must give a schema" unless raw_schema
 
+        self.schema_registries = schema_registries
         self.schema_validation_errors = []
         self.raw_schema = raw_schema
 
@@ -137,7 +162,7 @@ module Foobara
       def build_schema_validation_errors(skip: nil)
         skip = Array.wrap(skip)
 
-        unless valid_schema_type?(type)
+        unless valid_schema_type?(type, schema_registries:)
           schema_validation_errors << Error.new(
             symbol: :"unknown_type_#{type}",
             message: "Unknown type #{type}",
@@ -158,7 +183,8 @@ module Foobara
           if allowed_keys.include?(key)
             validator = validators[key]
 
-            outcome = TypeBuilder.type_for(Schema.for(validator.data_schema)).process(value, path: [key])
+            outcome = TypeBuilder.type_for(Schema.for(validator.data_schema, schema_registries:)).process(value,
+                                                                                                          path: [key])
 
             unless outcome.success?
               self.schema_validation_errors += outcome.errors

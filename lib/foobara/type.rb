@@ -73,7 +73,7 @@ module Foobara
         @all_primitives_registered
       end
 
-      delegate :[], to: :global_registry
+      delegate :[], :registered?, to: :global_registry
 
       private
 

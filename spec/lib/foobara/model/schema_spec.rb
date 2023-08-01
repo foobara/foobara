@@ -3,7 +3,7 @@ RSpec.describe Foobara::Model::Schema do
     subject { schema }
 
     context "with nothing but a primitive type" do
-      let(:schema) { described_class.for(type:) }
+      let(:schema) { described_class.for({ type: }) }
 
       context "with a valid type" do
         let(:type) { :integer }
@@ -51,7 +51,8 @@ RSpec.describe Foobara::Model::Schema do
     end
 
     context "with attributes" do
-      let(:schema) { described_class.for(type:, schemas:) }
+      # TODO: goofy that we have to wrap this in brackets
+      let(:schema) { described_class.for({ type:, schemas: }) }
 
       let(:type) { :attributes }
       let(:schemas) {
