@@ -5,7 +5,7 @@ module Foobara
   class Type
     module Validators
       module Integer
-        class MaxExceeded < Foobara::Type::ValueValidator
+        class BelowMinimum < Foobara::Type::ValueValidator
           class Error < Foobara::Type::ValidatorError
             class << self
               def context_schema
@@ -13,7 +13,7 @@ module Foobara
                   path: :duck, # TODO: fix this up once there's an array type
                   attribute_name: :symbol,
                   value: :integer,
-                  max: :integer
+                  min: :integer
                 }
               end
             end
@@ -21,7 +21,7 @@ module Foobara
 
           class << self
             def validator_symbol
-              :max
+              :min
             end
 
             def data_schema
@@ -29,28 +29,28 @@ module Foobara
             end
           end
 
-          attr_accessor :max
+          attr_accessor :min
 
-          def initialize(max)
+          def initialize(min)
             super()
 
-            self.max = max
+            self.min = min
           end
 
           def validation_errors(value)
-            if value > max
+            if value < min
               build_error(value)
             end
           end
 
           def error_message(value)
-            "Max exceeded. #{value} is larger than #{max}"
+            "Below minimum allowed. #{value} is less than #{min}"
           end
 
           def error_context(value)
             {
               value:,
-              max:
+              min:
             }
           end
         end

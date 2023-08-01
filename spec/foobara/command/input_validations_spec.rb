@@ -5,7 +5,7 @@ RSpec.describe Foobara::Command do
         input_schema(
           type: :attributes,
           schemas: {
-            exponent: { type: :integer, max: 10 },
+            exponent: { type: :integer, max: 10, min: 1 },
             base: { type: :integer, required: true }
           },
           required: :exponent
@@ -54,16 +54,32 @@ RSpec.describe Foobara::Command do
       end
 
       context "when input requirements not met" do
-        let(:exponent) { 13 }
+        context "when too high" do
+          let(:exponent) { 13 }
 
-        it "is not success" do
-          expect(outcome).to_not be_success
-          expect(errors.size).to eq(1)
-          expect(error.context).to eq(max: 10, value: 13)
-          expect(error.message).to be_a(String)
-          expect(error.symbol).to eq(:max_exceeded)
-          expect(error.path).to eq([:exponent])
-          expect(error.attribute_name).to eq(:exponent)
+          it "is not success" do
+            expect(outcome).to_not be_success
+            expect(errors.size).to eq(1)
+            expect(error.context).to eq(max: 10, value: 13)
+            expect(error.message).to be_a(String)
+            expect(error.symbol).to eq(:max_exceeded)
+            expect(error.path).to eq([:exponent])
+            expect(error.attribute_name).to eq(:exponent)
+          end
+        end
+
+        context "when too low" do
+          let(:exponent) { -5 }
+
+          it "is not success" do
+            expect(outcome).to_not be_success
+            expect(errors.size).to eq(1)
+            expect(error.context).to eq(min: 1, value: -5)
+            expect(error.message).to be_a(String)
+            expect(error.symbol).to eq(:below_minimum)
+            expect(error.path).to eq([:exponent])
+            expect(error.attribute_name).to eq(:exponent)
+          end
         end
       end
 

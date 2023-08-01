@@ -141,6 +141,7 @@ module Foobara
       end
 
       register_validator(:integer, Type::Validators::Integer::MaxExceeded)
+      register_validator(:integer, Type::Validators::Integer::BelowMinimum)
     end
   end
 end
