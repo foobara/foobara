@@ -88,7 +88,14 @@ module Foobara
       delegate :type, :valid_schema_type?, to: :class
 
       def to_h
-        { type: }
+        h = { type: }
+
+        Schema.validators_for_type(:integer).each_key do |validator_symbol|
+          value = strict_schema[validator_symbol]
+          h = h.merge(validator_symbol => value)
+        end
+
+        h
       end
 
       def has_errors?
