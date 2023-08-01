@@ -127,7 +127,9 @@ module Foobara
         Outcome.raise!(schema_validation_errors)
       end
 
-      def build_schema_validation_errors
+      def build_schema_validation_errors(skip: nil)
+        skip = Array.wrap(skip)
+
         unless valid_schema_type?(type)
           schema_validation_errors << Error.new(
             symbol: :"unknown_type_#{type}",
@@ -137,6 +139,29 @@ module Foobara
               strict_schema:
             }
           )
+        end
+
+        validators = Schema.validators_for_type(type) || {}
+        allowed_keys = [*validators.keys, :type]
+
+        strict_schema.each_pair do |key, value|
+          next if key == :type
+          next if skip.include?(key)
+
+          if allowed_keys.include?(key)
+            validator = validators[key]
+
+            outcome = TypeBuilder.type_for(Schema.for(validator.data_schema)).process(value, path: [key])
+
+            unless outcome.success?
+              self.schema_validation_errors += outcome.errors
+            end
+          else
+            schema_validation_errors << InvalidSchemaError.new(
+              symbol: :invalid_schema_element,
+              message: "Found #{key} but expected one of #{allowed_keys}"
+            )
+          end
         end
       end
 

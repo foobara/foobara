@@ -31,7 +31,7 @@ module Foobara
         end
 
         def build_schema_validation_errors
-          super
+          super(skip: %i[schemas required defaults])
 
           if schemas.blank?
             # TODO: should probably be some kind of schema validation error instead of Error
