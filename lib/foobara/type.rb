@@ -3,6 +3,38 @@ require "singleton"
 
 Foobara::Util.require_directory("#{__dir__}/type")
 
+# moar notes...
+#
+# So far we have 4 types, :duck, :integer, :symbol, :attributes
+# and 4 schema types... :duck, :integer, :symbol, :attributes
+# and 2 type builders... :attributes and :integer
+#
+# The other two will have type builders once they have supported validators of some sort.
+#
+# They match. Having them not-coupled will likely lead to annoyances but coupling them could result in some code-debt
+# creeping in over time.
+# Probably need to couple them.
+# What project should this go into? How do we structure this?
+# So far, Schema.for takes a schema hash. TypeBuilder.for takes a schema and returns a type. The type takes a value
+# and returns a value.
+# What's a use case that makes me want to couple these? Let's say I want to create a new type and call it "complex"
+# and use it as a complex number. It could extend the attributes type, have a strict schema of
+# { type: :complex, real: :integer, imaginary: :integer }. To accomplish this at the moment, I would have to register a
+# schema, register a type builder, and register a type. Maybe that's OK? That might be OK if that call all be abstracted
+# away somehow on some kind of Domain.register_model method. But I need to be able to inject the schemas into Schema
+# so it can interpret custom types. This might require access to the types, too. Unclear. But if so that would be
+# annoying to have the schema and not the type. Also, we're already having schemas creep into the Type project which
+# is a backwards dependency at the moment. This is to support context schemas on built-in validator errors.  This is
+# solvable but inconvenient.
+#
+# Oh, another point of confusion, schemas/types/type_builders can be distinguished with symbols and these symbols are
+# all the same but it can sometimes be confusing which were dealing with. Error also has a different symbol which can
+# get confusing though technically unrelated.
+#
+# Turns out Schema doesn't currently need type. Maybe just proceed decoupled and see how things shake out.
+# Let' make a test that tries to register the above complex type and use it. This would help enumerate all the various
+# chunks of implementation required to fully implement a new type.
+
 # notes:
 # * A "schema hash" is a hash representation of a type which comes in a two forms
 # ** sugary schema hash. Good for humans expressing types to the machine and possibly each other
