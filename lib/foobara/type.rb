@@ -52,15 +52,31 @@ module Foobara
   # So we ask the schema to give us a type??
   class Type
     class << self
-      def global_registry
-        @global_registry ||= Registry.new
-      end
+      class CannotRegisterPrimitive < StandardError; end
 
       def register_primitive_type(symbol, type)
+        if all_primitives_registered?
+          raise CannotRegisterPrimitive, "Primitives cannot be registered. Register a custom type instead."
+        end
+
         global_registry.register(symbol, type)
       end
 
+      def all_primitives_registered!
+        @all_primitives_registered = true
+      end
+
+      def all_primitives_registered?
+        @all_primitives_registered
+      end
+
       delegate :[], to: :global_registry
+
+      private
+
+      def global_registry
+        @global_registry ||= Registry.new
+      end
     end
 
     # TODO: eliminate castors (or not?)
@@ -252,5 +268,7 @@ module Foobara
         casters: Type::Casters::Attributes::Hash.new
       )
     )
+
+    all_primitives_registered!
   end
 end
