@@ -2,7 +2,7 @@ require "foobara/type/caster"
 
 module Foobara
   class Type
-    module ValueProcessors
+    module Casters
       module Integer
         class String < Caster
           INTEGER_REGEX = /^-?\d+$/

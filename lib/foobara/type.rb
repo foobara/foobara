@@ -242,7 +242,7 @@ module Foobara
       Type.new(
         casters: [
           Type::Casters::DirectTypeMatch.new(type_symbol: :integer, ruby_classes: ::Integer),
-          Type::ValueProcessors::Integer::String.new
+          Type::Casters::Integer::String.new
         ]
       )
     )
