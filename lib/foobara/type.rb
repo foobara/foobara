@@ -55,10 +55,12 @@ module Foobara
     class << self
       class CannotRegisterPrimitive < StandardError; end
 
-      def register_primitive_type(symbol, type)
+      def register_primitive_type(symbol)
         if all_primitives_registered?
           raise CannotRegisterPrimitive, "Primitives cannot be registered. Register a custom type instead."
         end
+
+        type = Type.new(casters: casters_for_primitive(symbol))
 
         global_registry.register(symbol, type)
       end
@@ -78,6 +80,21 @@ module Foobara
       def global_registry
         @global_registry ||= Registry.new
       end
+
+      def casters_for_primitive(symbol)
+        type_module_name = symbol.to_s.camelize.to_sym
+
+        casters_module = Util.constant_value(self::Casters, type_module_name)
+        casters = Util.constant_values(casters_module, Class)
+
+        direct_caster = casters.find { |caster| caster.name.to_sym == type_module_name }
+
+        direct_caster = Array.wrap(direct_caster)
+
+        casters -= direct_caster
+
+        [*direct_caster, *casters].compact.map(&:instance)
+      end
     end
 
     # TODO: eliminate castors (or not?)
@@ -94,7 +111,7 @@ module Foobara
     # let's explore the use-case of attributes processing...
     #
     # 1) validate that it's a hash
-    # 2) validate the keys are symbolizeable
+    # 2) validate the keys are symbolizable
     # 3) symbolize the keys
     # 4) fill in default values for missing keys
     # 5) for each key in the schemas keys, process each value against its schema (cast it, transform it, validate it)
@@ -237,39 +254,10 @@ module Foobara
       end
     end
 
-    register_primitive_type(
-      :duck,
-      Type.new(
-        casters: [
-          Type::Casters::Duck::Object.instance
-        ]
-      )
-    )
-    register_primitive_type(
-      :symbol,
-      Type.new(
-        casters: [
-          Type::Casters::Symbol::Symbol.instance,
-          Type::Casters::Symbol::String.instance
-        ]
-      )
-    )
-    register_primitive_type(
-      :integer,
-      Type.new(
-        casters: [
-          Type::Casters::Integer::Integer.instance,
-          Type::Casters::Integer::String.instance
-        ]
-      )
-    )
-    register_primitive_type(
-      :attributes,
-      Type.new(
-        casters: Type::Casters::Attributes::Hash.instance
-      )
-    )
-
+    register_primitive_type(:duck)
+    register_primitive_type(:symbol)
+    register_primitive_type(:integer)
+    register_primitive_type(:attributes)
     all_primitives_registered!
   end
 end
