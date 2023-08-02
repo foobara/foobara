@@ -45,13 +45,17 @@ RSpec.describe "custom types" do
       Foobara::Model::TypeBuilder.clear_type_cache
     end
 
-    # let's go ahead and build the test with the current interfaces and see what might be desirable to tweak
-    # Although the important thing is to make registering value types and entity types easy.
-    # Still, let's play with this...
-    let(:type) { Foobara::Model::TypeBuilder.type_for(schema) }
+    let(:complex_class) do
+      Class.new do
+        attr_accessor :real, :imaginary
+      end
+    end
+
     let(:schema_registry) { Foobara::Model::Schema::Registry.new }
-    # TODO: how do we get the various registries into here if we want this complex type to not be global?
+    let(:type) { Foobara::Model::TypeBuilder.type_for(schema) }
     let(:schema) { Foobara::Model::Schema.for(schema_hash, schema_registries: schema_registry) }
+
+    # type registration start
     let(:complex_schema) do
       Class.new(Foobara::Model::Schema) do
         class << self
@@ -179,17 +183,12 @@ RSpec.describe "custom types" do
       end
     end
 
-    let(:complex_class) do
-      Class.new do
-        attr_accessor :real, :imaginary
-      end
-    end
-
     before do
       complex_schema.register_validator(:complex, pointless_validator)
       schema_registry.register(complex_schema)
       Foobara::Model::TypeBuilder.builder_registry[:complex] = type_builder
     end
+    # type registration end
 
     context "when using the type against valid data from complex type non sugar schema" do
       let(:schema_hash) do
