@@ -182,6 +182,7 @@ module Foobara
       value_processors.select { |processor| processor.is_a?(ValueValidator) }
     end
 
+    # TODO: see if this method can be broken up
     def process(value, path = [])
       cast_outcome = cast_from(value)
 
@@ -245,7 +246,12 @@ module Foobara
         end
       end
 
-      outcome
+      if outcome.success?
+        outcome
+      else
+        # cast back to Outcome
+        Outcome.errors(outcome.errors)
+      end
     end
 
     def process!(value)
