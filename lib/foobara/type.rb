@@ -131,7 +131,7 @@ module Foobara
 
     # TODO: eliminate castors (or not?)
     # TODO: eliminate children_types by using classes?
-    attr_accessor :casters, :value_processors, :children_types
+    attr_accessor :casters, :value_transformers, :value_validators, :children_types
 
     # Can we eliminate symbol here or no?
     # Has a collection of transformers and validators.
@@ -172,14 +172,11 @@ module Foobara
     # max_length (string validation at attribute level)
     # max (integer validation at attribute level)
     # matches (string against a regex)
-    def initialize(casters: [], value_processors: [], children_types: nil)
+    def initialize(casters: [], value_transformers: [], value_validators: [], children_types: nil)
       self.children_types = children_types
       self.casters = Array.wrap(casters)
-      self.value_processors = value_processors
-    end
-
-    def value_validators
-      value_processors.select { |processor| processor.is_a?(ValueValidator) }
+      self.value_transformers = value_transformers
+      self.value_validators = value_validators
     end
 
     # TODO: see if this method can be broken up
@@ -191,14 +188,24 @@ module Foobara
       outcome = OutcomeWithResultEvenIfNotSuccess.new
       outcome.result = cast_outcome.result
 
-      value_processors.each do |value_processor|
-        next unless value_processor.applicable?(outcome.result)
+      value_transformers.each do |value_transformer|
+        next unless value_transformer.applicable?(outcome.result)
 
-        return outcome if value_processor.halt_if_already_not_success? && !outcome.success?
+        return outcome if value_transformer.halt_if_already_not_success? && !outcome.success?
 
-        value_processor.process_outcome(outcome, path)
+        value_transformer.process_outcome(outcome, path)
 
-        return outcome if value_processor.error_halts_processing? && !outcome.success?
+        return outcome if value_transformer.error_halts_processing? && !outcome.success?
+      end
+
+      value_validators.each do |value_validator|
+        next unless value_validator.applicable?(outcome.result)
+
+        return outcome if value_validator.halt_if_already_not_success? && !outcome.success?
+
+        value_validator.process_outcome(outcome, path)
+
+        return outcome if value_validator.error_halts_processing? && !outcome.success?
       end
 
       if children_types.is_a?(Hash)

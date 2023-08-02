@@ -305,7 +305,7 @@ RSpec.describe "custom types", skip: "only documentation for now" do
         end
 
         class << self
-          def validator_symbol
+          def symbol
             :be_pointless
           end
 
@@ -448,3 +448,47 @@ end
 # TODO:
 # 1) See if we can we take a type and convert it into a schema
 # 2) If we can, express validator error types as types directly instead of using Schema in order to decouple
+
+# let's take yet another swing at possible definitions
+#
+# * sugary schema value: schema value meant for human expression.
+#   ex: { real: :integer, imaginary: :integer }
+# * strict schema value: schema value meant for metaprogramming.
+#   ex: { type: :attributes, schemas: { real: { type: :integer, }, imaginary: { type: :integer } } }
+# * Schema: runtime encapsulation of schema values with a couple operations:
+#   1) identifying whether this is the relevant Schema for a given sugary schema value
+#   2) converting from a sugary schema value to a strict schema value
+#   3) optional: converting from a strict schema value to a sugary schema value
+#   4) providing schema validation errors
+#   5) housing list of casters to apply
+#   7) housing list of transformers to apply
+#   6) housing list of validators to apply
+#   8) generating a Type
+# * Type: runtime encapsulation of a type
+#   1) contains the process method
+#     * finds the right caster
+#     * casts value
+#     * transforms value
+#     * validates value
+#     * gives process outcome
+# * Schema Registry
+#   1) can find a schema given a sugary schema value
+#   2) can find a schema given a type
+# * ValueCaster
+#   1) says whether it applies to a given value
+#   2) casts that value to a value of the desired type
+# * ValueTransformer
+#   1) takes a value and transforms it somehow into a different value.
+# * ValueValidator
+#   1) takes a value and returns a list of validation errors
+#   2) tells the symbol of the error it would raise and the context type of the error it would raise
+#   3) answers whether or not processing should stop
+#   4) specifies the type the validator can receive to initialize it (not the value type but context for the validator)
+
+# Next steps?
+# 0) Eliminate TypeBuilder and let Schema know about Type again
+# 0) Split up transformers and validators
+# 1) Change validator to give error type instead of error schema?
+# 2) Make all Type creations occur through Schema. This is so we can map from type to schema easily.
+# 3) This means needing to move all the primitive types out of Type and into a different project.
+# *) Create a faster way of declaring types such as the pseudocode in this file.

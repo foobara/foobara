@@ -11,7 +11,8 @@ module Foobara
         def to_args
           {
             casters:,
-            value_processors:,
+            value_transformers:,
+            value_validators:,
             children_types:
           }
         end
@@ -22,10 +23,16 @@ module Foobara
           end
         end
 
-        def value_processors
+        def value_transformers
           [
             *super,
-            *default_transformers,
+            *default_transformers
+          ]
+        end
+
+        def value_validators
+          [
+            *super,
             unexpected_attributes_validator,
             *required_field_validators
           ]

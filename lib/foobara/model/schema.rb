@@ -34,13 +34,35 @@ module Foobara
           name.demodulize.gsub(/Schema$/, "").underscore.to_sym
         end
 
+        def register_transformer(type_symbol, transformer_class)
+          transformers = @transformers ||= {}
+
+          for_type = transformers[type_symbol] ||= {}
+
+          for_type[transformer_class.symbol] = transformer_class
+        end
+
+        def transformers_for_type(type_symbol)
+          transformers = if @transformers.blank?
+                           {}
+                         else
+                           @transformers[type_symbol] || {}
+                         end
+
+          if self == Schema
+            transformers
+          else
+            transformers.merge(superclass.transformers_for_type(type_symbol))
+          end
+        end
+
         # Problematic that this is on this class
         def register_validator(type_symbol, validator_class)
           validators = @validators ||= {}
 
           for_type = validators[type_symbol] ||= {}
 
-          for_type[validator_class.validator_symbol] = validator_class
+          for_type[validator_class.symbol] = validator_class
         end
 
         def validators_for_type(type_symbol)
@@ -124,7 +146,7 @@ module Foobara
         validate_schema!
       end
 
-      delegate :type, :valid_schema_type?, :validators_for_type, to: :class
+      delegate :type, :valid_schema_type?, :validators_for_type, :transformers_for_type, to: :class
 
       def to_h
         h = { type: }

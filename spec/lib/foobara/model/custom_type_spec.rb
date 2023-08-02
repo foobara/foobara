@@ -141,7 +141,7 @@ RSpec.describe "custom types" do
         end
 
         class << self
-          def validator_symbol
+          def symbol
             :be_pointless
           end
 

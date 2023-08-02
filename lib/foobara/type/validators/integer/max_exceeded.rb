@@ -20,7 +20,7 @@ module Foobara
           end
 
           class << self
-            def validator_symbol
+            def symbol
               :max
             end
 

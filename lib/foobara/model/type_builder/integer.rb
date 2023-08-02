@@ -9,7 +9,8 @@ module Foobara
         def to_args
           {
             casters:,
-            value_processors:
+            value_transformers:,
+            value_validators:
           }
         end
 

@@ -51,7 +51,8 @@ module Foobara
       def to_args
         {
           casters:,
-          value_processors:
+          value_transformers:,
+          value_validators:
         }
       end
 
@@ -63,17 +64,28 @@ module Foobara
         []
       end
 
-      def value_processors
-        processors = base_type&.value_processors.dup || []
+      def value_transformers
+        transformers = base_type&.value_transformers.dup || []
 
-        # what about transformers??
-        schema.validators_for_type(symbol).each_pair do |validator_symbol, validator_class|
-          if schema.strict_schema.key?(validator_symbol)
-            processors << validator_class.new(schema.strict_schema[validator_symbol])
+        schema.transformers_for_type(symbol).each_pair do |transformer_symbol, transformer_class|
+          if schema.strict_schema.key?(transformer_symbol)
+            transformers << transformer_class.new(schema.strict_schema[transformer_symbol])
           end
         end
 
-        processors
+        transformers
+      end
+
+      def value_validators
+        validators = base_type&.value_validators.dup || []
+
+        schema.validators_for_type(symbol).each_pair do |validator_symbol, validator_class|
+          if schema.strict_schema.key?(validator_symbol)
+            validators << validator_class.new(schema.strict_schema[validator_symbol])
+          end
+        end
+
+        validators
       end
 
       builder_registry[:attributes] = TypeBuilder::Attributes
