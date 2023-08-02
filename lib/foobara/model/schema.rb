@@ -16,6 +16,10 @@ module Foobara
       end
 
       class << self
+        def can_handle?(sugary_schema)
+          sugary_schema == type
+        end
+
         def register_schema(schema)
           Schema.global_schema_registry.register(schema)
         end
@@ -140,7 +144,11 @@ module Foobara
       private
 
       def desugarize
-        raise "Subclass responsibility"
+        if raw_schema == type
+          { type: }
+        else
+          raw_schema
+        end
       end
 
       def validate_schema

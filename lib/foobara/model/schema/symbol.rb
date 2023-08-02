@@ -1,8 +1,8 @@
 module Foobara
   class Model
     class Schema
+      # Hmmmm do we need these classes?
       class Symbol < Schema
-        include Schema::Concerns::Primitive
       end
     end
   end
