@@ -24,6 +24,10 @@ module Foobara
 
           builder_class.new(schema)
         end
+
+        def clear_type_cache
+          @type_cache = nil
+        end
       end
 
       attr_accessor :schema

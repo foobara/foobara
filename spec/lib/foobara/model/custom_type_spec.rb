@@ -41,6 +41,10 @@ RSpec.describe "custom types" do
   #
   # finally, need to call Type.register_custom_type or register it in a local registry and pass that registry around
   context "when defining a custom complex type" do
+    after do
+      Foobara::Model::TypeBuilder.clear_type_cache
+    end
+
     # let's go ahead and build the test with the current interfaces and see what might be desirable to tweak
     # Although the important thing is to make registering value types and entity types easy.
     # Still, let's play with this...
@@ -52,13 +56,35 @@ RSpec.describe "custom types" do
       Class.new(Foobara::Model::Schema) do
         class << self
           def can_handle?(sugary_schema)
-            sugary_schema == :complex
+            sugary_schema == :complex || sugar_for_complex?(sugary_schema)
+          end
+
+          def sugar_for_complex?(sugary_schema)
+            if sugary_schema.is_a?(Symbol)
+              sugary_schema = sugary_schema.to_s
+            end
+
+            if sugary_schema.is_a?(String)
+              @complex_form_regex ||= /\A([a-z])\s*\+\s*(?!\1)([a-z])i\z/
+
+              @complex_form_regex.match?(sugary_schema)
+            end
           end
 
           def name
             "ComplexSchema"
           end
         end
+
+        def desugarize
+          if sugar_for_complex?(raw_schema)
+            { type: }
+          else
+            super
+          end
+        end
+
+        delegate :sugar_for_complex?, to: :class
       end
     end
 
@@ -113,7 +139,7 @@ RSpec.describe "custom types" do
             end
           end
         end
-        # RSpec/LeakyConstantDeclaration
+
         class << self
           def validator_symbol
             :be_pointless
@@ -165,7 +191,7 @@ RSpec.describe "custom types" do
       Foobara::Model::TypeBuilder.builder_registry[:complex] = type_builder
     end
 
-    context "when using the type against valid data from complex type sugar schema" do
+    context "when using the type against valid data from complex type non sugar schema" do
       let(:schema_hash) do
         {
           type: :attributes,
@@ -203,6 +229,29 @@ RSpec.describe "custom types" do
             context: { foo: :bar },
             message: "cant be the same!"
           )
+        end
+      end
+    end
+
+    context "when using the type against valid data from complex type sugar schema" do
+      let(:schema_hash) do
+        {
+          type: :attributes,
+          schemas: {
+            n: :integer,
+            c: :"x + yi"
+          }
+        }
+      end
+
+      context "when valid" do
+        it "can process the thing" do
+          value = type.process!(n: 5, c: [1, 2])
+          complex = value[:c]
+
+          expect(complex).to be_a(complex_class)
+          expect(complex.real).to eq(1)
+          expect(complex.imaginary).to eq(2)
         end
       end
     end
