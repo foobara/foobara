@@ -32,13 +32,22 @@ module Foobara
         self.schema = schema
       end
 
+      def base_type
+        nil
+      end
+
       def to_type
-        Foobara::Type[symbol] || Foobara::Type.new(**to_args)
+        if Foobara::Type.registered?(symbol)
+          Foobara::Type[symbol]
+        else
+          Foobara::Type.new(**to_args)
+        end
       end
 
       def to_args
         {
-          casters:
+          casters:,
+          value_processors:
         }
       end
 
@@ -47,7 +56,19 @@ module Foobara
       end
 
       def casters
-        raise "subclass responsibility"
+        []
+      end
+
+      def value_processors
+        processors = base_type&.value_processors.dup || []
+
+        schema.validators_for_type(symbol).each_pair do |validator_symbol, validator_class|
+          if schema.strict_schema.key?(validator_symbol)
+            processors << validator_class.new(schema.strict_schema[validator_symbol])
+          end
+        end
+
+        processors
       end
 
       builder_registry[:attributes] = TypeBuilder::Attributes
