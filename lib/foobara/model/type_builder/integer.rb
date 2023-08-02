@@ -6,14 +6,7 @@ module Foobara
           Type.new(**to_args)
         end
 
-        def to_args
-          {
-            casters:,
-            value_transformers:,
-            value_validators:
-          }
-        end
-
+        # TODO: can we eliminate this??
         def base_type
           @base_type ||= Type[:integer]
         end

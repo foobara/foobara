@@ -178,22 +178,24 @@ module Foobara
         end
 
         def desugarize_defaults(hash)
-          hash[:defaults] ||= {}
+          defaults = hash[:defaults] || {}
 
           schemas = hash[:schemas]
           schemas.each_pair do |attribute_name, attribute_schema|
             if attribute_schema.is_a?(Hash) && attribute_schema.key?(:default)
               default = attribute_schema[:default]
               schemas[attribute_name] = attribute_schema.except(:default)
-              hash[:defaults] = hash[:defaults].merge(attribute_name => default)
+              defaults = defaults.merge(attribute_name => default)
             end
           end
+
+          hash[:defaults] = defaults unless defaults.empty?
 
           hash
         end
 
         def desugarize_required(hash)
-          hash[:required] = Array.wrap(hash[:required])
+          required_attributes = Array.wrap(hash[:required])
 
           schemas = hash[:schemas]
           schemas.each_pair do |attribute_name, attribute_schema|
@@ -202,11 +204,11 @@ module Foobara
               schemas[attribute_name] = attribute_schema.except(:required)
 
               # TODO: is false a good no-op? Maybe make required true the default and add a :foo? convention/sugar?
-              if required # required: false is a no-op as it's the default
-                hash[:required] += [attribute_name]
-              end
+              required_attributes << attribute_name if required # required: false is a no-op as it's the default
             end
           end
+
+          hash[:required] = required_attributes unless required_attributes.empty?
 
           hash
         end

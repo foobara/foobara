@@ -9,12 +9,7 @@ module Foobara
         end
 
         def to_args
-          {
-            casters:,
-            value_transformers:,
-            value_validators:,
-            children_types:
-          }
+          super.merge(children_types:)
         end
 
         def children_types
@@ -23,38 +18,15 @@ module Foobara
           end
         end
 
-        def value_transformers
-          [
-            *super,
-            *default_transformers
-          ]
-        end
-
         def value_validators
-          [
-            *super,
-            unexpected_attributes_validator,
-            *required_field_validators
-          ]
-        end
-
-        def default_transformers
-          schema.defaults.map do |(attribute_name, default_value)|
-            Transformers::Attribute::AddDefault.new(attribute_name:, default_value:)
-          end
-        end
-
-        def required_field_validators
-          schema.required.map do |attribute_name|
-            # we need to get paths into here... not attribute_name specifically
-            Validators::Attribute::MissingRequiredAttribute.new(attribute_name)
-          end
+          [*super, unexpected_attributes_validator]
         end
 
         def unexpected_attributes_validator
           Validators::Attribute::UnexpectedAttribute.new(schema.valid_attribute_names)
         end
 
+        # TODO: can we eliminate this concept?
         def base_type
           @base_type ||= Type[:attributes]
         end

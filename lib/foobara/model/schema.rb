@@ -240,6 +240,8 @@ module Foobara
 
       register_validator(:integer, Type::Validators::Integer::MaxExceeded)
       register_validator(:integer, Type::Validators::Integer::BelowMinimum)
+      register_transformer(:attributes, Type::Transformers::Attributes::AddDefaults)
+      register_validator(:attributes, Type::Validators::Attributes::MissingRequiredAttributes)
     end
   end
 end

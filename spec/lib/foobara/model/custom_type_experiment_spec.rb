@@ -487,7 +487,7 @@ end
 
 # Next steps?
 # 0) Eliminate TypeBuilder and let Schema know about Type again
-# 0) Split up transformers and validators
+# 0) Split up transformers and validators [done]
 # 1) Change validator to give error type instead of error schema?
 # 2) Make all Type creations occur through Schema. This is so we can map from type to schema easily.
 # 3) This means needing to move all the primitive types out of Type and into a different project.

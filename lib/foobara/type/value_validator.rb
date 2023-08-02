@@ -45,6 +45,7 @@ module Foobara
         [attribute_name].compact
       end
 
+      # TODO: this is a bit problematic. Maybe eliminate this instead of assuming it's generally useful
       def attribute_name
         nil
       end
