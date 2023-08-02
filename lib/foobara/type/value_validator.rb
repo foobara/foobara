@@ -20,11 +20,19 @@ module Foobara
         Util.constant_value(self.class, :Error)
       end
 
-      def build_error(value, message: error_message(value), context: error_context(value), path: error_path, **args)
+      def build_error(
+        value = nil,
+        symbol: error_symbol,
+        message: error_message(value),
+        context: error_context(value),
+        path: error_path,
+        **args
+      )
         error_class.new(
           path:,
           message:,
           context:,
+          symbol:,
           **args
         )
       end
