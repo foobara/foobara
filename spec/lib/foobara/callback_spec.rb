@@ -13,12 +13,12 @@ RSpec.describe Foobara::Callback do
     before do
       %i[walk jump].each do |action|
         Foobara::Callback::Block.types.each do |type|
-          basic_block = lambda { |foo|
+          basic_block = ->(foo) {
             called(action, type, foo)
           }
 
           callback = if type == :around
-                       lambda { |**opts, &do_it|
+                       ->(**opts, &do_it) {
                          basic_block.call(opts)
                          do_it.call
                        }

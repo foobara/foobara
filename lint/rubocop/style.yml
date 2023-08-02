@@ -30,6 +30,9 @@ Style/HashSyntax:
 Style/IfUnlessModifier:
   Enabled: false
 
+Style/Lambda:
+  EnforcedStyle: literal
+
 Style/Next:
   Enabled: false
 
