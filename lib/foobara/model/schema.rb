@@ -44,7 +44,17 @@ module Foobara
         end
 
         def validators_for_type(type_symbol)
-          @validators[type_symbol]
+          validators = if @validators.blank?
+                         {}
+                       else
+                         @validators[type_symbol] || {}
+                       end
+
+          if self == Schema
+            validators
+          else
+            validators.merge(superclass.validators_for_type(type_symbol))
+          end
         end
 
         def for(sugary_schema, schema_registries: nil)
@@ -114,7 +124,7 @@ module Foobara
         validate_schema!
       end
 
-      delegate :type, :valid_schema_type?, to: :class
+      delegate :type, :valid_schema_type?, :validators_for_type, to: :class
 
       def to_h
         h = { type: }
@@ -181,7 +191,7 @@ module Foobara
           )
         end
 
-        validators = Schema.validators_for_type(type) || {}
+        validators = self.class.validators_for_type(type) || {}
         allowed_keys = [*validators.keys, :type]
 
         strict_schema.each_pair do |key, value|
