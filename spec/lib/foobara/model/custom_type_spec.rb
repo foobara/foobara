@@ -60,7 +60,7 @@ RSpec.describe "custom types" do
       Class.new(Foobara::Model::Schema) do
         class << self
           def can_handle?(sugary_schema)
-            sugary_schema == :complex || sugar_for_complex?(sugary_schema)
+            super || sugar_for_complex?(sugary_schema)
           end
 
           def sugar_for_complex?(sugary_schema)
