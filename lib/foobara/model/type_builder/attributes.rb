@@ -25,8 +25,8 @@ module Foobara
         def value_processors
           [
             *super,
-            unexpected_attributes_validator,
             *default_transformers,
+            unexpected_attributes_validator,
             *required_field_validators
           ]
         end

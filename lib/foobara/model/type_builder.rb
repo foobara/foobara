@@ -66,6 +66,7 @@ module Foobara
       def value_processors
         processors = base_type&.value_processors.dup || []
 
+        # what about transformers??
         schema.validators_for_type(symbol).each_pair do |validator_symbol, validator_class|
           if schema.strict_schema.key?(validator_symbol)
             processors << validator_class.new(schema.strict_schema[validator_symbol])
