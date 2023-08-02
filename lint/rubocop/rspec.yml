@@ -1,6 +1,9 @@
 require:
   - rubocop-rspec
 
+RSpec/DescribeClass:
+  Enabled: false
+
 RSpec/ExampleLength:
   Enabled: false
 
