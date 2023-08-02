@@ -96,10 +96,6 @@ RSpec.describe "custom types" do
       klass = complex_class
 
       Class.new(Foobara::Type::Caster) do
-        def type_symbol
-          :caster
-        end
-
         def applicable?(value)
           value.is_a?(Array) && value.size == 2
         end
