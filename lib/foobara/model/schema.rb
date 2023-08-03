@@ -212,7 +212,11 @@ module Foobara
 
       def desugarizers
         [*transformers_for_type(type).values, *validators_for_type(type).values].map do |processor|
-          Util.constant_value(processor, :Desugarizer)
+          schema_module = Util.constant_value(processor, :Schema)
+
+          if schema_module
+            Util.constant_value(schema_module, :Desugarizer)
+          end
         end.compact
       end
 
