@@ -24,7 +24,7 @@ module Foobara
 
                 rawish_schema[:required] = required_attributes unless required_attributes.empty?
 
-                rawish_schema
+                Outcome.success(rawish_schema)
               end
             end
           end

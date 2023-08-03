@@ -187,7 +187,17 @@ module Foobara
                              end
 
         desugarizers.each do |desugarizer|
-          strict_schema_hash = desugarizer.call(strict_schema_hash)
+          outcome = desugarizer.call(strict_schema_hash)
+
+          if outcome.success?
+            strict_schema_hash = outcome.result
+          else
+            outcome.errors.each do |error|
+              errors << error
+            end
+
+            break
+          end
         end
 
         strict_schema_hash

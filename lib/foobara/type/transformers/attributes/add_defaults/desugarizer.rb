@@ -22,7 +22,7 @@ module Foobara
 
                 rawish_schema[:defaults] = defaults unless defaults.empty?
 
-                rawish_schema
+                Outcome.success(rawish_schema)
               end
             end
           end
