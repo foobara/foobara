@@ -1,3 +1,4 @@
+# :nocov:
 # rubocop:disable RSpec/ScatteredSetup
 # rubocop:disable RSpec/ScatteredLet
 
@@ -489,3 +490,4 @@ end
 # 2) Make all Type creations occur through Schema. This is so we can map from type to schema easily.
 # 3) This means needing to move all the primitive types out of Type and into a different project.
 # *) Create a faster way of declaring types such as the pseudocode in this file.
+# :nocov:
