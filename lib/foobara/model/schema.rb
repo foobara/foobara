@@ -16,6 +16,7 @@ module Foobara
       end
 
       include Concerns::TypeBuilding
+      include Concerns::ProcessorRegistries
 
       class << self
         def can_handle?(sugary_schema)
@@ -34,55 +35,6 @@ module Foobara
 
         def type
           name.demodulize.gsub(/Schema$/, "").underscore.to_sym
-        end
-
-        def register_transformer(type_symbol, transformer_class)
-          transformers = @transformers ||= {}
-
-          for_type = transformers[type_symbol] ||= {}
-
-          for_type[transformer_class.symbol] = transformer_class
-        end
-
-        def transformers_for_type(type_symbol)
-          transformers = if @transformers.blank?
-                           {}
-                         else
-                           @transformers[type_symbol] || {}
-                         end
-
-          if self == Schema
-            transformers
-          else
-            transformers.merge(superclass.transformers_for_type(type_symbol))
-          end
-        end
-
-        def processors_for_type(type_symbol)
-          transformers_for_type(type_symbol).merge(validators_for_type(type_symbol))
-        end
-
-        # Problematic that this is on this class
-        def register_validator(type_symbol, validator_class)
-          validators = @validators ||= {}
-
-          for_type = validators[type_symbol] ||= {}
-
-          for_type[validator_class.symbol] = validator_class
-        end
-
-        def validators_for_type(type_symbol)
-          validators = if @validators.blank?
-                         {}
-                       else
-                         @validators[type_symbol] || {}
-                       end
-
-          if self == Schema
-            validators
-          else
-            validators.merge(superclass.validators_for_type(type_symbol))
-          end
         end
 
         def for(sugary_schema, schema_registries: nil)
@@ -154,9 +106,6 @@ module Foobara
 
       delegate :type,
                :valid_schema_type?,
-               :validators_for_type,
-               :transformers_for_type,
-               :processors_for_type,
                to: :class
 
       def to_h
@@ -208,7 +157,7 @@ module Foobara
       end
 
       def desugarizers
-        processors_for_type(type).values.map do |processor|
+        processors.values.map do |processor|
           schema_module = Util.constant_value(processor, :Schema)
 
           if schema_module
@@ -218,7 +167,7 @@ module Foobara
       end
 
       def schema_validators
-        processors_for_type(type).values.map do |processor|
+        processors.values.map do |processor|
           schema_module = Util.constant_value(processor, :Schema)
 
           if schema_module
@@ -244,7 +193,7 @@ module Foobara
       end
 
       def allowed_keys
-        @allowed_keys ||= [*self.class.processors_for_type(type).keys, :type]
+        @allowed_keys ||= [*processors.keys, :type]
       end
 
       def build_schema_validation_errors
@@ -261,7 +210,7 @@ module Foobara
 
         strict_schema.each_pair do |key, value|
           if allowed_keys.include?(key)
-            processor = self.class.processors_for_type(type)[key]
+            processor = processors[key]
 
             next unless processor
 
@@ -288,13 +237,6 @@ module Foobara
           end
         end
       end
-
-      # TODO: something feels off about registering these in this fashion
-      register_validator(:integer, Type::Validators::Integer::MaxExceeded)
-      register_validator(:integer, Type::Validators::Integer::BelowMinimum)
-      register_transformer(:attributes, Type::Transformers::Attributes::AddDefaults)
-      register_validator(:attributes, Type::Validators::Attributes::MissingRequiredAttributes)
-      register_validator(:attributes, Type::Validators::Attributes::UnexpectedAttributes)
     end
   end
 end

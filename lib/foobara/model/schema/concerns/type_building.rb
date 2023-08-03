@@ -34,7 +34,7 @@ module Foobara
 
             # we are an instance here so why do we pass in type??
             # TODO: make it so passing in type isn't necessary
-            transformers_for_type(type).each_pair do |transformer_symbol, transformer_class|
+            self.transformers.each_pair do |transformer_symbol, transformer_class|
               if strict_schema.key?(transformer_symbol)
                 transformers << transformer_class.new(strict_schema[transformer_symbol])
               end
@@ -46,7 +46,7 @@ module Foobara
           def value_validators
             validators = []
 
-            validators_for_type(type).each_pair do |validator_symbol, validator_class|
+            self.validators.each_pair do |validator_symbol, validator_class|
               validator = validator_class.new(strict_schema[validator_symbol], to_h)
               validators << validator if validator.applicable?
             end

@@ -170,7 +170,7 @@ RSpec.describe "custom types" do
     end
 
     before do
-      complex_schema.register_validator(:complex, pointless_validator)
+      complex_schema.register_validator(pointless_validator)
       schema_registry.register(complex_schema)
     end
     # type registration end

@@ -1,3 +1,5 @@
+require "foobara/model/schema"
+
 module Foobara
   class Model
     class Schema
@@ -80,6 +82,10 @@ module Foobara
           @children_types ||= schemas.transform_values(&:to_type)
         end
       end
+
+      Attributes.register_transformer(Type::Transformers::Attributes::AddDefaults)
+      Attributes.register_validator(Type::Validators::Attributes::MissingRequiredAttributes)
+      Attributes.register_validator(Type::Validators::Attributes::UnexpectedAttributes)
     end
   end
 end
