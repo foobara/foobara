@@ -24,6 +24,10 @@ module Foobara
             def symbol
               :required
             end
+
+            def data_schema
+              :duck # TODO: expand when we have support for an array of symbols
+            end
           end
 
           def applicable?

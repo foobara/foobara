@@ -45,35 +45,13 @@ module Foobara
         end
 
         def build_schema_validation_errors
-          super(skip: %i[schemas required defaults])
+          # TODO: a way to make it so we don't have to pass schemas to super like this?
+          super
 
-          if schemas.blank?
-            # TODO: should probably be some kind of schema validation error instead of Error
-            schema_validation_errors << Error.new(
-              symbol: :missing_schemas_key_for_attributes,
-              message: "Attributes must always have schemas present",
-              context: {
-                schema: to_h
-              }
-            )
-          else
-            non_symbolic = schemas.keys.reject { |key| key.is_a?(::Symbol) }
-
-            if non_symbolic.present?
-              schema_validation_errors << Error.new(
-                symbol: :non_symbolic_attribute_keys_given,
-                message: "Attributes must have all symbolic keys but #{non_symbolic} were given instead",
-                context: {
-                  non_symbolic:
-                }
-              )
-            else
-              # TODO: having defaults and required hard-coded here is probably fine but does make it less likely
-              # to have a system where extensions can easily be added at the attributes level.
-              self.schema_validation_errors +=
-                Array.wrap(default_validation_errors) + Array.wrap(required_attribute_validation_errors)
-            end
-          end
+          # TODO: having defaults and required hard-coded here is probably fine but does make it less likely
+          # to have a system where extensions can easily be added at the attributes level.
+          self.schema_validation_errors +=
+            Array.wrap(default_validation_errors) + Array.wrap(required_attribute_validation_errors)
         end
 
         def default_validation_errors
@@ -139,6 +117,10 @@ module Foobara
         end
 
         private
+
+        def allowed_keys
+          [:schemas, *super]
+        end
 
         def desugarizers
           deep_dup = ->(hash) { hash.deep_dup }

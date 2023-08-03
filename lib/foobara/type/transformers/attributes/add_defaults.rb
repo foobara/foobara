@@ -10,6 +10,10 @@ module Foobara
             def symbol
               :defaults
             end
+
+            def data_schema
+              :duck # TODO: fix this when we have a way to specify attributes with unspecified keys
+            end
           end
 
           attr_accessor :defaults

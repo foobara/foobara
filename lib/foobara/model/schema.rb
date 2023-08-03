@@ -56,6 +56,10 @@ module Foobara
           end
         end
 
+        def processors_for_type(type_symbol)
+          transformers_for_type(type_symbol).merge(validators_for_type(type_symbol))
+        end
+
         # Problematic that this is on this class
         def register_validator(type_symbol, validator_class)
           validators = @validators ||= {}
@@ -236,9 +240,11 @@ module Foobara
         Outcome.raise!(schema_validation_errors)
       end
 
-      def build_schema_validation_errors(skip: nil)
-        skip = Array.wrap(skip)
+      def allowed_keys
+        @allowed_keys ||= [*self.class.processors_for_type(type).keys, :type]
+      end
 
+      def build_schema_validation_errors
         unless valid_schema_type?(type, schema_registries:)
           schema_validation_errors << Error.new(
             symbol: :"unknown_type_#{type}",
@@ -250,18 +256,15 @@ module Foobara
           )
         end
 
-        validators = self.class.validators_for_type(type) || {}
-        allowed_keys = [*validators.keys, :type]
-
         strict_schema.each_pair do |key, value|
-          next if key == :type
-          next if skip.include?(key)
-
           if allowed_keys.include?(key)
-            validator = validators[key]
+            processor = self.class.processors_for_type(type)[key]
 
-            outcome = TypeBuilder.type_for(Schema.for(validator.data_schema, schema_registries:)).process(value,
-                                                                                                          path: [key])
+            next unless processor
+
+            outcome = TypeBuilder.type_for(
+              Schema.for(processor.data_schema, schema_registries:)
+            ).process(value, path: [key])
 
             unless outcome.success?
               self.schema_validation_errors += outcome.errors
