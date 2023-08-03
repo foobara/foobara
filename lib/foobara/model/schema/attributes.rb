@@ -120,9 +120,7 @@ module Foobara
 
         def to_h
           super.merge(
-            schemas: schemas.transform_values(&:to_h),
-            required:,
-            defaults:
+            schemas: schemas.transform_values(&:to_h)
           )
         end
 
