@@ -238,6 +238,7 @@ module Foobara
         end
       end
 
+      # another way we can do this? Odd to have all of these here... cant we do it automatically in TypeBuilder?
       register_validator(:integer, Type::Validators::Integer::MaxExceeded)
       register_validator(:integer, Type::Validators::Integer::BelowMinimum)
       register_transformer(:attributes, Type::Transformers::Attributes::AddDefaults)

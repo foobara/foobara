@@ -41,11 +41,7 @@ module Foobara
       end
 
       def to_type
-        if Foobara::Type.registered?(symbol)
-          Foobara::Type[symbol]
-        else
-          Foobara::Type.new(**to_args)
-        end
+        Foobara::Type.new(**to_args)
       end
 
       def to_args
@@ -61,7 +57,18 @@ module Foobara
       end
 
       def casters
-        []
+        type_module_name = symbol.to_s.camelize.to_sym
+
+        casters_module = Util.constant_value(Type::Casters, type_module_name)
+        casters = Util.constant_values(casters_module, Class)
+
+        direct_caster = casters.find { |caster| caster.name.to_sym == type_module_name }
+
+        direct_caster = Array.wrap(direct_caster)
+
+        casters -= direct_caster
+
+        [*direct_caster, *casters].compact.map(&:instance)
       end
 
       def value_transformers

@@ -4,10 +4,6 @@ module Foobara
       class Attributes < TypeBuilder
         delegate :schemas, to: :schema
 
-        def to_type
-          Type.new(**to_args)
-        end
-
         def to_args
           super.merge(children_types:)
         end
