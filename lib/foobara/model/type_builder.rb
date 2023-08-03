@@ -96,7 +96,6 @@ module Foobara
       end
 
       builder_registry[:attributes] = TypeBuilder::Attributes
-      builder_registry[:integer] = TypeBuilder::Integer
     end
   end
 end
