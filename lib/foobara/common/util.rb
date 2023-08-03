@@ -45,5 +45,21 @@ module Foobara
         require f
       end
     end
+
+    def all_symbolic_keys?(hash)
+      all_symbolic_elements?(hash.keys)
+    end
+
+    def all_symbolizable_keys?(hash)
+      all_symbolizable_elements?(hash.keys)
+    end
+
+    def all_symbolic_elements?(array)
+      array.all? { |key| key.is_a?(Symbol) || key.is_a?(String) }
+    end
+
+    def all_symbolizable_elements?(array)
+      array.all? { |key| key.is_a?(Symbol) || key.is_a?(String) }
+    end
   end
 end

@@ -150,24 +150,15 @@ module Foobara
         validate_schema!
       end
 
-      delegate :type, :valid_schema_type?, :validators_for_type, :transformers_for_type, to: :class
+      delegate :type,
+               :valid_schema_type?,
+               :validators_for_type,
+               :transformers_for_type,
+               :processors_for_type,
+               to: :class
 
       def to_h
-        h = { type: }
-
-        validators_for_type(type).each_pair do |validator_symbol, validator_data|
-          if strict_schema.key?(validator_symbol)
-            h = h.merge(validator_symbol => validator_data)
-          end
-        end
-
-        transformers_for_type(type).each_pair do |transformer_symbol, transformer_data|
-          if strict_schema.key?(transformer_symbol)
-            h = h.merge(transformer_symbol => transformer_data)
-          end
-        end
-
-        h
+        strict_schema.dup
       end
 
       def has_errors?
@@ -215,11 +206,21 @@ module Foobara
       end
 
       def desugarizers
-        [*transformers_for_type(type).values, *validators_for_type(type).values].map do |processor|
+        processors_for_type(type).values.map do |processor|
           schema_module = Util.constant_value(processor, :Schema)
 
           if schema_module
             Util.constant_value(schema_module, :Desugarizer)
+          end
+        end.compact
+      end
+
+      def schema_validators
+        processors_for_type(type).values.map do |processor|
+          schema_module = Util.constant_value(processor, :Schema)
+
+          if schema_module
+            Util.constant_value(schema_module, :SchemaValidator)
           end
         end.compact
       end
@@ -274,6 +275,16 @@ module Foobara
               symbol: :invalid_schema_element,
               message: "Found #{key} but expected one of #{allowed_keys}"
             )
+          end
+        end
+
+        schema_validators.each do |validator|
+          break if schema_validation_errors.present?
+
+          errors = Array.wrap(validator.call(to_h))
+
+          errors.each do |error|
+            schema_validation_errors << error
           end
         end
       end
