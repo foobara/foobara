@@ -141,51 +141,38 @@ module Foobara
         private
 
         def desugarizers
+          deep_dup = ->(hash) { hash.deep_dup }
+          symbolize_keys = ->(hash) { hash.symbolize_keys }
+          to_strictish_schema = ->(hash) {
+            if hash.key?(:type) && hash.key?(:schemas)
+              hash
+            else
+              {
+                type: :attributes,
+                schemas: hash.deep_dup
+              }
+            end
+          }
+          symbolize_schemas = ->(hash) {
+            hash[:schemas] = hash[:schemas].symbolize_keys
+            hash
+          }
+          schemaize_schemas = ->(hash) {
+            hash[:schemas] = hash[:schemas].transform_values do |attribute_schema|
+              Schema.for(attribute_schema, schema_registries:)
+            end
+
+            hash
+          }
+
           [
-            *super
+            deep_dup,
+            symbolize_keys,
+            to_strictish_schema,
+            symbolize_schemas,
+            *super,
+            schemaize_schemas
           ]
-        end
-
-        def desugarize
-          # Can we eliminate these symbolic keys hash checks somehow?? Maybe refuse to cast if these are not met?
-          unless raw_schema.is_a?(Hash)
-            errors << Error.new(
-              symbol: :expected_a_hash_with_symbolizable_keys,
-              message: "Attributes must be a hash with symbolizable keys",
-              context: {
-                raw_schema:
-              }
-            )
-            return
-          end
-
-          hash = if strictish_schema?
-                   raw_schema.deep_dup
-                 else
-                   {
-                     type: :attributes,
-                     schemas: raw_schema.deep_dup
-                   }
-                 end
-
-          unless hash[:schemas].keys.all? { |attribute_name| attribute_name.is_a?(::Symbol) }
-            errors << Error.new(
-              symbol: :expected_a_hash_with_symbolizable_keys,
-              message: "Attributes must be a hash with symbolizable keys",
-              context: {
-                raw_schema:
-              }
-            )
-            return
-          end
-
-          hash = super(hash)
-
-          hash[:schemas] = hash[:schemas].transform_values do |attribute_schema|
-            Schema.for(attribute_schema, schema_registries:)
-          end
-
-          hash
         end
 
         def strictish_schema?

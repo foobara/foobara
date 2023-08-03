@@ -189,6 +189,10 @@ module Foobara
         desugarizers.each do |desugarizer|
           outcome = desugarizer.call(strict_schema_hash)
 
+          unless outcome.is_a?(Outcome)
+            outcome = Outcome.success(outcome)
+          end
+
           if outcome.success?
             strict_schema_hash = outcome.result
           else
