@@ -83,9 +83,7 @@ module Foobara
         end
       end
 
-      Attributes.register_transformer(Type::Transformers::Attributes::AddDefaults)
-      Attributes.register_validator(Type::Validators::Attributes::MissingRequiredAttributes)
-      Attributes.register_validator(Type::Validators::Attributes::UnexpectedAttributes)
+      Attributes.autoregister_processors
     end
   end
 end

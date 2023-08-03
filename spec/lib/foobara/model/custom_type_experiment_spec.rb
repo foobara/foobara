@@ -483,10 +483,10 @@ end
 #   4) specifies the type the validator can receive to initialize it (not the value type but context for the validator)
 
 # Next steps?
-# 0) Eliminate TypeBuilder and let Schema know about Type again
+# 0) Eliminate TypeBuilder and let Schema know about Type again [done]
 # 0) Split up transformers and validators [done]
 # 1) Change validator to give error type instead of error schema?
-# 2) Make all Type creations occur through Schema. This is so we can map from type to schema easily.
+# 2) Make all Type creations occur through Schema. This is so we can map from type to schema easily. [done/dup]
 # 3) This means needing to move all the primitive types out of Type and into a different project.
 # *) Create a faster way of declaring types such as the pseudocode in this file.
 # :nocov:

@@ -4,8 +4,7 @@ module Foobara
       class Integer < Schema
       end
 
-      Integer.register_validator(Type::Validators::Integer::MaxExceeded)
-      Integer.register_validator(Type::Validators::Integer::BelowMinimum)
+      Integer.autoregister_processors
     end
   end
 end

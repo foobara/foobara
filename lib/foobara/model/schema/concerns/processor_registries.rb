@@ -42,6 +42,26 @@ module Foobara
                 v.merge(superclass.validators)
               end
             end
+
+            def autoregister_processors
+              module_symbol = type.to_s.camelize.to_sym
+
+              transformer_module = Util.constant_value(Type::Transformers, module_symbol)
+
+              if transformer_module
+                Util.constant_values(transformer_module, Class).each do |transformer|
+                  register_transformer(transformer)
+                end
+              end
+
+              validator_module = Util.constant_value(Type::Validators, module_symbol)
+
+              if validator_module
+                Util.constant_values(validator_module, Class).each do |validator|
+                  register_validator(validator)
+                end
+              end
+            end
           end
 
           delegate :validators,
