@@ -3,8 +3,22 @@ module Foobara
     class Schema
       class Attributes < Schema
         class << self
-          def can_handle?(sugary_schema)
-            sugary_schema.is_a?(Hash) && sugary_schema.keys.all? { |key| key.is_a?(::Symbol) }
+          def can_handle?(hash)
+            hash.is_a?(::Hash) && all_keys_symbolizable?(hash) &&
+              (!strictish_schema?(hash) || all_keys_symbolizable?(hash.symbolize_keys[:schemas]))
+          end
+
+          private
+
+          def all_keys_symbolizable?(hash)
+            hash.keys.all? do |key|
+              key.is_a?(::Symbol) || key.is_a?(::String)
+            end
+          end
+
+          def strictish_schema?(hash)
+            keys = hash.keys.map(&:to_sym)
+            keys.include?(:type) && keys.include?(:schemas)
           end
         end
 
@@ -125,6 +139,12 @@ module Foobara
         end
 
         private
+
+        def desugarizers
+          [
+            *super
+          ]
+        end
 
         def desugarize
           # Can we eliminate these symbolic keys hash checks somehow?? Maybe refuse to cast if these are not met?
