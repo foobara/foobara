@@ -41,22 +41,25 @@ module Foobara
         end
 
         def desugarizers
-          deep_dup = ->(hash) { hash.deep_dup }
-          symbolize_keys = ->(hash) { hash.symbolize_keys }
-          to_strictish_schema = ->(hash) {
-            if hash.key?(:type) && hash.key?(:schemas)
-              hash
-            else
-              {
-                type: :attributes,
-                schemas: hash.deep_dup
-              }
-            end
-          }
-          symbolize_schemas = ->(hash) {
-            hash[:schemas] = hash[:schemas].symbolize_keys
+          desugarize = ->(hash) {
+            hash = hash.deep_dup
+
+            hash.symbolize_keys!
+
+            hash = if hash.key?(:type) && hash.key?(:schemas)
+                     hash
+                   else
+                     {
+                       type: :attributes,
+                       schemas: hash.deep_dup
+                     }
+                   end
+
+            hash[:schemas].symbolize_keys!
+
             hash
           }
+
           schemaize_schemas = ->(hash) {
             hash[:schemas] = hash[:schemas].transform_values do |attribute_schema|
               Schema.for(attribute_schema, schema_registries:)
@@ -66,10 +69,7 @@ module Foobara
           }
 
           [
-            deep_dup,
-            symbolize_keys,
-            to_strictish_schema,
-            symbolize_schemas,
+            desugarize,
             *super,
             schemaize_schemas
           ]
