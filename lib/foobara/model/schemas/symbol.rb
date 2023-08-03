@@ -1,7 +1,6 @@
 module Foobara
   class Model
-    class Schema
-      # Hmmmm do we need these classes?
+    module Schemas
       class Symbol < Schema
       end
     end

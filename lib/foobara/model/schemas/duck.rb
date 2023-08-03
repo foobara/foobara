@@ -1,6 +1,6 @@
 module Foobara
   class Model
-    class Schema
+    module Schemas
       class Duck < Schema
       end
     end

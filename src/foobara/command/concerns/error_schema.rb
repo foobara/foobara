@@ -26,7 +26,7 @@ module Foobara
             else
               map[path] = {}
 
-              if schema_to_process.is_a?(Foobara::Model::Schema::Attributes)
+              if schema_to_process.is_a?(Foobara::Model::Schemas::Attributes)
                 schema_to_process.schemas.each_pair do |attribute_name, schema|
                   attribute_path = [*path, attribute_name]
 

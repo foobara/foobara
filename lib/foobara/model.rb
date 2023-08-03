@@ -4,9 +4,9 @@ Foobara::Util.require_directory("#{__dir__}/model")
 
 module Foobara
   class Model
-    Schema.register_schema(Schema::Duck)
-    Schema.register_schema(Schema::Symbol)
-    Schema.register_schema(Schema::Integer)
-    Schema.register_schema(Schema::Attributes)
+    Schema.register_schema(Schemas::Duck)
+    Schema.register_schema(Schemas::Symbol)
+    Schema.register_schema(Schemas::Integer)
+    Schema.register_schema(Schemas::Attributes)
   end
 end

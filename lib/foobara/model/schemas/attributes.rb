@@ -2,7 +2,7 @@ require "foobara/model/schema"
 
 module Foobara
   class Model
-    class Schema
+    module Schemas
       class Attributes < Schema
         class << self
           def can_handle?(hash)

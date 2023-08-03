@@ -113,7 +113,7 @@ module Foobara
           end
 
           # TODO: need to pass in schema registries here
-          context_schema = Foobara::Model::Schema::Attributes.new(map[symbol])
+          context_schema = Foobara::Model::Schemas::Attributes.new(map[symbol])
 
           if context_schema.present?
             error.context = context_schema.to_type.process!(context || {})
