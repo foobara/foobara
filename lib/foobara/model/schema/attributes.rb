@@ -174,11 +174,6 @@ module Foobara
             schemaize_schemas
           ]
         end
-
-        def strictish_schema?
-          raw_schema.key?(:type) && raw_schema.key?(:schemas) &&
-            raw_schema.keys - %i[type schemas defaults required] == []
-        end
       end
     end
   end
