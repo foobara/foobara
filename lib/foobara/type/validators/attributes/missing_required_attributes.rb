@@ -26,11 +26,8 @@ module Foobara
             end
           end
 
-          attr_accessor :required_attribute_names
-
-          def initialize(required_attribute_names)
-            super()
-            self.required_attribute_names = required_attribute_names
+          def required_attribute_names
+            validator_data
           end
 
           def validation_errors(attributes_hash)

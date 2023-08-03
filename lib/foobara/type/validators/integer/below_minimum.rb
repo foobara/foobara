@@ -29,12 +29,8 @@ module Foobara
             end
           end
 
-          attr_accessor :min
-
-          def initialize(min)
-            super()
-
-            self.min = min
+          def min
+            validator_data
           end
 
           def validation_errors(value)

@@ -156,6 +156,8 @@ module Foobara
           h = h.merge(validator_symbol => value)
         end
 
+        # TODO: what about transformers?
+
         h
       end
 
@@ -243,6 +245,7 @@ module Foobara
       register_validator(:integer, Type::Validators::Integer::BelowMinimum)
       register_transformer(:attributes, Type::Transformers::Attributes::AddDefaults)
       register_validator(:attributes, Type::Validators::Attributes::MissingRequiredAttributes)
+      register_validator(:attributes, Type::Validators::Attributes::UnexpectedAttributes)
     end
   end
 end

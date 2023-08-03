@@ -314,11 +314,8 @@ RSpec.describe "custom types", skip: "only documentation for now" do
           end
         end
 
-        attr_accessor :be_pointless
-
-        def initialize(be_pointless)
-          super()
-          self.be_pointless = be_pointless
+        def be_pointless
+          validator_data
         end
 
         def validation_errors(complex)

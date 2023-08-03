@@ -13,15 +13,6 @@ module Foobara
             TypeBuilder.type_for(schema)
           end
         end
-
-        def value_validators
-          [*super, unexpected_attributes_validator]
-        end
-
-        # can we eliminate this??
-        def unexpected_attributes_validator
-          Validators::Attribute::UnexpectedAttributes.new(schema.valid_attribute_names)
-        end
       end
     end
   end

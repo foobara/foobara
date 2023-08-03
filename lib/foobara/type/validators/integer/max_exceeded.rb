@@ -29,12 +29,8 @@ module Foobara
             end
           end
 
-          attr_accessor :max
-
-          def initialize(max)
-            super()
-
-            self.max = max
+          def max
+            validator_data
           end
 
           def validation_errors(value)
