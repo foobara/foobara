@@ -129,10 +129,11 @@ module Foobara
         private
 
         def desugarize
+          # Can we eliminate these symbolic keys hash checks somehow?? Maybe refuse to cast if these are not met?
           unless raw_schema.is_a?(Hash)
             errors << Error.new(
-              symbol: :expected_a_hash,
-              message: "Attributes must be a hash",
+              symbol: :expected_a_hash_with_symbolizable_keys,
+              message: "Attributes must be a hash with symbolizable keys",
               context: {
                 raw_schema:
               }
@@ -151,8 +152,8 @@ module Foobara
 
           unless hash[:schemas].keys.all? { |attribute_name| attribute_name.is_a?(::Symbol) }
             errors << Error.new(
-              symbol: :expected_a_hash,
-              message: "Attributes must be a hash",
+              symbol: :expected_a_hash_with_symbolizable_keys,
+              message: "Attributes must be a hash with symbolizable keys",
               context: {
                 raw_schema:
               }
@@ -160,6 +161,7 @@ module Foobara
             return
           end
 
+          # what can we do? Iterate over all
           # TODO: having defaults and required hard-coded here is probably fine but does make it less likely
           # to have a system where extensions can easily be added at the attributes level.
           hash = desugarize_defaults(hash)

@@ -18,8 +18,9 @@ module Foobara
           [*super, unexpected_attributes_validator]
         end
 
+        # can we eliminate this??
         def unexpected_attributes_validator
-          Validators::Attribute::UnexpectedAttribute.new(schema.valid_attribute_names)
+          Validators::Attribute::UnexpectedAttributes.new(schema.valid_attribute_names)
         end
       end
     end

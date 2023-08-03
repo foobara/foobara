@@ -4,8 +4,14 @@ module Foobara
       module Validators
         # TODO: move to Type project
         module Attribute
-          class UnexpectedAttribute < Foobara::Type::ValueValidator
-            class Error < Foobara::Type::ValidatorError; end
+          class UnexpectedAttributes < Foobara::Type::ValueValidator
+            class Error < Foobara::Type::ValidatorError
+              class << self
+                def symbol
+                  :unexpected_attribute
+                end
+              end
+            end
 
             attr_accessor :allowed_attribute_names
 
