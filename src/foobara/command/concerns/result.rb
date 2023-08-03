@@ -7,7 +7,7 @@ module Foobara
         class CouldNotProcessResult < Outcome::UnsuccessfulOutcomeError; end
 
         def result_type
-          @result_type ||= Model::TypeBuilder.type_for(result_schema)
+          @result_type ||= result_schema.to_type
         end
 
         private

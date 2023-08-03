@@ -116,7 +116,7 @@ module Foobara
           context_schema = Foobara::Model::Schema::Attributes.new(map[symbol])
 
           if context_schema.present?
-            error.context = Model::TypeBuilder.type_for(context_schema).process!(context || {})
+            error.context = context_schema.to_type.process!(context || {})
           elsif context.present?
             raise "There's no context schema declared for #{symbol}"
           end

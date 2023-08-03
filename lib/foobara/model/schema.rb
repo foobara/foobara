@@ -15,6 +15,8 @@ module Foobara
         end
       end
 
+      include Concerns::TypeBuilding
+
       class << self
         def can_handle?(sugary_schema)
           sugary_schema == type
@@ -263,9 +265,7 @@ module Foobara
 
             next unless processor
 
-            outcome = TypeBuilder.type_for(
-              Schema.for(processor.data_schema, schema_registries:)
-            ).process(value, path: [key])
+            outcome = Schema.for(processor.data_schema, schema_registries:).to_type.process(value, path: [key])
 
             unless outcome.success?
               self.schema_validation_errors += outcome.errors
@@ -289,7 +289,7 @@ module Foobara
         end
       end
 
-      # another way we can do this? Odd to have all of these here... can't we do it automatically in TypeBuilder?
+      # TODO: something feels off about registering these in this fashion
       register_validator(:integer, Type::Validators::Integer::MaxExceeded)
       register_validator(:integer, Type::Validators::Integer::BelowMinimum)
       register_transformer(:attributes, Type::Transformers::Attributes::AddDefaults)

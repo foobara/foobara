@@ -27,7 +27,7 @@ RSpec.describe Foobara::Model::Schema do
         describe "casting" do
           subject { type_instance.process!(object) }
 
-          let(:type_instance) { Foobara::Model::TypeBuilder.type_for(schema) }
+          let(:type_instance) { schema.to_type }
 
           context "when cast is not required" do
             let(:object) { 123 }

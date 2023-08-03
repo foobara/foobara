@@ -1,7 +1,6 @@
-RSpec.describe Foobara::Model::TypeBuilder::Attributes do
+RSpec.describe Foobara::Model::Schema::Concerns::TypeBuilding do
   let(:schema) { Foobara::Model::Schema.for(schema_hash) }
-  let(:type_builder) { Foobara::Model::TypeBuilder.builder_for(schema) }
-  let(:type) { type_builder.to_type }
+  let(:type) { schema.to_type }
 
   describe "defaults" do
     context "when schema has top-level defaults hash" do

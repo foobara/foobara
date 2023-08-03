@@ -74,6 +74,11 @@ module Foobara
             schemaize_schemas
           ]
         end
+
+        # Type building override
+        def children_types
+          @children_types ||= schemas.transform_values(&:to_type)
+        end
       end
     end
   end

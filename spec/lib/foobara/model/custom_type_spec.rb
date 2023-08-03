@@ -41,10 +41,6 @@ RSpec.describe "custom types" do
   #
   # finally, need to call Type.register_custom_type or register it in a local registry and pass that registry around
   context "when defining a custom complex type" do
-    after do
-      Foobara::Model::TypeBuilder.clear_type_cache
-    end
-
     let(:complex_class) do
       Class.new do
         attr_accessor :real, :imaginary
@@ -52,11 +48,14 @@ RSpec.describe "custom types" do
     end
 
     let(:schema_registry) { Foobara::Model::Schema::Registry.new }
-    let(:type) { Foobara::Model::TypeBuilder.type_for(schema) }
+    let(:type) { schema.to_type }
     let(:schema) { Foobara::Model::Schema.for(schema_hash, schema_registries: schema_registry) }
 
     # type registration start
     let(:complex_schema) do
+      custom_caster = array_to_complex_caster.new
+      klass = complex_class
+
       Class.new(Foobara::Model::Schema) do
         class << self
           def can_handle?(sugary_schema)
@@ -89,6 +88,13 @@ RSpec.describe "custom types" do
         end
 
         delegate :sugar_for_complex?, to: :class
+
+        define_method :casters do
+          [
+            custom_caster,
+            Foobara::Type::Casters::DirectTypeMatch.new(type_symbol: :complex, ruby_classes: klass)
+          ]
+        end
       end
     end
 
@@ -111,19 +117,6 @@ RSpec.describe "custom types" do
           complex.imaginary = imaginary
 
           complex
-        end
-      end
-    end
-
-    let(:type_builder) do
-      casters = [
-        array_to_complex_caster.new,
-        Foobara::Type::Casters::DirectTypeMatch.new(type_symbol: :complex, ruby_classes: complex_class)
-      ]
-
-      Class.new(Foobara::Model::TypeBuilder) do
-        define_method :casters do
-          casters
         end
       end
     end
@@ -179,8 +172,6 @@ RSpec.describe "custom types" do
     before do
       complex_schema.register_validator(:complex, pointless_validator)
       schema_registry.register(complex_schema)
-      # TODO: can we remove this?
-      Foobara::Model::TypeBuilder.builder_registry[:complex] = type_builder
     end
     # type registration end
 
