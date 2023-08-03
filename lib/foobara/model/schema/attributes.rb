@@ -161,11 +161,7 @@ module Foobara
             return
           end
 
-          # what can we do? Iterate over all
-          # TODO: having defaults and required hard-coded here is probably fine but does make it less likely
-          # to have a system where extensions can easily be added at the attributes level.
-          hash = desugarize_defaults(hash)
-          hash = desugarize_required(hash)
+          hash = super(hash)
 
           hash[:schemas] = hash[:schemas].transform_values do |attribute_schema|
             Schema.for(attribute_schema, schema_registries:)
@@ -177,42 +173,6 @@ module Foobara
         def strictish_schema?
           raw_schema.key?(:type) && raw_schema.key?(:schemas) &&
             raw_schema.keys - %i[type schemas defaults required] == []
-        end
-
-        def desugarize_defaults(hash)
-          defaults = hash[:defaults] || {}
-
-          schemas = hash[:schemas]
-          schemas.each_pair do |attribute_name, attribute_schema|
-            if attribute_schema.is_a?(Hash) && attribute_schema.key?(:default)
-              default = attribute_schema[:default]
-              schemas[attribute_name] = attribute_schema.except(:default)
-              defaults = defaults.merge(attribute_name => default)
-            end
-          end
-
-          hash[:defaults] = defaults unless defaults.empty?
-
-          hash
-        end
-
-        def desugarize_required(hash)
-          required_attributes = Array.wrap(hash[:required])
-
-          schemas = hash[:schemas]
-          schemas.each_pair do |attribute_name, attribute_schema|
-            if attribute_schema.is_a?(Hash) && attribute_schema.key?(:required)
-              required = attribute_schema[:required]
-              schemas[attribute_name] = attribute_schema.except(:required)
-
-              # TODO: is false a good no-op? Maybe make required true the default and add a :foo? convention/sugar?
-              required_attributes << attribute_name if required # required: false is a no-op as it's the default
-            end
-          end
-
-          hash[:required] = required_attributes unless required_attributes.empty?
-
-          hash
         end
       end
     end

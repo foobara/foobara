@@ -179,12 +179,24 @@ module Foobara
 
       private
 
-      def desugarize
-        if raw_schema == type
-          { type: }
-        else
-          raw_schema
+      def desugarize(raw_schema = @raw_schema)
+        strict_schema_hash = if raw_schema == type
+                               { type: }
+                             else
+                               raw_schema
+                             end
+
+        desugarizers.each do |desugarizer|
+          strict_schema_hash = desugarizer.call(strict_schema_hash)
         end
+
+        strict_schema_hash
+      end
+
+      def desugarizers
+        [*transformers_for_type(type).values, *validators_for_type(type).values].map do |processor|
+          Util.constant_value(processor, :Desugarizer)
+        end.compact
       end
 
       def validate_schema
