@@ -21,15 +21,6 @@ module Foobara
         def unexpected_attributes_validator
           Validators::Attribute::UnexpectedAttribute.new(schema.valid_attribute_names)
         end
-
-        # TODO: can we eliminate this concept?
-        def base_type
-          @base_type ||= Type[:attributes]
-        end
-
-        def casters
-          base_type.casters
-        end
       end
     end
   end

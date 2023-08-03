@@ -84,51 +84,6 @@ module Foobara
   # Just expressions for expressing types?
   # So we ask the schema to give us a type??
   class Type
-    class << self
-      class CannotRegisterPrimitive < StandardError; end
-
-      def register_primitive_type(symbol)
-        if all_primitives_registered?
-          raise CannotRegisterPrimitive, "Primitives cannot be registered. Register a custom type instead."
-        end
-
-        type = PrimitiveType.new(casters: casters_for_primitive(symbol))
-
-        global_registry.register(symbol, type)
-      end
-
-      def all_primitives_registered!
-        @all_primitives_registered = true
-      end
-
-      def all_primitives_registered?
-        @all_primitives_registered
-      end
-
-      delegate :[], :registered?, to: :global_registry
-
-      private
-
-      def global_registry
-        @global_registry ||= Registry.new
-      end
-
-      def casters_for_primitive(symbol)
-        type_module_name = symbol.to_s.camelize.to_sym
-
-        casters_module = Util.constant_value(self::Casters, type_module_name)
-        casters = Util.constant_values(casters_module, Class)
-
-        direct_caster = casters.find { |caster| caster.name.to_sym == type_module_name }
-
-        direct_caster = Array.wrap(direct_caster)
-
-        casters -= direct_caster
-
-        [*direct_caster, *casters].compact.map(&:instance)
-      end
-    end
-
     # TODO: eliminate castors (or not?)
     # TODO: eliminate children_types by using classes?
     attr_accessor :casters, :value_transformers, :value_validators, :children_types
@@ -298,11 +253,5 @@ module Foobara
         )
       end
     end
-
-    register_primitive_type(:duck)
-    register_primitive_type(:symbol)
-    register_primitive_type(:integer)
-    register_primitive_type(:attributes)
-    all_primitives_registered!
   end
 end

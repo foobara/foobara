@@ -1,8 +1,8 @@
 RSpec.describe Foobara::Type do
-  let(:type) { described_class[type_symbol] }
+  let(:type) { Foobara::Model::TypeBuilder.type_for(Foobara::Model::Schema.for(type_schema)) }
 
   context "when :attributes" do
-    let(:type_symbol) { :attributes }
+    let(:type_schema) { { foo: :duck } }
 
     describe "#cast_from" do
       let(:outcome) { type.process(hash) }
@@ -40,7 +40,7 @@ RSpec.describe Foobara::Type do
 
   describe ".[]" do
     context "when looking up a primitive" do
-      it "returns a primitive" do
+      it "returns a primitive", skip: "not registering primitives here anymore..." do
         expect(described_class[:integer]).to be_a(Foobara::Type::PrimitiveType)
       end
     end

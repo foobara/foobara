@@ -36,10 +36,6 @@ module Foobara
         self.schema = schema
       end
 
-      def base_type
-        nil
-      end
-
       def to_type
         Foobara::Type.new(**to_args)
       end
@@ -72,7 +68,7 @@ module Foobara
       end
 
       def value_transformers
-        transformers = base_type&.value_transformers.dup || []
+        transformers = []
 
         schema.transformers_for_type(symbol).each_pair do |transformer_symbol, transformer_class|
           if schema.strict_schema.key?(transformer_symbol)
@@ -84,7 +80,7 @@ module Foobara
       end
 
       def value_validators
-        validators = base_type&.value_validators.dup || []
+        validators = []
 
         schema.validators_for_type(symbol).each_pair do |validator_symbol, validator_class|
           if schema.strict_schema.key?(validator_symbol)
