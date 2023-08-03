@@ -51,7 +51,7 @@ module Foobara
                    else
                      {
                        type: :attributes,
-                       schemas: hash.deep_dup
+                       schemas: hash
                      }
                    end
 
