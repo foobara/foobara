@@ -154,8 +154,6 @@ module Foobara
       end
 
       value_validators.each do |value_validator|
-        next unless value_validator.applicable?(outcome.result)
-
         return outcome if value_validator.halt_if_already_not_success? && !outcome.success?
 
         value_validator.process_outcome(outcome, path)

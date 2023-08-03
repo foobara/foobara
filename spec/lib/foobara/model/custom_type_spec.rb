@@ -179,6 +179,7 @@ RSpec.describe "custom types" do
     before do
       complex_schema.register_validator(:complex, pointless_validator)
       schema_registry.register(complex_schema)
+      # TODO: can we remove this?
       Foobara::Model::TypeBuilder.builder_registry[:complex] = type_builder
     end
     # type registration end

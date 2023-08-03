@@ -15,10 +15,10 @@ module Foobara
             def symbol
               :unexpected_attributes
             end
+          end
 
-            def always_applies?
-              true
-            end
+          def applicable?
+            true
           end
 
           def allowed_attribute_names

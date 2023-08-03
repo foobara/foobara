@@ -3,13 +3,6 @@ require "foobara/type/value_processor"
 module Foobara
   class Type
     class ValueValidator < ValueProcessor
-      class << self
-        # This means we dont have to specify a symbol for it in the schema to activate it
-        def always_applies?
-          false
-        end
-      end
-
       attr_accessor :validator_data, :strict_schema_hash
 
       def initialize(validator_data, strict_schema_hash)
@@ -17,6 +10,12 @@ module Foobara
         self.validator_data = validator_data
         self.strict_schema_hash = strict_schema_hash
       end
+
+      def applicable?
+        strict_schema_hash.key?(symbol)
+      end
+
+      delegate :symbol, to: :class
 
       def validation_errors(_value)
         raise "subclass responsibility"

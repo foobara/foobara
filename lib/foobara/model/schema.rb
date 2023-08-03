@@ -151,9 +151,11 @@ module Foobara
       def to_h
         h = { type: }
 
-        Schema.validators_for_type(:integer).each_key do |validator_symbol|
-          value = strict_schema[validator_symbol]
-          h = h.merge(validator_symbol => value)
+        validators_for_type(type).each_key do |validator_symbol|
+          if strict_schema.key?(validator_symbol)
+            value = strict_schema[validator_symbol]
+            h = h.merge(validator_symbol => value)
+          end
         end
 
         # TODO: what about transformers?
