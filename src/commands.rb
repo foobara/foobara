@@ -10,6 +10,7 @@ end
 
 # TODO: break these out into separate gems instead of simulating it here
 require "foobara"
+require "foobara/value"
 require "foobara/enumerated"
 require "foobara/callback"
 require "foobara/state_machine"
