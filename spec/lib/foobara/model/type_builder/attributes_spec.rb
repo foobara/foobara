@@ -1,5 +1,5 @@
 RSpec.describe Foobara::Model::Schema::Concerns::TypeBuilding do
-  let(:schema) { Foobara::Model::Schema.for(schema_hash) }
+  let(:schema) { Foobara::Model::Schema::Registry.global.schema_for(schema_hash) }
   let(:type) { schema.to_type }
 
   describe "defaults" do

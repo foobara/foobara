@@ -57,7 +57,7 @@ RSpec.describe "custom types", skip: "only documentation for now" do
 
     let(:schema_registry) { Foobara::Model::Schema::Registry.new }
     let(:type) { Foobara::Model::TypeBuilder.type_for(schema) }
-    let(:schema) { Foobara::Model::Schema.for(schema_hash, schema_registries: schema_registry) }
+    let(:schema) { Foobara::Model::Schema::Registry.global.schema_for(schema_hash, schema_registry:) }
 
     # type experiment start
     # helpers start

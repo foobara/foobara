@@ -11,7 +11,7 @@ module Foobara
             else
               raw_result_schema = args.first
               # TODO: need to pass in schema registries here
-              @result_schema = Foobara::Model::Schema.for(raw_result_schema)
+              @result_schema = Foobara::Model::Schema::Registry.global.schema_for(raw_result_schema)
             end
           end
 

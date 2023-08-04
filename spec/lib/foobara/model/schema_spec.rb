@@ -1,9 +1,9 @@
 RSpec.describe Foobara::Model::Schema do
-  describe ".for" do
+  describe "::Registry.global.schema_for" do
     subject { schema }
 
     context "with nothing but a primitive type" do
-      let(:schema) { described_class.for({ type: }) }
+      let(:schema) { described_class::Registry.global.schema_for({ type: }) }
 
       context "with a valid type" do
         let(:type) { :integer }
@@ -15,7 +15,7 @@ RSpec.describe Foobara::Model::Schema do
         end
 
         context "when using sugar syntax" do
-          let(:schema) { described_class.for(type) }
+          let(:schema) { described_class::Registry.global.schema_for(type) }
 
           it { is_expected.to be_valid }
 
@@ -52,7 +52,7 @@ RSpec.describe Foobara::Model::Schema do
 
     context "with attributes" do
       # TODO: goofy that we have to wrap this in brackets
-      let(:schema) { described_class.for({ type:, schemas: }) }
+      let(:schema) { described_class::Registry.global.schema_for({ type:, schemas: }) }
 
       let(:type) { :attributes }
       let(:schemas) {
@@ -69,7 +69,7 @@ RSpec.describe Foobara::Model::Schema do
       end
 
       context "when using sugar syntax" do
-        let(:schema) { described_class.for(schemas) }
+        let(:schema) { described_class::Registry.global.schema_for(schemas) }
 
         it { is_expected.to be_valid }
 

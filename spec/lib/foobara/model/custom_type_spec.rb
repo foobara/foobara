@@ -49,7 +49,7 @@ RSpec.describe "custom types" do
 
     let(:schema_registry) { Foobara::Model::Schema::Registry.new }
     let(:type) { schema.to_type }
-    let(:schema) { Foobara::Model::Schema.for(schema_hash, schema_registries: schema_registry) }
+    let(:schema) { schema_registry.schema_for(schema_hash) }
 
     # type registration start
     let(:complex_schema) do

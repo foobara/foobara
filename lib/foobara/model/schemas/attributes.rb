@@ -64,7 +64,7 @@ module Foobara
 
           schemaize_schemas = ->(hash) {
             hash[:schemas] = hash[:schemas].transform_values do |attribute_schema|
-              Schema.for(attribute_schema, schema_registries:)
+              schema_registry.schema_for(attribute_schema)
             end
 
             hash

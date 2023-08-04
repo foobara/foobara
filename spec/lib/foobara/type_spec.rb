@@ -1,5 +1,5 @@
 RSpec.describe Foobara::Type do
-  let(:type) { Foobara::Model::Schema.for(type_schema).to_type }
+  let(:type) { Foobara::Model::Schema::Registry.global.schema_for(type_schema).to_type }
 
   context "when :attributes" do
     let(:type_schema) { { foo: :duck } }

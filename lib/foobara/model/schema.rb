@@ -23,79 +23,22 @@ module Foobara
           sugary_schema == type
         end
 
-        def register_schema(schema)
-          Schema.global_schema_registry.register(schema)
-        end
-
-        def valid_schema_type?(symbol_or_schema, schema_registries: nil)
-          [*schema_registries, Schema.global_schema_registry].uniq.any? do |registry|
-            registry.registered?(symbol_or_schema)
-          end
+        def valid_schema_type?(symbol_or_schema, schema_registry: Registry.global)
+          schema_registry.registered?(symbol_or_schema)
         end
 
         def type
           name.demodulize.gsub(/Schema$/, "").underscore.to_sym
         end
-
-        def for(sugary_schema, schema_registries: nil)
-          schema_registries = [*schema_registries, Schema.global_schema_registry].compact.uniq
-
-          return sugary_schema if sugary_schema.is_a?(Schema)
-
-          schema = nil
-
-          if sugary_schema.is_a?(Hash) && sugary_schema.key?(:type)
-            type = sugary_schema[:type]
-
-            schema = nil
-
-            # Should we delete this method of finding a schema? Could prevent other schemas from claiming things with
-            # type in it.
-            schema_registries.each do |registry|
-              if registry.registered?(type)
-                schema = registry[type]
-                break
-              end
-            end
-          end
-
-          unless schema
-            schema_registries.each do |registry|
-              registry.each_schema do |schema_class|
-                if schema_class.can_handle?(sugary_schema)
-                  schema = schema_class
-                  break
-                end
-              end
-              break if schema
-            end
-          end
-
-          unless schema
-            raise InvalidSchema, Error.new(
-              symbol: :could_not_determine_schema_type,
-              message: "Could not determine schema type for #{sugary_schema}",
-              context: {
-                raw_schema: sugary_schema
-              }
-            )
-          end
-
-          schema.new(sugary_schema, schema_registries:)
-        end
-
-        def global_schema_registry
-          @global_schema_registry ||= Registry.new
-        end
       end
 
-      attr_accessor :raw_schema, :schema_validation_errors, :schema_registries
+      attr_accessor :raw_schema, :schema_validation_errors, :schema_registry
       attr_reader :strict_schema
 
-      def initialize(raw_schema, schema_registries: nil)
+      def initialize(raw_schema, schema_registry: Schema::Registry.global)
         raise ArgumentError, "must give a schema" unless raw_schema
 
-        self.schema_registries = schema_registries
+        self.schema_registry = schema_registry
         self.schema_validation_errors = []
         self.raw_schema = raw_schema
 
@@ -197,7 +140,7 @@ module Foobara
       end
 
       def build_schema_validation_errors
-        unless valid_schema_type?(type, schema_registries:)
+        unless valid_schema_type?(type, schema_registry:)
           schema_validation_errors << Error.new(
             symbol: :"unknown_type_#{type}",
             message: "Unknown type #{type}",
@@ -214,7 +157,7 @@ module Foobara
 
             next unless processor
 
-            outcome = Schema.for(processor.data_schema, schema_registries:).to_type.process(value, path: [key])
+            outcome = schema_registry.schema_for(processor.data_schema).to_type.process(value, path: [key])
 
             unless outcome.success?
               self.schema_validation_errors += outcome.errors
