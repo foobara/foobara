@@ -4,9 +4,14 @@ Foobara::Util.require_directory("#{__dir__}/model")
 
 module Foobara
   class Model
-    Schema::Registry.global.register(Schemas::Duck)
-    Schema::Registry.global.register(Schemas::Symbol)
-    Schema::Registry.global.register(Schemas::Integer)
-    Schema::Registry.global.register(Schemas::Attributes)
+    [
+      Schemas::Duck,
+      Schemas::Symbol,
+      Schemas::Integer,
+      Schemas::Attributes
+    ].each do |schema_class|
+      schema_class.autoregister_processors
+      Schema::Registry.global.register(schema_class)
+    end
   end
 end

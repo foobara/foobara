@@ -82,8 +82,6 @@ module Foobara
           @children_types ||= schemas.transform_values(&:to_type)
         end
       end
-
-      Attributes.autoregister_processors
     end
   end
 end
