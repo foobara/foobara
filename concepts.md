@@ -300,6 +300,10 @@ Additional thoughts...
 * should have simple primitive types (integer, string, etc)
 * primitive structured types (array, hash, attributes, tuple)
 * a way to support self-referential types
+* a way to have unioned types. like... Type[:integer] | TypeBuilder.for([:duck], equals: nil)
+  as a way to say something is an integer or nil. Although specifically for htis we should probably
+  just support it first class since it would by far be the most common union type. Therefore,
+  union types really might not be that useful in practice, frankly.
 
 Should we have a way to run ad-hoc validators?
 
