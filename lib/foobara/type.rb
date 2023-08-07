@@ -146,16 +146,12 @@ module Foobara
       value_transformers.each do |value_transformer|
         next unless value_transformer.applicable?(outcome.result)
 
-        return outcome if value_transformer.halt_if_already_not_success? && !outcome.success?
-
         value_transformer.process_outcome(outcome, path)
 
         return outcome if value_transformer.error_halts_processing? && !outcome.success?
       end
 
       value_validators.each do |value_validator|
-        return outcome if value_validator.halt_if_already_not_success? && !outcome.success?
-
         value_validator.process_outcome(outcome, path)
 
         return outcome if value_validator.error_halts_processing? && !outcome.success?
