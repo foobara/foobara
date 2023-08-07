@@ -356,3 +356,27 @@ Old concepts...
 
 TODO: decompose Schema to eliminate subclasses and then relocate behaviors until Schema is gone
 TODO: Also, move everything out of Model project for now since no actual direct modeling support has begun there yet
+
+* What is the difference between Type and TypeDeclaration?
+  * Similarities...
+    * Both take a value, "process" it, and return a transformfed value or errors (an outcome)
+      * Or at least it would be reasonable to view them both this way.
+      * So that means both seem to implement ValueProcessor interface?
+      * One potential difference: we never want to proceed with a bad schema.
+      * How does process work for each?
+        * Type
+          * Takes value
+          * Casts value that can be processed by other processors
+          * Transforms the value (for example, attributes type adds defaults)
+          * Validates the value (for example, attributes makes sure required attributes are all present)
+        * TypeDeclaration
+          * Takes (potentially sugary) type declaration value
+          * Desugarizes it into strict type declaration value
+            * very similar to casting/transforming
+          * Validates the the type declaration value
+    * Both have use cases where we have a collection of instances of each and we need to
+      find the appropriate one to use for processing
+* This seems to imply that TypeDeclaration is a subclass of Type and that TypeDeclarationRegistry
+  if it exists would be a subclass of TypeRegistry
+
+TODO: so is it possible to move forward by renaming Schema to TypeDeclaration and having it inherit from Type??
