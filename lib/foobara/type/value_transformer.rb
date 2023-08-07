@@ -3,6 +3,10 @@ require "foobara/type/value_processor"
 module Foobara
   class Type
     class ValueTransformer < ValueProcessor
+      def transformer_data
+        processor_data
+      end
+
       def transform(_value)
         raise "subclass responsibility"
       end

@@ -12,17 +12,18 @@ module Foobara
           end
 
           class << self
+            # TODO: better symbol would be "allowed_attributes"
             def symbol
               :unexpected_attributes
             end
-          end
 
-          def applicable?
-            true
+            def data_schema
+              :duck # TODO: expand when we have support for an array of symbols
+            end
           end
 
           def allowed_attribute_names
-            strict_schema_hash[:schemas].keys
+            processor_data
           end
 
           def error_halts_processing?

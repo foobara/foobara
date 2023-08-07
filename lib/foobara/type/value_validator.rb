@@ -3,16 +3,12 @@ require "foobara/type/value_processor"
 module Foobara
   class Type
     class ValueValidator < ValueProcessor
-      attr_accessor :validator_data, :strict_schema_hash
-
-      def initialize(validator_data, strict_schema_hash)
-        super()
-        self.validator_data = validator_data
-        self.strict_schema_hash = strict_schema_hash
+      def validator_data
+        processor_data
       end
 
       def applicable?
-        strict_schema_hash.key?(symbol)
+        validator_data.present?
       end
 
       delegate :symbol, to: :class

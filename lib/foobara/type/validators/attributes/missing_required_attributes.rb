@@ -30,10 +30,6 @@ module Foobara
             end
           end
 
-          def applicable?
-            strict_schema_hash[symbol].present?
-          end
-
           def required_attribute_names
             validator_data
           end

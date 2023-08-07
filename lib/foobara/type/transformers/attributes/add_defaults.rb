@@ -16,11 +16,8 @@ module Foobara
             end
           end
 
-          attr_accessor :defaults
-
-          def initialize(defaults)
-            super()
-            self.defaults = defaults
+          def defaults
+            transformer_data
           end
 
           def transform(attributes_hash)
