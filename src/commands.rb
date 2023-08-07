@@ -16,6 +16,7 @@ require "foobara/callback"
 require "foobara/state_machine"
 require "foobara/type"
 require "foobara/model"
+require "foobara/builtin_types"
 
 Foobara::Util.require_directory("#{__dir__}/../src/")
 
