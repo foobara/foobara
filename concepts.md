@@ -329,19 +329,21 @@ New concepts...
 * Sugarizer (maybe not worth spending time writing)
 * strict type declaration validator
 
+Maybe introduce a TypeDeclaration class to wrap the type declaration values??
+
 Old concepts...
 
 * Type instance
-  * high-level value processor and really nothing else!
+  * high-level value processor and really nothing else! [Type]
 * Schema class
   * holds schema registry
-  * answers if it can handle a sugary schema type
-  * Has a subclass for each "type"
-  * houses supported value processors registry
+  * answers if it can handle a sugary schema type [TypeBuilder, or, maybe when registering?]
+  * Has a subclass for the "type" [Type]
+  * houses supported value processors registry [Type]
 * Schema instance
-  * Desugarizes
-  * validates strict schema hash
-  * TypeBuilder: builds types
+  * Desugarizes [TypeDeclaration]
+  * validates strict schema hash [TypeDeclaration]
+  * TypeBuilder: builds types [TypeBuilder]
 * ValueValidator/Processor/Transformer/Caster
   * same
 * strict schema "hash"
@@ -349,7 +351,8 @@ Old concepts...
 * sugary schema "hash"
   * sugary type declaration
 * schema registry
-  * TypeBuilderRegistry??
+  * TypeBuilderRegistry?? [TypeBuilderRegistry? TypeRegistry? unclear which]
 
 
 TODO: decompose Schema to eliminate subclasses and then relocate behaviors until Schema is gone
+TODO: Also, move everything out of Model project for now since no actual direct modeling support has begun there yet
