@@ -1,5 +1,5 @@
 module Foobara
-  class Type
+  class Type < Value::Processor
     module Casters
       module Attributes
         class Hash < Value::Caster

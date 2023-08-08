@@ -1,5 +1,5 @@
 module Foobara
-  class Type
+  class Type < Value::Processor
     module Validators
       module Attributes
         class UnexpectedAttributes < Value::Validator

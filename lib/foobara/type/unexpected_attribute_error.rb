@@ -1,7 +1,7 @@
 require "foobara/type/attribute_error"
 
 module Foobara
-  class Type
+  class Type < Value::Processor
     class UnexpectedAttributeError < AttributeError
       class << self
         def symbol

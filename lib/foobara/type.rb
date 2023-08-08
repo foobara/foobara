@@ -83,7 +83,7 @@ module Foobara
   # And what does a Schema contain?
   # Just expressions for expressing types?
   # So we ask the schema to give us a type??
-  class Type
+  class Type < Value::Processor
     # TODO: eliminate castors (or not?)
     # TODO: eliminate children_types by using classes?
     attr_accessor :casters, :value_transformers, :value_validators, :children_types
@@ -128,6 +128,7 @@ module Foobara
     # max (integer validation at attribute level)
     # matches (string against a regex)
     def initialize(casters: [], value_transformers: [], value_validators: [], children_types: nil)
+      super(true)
       self.children_types = children_types
       self.casters = Array.wrap(casters)
       self.value_transformers = value_transformers

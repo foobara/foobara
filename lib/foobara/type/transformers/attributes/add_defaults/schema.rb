@@ -1,7 +1,7 @@
 require "foobara/value/transformer"
 
 module Foobara
-  class Type
+  class Type < Value::Processor
     module Transformers
       module Attributes
         class AddDefaults < Value::Transformer

@@ -1,7 +1,7 @@
 require "foobara/type/type_error"
 
 module Foobara
-  class Type
+  class Type < Value::Processor
     class AttributeError < Type::TypeError
       attr_accessor :path
 

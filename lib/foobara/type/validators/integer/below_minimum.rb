@@ -1,7 +1,7 @@
 require "foobara/type/validator_error"
 
 module Foobara
-  class Type
+  class Type < Value::Processor
     module Validators
       module Integer
         class BelowMinimum < Foobara::Value::Validator

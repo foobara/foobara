@@ -1,5 +1,5 @@
 module Foobara
-  class Type
+  class Type < Value::Processor
     class TypeError < Foobara::Error
       attr_accessor :path
 
