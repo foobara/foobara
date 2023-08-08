@@ -151,7 +151,7 @@ RSpec.describe "custom types" do
           declaration_data
         end
 
-        def call(complex, _path)
+        def call(complex)
           return unless be_pointless == :true_symbol
 
           if complex.real == complex.imaginary

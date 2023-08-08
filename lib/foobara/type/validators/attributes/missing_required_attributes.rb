@@ -34,7 +34,7 @@ module Foobara
             declaration_data
           end
 
-          def call(attributes_hash, _path)
+          def call(attributes_hash)
             required_attribute_names.map do |required_attribute_name|
               unless attributes_hash.key?(required_attribute_name)
                 build_error(

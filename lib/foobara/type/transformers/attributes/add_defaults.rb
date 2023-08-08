@@ -20,7 +20,7 @@ module Foobara
             declaration_data
           end
 
-          def call(attributes_hash, _path)
+          def call(attributes_hash)
             defaults.merge(attributes_hash)
           end
         end

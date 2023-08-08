@@ -30,7 +30,7 @@ module Foobara
             true
           end
 
-          def call(attributes_hash, _path)
+          def call(attributes_hash)
             unexpected_attributes = attributes_hash.keys - allowed_attribute_names
 
             unexpected_attributes.map do |unexpected_attribute_name|

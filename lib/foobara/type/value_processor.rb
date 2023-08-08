@@ -5,7 +5,7 @@ module Foobara
     class ValueProcessor < ValueValidator
       delegate :error_classes, to: :class
 
-      def call(_value, _path)
+      def call(_value)
         raise "subclass responsibility"
       end
 

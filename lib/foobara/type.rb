@@ -145,13 +145,13 @@ module Foobara
       value_transformers.each do |value_transformer|
         next unless value_transformer.applicable?(value)
 
-        value = value_transformer.call(value, path)
+        value = value_transformer.call(value)
       end
 
       outcome = Outcome.success(value)
 
       value_validators.each do |value_validator|
-        errors = value_validator.call(value, path)
+        errors = value_validator.call(value)
 
         if errors.present?
           Array.wrap(errors).each do |error|

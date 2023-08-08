@@ -49,8 +49,7 @@ module Foobara
 
       delegate :symbol, to: :class
 
-      # Can we eliminate this path parameter???
-      def call(_value, _path)
+      def call(_value)
         raise "subclass responsibility"
       end
 
