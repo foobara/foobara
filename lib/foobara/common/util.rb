@@ -21,11 +21,13 @@ module Foobara
       end
     end
 
-    def constant_values(mod, klasses_to_include = nil)
-      klasses_to_include = klasses_to_include ? Array.wrap(klasses_to_include) : [Object]
+    def constant_values(mod, is_a: nil, extends: nil)
+      is_a = Array.wrap(is_a)
+      extends = Array.wrap(extends)
 
       mod.constants.map { |const| constant_value(mod, const) }.select do |object|
-        klasses_to_include.any? { |klass| object.is_a?(klass) }
+        (is_a.blank? || is_a.any? { |klass| object.is_a?(klass) }) &&
+          (extends.blank? || (object.is_a?(Class) && extends.any? { |klass| object.ancestors.include?(klass) }))
       end
     end
 
