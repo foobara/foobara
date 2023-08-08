@@ -1,8 +1,6 @@
-require "foobara/type/value_transformer"
-
 module Foobara
-  class Type
-    class ValueValidator < ValueTransformer
+  module Value
+    class Value::Validator < Value::Transformer
       class << self
         def error_class
           return @error_class if defined?(@error_class)

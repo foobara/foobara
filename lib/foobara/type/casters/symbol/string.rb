@@ -1,10 +1,10 @@
-require "foobara/type/caster"
+require "foobara/value/caster"
 
 module Foobara
   class Type
     module Casters
       module Symbol
-        class String < Caster
+        class String < Value::Caster
           include Singleton
 
           def applicable?(value)

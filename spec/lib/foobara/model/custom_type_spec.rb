@@ -24,10 +24,10 @@ RSpec.describe "custom types" do
   #   #cast
   #   #applies_message
   #
-  # Each ValueTransformer needs
+  # Each Value::Transformer needs
   #   #transform
   #
-  # Each ValueValidator needs
+  # Each Value::Validator needs
   #   .validator_symbol
   #   .data_schema # this would be better called value_schema I think...
   #   validation_errors
@@ -101,7 +101,7 @@ RSpec.describe "custom types" do
     let(:array_to_complex_caster) do
       klass = complex_class
 
-      Class.new(Foobara::Type::Caster) do
+      Class.new(Foobara::Value::Caster) do
         def applicable?(value)
           value.is_a?(Array) && value.size == 2
         end
@@ -122,7 +122,7 @@ RSpec.describe "custom types" do
     end
 
     let(:pointless_validator) do
-      Class.new(Foobara::Type::ValueValidator) do
+      Class.new(Foobara::Value::Validator) do
         self::Error = Class.new(Foobara::Type::AttributeError) do # rubocop:disable RSpec/LeakyConstantDeclaration
           class << self
             def error_schema

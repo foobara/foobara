@@ -1,8 +1,6 @@
-require "foobara/type/value_transformer"
-
 module Foobara
-  class Type
-    class Caster < ValueTransformer
+  module Value
+    class Caster < Value::Transformer
       def type_symbol
         @type_symbol ||= module_for(module_for(self.class)).name.underscore.to_sym
       end

@@ -1,8 +1,6 @@
-require "foobara/type/value_validator"
-
 module Foobara
-  class Type
-    class ValueProcessor < ValueValidator
+  module Value
+    class Value::Processor < Value::Validator
       delegate :error_classes, to: :class
 
       def call(_value)

@@ -1,11 +1,10 @@
-require "foobara/type/value_validator"
 require "foobara/type/validator_error"
 
 module Foobara
   class Type
     module Validators
       module Integer
-        class BelowMinimum < Foobara::Type::ValueValidator
+        class BelowMinimum < Foobara::Value::Validator
           class Error < Foobara::Type::ValidatorError
             class << self
               def context_schema

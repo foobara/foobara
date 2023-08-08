@@ -1,10 +1,8 @@
-require "foobara/type/caster"
-
 module Foobara
   class Type
     module Casters
       module Attributes
-        class Hash < Caster
+        class Hash < Value::Caster
           include Singleton
 
           def applicable?(value)

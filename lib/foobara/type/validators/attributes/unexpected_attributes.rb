@@ -2,7 +2,7 @@ module Foobara
   class Type
     module Validators
       module Attributes
-        class UnexpectedAttributes < Foobara::Type::ValueValidator
+        class UnexpectedAttributes < Value::Validator
           class Error < Foobara::Type::ValidatorError
             class << self
               def symbol

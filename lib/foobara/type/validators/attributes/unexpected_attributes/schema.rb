@@ -1,10 +1,8 @@
-require "foobara/type/value_validator"
-
 module Foobara
   class Type
     module Validators
       module Attributes
-        class UnexpectedAttributes < Foobara::Type::ValueValidator
+        class UnexpectedAttributes < Value::Validator
           module Schema
             module Desugarizer
               class << self

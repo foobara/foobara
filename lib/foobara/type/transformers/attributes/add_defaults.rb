@@ -1,10 +1,8 @@
-require "foobara/type/value_transformer"
-
 module Foobara
   class Type
     module Transformers
       module Attributes
-        class AddDefaults < Foobara::Type::ValueTransformer
+        class AddDefaults < Value::Transformer
           class << self
             # TODO: have convention of grabbing this from the class name instead
             def symbol

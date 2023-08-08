@@ -1,11 +1,10 @@
-require "foobara/type/value_validator"
 require "foobara/type/validator_error"
 
 module Foobara
   class Type
     module Validators
       module Attributes
-        class MissingRequiredAttributes < Foobara::Type::ValueValidator
+        class MissingRequiredAttributes < Foobara::Value::Validator
           class Error < Foobara::Type::ValidatorError
             class << self
               def context_schema

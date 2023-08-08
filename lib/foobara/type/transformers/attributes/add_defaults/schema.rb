@@ -1,10 +1,10 @@
-require "foobara/type/value_transformer"
+require "foobara/value/transformer"
 
 module Foobara
   class Type
     module Transformers
       module Attributes
-        class AddDefaults < Foobara::Type::ValueTransformer
+        class AddDefaults < Value::Transformer
           module Schema
             # TODO: should this be a value transformer??
             module Desugarizer

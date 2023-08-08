@@ -1,6 +1,6 @@
 module Foobara
-  class Type
-    class ValueTransformer
+  module Value
+    class Value::Transformer
       class << self
         def metadata
           @metadata ||= {}
