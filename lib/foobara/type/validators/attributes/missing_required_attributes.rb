@@ -31,10 +31,10 @@ module Foobara
           end
 
           def required_attribute_names
-            validator_data
+            declaration_data
           end
 
-          def validation_errors(attributes_hash)
+          def call(attributes_hash, _path)
             required_attribute_names.map do |required_attribute_name|
               unless attributes_hash.key?(required_attribute_name)
                 build_error(

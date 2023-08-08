@@ -23,14 +23,14 @@ module Foobara
           end
 
           def allowed_attribute_names
-            processor_data
+            declaration_data
           end
 
           def error_halts_processing?
             true
           end
 
-          def validation_errors(attributes_hash)
+          def call(attributes_hash, _path)
             unexpected_attributes = attributes_hash.keys - allowed_attribute_names
 
             unexpected_attributes.map do |unexpected_attribute_name|

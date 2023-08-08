@@ -15,7 +15,7 @@ module Foobara
             "be a string"
           end
 
-          def cast(string)
+          def call(string)
             string.to_sym
           end
         end

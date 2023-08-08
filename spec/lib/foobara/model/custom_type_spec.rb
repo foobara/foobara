@@ -110,7 +110,7 @@ RSpec.describe "custom types" do
           "be an array with two elements"
         end
 
-        define_method :cast do |(real, imaginary)|
+        define_method :call do |(real, imaginary)|
           complex = klass.new
 
           complex.real = real
@@ -130,6 +130,10 @@ RSpec.describe "custom types" do
                 foo: :symbol
               }
             end
+
+            def symbol
+              :real_should_not_match_imaginary
+            end
           end
         end
 
@@ -144,19 +148,15 @@ RSpec.describe "custom types" do
         end
 
         def be_pointless
-          validator_data
+          declaration_data
         end
 
-        def validation_errors(complex)
+        def call(complex, _path)
           return unless be_pointless == :true_symbol
 
           if complex.real == complex.imaginary
             build_error
           end
-        end
-
-        def error_symbol
-          :real_should_not_match_imaginary
         end
 
         def error_context(_value)

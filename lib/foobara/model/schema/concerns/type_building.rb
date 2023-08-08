@@ -49,7 +49,7 @@ module Foobara
             self.validators.each_pair do |validator_symbol, validator_class|
               validator = validator_class.new(strict_schema[validator_symbol])
 
-              validators << validator if validator.applicable?
+              validators << validator if validator.always_applicable?
             end
 
             validators

@@ -17,10 +17,10 @@ module Foobara
           end
 
           def defaults
-            transformer_data
+            declaration_data
           end
 
-          def transform(attributes_hash)
+          def call(attributes_hash, _path)
             defaults.merge(attributes_hash)
           end
         end

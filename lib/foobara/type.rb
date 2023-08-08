@@ -140,21 +140,27 @@ module Foobara
 
       return cast_outcome unless cast_outcome.success?
 
-      outcome = OutcomeWithResultEvenIfNotSuccess.new
-      outcome.result = cast_outcome.result
+      value = cast_outcome.result
 
       value_transformers.each do |value_transformer|
-        next unless value_transformer.applicable?(outcome.result)
+        next unless value_transformer.applicable?(value)
 
-        value_transformer.process_outcome(outcome, path)
-
-        return outcome if value_transformer.error_halts_processing? && !outcome.success?
+        value = value_transformer.call(value, path)
       end
 
-      value_validators.each do |value_validator|
-        value_validator.process_outcome(outcome, path)
+      outcome = Outcome.success(value)
 
-        return outcome if value_validator.error_halts_processing? && !outcome.success?
+      value_validators.each do |value_validator|
+        errors = value_validator.call(value, path)
+
+        if errors.present?
+          Array.wrap(errors).each do |error|
+            error.path = [*path, *error.path]
+            outcome.add_error(error)
+          end
+
+          return outcome if value_validator.error_halts_processing?
+        end
       end
 
       if children_types.is_a?(Hash)
@@ -226,7 +232,7 @@ module Foobara
       caster = casters.find { |c| c.applicable?(value) }
 
       if caster
-        Outcome.success(caster.cast(value))
+        Outcome.success(caster.call(value))
       else
         applies_messages = casters.map(&:applies_message).flatten
         connector = ", or "

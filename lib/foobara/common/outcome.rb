@@ -46,7 +46,7 @@ module Foobara
       end
     end
 
-    attr_writer :result
+    attr_accessor :result
     attr_reader :error_collection
 
     def initialize(error_collection: ErrorCollection.new)
@@ -59,12 +59,8 @@ module Foobara
       !has_errors?
     end
 
-    def result
-      @result if success?
-    end
-
     def raise!
-      return  if success?
+      return if success?
 
       if errors.size == 1
         raise errors.first

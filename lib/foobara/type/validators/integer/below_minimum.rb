@@ -30,10 +30,10 @@ module Foobara
           end
 
           def min
-            validator_data
+            declaration_data
           end
 
-          def validation_errors(value)
+          def call(value, _path)
             if value < min
               build_error(value)
             end

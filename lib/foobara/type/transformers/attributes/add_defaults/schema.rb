@@ -6,6 +6,7 @@ module Foobara
       module Attributes
         class AddDefaults < Foobara::Type::ValueTransformer
           module Schema
+            # TODO: should this be a value transformer??
             module Desugarizer
               class << self
                 def call(rawish_schema)
@@ -28,6 +29,7 @@ module Foobara
               end
             end
 
+            # TODO: should this be a value validator??
             module SchemaValidator
               class << self
                 def call(strict_schema_hash)
