@@ -43,7 +43,9 @@ module Foobara
               possible_input_error([*path, validator.attribute_name].compact, symbol, context_schema)
             end
 
-            if type.children_types.present?
+            # TODO: we should be able to ask the input_type for its possible errors instead of having to construct it
+            # as needed in places like this...
+            if type.respond_to?(:children_types) && type.children_types.present?
               type.children_types.each_pair do |attribute_name, attribute_type|
                 child_path = [*path, attribute_name]
 

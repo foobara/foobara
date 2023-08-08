@@ -1,8 +1,3 @@
-require "active_support/core_ext/array/conversions"
-require "singleton"
-
-Foobara::Util.require_directory("#{__dir__}/type")
-
 # moar notes...
 #
 # So far we have 4 types, :duck, :integer, :symbol, :attributes
@@ -84,204 +79,144 @@ module Foobara
   # Just expressions for expressing types?
   # So we ask the schema to give us a type??
   class Type < Value::Processor
-    class Halt < StandardError
-      attr_accessor :errors
+    module Types
+      class ConstructedAtomType < Type
+        class Halt < StandardError
+          attr_accessor :errors
 
-      def initialize(errors)
-        super("halt")
-        self.errors = errors
-      end
-    end
+          def initialize(errors)
+            super("halt")
+            self.errors = errors
+          end
+        end
 
-    # TODO: eliminate castors (or not?)
-    # TODO: eliminate children_types by using classes?
-    attr_accessor :casters, :value_transformers, :value_validators, :children_types
+        attr_accessor :casters, :value_transformers, :value_validators
 
-    # Can we eliminate symbol here or no?
-    # Has a collection of transformers and validators.
-    # transformers return an outcome that might contain a new value
-    # validators return error arrays
-    # a caster is a special type of transformer expected to happen before all other
-    # transformers and validators.
-    #
-    # let's explore the use-case of attributes processing...
-    #
-    # 1) validate that it's a hash
-    # 2) validate the keys are symbolizable
-    # 3) symbolize the keys
-    # 4) fill in default values for missing keys
-    # 5) for each key in the schemas keys, process each value against its schema (cast it, transform it, validate it)
-    # 5) validate required attributes are present
-    # 6) validate there aren't extra keys
-    # .
-    # Looks like this splits up nicely in to 3 steps... casting, transforming, validating. Unsure if this ordering
-    # will always hold so I'm tempted to combine transformers and validators into one collection to be more flexible.
-    # Although this means it is doing some of the validation as part of the casting steps.
-    #
-    # What if we don't allow transformers to fail? Then they have to be split into a validator and transformer.
-    # then validators give errors and transformers give a new value to replace the prior value.
-    # .
-    # OK I'll go that route but I think I have to eliminate any idea of pre-defined order based on type.
-    #
-    # steps are... change casters into processors.
-    # ohhhh maybe we should pass them an outcome?? nah. Well... we could make a base class do that? Let's do that.
-    #
-    # notes: needed/useful transformers/validators to implement:
-    #
-    # default (cast from nil at attribute level)
-    # required (validation at attributes level)
-    # allow_empty (validation at attribute level)
-    # allow_nil (validation at attribute level)
-    # one_of (validation at attribute level)
-    # max_length (string validation at attribute level)
-    # max (integer validation at attribute level)
-    # matches (string against a regex)
-    def initialize(casters: [], value_transformers: [], value_validators: [], children_types: nil)
-      super(true)
-      self.children_types = children_types
-      self.casters = Array.wrap(casters)
-      self.value_transformers = value_transformers
-      self.value_validators = value_validators
-    end
+        # Can we eliminate symbol here or no?
+        # Has a collection of transformers and validators.
+        # transformers return an outcome that might contain a new value
+        # validators return error arrays
+        # a caster is a special type of transformer expected to happen before all other
+        # transformers and validators.
+        #
+        # let's explore the use-case of attributes processing...
+        #
+        # 1) validate that it's a hash
+        # 2) validate the keys are symbolizable
+        # 3) symbolize the keys
+        # 4) fill in default values for missing keys
+        # 5) for each key in the schemas keys, process each value against its schema
+        #    (cast it, transform it, validate it)
+        # 5) validate required attributes are present
+        # 6) validate there aren't extra keys
+        # .
+        # Looks like this splits up nicely in to 3 steps... casting, transforming, validating. Unsure if this ordering
+        # will always hold so I'm tempted to combine transformers and validators into one collection to be more flexible
+        # Although this means it is doing some of the validation as part of the casting steps.
+        #
+        # What if we don't allow transformers to fail? Then they have to be split into a validator and transformer.
+        # then validators give errors and transformers give a new value to replace the prior value.
+        # .
+        # OK I'll go that route but I think I have to eliminate any idea of pre-defined order based on type.
+        #
+        # steps are... change casters into processors.
+        # ohhhh maybe we should pass them an outcome?? nah. Well... we could make a base class do that? Let's do that.
+        #
+        # notes: needed/useful transformers/validators to implement:
+        #
+        # default (cast from nil at attribute level)
+        # required (validation at attributes level)
+        # allow_empty (validation at attribute level)
+        # allow_nil (validation at attribute level)
+        # one_of (validation at attribute level)
+        # max_length (string validation at attribute level)
+        # max (integer validation at attribute level)
+        # matches (string against a regex)
+        def initialize(casters: [], value_transformers: [], value_validators: [], **opts)
+          super(**opts)
 
-    def process(...)
-      call(...)
-    end
+          self.casters = Array.wrap(casters)
+          self.value_transformers = value_transformers
+          self.value_validators = value_validators
+        end
 
-    # TODO: see if this method can be broken up
-    def call(value, path = [])
-      cast_outcome = cast_from(value)
+        def process(...)
+          call(...)
+        end
 
-      return cast_outcome unless cast_outcome.success?
+        def call(value, path = [])
+          cast_outcome = cast_from(value)
 
-      value = transform(cast_outcome.result)
-      errors = validation_errors(value, path)
+          return cast_outcome unless cast_outcome.success?
 
-      outcome = if errors.present?
-                  Outcome.errors(errors).tap do |outcome|
-                    outcome.result = value
-                  end
-                else
-                  Outcome.success(value)
-                end
+          value = transform(cast_outcome.result)
+          errors = validation_errors(value, path)
 
-      if children_types.is_a?(Hash)
-        value = outcome.result
-
-        value.each_key do |attribute_name|
-          attribute_type = children_types[attribute_name]
-          attribute_outcome = attribute_type.process(value[attribute_name], [*path, attribute_name])
-
-          if attribute_outcome.success?
-            value[attribute_name] = attribute_outcome.result
+          if errors.present?
+            Outcome.errors(errors).tap do |outcome|
+              outcome.result = value
+            end
           else
-            attribute_outcome.errors.each do |error|
-              if error.is_a?(CannotCastError)
-                error_hash = error.to_h.except(:type) # why do we have type here? TODO: fix
-                error_hash[:context][:attribute_name] = attribute_name
+            Outcome.success(value)
+          end
+        rescue Halt => e
+          HaltedOutcome.errors(e.errors)
+        end
 
-                # Do we really need this translation?? #TODO eliminate somehow
-                # TODO: figure out how to eliminate this .compact, perhaps by putting path on the validator
-                error = AttributeError.new(path: [*path, attribute_name].compact, **error_hash)
+        private
+
+        def validation_errors(value, path)
+          retval = []
+
+          value_validators.each do |value_validator|
+            errors = value_validator.call(value)
+
+            if errors.present?
+              errors = Array.wrap(errors)
+
+              errors.each do |error|
+                error.path = [*path, *error.path]
+                retval << error
               end
 
-              outcome.add_error(error)
+              raise Halt, errors if value_validator.error_halts_processing?
             end
           end
-        end
-      elsif children_types.is_a?(Array) # TODO: we probably need classes if we want to support arrays and tuples
-        if children_types.size != 1
-          raise "not sure how to handle more than one element type for an array"
+
+          retval
         end
 
-        child_type = children_types.first
+        def transform(value)
+          value_transformers.inject(value) do |result, value_transformer|
+            value_transformer.applicable?(result) ? value_transformer.call(result) : result
+          end
+        end
 
-        value.each.with_index do |child, index|
-          child_outcome = child_type.process(child)
+        def cast_from(value)
+          caster = casters.find { |c| c.applicable?(value) }
 
-          if child_outcome.success?
-            value[index] = child_outcome.result
+          if caster
+            Outcome.success(caster.call(value))
           else
-            child_outcome.errors.each do |error|
-              error.path = [path, index, *error.path]
-              outcome.add_error(error)
-            end
+            applies_messages = casters.map(&:applies_message).flatten
+            connector = ", or "
+            applies_message = applies_messages.to_sentence(
+              words_connector: ", ",
+              last_word_connector: connector,
+              two_words_connector: connector
+            )
+
+            HaltedOutcome.error(
+              CannotCastError.new(
+                message: "Cannot cast #{value}. Expected it to #{applies_message}",
+                context: {
+                  cast_to: casters.first.type_symbol,
+                  value:
+                }
+              )
+            )
           end
         end
-      end
-
-      if outcome.success?
-        outcome
-      else
-        # cast back to Outcome
-        Outcome.errors(outcome.errors)
-      end
-    rescue Halt => e
-      Outcome.errors(e.errors)
-    end
-
-    def process!(value)
-      outcome = process(value)
-
-      if outcome.success?
-        outcome.result
-      else
-        outcome.raise!
-      end
-    end
-
-    private
-
-    def validation_errors(value, path)
-      retval = []
-
-      value_validators.each do |value_validator|
-        errors = value_validator.call(value)
-
-        if errors.present?
-          errors = Array.wrap(errors)
-
-          errors.each do |error|
-            error.path = [*path, *error.path]
-            retval << error
-          end
-
-          raise Halt, errors if value_validator.error_halts_processing?
-        end
-      end
-
-      retval
-    end
-
-    def transform(value)
-      value_transformers.inject(value) do |result, value_transformer|
-        value_transformer.applicable?(result) ? value_transformer.call(result) : result
-      end
-    end
-
-    def cast_from(value)
-      caster = casters.find { |c| c.applicable?(value) }
-
-      if caster
-        Outcome.success(caster.call(value))
-      else
-        applies_messages = casters.map(&:applies_message).flatten
-        connector = ", or "
-        applies_message = applies_messages.to_sentence(
-          words_connector: ", ",
-          last_word_connector: connector,
-          two_words_connector: connector
-        )
-
-        Outcome.error(
-          CannotCastError.new(
-            message: "Cannot cast #{value}. Expected it to #{applies_message}",
-            context: {
-              cast_to: casters.first.type_symbol,
-              value:
-            }
-          )
-        )
       end
     end
   end

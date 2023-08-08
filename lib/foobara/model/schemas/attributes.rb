@@ -18,6 +18,10 @@ module Foobara
           end
         end
 
+        def to_type
+          Type::Types::ConstructedAttributesType.new(**to_type_args.merge(children_types:))
+        end
+
         def schemas
           strict_schema[:schemas]
         end

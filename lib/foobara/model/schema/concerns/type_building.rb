@@ -6,12 +6,15 @@ module Foobara
           extend ActiveSupport::Concern
 
           def to_type
-            Foobara::Type.new(
+            Foobara::Type::Types::ConstructedAtomType.new(**to_type_args)
+          end
+
+          def to_type_args
+            {
               casters:,
               value_transformers:,
-              value_validators:,
-              children_types:
-            )
+              value_validators:
+            }
           end
 
           def casters
@@ -53,10 +56,6 @@ module Foobara
             end
 
             validators
-          end
-
-          def children_types
-            nil
           end
         end
       end

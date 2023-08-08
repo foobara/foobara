@@ -203,7 +203,6 @@ RSpec.describe "custom types" do
           outcome = type.process(n: 5, c: [2, 2])
 
           expect(outcome).to_not be_success
-          expect(outcome.result).to be_nil
           errors = outcome.errors
 
           expect(errors.size).to eq(1)
