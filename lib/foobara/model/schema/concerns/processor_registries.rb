@@ -49,7 +49,7 @@ module Foobara
               transformer_module = Util.constant_value(Type::Transformers, module_symbol)
 
               if transformer_module
-                Util.constant_values(transformer_module, Class).each do |transformer|
+                Util.constant_values(transformer_module, is_a: Class).each do |transformer|
                   register_transformer(transformer)
                 end
               end
@@ -57,7 +57,7 @@ module Foobara
               validator_module = Util.constant_value(Type::Validators, module_symbol)
 
               if validator_module
-                Util.constant_values(validator_module, Class).each do |validator|
+                Util.constant_values(validator_module, is_a: Class).each do |validator|
                   register_validator(validator)
                 end
               end

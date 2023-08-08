@@ -26,8 +26,15 @@ module Foobara
         end
       end
 
+      # TODO: delegate this to class and memoize it
       def error_class
-        Util.constant_value(self.class, :Error)
+        error_classes = Util.constant_values(self.class, extends: Foobara::Error)
+
+        unless error_classes.size == 1
+          raise "Expected exactly one error class to be defined for #{self.class.name} but has #{error_classes.size}"
+        end
+
+        error_classes.first
       end
 
       def build_error(

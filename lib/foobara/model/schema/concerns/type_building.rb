@@ -18,7 +18,7 @@ module Foobara
             type_module_name = type.to_s.camelize.to_sym
 
             casters_module = Util.constant_value(Type::Casters, type_module_name)
-            casters = Util.constant_values(casters_module, Class)
+            casters = Util.constant_values(casters_module, is_a: Class)
 
             direct_caster = casters.find { |caster| caster.name.to_sym == type_module_name }
 
