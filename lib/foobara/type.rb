@@ -84,6 +84,15 @@ module Foobara
   # Just expressions for expressing types?
   # So we ask the schema to give us a type??
   class Type < Value::Processor
+    class Halt < StandardError
+      attr_accessor :errors
+
+      def initialize(errors)
+        super("halt")
+        self.errors = errors
+      end
+    end
+
     # TODO: eliminate castors (or not?)
     # TODO: eliminate children_types by using classes?
     attr_accessor :casters, :value_transformers, :value_validators, :children_types
@@ -135,34 +144,26 @@ module Foobara
       self.value_validators = value_validators
     end
 
+    def process(...)
+      call(...)
+    end
+
     # TODO: see if this method can be broken up
-    def process(value, path = [])
+    def call(value, path = [])
       cast_outcome = cast_from(value)
 
       return cast_outcome unless cast_outcome.success?
 
-      value = cast_outcome.result
+      value = transform(cast_outcome.result)
+      errors = validation_errors(value, path)
 
-      value_transformers.each do |value_transformer|
-        next unless value_transformer.applicable?(value)
-
-        value = value_transformer.call(value)
-      end
-
-      outcome = Outcome.success(value)
-
-      value_validators.each do |value_validator|
-        errors = value_validator.call(value)
-
-        if errors.present?
-          Array.wrap(errors).each do |error|
-            error.path = [*path, *error.path]
-            outcome.add_error(error)
-          end
-
-          return outcome if value_validator.error_halts_processing?
-        end
-      end
+      outcome = if errors.present?
+                  Outcome.errors(errors).tap do |outcome|
+                    outcome.result = value
+                  end
+                else
+                  Outcome.success(value)
+                end
 
       if children_types.is_a?(Hash)
         value = outcome.result
@@ -215,6 +216,8 @@ module Foobara
         # cast back to Outcome
         Outcome.errors(outcome.errors)
       end
+    rescue Halt => e
+      Outcome.errors(e.errors)
     end
 
     def process!(value)
@@ -228,6 +231,33 @@ module Foobara
     end
 
     private
+
+    def validation_errors(value, path)
+      retval = []
+
+      value_validators.each do |value_validator|
+        errors = value_validator.call(value)
+
+        if errors.present?
+          errors = Array.wrap(errors)
+
+          errors.each do |error|
+            error.path = [*path, *error.path]
+            retval << error
+          end
+
+          raise Halt, errors if value_validator.error_halts_processing?
+        end
+      end
+
+      retval
+    end
+
+    def transform(value)
+      value_transformers.inject(value) do |result, value_transformer|
+        value_transformer.applicable?(result) ? value_transformer.call(result) : result
+      end
+    end
 
     def cast_from(value)
       caster = casters.find { |c| c.applicable?(value) }
