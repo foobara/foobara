@@ -25,10 +25,6 @@ module Foobara
       def cast(_value)
         raise "subclass responsibility"
       end
-
-      def process(value, path = [])
-        super(value, path)
-      end
     end
   end
 end

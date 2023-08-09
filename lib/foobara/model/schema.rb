@@ -157,7 +157,13 @@ module Foobara
 
             next unless processor
 
-            outcome = schema_registry.schema_for(processor.data_schema).to_type.process(value, path: [key])
+            outcome = schema_registry.schema_for(processor.data_schema).to_type.process(value)
+
+            unless outcome.success?
+              outcome.each_error do |error|
+                error.path = [key, *error.path]
+              end
+            end
 
             unless outcome.success?
               self.schema_validation_errors += outcome.errors

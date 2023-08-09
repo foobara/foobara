@@ -28,14 +28,14 @@ module Foobara
         raise "subclass responsibility"
       end
 
-      def process(value, _path)
+      def process(value)
         Outcome.success(transform(value))
       end
 
-      def process_outcome(outcome, path)
+      def process_outcome(outcome)
         return outcome if outcome.is_a?(Value::HaltedOutcome)
 
-        new_outcome = process(outcome.result, path)
+        new_outcome = process(outcome.result)
 
         outcome.result = new_outcome.result
 
@@ -47,7 +47,7 @@ module Foobara
       end
 
       def process!(value)
-        outcome = process(value, [])
+        outcome = process(value)
 
         if outcome.success?
           outcome.result

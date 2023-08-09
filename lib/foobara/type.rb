@@ -17,7 +17,7 @@ module Foobara
     end
 
     # TODO: also should have abstract method for error classes...
-    def process(_value, _path = [])
+    def process(_value)
       raise "subclass responsibility"
     end
   end

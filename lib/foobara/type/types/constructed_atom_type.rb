@@ -140,20 +140,13 @@ module Foobara
           self.value_validators = value_validators
         end
 
-        def process(value, path = [])
+        def process(value)
           outcome = cast_from(value)
 
           return outcome unless outcome.success?
 
           [*value_transformers, *value_validators].each do |processor|
-            new_outcome = processor.process(outcome.result, path)
-
-            unless new_outcome.success?
-              new_outcome.each_error do |error|
-                # TODO: why do we fix the path here when we pass it in to process?? Should only do one or the other
-                error.path = [*path, *error.path]
-              end
-            end
+            new_outcome = processor.process(outcome.result)
 
             outcome.each_error do |error|
               new_outcome.add_error(error)

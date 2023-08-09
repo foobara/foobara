@@ -55,7 +55,7 @@ module Foobara
         raise "subclass responsibility"
       end
 
-      def process(value, _path)
+      def process(value)
         errors = validation_errors(value)
 
         if errors.blank?
