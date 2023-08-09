@@ -1,6 +1,6 @@
 module Foobara
   module Value
-    class Value::Transformer
+    class Transformer
       class << self
         def metadata
           @metadata ||= {}
@@ -28,14 +28,14 @@ module Foobara
         raise "subclass responsibility"
       end
 
-      def process(value)
+      def process(value, _path)
         Outcome.success(transform(value))
       end
 
-      def process_outcome(outcome)
-        return outcome if outcome.is_a?(HaltedOutcome)
+      def process_outcome(outcome, path)
+        return outcome if outcome.is_a?(Value::HaltedOutcome)
 
-        new_outcome = process(outcome.result)
+        new_outcome = process(outcome.result, path)
 
         outcome.result = new_outcome.result
 
@@ -47,7 +47,7 @@ module Foobara
       end
 
       def process!(value)
-        outcome = process(value)
+        outcome = process(value, [])
 
         if outcome.success?
           outcome.result

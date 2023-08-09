@@ -17,7 +17,7 @@ module Foobara
             "be a string of digits optionally with a minus sign in front"
           end
 
-          def call(string)
+          def cast(string)
             string.to_i
           end
         end

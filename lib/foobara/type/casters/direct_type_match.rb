@@ -14,7 +14,7 @@ module Foobara
           ruby_classes.any? { |klass| value.is_a?(klass) }
         end
 
-        def call(value)
+        def cast(value)
           value
         end
 

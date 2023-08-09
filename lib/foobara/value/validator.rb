@@ -55,13 +55,14 @@ module Foobara
         raise "subclass responsibility"
       end
 
-      def process(value)
+      def process(value, _path)
         errors = validation_errors(value)
 
-        if errors.present?
-          Outcome.errors(errors)
-        else
+        if errors.blank?
           Outcome.success(value)
+        else
+          klass = error_halts_processing? ? HaltedOutcome : Outcome
+          klass.new(errors:, result: value)
         end
       end
 

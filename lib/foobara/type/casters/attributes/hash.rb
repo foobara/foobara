@@ -13,7 +13,7 @@ module Foobara
             "be a hash with symbolizable keys"
           end
 
-          def call(hash)
+          def cast(hash)
             keys = hash.keys
             non_symbolic_keys = keys.reject { |key| key.is_a?(::Symbol) }
 

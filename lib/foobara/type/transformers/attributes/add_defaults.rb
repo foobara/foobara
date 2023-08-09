@@ -18,7 +18,7 @@ module Foobara
             declaration_data
           end
 
-          def call(attributes_hash)
+          def transform(attributes_hash)
             defaults.merge(attributes_hash)
           end
         end

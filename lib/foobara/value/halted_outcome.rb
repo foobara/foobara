@@ -1,6 +1,6 @@
 module Foobara
-  class Type < Value::Processor
-    class HaltedOutcome < Outcome
+  module Value
+    class Value::HaltedOutcome < Outcome
     end
   end
 end

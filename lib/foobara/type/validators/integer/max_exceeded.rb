@@ -33,7 +33,7 @@ module Foobara
             declaration_data
           end
 
-          def call(value)
+          def validation_errors(value)
             if value > max
               build_error(value)
             end

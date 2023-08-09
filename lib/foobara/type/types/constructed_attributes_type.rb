@@ -11,12 +11,12 @@ module Foobara
           self.children_types = children_types
         end
 
-        def call(value, path = [])
+        def process(value, path = [])
           # how to know things were halted??
-          # For now will go with a hacky HaltedOutcome
+          # For now will go with a hacky Value::HaltedOutcome
           outcome = super
 
-          return outcome if outcome.is_a?(HaltedOutcome)
+          return outcome if outcome.is_a?(Value::HaltedOutcome)
           return outcome unless children_types.present?
 
           value = outcome.result

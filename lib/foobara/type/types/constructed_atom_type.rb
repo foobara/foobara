@@ -140,63 +140,38 @@ module Foobara
           self.value_validators = value_validators
         end
 
-        def process(...)
-          call(...)
-        end
+        def process(value, path = [])
+          outcome = cast_from(value)
 
-        def call(value, path = [])
-          cast_outcome = cast_from(value)
+          return outcome unless outcome.success?
 
-          return cast_outcome unless cast_outcome.success?
+          [*value_transformers, *value_validators].each do |processor|
+            new_outcome = processor.process(outcome.result, path)
 
-          value = transform(cast_outcome.result)
-          errors = validation_errors(value, path)
-
-          if errors.present?
-            Outcome.errors(errors).tap do |outcome|
-              outcome.result = value
-            end
-          else
-            Outcome.success(value)
-          end
-        rescue Halt => e
-          HaltedOutcome.errors(e.errors)
-        end
-
-        private
-
-        def validation_errors(value, path)
-          retval = []
-
-          value_validators.each do |value_validator|
-            errors = value_validator.call(value)
-
-            if errors.present?
-              errors = Array.wrap(errors)
-
-              errors.each do |error|
+            unless new_outcome.success?
+              new_outcome.each_error do |error|
+                # TODO: why do we fix the path here when we pass it in to process?? Should only do one or the other
                 error.path = [*path, *error.path]
-                retval << error
               end
-
-              raise Halt, errors if value_validator.error_halts_processing?
             end
+
+            outcome.each_error do |error|
+              new_outcome.add_error(error)
+            end
+
+            outcome = new_outcome
+
+            break if outcome.is_a?(Value::HaltedOutcome)
           end
 
-          retval
-        end
-
-        def transform(value)
-          value_transformers.inject(value) do |result, value_transformer|
-            value_transformer.applicable?(result) ? value_transformer.call(result) : result
-          end
+          outcome
         end
 
         def cast_from(value)
           caster = casters.find { |c| c.applicable?(value) }
 
           if caster
-            Outcome.success(caster.call(value))
+            caster.process(value)
           else
             applies_messages = casters.map(&:applies_message).flatten
             connector = ", or "
@@ -206,7 +181,7 @@ module Foobara
               two_words_connector: connector
             )
 
-            HaltedOutcome.error(
+            Value::HaltedOutcome.error(
               CannotCastError.new(
                 message: "Cannot cast #{value}. Expected it to #{applies_message}",
                 context: {

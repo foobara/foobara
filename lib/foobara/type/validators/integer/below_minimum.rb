@@ -32,7 +32,7 @@ module Foobara
             declaration_data
           end
 
-          def call(value)
+          def validation_errors(value)
             if value < min
               build_error(value)
             end

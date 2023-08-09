@@ -49,8 +49,14 @@ module Foobara
     attr_accessor :result
     attr_reader :error_collection
 
-    def initialize(error_collection: ErrorCollection.new)
+    def initialize(result: nil, errors: nil, error_collection: ErrorCollection.new)
       @error_collection = error_collection
+
+      self.result = result
+
+      if errors.present?
+        Array.wrap(errors).each { |error| add_error(error) }
+      end
     end
 
     delegate :has_errors?, :errors, :each_error, :has_error?, :add_error, to: :error_collection
