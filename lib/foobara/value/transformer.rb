@@ -24,8 +24,12 @@ module Foobara
         declaration_data_given
       end
 
-      def call(_value)
+      def transform(_value)
         raise "subclass responsibility"
+      end
+
+      def call(value)
+        Outcome.success(transform(value))
       end
 
       # A transformer with no declaration data or with declaration data of false is considered to be

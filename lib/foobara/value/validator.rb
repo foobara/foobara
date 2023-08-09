@@ -1,6 +1,6 @@
 module Foobara
   module Value
-    class Value::Validator < Value::Transformer
+    class Validator < Transformer
       class << self
         def error_class
           return @error_class if defined?(@error_class)
@@ -24,7 +24,7 @@ module Foobara
           error_class.message(value)
         end
 
-        def error_context(_value)
+        def error_context(value)
           error_class.context(value)
         end
 
@@ -47,8 +47,22 @@ module Foobara
 
       delegate :symbol, to: :class
 
-      def call(_value)
+      def transform(_value)
+        raise "can't call transform from a validator"
+      end
+
+      def validation_errors(_value)
         raise "subclass responsibility"
+      end
+
+      def call(value)
+        errors = validation_errors(value)
+
+        if errors.present?
+          Outcome.errors(errors)
+        else
+          Outcome.success(value)
+        end
       end
 
       def build_error(

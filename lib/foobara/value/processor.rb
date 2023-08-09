@@ -1,7 +1,11 @@
 module Foobara
   module Value
-    class Value::Processor < Value::Validator
+    class Processor < Validator
       delegate :error_classes, to: :class
+
+      def process(...)
+        call(...)
+      end
 
       def call(_value)
         raise "subclass responsibility"
