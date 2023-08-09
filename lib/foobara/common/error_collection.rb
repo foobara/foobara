@@ -46,5 +46,9 @@ module Foobara
 
       error_array << error
     end
+
+    def add_errors(errors)
+      Array.wrap(errors).each { |error| add_error(error) }
+    end
   end
 end

@@ -33,7 +33,7 @@ module Foobara
         raise "No errors given" if errors.empty?
 
         new.tap do |outcome|
-          errors.each { |error| outcome.add_error(error) }
+          outcome.add_errors(errors)
         end
       end
 
@@ -55,11 +55,17 @@ module Foobara
       self.result = result
 
       if errors.present?
-        Array.wrap(errors).each { |error| add_error(error) }
+        add_errors(errors)
       end
     end
 
-    delegate :has_errors?, :errors, :each_error, :has_error?, :add_error, to: :error_collection
+    delegate :has_errors?,
+             :errors,
+             :each_error,
+             :has_error?,
+             :add_error,
+             :add_errors,
+             to: :error_collection
 
     def success?
       !has_errors?

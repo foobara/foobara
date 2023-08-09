@@ -141,23 +141,14 @@ module Foobara
         end
 
         def process(value)
-          outcome = cast_from(value)
+          # TODO: create a processor that takes casters and casts
+          cast_outcome = cast_from(value)
 
-          return outcome unless outcome.success?
+          return cast_outcome unless cast_outcome.success?
 
-          [*value_transformers, *value_validators].each do |processor|
-            new_outcome = processor.process(outcome.result)
-
-            outcome.each_error do |error|
-              new_outcome.add_error(error)
-            end
-
-            outcome = new_outcome
-
-            break if outcome.is_a?(Value::HaltedOutcome)
+          [*value_transformers, *value_validators].inject(cast_outcome) do |outcome, processor|
+            processor.process_outcome(outcome)
           end
-
-          outcome
         end
 
         def cast_from(value)

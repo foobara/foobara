@@ -64,18 +64,12 @@ module Foobara
                :symbol,
                to: :class
 
-      def process_outcome(outcome)
-        return outcome if outcome.is_a?(Value::HaltedOutcome)
+      def process_outcome(old_outcome)
+        return old_outcome if old_outcome.is_a?(Value::HaltedOutcome)
 
-        new_outcome = process(outcome.result)
-
-        outcome.result = new_outcome.result
-
-        new_outcome.each_error do |error|
-          outcome.add_error(error)
+        process(old_outcome.result).tap do |outcome|
+          outcome.add_errors(old_outcome.errors)
         end
-
-        outcome
       end
 
       def process!(value)
