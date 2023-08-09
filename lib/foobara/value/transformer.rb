@@ -32,6 +32,30 @@ module Foobara
         Outcome.success(transform(value))
       end
 
+      def process_outcome(outcome)
+        return outcome if outcome.is_a?(HaltedOutcome)
+
+        new_outcome = process(outcome.result)
+
+        outcome.result = new_outcome.result
+
+        new_outcome.each_error do |error|
+          outcome.add_error(error)
+        end
+
+        outcome
+      end
+
+      def process!(value)
+        outcome = process(value)
+
+        if outcome.success?
+          outcome.result
+        else
+          outcome.raise!
+        end
+      end
+
       # A transformer with no declaration data or with declaration data of false is considered to be
       # not applicable. Override this wherever different behavior is needed.
       # TODO: do any transformers really need this _value argument to determine applicability??

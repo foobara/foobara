@@ -20,29 +20,5 @@ module Foobara
     def process(_value, _path = [])
       raise "subclass responsibility"
     end
-
-    def process_outcome(outcome)
-      return outcome if outcome.is_a?(HaltedOutcome)
-
-      new_outcome = process(outcome.result)
-
-      outcome.result = new_outcome.result
-
-      new_outcome.each_error do |error|
-        outcome.add_error(error)
-      end
-
-      outcome
-    end
-
-    def process!(value)
-      outcome = process(value)
-
-      if outcome.success?
-        outcome.result
-      else
-        outcome.raise!
-      end
-    end
   end
 end
