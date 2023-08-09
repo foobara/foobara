@@ -1,8 +1,8 @@
-require "foobara/type/type_error"
+require "foobara/value/error"
 
 module Foobara
-  class Type < Value::Processor
-    class CannotCastError < Foobara::Type::TypeError
+  module Value
+    class CannotCastError < Value::Error
       def initialize(**opts)
         super(**opts.merge(symbol: :cannot_cast))
       end
