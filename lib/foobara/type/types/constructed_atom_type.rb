@@ -141,42 +141,16 @@ module Foobara
         end
 
         def process(value)
-          # TODO: create a processor that takes casters and casts
-          cast_outcome = cast_from(value)
-
-          return cast_outcome unless cast_outcome.success?
-
-          Value::MultiProcessor.new(processors:).process_outcome(cast_outcome)
+          # TODO: use process instead
+          Value::MultiProcessor.new(processors:).process_outcome(Outcome.success(value))
         end
 
         def processors
-          [*value_transformers, *value_validators]
+          [casting_processor, *value_transformers, *value_validators]
         end
 
-        def cast_from(value)
-          caster = casters.find { |c| c.applicable?(value) }
-
-          if caster
-            caster.process(value)
-          else
-            applies_messages = casters.map(&:applies_message).flatten
-            connector = ", or "
-            applies_message = applies_messages.to_sentence(
-              words_connector: ", ",
-              last_word_connector: connector,
-              two_words_connector: connector
-            )
-
-            Value::HaltedOutcome.error(
-              CannotCastError.new(
-                message: "Cannot cast #{value}. Expected it to #{applies_message}",
-                context: {
-                  cast_to: casters.first.type_symbol,
-                  value:
-                }
-              )
-            )
-          end
+        def casting_processor
+          Value::CastingProcessor.new(casters:)
         end
       end
     end

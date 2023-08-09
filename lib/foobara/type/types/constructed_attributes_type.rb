@@ -31,7 +31,7 @@ module Foobara
               attribute_outcome.each_error do |error|
                 error.path = [attribute_name, *error.path]
 
-                if error.is_a?(CannotCastError)
+                if error.is_a?(Value::CannotCastError)
                   error_hash = error.to_h.except(:type) # why do we have type here? TODO: fix
                   error_hash[:context][:attribute_name] = attribute_name
 
