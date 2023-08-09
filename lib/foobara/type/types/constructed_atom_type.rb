@@ -81,15 +81,6 @@ module Foobara
   class Type < Value::Processor
     module Types
       class ConstructedAtomType < Type
-        class Halt < StandardError
-          attr_accessor :errors
-
-          def initialize(errors)
-            super("halt")
-            self.errors = errors
-          end
-        end
-
         attr_accessor :casters, :value_transformers, :value_validators
 
         # Can we eliminate symbol here or no?
@@ -132,8 +123,8 @@ module Foobara
         # max_length (string validation at attribute level)
         # max (integer validation at attribute level)
         # matches (string against a regex)
-        def initialize(casters: [], value_transformers: [], value_validators: [], **opts)
-          super(**opts)
+        def initialize(*args, casters: [], value_transformers: [], value_validators: [], **opts)
+          super(*args, **opts)
 
           self.casters = Array.wrap(casters)
           self.value_transformers = value_transformers
@@ -150,6 +141,21 @@ module Foobara
 
         def casting_processor
           Value::CastingProcessor.new(casters:)
+        end
+
+        # format?
+        # maybe [path, symbol, context_type] ?
+        # maybe [path, error_class] ?
+        def possible_errors
+          possibilities = []
+
+          # should work off of the processors instead?? Otherwise this is risky because there could be
+          # situations where the error context is parameterized off declaration_data somehow...
+          processors.each do |processor|
+            possibilities += processor.possible_errors
+          end
+
+          possibilities
         end
       end
     end

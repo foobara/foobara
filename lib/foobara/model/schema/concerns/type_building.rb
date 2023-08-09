@@ -6,7 +6,9 @@ module Foobara
           extend ActiveSupport::Concern
 
           def to_type
-            Foobara::Type::Types::ConstructedAtomType.new(**to_type_args)
+            declaration_data = to_h
+
+            Type::Types::ConstructedAtomType.new(declaration_data, **to_type_args)
           end
 
           def to_type_args

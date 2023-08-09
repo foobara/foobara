@@ -6,8 +6,8 @@ module Foobara
       class ConstructedAttributesType < ConstructedAtomType
         attr_accessor :attributes_processor
 
-        def initialize(children_types: {}, **opts)
-          super(**opts)
+        def initialize(*args, children_types: {}, **opts)
+          super(*args, **opts)
           self.attributes_processor = AttributesProcessor.new(children_types)
         end
 

@@ -22,20 +22,32 @@ module Foobara
                 attribute_outcome.each_error do |error|
                   error.path = [attribute_name, *error.path]
 
-                  if error.is_a?(Value::CannotCastError)
-                    error_hash = error.to_h.except(:type) # why do we have type here? TODO: fix
-                    error_hash[:context][:attribute_name] = attribute_name
-
-                    # Do we really need this translation?? #TODO eliminate somehow
-                    error = AttributeError.new(path: [attribute_name], **error_hash)
-                  end
-
                   errors << error
                 end
               end
             end
 
             Outcome.new(result: attributes_hash, errors:)
+          end
+
+          def possible_errors
+            possibilities = []
+
+            children_types.each_pair do |attribute_name, attribute_type|
+              attribute_type.possible_errors.each do |possible_error|
+                path = possible_error[0]
+                symbol = possible_error[1]
+                error_type = possible_error[2]
+
+                possibilities << [
+                  [attribute_name, *path],
+                  symbol,
+                  error_type
+                ]
+              end
+            end
+
+            possibilities
           end
         end
       end

@@ -19,7 +19,9 @@ module Foobara
         end
 
         def to_type
-          Type::Types::ConstructedAttributesType.new(**to_type_args.merge(children_types:))
+          declaration_data = to_h
+          args = to_type_args.merge(children_types:)
+          Type::Types::ConstructedAttributesType.new(declaration_data, **args)
         end
 
         def schemas

@@ -7,6 +7,9 @@ module Foobara
         self.path = path
         super(**opts)
       end
+
+      delegate :context_type,
+               to: :class
     end
   end
 end

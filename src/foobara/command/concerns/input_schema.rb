@@ -35,23 +35,12 @@ module Foobara
           private
 
           def register_possible_errors(path = [], type = inputs_type)
-            type.value_validators.each do |validator|
-              symbol = validator.error_symbol
-              context_schema = validator.error_context_schema
+            type.possible_errors.each do |possible_error|
+              p = possible_error[0]
+              symbol = possible_error[1]
+              context_schema = possible_error[2]
 
-              # TODO: figure out how to eliminate this .compact, perhaps by putting path on the validator
-              possible_input_error([*path, validator.attribute_name].compact, symbol, context_schema)
-            end
-
-            # TODO: we should be able to ask the input_type for its possible errors instead of having to construct it
-            # as needed in places like this...
-            if type.respond_to?(:children_types) && type.children_types.present?
-              type.children_types.each_pair do |attribute_name, attribute_type|
-                child_path = [*path, attribute_name]
-
-                possible_input_error(child_path, :cannot_cast, cast_to: :duck, value: :duck, attribute_name: :symbol)
-                register_possible_errors(child_path, attribute_type)
-              end
+              possible_input_error([*path, *p], symbol, context_schema)
             end
           end
         end

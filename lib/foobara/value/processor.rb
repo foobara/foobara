@@ -24,12 +24,24 @@ module Foobara
           error_class.symbol
         end
 
+        def error_context_type
+          error_class.context_type
+        end
+
         def error_message(value)
           error_class.message(value)
         end
 
         def error_context(value)
           error_class.context(value)
+        end
+
+        def possible_errors
+          path = []
+
+          error_classes.map do |error_class|
+            [path, error_class.symbol, error_class.context_schema]
+          end
         end
 
         # TODO: this is a problem or an indicator we need to couple Type and Schema.
@@ -60,8 +72,14 @@ module Foobara
                :error_message,
                :error_context,
                :error_context_schema,
+               :error_context_type,
                :symbol,
+               :possible_errors,
                to: :class
+
+      def error_context_schema
+        error_class.context_schema
+      end
 
       # Should we move more of these to the instance level?
       def error_symbol

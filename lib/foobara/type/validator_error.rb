@@ -1,8 +1,8 @@
-require "foobara/type/attribute_error"
+require "foobara/value/attribute_error"
 
 module Foobara
   class Type < Value::Processor
-    class ValidatorError < Foobara::Type::AttributeError
+    class ValidatorError < Foobara::Value::AttributeError
       class << self
         def symbol
           @symbol ||= Util.module_for(self).name.demodulize.gsub(/Error$/, "").underscore.to_sym
@@ -15,8 +15,6 @@ module Foobara
         # errors define schemas directly. Unnecessary complexity?
         def context_schema
           {
-            path: :duck, # TODO: fix this up once there's an array type
-            attribute_name: :symbol,
             value: :duck
           }
         end

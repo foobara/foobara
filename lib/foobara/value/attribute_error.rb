@@ -1,17 +1,20 @@
-require "foobara/type/type_error"
+require "foobara/value/error"
 
 module Foobara
-  class Type < Value::Processor
-    class AttributeError < Type::TypeError
+  module Value
+    class AttributeError < Value::Error
       attr_accessor :path
 
       class << self
         def context_schema
           {
-            path: :duck, # TODO: fix this up once there's an array type
             attribute_name: :symbol,
             value: :duck
           }
+        end
+
+        def context_type
+          @context_type ||= Model::Schemas::Attributes.new(context_schema)
         end
       end
 

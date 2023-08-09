@@ -123,7 +123,7 @@ RSpec.describe "custom types" do
 
     let(:pointless_validator) do
       Class.new(Foobara::Value::Validator) do
-        self::Error = Class.new(Foobara::Type::AttributeError) do # rubocop:disable RSpec/LeakyConstantDeclaration
+        self::Error = Class.new(Foobara::Value::AttributeError) do # rubocop:disable RSpec/LeakyConstantDeclaration
           class << self
             def error_schema
               {

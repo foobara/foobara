@@ -10,6 +10,10 @@ module Foobara
       def process(value)
         Outcome.success(transform(value))
       end
+
+      def possible_errors
+        []
+      end
     end
   end
 end

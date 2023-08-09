@@ -30,6 +30,16 @@ module Foobara
           **args
         )
       end
+
+      def possible_errors
+        [
+          [
+            [],
+            error_symbol,
+            error_context_schema
+          ]
+        ]
+      end
     end
   end
 end

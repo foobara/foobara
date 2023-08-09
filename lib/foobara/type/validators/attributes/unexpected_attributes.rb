@@ -3,7 +3,7 @@ module Foobara
     module Validators
       module Attributes
         class UnexpectedAttributes < Value::Validator
-          class Error < Foobara::Type::ValidatorError
+          class Error < Foobara::Value::AttributeError
             class << self
               def symbol
                 :unexpected_attribute

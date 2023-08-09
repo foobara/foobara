@@ -42,7 +42,7 @@ module Foobara
             @inputs = outcome.result
           else
             outcome.errors.each do |error|
-              if error.is_a?(Type::AttributeError)
+              if error.is_a?(Value::AttributeError)
                 add_input_error(error)
               else
                 # TODO: raise a real error

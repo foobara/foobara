@@ -32,7 +32,7 @@ module Foobara
           error = if args.size == 1 && opts.empty?
                     error = args.first
 
-                    unless error.is_a?(Type::AttributeError)
+                    unless error.is_a?(Value::AttributeError)
                       raise ArgumentError, "expected an AttributeError or keyword arguments to construct one"
                     end
 
@@ -98,7 +98,7 @@ module Foobara
           map = case error
                 when Command::RuntimeError
                   map[:runtime]
-                when Type::AttributeError
+                when Value::AttributeError
                   map[:input][error.path]
                 else
                   # :nocov:

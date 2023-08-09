@@ -54,9 +54,10 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
       expect(command_class.error_context_schema_map).to eq(
         input: {
           [] => {
+            cannot_cast: { cast_to: :duck, value: :duck, attribute_name: :symbol },
+
             unexpected_attribute: {
               attribute_name: :symbol,
-              path: :duck,
               value: :duck
             }
           },
@@ -72,10 +73,10 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
           could_not_run_some_subcommand: {
             input: {
               [] => {
+                cannot_cast: { cast_to: :duck, value: :duck, attribute_name: :symbol },
                 unexpected_attribute: {
-                  attribute_name: :symbol,
-                  path: :duck,
-                  value: :duck
+                  value: :duck,
+                  attribute_name: :symbol
                 }
               },
               [:should_fail] => {

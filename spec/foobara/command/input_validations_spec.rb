@@ -89,7 +89,7 @@ RSpec.describe Foobara::Command do
         it "is not success" do
           expect(outcome).to_not be_success
           expect(errors.size).to eq(1)
-          expect(error.context).to eq(attribute_name: :exponent, value: exponent, cast_to: :integer)
+          expect(error.context).to eq(value: exponent, cast_to: :integer)
           expect(error.message).to be_a(String)
           expect(error.symbol).to eq(:cannot_cast)
           expect(error.path).to eq([:exponent])
