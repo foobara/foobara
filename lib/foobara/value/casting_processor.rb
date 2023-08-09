@@ -52,13 +52,7 @@ module Foobara
         if caster
           caster.process(value)
         else
-          Value::HaltedOutcome.error(
-            # TODO: use build_error
-            CannotCastError.new(
-              message: error_message(value),
-              context: error_context(value)
-            )
-          )
+          Value::HaltedOutcome.error(build_error(value))
         end
       end
 

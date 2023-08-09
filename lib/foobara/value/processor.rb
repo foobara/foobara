@@ -57,12 +57,16 @@ module Foobara
 
       delegate :error_class,
                :error_classes,
-               :error_symbol,
                :error_message,
                :error_context,
                :error_context_schema,
                :symbol,
                to: :class
+
+      # Should we move more of these to the instance level?
+      def error_symbol
+        error_class.symbol
+      end
 
       def process_outcome(old_outcome)
         return old_outcome if old_outcome.is_a?(Value::HaltedOutcome)
@@ -107,11 +111,11 @@ module Foobara
       end
 
       def build_error(
-        error_class = self.class.error_class,
         value = nil,
-        symbol: error_class.error_symbol,
-        message: error_class.error_message(value),
-        context: error_class.error_context(value),
+        error_class: self.error_class,
+        symbol: error_symbol,
+        message: error_message(value),
+        context: error_context(value),
         path: error_path,
         **args
       )
