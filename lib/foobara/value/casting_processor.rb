@@ -43,10 +43,7 @@ module Foobara
         }
       end
 
-      # TODO: use process instead
-      def process_outcome(old_outcome)
-        value = old_outcome.result
-
+      def process(value)
         caster = caster_for(value)
 
         if caster

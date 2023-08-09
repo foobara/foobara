@@ -21,6 +21,10 @@ module Foobara
         end
       end
 
+      def process(value)
+        process_outcome(Outcome.success(value))
+      end
+
       def applicable?(value)
         processors.any? { |processor| processor.applicable?(value) }
       end

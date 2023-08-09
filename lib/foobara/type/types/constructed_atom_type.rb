@@ -141,8 +141,7 @@ module Foobara
         end
 
         def process(value)
-          # TODO: use process instead
-          Value::MultiProcessor.new(processors:).process_outcome(Outcome.success(value))
+          Value::MultiProcessor.new(processors:).process(value)
         end
 
         def processors
