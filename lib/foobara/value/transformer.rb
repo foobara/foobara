@@ -28,7 +28,7 @@ module Foobara
         raise "subclass responsibility"
       end
 
-      def call(value)
+      def process(value)
         Outcome.success(transform(value))
       end
 

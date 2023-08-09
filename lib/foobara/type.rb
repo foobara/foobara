@@ -16,13 +16,23 @@ module Foobara
       self.base_type = base_type
     end
 
-    def call(...)
-      process(...)
-    end
-
     # TODO: also should have abstract method for error classes...
     def process(_value, _path = [])
       raise "subclass responsibility"
+    end
+
+    def process_outcome(outcome)
+      return outcome if outcome.is_a?(HaltedOutcome)
+
+      new_outcome = process(outcome.result)
+
+      outcome.result = new_outcome.result
+
+      new_outcome.each_error do |error|
+        outcome.add_error(error)
+      end
+
+      outcome
     end
 
     def process!(value)

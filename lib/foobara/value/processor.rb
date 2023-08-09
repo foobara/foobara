@@ -1,13 +1,10 @@
 module Foobara
   module Value
+    # TODO: make this the base class (again... le sigh)
     class Processor < Validator
       delegate :error_classes, to: :class
 
-      def process(...)
-        call(...)
-      end
-
-      def call(_value)
+      def process(_value)
         raise "subclass responsibility"
       end
 
