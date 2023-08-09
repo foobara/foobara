@@ -146,9 +146,11 @@ module Foobara
 
           return cast_outcome unless cast_outcome.success?
 
-          [*value_transformers, *value_validators].inject(cast_outcome) do |outcome, processor|
-            processor.process_outcome(outcome)
-          end
+          Value::MultiProcessor.new(processors:).process_outcome(cast_outcome)
+        end
+
+        def processors
+          [*value_transformers, *value_validators]
         end
 
         def cast_from(value)
