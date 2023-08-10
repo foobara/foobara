@@ -8,6 +8,8 @@ module Foobara
       end
 
       def process(value)
+        return Outcome.success(value) unless applicable?(value)
+
         Outcome.success(transform(value))
       end
 

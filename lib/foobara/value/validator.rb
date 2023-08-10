@@ -6,6 +6,8 @@ module Foobara
       end
 
       def process(value)
+        return Outcome.success(value) unless applicable?(value)
+
         errors = validation_errors(value)
 
         if errors.blank?

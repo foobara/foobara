@@ -10,6 +10,8 @@ module Foobara
           end
 
           def process(attributes_hash)
+            return Outcome.success(attributes_hash) unless applicable?(attributes_hash)
+
             errors = []
 
             attributes_hash.each_pair do |attribute_name, attribute_value|

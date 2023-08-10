@@ -80,6 +80,7 @@ module Foobara
   # So we ask the schema to give us a type??
   class Type < Value::Processor
     module Types
+      # TODO: why not a MultiProcesor??
       class ConstructedAtomType < Type
         attr_accessor :casters, :value_transformers, :value_validators
 
@@ -132,6 +133,8 @@ module Foobara
         end
 
         def process(value)
+          return Outcome.success(value) unless applicable?(value)
+
           Value::MultiProcessor.new(processors:).process(value)
         end
 
@@ -147,15 +150,9 @@ module Foobara
         # maybe [path, symbol, context_type] ?
         # maybe [path, error_class] ?
         def possible_errors
-          possibilities = []
-
-          # should work off of the processors instead?? Otherwise this is risky because there could be
-          # situations where the error context is parameterized off declaration_data somehow...
-          processors.each do |processor|
-            possibilities += processor.possible_errors
+          processors.inject([]) do |possibilities, processor|
+            possibilities + processor.possible_errors
           end
-
-          possibilities
         end
       end
     end
