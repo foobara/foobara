@@ -8,6 +8,7 @@ module Foobara
           attr_accessor :error_context_schema_map
 
           def possible_input_error(path, symbol, context_schema = nil)
+            path = Array.wrap(path)
             error_context_schema_map[:input][path][symbol] = context_schema.presence
           end
 

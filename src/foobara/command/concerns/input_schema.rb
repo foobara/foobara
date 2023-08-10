@@ -7,8 +7,13 @@ module Foobara
         class_methods do
           def input_schema(*args)
             if args.empty?
-              @input_schema
+              return @input_schema if defined?(@input_schema)
+
+              @input_schema = if superclass < Foobara::Command
+                                input_schema(superclass.raw_input_schema)
+                              end
             else
+              # TODO: raise argument error if more than one argument given
               raw_input_schema = args.first
 
               # TODO: need to pass in schema registries here
@@ -25,6 +30,8 @@ module Foobara
               end
 
               register_possible_errors
+
+              input_schema
             end
           end
 

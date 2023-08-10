@@ -33,22 +33,29 @@ module Foobara
                     error = args.first
 
                     unless error.is_a?(Value::AttributeError)
+                      # :nocov:
                       raise ArgumentError, "expected an AttributeError or keyword arguments to construct one"
+                      # :nocov:
                     end
 
                     error
                   elsif args.empty? || (args.size == 1 && args.first.is_a?(Hash))
                     error_args = opts.merge(args.first || {})
                     symbol = error_args[:symbol]
+                    input = error_args[:input]
 
-                    raise "missing error symbol" unless symbol
+                    error_args = error_args.except(:input)
 
-                    # TODO: a way to eliminate this check?
-                    klass = symbol == :unexpected_attribute ? UnexpectedAttributeError : AttributeError
+                    raise ArgumentError, "missing error symbol" unless symbol
+                    raise ArgumentError, "missing input" unless input
 
-                    klass.new(**error_args)
+                    # TODO: a way to eliminate this check? Like wtf?
+                    klass = symbol == :unexpected_attribute ? UnexpectedAttributeError : Value::AttributeError
+                    klass.new(**error_args.merge(path: [input]))
                   else
+                    # :nocov:
                     raise ArgumentError, "Invalid arguments given. Expected an error or keyword args for an error"
+                    # :nocov:
                   end
 
           add_error(error)
@@ -70,11 +77,13 @@ module Foobara
                     error_args = opts.merge(args.first || {})
                     symbol = error_args[:symbol]
 
-                    raise "missing error symbol" unless symbol
+                    raise ArgumentError, "missing error symbol" unless symbol
 
                     Foobara::Command::RuntimeError.new(**error_args)
                   else
+                    # :nocov:
                     raise ArgumentError, "Invalid arguments given. Expected an error or keyword args for an error"
+                    # :nocov:
                   end
 
           add_error(error)
