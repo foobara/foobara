@@ -49,9 +49,7 @@ module Foobara
                     raise ArgumentError, "missing error symbol" unless symbol
                     raise ArgumentError, "missing input" unless input
 
-                    # TODO: a way to eliminate this check? Like wtf?
-                    klass = symbol == :unexpected_attribute ? UnexpectedAttributeError : Value::AttributeError
-                    klass.new(**error_args.merge(path: [input]))
+                    Value::AttributeError.new(**error_args.merge(path: [input]))
                   else
                     # :nocov:
                     raise ArgumentError, "Invalid arguments given. Expected an error or keyword args for an error"
