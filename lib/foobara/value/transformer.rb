@@ -4,7 +4,9 @@ module Foobara
   module Value
     class Transformer < Processor
       def transform(_value)
+        # :nocov:
         raise "subclass responsibility"
+        # :nocov:
       end
 
       def process(value)

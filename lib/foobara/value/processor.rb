@@ -121,7 +121,9 @@ module Foobara
       end
 
       def process(_value)
+        # :nocov:
         raise "subclass responsibility"
+        # :nocov:
       end
 
       def error_halts_processing?

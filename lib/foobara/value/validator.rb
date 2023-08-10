@@ -2,7 +2,9 @@ module Foobara
   module Value
     class Validator < Processor
       def validation_errors(_value)
+        # :nocov:
         raise "subclass responsibility"
+        # :nocov:
       end
 
       def process(value)

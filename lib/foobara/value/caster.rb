@@ -23,7 +23,9 @@ module Foobara
       end
 
       def cast(_value)
+        # :nocov:
         raise "subclass responsibility"
+        # :nocov:
       end
     end
   end
