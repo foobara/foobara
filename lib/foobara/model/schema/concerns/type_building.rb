@@ -8,7 +8,7 @@ module Foobara
           def to_type
             declaration_data = to_h
 
-            Type::Types::ConstructedAtomType.new(declaration_data, **to_type_args)
+            Type::AtomType.new(declaration_data, **to_type_args)
           end
 
           def to_type_args

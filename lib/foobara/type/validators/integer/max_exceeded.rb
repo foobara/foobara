@@ -2,7 +2,7 @@ require "foobara/value/validator"
 require "foobara/type/validator_error"
 
 module Foobara
-  class Type < Value::Processor
+  module Type
     module Validators
       module Integer
         class MaxExceeded < Foobara::Value::Validator

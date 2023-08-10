@@ -1,9 +1,9 @@
 require "foobara/type/types/constructed_atom_type"
 
 module Foobara
-  class Type < Value::Processor
+  module Type
     module Types
-      class ConstructedAttributesType < ConstructedAtomType
+      class AttributesType < AtomType
         attr_accessor :attributes_processor
 
         def initialize(*args, children_types: {}, **opts)

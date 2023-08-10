@@ -1,7 +1,7 @@
 require "foobara/value/caster"
 
 module Foobara
-  class Type < Value::Processor
+  module Type
     module Casters
       module Duck
         class Object < Type::Casters::DirectTypeMatch

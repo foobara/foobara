@@ -1,9 +1,9 @@
 require "foobara/type/types/constructed_atom_type"
 
 module Foobara
-  class Type < Value::Processor
+  module Type
     module Types
-      class ConstructedAttributesType < ConstructedAtomType
+      class AttributesType < AtomType
         class AttributesProcessor < Value::Processor
           def children_types
             declaration_data

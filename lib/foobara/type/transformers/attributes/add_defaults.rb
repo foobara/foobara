@@ -1,5 +1,5 @@
 module Foobara
-  class Type < Value::Processor
+  module Type
     module Transformers
       module Attributes
         class AddDefaults < Value::Transformer
