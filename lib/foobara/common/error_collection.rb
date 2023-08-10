@@ -16,7 +16,7 @@ module Foobara
       !empty?
     end
 
-    delegate :empty?, :partition, to: :error_array
+    delegate :empty?, :partition, :size, to: :error_array
 
     def errors
       error_array
@@ -27,18 +27,45 @@ module Foobara
     end
 
     def has_error?(error)
-      raise ArgumentError unless error.is_a?(Error)
+      unless error.is_a?(Error)
+        # :nocov:
+        raise ArgumentError, "Can only check if an Error class is in the collection"
+        # :nocov:
+      end
 
       error_array.include?(error)
     end
 
     def add_error(*args)
-      error = if args.size == 1
-                args.first
-              else
+      error = if args.size == 3
                 symbol, message, context = args
-                Error.new(symbol:, message:, context:)
+
+                { symbol:, message:, context: }
+              elsif args.size == 1
+                arg = args.first
+
+                if arg.is_a?(Error)
+                  arg
+                elsif arg.is_a?(Hash)
+                  if arg.key?(:symbol) && arg.key?(:message)
+                    arg
+                  else
+                    # :nocov:
+                    raise ArgumentError,
+                          "if passing a hash of error args it must include symbol and message at least"
+                    # :nocov:
+                  end
+                end
               end
+
+      unless error
+        # :nocov:
+        raise ArgumentError, "Not sure how to convert #{args.inspect} into an error. Can handle a hash of error args " \
+                             "or 3 arguments for symbol, message, and context, or, of course, an Error"
+        # :nocov:
+      end
+
+      error = Error.new(**error) unless arg.is_a?(Error)
 
       if has_error?(error)
         raise ErrorAlreadySetError, "cannot set #{error} more than once"
