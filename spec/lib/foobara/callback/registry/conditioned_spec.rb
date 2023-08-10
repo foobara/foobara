@@ -31,10 +31,20 @@ RSpec.describe Foobara::Callback::Registry::Conditioned do
           let(:callbacks_ran) { [] }
 
           before do
+            expect(registry).to_not have_before_callbacks
+            expect(registry).to_not have_around_callbacks
+            expect(registry).to_not have_after_callbacks
+            expect(registry).to_not have_error_callbacks
+
             registry.before do |foo:|
               expect(foo).to eq(:bar)
               callbacks_ran << :before
             end
+
+            expect(registry).to have_before_callbacks
+            expect(registry).to_not have_around_callbacks
+            expect(registry).to_not have_after_callbacks
+            expect(registry).to_not have_error_callbacks
 
             registry.around do |foo:, &do_it|
               callbacks_ran << :around_start
@@ -45,10 +55,20 @@ RSpec.describe Foobara::Callback::Registry::Conditioned do
               callbacks_ran << :around_end
             end
 
+            expect(registry).to have_before_callbacks
+            expect(registry).to have_around_callbacks
+            expect(registry).to_not have_after_callbacks
+            expect(registry).to_not have_error_callbacks
+
             registry.after do |foo:|
               expect(foo).to eq(:bar)
               callbacks_ran << :after
             end
+
+            expect(registry).to have_before_callbacks
+            expect(registry).to have_around_callbacks
+            expect(registry).to have_after_callbacks
+            expect(registry).to_not have_error_callbacks
 
             registry.error do |error|
               expect(error).to be_a(Foobara::Callback::Runner::UnexpectedErrorWhileRunningCallback)
@@ -56,6 +76,11 @@ RSpec.describe Foobara::Callback::Registry::Conditioned do
 
               callbacks_ran << :error
             end
+
+            expect(registry).to have_before_callbacks
+            expect(registry).to have_around_callbacks
+            expect(registry).to have_after_callbacks
+            expect(registry).to have_error_callbacks
           end
 
           it "calls expected callbacks in order" do
