@@ -1,4 +1,4 @@
-require "foobara/type/types/constructed_atom_type"
+require "foobara/type/atom_type"
 
 module Foobara
   module Type
