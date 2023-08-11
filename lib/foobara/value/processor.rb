@@ -17,6 +17,10 @@ module Foobara
 
           @error_class = error_classes.first
         end
+
+        def symbol
+          @symbol ||= name.gsub(/(Processor|Transformer|Validator)$/, "").underscore
+        end
       end
 
       attr_accessor :declaration_data, :declaration_data_given
