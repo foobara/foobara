@@ -1,6 +1,55 @@
 RSpec.describe Foobara::Callback::Registry::Conditioned do
   let(:registry) { described_class.new(charge: %i[positive negative], mass: %i[high low]) }
 
+  describe "#register_callback" do
+    let(:condition_key) { :charge }
+    let(:condition_value) { :positive }
+    let(:conditions) { { condition_key => condition_value } }
+
+    def register_it
+      registry.after(conditions) { "noop" }
+    end
+    context "when given good condition" do
+      it "registers it and can return it even when unioned with other conditions" do
+        expect {
+          register_it
+        }.to change { registry.callback_sets.size }.from(0).to(1)
+
+        registry.unioned_callback_set_for(charge: :positive, mass: nil)
+      end
+    end
+
+    context "when given bad condition key" do
+      let(:condition_key) { :bad_key }
+
+      it "explodes" do
+        expect {
+          register_it
+        }.to raise_error(described_class::InvalidConditions)
+      end
+    end
+
+    context "when given bad condition value" do
+      let(:condition_value) { :bad_value }
+
+      it "explodes" do
+        expect {
+          register_it
+        }.to raise_error(described_class::InvalidConditions)
+      end
+    end
+
+    context "when given nil value" do
+      let(:condition_value) { nil }
+
+      it "is fine" do
+        expect {
+          register_it
+        }.to change { registry.callback_sets.size }.from(0).to(1)
+      end
+    end
+  end
+
   describe "#runner" do
     context "when no conditions given" do
       let(:runner) { registry.runner.callback_data(foo: :bar) }

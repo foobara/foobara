@@ -63,5 +63,17 @@ module Foobara
     def all_symbolizable_elements?(array)
       array.all? { |key| key.is_a?(Symbol) || key.is_a?(String) }
     end
+
+    def args_and_opts_to_opts(args, opts)
+      if !args.is_a?(Array) || args.size > 1
+        raise ArgumentError, "args must be an array of 0 or 1 hashes but received #{args}"
+      end
+
+      unless opts.is_a?(Hash)
+        raise ArgumentError, "opts must be a hash not a #{opts}"
+      end
+
+      (args.first || {}).merge(opts)
+    end
   end
 end

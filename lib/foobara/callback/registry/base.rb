@@ -7,6 +7,10 @@ module Foobara
         end
 
         def register_callback(type, *args, **opts, &callback_block)
+          unless block_given?
+            raise ArgumentError, "Must provide a callback block to register"
+          end
+
           validate_type!(type)
 
           set = specific_callback_set_for(*args, **opts)

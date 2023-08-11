@@ -10,12 +10,14 @@ module Foobara
 
         def initialize(possible_conditions)
           super()
+
           self.callback_sets = {}
           self.possible_conditions = possible_conditions
           self.possible_condition_keys = possible_conditions.keys.map(&:to_s).sort.map(&:to_sym)
         end
 
-        def specific_callback_set_for(**conditions)
+        def specific_callback_set_for(*args, **opts)
+          conditions = Util.args_and_opts_to_opts(args, opts)
           validate_conditions!(**conditions) # TODO: don't always have to validate this...
           key = condition_hash_to_callback_key(conditions)
           callback_sets[key] ||= Callback::Set.new
@@ -47,15 +49,16 @@ module Foobara
                     "Invalid condition name #{condition_name} expected one of #{possible_condition_keys}"
             end
 
-            if !condition_value.nil? && !condition_value.is_a?(Symbol)
-              possible_values = possible_conditions[condition_name]
+            next if condition_value.nil?
 
-              unless possible_values.include?(condition_value)
-                raise InvalidConditions,
-                      "Invalid condition value #{
+            possible_values = possible_conditions[condition_name]
+
+            unless possible_values.include?(condition_value)
+              raise InvalidConditions,
+                    "Invalid condition value #{
                       condition_value
-                    }: nil or one of #{possible_values} but got #{condition_value}"
-              end
+                    }: expected nil or one of #{possible_values} but got #{condition_value}"
+
             end
           end
         end
