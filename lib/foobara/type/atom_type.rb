@@ -1,3 +1,5 @@
+require "foobara/type/type"
+
 # moar notes...
 #
 # So far we have 4 types, :duck, :integer, :symbol, :attributes
@@ -81,12 +83,10 @@ module Foobara
   module Type
     # TODO: we really should have a Type class so that we don't have awkward .is_a?(AtomType) calls for things that
     # are clearly not atom types but just types
-    class AtomType < Value::MultiProcessor
-      class << self
-        attr_accessor :root_type
-      end
+    class AtomType < Foobara::Type::TypeClass
+      include Value::MultiProcessor
 
-      attr_accessor :casters, :value_transformers, :value_validators, :base_type
+      attr_accessor :casters, :value_transformers, :value_validators
 
       # Can we eliminate symbol here or no?
       # Has a collection of transformers and validators.
@@ -133,9 +133,8 @@ module Foobara
         casters: [],
         value_transformers: [],
         value_validators: [],
-        base_type: self.class.root_type, **opts
+        **opts
       )
-        self.base_type = base_type
         self.casters = Array.wrap(casters)
         self.value_transformers = value_transformers
         self.value_validators = value_validators
@@ -144,21 +143,6 @@ module Foobara
           *args,
           **opts.merge(processors: [Value::CastingProcessor.new(casters:), *value_transformers, *value_validators])
         )
-      end
-
-      def process(value)
-        return Outcome.success(value) unless applicable?(value)
-
-        Value::MultiProcessor.new(processors:).process(value)
-      end
-
-      # format?
-      # maybe [path, symbol, context_type] ?
-      # maybe [path, error_class] ?
-      def possible_errors
-        processors.inject([]) do |possibilities, processor|
-          possibilities + processor.possible_errors
-        end
       end
     end
   end

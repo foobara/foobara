@@ -1,8 +1,6 @@
-require "foobara/value/processor"
-
 module Foobara
   module Value
-    class MultiProcessor < Processor
+    module MultiProcessor
       attr_accessor :processors
 
       def initialize(*args, processors:)
@@ -30,6 +28,15 @@ module Foobara
 
       def applicable?(value)
         processors.any? { |processor| processor.applicable?(value) }
+      end
+
+      # format?
+      # maybe [path, symbol, context_type] ?
+      # maybe [path, error_class] ?
+      def possible_errors
+        processors.inject([]) do |possibilities, processor|
+          possibilities + processor.possible_errors
+        end
       end
     end
   end
