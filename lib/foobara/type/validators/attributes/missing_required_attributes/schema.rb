@@ -4,6 +4,7 @@ module Foobara
       module Attributes
         class MissingRequiredAttributes < Value::Validator
           module Schema
+            # TODO: Desugarizer should extend Caster
             module Desugarizer
               class << self
                 def call(rawish_schema)

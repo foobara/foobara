@@ -9,7 +9,7 @@ module Foobara
         def context_type
           # TODO: hmmmm this is a backwards dependency here, dang...
           # TODO: fix this...
-          @context_type ||= Model::Schemas::Attributes.new(context_schema)
+          @context_type ||= Model::Schemas::Attributes.new(context_schema).to_type
         end
 
         # Value will always need to be a duck but cast_to: should probably be the relevant

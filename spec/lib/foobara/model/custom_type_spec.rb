@@ -134,6 +134,14 @@ RSpec.describe "custom types" do
             def symbol
               :real_should_not_match_imaginary
             end
+
+            def context(_value)
+              { foo: :bar }
+            end
+
+            def message(_value)
+              "cant be the same!"
+            end
           end
         end
 
@@ -157,14 +165,6 @@ RSpec.describe "custom types" do
           if complex.real == complex.imaginary
             build_error
           end
-        end
-
-        def error_context(_value)
-          { foo: :bar }
-        end
-
-        def error_message(_value)
-          "cant be the same!"
         end
       end
     end

@@ -3,6 +3,12 @@ require "foobara/value/processor"
 module Foobara
   module Value
     class Transformer < Processor
+      class << self
+        def error_classes
+          []
+        end
+      end
+
       def transform(_value)
         # :nocov:
         raise "subclass responsibility"
@@ -15,10 +21,6 @@ module Foobara
         end
 
         Outcome.success(value)
-      end
-
-      def possible_errors
-        []
       end
     end
   end

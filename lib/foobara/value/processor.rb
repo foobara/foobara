@@ -2,10 +2,6 @@ module Foobara
   module Value
     class Processor
       class << self
-        def metadata
-          @metadata ||= {}
-        end
-
         def error_classes
           @error_classes ||= Util.constant_values(self, extends: Foobara::Error)
         end
@@ -14,43 +10,12 @@ module Foobara
           return @error_class if defined?(@error_class)
 
           unless error_classes.size == 1
+            # :nocov:
             raise "Expected exactly one error class to be defined for #{name} but has #{error_classes.size}"
+            # :nocov:
           end
 
           @error_class = error_classes.first
-        end
-
-        def error_symbol
-          error_class.symbol
-        end
-
-        def error_context_type
-          error_class.context_type
-        end
-
-        def error_message(value)
-          error_class.message(value)
-        end
-
-        def error_context(value)
-          error_class.context(value)
-        end
-
-        def possible_errors
-          path = []
-
-          error_classes.map do |error_class|
-            [path, error_class.symbol, error_class.context_schema]
-          end
-        end
-
-        # TODO: this is a problem or an indicator we need to couple Type and Schema.
-        # here we are in the Type namespace but we really need to communicate the error context schemas to the
-        # outside world for things like Schema and Command to work well.
-        # A solution... a way to map built-in validator errors to schemas a level up in Schema.
-        # Not necessary but maybe a good idea just to preserve separation of concerns for longer
-        def error_context_schema
-          error_class.context_schema
         end
       end
 
@@ -63,27 +28,47 @@ module Foobara
           self.declaration_data = args.first
           self.declaration_data_given = true
         elsif args_count != 0
+          # :nocov:
           raise ArgumentError, "Expected 0 or 1 arguments containing the #{self.class.name} data"
+          # :nocov:
         end
       end
 
       delegate :error_class,
                :error_classes,
-               :error_message,
-               :error_context,
-               :error_context_schema,
-               :error_context_type,
-               :symbol,
-               :possible_errors,
                to: :class
 
+      # TODO: this is a problem or an indicator we need to couple Type and Schema.
+      # here we are in the Type namespace but we really need to communicate the error context schemas to the
+      # outside world for things like Schema and Command to work well.
+      # A solution... a way to map built-in validator errors to schemas a level up in Schema.
+      # Not necessary but maybe a good idea just to preserve separation of concerns for longer
       def error_context_schema
         error_class.context_schema
       end
 
-      # Should we move more of these to the instance level?
       def error_symbol
         error_class.symbol
+      end
+
+      def error_context_type
+        error_class.context_type
+      end
+
+      def error_message(value)
+        error_class.message(value)
+      end
+
+      def error_context(value)
+        error_class.context(value)
+      end
+
+      def possible_errors
+        path = []
+
+        error_classes.map do |error_class|
+          [path, error_class.symbol, error_class.context_schema]
+        end
       end
 
       def process_outcome(old_outcome)
@@ -139,7 +124,11 @@ module Foobara
         path: error_path,
         **args
       )
-        raise "invalid error" unless error_classes.include?(error_class)
+        unless error_classes.include?(error_class)
+          # :nocov:
+          raise "invalid error"
+          # :nocov:
+        end
 
         error_class.new(
           path:,

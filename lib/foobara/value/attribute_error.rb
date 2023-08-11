@@ -14,7 +14,7 @@ module Foobara
         end
 
         def context_type
-          @context_type ||= Model::Schemas::Attributes.new(context_schema)
+          @context_type ||= Model::Schemas::Attributes.new(context_schema).to_type
         end
       end
 

@@ -3,21 +3,18 @@ require "foobara/value/processor"
 module Foobara
   module Value
     class CastingProcessor < Processor
+      class << self
+        def error_classes
+          [CannotCastError]
+        end
+      end
+
       attr_accessor :casters
 
       # TODO: get this thing out of here and onto Model
       def initialize(*args, casters:)
         self.casters = casters
         super(*args)
-      end
-
-      def error_class
-        CannotCastError
-      end
-
-      # TODO: shouldn't need to override both of these methods
-      def error_classes
-        [error_class]
       end
 
       def caster_for(value)
@@ -41,12 +38,7 @@ module Foobara
         {
           cast_to: casters.first.type_symbol,
           value:
-
         }
-      end
-
-      def error_context_type
-        error_class.context_type
       end
 
       def process(value)
@@ -61,16 +53,6 @@ module Foobara
 
       def always_applicable?
         true
-      end
-
-      def possible_errors
-        [
-          [
-            [],
-            error_symbol,
-            error_context_schema
-          ]
-        ]
       end
     end
   end
