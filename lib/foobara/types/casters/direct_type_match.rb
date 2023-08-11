@@ -1,5 +1,5 @@
 module Foobara
-  module Type
+  module Types
     module Casters
       class DirectTypeMatch < Value::Caster
         attr_accessor :ruby_classes, :type_symbol

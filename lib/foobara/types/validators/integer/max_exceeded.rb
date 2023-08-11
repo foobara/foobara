@@ -1,12 +1,12 @@
 require "foobara/value/validator"
-require "foobara/type/validator_error"
+require "foobara/types/validator_error"
 
 module Foobara
-  module Type
+  module Types
     module Validators
       module Integer
         class MaxExceeded < Foobara::Value::Validator
-          class Error < Foobara::Type::ValidatorError
+          class Error < Foobara::Types::ValidatorError
             class << self
               def context_schema
                 {

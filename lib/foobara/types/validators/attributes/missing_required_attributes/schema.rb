@@ -1,5 +1,5 @@
 module Foobara
-  module Type
+  module Types
     module Validators
       module Attributes
         class MissingRequiredAttributes < Value::Validator

@@ -1,4 +1,4 @@
-require "foobara/type/type"
+require "foobara/types/type"
 
 # moar notes...
 #
@@ -80,10 +80,10 @@ module Foobara
   # And what does a Schema contain?
   # Just expressions for expressing types?
   # So we ask the schema to give us a type??
-  module Type
+  module Types
     # TODO: we really should have a Type class so that we don't have awkward .is_a?(AtomType) calls for things that
     # are clearly not atom types but just types
-    class AtomType < Foobara::Type::TypeClass
+    class AtomType < Foobara::Types::TypeClass
       include Value::MultiProcessor
 
       attr_accessor :casters, :value_transformers, :value_validators

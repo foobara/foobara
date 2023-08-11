@@ -1,7 +1,7 @@
-require "foobara/type/atom_type"
+require "foobara/types/atom_type"
 
 module Foobara
-  module Type
+  module Types
     module Types
       class AttributesType < AtomType
         attr_accessor :attributes_processor

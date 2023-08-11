@@ -1,5 +1,5 @@
 module Foobara
-  module Type
+  module Types
     module Transformers
       module Attributes
         class AddDefaults < Value::Transformer

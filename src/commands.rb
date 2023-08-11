@@ -14,7 +14,7 @@ require "foobara/value"
 require "foobara/enumerated"
 require "foobara/callback"
 require "foobara/state_machine"
-require "foobara/type"
+require "foobara/types"
 require "foobara/model"
 require "foobara/builtin_types"
 

@@ -1,7 +1,7 @@
 require "foobara/value/caster"
 
 module Foobara
-  module Type
+  module Types
     module Casters
       module Integer
         class Integer < Type::Casters::DirectTypeMatch

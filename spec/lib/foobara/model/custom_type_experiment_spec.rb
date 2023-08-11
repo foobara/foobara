@@ -260,7 +260,7 @@ RSpec.describe "custom types", skip: "only documentation for now" do
     let(:array_to_complex_caster) do
       klass = complex_class
 
-      Class.new(Foobara::Type::Caster) do
+      Class.new(Foobara::Types::Caster) do
         def applicable?(value)
           value.is_a?(Array) && value.size == 2
         end
@@ -283,7 +283,7 @@ RSpec.describe "custom types", skip: "only documentation for now" do
     let(:type_builder) do
       casters = [
         array_to_complex_caster.new,
-        Foobara::Type::Casters::DirectTypeMatch.new(type_symbol: :complex, ruby_classes: complex_class)
+        Foobara::Types::Casters::DirectTypeMatch.new(type_symbol: :complex, ruby_classes: complex_class)
       ]
 
       Class.new(Foobara::Model::TypeBuilder) do
@@ -294,8 +294,8 @@ RSpec.describe "custom types", skip: "only documentation for now" do
     end
 
     let(:pointless_validator) do
-      Class.new(Foobara::Type::ValueValidator) do
-        self::Error = Class.new(Foobara::Type::AttributeError) do # rubocop:disable RSpec/LeakyConstantDeclaration
+      Class.new(Foobara::Types::ValueValidator) do
+        self::Error = Class.new(Foobara::Types::AttributeError) do # rubocop:disable RSpec/LeakyConstantDeclaration
           class << self
             def error_schema
               {

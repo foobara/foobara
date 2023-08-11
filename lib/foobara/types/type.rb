@@ -1,5 +1,5 @@
 module Foobara
-  module Type
+  module Types
     # TODO: rename
     # TODO: move casting interface to here?
     class TypeClass < Value::Processor

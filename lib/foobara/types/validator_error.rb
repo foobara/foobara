@@ -1,7 +1,7 @@
 require "foobara/value/attribute_error"
 
 module Foobara
-  module Type
+  module Types
     class ValidatorError < Foobara::Value::AttributeError
       class << self
         def symbol
