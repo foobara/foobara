@@ -81,9 +81,7 @@ module Foobara
   # Just expressions for expressing types?
   # So we ask the schema to give us a type??
   module Types
-    # TODO: we really should have a Type class so that we don't have awkward .is_a?(AtomType) calls for things that
-    # are clearly not atom types but just types
-    class AtomType < Foobara::Types::TypeClass
+    class AtomType < Foobara::Types::Type
       include Value::MultiProcessor
 
       attr_accessor :casters, :value_transformers, :value_validators

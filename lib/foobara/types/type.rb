@@ -1,8 +1,7 @@
 module Foobara
   module Types
-    # TODO: rename
     # TODO: move casting interface to here?
-    class TypeClass < Value::Processor
+    class Type < Value::Processor
       class << self
         attr_accessor :root_type
       end

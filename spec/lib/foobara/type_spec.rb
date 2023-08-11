@@ -1,4 +1,4 @@
-RSpec.describe Foobara::Type do
+RSpec.describe Foobara::Types do
   let(:type) { Foobara::Model::Schema::Registry.global.schema_for(type_schema).to_type }
 
   context "when :attributes" do

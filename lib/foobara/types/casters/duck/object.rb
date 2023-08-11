@@ -4,7 +4,7 @@ module Foobara
   module Types
     module Casters
       module Duck
-        class Object < Type::Casters::DirectTypeMatch
+        class Object < Types::Casters::DirectTypeMatch
           include Singleton
 
           def initialize

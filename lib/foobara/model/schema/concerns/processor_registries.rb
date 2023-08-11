@@ -46,7 +46,7 @@ module Foobara
             def autoregister_processors
               module_symbol = type.to_s.camelize.to_sym
 
-              transformer_module = Util.constant_value(Type::Transformers, module_symbol)
+              transformer_module = Util.constant_value(Types::Transformers, module_symbol)
 
               if transformer_module
                 Util.constant_values(transformer_module, is_a: Class).each do |transformer|
@@ -54,7 +54,7 @@ module Foobara
                 end
               end
 
-              validator_module = Util.constant_value(Type::Validators, module_symbol)
+              validator_module = Util.constant_value(Types::Validators, module_symbol)
 
               if validator_module
                 Util.constant_values(validator_module, is_a: Class).each do |validator|

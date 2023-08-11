@@ -2,7 +2,7 @@ require "foobara/types/atom_type"
 
 module Foobara
   module Types
-    module Types
+    module BuiltinTypes
       class AttributesType < AtomType
         class AttributesProcessor < Value::Processor
           def children_types

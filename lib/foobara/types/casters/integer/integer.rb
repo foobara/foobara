@@ -4,7 +4,7 @@ module Foobara
   module Types
     module Casters
       module Integer
-        class Integer < Type::Casters::DirectTypeMatch
+        class Integer < Types::Casters::DirectTypeMatch
           include Singleton
 
           def initialize

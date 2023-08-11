@@ -8,7 +8,7 @@ module Foobara
           def to_type
             declaration_data = to_h
 
-            Type::AtomType.new(declaration_data, **to_type_args)
+            Types::AtomType.new(declaration_data, **to_type_args)
           end
 
           def to_type_args
@@ -22,7 +22,7 @@ module Foobara
           def casters
             type_module_name = type.to_s.camelize.to_sym
 
-            casters_module = Util.constant_value(Type::Casters, type_module_name)
+            casters_module = Util.constant_value(Types::Casters, type_module_name)
             casters = Util.constant_values(casters_module, is_a: Class)
 
             direct_caster = casters.find { |caster| caster.name.to_sym == type_module_name }

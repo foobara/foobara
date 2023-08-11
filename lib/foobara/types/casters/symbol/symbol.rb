@@ -4,7 +4,7 @@ module Foobara
   module Types
     module Casters
       module Symbol
-        class Symbol < Type::Casters::DirectTypeMatch
+        class Symbol < Types::Casters::DirectTypeMatch
           include Singleton
 
           def initialize
