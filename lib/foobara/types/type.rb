@@ -2,6 +2,8 @@ module Foobara
   module Types
     # TODO: move casting interface to here?
     class Type < Value::Processor
+      include SupportedProcessorRegistration
+
       class << self
         attr_accessor :root_type
       end

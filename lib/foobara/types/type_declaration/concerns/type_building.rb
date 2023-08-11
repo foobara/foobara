@@ -8,6 +8,7 @@ module Foobara
           def to_type
             declaration_data = to_h
 
+            # TODO: A little nervous to pass declaration data here... is that really necessary?
             Types::AtomType.new(declaration_data, **to_type_args)
           end
 
@@ -39,7 +40,7 @@ module Foobara
 
             # we are an instance here so why do we pass in type??
             # TODO: make it so passing in type isn't necessary
-            self.transformers.each_pair do |transformer_symbol, transformer_class|
+            supported_transformer_classes.each_pair do |transformer_symbol, transformer_class|
               if strict_schema.key?(transformer_symbol)
                 transformers << transformer_class.new(strict_schema[transformer_symbol])
               end
@@ -51,7 +52,7 @@ module Foobara
           def value_validators
             validators = []
 
-            self.validators.each_pair do |validator_symbol, validator_class|
+            supported_validator_classes.each_pair do |validator_symbol, validator_class|
               validator = validator_class.new(strict_schema[validator_symbol])
 
               validators << validator if validator.always_applicable?
