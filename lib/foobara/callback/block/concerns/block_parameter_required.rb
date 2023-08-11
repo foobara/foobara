@@ -8,8 +8,9 @@ module Foobara
           super
 
           unless takes_block?
-            # TODO: raise a real error
-            raise "#{type} callback must take a block argument"
+            # :nocov:
+            raise ArgumentError, "#{type} callback must take a block argument"
+            # :nocov:
           end
         end
       end

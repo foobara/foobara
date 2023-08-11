@@ -10,9 +10,11 @@ module Foobara
       end
 
       def process(value)
-        return Outcome.success(value) unless applicable?(value)
+        if applicable?(value)
+          value = transform(value)
+        end
 
-        Outcome.success(transform(value))
+        Outcome.success(value)
       end
 
       def possible_errors
