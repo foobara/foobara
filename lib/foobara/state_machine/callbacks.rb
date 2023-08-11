@@ -6,7 +6,7 @@ module Foobara
       # owner helps with determining the relevant object when running class-registered state transition callbacks
       attr_accessor :callback_registry, :owner
 
-      def initialize(owner:)
+      def initialize(owner: nil)
         self.owner = owner
         self.callback_registry = Callback::Registry::ChainedConditioned.new(self.class.class_callback_registry)
       end
@@ -51,24 +51,32 @@ module Foobara
         # 5 before_<transition>_transition_to_<state>
         # 6 before_<transition>_transition_from_<state>
         def create_register_callback_methods
-          raise "Do not create register callback methods twice" if register_callback_methods
+          if register_callback_methods
+            # :nocov:
+            raise "Do not create register callback methods twice"
+            # :nocov:
+          end
 
           callback_methods = @register_callback_methods = []
 
           tos = Set.new
+          transitions = Set.new
           froms = Set.new
 
           froms_to_tos = Set.new
           transitions_to_tos = Set.new
           froms_to_transitions = Set.new
+          froms_transitions_tos = Set.new
 
           transition_map.each_pair do |from, to_map|
             froms << from
             to_map.each_pair do |transition, to|
+              transitions << transition
               tos << to
               froms_to_tos << [from, to]
               transitions_to_tos << [transition, to]
               froms_to_transitions << [from, transition]
+              froms_transitions_tos << [from, transition, to]
             end
           end
 
@@ -86,6 +94,15 @@ module Foobara
 
               define_method method_name do |&block|
                 register_transition_callback(type, from:, &block)
+              end
+            end
+
+            transitions.each do |transition|
+              method_name = "#{type}_#{transition}"
+              callback_methods << method_name
+
+              define_method method_name do |&block|
+                register_transition_callback(type, transition:, &block)
               end
             end
 
@@ -122,6 +139,15 @@ module Foobara
 
               define_method method_name do |&block|
                 register_transition_callback(type, transition:, from:, &block)
+              end
+            end
+
+            froms_transitions_tos.each do |(from, transition, to)|
+              method_name = "#{type}_#{transition}_from_#{from}_to_#{to}"
+              callback_methods << method_name
+
+              define_method method_name do |&block|
+                register_transition_callback(type, transition:, from:, to:, &block)
               end
             end
           end
