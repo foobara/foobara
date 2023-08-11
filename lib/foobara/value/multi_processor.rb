@@ -1,5 +1,6 @@
 module Foobara
   module Value
+    # TODO: a better name would be PipelineProcessor
     module MultiProcessor
       attr_accessor :processors
 

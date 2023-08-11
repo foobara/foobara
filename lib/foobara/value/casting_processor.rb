@@ -1,24 +1,22 @@
-require "foobara/value/processor"
+require "foobara/value/selection_processor"
 
 module Foobara
   module Value
-    class CastingProcessor < Processor
+    class CastingProcessor < SelectionProcessor
       class << self
         def error_classes
+          # TODO: relocate this class here
           [CannotCastError]
         end
       end
 
-      attr_accessor :casters
-
       # TODO: get this thing out of here and onto Model
       def initialize(*args, casters:)
-        self.casters = casters
-        super(*args)
+        super(*args, processors: casters)
       end
 
-      def caster_for(value)
-        casters.find { |c| c.applicable?(value) }
+      def casters
+        processors
       end
 
       def error_message(value)
@@ -42,17 +40,15 @@ module Foobara
       end
 
       def process(value)
-        caster = caster_for(value)
+        outcome = super
 
-        if caster
-          caster.process(value)
-        else
-          Value::HaltedOutcome.error(build_error(value))
-        end
+        outcome.success? ? outcome : HaltedOutcome.error(build_error(value))
       end
 
-      def always_applicable?
-        true
+      def possible_errors
+        possibilities = super
+
+        # TODO: replace NoApplicableProcessorError with CannotCastError
       end
     end
   end
