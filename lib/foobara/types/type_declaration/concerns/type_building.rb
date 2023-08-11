@@ -1,6 +1,6 @@
 module Foobara
-  class Model
-    class Schema
+  module Types
+    class TypeDeclaration < Type
       module Concerns
         module TypeBuilding
           extend ActiveSupport::Concern
