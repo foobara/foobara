@@ -4,4 +4,5 @@ require "bundler/setup"
 require "commands"
 
 require "irb"
+require "pry"
 IRB.start(__FILE__)
