@@ -1,7 +1,6 @@
 module Foobara
   module Value
-    # TODO: a better name would be PipelineProcessor
-    module MultiProcessor
+    module ProcessorPipeline
       attr_accessor :processors
 
       def initialize(*args, processors:)

@@ -82,7 +82,7 @@ module Foobara
   # So we ask the schema to give us a type??
   module Types
     class AtomType < Foobara::Types::Type
-      include Value::MultiProcessor
+      include Value::ProcessorPipelineMethods
 
       attr_accessor :casters, :value_transformers, :value_validators
 

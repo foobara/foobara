@@ -1,6 +1,6 @@
 module Foobara
   module Types
-    class TypeDeclaration < Type
+    class TypeDeclarationHandler < Value::Processor
       module Concerns
         module TypeBuilding
           extend ActiveSupport::Concern

@@ -1,9 +1,9 @@
 module Foobara
   module Value
     class SelectionProcessor < Processor
-      # TODO: should split MultiProcessor into a PipelineProcessor and more
-      # abstract MultiProcessor
-      include MultiProcessor
+      # TODO: should split ProcessorPipeline into a PipelineProcessor and more
+      # abstract ProcessorPipeline
+      include ProcessorPipeline
 
       class NoApplicableProcessorError < Foobara::Error
         class << self
@@ -34,6 +34,10 @@ module Foobara
         else
           process(outcome.result)
         end
+      end
+
+      def register(processor)
+        processors << processor
       end
 
       def process(value)

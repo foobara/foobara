@@ -13,18 +13,25 @@ module Foobara
     # TODO: maybe change name to TypeDeclarationProcessor?? That frees up
     # the type declaration value to be known as a type declaration and makes
     # passing it ot the Type maybe a little less awkward.
-    class TypeDeclaration < Type
-      include Value::MultiProcessor
+    class TypeDeclarationHandler < Value::Processor
+      include Value::ProcessorPipeline
       include Concerns::TypeBuilding
 
-      def applicable?(sugary_type_declaration_value)
+      attr_accessor :desugarizers, :type_declaration_validators
+
+      def initialize(*args, desugarizers: [], type_declaration_validators: [], **opts)
+        self.desugarizers = desugarizers
+        self.type_declaration_validators = type_declaration_validators
+      end
+
+      def applicable?(sugary_type_declaration)
         # :nocov:
         raise "subclass responsibility"
         # :nocov:
       end
 
       def processors
-        [*dusugarizers, *validators, type_builder_processor]
+        [*dusugarizers, *type_declaration_validators, type_builder_processor]
       end
     end
   end
