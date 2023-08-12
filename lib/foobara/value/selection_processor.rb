@@ -1,10 +1,6 @@
 module Foobara
   module Value
-    class SelectionProcessor < Processor
-      # TODO: should split ProcessorPipeline into a PipelineProcessor and more
-      # abstract ProcessorPipeline
-      include ProcessorPipeline
-
+    class SelectionProcessor < Processor::Pipeline
       class NoApplicableProcessorError < Foobara::Error
         class << self
           def context_schema
