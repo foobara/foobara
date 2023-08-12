@@ -3,7 +3,8 @@ require "foobara/types/atom_type"
 module Foobara
   module Types
     module BuiltinTypes
-      class AttributesType < AtomType
+      # TODO: create a structured type superclass?
+      class AttributesType < Foobara::Types::Type
         attr_accessor :attributes_processor
 
         def initialize(*args, children_types: {}, **opts)
