@@ -10,34 +10,27 @@ module Foobara
     #   validate declaration value
     #   transform into Type instance
     # So... sugary type declaration value in, type out
-    # TODO: maybe change name to TypeDeclarationProcessor?? That frees up
-    # the type declaration value to be known as a type declaration and makes
-    # passing it ot the Type maybe a little less awkward.
     class TypeDeclarationHandler < Value::Processor
       class BuiltinAtomTypeDeclarationHandler < TypeDeclarationHandler
+        def initialize(*args, **opts)
+          super(
+            *args,
+            desugarizers: SymbolDesugarizer.new(true),
+            to_type_transformer: ToTypeTransformer.new(true),
+            **opts
+          )
+        end
+
         def applicable?(sugary_type_declaration)
-          type_symbol = type_declaration_to_type_symbol(sugary_type_declaration)
+          strict_type_declaration = desugarize(sugary_type_declaration)
 
-          type_symbol && BuiltinTypes.registered?(type_symbol)
-        end
+          # we only handle case where it's a builtin type not an extension of one
+          return false unless strict_type_declaration.keys == [:type]
 
-        def desugarizers
-          @desugarizers ||= [SymbolDesugarizer.instance]
-        end
-
-        def process(sugary_type_declaration)
-          type_symbol = type_declaration_to_type_symbol(sugary_type_declaration)
-
-          Outcome.success(BuiltinTypes[type_symbol])
-        end
-
-        private
-
-        def type_declaration_to_type_symbol(sugary_type_declaration)
-          if sugary_type_declaration.is_a?(Hash)
-            sugary_type_declaration[:type]
-          elsif sugary_type_declaration.is_a?(Symbol)
-            sugary_type_declaration
+          type_symbol = strict_type_declaration[:type]
+          if BuiltinTypes.registered?(type_symbol)
+            type = BuiltinTypes[type_symbol]
+            type.is_a?(AtomType)
           end
         end
       end

@@ -16,11 +16,20 @@ module Foobara
     class TypeDeclarationHandler < Value::Processor::Pipeline
       include Concerns::TypeBuilding
 
-      attr_accessor :desugarizers, :type_declaration_validators
+      attr_accessor :desugarizers, :type_declaration_validators, :to_type_transformers
 
-      def initialize(*args, desugarizers: [], type_declaration_validators: [], **opts)
-        self.desugarizers = desugarizers
-        self.type_declaration_validators = type_declaration_validators
+      def initialize(
+        *args,
+        to_type_transformers:,
+        desugarizers: [],
+        type_declaration_validators: [],
+        **opts
+      )
+        self.desugarizers = Array.wrap(desugarizers)
+        self.type_declaration_validators = Array.wrap(type_declaration_validators)
+        self.to_type_transformers = Array.wrap(to_type_transformers)
+
+        super(*args, **opts)
       end
 
       def applicable?(sugary_type_declaration)
@@ -30,7 +39,32 @@ module Foobara
       end
 
       def processors
-        [*dusugarizers, *type_declaration_validators, type_builder_processor]
+        [desugarizer, type_declaration_validator, to_type_transformer]
+      end
+
+      def desugarizer
+        @desugarizer ||= Value::Processor::Pipeline.new(processors: desugarizers)
+      end
+
+      def desugarize(value)
+        desugarizer.process!(value)
+      end
+
+      def type_declaration_validator
+        @type_declaration_validator ||= Value::Processor::Pipeline.new(processors: type_declaration_validators)
+      end
+
+      def type_declaration_validation_errors(value)
+        value = desugarize(value)
+        type_declaration_validator.process(value).errors
+      end
+
+      def to_type_transformer
+        @to_type_transformer ||= Value::Processor::Pipeline.new(processors: to_type_transformers)
+      end
+
+      def to_type(value)
+        process(value)
       end
     end
   end
