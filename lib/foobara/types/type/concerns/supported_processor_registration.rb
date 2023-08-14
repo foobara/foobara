@@ -36,6 +36,7 @@ module Foobara
             end
           end
 
+          # TODO: move this to builtin types
           def autoregister_supported_processors
             # TODO: what hte hell is type here?
             module_symbol = type.to_s.camelize.to_sym
