@@ -11,7 +11,7 @@ module Foobara
     #   transform into Type instance
     # So... sugary type declaration value in, type out
     class TypeDeclarationHandler < Value::Processor
-      class BuiltinAtomTypeDeclarationExtensionHandler < BuiltinTypeDeclaration
+      class BuiltinTypeDeclaration < TypeDeclarationHandler
         def initialize(*args, **opts)
           super(
             *args,
@@ -24,14 +24,10 @@ module Foobara
         def applicable?(sugary_type_declaration)
           strict_type_declaration = desugarize(sugary_type_declaration)
 
-          # if there's no processors to extend the exissting type with, then we don't handle that here
-          return false if strict_type_declaration.keys == [:type]
-
-          type_symbol = strict_type_declaration[:type]
-          if BuiltinTypes.registered?(type_symbol)
-            type = BuiltinTypes[type_symbol]
-            # Does it actually matter if it's an atom or not?
-            type.is_a?(AtomType)
+          # we only handle case where it's a builtin type not an extension of one
+          if strict_type_declaration.keys == [:type]
+            type_symbol = strict_type_declaration[:type]
+            BuiltinTypes.registered?(type_symbol)
           end
         end
       end

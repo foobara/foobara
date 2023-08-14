@@ -4,7 +4,7 @@ module Foobara
   module Types
     module BuiltinTypes
       # TODO: create a structured type superclass?
-      class AttributesType < Foobara::Types::Type
+      class TypedAttributesType < AttributesType
         attr_accessor :attributes_processor
 
         def initialize(*args, children_types: {}, **opts)
