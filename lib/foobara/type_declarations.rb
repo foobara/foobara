@@ -60,12 +60,12 @@ Duck (RegisteredTypeExtensionTypeDeclarationHandler)
 TypeDeclarationHandler
   RegisteredAtomTypeExtensionTypeDeclarationHandler
   RegisteredStructuredTypeExtensionTypeDeclarationHandler
-    ArrayExtensionTypeDeclarationHandler
-    TupleExtensionTypeDeclarationHandler
-    AssociativeArrayExtensionTypeDeclarationHandler
-    AttributesExtensionTypeDeclarationHandler
-    ModelExtensionTypeDeclarationHandler
-    EntityExtensionTypeDeclarationHandler
+    ExtendArrayTypeDeclarationHandler
+    ExtendTupleTypeDeclarationHandler
+    ExtendAssociativeArrayTypeDeclarationHandler
+    ExtendAttributesTypeDeclarationHandler
+    ExtendModelTypeDeclarationHandler
+    ExtendEntityTypeDeclarationHandler
 
 I think we need these type declarations but not necessarily Type subclasses for all of these types
 

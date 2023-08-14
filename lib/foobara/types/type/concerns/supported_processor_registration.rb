@@ -35,28 +35,6 @@ module Foobara
               processor_class.is_a?(Value::Validator)
             end
           end
-
-          # TODO: move this to builtin types
-          def autoregister_supported_processors
-            # TODO: what hte hell is type here?
-            module_symbol = type.to_s.camelize.to_sym
-
-            transformer_module = Util.constant_value(Types::Transformers, module_symbol)
-
-            if transformer_module
-              Util.constant_values(transformer_module, is_a: Class).each do |transformer_class|
-                register_supported_processor_class(transformer_class)
-              end
-            end
-
-            validator_module = Util.constant_value(Types::Validators, module_symbol)
-
-            if validator_module
-              Util.constant_values(validator_module, is_a: Class).each do |validator_class|
-                register_supported_processor_class(validator_class)
-              end
-            end
-          end
         end
       end
     end
