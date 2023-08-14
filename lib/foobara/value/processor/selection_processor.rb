@@ -1,75 +1,77 @@
 module Foobara
   module Value
-    class SelectionProcessor < Processor::Pipeline
-      class NoApplicableProcessorError < Foobara::Error
-        class << self
-          def context_schema
-            {
-              processors: :duck,
-              value: :duck
-            }
+    class Processor
+      class Selection < Pipeline
+        class NoApplicableProcessorError < Foobara::Error
+          class << self
+            def context_schema
+              {
+                processors: :duck,
+                value: :duck
+              }
+            end
           end
         end
-      end
 
-      class MoreThanOneApplicableProcessorError < Foobara::Error
-        class << self
-          def context_schema
-            {
-              processors: :duck,
-              applicable_processors: :duck,
-              value: :duck
-            }
+        class MoreThanOneApplicableProcessorError < Foobara::Error
+          class << self
+            def context_schema
+              {
+                processors: :duck,
+                applicable_processors: :duck,
+                value: :duck
+              }
+            end
           end
         end
-      end
 
-      def process_outcome(old_outcome)
-        if old_outcome.is_a?(Value::HaltedOutcome)
-          old_outcome
-        else
-          process(outcome.result)
+        def process_outcome(old_outcome)
+          if old_outcome.is_a?(Value::HaltedOutcome)
+            old_outcome
+          else
+            process(outcome.result)
+          end
         end
-      end
 
-      def register(processor)
-        processors << processor
-      end
-
-      def process(value)
-        applicable_processors = processors.select { |processor| processor.applicable?(value) }
-
-        error = if applicable_processors.empty?
-                  build_error(NoApplicableProcessorError)
-                elsif applicable_processors.size > 1
-                  build_error(
-                    MoreThanOneApplicableProcessorError,
-                    message: "More than one processor applicable for #{value}",
-                    context: error_context(value).merge(applicable_processors:)
-                  )
-                end
-
-        if error
-          Outcome.error(error)
-        else
-          processor = applicable_processors.first
-          processor.process(value)
+        def register(processor)
+          processors << processor
         end
-      end
 
-      def always_applicable?
-        true
-      end
+        def process(value)
+          applicable_processors = processors.select { |processor| processor.applicable?(value) }
 
-      def error_message(value)
-        "Could not find processor that is applicable for #{value}"
-      end
+          error = if applicable_processors.empty?
+                    build_error(NoApplicableProcessorError)
+                  elsif applicable_processors.size > 1
+                    build_error(
+                      MoreThanOneApplicableProcessorError,
+                      message: "More than one processor applicable for #{value}",
+                      context: error_context(value).merge(applicable_processors:)
+                    )
+                  end
 
-      def error_context(value)
-        {
-          processors: processors.map(&:symbol),
-          value:
-        }
+          if error
+            Outcome.error(error)
+          else
+            processor = applicable_processors.first
+            processor.process(value)
+          end
+        end
+
+        def always_applicable?
+          true
+        end
+
+        def error_message(value)
+          "Could not find processor that is applicable for #{value}"
+        end
+
+        def error_context(value)
+          {
+            processors: processors.map(&:symbol),
+            value:
+          }
+        end
       end
     end
   end
