@@ -3,7 +3,6 @@ require "foobara/types/atom_type"
 module Foobara
   module Types
     module BuiltinTypes
-      # TODO: create a structured type superclass?
       class TypedAttributesType < AttributesType
         attr_accessor :attributes_processor
 

@@ -3,9 +3,7 @@ require "foobara/types/atom_type"
 module Foobara
   module Types
     module BuiltinTypes
-      # TODO: this is a problem... Attributes type is a structured type not an atom type.
-      # we need to get behavior from AtomType another way.
-      class AttributesType < AtomType
+      class AttributesType < AssociativeArrayType
         class AttributesProcessor < Value::Processor
           def children_types
             declaration_data
