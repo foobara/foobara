@@ -1,6 +1,8 @@
+require "foobara/value/attribute_error"
+
 module Foobara
   module Value
-    module Processor
+    class Processor
       class Casting < Selection
         class CannotCastError < AttributeError
           class << self

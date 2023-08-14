@@ -1,3 +1,4 @@
+=begin
 module Foobara
   class Model
     module Schemas
@@ -6,3 +7,4 @@ module Foobara
     end
   end
 end
+=end

@@ -15,6 +15,7 @@ require "foobara/enumerated"
 require "foobara/callback"
 require "foobara/state_machine"
 require "foobara/types"
+require "foobara/type_declarations"
 require "foobara/model"
 require "foobara/builtin_types"
 

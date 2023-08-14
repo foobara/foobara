@@ -1,3 +1,4 @@
+=begin
 require "foobara/model/schema"
 
 module Foobara
@@ -91,3 +92,4 @@ module Foobara
     end
   end
 end
+=end

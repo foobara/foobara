@@ -49,18 +49,24 @@ module Foobara
       # max (integer validation at attribute level)
       # matches (string against a regex)
 
+      attr_accessor :base_type, :casters, :value_transformers, :value_validators, :element_processors, :structure_size
+
       def initialize(
         *args,
         base_type: self.class.root_type,
         casters: [],
         value_transformers: [],
         value_validators: [],
+        element_processors: nil,
+        structure_size: nil,
         **opts
       )
         self.base_type = base_type
         self.casters = Array.wrap(casters)
         self.value_transformers = value_transformers
         self.value_validators = value_validators
+        self.element_processors = element_processors
+        self.structure_size = structure_size
 
         super(
           *args,
@@ -68,14 +74,13 @@ module Foobara
         )
       end
 
-      attr_accessor :base_type, :casters, :value_transformers, :value_validators
-
       def processors
         [
           value_caster,
           value_transformer,
-          value_validator
-        ]
+          value_validator,
+          element_processor
+        ].compact
       end
 
       def value_caster
@@ -91,13 +96,23 @@ module Foobara
       end
 
       def value_transformer
-        # TODO: create Transformer::Pipeline
-        @value_transformer ||= Value::Processor::Pipeline.new(processors: value_transformers)
+        if value_transformers.present?
+          # TODO: create Transformer::Pipeline. Or not? yagni?
+          @value_transformer ||= Value::Processor::Pipeline.new(processors: value_transformers)
+        end
       end
 
       def value_validator
-        # TODO: create Validator::Pipeline
-        @value_validator ||= Value::Processor::Pipeline.new(processors: value_validators)
+        if value_validators.present?
+          # TODO: create Validator::Pipeline
+          @value_validator ||= Value::Processor::Pipeline.new(processors: value_validators)
+        end
+      end
+
+      def element_processor
+        if element_processors.present?
+          @element_processor ||= Value::Processor::Pipeline.new(processors: element_processors)
+        end
       end
 
       def validation_errors(value)

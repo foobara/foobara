@@ -1,13 +1,14 @@
-RSpec.describe Foobara::Model::Schema::Concerns::TypeBuilding do
-  let(:schema) { Foobara::Model::Schema::Registry.global.schema_for(schema_hash) }
-  let(:type) { schema.to_type }
+RSpec.describe Foobara::TypeDeclarations::TypeDeclarationHandler::Concerns::TypeBuilding do
+  let(:type) {
+    Foobara::TypeDeclarations::TypeDeclarationHandlerRegistry.global.process!(type_declaration)
+  }
 
   describe "defaults" do
-    context "when schema has top-level defaults hash" do
-      let(:schema_hash) do
+    context "when type_declaration has top-level defaults hash" do
+      let(:type_declaration) do
         {
           type: :attributes,
-          schemas: {
+          attribute_types: {
             a: :integer,
             b: :integer,
             c: :integer
@@ -31,11 +32,11 @@ RSpec.describe Foobara::Model::Schema::Concerns::TypeBuilding do
       end
     end
 
-    context "when schema has specifies defaults on a per-attribute level" do
-      let(:schema_hash) do
+    context "when type_declaration specifies defaults on a per-attribute level" do
+      let(:type_declaration) do
         {
           type: :attributes,
-          schemas: {
+          attribute_types: {
             a: { type: :integer  },
             b: { type: :integer, default: 1 },
             c: { type: :integer, default: "2" }
@@ -57,11 +58,11 @@ RSpec.describe Foobara::Model::Schema::Concerns::TypeBuilding do
   end
 
   describe "required attributes" do
-    context "when schema has top-level required array" do
-      let(:schema_hash) do
+    context "when type_declaration has top-level required array" do
+      let(:type_declaration) do
         {
           type: :attributes,
-          schemas: {
+          attribute_types: {
             a: :integer,
             b: :integer,
             c: :integer
@@ -107,11 +108,11 @@ RSpec.describe Foobara::Model::Schema::Concerns::TypeBuilding do
       end
     end
 
-    context "when schema has per-attribute required flag" do
-      let(:schema_hash) do
+    context "when type_declaration has per-attribute required flag" do
+      let(:type_declaration) do
         {
           type: :attributes,
-          schemas: {
+          attribute_types: {
             a: { type: :integer, required: true },
             b: { type: :integer, required: false },
             c: { type: :integer, required: true }

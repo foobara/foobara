@@ -1,3 +1,4 @@
+=begin
 module Foobara
   class Model
     class Schema
@@ -120,3 +121,4 @@ module Foobara
     end
   end
 end
+=end

@@ -1,6 +1,6 @@
 module Foobara
   module Types
-    class Type < Value::Processor
+    class Type < Value::Processor::Pipeline
       module Concerns
         # What do we actually need here?
         # we need a way to associate a type with a collection of supported processors.
