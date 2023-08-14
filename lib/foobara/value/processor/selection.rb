@@ -1,7 +1,7 @@
 module Foobara
   module Value
     class Processor
-      class Selection < Pipeline
+      class Selection < Multi
         class NoApplicableProcessorError < Foobara::Error
           class << self
             def context_schema
@@ -31,10 +31,6 @@ module Foobara
           else
             process(outcome.result)
           end
-        end
-
-        def register(processor)
-          processors << processor
         end
 
         def process(value)

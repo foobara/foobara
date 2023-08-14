@@ -27,7 +27,7 @@ module Foobara
       )
         self.desugarizers = Array.wrap(desugarizers)
         self.type_declaration_validators = Array.wrap(type_declaration_validators)
-        self.to_type_transformers = Array.wrap(to_type_transformers)
+        self.to_type_transformers = Array.wrap(to_type_transformers) # why would we need multiple??
 
         super(*args, **opts)
       end
