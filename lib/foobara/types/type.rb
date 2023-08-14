@@ -1,8 +1,7 @@
 module Foobara
   module Types
     # TODO: move casting interface to here?
-    class Type < Value::Processor
-      include Value::Processor::Pipeline::Methods
+    class Type < Value::Processor::Pipeline
       include Concerns::SupportedProcessorRegistration
 
       class << self
@@ -70,12 +69,6 @@ module Foobara
       end
 
       attr_accessor :base_type, :casters, :value_transformers, :value_validators
-
-      def possible_errors
-        # :nocov:
-        raise "subclass responsibility"
-        # :nocov:
-      end
 
       def processors
         [

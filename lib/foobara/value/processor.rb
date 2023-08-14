@@ -21,6 +21,10 @@ module Foobara
         def symbol
           @symbol ||= name.gsub(/(Processor|Transformer|Validator)$/, "").underscore
         end
+
+        def declaration_data_type
+          :duck
+        end
       end
 
       attr_accessor :declaration_data, :declaration_data_given
@@ -40,6 +44,8 @@ module Foobara
 
       delegate :error_class,
                :error_classes,
+               :symbol,
+               :declaration_data_type,
                to: :class
 
       # TODO: this is a problem or an indicator we need to couple Type and Schema.
