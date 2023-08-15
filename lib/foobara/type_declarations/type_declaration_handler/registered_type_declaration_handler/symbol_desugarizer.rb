@@ -2,7 +2,7 @@ require "foobara/type_declarations/desugarizer"
 
 module Foobara
   module TypeDeclarations
-    class TypeDeclarationHandler < Value::Processor::Pipeline::Pipeline
+    class TypeDeclarationHandler < Value::Processor::Pipeline
       class RegisteredTypeDeclarationHandler < TypeDeclarationHandler
         # TODO: make a quick way to convert a couple simple procs into a transformer
         class SymbolDesugarizer < TypeDeclarations::Desugarizer

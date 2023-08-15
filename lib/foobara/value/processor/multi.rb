@@ -29,6 +29,14 @@ module Foobara
         def register(processor)
           processors << processor
         end
+
+        def process_outcome(old_outcome)
+          raise "subclass responsibility"
+        end
+
+        def process(value)
+          process_outcome(Outcome.success(value))
+        end
       end
     end
   end

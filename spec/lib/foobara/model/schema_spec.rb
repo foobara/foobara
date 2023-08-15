@@ -1,17 +1,19 @@
 RSpec.describe Foobara::TypeDeclarations::TypeDeclarationHandlerRegistry do
   describe "global.schema_for" do
-    subject { schema }
+    subject { type }
 
     context "with nothing but a primitive type" do
-      let(:type) { described_class::Registry.global.schema_for({ type: }) }
+      let(:type_declaration_registry) { Foobara::TypeDeclarations.global_type_declaration_handler_registry }
+      let(:type) { type_declaration_registry.type_for(type: type_symbol) }
 
       context "with a valid type" do
-        let(:type) { :integer }
+        let(:type_symbol) { :integer }
 
         it { is_expected.to be_valid }
 
-        it "has the correct type", :focus do
-          expect(schema.type).to eq(type)
+        it "has the correct type" do
+          expect(type).to be_a(Foobara::Types::Type)
+          expect(type).to be(Foobara::BuiltinTypes[type_symbol])
         end
 
         context "when using sugar syntax" do

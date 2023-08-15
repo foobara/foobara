@@ -9,12 +9,12 @@ module Foobara
         true
       end
 
-      def type_declaration_handler_for(value)
-        processor_for(value)
+      def type_declaration_handler_for(type_declaration)
+        processor_for!(type_declaration)
       end
 
-      def type_declaration_handler_for!(value)
-        processor_for!(value)
+      def type_for(type_declaration)
+        process!(type_declaration)
       end
     end
   end

@@ -63,6 +63,7 @@ module Foobara
           if error
             Outcome.error(error)
           else
+            processor = applicable_processors.first
             Outcome.success(processor)
           end
         end
