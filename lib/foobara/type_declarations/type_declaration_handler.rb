@@ -22,16 +22,20 @@ module Foobara
 
       def initialize(
         *args,
-        to_type_transformers:,
+        to_type_transformers:, processors: nil,
         desugarizers: [],
         type_declaration_validators: [],
         **opts
       )
+        if processors.present?
+          raise ArgumentError, "Cannot set processors directly for a type declaration handler"
+        end
+
         self.desugarizers = Array.wrap(desugarizers)
         self.type_declaration_validators = Array.wrap(type_declaration_validators)
         self.to_type_transformers = Array.wrap(to_type_transformers) # why would we need multiple??
 
-        super(*args, **opts)
+        super(*Util.args_and_opts_to_args(args, opts))
       end
 
       def applicable?(sugary_type_declaration)

@@ -11,13 +11,25 @@ module Foobara
     #   transform into Type instance
     # So... sugary type declaration value in, type out
     class TypeDeclarationHandler < Value::Processor::Pipeline
-      class BuiltinAtomTypeDeclarationExtensionHandler < RegisteredTypeDeclarationHandler
-        def initialize(*args, **opts)
+      class ExtendRegisteredTypeDeclarationHandler < RegisteredTypeDeclarationHandler
+        attr_accessor :supported_processors_to_apply
+
+        def initialize(
+          *args,
+          desugarizers: SymbolDesugarizer.new(true),
+          type_declaration_validators: [],
+          to_type_transformer: ToTypeTransformer.new(true),
+          processors: [],
+          **supported_processors_to_apply
+        )
+          self.supported_processors_to_apply = supported_processors_to_apply
+
           super(
-            *args,
-            desugarizers: SymbolDesugarizer.new(true),
-            to_type_transformer: ToTypeTransformer.new(true),
-            **opts
+            *args, # TODO: would we like to consider the processors to apply as part of the declaration_data?
+            desugarizers:,
+            to_type_transformer:,
+            type_declaration_validators:,
+            processors:
           )
         end
 

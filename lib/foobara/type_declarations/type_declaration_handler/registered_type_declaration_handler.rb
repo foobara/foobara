@@ -12,12 +12,20 @@ module Foobara
     # So... sugary type declaration value in, type out
     class TypeDeclarationHandler < Value::Processor::Pipeline
       class RegisteredTypeDeclarationHandler < TypeDeclarationHandler
-        def initialize(*args, **opts)
+        def initialize(
+          *args,
+          type_declaration_validators: [],
+          processors: [],
+          desugarizers: SymbolDesugarizer.new(true),
+          to_type_transformers: ToTypeTransformer.new(true),
+          **opts
+        )
           super(
-            *args,
-            desugarizers: SymbolDesugarizer.new(true),
-            to_type_transformers: ToTypeTransformer.new(true),
-            **opts
+            *Util.args_and_opts_to_args(args, opts),
+            type_declaration_validators:,
+            processors:,
+            desugarizers:,
+            to_type_transformers:
           )
         end
 
