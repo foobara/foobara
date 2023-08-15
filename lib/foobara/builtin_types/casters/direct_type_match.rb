@@ -5,8 +5,9 @@ module Foobara
       class DirectTypeMatch < Value::Caster
         attr_accessor :ruby_classes
 
-        def initialize(ruby_classes:)
+        def initialize(*args, ruby_classes:)
           self.ruby_classes = ::Array.wrap(ruby_classes)
+          super(*args)
         end
 
         def applicable?(value)

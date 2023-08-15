@@ -1,29 +1,24 @@
+require "foobara/builtin_types/casters/direct_type_match"
+
 module Foobara
   module BuiltinTypes
-    module Attributes
+    module AssociativeArray
       module Casters
-        class Hash < Value::Caster
+        class Hash < BuiltinTypes::Casters::DirectTypeMatch
+          def initialize(*args)
+            super(*args, ruby_classes: ::Hash)
+          end
+
           def applicable?(value)
-            value.is_a?(::Hash) && value.keys.all? { |key| key.is_a?(::Symbol) || key.is_a?(String) }
+            value.is_a?(::Hash)
           end
 
           def applies_message
-            "be a hash with symbolizable keys"
+            "be a hash"
           end
 
           def cast(hash)
-            keys = hash.keys
-            non_symbolic_keys = keys.reject { |key| key.is_a?(::Symbol) }
-
-            if non_symbolic_keys.empty?
-              hash
-            else
-              hash.symbolize_keys
-            end
-          end
-
-          def type_symbol
-            :attributes
+            hash
           end
         end
       end

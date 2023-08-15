@@ -5,8 +5,8 @@ module Foobara
     module Duck
       module Casters
         class Object < BuiltinTypes::Casters::DirectTypeMatch
-          def initialize
-            super(ruby_classes: ::Object)
+          def initialize(*args)
+            super(*args, ruby_classes: ::Object)
           end
         end
       end

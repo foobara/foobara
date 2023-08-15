@@ -5,8 +5,8 @@ module Foobara
     module Integer
       module Casters
         class Integer < BuiltinTypes::Casters::DirectTypeMatch
-          def initialize
-            super(ruby_classes: ::Integer)
+          def initialize(*args)
+            super(*args, ruby_classes: ::Integer)
           end
         end
       end
