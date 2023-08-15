@@ -18,28 +18,28 @@ module Foobara
 
         number = build_and_register_from_modules(:number, atomic_duck)
         integer = build_and_register_from_modules(:integer, number)
-        build_and_register_from_modules(:big_integer, integer)
-        float = build_and_register_from_modules(:float, number)
-        build_and_register_from_modules(:big_decimal, float)
-        string = build_and_register_from_modules(:string, atomic_duck)
-        build_and_register_from_modules(:datetime, atomic_duck)
-        build_and_register_from_modules(:date, atomic_duck)
-        build_and_register_from_modules(:boolean, atomic_duck)
+        # build_and_register_from_modules(:big_integer, integer)
+        # float = build_and_register_from_modules(:float, number)
+        # build_and_register_from_modules(:big_decimal, float)
+        # string = build_and_register_from_modules(:string, atomic_duck)
+        # build_and_register_from_modules(:datetime, atomic_duck)
+        # build_and_register_from_modules(:date, atomic_duck)
+        # build_and_register_from_modules(:boolean, atomic_duck)
 
-        email = build_and_register_from_modules(:email, string)
-        phone_number = build_and_register_from_modules(:phone_number, string)
+        # email = build_and_register_from_modules(:email, string)
+        # phone_number = build_and_register_from_modules(:phone_number, string)
 
         structured_duck = build_and_register_from_modules(:structured_duck)
 
         array = build_and_register_from_modules(:array, structured_duck)
-        tuple = build_and_register_from_modules(:tuple, array)
+        # tuple = build_and_register_from_modules(:tuple, array)
         associative_array = build_and_register_from_modules(:associative_array, array)
         attributes = build_and_register_from_modules(:attributes, associative_array)
-        model = build_and_register_from_modules(:model, attributes)
-        entity = build_and_register_from_modules(:entity, model)
+        # model = build_and_register_from_modules(:model, attributes)
+        # entity = build_and_register_from_modules(:entity, model)
 
-        address = build_and_register_from_modules(:address, model)
-        us_address = build_and_register_from_modules(:us_address, model)
+        # address = build_and_register_from_modules(:address, model)
+        # us_address = build_and_register_from_modules(:us_address, model)
       end
 
       def build_and_register_from_modules(type_symbol, base_type = root_type)

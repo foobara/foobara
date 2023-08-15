@@ -2,15 +2,15 @@ require "foobara/types/validator_error"
 
 module Foobara
   module BuiltinTypes
-    module Integer
+    module Number
       module Validators
         class BelowMinimum < Foobara::Value::Validator
           class Error < Foobara::Types::ValidatorError
             class << self
               def context_schema
                 {
-                  value: :integer,
-                  min: :integer
+                  value: :number,
+                  min: :number
                 }
               end
             end
@@ -18,11 +18,12 @@ module Foobara
 
           class << self
             def symbol
+              # TODO: derive this symbol from the class instead...
               :min
             end
 
             def data_schema
-              :integer
+              :number
             end
           end
 
