@@ -14,7 +14,7 @@ module Foobara
       end
     end
 
-    register_type_declaration(RegisteredTypeDeclarationHandler.new)
+    register_type_declaration(TypeDeclarationHandler::RegisteredTypeDeclarationHandler.new)
   end
 end
 

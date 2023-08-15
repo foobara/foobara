@@ -2,7 +2,7 @@ module Foobara
   module BuiltinTypes
     class << self
       def global_registry
-        @global_registry ||= Registry.new
+        @global_registry ||= Types::Registry.new
       end
 
       delegate :[], :[]=, :registered?, :root_type, :root_type=, to: :global_registry
@@ -80,5 +80,7 @@ module Foobara
         type
       end
     end
+
+    build_and_register_all_builtins!
   end
 end

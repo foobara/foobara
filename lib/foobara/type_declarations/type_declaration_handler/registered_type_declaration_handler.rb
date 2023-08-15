@@ -16,7 +16,7 @@ module Foobara
           super(
             *args,
             desugarizers: SymbolDesugarizer.new(true),
-            to_type_transformer: ToTypeTransformer.new(true),
+            to_type_transformers: ToTypeTransformer.new(true),
             **opts
           )
         end
