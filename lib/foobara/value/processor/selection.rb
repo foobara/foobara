@@ -35,6 +35,7 @@ module Foobara
           end
         end
 
+        # TODO: move applies_message usage here from casting processor
         def process(value)
           applicable_processors = processors.select { |processor| processor.applicable?(value) }
 

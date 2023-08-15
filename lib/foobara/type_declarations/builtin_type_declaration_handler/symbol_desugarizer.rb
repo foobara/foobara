@@ -1,7 +1,7 @@
 module Foobara
   module Types
-    class TypeDeclarationHandler < Value::Processor
-      class BuiltinAtomTypeDeclarationHandler < TypeDeclarationHandler
+    class TypeDeclarationHandler < Value::Pipeline
+      class RegisteredTypeDeclarationHandler < TypeDeclarationHandler
         # TODO: make a quick way to convert a couple simple procs into a transformer
         class SymbolDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(sugary_type_declaration)
