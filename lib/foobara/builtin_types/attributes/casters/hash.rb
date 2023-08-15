@@ -1,7 +1,7 @@
 module Foobara
-  module Types
-    module Casters
-      module Attributes
+  module BuiltinTypes
+    module Attributes
+      module Casters
         class Hash < Value::Caster
           include Singleton
 

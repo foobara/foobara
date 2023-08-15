@@ -1,7 +1,7 @@
 module Foobara
-  module Types
-    module Validators
-      module Attributes
+  module BuiltinTypes
+    module Attributes
+      module Validators
         class UnexpectedAttributes < Value::Validator
           class Error < Foobara::Value::AttributeError
             class << self

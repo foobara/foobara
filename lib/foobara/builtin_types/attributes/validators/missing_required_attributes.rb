@@ -1,9 +1,9 @@
 require "foobara/types/validator_error"
 
 module Foobara
-  module Types
-    module Validators
-      module Attributes
+  module BuiltinTypes
+    module Attributes
+      module Validators
         class MissingRequiredAttributes < Foobara::Value::Validator
           class Error < Foobara::Types::ValidatorError
             class << self

@@ -1,6 +1,7 @@
 require "foobara/value/transformer"
 
 module Foobara
+  # TODO: fix all this stuff
   module Types
     module Transformers
       module Attributes

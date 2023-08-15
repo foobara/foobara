@@ -1,9 +1,8 @@
 require "foobara/types/atom_type"
 
 module Foobara
-  module Types
     module BuiltinTypes
-      class AttributesType < AssociativeArrayType
+      module Attributes
         class AttributesProcessor < Value::Processor
           def children_types
             declaration_data

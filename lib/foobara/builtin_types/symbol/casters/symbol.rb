@@ -1,9 +1,9 @@
 require "foobara/value/caster"
 
 module Foobara
-  module Types
-    module Casters
-      module Symbol
+  module BuiltinTypes
+    module Symbol
+      module Casters
         class Symbol < Types::Casters::DirectTypeMatch
           include Singleton
 

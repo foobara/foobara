@@ -1,5 +1,6 @@
 module Foobara
-  module Types
+  # Can this live in another project?
+  module BuiltinTypes
     module Casters
       class DirectTypeMatch < Value::Caster
         attr_accessor :ruby_classes, :type_symbol

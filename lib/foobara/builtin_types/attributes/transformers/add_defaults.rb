@@ -1,7 +1,7 @@
 module Foobara
-  module Types
-    module Transformers
-      module Attributes
+  module BuiltinTypes
+    module Attributes
+      module Transformers
         class AddDefaults < Value::Transformer
           class << self
             # TODO: have convention of grabbing this from the class name instead

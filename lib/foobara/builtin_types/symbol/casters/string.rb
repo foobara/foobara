@@ -1,9 +1,9 @@
 require "foobara/value/caster"
 
 module Foobara
-  module Types
-    module Casters
-      module Symbol
+  module BuiltinTypes
+    module Symbol
+      module Casters
         class String < Value::Caster
           include Singleton
 

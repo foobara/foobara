@@ -2,9 +2,9 @@ require "foobara/value/validator"
 require "foobara/types/validator_error"
 
 module Foobara
-  module Types
-    module Validators
-      module Integer
+  module BuiltinTypes
+    module Integer
+      module Validators
         class MaxExceeded < Foobara::Value::Validator
           class Error < Foobara::Types::ValidatorError
             class << self
