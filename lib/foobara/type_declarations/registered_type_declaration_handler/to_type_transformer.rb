@@ -1,7 +1,7 @@
 module Foobara
   module Types
-    class TypeDeclarationHandler < Value::Processor
-      class BuiltinAtomTypeDeclarationHandler < TypeDeclarationHandler
+    class TypeDeclarationHandler < Value::Processor::Pipeline
+      class RegisteredTypeDeclarationHandler < TypeDeclarationHandler
         # TODO: make a quick way to convert a couple simple procs into a transformer
         class ToTypeTransformer < Value::Transformer
           def transform(strict_type_declaration)

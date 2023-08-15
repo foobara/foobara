@@ -10,7 +10,7 @@ module Foobara
     #   validate declaration value
     #   transform into Type instance
     # So... sugary type declaration value in, type out
-    class TypeDeclarationHandler < Value::Processor
+    class TypeDeclarationHandler < Value::Processor::Pipeline
       class RegisteredTypeDeclarationHandler < TypeDeclarationHandler
         def initialize(*args, **opts)
           super(
