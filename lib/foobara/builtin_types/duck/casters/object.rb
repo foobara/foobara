@@ -6,7 +6,7 @@ module Foobara
       module Casters
         class Object < BuiltinTypes::Casters::DirectTypeMatch
           def initialize
-            super(type_symbol: :duck, ruby_classes: ::Object)
+            super(ruby_classes: ::Object)
           end
         end
       end

@@ -51,9 +51,16 @@ module Foobara
 
         def error_context(value)
           {
-            cast_to: casters.first.type_symbol,
+            cast_to:,
             value:
           }
+        end
+
+        def cast_to
+          # TODO: isn't there a way to declare declaration_data_type so we don't have to validate here??
+          raise "Missing cast_to" unless declaration_data.key?(:cast_to)
+
+          declaration_data[:cast_to]
         end
 
         def process(value)

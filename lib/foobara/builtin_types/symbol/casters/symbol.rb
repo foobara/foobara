@@ -6,7 +6,7 @@ module Foobara
       module Casters
         class Symbol < BuiltinTypes::Casters::DirectTypeMatch
           def initialize
-            super(type_symbol: :symbol, ruby_classes: ::Symbol)
+            super(ruby_classes: ::Symbol)
           end
         end
       end

@@ -6,7 +6,7 @@ module Foobara
       module Casters
         class Integer < BuiltinTypes::Casters::DirectTypeMatch
           def initialize
-            super(type_symbol: :integer, ruby_classes: ::Integer)
+            super(ruby_classes: ::Integer)
           end
         end
       end

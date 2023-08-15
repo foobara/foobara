@@ -3,11 +3,9 @@ module Foobara
   module BuiltinTypes
     module Casters
       class DirectTypeMatch < Value::Caster
-        attr_accessor :ruby_classes, :type_symbol
+        attr_accessor :ruby_classes
 
-        def initialize(type_symbol:, ruby_classes:)
-          super()
-          self.type_symbol = type_symbol
+        def initialize(ruby_classes:)
           self.ruby_classes = ::Array.wrap(ruby_classes)
         end
 

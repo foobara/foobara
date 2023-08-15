@@ -92,7 +92,7 @@ RSpec.describe "custom types" do
         define_method :casters do
           [
             custom_caster,
-            Foobara::Types::Casters::DirectTypeMatch.new(type_symbol: :complex, ruby_classes: klass)
+            Foobara::Types::Casters::DirectTypeMatch.new(ruby_classes: klass)
           ]
         end
       end
