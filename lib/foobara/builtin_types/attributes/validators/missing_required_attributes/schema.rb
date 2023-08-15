@@ -8,7 +8,7 @@ module Foobara
             module Desugarizer
               class << self
                 def call(rawish_schema)
-                  required_attributes = Array.wrap(rawish_schema[:required])
+                  required_attributes = ::Array.wrap(rawish_schema[:required])
 
                   schemas = rawish_schema[:schemas]
                   schemas.each_pair do |attribute_name, attribute_schema|

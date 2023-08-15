@@ -39,7 +39,7 @@ Duck
     Datetime
     Date
     Boolean
-  StructuredDuck
+  Duckture
     Array
       Tuple
       AssociativeArray
@@ -62,7 +62,7 @@ Duck (RegisteredTypeExtensionTypeDeclarationHandler)
     Datetime (RegisteredTypeExtensionTypeDeclarationHandler)
     Date (RegisteredTypeExtensionTypeDeclarationHandler)
     Boolean (RegisteredTypeExtensionTypeDeclarationHandler)
-  StructuredDuck (N/A)
+  Duckture (N/A)
     Array (hmmmm we need an element processor initialized with the element type...)
       Tuple (hmmmm we need an element processor initialized with the elements type...)
       AssociativeArray (hmmmm we need an element processor initialized with the key type and the value type...)

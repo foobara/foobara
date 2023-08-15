@@ -8,7 +8,7 @@ module Foobara
         def initialize(type_symbol:, ruby_classes:)
           super()
           self.type_symbol = type_symbol
-          self.ruby_classes = Array.wrap(ruby_classes)
+          self.ruby_classes = ::Array.wrap(ruby_classes)
         end
 
         def applicable?(value)

@@ -29,9 +29,9 @@ module Foobara
         # email = build_and_register_from_modules(:email, string)
         # phone_number = build_and_register_from_modules(:phone_number, string)
 
-        structured_duck = build_and_register_from_modules(:structured_duck)
+        duckture = build_and_register_from_modules(:duckture)
 
-        array = build_and_register_from_modules(:array, structured_duck)
+        array = build_and_register_from_modules(:array, duckture)
         # tuple = build_and_register_from_modules(:tuple, array)
         associative_array = build_and_register_from_modules(:associative_array, array)
         attributes = build_and_register_from_modules(:attributes, associative_array)
@@ -53,7 +53,7 @@ module Foobara
       def build_from_modules(type_symbol, base_type = root_type)
         module_symbol = type_symbol.to_s.camelize.to_sym
 
-        builtin_type_module = const_get(module_symbol)
+        builtin_type_module = const_get(module_symbol, false)
 
         load_processors_classes = ->(module_name, extends = Class) {
           mod = Util.constant_value(builtin_type_module, module_name)
