@@ -1,3 +1,5 @@
+require "foobara/type_declarations/desugarizer"
+
 module Foobara
   module TypeDeclarations
     class TypeDeclarationHandler < Value::Processor::Pipeline::Pipeline

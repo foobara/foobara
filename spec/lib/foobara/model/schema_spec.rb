@@ -1,16 +1,16 @@
-RSpec.describe Foobara::Model::Schema do
-  describe "::Registry.global.schema_for" do
+RSpec.describe Foobara::TypeDeclarations::TypeDeclarationHandlerRegistry do
+  describe "global.schema_for" do
     subject { schema }
 
     context "with nothing but a primitive type" do
-      let(:schema) { described_class::Registry.global.schema_for({ type: }) }
+      let(:type) { described_class::Registry.global.schema_for({ type: }) }
 
       context "with a valid type" do
         let(:type) { :integer }
 
         it { is_expected.to be_valid }
 
-        it "has the correct type" do
+        it "has the correct type", :focus do
           expect(schema.type).to eq(type)
         end
 

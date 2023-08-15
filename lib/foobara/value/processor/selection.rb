@@ -37,6 +37,17 @@ module Foobara
 
         # TODO: move applies_message usage here from casting processor
         def process(value)
+          outcome = processor_for(value)
+
+          if outcome.success?
+            processor = outcome.result
+            outcome = processor.process(value)
+          end
+
+          outcome
+        end
+
+        def processor_for(value)
           applicable_processors = processors.select { |processor| processor.applicable?(value) }
 
           error = if applicable_processors.empty?
@@ -52,9 +63,14 @@ module Foobara
           if error
             Outcome.error(error)
           else
-            processor = applicable_processors.first
-            processor.process(value)
+            Outcome.success(processor)
           end
+        end
+
+        def processor_for!(value)
+          outcome = processor_for(value)
+
+          outcome.success? ? outcome.result : outcome.raise!
         end
 
         def always_applicable?

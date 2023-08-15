@@ -1,3 +1,5 @@
+require "foobara/type_declarations/concerns/type_building"
+
 module Foobara
   module TypeDeclarations
     # This will replace Schema...

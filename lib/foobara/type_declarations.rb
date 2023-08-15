@@ -2,6 +2,22 @@ require "active_support/core_ext/object/deep_dup"
 
 Foobara::Util.require_directory("#{__dir__}/type_declarations")
 
+module Foobara
+  module TypeDeclarations
+    class << self
+      def global_type_declaration_handler_registry
+        @global_type_declaration_handler_registry ||= TypeDeclarationHandlerRegistry.new
+      end
+
+      def register_type_declaration(type_declaration_handler)
+        global_type_declaration_handler_registry.register(type_declaration_handler)
+      end
+    end
+
+    register_type_declaration(RegisteredTypeDeclarationHandler.new)
+  end
+end
+
 =begin
 how many handlers do we need??
 

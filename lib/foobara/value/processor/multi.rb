@@ -4,7 +4,7 @@ module Foobara
       class Multi < Processor
         attr_accessor :processors
 
-        def initialize(*args, processors:)
+        def initialize(*args, processors: [])
           self.processors = processors
           super(*args)
         end
