@@ -1,5 +1,5 @@
 module Foobara
-  module Types
+  module TypeDeclarations
     class TypeDeclarationHandler < Value::Processor::Pipeline::Pipeline
       class RegisteredTypeDeclarationHandler < TypeDeclarationHandler
         # TODO: make a quick way to convert a couple simple procs into a transformer

@@ -1,5 +1,5 @@
 module Foobara
-  module Types
+  module TypeDeclarations
     class TypeDeclarationHandlerRegistry < Value::SelectionProcessor
       def applicable?(_value)
         true

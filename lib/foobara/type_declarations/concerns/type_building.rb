@@ -1,5 +1,5 @@
 module Foobara
-  module Types
+  module TypeDeclarations
     class TypeDeclarationHandler < Value::Processor::Pipeline
       module Concerns
         module TypeBuilding
@@ -9,7 +9,7 @@ module Foobara
             declaration_data = to_h
 
             # TODO: A little nervous to pass declaration data here... is that really necessary?
-            Types::AtomType.new(declaration_data, **to_type_args)
+            Type.new(declaration_data, **to_type_args)
           end
 
           def to_type_args
@@ -23,7 +23,7 @@ module Foobara
           def casters
             type_module_name = type.to_s.camelize.to_sym
 
-            casters_module = Util.constant_value(Types::Casters, type_module_name)
+            casters_module = Util.constant_value(BuiltinTypes::Casters, type_module_name)
             casters = Util.constant_values(casters_module, is_a: Class)
 
             direct_caster = casters.find { |caster| caster.name.to_sym == type_module_name }

@@ -1,5 +1,5 @@
 module Foobara
-  module Types
+  module TypeDeclarations
     # This will replace Schema...
     # This is like Type
     # Instead of casters/transformers we have can_handle? and desugarizers
