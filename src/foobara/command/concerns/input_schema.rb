@@ -7,6 +7,7 @@ module Foobara
         class_methods do
           def input_schema(*args)
             if args.empty?
+              # TODO: rename to input_type or something like that
               return @input_schema if defined?(@input_schema)
 
               @input_schema = if superclass < Foobara::Command
@@ -16,18 +17,7 @@ module Foobara
               # TODO: raise argument error if more than one argument given
               raw_input_schema = args.first
 
-              # TODO: need to pass in schema registries here
-              @input_schema = Foobara::Model::Schemas::Attributes.new(raw_input_schema)
-
-              errors = if input_schema.has_errors?
-                         input_schema.errors
-                       else
-                         input_schema.schema_validation_errors
-                       end
-
-              if errors.present?
-                raise "Schema is not valid!! #{errors.map(&:message).join(", ")}"
-              end
+              @input_schema = type_declaration_handler_registry.type_for(raw_input_schema)
 
               register_possible_errors
 
