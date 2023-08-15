@@ -1,12 +1,10 @@
-require "foobara/value/caster"
+require "foobara/builtin_types/casters/direct_type_match"
 
 module Foobara
   module BuiltinTypes
     module Integer
       module Casters
-        class Integer < Types::Casters::DirectTypeMatch
-          include Singleton
-
+        class Integer < BuiltinTypes::Casters::DirectTypeMatch
           def initialize
             super(type_symbol: :integer, ruby_classes: ::Integer)
           end

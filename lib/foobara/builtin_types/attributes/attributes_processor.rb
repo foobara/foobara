@@ -1,55 +1,52 @@
-require "foobara/types/atom_type"
-
 module Foobara
-    module BuiltinTypes
-      module Attributes
-        class AttributesProcessor < Value::Processor
-          def children_types
-            declaration_data
-          end
+  module BuiltinTypes
+    module Attributes
+      class AttributesProcessor < Value::Processor
+        def children_types
+          declaration_data
+        end
 
-          def process(attributes_hash)
-            return Outcome.success(attributes_hash) unless applicable?(attributes_hash)
+        def process(attributes_hash)
+          return Outcome.success(attributes_hash) unless applicable?(attributes_hash)
 
-            errors = []
+          errors = []
 
-            attributes_hash.each_pair do |attribute_name, attribute_value|
-              attribute_type = children_types[attribute_name]
-              attribute_outcome = attribute_type.process(attribute_value)
+          attributes_hash.each_pair do |attribute_name, attribute_value|
+            attribute_type = children_types[attribute_name]
+            attribute_outcome = attribute_type.process(attribute_value)
 
-              if attribute_outcome.success?
-                attributes_hash[attribute_name] = attribute_outcome.result
-              else
-                attribute_outcome.each_error do |error|
-                  error.path = [attribute_name, *error.path]
+            if attribute_outcome.success?
+              attributes_hash[attribute_name] = attribute_outcome.result
+            else
+              attribute_outcome.each_error do |error|
+                error.path = [attribute_name, *error.path]
 
-                  errors << error
-                end
+                errors << error
               end
             end
-
-            Outcome.new(result: attributes_hash, errors:)
           end
 
-          def possible_errors
-            possibilities = []
+          Outcome.new(result: attributes_hash, errors:)
+        end
 
-            children_types.each_pair do |attribute_name, attribute_type|
-              attribute_type.possible_errors.each do |possible_error|
-                path = possible_error[0]
-                symbol = possible_error[1]
-                error_type = possible_error[2]
+        def possible_errors
+          possibilities = []
 
-                possibilities << [
-                  [attribute_name, *path],
-                  symbol,
-                  error_type
-                ]
-              end
+          children_types.each_pair do |attribute_name, attribute_type|
+            attribute_type.possible_errors.each do |possible_error|
+              path = possible_error[0]
+              symbol = possible_error[1]
+              error_type = possible_error[2]
+
+              possibilities << [
+                [attribute_name, *path],
+                symbol,
+                error_type
+              ]
             end
-
-            possibilities
           end
+
+          possibilities
         end
       end
     end

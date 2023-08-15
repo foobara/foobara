@@ -49,22 +49,22 @@ module Foobara
       # max (integer validation at attribute level)
       # matches (string against a regex)
 
-      attr_accessor :base_type, :casters, :value_transformers, :value_validators, :element_processors, :structure_size
+      attr_accessor :base_type, :casters, :transformers, :validators, :element_processors, :structure_size
 
       def initialize(
         *args,
         base_type: self.class.root_type,
         casters: [],
-        value_transformers: [],
-        value_validators: [],
+        transformers: [],
+        validators: [],
         element_processors: nil,
         structure_size: nil,
         **opts
       )
         self.base_type = base_type
         self.casters = Array.wrap(casters)
-        self.value_transformers = value_transformers
-        self.value_validators = value_validators
+        self.transformers = transformers
+        self.validators = validators
         self.element_processors = element_processors
         self.structure_size = structure_size
 
@@ -85,7 +85,7 @@ module Foobara
       end
 
       def value_caster
-        @value_caster ||= Value::CastingProcessor.new(casters:)
+        @value_caster ||= Value::Processor::Casting.new(casters:)
       end
 
       def cast(value)
@@ -97,16 +97,16 @@ module Foobara
       end
 
       def value_transformer
-        if value_transformers.present?
+        if transformers.present?
           # TODO: create Transformer::Pipeline. Or not? yagni?
-          @value_transformer ||= Value::Processor::Pipeline.new(processors: value_transformers)
+          @value_transformer ||= Value::Processor::Pipeline.new(processors: transformers)
         end
       end
 
       def value_validator
-        if value_validators.present?
+        if validators.present?
           # TODO: create Validator::Pipeline
-          @value_validator ||= Value::Processor::Pipeline.new(processors: value_validators)
+          @value_validator ||= Value::Processor::Pipeline.new(processors: validators)
         end
       end
 

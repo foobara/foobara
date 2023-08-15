@@ -1,3 +1,5 @@
+Foobara::Util.require_directory("#{__dir__}/builtin_types")
+
 module Foobara
   module BuiltinTypes
     class << self
@@ -53,14 +55,20 @@ module Foobara
 
         builtin_type_module = const_get(module_symbol)
 
-        load_processors = ->(symbol, module_name: "#{symbol}s", extends: Value.const_get(symbol)) {
-          Util.constant_values(builtin_type_module.const_get(module_name), extends:).map(&:instance)
+        load_processors_classes = ->(module_name, extends = Class) {
+          mod = Util.constant_value(builtin_type_module, module_name)
+
+          mod ? Util.constant_values(mod, extends:) : []
         }
 
-        desugarizer = TypeDeclarations::RegisteredTypeDeclarationHandler::SymbolDesugarizer.instance
-        declaration_data = desugarizer.transform(type_symbol)
+        load_processors = ->(symbol, module_name: "#{symbol}s", extends: Value.const_get(symbol)) {
+          load_processors_classes.call(module_name, extends).map(&:instance)
+        }
 
-        type = Type.new(
+        desugarizer = TypeDeclarations::TypeDeclarationHandler::RegisteredTypeDeclarationHandler::SymbolDesugarizer
+        declaration_data = desugarizer.instance.transform(type_symbol)
+
+        type = Foobara::Types::Type.new(
           declaration_data,
           base_type:,
           casters: load_processors.call(:Caster),
@@ -69,10 +77,8 @@ module Foobara
         )
 
         # what about desugarizers and schema validators?? I guess those live with the TypeDeclaration instead?
-        %i[SupportedTransformers SupportedValidators SupportedProcessors].each do |module_name|
-          supported_processor_module = builtin_type_module.const_get(module_name)
-
-          Util.constant_values(supported_processor_module, extends: Value::Processor).each do |processor_class|
+        %i[SupportedTransformer SupportedValidator SupportedProcessor].each do |module_name|
+          load_processors_classes.call(module_name, Value::Processor).each do |processor_class|
             type.register_supported_processor_class(processor_class)
           end
         end

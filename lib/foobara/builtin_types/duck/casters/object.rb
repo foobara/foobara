@@ -4,9 +4,7 @@ module Foobara
   module BuiltinTypes
     module Duck
       module Casters
-        class Object < Types::Casters::DirectTypeMatch
-          include Singleton
-
+        class Object < BuiltinTypes::Casters::DirectTypeMatch
           def initialize
             super(type_symbol: :duck, ruby_classes: ::Object)
           end

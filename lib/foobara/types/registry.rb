@@ -23,7 +23,7 @@ module Foobara
         registry[symbol]
       end
 
-      def []=(symbol, type)
+      def register(symbol, type)
         if registry.key?(symbol)
           # :nocov:
           raise "#{symbol} was already registered"
@@ -31,6 +31,10 @@ module Foobara
         end
 
         registry[symbol] = type
+      end
+
+      def []=(symbol, type)
+        register(symbol, type)
       end
 
       def registered?(symbol)

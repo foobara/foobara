@@ -15,8 +15,8 @@ module Foobara
           def to_type_args
             {
               casters:,
-              value_transformers:,
-              value_validators:
+              transformers:,
+              validators:
             }
           end
 

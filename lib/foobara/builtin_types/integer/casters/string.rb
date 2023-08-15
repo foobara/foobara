@@ -5,8 +5,6 @@ module Foobara
     module Integer
       module Casters
         class String < Value::Caster
-          include Singleton
-
           INTEGER_REGEX = /^-?\d+$/
 
           def applicable?(value)

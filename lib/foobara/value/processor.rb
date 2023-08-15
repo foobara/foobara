@@ -2,6 +2,11 @@ module Foobara
   module Value
     class Processor
       class << self
+        # NOTE: obviously can't use this convenience method for processors with declaration data
+        def instance
+          @instance ||= new
+        end
+
         def error_classes
           @error_classes ||= Util.constant_values(self, extends: Foobara::Error)
         end

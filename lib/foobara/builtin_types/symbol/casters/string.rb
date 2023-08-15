@@ -5,8 +5,6 @@ module Foobara
     module Symbol
       module Casters
         class String < Value::Caster
-          include Singleton
-
           def applicable?(value)
             value.is_a?(::String)
           end

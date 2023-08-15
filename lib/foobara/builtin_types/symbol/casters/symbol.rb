@@ -4,9 +4,7 @@ module Foobara
   module BuiltinTypes
     module Symbol
       module Casters
-        class Symbol < Types::Casters::DirectTypeMatch
-          include Singleton
-
+        class Symbol < BuiltinTypes::Casters::DirectTypeMatch
           def initialize
             super(type_symbol: :symbol, ruby_classes: ::Symbol)
           end
