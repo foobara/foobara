@@ -10,7 +10,7 @@ module Foobara
         end
 
         def error_classes
-          processors.map(&:error_classes)
+          [*super, processors.map(&:error_classes).flatten]
         end
 
         def applicable?(value)

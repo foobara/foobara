@@ -2,6 +2,7 @@ require "foobara/value/error"
 
 module Foobara
   module Value
+    # TODO: this needs a better name
     class AttributeError < Value::Error
       attr_accessor :path
 
@@ -14,6 +15,7 @@ module Foobara
         end
 
         def context_type
+          # TODO: fix this bad dependency??
           @context_type ||= Model::Schemas::Attributes.new(context_schema).to_type
         end
       end

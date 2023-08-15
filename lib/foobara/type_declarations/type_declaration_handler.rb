@@ -15,7 +15,7 @@ module Foobara
     # TODO: maybe change name to TypeDeclarationProcessor?? That frees up
     # the type declaration value to be known as a type declaration and makes
     # passing it ot the Type maybe a little less awkward.
-    class TypeDeclarationHandler < Value::Processor::Pipeline::Pipeline
+    class TypeDeclarationHandler < Value::Processor::Pipeline
       include Concerns::TypeBuilding
 
       attr_accessor :desugarizers, :type_declaration_validators, :to_type_transformers

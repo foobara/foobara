@@ -1,10 +1,11 @@
 require "foobara/value/processor/multi"
+require "foobara/value/attribute_error"
 
 module Foobara
   module Value
     class Processor
       class Selection < Multi
-        class NoApplicableProcessorError < Foobara::Error
+        class NoApplicableProcessorError < AttributeError
           class << self
             def context_schema
               {
@@ -15,7 +16,7 @@ module Foobara
           end
         end
 
-        class MoreThanOneApplicableProcessorError < Foobara::Error
+        class MoreThanOneApplicableProcessorError < AttributeError
           class << self
             def context_schema
               {
@@ -51,10 +52,11 @@ module Foobara
           applicable_processors = processors.select { |processor| processor.applicable?(value) }
 
           error = if applicable_processors.empty?
-                    build_error(NoApplicableProcessorError)
+                    build_error(value, error_class: NoApplicableProcessorError)
                   elsif applicable_processors.size > 1
                     build_error(
-                      MoreThanOneApplicableProcessorError,
+                      value,
+                      error_class: MoreThanOneApplicableProcessorError,
                       message: "More than one processor applicable for #{value}",
                       context: error_context(value).merge(applicable_processors:)
                     )

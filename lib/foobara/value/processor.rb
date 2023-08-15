@@ -8,7 +8,15 @@ module Foobara
         end
 
         def error_classes
-          @error_classes ||= Util.constant_values(self, extends: Foobara::Error)
+          @error_classes ||= begin
+            error_klasses = Util.constant_values(self, extends: Foobara::Error)
+
+            if superclass < Processor
+              error_klasses += superclass.error_classes
+            end
+
+            error_klasses
+          end
         end
 
         def error_class
@@ -133,7 +141,7 @@ module Foobara
       def build_error(
         value = nil,
         error_class: self.error_class,
-        symbol: error_symbol,
+        symbol: error_class.symbol,
         message: error_message(value),
         context: error_context(value),
         path: error_path,
