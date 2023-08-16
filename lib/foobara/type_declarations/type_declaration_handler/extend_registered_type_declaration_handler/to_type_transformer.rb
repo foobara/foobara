@@ -1,9 +1,10 @@
 require "foobara/type_declarations/type_declaration_handler/registered_type_declaration_handler/to_type_transformer"
+require "foobara/type_declarations/type_declaration_handler/extend_associative_array_type_declaration_handler"
 
 module Foobara
   module TypeDeclarations
     class TypeDeclarationHandler < Value::Processor::Pipeline
-      class ExtendRegisteredTypeDeclarationHandler < RegisteredTypeDeclarationHandler
+      class ExtendAttributesTypeDeclarationHandler < ExtendAssociativeArrayTypeDeclarationHandler
         # TODO: make a quick way to convert a couple simple procs into a transformer
         class ToTypeTransformer < RegisteredTypeDeclarationHandler::ToTypeTransformer
           def transform(strict_type_declaration)

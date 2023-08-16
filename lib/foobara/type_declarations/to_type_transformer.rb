@@ -16,6 +16,10 @@ module Foobara
 
         super(*Util.args_and_opts_to_args(args, opts))
       end
+
+      def always_applicable?
+        true
+      end
     end
   end
 end

@@ -6,7 +6,8 @@ module Foobara
 
         class_methods do
           def inputs_type
-            @inputs_type ||= input_schema.to_type
+            # TODO: eliminate input_schema
+            @inputs_type ||= input_schema
           end
         end
 
