@@ -17,6 +17,8 @@ module Foobara
               # TODO: raise argument error if more than one argument given
               raw_input_schema = args.first
 
+              binding.pry
+
               @input_schema = type_declaration_handler_registry.type_for(raw_input_schema)
 
               register_possible_errors

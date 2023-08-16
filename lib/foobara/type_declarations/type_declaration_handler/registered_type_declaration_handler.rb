@@ -13,12 +13,14 @@ module Foobara
     class TypeDeclarationHandler < Value::Processor::Pipeline
       class RegisteredTypeDeclarationHandler < TypeDeclarationHandler
         def applicable?(sugary_type_declaration)
+          return false unless desugarizer.applicable?(sugary_type_declaration)
+
           strict_type_declaration = desugarize(sugary_type_declaration)
 
           # we only handle case where it's a builtin type not an extension of one
           if strict_type_declaration.keys == [:type]
             type_symbol = strict_type_declaration[:type]
-            BuiltinTypes.registered?(type_symbol)
+            type_declaration_handler_registry.registered?(type_symbol)
           end
         end
       end

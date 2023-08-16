@@ -351,7 +351,7 @@ RSpec.describe "custom types", skip: "only documentation for now" do
       let(:schema_hash) do
         {
           type: :attributes,
-          schemas: {
+          element_type_declarations: {
             n: :integer,
             # not entirely complex since we only support integers for the components for now but whatever
             c: { type: :complex, be_pointless: :true_symbol }
@@ -393,7 +393,7 @@ RSpec.describe "custom types", skip: "only documentation for now" do
       let(:schema_hash) do
         {
           type: :attributes,
-          schemas: {
+          element_type_declarations: {
             n: :integer,
             c: :"x + yi"
           }

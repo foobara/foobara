@@ -49,7 +49,13 @@ module Foobara
       # max (integer validation at attribute level)
       # matches (string against a regex)
 
-      attr_accessor :base_type, :casters, :transformers, :validators, :element_processors, :structure_size
+      attr_accessor :base_type,
+                    :casters,
+                    :transformers,
+                    :validators,
+                    :element_processors,
+                    :structure_count,
+                    :element_types
 
       def initialize(
         *args,
@@ -58,7 +64,9 @@ module Foobara
         transformers: [],
         validators: [],
         element_processors: nil,
-        structure_size: nil,
+        element_types: nil,
+        structure_count: nil,
+        abstract: false,
         **opts
       )
         self.base_type = base_type
@@ -66,7 +74,8 @@ module Foobara
         self.transformers = transformers
         self.validators = validators
         self.element_processors = element_processors
-        self.structure_size = structure_size
+        self.structure_count = structure_count
+        self.element_types = element_types
 
         super(
           *args,
@@ -85,7 +94,7 @@ module Foobara
       end
 
       def value_caster
-        @value_caster ||= Value::Processor::Casting.new(casters:)
+        @value_caster ||= Value::Processor::Casting.new({ cast_to: declaration_data }, casters:)
       end
 
       def cast(value)

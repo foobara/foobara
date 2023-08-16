@@ -19,7 +19,10 @@ module Foobara
           return false if strict_type_declaration.keys == [:type]
 
           type_symbol = strict_type_declaration[:type]
-          type_registry.registered?(type_symbol)
+          # this check feels very hacky but not sure a generic way to let a different handler extend :attributes hmmm
+          unless type_symbol == :attributes
+            type_registry.registered?(type_symbol)
+          end
         end
 
         def type_to_extend(strict_type_declaration)

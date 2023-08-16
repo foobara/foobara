@@ -14,11 +14,15 @@ module Foobara
           end
 
           def find_supported_processor_class(processor_symbol)
-            unless supported_processor_classes.key?(processor_symbol)
+            if supported_processor_classes.key?(processor_symbol)
+              supported_processor_classes[processor_symbol]
+            elsif base_type
+              base_type.find_supported_processor_class(processor_symbol)
+            else
+              binding.pry
+              # TODO: can we catch this via a schema validator before hitting it here?
               raise "No such processor for #{processor_symbol}"
             end
-
-            supported_processor_classes[processor_symbol]
           end
 
           def register_supported_processor_class(processor_class, symbol: processor_class.symbol)

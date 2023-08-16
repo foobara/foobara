@@ -15,6 +15,7 @@ module Foobara
     end
 
     register_type_declaration(TypeDeclarationHandler::RegisteredTypeDeclarationHandler.new)
+    register_type_declaration(TypeDeclarationHandler::ExtendRegisteredTypeDeclarationHandler.new)
     register_type_declaration(TypeDeclarationHandler::ExtendAttributesTypeDeclarationHandler.new)
   end
 end

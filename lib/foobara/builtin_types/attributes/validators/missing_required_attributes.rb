@@ -3,8 +3,10 @@ require "foobara/types/validator_error"
 module Foobara
   module BuiltinTypes
     module Attributes
-      module Validators
+      module SupportedValidator
         class MissingRequiredAttributes < Foobara::Value::Validator
+          include TypeDeclarations::WithRegistries
+
           class Error < Foobara::Types::ValidatorError
             class << self
               def context_schema

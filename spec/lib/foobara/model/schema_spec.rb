@@ -54,10 +54,10 @@ RSpec.describe Foobara::TypeDeclarations::TypeDeclarationHandlerRegistry do
 
     context "with attributes" do
       # TODO: goofy that we have to wrap this in brackets
-      let(:schema) { described_class::Registry.global.schema_for({ type:, schemas: }) }
+      let(:schema) { described_class::Registry.global.schema_for({ type:, element_type_declarations: }) }
 
       let(:type) { :attributes }
-      let(:schemas) {
+      let(:element_type_declarations) {
         {
           base: :integer,
           exponent: :integer
@@ -71,7 +71,7 @@ RSpec.describe Foobara::TypeDeclarations::TypeDeclarationHandlerRegistry do
       end
 
       context "when using sugar syntax" do
-        let(:schema) { described_class::Registry.global.schema_for(schemas) }
+        let(:schema) { described_class::Registry.global.schema_for(element_type_declarations) }
 
         it { is_expected.to be_valid }
 

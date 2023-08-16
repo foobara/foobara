@@ -32,7 +32,7 @@ module Foobara
           if old_outcome.is_a?(Value::HaltedOutcome)
             old_outcome
           else
-            process(outcome.result)
+            process(old_outcome.result)
           end
         end
 
@@ -74,6 +74,9 @@ module Foobara
           outcome = processor_for(value)
 
           outcome.success? ? outcome.result : outcome.raise!
+        rescue => e
+          binding.pry
+          raise
         end
 
         def always_applicable?
@@ -81,6 +84,7 @@ module Foobara
         end
 
         def error_message(value)
+          # TODO: should override this message so we say registry or caster or whatever based on the situation
           "Could not find processor that is applicable for #{value}"
         end
 

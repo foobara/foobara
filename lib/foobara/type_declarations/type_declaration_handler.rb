@@ -30,8 +30,8 @@ module Foobara
         type_declaration_handler_registry: TypeDeclarations.global_type_declaration_handler_registry,
         to_type_transformer: self.class::ToTypeTransformer,
         processors: nil,
-        desugarizers: [],
-        type_declaration_validators: [],
+        desugarizers: starting_desugarizers,
+        type_declaration_validators: starting_type_declaration_validators,
         **opts
       )
         if processors.present?
@@ -40,18 +40,18 @@ module Foobara
 
         self.type_registry = type_registry
         self.type_declaration_handler_registry = type_declaration_handler_registry
-        self.desugarizers = Array.wrap(desugarizers)
-        self.type_declaration_validators = Array.wrap(type_declaration_validators)
+        self.desugarizers = Array.wrap(starting_desugarizers)
+        self.type_declaration_validators = Array.wrap(starting_type_declaration_validators)
         self.to_type_transformer = to_type_transformer
 
         super(*Util.args_and_opts_to_args(args, opts))
       end
 
-      def desugarizers
+      def starting_desugarizers
         Util.constant_values(self.class, extends: TypeDeclarations::Desugarizer).map(&:instance)
       end
 
-      def type_declaration_validators
+      def starting_type_declaration_validators
         Util.constant_values(self.class, extends: Value::Validator, inherit: true).map(&:instance)
       end
 
@@ -78,7 +78,7 @@ module Foobara
       end
 
       def desugarizer
-        @desugarizer ||= Value::Processor::Pipeline.new(processors: desugarizers)
+        Value::Processor::Pipeline.new(processors: desugarizers)
       end
 
       def desugarize(value)
@@ -86,7 +86,7 @@ module Foobara
       end
 
       def type_declaration_validator
-        @type_declaration_validator ||= Value::Processor::Pipeline.new(processors: type_declaration_validators)
+        Value::Processor::Pipeline.new(processors: type_declaration_validators)
       end
 
       def type_declaration_validation_errors(value)

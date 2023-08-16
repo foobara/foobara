@@ -3,8 +3,11 @@ require "foobara/types/validator_error"
 module Foobara
   module BuiltinTypes
     module Number
-      module Validators
+      # TODO: should be be SupportedValidator
+      module SupportedValidator
         class BelowMinimum < Foobara::Value::Validator
+          include TypeDeclarations::WithRegistries
+
           class Error < Foobara::Types::ValidatorError
             class << self
               def context_schema

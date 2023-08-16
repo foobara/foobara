@@ -4,7 +4,7 @@ RSpec.describe Foobara::Command::Concerns::Errors do
       Class.new(Foobara::Command) do
         input_schema(
           type: :attributes,
-          schemas: {
+          element_type_declarations: {
             exponent: { type: :integer, max: 10, min: 1 },
             base: { type: :integer, required: true }
           },
@@ -65,7 +65,7 @@ RSpec.describe Foobara::Command::Concerns::Errors do
       end
 
       context  "when input requirements met" do
-        it "is success" do
+        it "is success", :focus do
           expect(outcome).to be_success
           expect(result).to eq(64)
         end

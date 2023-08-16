@@ -27,11 +27,11 @@ module Foobara
             else
               map[path] = {}
 
-              if schema_to_process.is_a?(Foobara::Model::Schemas::Attributes)
-                schema_to_process.schemas.each_pair do |attribute_name, schema|
+              if schema_to_process.declaration_data[:type] == :attributes
+                schema_to_process.element_types.each_pair do |attribute_name, attribute_type|
                   attribute_path = [*path, attribute_name]
 
-                  error_context_schema_map(map, attribute_path, schema)
+                  error_context_schema_map(map, attribute_path, attribute_type)
                 end
               end
             end

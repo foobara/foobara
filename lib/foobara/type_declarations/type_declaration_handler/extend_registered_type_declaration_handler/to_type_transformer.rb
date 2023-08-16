@@ -4,7 +4,7 @@ require "foobara/type_declarations/type_declaration_handler/extend_associative_a
 module Foobara
   module TypeDeclarations
     class TypeDeclarationHandler < Value::Processor::Pipeline
-      class ExtendAttributesTypeDeclarationHandler < ExtendAssociativeArrayTypeDeclarationHandler
+      class ExtendRegisteredTypeDeclarationHandler < RegisteredTypeDeclarationHandler
         # TODO: make a quick way to convert a couple simple procs into a transformer
         class ToTypeTransformer < RegisteredTypeDeclarationHandler::ToTypeTransformer
           def transform(strict_type_declaration)
@@ -14,6 +14,7 @@ module Foobara
             casters = base_type.casters.dup
             transformers = base_type.transformers.dup
             validators = base_type.validators.dup
+            element_processors = base_type.element_processors.dup
 
             additional_processors_to_apply = strict_type_declaration.except(:type)
 
@@ -31,17 +32,20 @@ module Foobara
                 validators << processor
               when Value::Transformer
                 transformers << processor
+              when Types::ElementProcessor
+                element_processors << processor
               else
                 raise "Not sure where to put #{processor}"
               end
             end
 
-            Type.new(
+            Types::Type.new(
               strict_type_declaration,
               base_type:,
               casters:,
               transformers:,
-              validators:
+              validators:,
+              element_processors:
             )
           end
         end

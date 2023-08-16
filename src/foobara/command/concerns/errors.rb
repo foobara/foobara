@@ -119,14 +119,10 @@ module Foobara
             raise "Invalid error symbol #{symbol} expected one of #{possible_error_symbols}"
           end
 
-          # TODO: need to pass in schema registries here
-          context_schema = Foobara::Model::Schemas::Attributes.new(map[symbol])
+          type_declaration = map[symbol]
+          context_type = type_declaration_handler_registry.process(type_declaration)
 
-          if context_schema.present?
-            error.context = context_schema.to_type.process!(context || {})
-          elsif context.present?
-            raise "There's no context schema declared for #{symbol}"
-          end
+          error.context = context_type.process!(context || {})
 
           error
         end

@@ -55,7 +55,7 @@ RSpec.describe Foobara::Command::Concerns::Callbacks do
             expect(outcome).to be_success
           end
 
-          it "runs callbacks", :focus do
+          it "runs callbacks" do
             expect(@before_execute_called).to be(true)
           end
         end

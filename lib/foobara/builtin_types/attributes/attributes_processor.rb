@@ -1,52 +1,60 @@
 module Foobara
   module BuiltinTypes
     module Attributes
-      class AttributesProcessor < Value::Processor
-        def children_types
-          declaration_data
-        end
+      # TODO: pluralize thees module names
+      module SupportedProcessor
+        class ElementTypeDeclarations < Types::ElementProcessor
+          include TypeDeclarations::WithRegistries
 
-        def process(attributes_hash)
-          return Outcome.success(attributes_hash) unless applicable?(attributes_hash)
+          def element_type_declarations
+            declaration_data
+          end
 
-          errors = []
+          def process(attributes_hash)
+            return Outcome.success(attributes_hash) unless applicable?(attributes_hash)
 
-          attributes_hash.each_pair do |attribute_name, attribute_value|
-            attribute_type = children_types[attribute_name]
-            attribute_outcome = attribute_type.process(attribute_value)
+            errors = []
 
-            if attribute_outcome.success?
-              attributes_hash[attribute_name] = attribute_outcome.result
-            else
-              attribute_outcome.each_error do |error|
-                error.path = [attribute_name, *error.path]
+            attributes_hash.each_pair do |attribute_name, attribute_value|
+              attribute_type_declaration = element_type_declarations[attribute_name]
+              attribute_type = type_declaration_handler_registry.process!(attribute_type_declaration)
+              attribute_outcome = attribute_type.process(attribute_value)
 
-                errors << error
+              if attribute_outcome.success?
+                attributes_hash[attribute_name] = attribute_outcome.result
+              else
+                attribute_outcome.each_error do |error|
+                  error.path = [attribute_name, *error.path]
+
+                  errors << error
+                end
               end
             end
+
+            Outcome.new(result: attributes_hash, errors:)
           end
 
-          Outcome.new(result: attributes_hash, errors:)
-        end
+          def possible_errors
+            possibilities = []
 
-        def possible_errors
-          possibilities = []
+            element_type_declarations.each_pair do |attribute_name, attribute_declaration|
+              attribute_type = type_declaration_handler_registry.type_for(attribute_declaration)
 
-          children_types.each_pair do |attribute_name, attribute_type|
-            attribute_type.possible_errors.each do |possible_error|
-              path = possible_error[0]
-              symbol = possible_error[1]
-              error_type = possible_error[2]
+              attribute_type.possible_errors.each do |possible_error|
+                path = possible_error[0]
+                symbol = possible_error[1]
+                error_type = possible_error[2]
 
-              possibilities << [
-                [attribute_name, *path],
-                symbol,
-                error_type
-              ]
+                possibilities << [
+                  [attribute_name, *path],
+                  symbol,
+                  error_type
+                ]
+              end
             end
-          end
 
-          possibilities
+            possibilities
+          end
         end
       end
     end

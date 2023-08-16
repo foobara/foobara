@@ -10,7 +10,7 @@ module Foobara
         end
 
         def error_classes
-          [*super, processors.map(&:error_classes).flatten]
+          [*super, *processors.map(&:error_classes).flatten]
         end
 
         def applicable?(value)
@@ -21,7 +21,7 @@ module Foobara
         # maybe [path, symbol, context_type] ?
         # maybe [path, error_class] ?
         def possible_errors
-          processors.inject([]) do |possibilities, processor|
+          processors.inject(super) do |possibilities, processor|
             possibilities + processor.possible_errors
           end
         end

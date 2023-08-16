@@ -1,3 +1,5 @@
+require "foobara/type_declarations/type_declaration_handler/extend_registered_type_declaration_handler"
+
 module Foobara
   module TypeDeclarations
     # This will replace Schema...
@@ -11,7 +13,7 @@ module Foobara
     #   transform into Type instance
     # So... sugary type declaration value in, type out
     class TypeDeclarationHandler < Value::Processor::Pipeline
-      class ExtendAssociativeArrayTypeDeclarationHandler < RegisteredTypeDeclarationHandler
+      class ExtendAssociativeArrayTypeDeclarationHandler < ExtendRegisteredTypeDeclarationHandler
       end
     end
   end

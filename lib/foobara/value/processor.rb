@@ -32,7 +32,7 @@ module Foobara
         end
 
         def symbol
-          @symbol ||= name.gsub(/(Processor|Transformer|Validator)$/, "").underscore
+          @symbol ||= name.demodulize.gsub(/(Processor|Transformer|Validator)$/, "").underscore.to_sym
         end
 
         def declaration_data_type
@@ -49,6 +49,7 @@ module Foobara
           self.declaration_data = args.first
           self.declaration_data_given = true
         elsif args_count != 0
+          binding.pry
           # :nocov:
           raise ArgumentError, "Expected 0 or 1 arguments containing the #{self.class.name} data"
           # :nocov:
@@ -169,6 +170,14 @@ module Foobara
       # TODO: this is a bit problematic. Maybe eliminate this instead of assuming it's generally useful
       def attribute_name
         nil
+      end
+
+      def inspect
+        s = super
+
+        if s.size > 400
+          "#{s[0..400]}..."
+        end
       end
     end
   end

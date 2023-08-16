@@ -28,6 +28,12 @@ module Foobara
           end
         end
 
+        class << self
+          def error_classes
+            [CannotCastError]
+          end
+        end
+
         def initialize(*args, casters:)
           super(*args, processors: casters)
         end
@@ -56,9 +62,21 @@ module Foobara
           }
         end
 
+        def build_error(
+          *args,
+          **opts
+        )
+          super(
+            *args,
+            **opts.merge(error_class:)
+          )
+        end
+
         def cast_to
           # TODO: isn't there a way to declare declaration_data_type so we don't have to validate here??
-          raise "Missing cast_to" unless declaration_data.key?(:cast_to)
+          unless declaration_data.key?(:cast_to)
+            raise "Missing cast_to"
+          end
 
           declaration_data[:cast_to]
         end
@@ -67,12 +85,6 @@ module Foobara
           outcome = super
 
           outcome.success? ? outcome : HaltedOutcome.error(build_error(value))
-        end
-
-        def possible_errors
-          possibilities = super
-
-          # TODO: replace NoApplicableProcessorError with CannotCastError
         end
       end
     end
