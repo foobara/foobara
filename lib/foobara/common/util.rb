@@ -15,19 +15,37 @@ module Foobara
       subsets + subsets.map { |subset| [head, *subset] }
     end
 
-    def constant_value(mod, constant)
-      if mod.constants(false).include?(constant.to_sym)
-        mod.const_get(constant, false)
+    def constant_value(mod, constant, inherit: false)
+      if mod.constants(inherit).include?(constant.to_sym)
+        mod.const_get(constant, inherit)
       end
     end
 
-    def constant_values(mod, is_a: nil, extends: nil)
-      is_a = Array.wrap(is_a)
-      extends = Array.wrap(extends)
+    def constant_values(mod, is_a: nil, extends: nil, inherit: false)
+      if inherit && !mod.is_a?(Class)
+        raise "Cannot pass inherit: true for something that is not a Class"
+      end
 
-      mod.constants.map { |const| constant_value(mod, const) }.select do |object|
-        (is_a.blank? || is_a.any? { |klass| object.is_a?(klass) }) &&
-          (extends.blank? || (object.is_a?(Class) && extends.any? { |klass| object.ancestors.include?(klass) }))
+      if inherit
+        superklass = mod.superclass
+        values = constant_values(mod, is_a:, extends:)
+
+        if superklass = Object
+          values
+        else
+          [
+            *values,
+            *constant_values(superklass, is_a:, extends:, inherit:)
+          ]
+        end
+      else
+        is_a = Array.wrap(is_a)
+        extends = Array.wrap(extends)
+
+        mod.constants.map { |const| constant_value(mod, const) }.select do |object|
+          (is_a.blank? || is_a.any? { |klass| object.is_a?(klass) }) &&
+            (extends.blank? || (object.is_a?(Class) && extends.any? { |klass| object.ancestors.include?(klass) }))
+        end
       end
     end
 
