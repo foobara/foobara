@@ -11,15 +11,9 @@ module Foobara
     #   transform into Type instance
     # So... sugary type declaration value in, type out
     class TypeDeclarationHandler < Value::Processor::Pipeline
-      class RegisteredTypeDeclarationHandler < TypeDeclarationHandler
+      class ExtendAttributesTypeDeclarationHandler < ExtendAssociativeArrayTypeDeclarationHandler
         def applicable?(sugary_type_declaration)
-          strict_type_declaration = desugarize(sugary_type_declaration)
-
-          # we only handle case where it's a builtin type not an extension of one
-          if strict_type_declaration.keys == [:type]
-            type_symbol = strict_type_declaration[:type]
-            BuiltinTypes.registered?(type_symbol)
-          end
+          desugarizers.any? { |desugarizer| desugarizer.applicable?(sugary_type_declaration) }
         end
       end
     end

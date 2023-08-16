@@ -15,6 +15,7 @@ module Foobara
     end
 
     register_type_declaration(TypeDeclarationHandler::RegisteredTypeDeclarationHandler.new)
+    register_type_declaration(TypeDeclarationHandler::ExtendAttributesTypeDeclarationHandler.new)
   end
 end
 
@@ -92,7 +93,7 @@ let's see...
 for atom could just not support element_types nor size
 for array element_types could just be applied repeating?? Kind of goofy
 For tuple element_types could be applied repeating and size validator could be added
-for associative array... element_types need to be indexed by symbols, ie, a hash instead of an array. Is that OK?
+for associative array... element_types need to be a hash instead of an array. Is that OK?
   Or could be an array of pairs... like Hash#to_a ? Maybe we just operate off of #each? Seems that will work, wow...
 For Attributes same as associative array but with key processor of symbol plus an attributes_processor
 For model add a name processor

@@ -1,4 +1,4 @@
-RSpec.describe Foobara::TypeDeclarations::TypeDeclarationHandler::Concerns::TypeBuilding do
+RSpec.describe Foobara::TypeDeclarations::ToTypeTransformer do
   let(:type) {
     Foobara::TypeDeclarations::TypeDeclarationHandlerRegistry.global.process!(type_declaration)
   }

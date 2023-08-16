@@ -1,6 +1,6 @@
 module Foobara
   module TypeDeclarations
-    class Desugarizer < Value::Transformer
+    class ToTypeTransformer < Value::Transformer
       attr_accessor :type_registry, :type_declaration_handler_registry
 
       def initialize(
@@ -15,14 +15,6 @@ module Foobara
         self.type_declaration_handler_registry = type_declaration_handler_registry
 
         super(*Util.args_and_opts_to_args(args, opts))
-      end
-
-      def desugarize(_value)
-        raise "subclass responsibility"
-      end
-
-      def transform(value)
-        desugarize(value)
       end
     end
   end

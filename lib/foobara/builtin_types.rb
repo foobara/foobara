@@ -3,10 +3,7 @@ Foobara::Util.require_directory("#{__dir__}/builtin_types")
 module Foobara
   module BuiltinTypes
     class << self
-      def global_registry
-        @global_registry ||= Types::Registry.new
-      end
-
+      delegate :global_registry, to: Types
       delegate :[], :[]=, :registered?, :root_type, :root_type=, to: :global_registry
 
       def build_and_register_all_builtins!

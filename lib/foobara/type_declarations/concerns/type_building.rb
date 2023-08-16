@@ -1,3 +1,4 @@
+=begin
 module Foobara
   module TypeDeclarations
     class TypeDeclarationHandler < Value::Processor::Pipeline
@@ -41,6 +42,7 @@ module Foobara
             # we are an instance here so why do we pass in type??
             # TODO: make it so passing in type isn't necessary
             supported_transformer_classes.each_pair do |transformer_symbol, transformer_class|
+              # we don't have a declaration type here!!!
               if strict_schema.key?(transformer_symbol)
                 transformers << transformer_class.new(strict_schema[transformer_symbol])
               end
@@ -65,3 +67,4 @@ module Foobara
     end
   end
 end
+=end

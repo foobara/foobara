@@ -13,6 +13,14 @@ module Foobara
             @supported_processor_classes ||= {}
           end
 
+          def find_supported_processor_class(processor_symbol)
+            unless supported_processor_classes.key?(processor_symbol)
+              raise "No such processor for #{processor_symbol}"
+            end
+
+            supported_processor_classes[processor_symbol]
+          end
+
           def register_supported_processor_class(processor_class, symbol: processor_class.symbol)
             if !symbol.is_a?(Symbol) || supported_processor_classes.key?(symbol)
               # :nocov:

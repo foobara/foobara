@@ -16,13 +16,20 @@ module Foobara
     # the type declaration value to be known as a type declaration and makes
     # passing it ot the Type maybe a little less awkward.
     class TypeDeclarationHandler < Value::Processor::Pipeline
-      include Concerns::TypeBuilding
+      # include Concerns::TypeBuilding
 
-      attr_accessor :desugarizers, :type_declaration_validators, :to_type_transformers
+      attr_accessor :desugarizers,
+                    :type_declaration_validators,
+                    :to_type_transformer,
+                    :type_registry,
+                    :type_declaration_handler_registry
 
       def initialize(
         *args,
-        to_type_transformers:, processors: nil,
+        type_registry: Types.global_registry,
+        type_declaration_handler_registry: TypeDeclarations.global_type_declaration_handler_registry,
+        to_type_transformer: self.class::ToTypeTransformer,
+        processors: nil,
         desugarizers: [],
         type_declaration_validators: [],
         **opts
@@ -31,11 +38,33 @@ module Foobara
           raise ArgumentError, "Cannot set processors directly for a type declaration handler"
         end
 
+        self.type_registry = type_registry
+        self.type_declaration_handler_registry = type_declaration_handler_registry
         self.desugarizers = Array.wrap(desugarizers)
         self.type_declaration_validators = Array.wrap(type_declaration_validators)
-        self.to_type_transformers = Array.wrap(to_type_transformers) # why would we need multiple??
+        self.to_type_transformer = to_type_transformer
 
         super(*Util.args_and_opts_to_args(args, opts))
+      end
+
+      def desugarizers
+        Util.constant_values(self.class, extends: TypeDeclarations::Desugarizer).map(&:instance)
+      end
+
+      def type_declaration_validators
+        Util.constant_values(self.class, extends: Value::Validator, inherit: true).map(&:instance)
+      end
+
+      def to_type_transformer
+        self.class::ToTypeTransformer.new(type_registry:, type_declaration_handler_registry:)
+      end
+
+      def inspect
+        s = super
+
+        if s.size > 400
+          "#{s[0..400]}..."
+        end
       end
 
       def applicable?(sugary_type_declaration)
@@ -65,12 +94,8 @@ module Foobara
         type_declaration_validator.process(value).errors
       end
 
-      def to_type_transformer
-        @to_type_transformer ||= Value::Processor::Pipeline.new(processors: to_type_transformers)
-      end
-
       def to_type(value)
-        process(value)
+        process!(value)
       end
     end
   end
