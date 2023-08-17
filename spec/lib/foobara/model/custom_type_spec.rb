@@ -47,19 +47,31 @@ RSpec.describe "custom types" do
       end
     end
 
-    let(:schema_registry) { Foobara::Model::Schema::Registry.new }
-    let(:type) { schema.to_type }
-    let(:schema) { schema_registry.schema_for(schema_hash) }
+    let(:schema_registry) do
+      Foobara::TypeDeclarations::TypeDeclarationHandlerRegistry.new
+    end
+    let(:type) { schema_registry.process!(type_declaration) }
+    # let(:schema) { schema_registry.schema_for(schema_hash) }
 
     # type registration start
     let(:complex_schema) do
       custom_caster = array_to_complex_caster.new
       klass = complex_class
 
-      Class.new(Foobara::Model::Schema) do
+      Class.new(Foobara::TypeDeclarations::TypeDeclarationHandler) do
         class << self
-          def can_handle?(sugary_schema)
-            super || sugar_for_complex?(sugary_schema)
+          desugarizer_class = Class.new(Foobara::TypeDeclarations::Desugarizer) do
+            def applicable?(value)
+              ComplexSchema.sugar_for_complex?(value)
+            end
+
+            def desugarize(value)
+              { type: :complex }
+            end
+          end
+
+          def name
+            "ComplexSchema"
           end
 
           def sugar_for_complex?(sugary_schema)
@@ -73,18 +85,14 @@ RSpec.describe "custom types" do
               @complex_form_regex.match?(sugary_schema)
             end
           end
-
-          def name
-            "ComplexSchema"
-          end
         end
 
-        def desugarize
-          if sugar_for_complex?(raw_schema)
-            { type: }
-          else
-            super
-          end
+        def applicable?(sugary_schema)
+          sugar_for_complex?(sugary_schema)
+        end
+
+        define_method :desugarizers do
+          [desugarizer_class.instance]
         end
 
         delegate :sugar_for_complex?, to: :class
@@ -170,13 +178,13 @@ RSpec.describe "custom types" do
     end
 
     before do
-      complex_schema.register_validator(pointless_validator)
-      schema_registry.register(complex_schema)
+      type.register_supported_processor_class(pointless_validator)
+      schema_registry.register(complex_schema.new)
     end
     # type registration end
 
     context "when using the type against valid data from complex type non sugar schema" do
-      let(:schema_hash) do
+      let(:type_declaration) do
         {
           type: :attributes,
           element_type_declarations: {
@@ -188,7 +196,7 @@ RSpec.describe "custom types" do
       end
 
       context "when valid" do
-        it "can process the thing" do
+        it "can process the thing", :focus do
           value = type.process!(n: 5, c: [1, 2])
           complex = value[:c]
 
@@ -240,3 +248,28 @@ RSpec.describe "custom types" do
     end
   end
 end
+
+# Problem
+# when we do something like:
+# {type: :attributes, element_type_declarations: { a: { type: :complex } }
+# then we have a bit of an issue because :attributes is not going to find the type :complex.
+# This is because it is not registered on the global registry rather in a local one which the attributes thingy
+# doesn't have access to.
+#
+# how to handle this??
+#
+# We somehow need processors that use type declaration handler registries and type registries to know what rules they
+# are currently operating under. Should we do this with thread-local variables? Otherwise it seems we would have to pass
+# those in to all .process etc calls which would be super annoying and require a non-trivial design change.
+#
+# So let's say we have domain A with a registry and domain B with a registry. Domain A knows about B but not the other
+# way around.
+# So a declaration in A should be allowed to reference stuff in B but a declaration in B should not.
+#
+# How to pull this off?
+#
+# Thread local registries variable?]
+#
+# A has global and B, B has global, global has nothing.
+#
+# if doing A.type_for(type_declaration) then any other type_for calls
