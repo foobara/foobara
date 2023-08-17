@@ -30,13 +30,6 @@ module Foobara
                                       end
 
             sugary_type_declaration[:element_type_declarations].symbolize_keys!
-
-            sugary_type_declaration[:element_type_declarations].transform_values! do |element_type_declaration|
-              handler = type_declaration_handler_registry.type_declaration_handler_for(element_type_declaration)
-              handler.desugarize(element_type_declaration)
-            end
-
-            sugary_type_declaration
           end
 
           private
