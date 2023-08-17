@@ -48,10 +48,23 @@ module Foobara
       end
 
       def starting_desugarizers
-        Util.constant_values(self.class, extends: TypeDeclarations::Desugarizer).map(&:instance)
+        # TODO: this is not great because if new stuff gets registered at runtime then we can't really
+        # update this cached data easily
+        desugarizers = []
+
+        klass = self.class
+
+        until klass == TypeDeclarationHandler
+          desugarizers += Util.constant_values(klass, extends: TypeDeclarations::Desugarizer).map(&:instance)
+          klass = klass.superclass
+        end
+
+        desugarizers
       end
 
       def starting_type_declaration_validators
+        # TODO: this is not great because if new stuff gets registered at runtime then we can't really
+        # update this cached data easily
         Util.constant_values(self.class, extends: Value::Validator, inherit: true).map(&:instance)
       end
 
@@ -77,12 +90,22 @@ module Foobara
         [desugarizer, type_declaration_validator, to_type_transformer]
       end
 
+      def process(raw_type_declaration)
+        type_outcome = super(raw_type_declaration.deep_dup)
+
+        if type_outcome.success?
+          type_outcome.result.raw_declaration_data = raw_type_declaration
+        end
+
+        type_outcome
+      end
+
       def desugarizer
         Value::Processor::Pipeline.new(processors: desugarizers)
       end
 
       def desugarize(value)
-        desugarizer.process!(value)
+        Value::Processor::Pipeline.new(processors: desugarizers).process!(value)
       end
 
       def type_declaration_validator
@@ -91,7 +114,7 @@ module Foobara
 
       def type_declaration_validation_errors(value)
         value = desugarize(value)
-        type_declaration_validator.process(value).errors
+        Value::Processor::Pipeline.new(processors: type_declaration_validators).process(value).errors
       end
 
       def to_type(value)

@@ -9,14 +9,15 @@ module Foobara
             if args.empty?
               @result_schema
             else
+              # TODO: raise argument error if more than one args
               raw_result_schema = args.first
-              # TODO: need to pass in schema registries here
-              @result_schema = Foobara::Model::Schema::Registry.global.schema_for(raw_result_schema)
+
+              @result_schema = type_declaration_handler_registry.type_for(raw_result_schema)
             end
           end
 
           def raw_result_schema
-            result_schema.raw_schema
+            result_schema.raw_declaration_data
           end
         end
 

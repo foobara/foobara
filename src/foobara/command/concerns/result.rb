@@ -6,8 +6,9 @@ module Foobara
 
         class CouldNotProcessResult < Outcome::UnsuccessfulOutcomeError; end
 
+        # TODO: eliminate result_schema
         def result_type
-          @result_type ||= result_schema.to_type
+          result_schema
         end
 
         private

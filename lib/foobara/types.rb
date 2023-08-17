@@ -9,6 +9,8 @@ module Foobara
       def global_registry
         @global_registry ||= Types::Registry.new
       end
+
+      delegate :[], :[]=, :registered?, :register, to: :global_registry
     end
   end
 end

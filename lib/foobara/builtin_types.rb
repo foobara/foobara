@@ -14,6 +14,7 @@ module Foobara
 
         atomic_duck = build_and_register_from_modules_and_install_type_declaration_extensions!(:atomic_duck)
 
+        symbol = build_and_register_from_modules_and_install_type_declaration_extensions!(:symbol, atomic_duck)
         number = build_and_register_from_modules_and_install_type_declaration_extensions!(:number, atomic_duck)
         integer = build_and_register_from_modules_and_install_type_declaration_extensions!(:integer, number)
         # build_and_register_from_modules_and_install_type_declaration_extensions!(:big_integer, integer)

@@ -9,6 +9,9 @@ module Foobara
         # from validators that are supported and may or may not be applied?
         # OK let's attempt doing this on Type instead.
         module SupportedProcessorRegistration
+          class MissingProcessorError < StandardError
+          end
+
           def supported_processor_classes
             @supported_processor_classes ||= {}
           end
@@ -19,9 +22,8 @@ module Foobara
             elsif base_type
               base_type.find_supported_processor_class(processor_symbol)
             else
-              binding.pry
               # TODO: can we catch this via a schema validator before hitting it here?
-              raise "No such processor for #{processor_symbol}"
+              raise MissingProcessorError, "No such processor for #{processor_symbol}"
             end
           end
 

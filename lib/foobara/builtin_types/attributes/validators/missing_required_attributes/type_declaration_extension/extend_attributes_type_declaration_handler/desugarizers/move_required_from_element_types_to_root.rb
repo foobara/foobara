@@ -7,14 +7,17 @@ module Foobara
             module ExtendAttributesTypeDeclarationHandler
               module Desugarizers
                 class MoveRequiredFromElementTypesToRoot < TypeDeclarations::Desugarizer
+                  def applicable?(value)
+                    value.is_a?(::Hash) && value[:type] == :attributes
+                  end
+
                   def desugarize(rawish_type_declaration)
-                    binding.pry
                     required_attributes = ::Array.wrap(rawish_type_declaration[:required])
 
                     element_type_declarations = rawish_type_declaration[:element_type_declarations]
 
                     element_type_declarations.each_pair do |attribute_name, attribute_type_declaration|
-                      if attribute_type_declaration.is_a?(Hash) && attribute_type_declaration.key?(:required)
+                      if attribute_type_declaration.is_a?(::Hash) && attribute_type_declaration.key?(:required)
                         required = attribute_type_declaration[:required]
 
                         element_type_declarations[attribute_name] = attribute_type_declaration.except(:required)

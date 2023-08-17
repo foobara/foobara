@@ -1,6 +1,13 @@
 module Foobara
   module Value
     class Processor
+      module Priority
+        FIRST = 0
+        HIGH = 10
+        MEDIUM = 20
+        LOW = 30
+      end
+
       class << self
         # NOTE: obviously can't use this convenience method for processors with declaration data
         def instance
@@ -170,6 +177,11 @@ module Foobara
       # TODO: this is a bit problematic. Maybe eliminate this instead of assuming it's generally useful
       def attribute_name
         nil
+      end
+
+      # Helps control when it runs in a pipeline
+      def priority
+        Priority::MEDIUM
       end
 
       def inspect

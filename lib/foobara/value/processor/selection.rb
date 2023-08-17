@@ -28,6 +28,13 @@ module Foobara
           end
         end
 
+        attr_accessor :enforce_unique
+
+        def initialize(*args, enforce_unique: true, **opts)
+          self.enforce_unique = enforce_unique
+          super(*args, **opts)
+        end
+
         def process_outcome(old_outcome)
           if old_outcome.is_a?(Value::HaltedOutcome)
             old_outcome
@@ -49,23 +56,30 @@ module Foobara
         end
 
         def processor_for(value)
-          applicable_processors = processors.select { |processor| processor.applicable?(value) }
+          processor = if enforce_unique
+                        applicable_processors = processors.select { |processor| processor.applicable?(value) }
 
-          error = if applicable_processors.empty?
-                    build_error(value, error_class: NoApplicableProcessorError)
-                  elsif applicable_processors.size > 1
-                    build_error(
-                      value,
-                      error_class: MoreThanOneApplicableProcessorError,
-                      message: "More than one processor applicable for #{value}",
-                      context: error_context(value).merge(applicable_processors:)
-                    )
-                  end
+                        if applicable_processors.size > 1
+                          return Outcome.error(
+                            build_error(
+                              value,
+                              error_class: MoreThanOneApplicableProcessorError,
+                              message: "More than one processor applicable for #{value}",
+                              context: error_context(value).merge(applicable_processors:)
+                            )
+                          )
+                        end
 
-          if error
-            Outcome.error(error)
+                        applicable_processors.first
+                      else
+                        processors.find { |processor| processor.applicable?(value) }
+                      end
+
+          if processor.blank?
+            Outcome.error(
+              build_error(value, error_class: NoApplicableProcessorError)
+            )
           else
-            processor = applicable_processors.first
             Outcome.success(processor)
           end
         end
@@ -74,9 +88,6 @@ module Foobara
           outcome = processor_for(value)
 
           outcome.success? ? outcome.result : outcome.raise!
-        rescue => e
-          binding.pry
-          raise
         end
 
         def always_applicable?

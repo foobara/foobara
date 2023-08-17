@@ -7,6 +7,10 @@ module Foobara
             module ExtendAttributesTypeDeclarationHandler
               module Desugarizers
                 class MoveDefaultsFromElementTypesToRoot < TypeDeclarations::Desugarizer
+                  def applicable?(value)
+                    value.is_a?(::Hash) && value[:type] == :attributes
+                  end
+
                   def desugarize(rawish_type_declaration)
                     defaults = rawish_type_declaration[:defaults]
                     defaults = defaults ? defaults.dup : {}

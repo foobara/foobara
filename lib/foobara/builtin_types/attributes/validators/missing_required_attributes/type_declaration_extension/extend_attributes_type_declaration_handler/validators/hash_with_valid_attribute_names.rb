@@ -7,12 +7,17 @@ module Foobara
             module ExtendAttributesTypeDeclarationHandler
               module Validators
                 class HashWithValidAttributeNames < Value::Validator
+                  # TODO: make this not necessary
+                  def always_applicable?
+                    true
+                  end
+
                   def validation_errors(strict_type_declaration)
                     required = strict_type_declaration[:required]
 
                     return unless required.present?
 
-                    if required.is_a?(Array) && Util.all_symbolic_elements?(required)
+                    if required.is_a?(::Array) && Util.all_symbolic_elements?(required)
                       valid_attribute_names = strict_type_declaration[:element_type_declarations].keys
 
                       required.map do |key|

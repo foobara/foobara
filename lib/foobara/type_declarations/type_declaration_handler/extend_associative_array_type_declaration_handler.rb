@@ -14,6 +14,9 @@ module Foobara
     # So... sugary type declaration value in, type out
     class TypeDeclarationHandler < Value::Processor::Pipeline
       class ExtendAssociativeArrayTypeDeclarationHandler < ExtendRegisteredTypeDeclarationHandler
+        def priority
+          Priority::MEDIUM
+        end
       end
     end
   end

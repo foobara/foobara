@@ -6,7 +6,7 @@ module Foobara
   module TypeDeclarations
     class << self
       def global_type_declaration_handler_registry
-        @global_type_declaration_handler_registry ||= TypeDeclarationHandlerRegistry.new
+        @global_type_declaration_handler_registry ||= TypeDeclarationHandlerRegistry.new(enforce_unique: false)
       end
 
       def register_type_declaration(type_declaration_handler)

@@ -13,15 +13,19 @@ module Foobara
     class TypeDeclarationHandler < Value::Processor::Pipeline
       class RegisteredTypeDeclarationHandler < TypeDeclarationHandler
         def applicable?(sugary_type_declaration)
-          return false unless desugarizer.applicable?(sugary_type_declaration)
-
           strict_type_declaration = desugarize(sugary_type_declaration)
+
+          return false unless strict_type_declaration.is_a?(::Hash)
 
           # we only handle case where it's a builtin type not an extension of one
           if strict_type_declaration.keys == [:type]
             type_symbol = strict_type_declaration[:type]
-            type_declaration_handler_registry.registered?(type_symbol)
+            type_registry.registered?(type_symbol)
           end
+        end
+
+        def priority
+          Priority::HIGH
         end
       end
     end

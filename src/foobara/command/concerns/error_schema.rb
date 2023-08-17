@@ -27,6 +27,8 @@ module Foobara
             else
               map[path] = {}
 
+              return if schema_to_process.blank?
+
               if schema_to_process.declaration_data[:type] == :attributes
                 schema_to_process.element_types.each_pair do |attribute_name, attribute_type|
                   attribute_path = [*path, attribute_name]

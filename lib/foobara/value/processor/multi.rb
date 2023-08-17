@@ -2,10 +2,11 @@ module Foobara
   module Value
     class Processor
       class Multi < Processor
-        attr_accessor :processors
+        attr_accessor :processors, :prioritize
 
-        def initialize(*args, processors: [])
-          self.processors = processors
+        def initialize(*args, processors: [], prioritize: true)
+          self.prioritize = prioritize
+          self.processors = prioritize ? processors.sort_by(&:priority) : processors
           super(*args)
         end
 
@@ -27,7 +28,7 @@ module Foobara
         end
 
         def register(processor)
-          processors << processor
+          self.processors = [*processors, processor].sort_by(&:priority)
         end
 
         def process_outcome(old_outcome)

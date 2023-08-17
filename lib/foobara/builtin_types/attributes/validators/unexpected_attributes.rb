@@ -1,8 +1,12 @@
 module Foobara
   module BuiltinTypes
     module Attributes
-      module Validators
+      module SupportedValidator
         class UnexpectedAttributes < Value::Validator
+          # TODO: so weird to have to do this everywhere...
+
+          include TypeDeclarations::WithRegistries
+
           class Error < Foobara::Value::AttributeError
             class << self
               def symbol
@@ -22,6 +26,10 @@ module Foobara
             end
           end
 
+          def always_applicable?
+            true
+          end
+
           def allowed_attribute_names
             declaration_data
           end
@@ -31,6 +39,7 @@ module Foobara
           end
 
           def validation_errors(attributes_hash)
+            binding.pry
             unexpected_attributes = attributes_hash.keys - allowed_attribute_names
 
             unexpected_attributes.map do |unexpected_attribute_name|

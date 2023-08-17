@@ -17,10 +17,13 @@ module Foobara
             element_processors = base_type.element_processors.dup
 
             additional_processors_to_apply = strict_type_declaration.except(:type)
-
             # TODO: add validator that these are all fine so we don't have to bother here...
             additional_processors_to_apply.each_pair do |processor_symbol, declaration_data|
+              # TODO: this isn't actually the full list...
+              # we need to somehow incorporate the processors(transformers/validators/element_transformers...)
+
               processor_class = base_type.find_supported_processor_class(processor_symbol)
+
               processor = processor_class.new(
                 declaration_data,
                 type_registry:,

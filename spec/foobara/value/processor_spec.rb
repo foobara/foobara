@@ -35,9 +35,9 @@ RSpec.describe Foobara::Value::Processor do
   end
 
   describe "error_context_type" do
-    subject { processor.error_context_type }
-
-    it { is_expected.to be_a(Foobara::Types::AtomType) }
+    it "has base_type of :attributes" do
+      expect(processor.error_context_type.base_type).to be(Foobara::Types[:attributes])
+    end
   end
 
   describe "#process!" do

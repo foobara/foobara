@@ -11,8 +11,17 @@ module Foobara
             return false unless sugary_type_declaration.is_a?(::Hash)
             return false unless Util.all_symbolizable_keys?(sugary_type_declaration)
 
-            !strictish_type_declaration?(sugary_type_declaration) ||
-              Util.all_symbolizable_keys?(sugary_type_declaration.symbolize_keys[:element_type_declarations])
+            sugary_type_declaration = sugary_type_declaration.symbolize_keys
+
+            return true unless sugary_type_declaration.key?(:type)
+
+            type_symbol = sugary_type_declaration[:type]
+
+            if type_symbol == :attributes
+              Util.all_symbolizable_keys?(sugary_type_declaration[:element_type_declarations])
+            else
+              !type_registry.registered?(type_symbol)
+            end
           end
 
           def desugarize(sugary_type_declaration)
@@ -30,6 +39,12 @@ module Foobara
                                       end
 
             sugary_type_declaration[:element_type_declarations].symbolize_keys!
+
+            sugary_type_declaration
+          end
+
+          def priority
+            Priority::HIGH
           end
 
           private

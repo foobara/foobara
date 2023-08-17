@@ -16,6 +16,8 @@ module Foobara
             errors = []
 
             attributes_hash.each_pair do |attribute_name, attribute_value|
+              # how did we make it this far??
+              binding.pry unless element_type_declarations.key?(attribute_name)
               attribute_type_declaration = element_type_declarations[attribute_name]
               attribute_type = type_declaration_handler_registry.process!(attribute_type_declaration)
               attribute_outcome = attribute_type.process(attribute_value)
@@ -54,6 +56,10 @@ module Foobara
             end
 
             possibilities
+          end
+
+          def priority
+            Priority::LOW
           end
         end
       end

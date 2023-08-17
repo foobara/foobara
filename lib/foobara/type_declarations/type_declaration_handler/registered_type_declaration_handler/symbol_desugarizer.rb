@@ -13,6 +13,10 @@ module Foobara
           def desugarize(symbol)
             { type: symbol }
           end
+
+          def priority
+            Priority::FIRST
+          end
         end
       end
     end

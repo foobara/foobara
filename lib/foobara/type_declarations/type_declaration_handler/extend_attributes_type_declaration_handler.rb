@@ -13,19 +13,10 @@ module Foobara
     class TypeDeclarationHandler < Value::Processor::Pipeline
       class ExtendAttributesTypeDeclarationHandler < ExtendAssociativeArrayTypeDeclarationHandler
         def applicable?(sugary_type_declaration)
-          return false unless desugarizers.any? { |desugarizer| desugarizer.applicable?(sugary_type_declaration) }
+          strictish_type_declaration = desugarize(sugary_type_declaration)
+          binding.pry unless sugary_type_declaration.is_a?(::Hash)
 
-          return true unless sugary_type_declaration.key?(:type)
-
-          if sugary_type_declaration[:type] == :attributes
-            sugary_type_declaration.keys.size > 1
-          else
-            applicable_handlers = type_declaration_handler_registry.handlers.select do |handler|
-              handler != self && handler.applicable?(sugary_type_declaration)
-            end
-
-            applicable_handlers.empty?
-          end
+          strictish_type_declaration[:type] == :attributes
         end
       end
     end

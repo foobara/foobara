@@ -7,6 +7,10 @@ module Foobara
             module ExtendAttributesTypeDeclarationHandler
               module Validators
                 class HashWithValidAttributeNames < Value::Validator
+                  def always_applicable?
+                    true
+                  end
+
                   def validation_errors(strict_type_declaration)
                     defaults = strict_type_declaration[:defaults]
 

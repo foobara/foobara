@@ -65,7 +65,7 @@ RSpec.describe Foobara::Command::Concerns::Errors do
       end
 
       context  "when input requirements met" do
-        it "is success", :focus do
+        it "is success" do
           expect(outcome).to be_success
           expect(result).to eq(64)
         end

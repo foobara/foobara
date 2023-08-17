@@ -1,3 +1,5 @@
+require "foobara/type_declarations/type_declaration_handler/registered_type_declaration_handler"
+
 module Foobara
   module TypeDeclarations
     # This will replace Schema...
@@ -15,14 +17,15 @@ module Foobara
         def applicable?(sugary_type_declaration)
           strict_type_declaration = desugarize(sugary_type_declaration)
 
+          return false unless strict_type_declaration.is_a?(::Hash)
           # if there's no processors to extend the existing type with, then we don't handle that here
           return false if strict_type_declaration.keys == [:type]
 
-          type_symbol = strict_type_declaration[:type]
-          # this check feels very hacky but not sure a generic way to let a different handler extend :attributes hmmm
-          unless type_symbol == :attributes
-            type_registry.registered?(type_symbol)
-          end
+          super(strict_type_declaration.slice(:type))
+        end
+
+        def priority
+          Priority::LOW
         end
 
         def type_to_extend(strict_type_declaration)

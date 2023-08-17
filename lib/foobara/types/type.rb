@@ -55,7 +55,8 @@ module Foobara
                     :validators,
                     :element_processors,
                     :structure_count,
-                    :element_types
+                    :element_types,
+                    :raw_declaration_data
 
       def initialize(
         *args,
@@ -79,7 +80,7 @@ module Foobara
 
         super(
           *args,
-          **opts.merge(processors:)
+          **opts.merge(processors:, prioritize: false)
         )
       end
 
@@ -94,7 +95,7 @@ module Foobara
       end
 
       def value_caster
-        @value_caster ||= Value::Processor::Casting.new({ cast_to: declaration_data }, casters:)
+        Value::Processor::Casting.new({ cast_to: declaration_data }, casters:)
       end
 
       def cast(value)
@@ -105,23 +106,28 @@ module Foobara
         value_caster.process!(value)
       end
 
+      # TODO: an interesting thought... we have Processor and then a subclass of Processor and then an instance of
+      # processor that encapsulates the declaration_data for that processor. But then we pass `value` to every
+      # method in the instance of the processor as needed. This means it can't really memoize stuff. Should we create
+      # an instance of something from the instance of the processor and then ask it questions?? TODO: try this
       def value_transformer
         if transformers.present?
           # TODO: create Transformer::Pipeline. Or not? yagni?
-          @value_transformer ||= Value::Processor::Pipeline.new(processors: transformers)
+          Value::Processor::Pipeline.new(processors: transformers)
         end
       end
 
+      # TODO: figure out how to safely memoize stuff so like this for performance reasons
       def value_validator
         if validators.present?
           # TODO: create Validator::Pipeline
-          @value_validator ||= Value::Processor::Pipeline.new(processors: validators)
+          Value::Processor::Pipeline.new(processors: validators)
         end
       end
 
       def element_processor
         if element_processors.present?
-          @element_processor ||= Value::Processor::Pipeline.new(processors: element_processors)
+          Value::Processor::Pipeline.new(processors: element_processors)
         end
       end
 

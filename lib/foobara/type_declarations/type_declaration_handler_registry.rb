@@ -1,6 +1,7 @@
 module Foobara
   module TypeDeclarations
     class TypeDeclarationHandlerRegistry < Value::Processor::Selection
+      # TODO: default these to true??
       def applicable?(_value)
         true
       end
