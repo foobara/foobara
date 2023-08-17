@@ -1,5 +1,5 @@
 RSpec.describe Foobara::Types do
-  let(:type) { Foobara::Model::Schema::Registry.global.schema_for(type_schema).to_type }
+  let(:type) { Foobara::TypeDeclarations::Namespace.type_for_declaration(type_schema) }
 
   context "when :attributes" do
     let(:type_schema) { { foo: :duck } }
@@ -14,7 +14,7 @@ RSpec.describe Foobara::Types do
 
         it "is the hash" do
           expect(outcome).to be_success
-          expect(result).to be(hash)
+          expect(result).to eq(hash)
         end
       end
 

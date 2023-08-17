@@ -67,7 +67,6 @@ module Foobara
         element_processors: nil,
         element_types: nil,
         structure_count: nil,
-        abstract: false,
         **opts
       )
         self.base_type = base_type

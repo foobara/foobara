@@ -24,11 +24,7 @@ module Foobara
 
               processor_class = base_type.find_supported_processor_class(processor_symbol)
 
-              processor = processor_class.new(
-                declaration_data,
-                type_registry:,
-                type_declaration_handler_registry:
-              )
+              processor = processor_class.new(declaration_data)
 
               case processor
               when Value::Validator

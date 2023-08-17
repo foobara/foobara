@@ -10,7 +10,7 @@ module Foobara
         class ElementTypeDeclarationsDesugarizer < HashDesugarizer
           def desugarize(sugary_type_declaration)
             sugary_type_declaration[:element_type_declarations].transform_values! do |element_type_declaration|
-              handler = type_declaration_handler_registry.type_declaration_handler_for(element_type_declaration)
+              handler = type_declaration_handler_for(element_type_declaration)
               handler.desugarize(element_type_declaration)
             end
 

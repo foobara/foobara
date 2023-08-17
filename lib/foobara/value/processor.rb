@@ -56,7 +56,6 @@ module Foobara
           self.declaration_data = args.first
           self.declaration_data_given = true
         elsif args_count != 0
-          binding.pry
           # :nocov:
           raise ArgumentError, "Expected 0 or 1 arguments containing the #{self.class.name} data"
           # :nocov:

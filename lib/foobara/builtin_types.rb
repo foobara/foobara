@@ -14,9 +14,9 @@ module Foobara
 
         atomic_duck = build_and_register_from_modules_and_install_type_declaration_extensions!(:atomic_duck)
 
-        symbol = build_and_register_from_modules_and_install_type_declaration_extensions!(:symbol, atomic_duck)
+        build_and_register_from_modules_and_install_type_declaration_extensions!(:symbol, atomic_duck)
         number = build_and_register_from_modules_and_install_type_declaration_extensions!(:number, atomic_duck)
-        integer = build_and_register_from_modules_and_install_type_declaration_extensions!(:integer, number)
+        build_and_register_from_modules_and_install_type_declaration_extensions!(:integer, number)
         # build_and_register_from_modules_and_install_type_declaration_extensions!(:big_integer, integer)
         # float = build_and_register_from_modules_and_install_type_declaration_extensions!(:float, number)
         # build_and_register_from_modules_and_install_type_declaration_extensions!(:big_decimal, float)
@@ -35,7 +35,7 @@ module Foobara
         associative_array = build_and_register_from_modules_and_install_type_declaration_extensions!(
           :associative_array, array
         )
-        attributes = build_and_register_from_modules_and_install_type_declaration_extensions!(
+        build_and_register_from_modules_and_install_type_declaration_extensions!(
           :attributes,
           associative_array
         )
@@ -78,7 +78,7 @@ module Foobara
         element_processors = load_processors.call(:ElementProcessor, extends: Types::ElementProcessor)
 
         [*transformers, *validators, *element_processors].each do |processor|
-          install_type_declaration_extensions_for(processor)
+          install_type_declaration_extensions_for(processor.class)
         end
 
         type = Foobara::Types::Type.new(
@@ -94,14 +94,16 @@ module Foobara
         %i[SupportedTransformer SupportedValidator SupportedProcessor].each do |module_name|
           load_processors_classes.call(module_name, Value::Processor).each do |processor_class|
             type.register_supported_processor_class(processor_class)
+            install_type_declaration_extensions_for(processor_class)
           end
         end
 
         type
       end
 
-      def install_type_declaration_extensions_for(processor)
-        extension_module = Util.constant_value(processor.class, :TypeDeclarationExtension)
+      def install_type_declaration_extensions_for(processor_class)
+        # TODO: make sure we're not double-registering stuff...
+        extension_module = Util.constant_value(processor_class, :TypeDeclarationExtension)
 
         return unless extension_module
 

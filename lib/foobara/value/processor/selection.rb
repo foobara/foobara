@@ -57,7 +57,7 @@ module Foobara
 
         def processor_for(value)
           processor = if enforce_unique
-                        applicable_processors = processors.select { |processor| processor.applicable?(value) }
+                        applicable_processors = processors.select { |p| p.applicable?(value) }
 
                         if applicable_processors.size > 1
                           return Outcome.error(

@@ -16,10 +16,8 @@ module Foobara
             errors = []
 
             attributes_hash.each_pair do |attribute_name, attribute_value|
-              # how did we make it this far??
-              binding.pry unless element_type_declarations.key?(attribute_name)
               attribute_type_declaration = element_type_declarations[attribute_name]
-              attribute_type = type_declaration_handler_registry.process!(attribute_type_declaration)
+              attribute_type = type_for_declaration(attribute_type_declaration)
               attribute_outcome = attribute_type.process(attribute_value)
 
               if attribute_outcome.success?
@@ -40,7 +38,7 @@ module Foobara
             possibilities = []
 
             element_type_declarations.each_pair do |attribute_name, attribute_declaration|
-              attribute_type = type_declaration_handler_registry.type_for(attribute_declaration)
+              attribute_type = type_for_declaration(attribute_declaration)
 
               attribute_type.possible_errors.each do |possible_error|
                 path = possible_error[0]

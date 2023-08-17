@@ -14,7 +14,6 @@ module Foobara
       class ExtendAttributesTypeDeclarationHandler < ExtendAssociativeArrayTypeDeclarationHandler
         def applicable?(sugary_type_declaration)
           strictish_type_declaration = desugarize(sugary_type_declaration)
-          binding.pry unless sugary_type_declaration.is_a?(::Hash)
 
           strictish_type_declaration[:type] == :attributes
         end

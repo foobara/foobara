@@ -120,7 +120,7 @@ module Foobara
           end
 
           type_declaration = map[symbol]
-          context_type = type_declaration_handler_registry.process!(type_declaration)
+          context_type = type_for_declaration(type_declaration)
 
           error.context = context_type.process!(context || {})
 

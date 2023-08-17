@@ -39,7 +39,6 @@ module Foobara
           end
 
           def validation_errors(attributes_hash)
-            binding.pry
             unexpected_attributes = attributes_hash.keys - allowed_attribute_names
 
             unexpected_attributes.map do |unexpected_attribute_name|

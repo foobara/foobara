@@ -24,7 +24,8 @@ module Foobara
 
                         # TODO: is false a good no-op?
                         # Maybe make required true the default and add a :foo? convention/sugar?
-                        required_attributes << attribute_name if required # required: false is a no-op as it's the default
+                        # required: false is a no-op as it's the default
+                        required_attributes << attribute_name if required
                       end
                     end
 

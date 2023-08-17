@@ -16,19 +16,13 @@ module Foobara
     # the type declaration value to be known as a type declaration and makes
     # passing it ot the Type maybe a little less awkward.
     class TypeDeclarationHandler < Value::Processor::Pipeline
-      # include Concerns::TypeBuilding
+      include WithRegistries
 
       attr_accessor :desugarizers,
-                    :type_declaration_validators,
-                    :to_type_transformer,
-                    :type_registry,
-                    :type_declaration_handler_registry
+                    :type_declaration_validators
 
       def initialize(
         *args,
-        type_registry: Types.global_registry,
-        type_declaration_handler_registry: TypeDeclarations.global_type_declaration_handler_registry,
-        to_type_transformer: self.class::ToTypeTransformer,
         processors: nil,
         desugarizers: starting_desugarizers,
         type_declaration_validators: starting_type_declaration_validators,
@@ -38,11 +32,8 @@ module Foobara
           raise ArgumentError, "Cannot set processors directly for a type declaration handler"
         end
 
-        self.type_registry = type_registry
-        self.type_declaration_handler_registry = type_declaration_handler_registry
-        self.desugarizers = Array.wrap(starting_desugarizers)
-        self.type_declaration_validators = Array.wrap(starting_type_declaration_validators)
-        self.to_type_transformer = to_type_transformer
+        self.desugarizers = Array.wrap(desugarizers)
+        self.type_declaration_validators = Array.wrap(type_declaration_validators)
 
         super(*Util.args_and_opts_to_args(args, opts))
       end
@@ -69,7 +60,7 @@ module Foobara
       end
 
       def to_type_transformer
-        self.class::ToTypeTransformer.new(type_registry:, type_declaration_handler_registry:)
+        self.class::ToTypeTransformer.instance
       end
 
       def inspect
@@ -80,7 +71,7 @@ module Foobara
         end
       end
 
-      def applicable?(sugary_type_declaration)
+      def applicable?(_sugary_type_declaration)
         # :nocov:
         raise "subclass responsibility"
         # :nocov:

@@ -30,7 +30,7 @@ module Foobara
         superklass = mod.superclass
         values = constant_values(mod, is_a:, extends:)
 
-        if superklass = Object
+        if superklass == Object
           values
         else
           [

@@ -31,7 +31,7 @@ module Foobara
           self.processors = [*processors, processor].sort_by(&:priority)
         end
 
-        def process_outcome(old_outcome)
+        def process_outcome(_old_outcome)
           raise "subclass responsibility"
         end
 

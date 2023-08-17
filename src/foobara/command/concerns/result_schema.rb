@@ -12,7 +12,7 @@ module Foobara
               # TODO: raise argument error if more than one args
               raw_result_schema = args.first
 
-              @result_schema = type_declaration_handler_registry.type_for(raw_result_schema)
+              @result_schema = type_for_declaration(raw_result_schema)
             end
           end
 

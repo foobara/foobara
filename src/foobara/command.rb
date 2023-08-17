@@ -1,6 +1,7 @@
 module Foobara
   class Command
-    include Concerns::TypeDeclarations
+    include Concerns::Namespace
+
     include Concerns::InputSchema
     include Concerns::ErrorSchema
     include Concerns::ResultSchema

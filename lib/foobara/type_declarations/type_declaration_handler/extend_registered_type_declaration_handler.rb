@@ -30,7 +30,7 @@ module Foobara
 
         def type_to_extend(strict_type_declaration)
           type_symbol = strict_type_declaration[:type]
-          type_registry[type_symbol]
+          type_for_symbol(type_symbol)
         end
       end
     end

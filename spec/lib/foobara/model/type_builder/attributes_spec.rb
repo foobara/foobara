@@ -1,6 +1,6 @@
 RSpec.describe Foobara::TypeDeclarations::ToTypeTransformer do
   let(:type) {
-    Foobara::TypeDeclarations::TypeDeclarationHandlerRegistry.global.process!(type_declaration)
+    Foobara::TypeDeclarations::Namespace.type_for_declaration(type_declaration)
   }
 
   describe "defaults" do
@@ -8,7 +8,7 @@ RSpec.describe Foobara::TypeDeclarations::ToTypeTransformer do
       let(:type_declaration) do
         {
           type: :attributes,
-          attribute_types: {
+          element_type_declarations: {
             a: :integer,
             b: :integer,
             c: :integer
@@ -36,7 +36,7 @@ RSpec.describe Foobara::TypeDeclarations::ToTypeTransformer do
       let(:type_declaration) do
         {
           type: :attributes,
-          attribute_types: {
+          element_type_declarations: {
             a: { type: :integer  },
             b: { type: :integer, default: 1 },
             c: { type: :integer, default: "2" }
@@ -62,7 +62,7 @@ RSpec.describe Foobara::TypeDeclarations::ToTypeTransformer do
       let(:type_declaration) do
         {
           type: :attributes,
-          attribute_types: {
+          element_type_declarations: {
             a: :integer,
             b: :integer,
             c: :integer
@@ -112,7 +112,7 @@ RSpec.describe Foobara::TypeDeclarations::ToTypeTransformer do
       let(:type_declaration) do
         {
           type: :attributes,
-          attribute_types: {
+          element_type_declarations: {
             a: { type: :integer, required: true },
             b: { type: :integer, required: false },
             c: { type: :integer, required: true }

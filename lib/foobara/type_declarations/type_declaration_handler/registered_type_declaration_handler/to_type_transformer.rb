@@ -8,7 +8,7 @@ module Foobara
         class ToTypeTransformer < TypeDeclarations::ToTypeTransformer
           def transform(strict_type_declaration)
             type_symbol = strict_type_declaration[:type]
-            type_registry[type_symbol]
+            type_for_symbol(type_symbol)
           end
         end
       end

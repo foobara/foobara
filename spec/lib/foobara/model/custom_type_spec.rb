@@ -41,35 +41,62 @@ RSpec.describe "custom types" do
   #
   # finally, need to call Type.register_custom_type or register it in a local registry and pass that registry around
   context "when defining a custom complex type" do
+    after do
+      Foobara::TypeDeclarations::Namespace.namespaces.delete(namespace)
+    end
+
     let(:complex_class) do
       Class.new do
         attr_accessor :real, :imaginary
       end
     end
-
-    let(:schema_registry) do
-      Foobara::TypeDeclarations::TypeDeclarationHandlerRegistry.new
-    end
-    let(:type) { schema_registry.process!(type_declaration) }
-    # let(:schema) { schema_registry.schema_for(schema_hash) }
-
+    let(:type) {
+      namespace.type_for_declaration(type_declaration)
+    }
+    # TODO: make sure this is tested
+    let(:type_declaration_handler) { namespace.type_declaration_handler_for(schema_hash) }
     # type registration start
     let(:complex_schema) do
       custom_caster = array_to_complex_caster.new
       klass = complex_class
 
-      Class.new(Foobara::TypeDeclarations::TypeDeclarationHandler) do
-        class << self
-          desugarizer_class = Class.new(Foobara::TypeDeclarations::Desugarizer) do
-            def applicable?(value)
-              ComplexSchema.sugar_for_complex?(value)
-            end
+      c = [
+        custom_caster,
+        Foobara::BuiltinTypes::Casters::DirectTypeMatch.new(ruby_classes: klass)
+      ]
 
-            def desugarize(value)
-              { type: :complex }
-            end
+      pointless = pointless_validator
+
+      Class.new(Foobara::TypeDeclarations::TypeDeclarationHandler) do
+        desugarizer_class = Class.new(Foobara::TypeDeclarations::Desugarizer) do
+          def applicable?(value)
+            ComplexSchema.sugar_for_complex?(value)
           end
 
+          def desugarize(_value)
+            { type: :complex }
+          end
+        end
+
+        to_type_transformer_class = Class.new(Foobara::TypeDeclarations::ToTypeTransformer) do
+          define_method :transform do |strict_type_declaration|
+            be_pointless = strict_type_declaration[:be_pointless]
+
+            validators = be_pointless ? [pointless.new(be_pointless)] : []
+
+            Foobara::Types::Type.new(
+              strict_type_declaration,
+              casters: c,
+              transformers: [],
+              validators:,
+              element_processors: nil
+            )
+          end
+        end
+
+        const_set(:ToTypeTransformer, to_type_transformer_class)
+
+        class << self
           def name
             "ComplexSchema"
           end
@@ -88,7 +115,8 @@ RSpec.describe "custom types" do
         end
 
         def applicable?(sugary_schema)
-          sugar_for_complex?(sugary_schema)
+          sugary_schema == :complex || (sugary_schema.is_a?(Hash) && sugary_schema[:type] == :complex) ||
+            sugar_for_complex?(sugary_schema)
         end
 
         define_method :desugarizers do
@@ -98,10 +126,7 @@ RSpec.describe "custom types" do
         delegate :sugar_for_complex?, to: :class
 
         define_method :casters do
-          [
-            custom_caster,
-            Foobara::Types::Casters::DirectTypeMatch.new(ruby_classes: klass)
-          ]
+          c
         end
       end
     end
@@ -177,10 +202,21 @@ RSpec.describe "custom types" do
       end
     end
 
-    before do
-      type.register_supported_processor_class(pointless_validator)
-      schema_registry.register(complex_schema.new)
+    let(:namespace) do
+      Foobara::TypeDeclarations::Namespace.new(:custom_type_spec)
     end
+
+    def in_namespace(&)
+      Foobara::TypeDeclarations::Namespace.using(namespace.name, &)
+    end
+
+    before do
+      stub_const("ComplexSchema", complex_schema)
+      namespace.register_type_declaration_handler(complex_schema.new)
+      # namespace.register_type(:complex, type)
+      type.register_supported_processor_class(pointless_validator)
+    end
+
     # type registration end
 
     context "when using the type against valid data from complex type non sugar schema" do
@@ -196,8 +232,11 @@ RSpec.describe "custom types" do
       end
 
       context "when valid" do
-        it "can process the thing", :focus do
-          value = type.process!(n: 5, c: [1, 2])
+        it "can process the thing" do
+          value = in_namespace do
+            type.process!(n: 5, c: [1, 2])
+          end
+
           complex = value[:c]
 
           expect(complex).to be_a(complex_class)
@@ -208,7 +247,7 @@ RSpec.describe "custom types" do
 
       context "when invalid" do
         it "can process the thing" do
-          outcome = type.process(n: 5, c: [2, 2])
+          outcome = in_namespace { type.process(n: 5, c: [2, 2]) }
 
           expect(outcome).to_not be_success
           errors = outcome.errors
@@ -225,7 +264,7 @@ RSpec.describe "custom types" do
     end
 
     context "when using the type against valid data from complex type sugar schema" do
-      let(:schema_hash) do
+      let(:type_declaration) do
         {
           type: :attributes,
           element_type_declarations: {
@@ -236,6 +275,10 @@ RSpec.describe "custom types" do
       end
 
       context "when valid" do
+        around do |example|
+          in_namespace { example.run }
+        end
+
         it "can process the thing" do
           value = type.process!(n: 5, c: [1, 2])
           complex = value[:c]
@@ -273,3 +316,53 @@ end
 # A has global and B, B has global, global has nothing.
 #
 # if doing A.type_for(type_declaration) then any other type_for calls
+=begin
+how to implement this??
+
+there's two concepts...
+
+declaration handlers
+types
+
+and each has its own registry
+
+let's say in A::Command we do input_schema(:b => :b, c => :integer, :a => :a)
+
+where :a is a type registered in A's type registry and :b is in B's type registry and :integer is in global registry...
+
+Then this is allowed.
+
+but in B::Command if we did that we will get an error because it shouldn't be able to find :a anywhere.
+
+so what does input schema do??
+
+In A::Command it should ask A for its declaration handler registry.  It calls type_for on it passing the declaration.
+
+the declaration handler registry tries to find a declaration handler for this type.
+
+it should find ExtendAttributesHandler in the global declaration handler registry.
+
+The confusion here is that a type declaration expressed in A should be allowed to access types from A but
+ExtendAttributesHandler is defined in global and doesn't know about A.
+
+What I think might be hard is knowing what namespace a declaration was originally defined in and detecting when we
+are starting processing of a different declaration in a new namespace independently or if we are starting processing
+of the other declaration in service of processing the first. How??
+
+I guess one option is a TypeDeclaration object?  It could contain the namespace it belongs to.
+
+whenever processing something in a new TypeDeclaration that is a sub-component of another,
+could copy the namespace info over?
+
+but faster from where at at the moment would be thread-local variables...
+
+so...
+
+foobara_namespace = {
+  name: :global,
+  declaration_handler_registries: [global_declaration_handler_registry],
+  type_registries: [global_type_registry]
+}
+
+
+=end
