@@ -5,7 +5,7 @@ module Foobara
         class AddDefaults < Value::Transformer
           module TypeDeclarationExtension
             module ExtendAttributesTypeDeclarationHandler
-              module Validators
+              module TypeDeclarationValidators
                 class HashWithValidAttributeNames < Value::Validator
                   def always_applicable?
                     true

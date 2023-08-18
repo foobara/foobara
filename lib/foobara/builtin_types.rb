@@ -135,7 +135,7 @@ module Foobara
             end
           end
 
-          validator_module = Util.constant_value(handler_module, :Validators)
+          validator_module = Util.constant_value(handler_module, :TypeDeclarationValidators)
 
           if validator_module
             validator_classes = Util.constant_values(validator_module, is_a: Class)

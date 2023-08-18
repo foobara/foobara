@@ -5,8 +5,7 @@ module Foobara
         class MissingRequiredAttributes < Foobara::Value::Validator
           module TypeDeclarationExtension
             module ExtendAttributesTypeDeclarationHandler
-              # TODO: rename this TypeDeclarationValidators
-              module Validators
+              module TypeDeclarationValidators
                 class HashWithValidAttributeNames < Value::Validator
                   # TODO: make this not necessary
                   def always_applicable?
