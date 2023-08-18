@@ -1,10 +1,11 @@
 module Foobara
   module BuiltinTypes
     module Attributes
-      module Transformers
-        class MissingRequiredAttributes < Value::Transformer
+      module SupportedValidator
+        class MissingRequiredAttributes < Foobara::Value::Validator
           module TypeDeclarationExtension
             module ExtendAttributesTypeDeclarationHandler
+              # TODO: rename this TypeDeclarationValidators
               module Validators
                 class HashWithValidAttributeNames < Value::Validator
                   # TODO: make this not necessary

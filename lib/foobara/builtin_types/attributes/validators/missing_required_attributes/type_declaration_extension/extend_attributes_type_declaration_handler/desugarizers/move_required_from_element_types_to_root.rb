@@ -1,8 +1,8 @@
 module Foobara
   module BuiltinTypes
     module Attributes
-      module Transformers
-        class MissingRequiredAttributes < Value::Transformer
+      module SupportedValidator
+        class MissingRequiredAttributes < Foobara::Value::Validator
           module TypeDeclarationExtension
             module ExtendAttributesTypeDeclarationHandler
               module Desugarizers
