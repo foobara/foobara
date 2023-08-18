@@ -4,7 +4,7 @@ module Foobara
   module BuiltinTypes
     module Array
       module Casters
-        class ToArrayable < Value::Caster
+        class Arrayable < Value::Caster
           def applicable?(value)
             value.respond_to?(:to_a)
           end

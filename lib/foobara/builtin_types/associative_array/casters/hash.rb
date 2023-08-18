@@ -8,18 +8,6 @@ module Foobara
           def initialize(*args)
             super(*args, ruby_classes: ::Hash)
           end
-
-          def applicable?(value)
-            value.is_a?(::Hash)
-          end
-
-          def applies_message
-            "be a hash"
-          end
-
-          def cast(hash)
-            hash
-          end
         end
       end
     end
