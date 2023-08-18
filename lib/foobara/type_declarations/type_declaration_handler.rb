@@ -16,8 +16,7 @@ module Foobara
     class TypeDeclarationHandler < Value::Processor::Pipeline
       include WithRegistries
 
-      attr_accessor :desugarizers,
-                    :type_declaration_validators
+      attr_accessor :desugarizers, :type_declaration_validators
 
       def initialize(
         *args,

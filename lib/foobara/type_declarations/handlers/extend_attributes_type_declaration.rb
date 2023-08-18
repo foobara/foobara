@@ -10,7 +10,7 @@ module Foobara
     #   validate declaration value
     #   transform into Type instance
     # So... sugary type declaration value in, type out
-    class TypeDeclarationHandler < Value::Processor::Pipeline
+    module Handlers
       class ExtendAttributesTypeDeclarationHandler < ExtendAssociativeArrayTypeDeclarationHandler
         def applicable?(sugary_type_declaration)
           strictish_type_declaration = desugarize(sugary_type_declaration)

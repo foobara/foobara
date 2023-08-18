@@ -69,7 +69,7 @@ module Foobara
           load_processors_classes.call(module_name, extends).map(&:instance)
         }
 
-        desugarizer = TypeDeclarations::TypeDeclarationHandler::RegisteredTypeDeclarationHandler::SymbolDesugarizer
+        desugarizer = TypeDeclarations::Handlers::RegisteredTypeDeclarationHandler::SymbolDesugarizer
         declaration_data = desugarizer.instance.transform(type_symbol)
 
         casters = load_processors.call(:Caster)
@@ -109,7 +109,7 @@ module Foobara
 
         Util.constant_values(extension_module, is_a: ::Module).each do |handler_module|
           handler_name = handler_module.name.demodulize
-          handler_class_to_extend = TypeDeclarations::TypeDeclarationHandler.const_get(handler_name)
+          handler_class_to_extend = TypeDeclarations::Handlers.const_get(handler_name)
 
           unless handler_class_to_extend
             raise "Couldn't find handler class for #{handler_name}"

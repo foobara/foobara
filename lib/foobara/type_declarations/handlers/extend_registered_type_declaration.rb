@@ -1,4 +1,4 @@
-require "foobara/type_declarations/type_declaration_handler/registered_type_declaration_handler"
+require "foobara/type_declarations/handlers/registered_type_declaration"
 
 module Foobara
   module TypeDeclarations
@@ -12,7 +12,7 @@ module Foobara
     #   validate declaration value
     #   transform into Type instance
     # So... sugary type declaration value in, type out
-    class TypeDeclarationHandler < Value::Processor::Pipeline
+    module Handlers
       class ExtendRegisteredTypeDeclarationHandler < RegisteredTypeDeclarationHandler
         def applicable?(sugary_type_declaration)
           strict_type_declaration = desugarize(sugary_type_declaration)

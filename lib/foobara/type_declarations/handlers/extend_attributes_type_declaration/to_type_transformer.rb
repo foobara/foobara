@@ -1,9 +1,9 @@
-require "foobara/type_declarations/type_declaration_handler/registered_type_declaration_handler/to_type_transformer"
-require "foobara/type_declarations/type_declaration_handler/extend_associative_array_type_declaration_handler"
+require "foobara/type_declarations/handlers/registered_type_declaration/to_type_transformer"
+require "foobara/type_declarations/handlers/extend_associative_array_type_declaration"
 
 module Foobara
   module TypeDeclarations
-    class TypeDeclarationHandler < Value::Processor::Pipeline
+    module Handlers
       class ExtendAttributesTypeDeclarationHandler < ExtendAssociativeArrayTypeDeclarationHandler
         class ToTypeTransformer < ExtendAssociativeArrayTypeDeclarationHandler::ToTypeTransformer
           def transform(strict_type_declaration)

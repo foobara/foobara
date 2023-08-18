@@ -1,4 +1,4 @@
-require "foobara/type_declarations/type_declaration_handler/extend_registered_type_declaration_handler"
+require "foobara/type_declarations/handlers/extend_registered_type_declaration"
 
 module Foobara
   module TypeDeclarations
@@ -12,7 +12,7 @@ module Foobara
     #   validate declaration value
     #   transform into Type instance
     # So... sugary type declaration value in, type out
-    class TypeDeclarationHandler < Value::Processor::Pipeline
+    module Handlers
       class ExtendAssociativeArrayTypeDeclarationHandler < ExtendRegisteredTypeDeclarationHandler
         def priority
           Priority::MEDIUM

@@ -2,7 +2,7 @@ require "foobara/type_declarations/to_type_transformer"
 
 module Foobara
   module TypeDeclarations
-    class TypeDeclarationHandler < Value::Processor::Pipeline
+    module Handlers
       class RegisteredTypeDeclarationHandler < TypeDeclarationHandler
         # TODO: make a quick way to convert a couple simple procs into a transformer
         class ToTypeTransformer < TypeDeclarations::ToTypeTransformer

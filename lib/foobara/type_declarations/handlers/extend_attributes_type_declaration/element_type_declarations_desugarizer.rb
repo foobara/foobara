@@ -1,10 +1,10 @@
 require "foobara/type_declarations/desugarizer"
-require "foobara/type_declarations/type_declaration_handler/extend_associative_array_type_declaration_handler"
-require "foobara/type_declarations/type_declaration_handler/extend_attributes_type_declaration_handler/hash_desugarizer"
+require "foobara/type_declarations/handlers/extend_associative_array_type_declaration"
+require "foobara/type_declarations/handlers/extend_attributes_type_declaration/hash_desugarizer"
 
 module Foobara
   module TypeDeclarations
-    class TypeDeclarationHandler < Value::Processor::Pipeline
+    module Handlers
       class ExtendAttributesTypeDeclarationHandler < ExtendAssociativeArrayTypeDeclarationHandler
         # TODO: make a quick way to convert a couple simple procs into a transformer
         class ElementTypeDeclarationsDesugarizer < HashDesugarizer
