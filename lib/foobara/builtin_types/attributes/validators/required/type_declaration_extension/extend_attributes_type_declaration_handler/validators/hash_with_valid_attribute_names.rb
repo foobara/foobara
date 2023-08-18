@@ -2,7 +2,7 @@ module Foobara
   module BuiltinTypes
     module Attributes
       module SupportedValidator
-        class MissingRequiredAttributes < Foobara::Value::Validator
+        class Required < Foobara::Value::Validator
           module TypeDeclarationExtension
             module ExtendAttributesTypeDeclarationHandler
               module TypeDeclarationValidators
