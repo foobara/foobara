@@ -32,6 +32,7 @@ module Foobara
               when Value::Transformer
                 transformers << processor
               when Types::ElementProcessor
+                element_processors ||= []
                 element_processors << processor
               else
                 raise "Not sure where to put #{processor}"

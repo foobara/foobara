@@ -73,21 +73,21 @@ module Foobara
         declaration_data = desugarizer.instance.transform(type_symbol)
 
         casters = load_processors.call(:Caster)
-        transformers = load_processors.call(:Transformer)
-        validators = load_processors.call(:Validator)
-        element_processors = load_processors.call(:ElementProcessor, extends: Types::ElementProcessor)
+        # transformers = load_processors.call(:Transformer)
+        # validators = load_processors.call(:Validator)
+        # element_processors = load_processors.call(:ElementProcessor, extends: Types::ElementProcessor)
 
-        [*transformers, *validators, *element_processors].each do |processor|
-          install_type_declaration_extensions_for(processor.class)
-        end
+        # [*transformers, *validators, *element_processors].each do |processor|
+        #   install_type_declaration_extensions_for(processor.class)
+        # end
 
         type = Foobara::Types::Type.new(
           declaration_data,
           base_type:,
-          casters: casters.presence || base_type.casters.dup,
-          transformers:,
-          validators:,
-          element_processors:
+          # transformers:,
+          # validators:,
+          # element_processors:
+          casters: casters.presence || base_type.casters.dup
         )
 
         # what about desugarizers and schema validators?? I guess those live with the TypeDeclaration instead?
