@@ -190,6 +190,14 @@ module Foobara
           "#{s[0..400]}..."
         end
       end
+
+      def method_missing(method, *args, **opts)
+        method == symbol ? declaration_data : super
+      end
+
+      def respond_to_missing?(method, private = false)
+        method == symbol || super
+      end
     end
   end
 end

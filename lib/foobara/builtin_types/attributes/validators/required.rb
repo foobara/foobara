@@ -15,6 +15,7 @@ module Foobara
                 }
               end
 
+              # TODO: use the name of the error class instead
               def symbol
                 :missing_required_attribute
               end
@@ -22,17 +23,13 @@ module Foobara
           end
 
           class << self
-            def symbol
-              :required
-            end
-
             def data_schema
               :duck # TODO: expand when we have support for an array of symbols
             end
           end
 
           def required_attribute_names
-            declaration_data
+            required
           end
 
           def error_halts_processing?
