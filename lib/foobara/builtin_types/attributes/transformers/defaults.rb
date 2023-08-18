@@ -2,13 +2,8 @@ module Foobara
   module BuiltinTypes
     module Attributes
       module SupportedTransformer
-        class AddDefaults < Value::Transformer
+        class Defaults < Value::Transformer
           class << self
-            # TODO: have convention of grabbing this from the class name instead
-            def symbol
-              :defaults
-            end
-
             def data_schema
               :duck # TODO: fix this when we have a way to specify attributes with unspecified keys
             end
