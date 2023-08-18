@@ -4,7 +4,7 @@ require "foobara/types/validator_error"
 module Foobara
   module BuiltinTypes
     module Number
-      module SupportedValidator
+      module SupportedValidators
         class MaxExceeded < Foobara::Value::Validator
           # TODO: we should move this into a base class or something so we don't have to do it all over this project
           include TypeDeclarations::WithRegistries

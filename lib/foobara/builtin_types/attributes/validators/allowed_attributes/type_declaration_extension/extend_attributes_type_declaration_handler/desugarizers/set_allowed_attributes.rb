@@ -1,8 +1,8 @@
 module Foobara
   module BuiltinTypes
     module Attributes
-      module SupportedValidator
-        class UnexpectedAttributes < Value::Validator
+      module SupportedValidators
+        class AllowedAttributes < Value::Validator
           module TypeDeclarationExtension
             module ExtendAttributesTypeDeclarationHandler
               module Desugarizers
@@ -15,7 +15,7 @@ module Foobara
                   # TODO: feels like we could instead hook into element_type_declarations since that already has
                   # the allowed attributes??
                   def desugarize(rawish_type_declaration)
-                    rawish_type_declaration[:unexpected_attributes] =
+                    rawish_type_declaration[:allowed_attributes] =
                       rawish_type_declaration[:element_type_declarations].keys
 
                     rawish_type_declaration

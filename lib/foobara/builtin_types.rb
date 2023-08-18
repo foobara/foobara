@@ -90,8 +90,7 @@ module Foobara
           casters: casters.presence || base_type.casters.dup
         )
 
-        # what about desugarizers and schema validators?? I guess those live with the TypeDeclaration instead?
-        %i[SupportedTransformer SupportedValidator SupportedProcessor].each do |module_name|
+        %i[SupportedTransformers SupportedValidators SupportedProcessors].each do |module_name|
           load_processors_classes.call(module_name, Value::Processor).each do |processor_class|
             type.register_supported_processor_class(processor_class)
             install_type_declaration_extensions_for(processor_class)

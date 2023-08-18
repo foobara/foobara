@@ -3,8 +3,7 @@ require "foobara/types/validator_error"
 module Foobara
   module BuiltinTypes
     module Number
-      # TODO: should be be SupportedValidator
-      module SupportedValidator
+      module SupportedValidators
         class BelowMinimum < Foobara::Value::Validator
           include TypeDeclarations::WithRegistries
 

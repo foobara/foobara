@@ -1,7 +1,7 @@
 module Foobara
   module BuiltinTypes
     module Attributes
-      module SupportedValidator
+      module SupportedValidators
         class Required < Foobara::Value::Validator
           module TypeDeclarationExtension
             module ExtendAttributesTypeDeclarationHandler

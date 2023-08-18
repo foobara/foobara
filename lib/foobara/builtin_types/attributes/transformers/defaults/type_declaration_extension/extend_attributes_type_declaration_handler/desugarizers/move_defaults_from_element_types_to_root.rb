@@ -1,7 +1,7 @@
 module Foobara
   module BuiltinTypes
     module Attributes
-      module SupportedTransformer
+      module SupportedTransformers
         class Defaults < Value::Transformer
           module TypeDeclarationExtension
             module ExtendAttributesTypeDeclarationHandler

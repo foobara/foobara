@@ -3,7 +3,7 @@ require "foobara/types/validator_error"
 module Foobara
   module BuiltinTypes
     module Attributes
-      module SupportedValidator
+      module SupportedValidators
         class Required < Foobara::Value::Validator
           include TypeDeclarations::WithRegistries
 

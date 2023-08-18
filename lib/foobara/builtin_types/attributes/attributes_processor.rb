@@ -1,8 +1,7 @@
 module Foobara
   module BuiltinTypes
     module Attributes
-      # TODO: pluralize thees module names
-      module SupportedProcessor
+      module SupportedProcessors
         class ElementTypeDeclarations < Types::ElementProcessor
           include TypeDeclarations::WithRegistries
 
