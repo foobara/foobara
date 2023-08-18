@@ -4,7 +4,6 @@ module Foobara
       module SupportedValidator
         class UnexpectedAttributes < Value::Validator
           # TODO: so weird to have to do this everywhere...
-
           include TypeDeclarations::WithRegistries
 
           class Error < Foobara::Value::AttributeError
