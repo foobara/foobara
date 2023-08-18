@@ -9,10 +9,6 @@ module Foobara
             end
           end
 
-          def defaults
-            declaration_data
-          end
-
           def transform(attributes_hash)
             defaults.merge(attributes_hash)
           end

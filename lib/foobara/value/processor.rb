@@ -39,7 +39,7 @@ module Foobara
         end
 
         def symbol
-          @symbol ||= name.demodulize.gsub(/(Processor|Transformer|Validator)$/, "").underscore.to_sym
+          @symbol ||= name&.demodulize&.gsub(/(Processor|Transformer|Validator)$/, "")&.underscore&.to_sym
         end
 
         def declaration_data_type

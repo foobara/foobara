@@ -22,6 +22,14 @@ module Foobara
 
         Outcome.success(value)
       end
+
+      def method_missing(method, *args, **opts)
+        method == symbol ? declaration_data : super
+      end
+
+      def respond_to_missing?(method, private = false)
+        method == symbol || super
+      end
     end
   end
 end
