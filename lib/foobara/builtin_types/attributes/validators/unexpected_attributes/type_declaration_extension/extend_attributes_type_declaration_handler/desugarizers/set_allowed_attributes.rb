@@ -1,8 +1,8 @@
 module Foobara
   module BuiltinTypes
     module Attributes
-      module Transformers
-        class UnexpectedAttributes < Value::Transformer
+      module SupportedValidator
+        class UnexpectedAttributes < Value::Validator
           module TypeDeclarationExtension
             module ExtendAttributesTypeDeclarationHandler
               module Desugarizers
