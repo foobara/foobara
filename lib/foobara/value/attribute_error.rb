@@ -1,9 +1,7 @@
-require "foobara/value/error"
-
 module Foobara
   module Value
     # TODO: this needs a better name
-    class AttributeError < Value::Error
+    class AttributeError < Error
       attr_accessor :path
 
       class << self
