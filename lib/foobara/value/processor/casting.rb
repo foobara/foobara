@@ -3,13 +3,16 @@ require "foobara/value/attribute_error"
 module Foobara
   module Value
     class Processor
+      # TODO: at least move this up to Types though that doesn't solve the issue
       class Casting < Selection
         class CannotCastError < AttributeError
           class << self
             def context_type
               # TODO: hmmmm this is a backwards dependency here, dang...
               # TODO: fix this...
-              @context_type ||= Model::Schemas::Attributes.new(context_schema).to_type
+              # NOTE: Inconvenient to fix as we'd need a type created without using TypeDeclarations...
+              # TODO: is this used??
+              @context_type ||= TypeDeclarations::Namespace.type_for_declaration(context_schema)
             end
 
             # Value will always need to be a duck but cast_to: should probably be the relevant

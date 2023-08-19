@@ -16,7 +16,7 @@ module Foobara
 
         def context_type
           # TODO: fix this bad dependency??
-          @context_type = TypeDeclarations.global_type_declaration_handler_registry.type_for(context_schema)
+          @context_type = TypeDeclarations::Namespace.type_for_declaration(context_schema)
         end
       end
 
