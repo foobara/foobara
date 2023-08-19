@@ -7,14 +7,6 @@ module Foobara
       class Casting < Selection
         class CannotCastError < AttributeError
           class << self
-            def context_type
-              # TODO: hmmmm this is a backwards dependency here, dang...
-              # TODO: fix this...
-              # NOTE: Inconvenient to fix as we'd need a type created without using TypeDeclarations...
-              # TODO: is this used??
-              @context_type ||= TypeDeclarations::Namespace.type_for_declaration(context_schema)
-            end
-
             # Value will always need to be a duck but cast_to: should probably be the relevant
             # type-declaration.  This means it shouldn't come from the class but rather the processor
             def context_schema

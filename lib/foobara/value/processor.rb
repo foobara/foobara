@@ -81,10 +81,6 @@ module Foobara
         error_class.symbol
       end
 
-      def error_context_type
-        error_class.context_type
-      end
-
       def error_message(value)
         error_class.message(value)
       end

@@ -34,12 +34,6 @@ RSpec.describe Foobara::Value::Processor do
     end
   end
 
-  describe "error_context_type" do
-    it "has base_type of :attributes" do
-      expect(processor.error_context_type.base_type).to be(Foobara::Types[:attributes])
-    end
-  end
-
   describe "#process!" do
     context "when is an error" do
       it "raises" do

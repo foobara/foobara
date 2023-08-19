@@ -11,11 +11,6 @@ module Foobara
             value: :duck
           }
         end
-
-        def context_type
-          # TODO: fix this bad dependency??
-          @context_type = TypeDeclarations::Namespace.type_for_declaration(context_schema)
-        end
       end
 
       def initialize(context:, path: [], **data)
