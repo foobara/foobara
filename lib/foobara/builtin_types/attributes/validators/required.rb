@@ -5,7 +5,7 @@ module Foobara
         class Required < TypeDeclarations::Validator
           class Error < Foobara::Value::AttributeError
             class << self
-              def context_schema
+              def context_type_declaration
                 {
                   attribute_name: :symbol
                 }

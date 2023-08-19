@@ -35,7 +35,7 @@ RSpec.describe "custom types" do
   #   #error_message
   #   #error_context
   #   Error
-  #     .context_schema # should we move this??
+  #     .context_type_declaration # should we move this??
   #
   # also, need to call .register_validator for any desired validators on the Schema. Another good reason to couple??
   #

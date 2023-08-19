@@ -7,7 +7,7 @@ module Foobara
       class Selection < Multi
         class NoApplicableProcessorError < AttributeError
           class << self
-            def context_schema
+            def context_type_declaration
               {
                 processors: :duck,
                 value: :duck
@@ -18,7 +18,7 @@ module Foobara
 
         class MoreThanOneApplicableProcessorError < AttributeError
           class << self
-            def context_schema
+            def context_type_declaration
               {
                 processors: :duck,
                 applicable_processors: :duck,

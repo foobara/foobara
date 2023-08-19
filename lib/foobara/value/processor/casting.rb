@@ -9,7 +9,7 @@ module Foobara
           class << self
             # Value will always need to be a duck but cast_to: should probably be the relevant
             # type-declaration.  This means it shouldn't come from the class but rather the processor
-            def context_schema
+            def context_type_declaration
               {
                 cast_to: :duck,
                 value: :duck,

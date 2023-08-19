@@ -5,7 +5,7 @@ module Foobara
         class BelowMinimum < TypeDeclarations::Validator
           class BelowMinimumError < Foobara::Value::AttributeError
             class << self
-              def context_schema
+              def context_type_declaration
                 {
                   value: :number,
                   min: :number

@@ -7,9 +7,9 @@ module Foobara
         class_methods do
           attr_accessor :error_context_schema_map
 
-          def possible_input_error(path, symbol, context_schema = nil)
+          def possible_input_error(path, symbol, context_type_declaration = nil)
             path = Array.wrap(path)
-            error_context_schema_map[:input][path][symbol] = context_schema.presence
+            error_context_schema_map[:input][path][symbol] = context_type_declaration.presence
           end
 
           def error_context_schema_map(map = nil, path = nil, schema_to_process = nil)
@@ -39,8 +39,8 @@ module Foobara
             end
           end
 
-          def possible_error(symbol, context_schema = nil)
-            error_context_schema_map[:runtime][symbol] = context_schema.presence
+          def possible_error(symbol, context_type_declaration = nil)
+            error_context_schema_map[:runtime][symbol] = context_type_declaration.presence
           end
         end
       end

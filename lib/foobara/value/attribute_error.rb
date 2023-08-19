@@ -5,7 +5,7 @@ module Foobara
       attr_accessor :path
 
       class << self
-        def context_schema
+        def context_type_declaration
           {
             attribute_name: :symbol,
             value: :duck
@@ -21,7 +21,7 @@ module Foobara
         self.path = path
       end
 
-      delegate :context_schema, to: :class
+      delegate :context_type_declaration, to: :class
 
       def attribute_name
         # TODO: feels awkward... something is not right

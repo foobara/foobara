@@ -5,7 +5,7 @@ module Foobara
         class MaxExceeded < TypeDeclarations::Validator
           class MaxExceededError < Foobara::Value::AttributeError
             class << self
-              def context_schema
+              def context_type_declaration
                 {
                   value: :number,
                   max: :number
