@@ -4,8 +4,8 @@ require "foobara/type_declarations/handlers/extend_associative_array_type_declar
 module Foobara
   module TypeDeclarations
     module Handlers
-      class ExtendAttributesTypeDeclarationHandler < ExtendAssociativeArrayTypeDeclarationHandler
-        class ToTypeTransformer < ExtendAssociativeArrayTypeDeclarationHandler::ToTypeTransformer
+      class ExtendAttributesTypeDeclaration < ExtendAssociativeArrayTypeDeclaration
+        class ToTypeTransformer < ExtendAssociativeArrayTypeDeclaration::ToTypeTransformer
           def transform(strict_type_declaration)
             super.tap do |type|
               type_declarations = type.declaration_data[:element_type_declarations]

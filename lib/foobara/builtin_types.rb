@@ -69,7 +69,7 @@ module Foobara
           load_processors_classes.call(module_name, extends).map(&:instance)
         }
 
-        desugarizer = TypeDeclarations::Handlers::RegisteredTypeDeclarationHandler::SymbolDesugarizer
+        desugarizer = TypeDeclarations::Handlers::RegisteredTypeDeclaration::SymbolDesugarizer
         declaration_data = desugarizer.instance.transform(type_symbol)
 
         casters = load_processors.call(:Caster)

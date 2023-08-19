@@ -11,7 +11,7 @@ module Foobara
     #   transform into Type instance
     # So... sugary type declaration value in, type out
     module Handlers
-      class ExtendAttributesTypeDeclarationHandler < ExtendAssociativeArrayTypeDeclarationHandler
+      class ExtendAttributesTypeDeclaration < ExtendAssociativeArrayTypeDeclaration
         def applicable?(sugary_type_declaration)
           strictish_type_declaration = desugarize(sugary_type_declaration)
 

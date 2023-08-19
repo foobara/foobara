@@ -13,6 +13,7 @@ Naming/FileName:
     - spec/lib/**/*
     - spec/**/*
     - bin/*
+    - src/commands/version.rb
   CheckDefinitionPathHierarchyRoots:
     - ./lib
     - ./src

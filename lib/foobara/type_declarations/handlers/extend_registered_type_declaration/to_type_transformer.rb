@@ -4,9 +4,9 @@ require "foobara/type_declarations/handlers/extend_associative_array_type_declar
 module Foobara
   module TypeDeclarations
     module Handlers
-      class ExtendRegisteredTypeDeclarationHandler < RegisteredTypeDeclarationHandler
+      class ExtendRegisteredTypeDeclaration < RegisteredTypeDeclaration
         # TODO: make a quick way to convert a couple simple procs into a transformer
-        class ToTypeTransformer < RegisteredTypeDeclarationHandler::ToTypeTransformer
+        class ToTypeTransformer < RegisteredTypeDeclaration::ToTypeTransformer
           def transform(strict_type_declaration)
             # TODO: maybe cache this stuff??
             base_type = super

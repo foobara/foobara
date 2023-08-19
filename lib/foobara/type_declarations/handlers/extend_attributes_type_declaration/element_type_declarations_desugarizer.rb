@@ -5,7 +5,7 @@ require "foobara/type_declarations/handlers/extend_attributes_type_declaration/h
 module Foobara
   module TypeDeclarations
     module Handlers
-      class ExtendAttributesTypeDeclarationHandler < ExtendAssociativeArrayTypeDeclarationHandler
+      class ExtendAttributesTypeDeclaration < ExtendAssociativeArrayTypeDeclaration
         # TODO: make a quick way to convert a couple simple procs into a transformer
         class ElementTypeDeclarationsDesugarizer < HashDesugarizer
           def desugarize(sugary_type_declaration)

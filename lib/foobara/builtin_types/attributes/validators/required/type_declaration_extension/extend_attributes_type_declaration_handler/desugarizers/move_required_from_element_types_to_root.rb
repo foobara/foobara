@@ -4,7 +4,7 @@ module Foobara
       module SupportedValidators
         class Required < Foobara::Value::Validator
           module TypeDeclarationExtension
-            module ExtendAttributesTypeDeclarationHandler
+            module ExtendAttributesTypeDeclaration
               module Desugarizers
                 class MoveRequiredFromElementTypesToRoot < TypeDeclarations::Desugarizer
                   def applicable?(value)

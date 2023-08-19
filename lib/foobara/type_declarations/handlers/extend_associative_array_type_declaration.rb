@@ -13,7 +13,7 @@ module Foobara
     #   transform into Type instance
     # So... sugary type declaration value in, type out
     module Handlers
-      class ExtendAssociativeArrayTypeDeclarationHandler < ExtendRegisteredTypeDeclarationHandler
+      class ExtendAssociativeArrayTypeDeclaration < ExtendRegisteredTypeDeclaration
         def priority
           Priority::MEDIUM
         end

@@ -14,9 +14,9 @@ module Foobara
       end
     end
 
-    register_type_declaration(Handlers::RegisteredTypeDeclarationHandler.new)
-    register_type_declaration(Handlers::ExtendRegisteredTypeDeclarationHandler.new)
-    register_type_declaration(Handlers::ExtendAttributesTypeDeclarationHandler.new)
+    register_type_declaration(Handlers::RegisteredTypeDeclaration.new)
+    register_type_declaration(Handlers::ExtendRegisteredTypeDeclaration.new)
+    register_type_declaration(Handlers::ExtendAttributesTypeDeclaration.new)
   end
 end
 
@@ -80,8 +80,8 @@ TypeDeclarationHandler
   RegisteredStructuredTypeExtensionTypeDeclarationHandler
     ExtendArrayTypeDeclarationHandler
     ExtendTupleTypeDeclarationHandler
-    ExtendAssociativeArrayTypeDeclarationHandler
-    ExtendAttributesTypeDeclarationHandler
+    ExtendAssociativeArrayTypeDeclaration
+    ExtendAttributesTypeDeclaration
     ExtendModelTypeDeclarationHandler
     ExtendEntityTypeDeclarationHandler
 

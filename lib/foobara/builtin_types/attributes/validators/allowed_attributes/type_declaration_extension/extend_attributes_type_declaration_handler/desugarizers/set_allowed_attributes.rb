@@ -4,7 +4,7 @@ module Foobara
       module SupportedValidators
         class AllowedAttributes < Value::Validator
           module TypeDeclarationExtension
-            module ExtendAttributesTypeDeclarationHandler
+            module ExtendAttributesTypeDeclaration
               module Desugarizers
                 class SetAllowedAttributes < TypeDeclarations::Desugarizer
                   def applicable?(value)

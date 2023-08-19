@@ -4,7 +4,7 @@ module Foobara
       module SupportedValidators
         class Required < Foobara::Value::Validator
           module TypeDeclarationExtension
-            module ExtendAttributesTypeDeclarationHandler
+            module ExtendAttributesTypeDeclaration
               module TypeDeclarationValidators
                 class HashWithValidAttributeNames < Value::Validator
                   # TODO: make this not necessary

@@ -13,7 +13,7 @@ module Foobara
     #   transform into Type instance
     # So... sugary type declaration value in, type out
     module Handlers
-      class ExtendRegisteredTypeDeclarationHandler < RegisteredTypeDeclarationHandler
+      class ExtendRegisteredTypeDeclaration < RegisteredTypeDeclaration
         def applicable?(sugary_type_declaration)
           strict_type_declaration = desugarize(sugary_type_declaration)
 

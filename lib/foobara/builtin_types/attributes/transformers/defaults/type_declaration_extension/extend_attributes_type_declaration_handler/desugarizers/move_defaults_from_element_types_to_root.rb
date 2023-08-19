@@ -4,7 +4,7 @@ module Foobara
       module SupportedTransformers
         class Defaults < Value::Transformer
           module TypeDeclarationExtension
-            module ExtendAttributesTypeDeclarationHandler
+            module ExtendAttributesTypeDeclaration
               module Desugarizers
                 class MoveDefaultsFromElementTypesToRoot < TypeDeclarations::Desugarizer
                   def applicable?(value)
