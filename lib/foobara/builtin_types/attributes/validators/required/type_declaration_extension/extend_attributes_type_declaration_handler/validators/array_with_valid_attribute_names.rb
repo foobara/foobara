@@ -6,12 +6,7 @@ module Foobara
           module TypeDeclarationExtension
             module ExtendAttributesTypeDeclaration
               module TypeDeclarationValidators
-                class ArrayWithValidAttributeNames < Value::Validator
-                  # TODO: make this not necessary
-                  def always_applicable?
-                    true
-                  end
-
+                class ArrayWithValidAttributeNames < TypeDeclarations::TypeDeclarationValidator
                   def validation_errors(strict_type_declaration)
                     required = strict_type_declaration[:required]
 

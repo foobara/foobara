@@ -1,10 +1,8 @@
-require "foobara/type_declarations/with_registries"
+require "foobara/type_declarations/transformer"
 
 module Foobara
   module TypeDeclarations
-    class ToTypeTransformer < Value::Transformer
-      include WithRegistries
-
+    class ToTypeTransformer < Transformer
       def always_applicable?
         true
       end

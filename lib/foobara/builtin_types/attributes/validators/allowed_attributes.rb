@@ -17,10 +17,6 @@ module Foobara
             end
           end
 
-          def always_applicable?
-            true
-          end
-
           def error_halts_processing?
             true
           end
