@@ -1,11 +1,9 @@
-require "foobara/types/validator_error"
-
 module Foobara
   module BuiltinTypes
     module Number
       module SupportedValidators
         class BelowMinimum < TypeDeclarations::Validator
-          class BelowMinimumError < Foobara::Types::ValidatorError
+          class BelowMinimumError < Foobara::Value::AttributeError
             class << self
               def context_schema
                 {

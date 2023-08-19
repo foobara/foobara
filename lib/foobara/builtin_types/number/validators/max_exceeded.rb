@@ -1,12 +1,9 @@
-require "foobara/value/validator"
-require "foobara/types/validator_error"
-
 module Foobara
   module BuiltinTypes
     module Number
       module SupportedValidators
         class MaxExceeded < TypeDeclarations::Validator
-          class MaxExceededError < Foobara::Types::ValidatorError
+          class MaxExceededError < Foobara::Value::AttributeError
             class << self
               def context_schema
                 {
