@@ -6,3 +6,14 @@ Naming/PredicateName:
 
 Naming/VariableNumber:
   Enabled: false
+
+Naming/FileName:
+  ExpectMatchingDefinition: true
+  Exclude:
+    - spec/lib/**/*
+    - spec/**/*
+    - bin/*
+  CheckDefinitionPathHierarchyRoots:
+    - ./lib
+    - ./src
+  IgnoreExecutableScripts: true
