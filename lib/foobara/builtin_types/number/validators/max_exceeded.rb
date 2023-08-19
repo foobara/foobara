@@ -6,7 +6,7 @@ module Foobara
     module Number
       module SupportedValidators
         class MaxExceeded < TypeDeclarations::Validator
-          class Error < Foobara::Types::ValidatorError
+          class MaxExceededError < Foobara::Types::ValidatorError
             class << self
               def context_schema
                 {

@@ -4,10 +4,6 @@ module Foobara
   module Types
     class ValidatorError < Foobara::Value::AttributeError
       class << self
-        def symbol
-          @symbol ||= Util.module_for(self).name.demodulize.gsub(/Error$/, "").underscore.to_sym
-        end
-
         # are we able to build a context type instead?
         # That's a problem because we wish to express these types via schemas to the outside world.
         # So we would need code to convert a type to a schema for that purpose if we keep type and schema decoupled.
