@@ -4,9 +4,7 @@ module Foobara
   module BuiltinTypes
     module Attributes
       module SupportedValidators
-        class Required < Foobara::Value::Validator
-          include TypeDeclarations::WithRegistries
-
+        class Required < TypeDeclarations::Validator
           class Error < Foobara::Types::ValidatorError
             class << self
               def context_schema

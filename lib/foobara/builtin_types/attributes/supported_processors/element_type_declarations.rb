@@ -2,9 +2,7 @@ module Foobara
   module BuiltinTypes
     module Attributes
       module SupportedProcessors
-        class ElementTypeDeclarations < Types::ElementProcessor
-          include TypeDeclarations::WithRegistries
-
+        class ElementTypeDeclarations < TypeDeclarations::ElementProcessor
           def element_type_declarations
             declaration_data
           end

@@ -2,7 +2,7 @@ module Foobara
   module BuiltinTypes
     module Attributes
       module SupportedValidators
-        class Required < Foobara::Value::Validator
+        class Required < TypeDeclarations::Validator
           module TypeDeclarationExtension
             module ExtendAttributesTypeDeclaration
               module Desugarizers

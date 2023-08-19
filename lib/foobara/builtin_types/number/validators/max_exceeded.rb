@@ -5,10 +5,7 @@ module Foobara
   module BuiltinTypes
     module Number
       module SupportedValidators
-        class MaxExceeded < Foobara::Value::Validator
-          # TODO: we should move this into a base class or something so we don't have to do it all over this project
-          include TypeDeclarations::WithRegistries
-
+        class MaxExceeded < TypeDeclarations::Validator
           class Error < Foobara::Types::ValidatorError
             class << self
               def context_schema

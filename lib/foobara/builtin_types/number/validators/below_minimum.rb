@@ -4,9 +4,7 @@ module Foobara
   module BuiltinTypes
     module Number
       module SupportedValidators
-        class BelowMinimum < Foobara::Value::Validator
-          include TypeDeclarations::WithRegistries
-
+        class BelowMinimum < TypeDeclarations::Validator
           class Error < Foobara::Types::ValidatorError
             class << self
               def context_schema

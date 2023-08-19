@@ -2,10 +2,7 @@ module Foobara
   module BuiltinTypes
     module Attributes
       module SupportedValidators
-        class AllowedAttributes < Value::Validator
-          # TODO: so weird to have to do this everywhere...
-          include TypeDeclarations::WithRegistries
-
+        class AllowedAttributes < TypeDeclarations::Validator
           class Error < Foobara::Value::AttributeError
             class << self
               def symbol

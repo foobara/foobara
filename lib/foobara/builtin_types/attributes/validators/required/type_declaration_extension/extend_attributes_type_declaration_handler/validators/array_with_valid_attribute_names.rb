@@ -2,11 +2,11 @@ module Foobara
   module BuiltinTypes
     module Attributes
       module SupportedValidators
-        class Required < Foobara::Value::Validator
+        class Required < TypeDeclarations::Validator
           module TypeDeclarationExtension
             module ExtendAttributesTypeDeclaration
               module TypeDeclarationValidators
-                class HashWithValidAttributeNames < Value::Validator
+                class ArrayWithValidAttributeNames < Value::Validator
                   # TODO: make this not necessary
                   def always_applicable?
                     true
