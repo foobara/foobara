@@ -1,7 +1,3 @@
-# TODO: figure out where this should live...
-# it knows about types and type declarations but type declarations needs to access it.
-# So for now it belongs there it seems and luckily it seems that Types doesn't need it... yet
-
 module Foobara
   module TypeDeclarations
     class Namespace
@@ -49,8 +45,6 @@ module Foobara
           end
         end
 
-        # TODO: experiment with private/protected to see if we can force all calls through this class to avoid confusion
-        # about what is expected during a direct call
         delegate :type_registered,
                  :type_registries,
                  :type_for_symbol,
@@ -126,7 +120,6 @@ module Foobara
       end
 
       def type_declaration_handler_for(type_declaration)
-        # TODO: repeat this for others
         Namespace.using self do
           outcome = nil
 

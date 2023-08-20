@@ -18,13 +18,10 @@ module Foobara
 
                     element_type_declarations.each_pair do |attribute_name, attribute_type_declaration|
                       if attribute_type_declaration.is_a?(::Hash) && attribute_type_declaration.key?(:required)
-                        required = attribute_type_declaration[:required]
+                        required = !attribute_type_declaration.key?(:required) || attribute_type_declaration[:required]
 
                         element_type_declarations[attribute_name] = attribute_type_declaration.except(:required)
 
-                        # TODO: is false a good no-op?
-                        # Maybe make required true the default and add a :foo? convention/sugar?
-                        # required: false is a no-op as it's the default
                         required_attributes << attribute_name if required
                       end
                     end
