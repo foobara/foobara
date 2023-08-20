@@ -3,12 +3,7 @@ module Foobara
     module Attributes
       module SupportedValidators
         class AllowedAttributes < TypeDeclarations::Validator
-          class Error < Foobara::Value::AttributeError
-            class << self
-              def symbol
-                :unexpected_attribute
-              end
-            end
+          class UnexpectedAttributeError < Foobara::Value::AttributeError
           end
 
           class << self

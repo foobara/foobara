@@ -3,17 +3,12 @@ module Foobara
     module Attributes
       module SupportedValidators
         class Required < TypeDeclarations::Validator
-          class Error < Foobara::Value::AttributeError
+          class MissingRequiredAttributeError < Foobara::Value::AttributeError
             class << self
               def context_type_declaration
                 {
                   attribute_name: :symbol
                 }
-              end
-
-              # TODO: use the name of the error class instead
-              def symbol
-                :missing_required_attribute
               end
             end
           end

@@ -2,7 +2,7 @@ module Foobara
   module BuiltinTypes
     module Number
       module SupportedValidators
-        class MaxExceeded < TypeDeclarations::Validator
+        class Max < TypeDeclarations::Validator
           class MaxExceededError < Foobara::Value::AttributeError
             class << self
               def context_type_declaration
@@ -15,10 +15,6 @@ module Foobara
           end
 
           class << self
-            def symbol
-              :max
-            end
-
             def data_schema
               :number
             end

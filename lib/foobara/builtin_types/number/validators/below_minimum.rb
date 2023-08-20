@@ -2,7 +2,7 @@ module Foobara
   module BuiltinTypes
     module Number
       module SupportedValidators
-        class BelowMinimum < TypeDeclarations::Validator
+        class Min < TypeDeclarations::Validator
           class BelowMinimumError < Foobara::Value::AttributeError
             class << self
               def context_type_declaration
@@ -15,11 +15,6 @@ module Foobara
           end
 
           class << self
-            def symbol
-              # TODO: derive this symbol from the class instead...
-              :min
-            end
-
             def data_schema
               :number
             end
