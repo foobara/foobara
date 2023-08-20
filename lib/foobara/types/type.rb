@@ -111,15 +111,15 @@ module Foobara
       # an instance of something from the instance of the processor and then ask it questions?? TODO: try this
       def value_transformer
         if transformers.present?
-          # TODO: create Transformer::Pipeline. Or not? yagni?
           Value::Processor::Pipeline.new(processors: transformers)
         end
       end
 
       # TODO: figure out how to safely memoize stuff so like this for performance reasons
+      # A good way, but potentially a decent amount of work, is to have a class that takes value to its initialize
+      # method.
       def value_validator
         if validators.present?
-          # TODO: create Validator::Pipeline
           Value::Processor::Pipeline.new(processors: validators)
         end
       end

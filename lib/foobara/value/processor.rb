@@ -68,6 +68,10 @@ module Foobara
                :declaration_data_type,
                to: :class
 
+      def runner(value)
+        Runner.new(self, value)
+      end
+
       def error_symbol
         error_class.symbol
       end

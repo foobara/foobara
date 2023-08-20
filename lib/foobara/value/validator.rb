@@ -1,6 +1,10 @@
 module Foobara
   module Value
     class Validator < Processor
+      class Runner < Processor::Runner
+        runner_methods :validation_errors
+      end
+
       def validation_errors(_value)
         # :nocov:
         raise "subclass responsibility"
