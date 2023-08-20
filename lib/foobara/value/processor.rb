@@ -68,15 +68,6 @@ module Foobara
                :declaration_data_type,
                to: :class
 
-      # TODO: this is a problem or an indicator we need to couple Type and Schema.
-      # here we are in the Type namespace but we really need to communicate the error context schemas to the
-      # outside world for things like Schema and Command to work well.
-      # A solution... a way to map built-in validator errors to schemas a level up in Schema.
-      # Not necessary but maybe a good idea just to preserve separation of concerns for longer
-      def error_context_schema
-        error_class.context_type_declaration
-      end
-
       def error_symbol
         error_class.symbol
       end
@@ -93,7 +84,7 @@ module Foobara
         path = []
 
         error_classes.map do |error_class|
-          [path, error_class.symbol, error_class.context_type_declaration]
+          [path, error_class.symbol, error_class]
         end
       end
 

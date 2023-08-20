@@ -35,7 +35,9 @@ module Foobara
             type.possible_errors.each do |possible_error|
               p = possible_error[0]
               symbol = possible_error[1]
-              context_type_declaration = possible_error[2]
+              error_class = possible_error[2]
+
+              context_type_declaration = TypeDeclarations.error_context_type_declaration(error_class)
 
               possible_input_error([*path, *p], symbol, context_type_declaration)
             end

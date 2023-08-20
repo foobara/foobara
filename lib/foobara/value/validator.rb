@@ -40,7 +40,7 @@ module Foobara
           [
             [],
             error_symbol,
-            error_context_schema
+            error_class
           ]
         ]
       end
