@@ -13,7 +13,9 @@ module Foobara
         delegate :has_errors?, to: :error_collection
 
         def error_hash
-          runtime_errors, input_errors = error_collection.partition { |e| e.is_a?(Foobara::Command::RuntimeError) }
+          runtime_errors, input_errors = error_collection.partition do |e|
+            e.is_a?(Foobara::Command::RuntimeCommandError)
+          end
 
           {
             runtime: runtime_errors.to_h { |error| [error.symbol, error.to_h] },
@@ -63,10 +65,10 @@ module Foobara
           error = if args.size == 1 && opts.empty?
                     error = args.first
 
-                    unless error.is_a?(Foobara::Command::RuntimeError)
+                    unless error.is_a?(Foobara::Command::RuntimeCommandError)
                       # :nocov:
                       raise ArgumentError,
-                            "expected a Foobara::Command::RuntimeError or keyword arguments to construct one"
+                            "expected a Foobara::Command::RuntimeCommandError or keyword arguments to construct one"
                       # :nocov:
                     end
 
@@ -77,7 +79,7 @@ module Foobara
 
                     raise ArgumentError, "missing error symbol" unless symbol
 
-                    Foobara::Command::RuntimeError.new(**error_args)
+                    Foobara::Command::RuntimeCommandError.new(**error_args)
                   else
                     # :nocov:
                     raise ArgumentError, "Invalid arguments given. Expected an error or keyword args for an error"
@@ -103,7 +105,7 @@ module Foobara
           map = self.class.error_context_schema_map
 
           map = case error
-                when Command::RuntimeError
+                when Command::RuntimeCommandError
                   map[:runtime]
                 when Value::AttributeError
                   map[:input][error.path]

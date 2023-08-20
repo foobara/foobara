@@ -9,7 +9,7 @@ module Foobara
         class AlreadyRegisteredSubcommand < StandardError; end
         class SubcommandNotRegistered < StandardError; end
 
-        class FailedToExecuteSubcommand < Foobara::Command::RuntimeError
+        class FailedToExecuteSubcommand < Foobara::Command::RuntimeCommandError
           attr_accessor :causes
 
           def initialize(causes:, **args)

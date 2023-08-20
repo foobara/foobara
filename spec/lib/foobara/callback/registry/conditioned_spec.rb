@@ -9,6 +9,7 @@ RSpec.describe Foobara::Callback::Registry::Conditioned do
     def register_it
       registry.after(conditions) { "noop" }
     end
+
     context "when given good condition" do
       it "registers it and can return it even when unioned with other conditions" do
         expect {
