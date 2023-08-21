@@ -118,7 +118,7 @@ RSpec.describe "custom types" do
       Class.new(Foobara::Value::Validator) do
         self::Error = Class.new(Foobara::Value::AttributeError) do # rubocop:disable RSpec/LeakyConstantDeclaration
           class << self
-            def error_schema
+            def context_type_declaration
               {
                 foo: :symbol
               }
@@ -143,7 +143,7 @@ RSpec.describe "custom types" do
             :be_pointless
           end
 
-          def data_schema
+          def declaration_data_type_declaration
             :symbol # TODO: use boolean instead once we have one
           end
         end

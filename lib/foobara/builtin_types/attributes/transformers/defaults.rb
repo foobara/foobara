@@ -4,7 +4,7 @@ module Foobara
       module SupportedTransformers
         class Defaults < Value::Transformer
           class << self
-            def data_schema
+            def declaration_data_type_declaration
               :duck # TODO: fix this when we have a way to specify attributes with unspecified keys
             end
           end

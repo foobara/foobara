@@ -14,7 +14,7 @@ module Foobara
           end
 
           class << self
-            def data_schema
+            def declaration_data_type_declaration
               :duck # TODO: expand when we have support for an array of symbols
             end
           end

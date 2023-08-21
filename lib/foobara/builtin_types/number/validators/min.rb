@@ -15,7 +15,7 @@ module Foobara
           end
 
           class << self
-            def data_schema
+            def declaration_data_type_declaration
               :number
             end
           end
