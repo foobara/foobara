@@ -4,13 +4,6 @@ module Foobara
       module Inputs
         extend ActiveSupport::Concern
 
-        class_methods do
-          def inputs_type
-            # TODO: eliminate input_schema
-            @inputs_type ||= input_schema
-          end
-        end
-
         attr_reader :inputs
 
         def method_missing(method_name, *args, &)
@@ -26,13 +19,13 @@ module Foobara
         end
 
         def respond_to_missing_for_inputs?(method_name, _private = false)
-          input_schema&.element_types&.key?(method_name)
+          inputs_type&.element_types&.key?(method_name)
         end
 
         delegate :inputs_type, to: :class
 
         def cast_and_validate_inputs
-          if input_schema.blank? && raw_inputs.blank?
+          if inputs_type.blank? && raw_inputs.blank?
             @inputs = {}
             return
           end

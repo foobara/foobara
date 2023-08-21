@@ -2,7 +2,7 @@ RSpec.describe Foobara::Command::Concerns::Errors do
   context "with simple command" do
     let(:command_base_class) {
       Class.new(Foobara::Command) do
-        input_schema(
+        inputs(
           type: :attributes,
           element_type_declarations: {
             exponent: { type: :integer, max: 10, min: 1 },

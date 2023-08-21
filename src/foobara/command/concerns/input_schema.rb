@@ -5,28 +5,24 @@ module Foobara
         extend ActiveSupport::Concern
 
         class_methods do
-          def input_schema(*args)
-            if args.empty?
-              # TODO: rename to input_type or something like that
-              return @input_schema if defined?(@input_schema)
+          def inputs(inputs_type_declaration)
+            @inputs_type = type_for_declaration(inputs_type_declaration)
 
-              @input_schema = if superclass < Foobara::Command
-                                input_schema(superclass.raw_input_schema)
-                              end
-            else
-              # TODO: raise argument error if more than one argument given
-              raw_input_schema = args.first
+            register_possible_errors
 
-              @input_schema = type_for_declaration(raw_input_schema)
-
-              register_possible_errors
-
-              input_schema
-            end
+            @inputs_type
           end
 
-          def raw_input_schema
-            input_schema.raw_declaration_data
+          def inputs_type
+            return @inputs_type if defined?(@inputs_type)
+
+            @inputs_type = if superclass < Foobara::Command
+                             superclass.inputs_type
+                           end
+          end
+
+          def raw_inputs_type_declaration
+            inputs_type.raw_declaration_data
           end
 
           private
@@ -44,7 +40,7 @@ module Foobara
           end
         end
 
-        delegate :input_schema, :raw_input_schema, to: :class
+        delegate :inputs_type, :raw_inputs_type_declaration, to: :class
       end
     end
   end

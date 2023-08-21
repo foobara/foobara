@@ -326,7 +326,7 @@ types
 
 and each has its own registry
 
-let's say in A::Command we do input_schema(:b => :b, c => :integer, :a => :a)
+let's say in A::Command we do inputs(:b => :b, c => :integer, :a => :a)
 
 where :a is a type registered in A's type registry and :b is in B's type registry and :integer is in global registry...
 

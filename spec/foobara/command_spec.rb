@@ -2,7 +2,7 @@ RSpec.describe Foobara::Command do
   context "with simple command" do
     let(:command_class) {
       Class.new(described_class) do
-        input_schema(
+        inputs(
           type: :attributes,
           element_type_declarations: {
             exponent: :integer,
@@ -89,7 +89,7 @@ RSpec.describe Foobara::Command do
     context "when sub-attribute is not valid" do
       let(:command_class2) do
         Class.new(command_class) do
-          input_schema(
+          inputs(
             type: :attributes,
             element_type_declarations: {
               exponent: :integer,

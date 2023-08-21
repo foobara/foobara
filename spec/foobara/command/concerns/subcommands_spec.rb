@@ -1,7 +1,7 @@
 RSpec.describe Foobara::Command::Concerns::Subcommands do
   let(:command_class) {
     Class.new(Foobara::Command) do
-      input_schema should_fail: :integer
+      inputs should_fail: :integer
 
       depends_on(RunSomeSubcommand)
 
@@ -19,7 +19,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
 
   let(:subcommand_class) {
     Class.new(Foobara::Command) do
-      input_schema should_fail: :integer
+      inputs should_fail: :integer
 
       possible_error(:it_failed, foo: :integer)
 

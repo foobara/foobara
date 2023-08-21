@@ -2,7 +2,7 @@ RSpec.describe Foobara::Command do
   context "with simple command" do
     let(:command_class) {
       Class.new(described_class) do
-        input_schema(
+        inputs(
           type: :attributes,
           element_type_declarations: {
             exponent: { type: :integer, max: 10, min: 1 },
@@ -100,7 +100,7 @@ RSpec.describe Foobara::Command do
       context "when unknown validator is applied" do
         let(:command_class2) {
           Class.new(command_class) do
-            input_schema(
+            inputs(
               type: :attributes,
               element_type_declarations: {
                 exponent: { type: :integer, max: 10, not_valid: :whatever },

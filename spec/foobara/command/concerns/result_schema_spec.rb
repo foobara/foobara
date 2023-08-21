@@ -2,7 +2,7 @@ RSpec.describe Foobara::Command::Concerns::ResultSchema do
   context "with simple command" do
     let(:command_class) {
       Class.new(Foobara::Command) do
-        input_schema to_be_result: :duck
+        inputs to_be_result: :duck
         result_schema :integer
 
         def execute

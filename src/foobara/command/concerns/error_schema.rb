@@ -12,13 +12,13 @@ module Foobara
             error_context_schema_map[:input][path][symbol] = error_class
           end
 
-          def error_context_schema_map(map = nil, path = nil, schema_to_process = nil)
+          def error_context_schema_map(map = nil, path = nil, inputs_type_to_process = nil)
             if map.nil?
               return @error_context_schema_map if @error_context_schema_map
 
               inputs_map = {}
 
-              error_context_schema_map(inputs_map, [], input_schema)
+              error_context_schema_map(inputs_map, [], inputs_type)
 
               @error_context_schema_map = {
                 input: inputs_map,
@@ -27,10 +27,10 @@ module Foobara
             else
               map[path] = {}
 
-              return if schema_to_process.blank?
+              return if inputs_type_to_process.blank?
 
-              if schema_to_process.declaration_data[:type] == :attributes
-                schema_to_process.element_types.each_pair do |attribute_name, attribute_type|
+              if inputs_type_to_process.declaration_data[:type] == :attributes
+                inputs_type_to_process.element_types.each_pair do |attribute_name, attribute_type|
                   attribute_path = [*path, attribute_name]
 
                   error_context_schema_map(map, attribute_path, attribute_type)
