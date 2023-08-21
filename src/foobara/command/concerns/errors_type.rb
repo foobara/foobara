@@ -1,7 +1,7 @@
 module Foobara
   class Command
     module Concerns
-      module ErrorType
+      module ErrorsType
         extend ActiveSupport::Concern
 
         class_methods do

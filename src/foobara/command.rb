@@ -2,8 +2,8 @@ module Foobara
   class Command
     include Concerns::Namespace
 
-    include Concerns::InputType
-    include Concerns::ErrorType
+    include Concerns::InputsType
+    include Concerns::ErrorsType
     include Concerns::ResultType
 
     include Concerns::Inputs

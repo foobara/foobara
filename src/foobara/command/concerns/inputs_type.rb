@@ -1,7 +1,7 @@
 module Foobara
   class Command
     module Concerns
-      module InputType
+      module InputsType
         extend ActiveSupport::Concern
 
         class_methods do
