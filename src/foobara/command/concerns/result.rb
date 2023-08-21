@@ -6,15 +6,10 @@ module Foobara
 
         class CouldNotProcessResult < Outcome::UnsuccessfulOutcomeError; end
 
-        # TODO: eliminate result_schema
-        def result_type
-          result_schema
-        end
-
         private
 
-        def process_result_using_result_schema(result)
-          return result unless result_schema.present?
+        def process_result_using_result_type(result)
+          return result unless result_type.present?
 
           outcome = result_type.process(result)
 

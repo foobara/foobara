@@ -28,7 +28,7 @@ module Foobara
                                                           execute
                                                         ])
 
-          result = process_result_using_result_schema(result)
+          result = process_result_using_result_type(result)
 
           state_machine.succeed!
 

@@ -5,28 +5,24 @@ module Foobara
         extend ActiveSupport::Concern
 
         class_methods do
-          def result_schema(*args)
-            if args.empty?
-              @result_schema
-            else
-              if args.count > 1
-                # :nocov:
-                raise ArgumentError, "Expected 0 or 1 arguments"
-                # :nocov:
-              end
-
-              raw_result_schema = args.first
-
-              @result_schema = type_for_declaration(raw_result_schema)
-            end
+          def result(result_type_declaration)
+            @result_type = type_for_declaration(result_type_declaration)
           end
 
-          def raw_result_schema
-            result_schema.raw_declaration_data
+          def result_type
+            return @result_type if defined?(@result_type)
+
+            @result_type = if superclass < Foobara::Command
+                             superclass.result_type
+                           end
+          end
+
+          def raw_result_type_declaration
+            result_type.raw_declaration_data
           end
         end
 
-        delegate :result_schema, :raw_result_schema, to: :class
+        delegate :result_type, :raw_result_type_declaration, to: :class
       end
     end
   end

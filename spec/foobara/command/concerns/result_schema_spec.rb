@@ -3,7 +3,7 @@ RSpec.describe Foobara::Command::Concerns::ResultSchema do
     let(:command_class) {
       Class.new(Foobara::Command) do
         inputs to_be_result: :duck
-        result_schema :integer
+        result :integer
 
         def execute
           to_be_result
