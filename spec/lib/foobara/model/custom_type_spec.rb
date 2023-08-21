@@ -13,9 +13,9 @@ RSpec.describe "custom types" do
       namespace.type_for_declaration(type_declaration)
     }
     # TODO: make sure this is tested
-    let(:type_declaration_handler) { namespace.type_declaration_handler_for(schema_hash) }
+    let(:type_declaration_handler) { namespace.type_declaration_handler_for(type_declaration) }
     # type registration start
-    let(:complex_schema) do
+    let(:type_declaration_handler_class) do
       custom_caster = array_to_complex_caster.new
       klass = complex_class
 
@@ -29,7 +29,7 @@ RSpec.describe "custom types" do
       Class.new(Foobara::TypeDeclarations::TypeDeclarationHandler) do
         desugarizer_class = Class.new(Foobara::TypeDeclarations::Desugarizer) do
           def applicable?(value)
-            ComplexSchema.sugar_for_complex?(value)
+            ComplexTypeDeclarationHandler.sugar_for_complex?(value)
           end
 
           def desugarize(_value)
@@ -57,25 +57,26 @@ RSpec.describe "custom types" do
 
         class << self
           def name
-            "ComplexSchema"
+            "ComplexTypeDeclarationHandler"
           end
 
-          def sugar_for_complex?(sugary_schema)
-            if sugary_schema.is_a?(Symbol)
-              sugary_schema = sugary_schema.to_s
+          def sugar_for_complex?(sugary_type_declaration)
+            if sugary_type_declaration.is_a?(Symbol)
+              sugary_type_declaration = sugary_type_declaration.to_s
             end
 
-            if sugary_schema.is_a?(String)
+            if sugary_type_declaration.is_a?(String)
               @complex_form_regex ||= /\A([a-z])\s*\+\s*(?!\1)([a-z])i\z/
 
-              @complex_form_regex.match?(sugary_schema)
+              @complex_form_regex.match?(sugary_type_declaration)
             end
           end
         end
 
-        def applicable?(sugary_schema)
-          sugary_schema == :complex || (sugary_schema.is_a?(Hash) && sugary_schema[:type] == :complex) ||
-            sugar_for_complex?(sugary_schema)
+        def applicable?(sugary_type_declaration)
+          sugary_type_declaration == :complex ||
+            (sugary_type_declaration.is_a?(Hash) && sugary_type_declaration[:type] == :complex) ||
+            sugar_for_complex?(sugary_type_declaration)
         end
 
         define_method :desugarizers do
@@ -170,15 +171,15 @@ RSpec.describe "custom types" do
     end
 
     before do
-      stub_const("ComplexSchema", complex_schema)
-      namespace.register_type_declaration_handler(complex_schema.new)
+      stub_const("ComplexTypeDeclarationHandler", type_declaration_handler_class)
+      namespace.register_type_declaration_handler(type_declaration_handler_class.new)
       # namespace.register_type(:complex, type)
       type.register_supported_processor_class(pointless_validator)
     end
 
     # type registration end
 
-    context "when using the type against valid data from complex type non sugar schema" do
+    context "when using the type against valid data from complex type non sugar type declaration" do
       let(:type_declaration) do
         {
           type: :attributes,
@@ -222,7 +223,7 @@ RSpec.describe "custom types" do
       end
     end
 
-    context "when using the type against valid data from complex type sugar schema" do
+    context "when using the type against valid data from complex type sugar type declaration" do
       let(:type_declaration) do
         {
           type: :attributes,

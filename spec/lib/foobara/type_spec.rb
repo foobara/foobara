@@ -1,8 +1,8 @@
 RSpec.describe Foobara::Types do
-  let(:type) { Foobara::TypeDeclarations::Namespace.type_for_declaration(type_schema) }
+  let(:type) { Foobara::TypeDeclarations::Namespace.type_for_declaration(type_declaration) }
 
   context "when :attributes" do
-    let(:type_schema) { { foo: :duck } }
+    let(:type_declaration) { { foo: :duck } }
 
     describe "#cast_from" do
       let(:outcome) { type.process(hash) }
