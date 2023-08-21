@@ -1,4 +1,4 @@
-RSpec.describe Foobara::Command::Concerns::ResultSchema do
+RSpec.describe Foobara::Command::Concerns::ResultType do
   context "with simple command" do
     let(:command_class) {
       Class.new(Foobara::Command) do

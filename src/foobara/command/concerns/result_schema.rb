@@ -1,7 +1,7 @@
 module Foobara
   class Command
     module Concerns
-      module ResultSchema
+      module ResultType
         extend ActiveSupport::Concern
 
         class_methods do
