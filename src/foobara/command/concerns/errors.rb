@@ -102,7 +102,7 @@ module Foobara
             raise "Bad error message, expected a string"
           end
 
-          map = self.class.error_context_schema_map
+          map = self.class.error_context_type_map
 
           map = case error
                 when Command::RuntimeCommandError

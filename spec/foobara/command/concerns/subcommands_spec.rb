@@ -51,7 +51,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
   describe ".context_error_map" do
     # TODO: encapsulate sub command errors into a simpler construct?
     it "contains subcommand error information" do
-      expect(command_class.error_context_schema_map).to eq(
+      expect(command_class.error_context_type_map).to eq(
         input: {
           [] => {
             cannot_cast: {

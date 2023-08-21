@@ -75,7 +75,7 @@ module Foobara
 
               possible_error(
                 possible_error_symbol_for(subcommand_class),
-                subcommand_class.error_context_schema_map
+                subcommand_class.error_context_type_map
               )
             end
           end
