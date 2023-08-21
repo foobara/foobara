@@ -5,7 +5,6 @@ module Foobara
         extend ActiveSupport::Concern
 
         class CannotHaltWithoutAddingErrors < StandardError; end
-        # TODO: can/should use throw/catch instead?
         class Halt < StandardError; end
 
         class_methods do

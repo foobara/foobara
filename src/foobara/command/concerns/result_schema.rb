@@ -9,7 +9,12 @@ module Foobara
             if args.empty?
               @result_schema
             else
-              # TODO: raise argument error if more than one args
+              if args.count > 1
+                # :nocov:
+                raise ArgumentError, "Expected 0 or 1 arguments"
+                # :nocov:
+              end
+
               raw_result_schema = args.first
 
               @result_schema = type_for_declaration(raw_result_schema)
