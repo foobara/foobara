@@ -22,7 +22,7 @@ module Foobara
             elsif base_type
               base_type.find_supported_processor_class(processor_symbol)
             else
-              # TODO: can we catch this via a schema validator before hitting it here?
+              # TODO: can we catch this via a type declaration validator before hitting it here?
               raise MissingProcessorError, "No such processor for #{processor_symbol}"
             end
           end
