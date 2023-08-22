@@ -15,7 +15,7 @@ module Foobara
         end
 
         def applicable?(value)
-          processors.any? { |processor| processor.applicable?(value) }
+          super || processors.any? { |processor| processor.applicable?(value) }
         end
 
         # format?

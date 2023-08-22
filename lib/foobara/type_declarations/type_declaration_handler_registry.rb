@@ -1,17 +1,8 @@
 module Foobara
   module TypeDeclarations
     class TypeDeclarationHandlerRegistry < Value::Processor::Selection
-      # TODO: default these to true??
-      def applicable?(_value)
-        true
-      end
-
       def always_applicable?
         true
-      end
-
-      def type_declaration_handler_for(type_declaration)
-        processor_for!(type_declaration)
       end
 
       def type_declaration_handler_for_handler_class(type_declaration_handler_class)
@@ -20,13 +11,9 @@ module Foobara
         end
       end
 
-      def handlers
-        processors
-      end
-
-      def type_for(type_declaration)
-        process!(type_declaration)
-      end
+      alias type_declaration_handler_for processor_for!
+      alias handlers processors
+      alias type_for process!
     end
   end
 end

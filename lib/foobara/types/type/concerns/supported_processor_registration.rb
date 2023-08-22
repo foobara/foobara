@@ -37,18 +37,6 @@ module Foobara
 
             supported_processor_classes[symbol] = processor_class
           end
-
-          def supported_transformer_classes
-            supported_processor_classes.select do |_symbol, processor_class|
-              processor_class.is_a?(Value::Transformer)
-            end
-          end
-
-          def supported_validator_classes
-            supported_processor_classes.select do |_symbol, processor_class|
-              processor_class.is_a?(Value::Validator)
-            end
-          end
         end
       end
     end

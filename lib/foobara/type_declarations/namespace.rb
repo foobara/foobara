@@ -124,6 +124,8 @@ module Foobara
           outcome = nil
 
           type_declaration_handler_registries.each do |registry|
+            next unless registry.applicable?(type_declaration)
+
             outcome = registry.processor_for(type_declaration)
 
             return outcome.result if outcome.success?

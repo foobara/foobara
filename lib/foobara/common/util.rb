@@ -23,7 +23,9 @@ module Foobara
 
     def constant_values(mod, is_a: nil, extends: nil, inherit: false)
       if inherit && !mod.is_a?(Class)
+        # :nocov:
         raise "Cannot pass inherit: true for something that is not a Class"
+        # :nocov:
       end
 
       if inherit
@@ -57,8 +59,9 @@ module Foobara
       files = Dir[glob].sort_by(&:length).reverse
 
       if files.empty?
-        # TODO: raise real error
+        # :nocov:
         raise "Didn't find anything to require for #{glob}"
+        # :nocov:
       end
 
       files.each do |f|
@@ -84,11 +87,15 @@ module Foobara
 
     def args_and_opts_to_opts(args, opts)
       if !args.is_a?(Array) || args.size > 1
+        # :nocov:
         raise ArgumentError, "args must be an array of 0 or 1 hashes but received #{args}"
+        # :nocov:
       end
 
       unless opts.is_a?(Hash)
+        # :nocov:
         raise ArgumentError, "opts must be a hash not a #{opts}"
+        # :nocov:
       end
 
       (args.first || {}).merge(opts)
@@ -98,11 +105,15 @@ module Foobara
       if arg.present?
         if opts.present?
           unless opts.is_a?(Hash)
+            # :nocov:
             raise ArgumentError, "opts must be a hash not a #{opts}"
+            # :nocov:
           end
 
           unless arg.is_a?(Hash)
+            # :nocov:
             raise ArgumentError, "arg must be a hash if present when opts is present"
+            # :nocov:
           end
 
           arg.merge(opts)
@@ -121,17 +132,31 @@ module Foobara
     # argument with stuff merged into the argument if needed.
     def args_and_opts_to_args(args, opts)
       unless args.is_a?(Array)
+        # :nocov:
         raise ArgumentError, "args must be an array of 0 or 1 hashes but received #{args}"
+        # :nocov:
       end
 
       case args.size
       when 0
-        Array.wrap(arg_and_opts_to_arg(args.first, opts))
+        Array.wrap(arg_and_opts_to_arg(nil, opts))
       when 1
         # Do not go from 1 argument to 0. ie, [nil] should return [nil] not [].
+        if opts.present?
+          arg = args.first
+
+          raise ArgumentError, "Expected #{arg.inspect} to be a Hash" unless arg.is_a?(::Hash)
+
+          [arg_and_opts_to_arg(args.first, opts)]
+        else
+          args
+        end
+
         [arg_and_opts_to_arg(args.first, opts)]
       else
+        # :nocov:
         raise ArgumentError, "args must be an array of 0 or 1 hashes but received #{args}"
+        # :nocov:
       end
     end
   end
