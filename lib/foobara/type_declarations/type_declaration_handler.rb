@@ -13,7 +13,9 @@ module Foobara
         **opts
       )
         if processors.present?
+          # :nocov:
           raise ArgumentError, "Cannot set processors directly for a type declaration handler"
+          # :nocov:
         end
 
         self.desugarizers = Array.wrap(desugarizers)
@@ -48,11 +50,13 @@ module Foobara
       end
 
       def inspect
+        # :nocov:
         s = super
 
         if s.size > 400
           "#{s[0..400]}..."
         end
+        # :nocov:
       end
 
       def applicable?(_sugary_type_declaration)
@@ -66,13 +70,11 @@ module Foobara
       end
 
       def process(raw_type_declaration)
-        type_outcome = super(raw_type_declaration.deep_dup)
-
-        if type_outcome.success?
-          type_outcome.result.raw_declaration_data = raw_type_declaration
+        super(raw_type_declaration.deep_dup).tap do |type_outcome|
+          if type_outcome.success?
+            type_outcome.result.raw_declaration_data = raw_type_declaration
+          end
         end
-
-        type_outcome
       end
 
       def desugarizer
@@ -87,14 +89,7 @@ module Foobara
         Value::Processor::Pipeline.new(processors: type_declaration_validators)
       end
 
-      def type_declaration_validation_errors(value)
-        value = desugarize(value)
-        Value::Processor::Pipeline.new(processors: type_declaration_validators).process(value).errors
-      end
-
-      def to_type(value)
-        process!(value)
-      end
+      alias to_type process!
     end
   end
 end

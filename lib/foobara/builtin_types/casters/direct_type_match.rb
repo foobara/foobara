@@ -20,7 +20,7 @@ module Foobara
 
         def applies_message
           ruby_classes.map do |klass|
-            "be a ::#{klass.name}"
+            "be a #{klass.name}"
           end
         end
       end

@@ -10,7 +10,7 @@ module Foobara
           end
 
           def applies_message
-            "be a string"
+            "be a String"
           end
 
           def cast(string)
