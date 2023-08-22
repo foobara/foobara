@@ -80,5 +80,9 @@ module Foobara
         raise UnsuccessfulOutcomeError, errors
       end
     end
+
+    def symbolic_errors
+      error_collection.symbolic
+    end
   end
 end

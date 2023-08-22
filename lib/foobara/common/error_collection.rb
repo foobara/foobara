@@ -77,5 +77,11 @@ module Foobara
     def add_errors(errors)
       Array.wrap(errors).each { |error| add_error(error) }
     end
+
+    def symbolic
+      error_array.to_h do |error|
+        [error.symbol, error.to_h]
+      end
+    end
   end
 end
