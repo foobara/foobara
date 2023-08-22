@@ -29,13 +29,13 @@ module Foobara
         message: error_message(value),
         context: error_context(value),
         path: error_path,
-        **args
+        **
       )
         error_class.new(
           path:,
           message:,
           context:,
-          **args
+          **
         )
       end
 

@@ -20,8 +20,8 @@ module Foobara
                :has_failure_callbacks?,
                to: :callback_registry
 
-      def register_transition_callback(type, **conditions, &)
-        callback_registry.register_callback(type, **conditions, &)
+      def register_transition_callback(type, **, &)
+        callback_registry.register_callback(type, **, &)
       end
 
       class_methods do
@@ -37,8 +37,8 @@ module Foobara
           @class_callback_registry = nil
         end
 
-        def register_transition_callback(type, **conditions, &)
-          class_callback_registry.register_callback(type, **conditions, &)
+        def register_transition_callback(type, **, &)
+          class_callback_registry.register_callback(type, **, &)
         end
 
         attr_reader :register_callback_methods

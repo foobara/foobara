@@ -2,18 +2,18 @@ module Foobara
   module Callback
     module Registry
       class Base
-        def runner(*args, **opts)
-          Runner.new(unioned_callback_set_for(*args, **opts))
+        def runner(*, **)
+          Runner.new(unioned_callback_set_for(*, **))
         end
 
-        def register_callback(type, *args, **opts, &callback_block)
+        def register_callback(type, *, **, &callback_block)
           unless block_given?
             raise ArgumentError, "Must provide a callback block to register"
           end
 
           validate_type!(type)
 
-          set = specific_callback_set_for(*args, **opts)
+          set = specific_callback_set_for(*, **)
 
           set[type] << Block.for(type, callback_block)
         end
@@ -30,40 +30,40 @@ module Foobara
           # :nocov:
         end
 
-        def before(*args, **opts, &)
-          register_callback(:before, *args, **opts, &)
+        def before(...)
+          register_callback(:before, ...)
         end
 
-        def after(*args, **opts, &)
-          register_callback(:after, *args, **opts, &)
+        def after(...)
+          register_callback(:after, ...)
         end
 
-        def around(*args, **opts, &)
-          register_callback(:around, *args, **opts, &)
+        def around(...)
+          register_callback(:around, ...)
         end
 
-        def error(*args, **opts, &)
-          register_callback(:error, *args, **opts, &)
+        def error(...)
+          register_callback(:error, ...)
         end
 
-        def has_callbacks?(type, *args, **opts)
-          unioned_callback_set_for(*args, **opts)[type].present?
+        def has_callbacks?(type, *, **)
+          unioned_callback_set_for(*, **)[type].present?
         end
 
-        def has_before_callbacks?(*args, **opts)
-          has_callbacks?(:before, *args, **opts)
+        def has_before_callbacks?(*, **)
+          has_callbacks?(:before, *, **)
         end
 
-        def has_after_callbacks?(*args, **opts)
-          has_callbacks?(:after, *args, **opts)
+        def has_after_callbacks?(*, **)
+          has_callbacks?(:after, *, **)
         end
 
-        def has_around_callbacks?(*args, **opts)
-          has_callbacks?(:around, *args, **opts)
+        def has_around_callbacks?(*, **)
+          has_callbacks?(:around, *, **)
         end
 
-        def has_error_callbacks?(*args, **opts)
-          has_callbacks?(:error, *args, **opts)
+        def has_error_callbacks?(*, **)
+          has_callbacks?(:error, *, **)
         end
 
         private

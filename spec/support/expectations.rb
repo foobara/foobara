@@ -1,7 +1,7 @@
 module RspecHelpers
   module Expectations
-    def is_expected_to_raise(*args)
-      expect { subject }.to raise_error(*args)
+    def is_expected_to_raise(*)
+      expect { subject }.to raise_error(*)
     end
   end
 end

@@ -29,14 +29,12 @@ module Foobara
 
             sugary_type_declaration.symbolize_keys!
 
-            sugary_type_declaration = if strictish_type_declaration?(sugary_type_declaration)
-                                        sugary_type_declaration
-                                      else
-                                        {
-                                          type: :attributes,
-                                          element_type_declarations: sugary_type_declaration
-                                        }
-                                      end
+            unless strictish_type_declaration?(sugary_type_declaration)
+              sugary_type_declaration = {
+                type: :attributes,
+                element_type_declarations: sugary_type_declaration
+              }
+            end
 
             sugary_type_declaration[:element_type_declarations].symbolize_keys!
 

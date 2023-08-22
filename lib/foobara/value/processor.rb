@@ -143,7 +143,7 @@ module Foobara
         message: error_message(value),
         context: error_context(value),
         path: error_path,
-        **args
+        **
       )
         unless error_classes.include?(error_class)
           # :nocov:
@@ -156,7 +156,7 @@ module Foobara
           message:,
           context:,
           symbol:,
-          **args
+          **
         )
       end
 
