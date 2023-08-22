@@ -9,9 +9,20 @@ RSpec.describe "custom types" do
         attr_accessor :real, :imaginary
       end
     end
-    let(:type) {
-      namespace.type_for_declaration(type_declaration)
-    }
+    # type registration end
+
+    let(:type_declaration) do
+      {
+        type: :attributes,
+        element_type_declarations: {
+          n: :integer,
+          # not entirely complex since we only support integers for the components for now but whatever
+          c: { type: :complex, be_pointless: :true_symbol }
+        }
+      }
+    end
+    let(:type) { namespace.type_for_declaration(type_declaration) }
+
     # TODO: make sure this is tested
     let(:type_declaration_handler) { namespace.type_declaration_handler_for(type_declaration) }
     # type registration start
@@ -173,22 +184,57 @@ RSpec.describe "custom types" do
     before do
       stub_const("ComplexTypeDeclarationHandler", type_declaration_handler_class)
       namespace.register_type_declaration_handler(type_declaration_handler_class.new)
-      # namespace.register_type(:complex, type)
-      type.register_supported_processor_class(pointless_validator)
     end
 
-    # type registration end
+    context "when type declaration invalid" do
+      let(:type_declaration) do
+        :"x + yi"
+      end
+
+      let(:type_declaration_handler) { type_declaration_handler_class.new }
+      let(:type_declaration_validator_class) {
+        Class.new(Foobara::TypeDeclarations::TypeDeclarationValidator) do
+          self::WhateverError = Class.new(Foobara::Value::AttributeError) do # rubocop:disable RSpec/LeakyConstantDeclaration
+            class << self
+              def message(_value)
+                "whatevs!"
+              end
+            end
+          end
+
+          def validation_errors(_value)
+            [build_error]
+          end
+
+          def error_context(_value)
+            { foo: :bar }
+          end
+        end
+      }
+
+      before do
+        validator = type_declaration_validator_class.instance
+        ComplexTypeDeclarationHandler.define_method :type_declaration_validators do
+          [validator]
+        end
+      end
+
+      it "cannot get a type from the type declaration handler" do
+        outcome = type_declaration_handler.process(type_declaration)
+
+        expect(outcome).to_not be_success
+
+        expect(outcome.symbolic_errors).to eq(whatever: {
+                                                context: { foo: :bar },
+                                                message: "whatevs!",
+                                                symbol: :whatever
+                                              })
+      end
+    end
 
     context "when using the type against valid data from complex type non sugar type declaration" do
-      let(:type_declaration) do
-        {
-          type: :attributes,
-          element_type_declarations: {
-            n: :integer,
-            # not entirely complex since we only support integers for the components for now but whatever
-            c: { type: :complex, be_pointless: :true_symbol }
-          }
-        }
+      before do
+        type.register_supported_processor_class(pointless_validator)
       end
 
       context "when valid" do
