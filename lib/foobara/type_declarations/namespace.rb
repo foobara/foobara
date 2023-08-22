@@ -16,7 +16,9 @@ module Foobara
           namespace = namespaces.find { |n| n.name == symbol }
 
           unless namespace
+            # :nocov:
             raise "Could not find namespace for #{symbol}"
+            # :nocov:
           end
 
           namespace
@@ -32,7 +34,9 @@ module Foobara
                       elsif namespace_or_symbol.is_a?(Symbol)
                         namespace_for_symbol(namespace_or_symbol)
                       else
+                        # :nocov:
                         raise ArgumentError, "Expected #{namespace_or_symbol} to be a symbol or namespace"
+                        # :nocov:
                       end
 
           old_namespace = current

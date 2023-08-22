@@ -10,6 +10,12 @@ module Foobara
           super(*args)
         end
 
+        def processor_names
+          processors.map do |processor|
+            (processor.class.name || "Anonymous").demodulize
+          end
+        end
+
         def error_classes
           [*super, *processors.map(&:error_classes).flatten]
         end

@@ -1,3 +1,5 @@
+require "foobara/value/processor/multi"
+
 module Foobara
   module Value
     class Processor
