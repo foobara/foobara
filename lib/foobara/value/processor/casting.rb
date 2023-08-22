@@ -5,23 +5,7 @@ module Foobara
     class Processor
       # TODO: at least move this up to Types though that doesn't solve the issue
       class Casting < Selection
-        class CannotCastError < AttributeError
-          class << self
-            # Value will always need to be a duck but cast_to: should probably be the relevant
-            # type-declaration.  This means it shouldn't come from the class but rather the processor
-            def context_type_declaration
-              {
-                cast_to: :duck,
-                value: :duck,
-                attribute_name: :symbol
-              }
-            end
-          end
-
-          def initialize(**opts)
-            super(**opts.merge(symbol: :cannot_cast))
-          end
-        end
+        class CannotCastError < AttributeError; end
 
         class << self
           def error_classes

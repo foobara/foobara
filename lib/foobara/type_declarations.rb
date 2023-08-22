@@ -13,18 +13,14 @@ module Foobara
         global_type_declaration_handler_registry.register(type_declaration_handler)
       end
 
-      def error_context_type_declaration(error_or_error_class)
-        if error_or_error_class.respond_to?(:context_type_declaration)
-          error_or_error_class.context_type_declaration
-        else
-          error_class = error_or_error_class.is_a?(Class) ? error_or_error_class : error_or_error_class.class
+      def error_context_type_declaration(error_class)
+        context_type_declaration = nil
 
+        if error_class.respond_to?(:context_type_declaration)
+          context_type_declaration = error_class.context_type_declaration
+        else
           # This feels dirty but decouples two projects: Value and Types
-          context_type_declaration = {
-            Value::AttributeError => {
-              attribute_name: :symbol,
-              value: :duck
-            },
+          {
             Value::Processor::Casting::CannotCastError => {
               cast_to: :duck,
               value: :duck,
@@ -38,11 +34,23 @@ module Foobara
               processors: :duck,
               applicable_processors: :duck,
               value: :duck
+            },
+            Value::AttributeError => {
+              attribute_name: :symbol,
+              value: :duck
             }
-          }[error_class]
+
+          }.each_pair do |klass, type_declaration|
+            if klass == error_class || error_class < klass
+              context_type_declaration = type_declaration
+              break
+            end
+          end
 
           unless context_type_declaration
+            # :nocov:
             raise "Not sure how to convert #{error_class} into a context type declaration"
+            # :nocov:
           end
 
           context_type_declaration

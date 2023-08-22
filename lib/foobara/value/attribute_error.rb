@@ -4,15 +4,6 @@ module Foobara
     class AttributeError < Error
       attr_accessor :path
 
-      class << self
-        def context_type_declaration
-          {
-            attribute_name: :symbol,
-            value: :duck
-          }
-        end
-      end
-
       def initialize(context:, path: [], **data)
         super(**data)
 

@@ -5,28 +5,9 @@ module Foobara
   module Value
     class Processor
       class Selection < Multi
-        class NoApplicableProcessorError < AttributeError
-          class << self
-            def context_type_declaration
-              {
-                processors: :duck,
-                value: :duck
-              }
-            end
-          end
-        end
+        class NoApplicableProcessorError < AttributeError; end
 
-        class MoreThanOneApplicableProcessorError < AttributeError
-          class << self
-            def context_type_declaration
-              {
-                processors: :duck,
-                applicable_processors: :duck,
-                value: :duck
-              }
-            end
-          end
-        end
+        class MoreThanOneApplicableProcessorError < AttributeError; end
 
         attr_accessor :enforce_unique
 

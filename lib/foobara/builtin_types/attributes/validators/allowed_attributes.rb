@@ -3,8 +3,7 @@ module Foobara
     module Attributes
       module SupportedValidators
         class AllowedAttributes < TypeDeclarations::Validator
-          class UnexpectedAttributeError < Foobara::Value::AttributeError
-          end
+          class UnexpectedAttributeError < Foobara::Value::AttributeError; end
 
           class << self
             def declaration_data_type_declaration
