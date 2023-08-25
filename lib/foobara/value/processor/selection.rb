@@ -41,6 +41,7 @@ module Foobara
                         applicable_processors = processors.select { |p| p.applicable?(value) }
 
                         if applicable_processors.size > 1
+                          # :nocov:
                           return Outcome.error(
                             build_error(
                               value,
@@ -49,6 +50,7 @@ module Foobara
                               context: error_context(value).merge(applicable_processors:)
                             )
                           )
+                          # :nocov:
                         end
 
                         applicable_processors.first

@@ -6,7 +6,7 @@ RSpec.describe Foobara::Command do
           type: :attributes,
           element_type_declarations: {
             exponent: { type: :integer, max: 10, min: 1 },
-            base: { type: :integer, required: true }
+            base: { type: :integer }
           },
           required: :exponent
         )
