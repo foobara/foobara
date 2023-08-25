@@ -80,7 +80,7 @@ module Foobara
       end
 
       def desugarizer
-        Value::Processor::MustProcessPipeline.new(processors: desugarizers)
+        Value::Processor::Pipeline.new(processors: desugarizers)
       end
 
       def desugarize(value)
