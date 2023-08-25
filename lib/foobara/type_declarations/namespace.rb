@@ -1,6 +1,8 @@
 module Foobara
   module TypeDeclarations
     class Namespace
+      class NoTypeDeclarationHandlerFoundError < StandardError; end
+
       class << self
         def new(...)
           super.tap do |instance|
@@ -125,17 +127,11 @@ module Foobara
 
       def type_declaration_handler_for(type_declaration)
         Namespace.using self do
-          outcome = nil
-
-          type_declaration_handler_registries.each do |registry|
-            next unless registry.applicable?(type_declaration)
-
-            outcome = registry.processor_for(type_declaration)
-
-            return outcome.result if outcome.success?
+          handlers.each do |handler|
+            return handler if handler.applicable?(type_declaration)
           end
 
-          outcome.raise!
+          raise NoTypeDeclarationHandlerFoundError, "No type declaration handler found for #{type_declaration}"
         end
       end
 
@@ -152,20 +148,14 @@ module Foobara
       end
 
       def handlers
-        type_declaration_handler_registries.map(&:handlers).flatten
+        type_declaration_handler_registries.map(&:handlers).flatten.sort_by(&:priority)
       end
 
       def type_for_declaration(type_declaration)
         Namespace.using self do
-          outcome = nil
+          handler = type_declaration_handler_for(type_declaration)
 
-          type_declaration_handler_registries.each do |registry|
-            outcome = registry.process(type_declaration)
-
-            return outcome.result if outcome.success?
-          end
-
-          outcome.raise!
+          handler.process!(type_declaration)
         end
       end
     end

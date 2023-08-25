@@ -56,6 +56,7 @@ RSpec.describe "custom types" do
 
             Foobara::Types::Type.new(
               strict_type_declaration,
+              name: :complex,
               casters: c,
               transformers: [],
               validators:,
@@ -85,13 +86,15 @@ RSpec.describe "custom types" do
         end
 
         def applicable?(sugary_type_declaration)
-          sugary_type_declaration == :complex ||
-            (sugary_type_declaration.is_a?(Hash) && sugary_type_declaration[:type] == :complex) ||
+          (sugary_type_declaration.is_a?(Hash) && sugary_type_declaration[:type] == :complex) ||
             sugar_for_complex?(sugary_type_declaration)
         end
 
         define_method :desugarizers do
-          [desugarizer_class.instance]
+          [
+            Foobara::TypeDeclarations::Handlers::RegisteredTypeDeclaration::SymbolDesugarizer.instance,
+            desugarizer_class.instance
+          ]
         end
 
         delegate :sugar_for_complex?, to: :class
@@ -292,6 +295,31 @@ RSpec.describe "custom types" do
           expect(complex).to be_a(complex_class)
           expect(complex.real).to eq(1)
           expect(complex.imaginary).to eq(2)
+        end
+      end
+    end
+
+    context "when registering type" do
+      describe "#type_for_declaration" do
+        context "when not registered" do
+          it "raises" do
+            expect {
+              namespace.type_for_declaration(:complex)
+            }.to raise_error(Foobara::TypeDeclarations::Namespace::NoTypeDeclarationHandlerFoundError)
+          end
+        end
+
+        context "when registered" do
+          let(:type_declaration_handler) { type_declaration_handler_class.new }
+          let(:type) { type_declaration_handler.process!("a + bi") }
+
+          before do
+            namespace.register_type(:complex, type)
+          end
+
+          it "gives the complex type for the complex symbol" do
+            expect(namespace.type_for_declaration(:complex)).to be(type)
+          end
         end
       end
     end
