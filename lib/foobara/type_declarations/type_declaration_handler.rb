@@ -54,8 +54,10 @@ module Foobara
         s = super
 
         if s.size > 400
-          "#{s[0..400]}..."
+          s = "#{s[0..400]}..."
         end
+
+        s
         # :nocov:
       end
 
