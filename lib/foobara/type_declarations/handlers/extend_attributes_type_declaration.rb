@@ -5,7 +5,11 @@ module Foobara
         def applicable?(sugary_type_declaration)
           strictish_type_declaration = desugarize(sugary_type_declaration)
 
-          strictish_type_declaration[:type] == :attributes
+          strictish_type_declaration.is_a?(::Hash) && strictish_type_declaration[:type] == :attributes
+        end
+
+        def starting_desugarizers
+          starting_desugarizers_without_inherited
         end
       end
     end

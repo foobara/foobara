@@ -10,7 +10,11 @@ module Foobara
           return old_outcome if old_outcome.is_a?(Value::HaltedOutcome)
 
           processors.inject(old_outcome) do |outcome, processor|
-            processor.process_outcome(outcome)
+            if processor.applicable_for_outcome?(outcome)
+              processor.process_outcome(outcome)
+            else
+              outcome
+            end
           end
         end
       end

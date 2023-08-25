@@ -1,6 +1,34 @@
 module Foobara
   module TypeDeclarations
     class TypeDeclarationHandler < Value::Processor::Pipeline
+      class << self
+        def starting_desugarizers
+          starting_desugarizers_with_inherited
+        end
+
+        def starting_desugarizers_with_inherited
+          # TODO: this is not great because if new stuff gets registered at runtime then we can't really
+          # update this cached data easily
+          if superclass == TypeDeclarationHandler
+            starting_desugarizers_without_inherited
+          else
+            [*superclass.starting_desugarizers, *starting_desugarizers_without_inherited]
+          end
+        end
+
+        def starting_desugarizers_without_inherited
+          # TODO: this is not great because if new stuff gets registered at runtime then we can't really
+          # update this cached data easily
+          Util.constant_values(self, extends: TypeDeclarations::Desugarizer).map(&:instance)
+        end
+
+        def starting_type_declaration_validators
+          # TODO: this is not great because if new stuff gets registered at runtime then we can't really
+          # update this cached data easily
+          Util.constant_values(self, extends: Value::Validator, inherit: true).map(&:instance)
+        end
+      end
+
       include WithRegistries
 
       attr_accessor :desugarizers, :type_declaration_validators
@@ -24,26 +52,11 @@ module Foobara
         super(*Util.args_and_opts_to_args(args, opts))
       end
 
-      def starting_desugarizers
-        # TODO: this is not great because if new stuff gets registered at runtime then we can't really
-        # update this cached data easily
-        desugarizers = []
-
-        klass = self.class
-
-        until klass == TypeDeclarationHandler
-          desugarizers += Util.constant_values(klass, extends: TypeDeclarations::Desugarizer).map(&:instance)
-          klass = klass.superclass
-        end
-
-        desugarizers
-      end
-
-      def starting_type_declaration_validators
-        # TODO: this is not great because if new stuff gets registered at runtime then we can't really
-        # update this cached data easily
-        Util.constant_values(self.class, extends: Value::Validator, inherit: true).map(&:instance)
-      end
+      delegate :starting_desugarizers,
+               :starting_desugarizers_with_inherited,
+               :starting_desugarizers_without_inherited,
+               :starting_type_declaration_validators,
+               to: :class
 
       def to_type_transformer
         self.class::ToTypeTransformer.instance

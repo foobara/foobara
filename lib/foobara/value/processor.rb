@@ -122,6 +122,10 @@ module Foobara
         declaration_data
       end
 
+      def applicable_for_outcome?(outcome)
+        applicable?(outcome.result)
+      end
+
       def declaration_data_given?
         declaration_data_given
       end
