@@ -26,11 +26,13 @@ module Foobara
                     :element_processors,
                     :structure_count,
                     :element_types,
-                    :raw_declaration_data
+                    :raw_declaration_data,
+                    :name
 
       def initialize(
         *args,
         base_type: self.class.root_type,
+        name: :anonymous,
         casters: [],
         transformers: [],
         validators: [],
@@ -46,6 +48,7 @@ module Foobara
         self.element_processors = element_processors
         self.structure_count = structure_count
         self.element_types = element_types
+        self.name = name
 
         super(
           *args,

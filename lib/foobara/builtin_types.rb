@@ -77,6 +77,7 @@ module Foobara
         type = Foobara::Types::Type.new(
           declaration_data,
           base_type:,
+          name: type_symbol,
           casters: casters.presence || base_type.casters.dup
         )
 
