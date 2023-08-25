@@ -103,10 +103,19 @@ module Foobara
         end
       end
 
+      # TODO: some way of memoizing these values? Would need to introduce a new class that takes the value to its
+      # constructor
       def validation_errors(value)
         value = cast!(value)
-        value = value_transformer.process!(value)
-        value_validator.process(value).errors
+        if value_transformer
+          value = value_transformer.process!(value)
+        end
+
+        if value_validator
+          value_validator.process(value).error_collection
+        else
+          Foobara::ErrorCollection.new
+        end
       end
     end
   end

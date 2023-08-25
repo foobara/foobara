@@ -311,7 +311,7 @@ RSpec.describe "custom types" do
 
         context "when registered" do
           let(:type_declaration_handler) { type_declaration_handler_class.new }
-          let(:type) { type_declaration_handler.process!("a + bi") }
+          let(:type) { type_declaration_handler.process!(type: :complex, be_pointless: :true_symbol) }
 
           before do
             namespace.register_type(:complex, type)
@@ -319,6 +319,28 @@ RSpec.describe "custom types" do
 
           it "gives the complex type for the complex symbol" do
             expect(namespace.type_for_declaration(:complex)).to be(type)
+          end
+
+          it "can cast if needed" do
+            # TODO: this is very confusing.
+            # Maybe call this complex type? Too much nested behavior being tested in this test.
+            outcome = type.cast([100, 200])
+
+            expect(outcome).to be_success
+            value = outcome.result
+            expect(value.real).to eq(100)
+            expect(value.imaginary).to eq(200)
+          end
+
+          it "can give validation_errors if needed" do
+            errors = type.validation_errors([-40, -40])
+            expect(errors.symbolic).to eq(
+              real_should_not_match_imaginary: {
+                symbol: :real_should_not_match_imaginary,
+                message: "cant be the same!",
+                context: { foo: :bar }
+              }
+            )
           end
         end
       end
