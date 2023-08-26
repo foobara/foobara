@@ -6,37 +6,33 @@ module Foobara
           module TypeDeclarationExtension
             module ExtendAttributesTypeDeclaration
               module TypeDeclarationValidators
-                class HashWithValidAttributeNames < TypeDeclarations::TypeDeclarationValidator
+                # TODO: rename to remove HashWith
+                class ValidAttributeNames < TypeDeclarations::TypeDeclarationValidator
+                  class InvalidDefaultValueGiven < Value::AttributeError; end
+
+                  def applicable?(strict_type_declaration)
+                    defaults = strict_type_declaration[:defaults]
+
+                    defaults.is_a?(::Hash) && Util.all_symbolic_keys?(defaults)
+                  end
+
                   def validation_errors(strict_type_declaration)
                     defaults = strict_type_declaration[:defaults]
 
-                    return unless defaults.present?
+                    valid_attribute_names = strict_type_declaration[:element_type_declarations].keys
 
-                    if defaults.is_a?(Hash) && Util.all_symbolic_keys?(defaults)
-                      valid_attribute_names = strict_type_declaration[:element_type_declarations].keys
-
-                      defaults.keys.map do |key|
-                        unless valid_attribute_names.include?(key)
-                          Error.new(
-                            symbol: :invalid_default_value_given,
-                            message: "#{key} is not a valid default key, expected one of #{valid_attribute_names}",
-                            context: {
-                              invalid_key: key,
-                              valid_attribute_names:,
-                              defaults:
-                            }
-                          )
-                        end
-                      end.compact
-                    else
-                      Error.new(
-                        symbol: :invalid_default_values_given,
-                        message: "defaults should be a hash with symbolic keys",
-                        context: {
-                          defaults:
-                        }
-                      )
-                    end
+                    defaults.keys.map do |key|
+                      unless valid_attribute_names.include?(key)
+                        build_error(
+                          message: "#{key} is not a valid default key, expected one of #{valid_attribute_names}",
+                          context: {
+                            invalid_key: key,
+                            valid_attribute_names:,
+                            defaults:
+                          }
+                        )
+                      end
+                    end.compact
                   end
                 end
               end

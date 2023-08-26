@@ -1,9 +1,53 @@
-RSpec.describe Foobara::TypeDeclarations::ToTypeTransformer do
+RSpec.describe Foobara::BuiltinTypes::Attributes::SupportedTransformers::Defaults do
   let(:type) {
     Foobara::TypeDeclarations::Namespace.type_for_declaration(type_declaration)
   }
 
   describe "defaults" do
+    context "when defaults is not a hash" do
+      let(:type_declaration) do
+        {
+          type: :attributes,
+          element_type_declarations: {
+            a: :integer
+          },
+          defaults: [:b, 1]
+        }
+      end
+
+      it "applies defaults when expected and casts where expected" do
+        expect {
+          type
+        }.to raise_error(
+          described_class::TypeDeclarationExtension::ExtendAttributesTypeDeclaration::TypeDeclarationValidators::
+              HashWithSymbolicKeys::InvalidDefaultValuesGiven
+        )
+      end
+    end
+
+    context "when defaults contains invalid attribute names" do
+      let(:type_declaration) do
+        {
+          type: :attributes,
+          element_type_declarations: {
+            a: :integer
+          },
+          defaults: {
+            b: 1
+          }
+        }
+      end
+
+      it "applies defaults when expected and casts where expected" do
+        expect {
+          type
+        }.to raise_error(
+          described_class::TypeDeclarationExtension::ExtendAttributesTypeDeclaration::TypeDeclarationValidators::
+              ValidAttributeNames::InvalidDefaultValueGiven
+        )
+      end
+    end
+
     context "when type_declaration has top-level defaults hash" do
       let(:type_declaration) do
         {

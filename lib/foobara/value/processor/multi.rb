@@ -38,7 +38,9 @@ module Foobara
         end
 
         def process_outcome(_old_outcome)
+          # :nocov:
           raise "subclass responsibility"
+          # :nocov:
         end
 
         def process(value)

@@ -16,8 +16,6 @@ module Foobara
       self.context = context
     end
 
-    delegate :type, to: :class
-
     def ==(other)
       equal?(other) || eql?(other)
     end
