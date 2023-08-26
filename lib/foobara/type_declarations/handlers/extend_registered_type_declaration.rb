@@ -17,11 +17,6 @@ module Foobara
         def priority
           Priority::LOW
         end
-
-        def type_to_extend(strict_type_declaration)
-          type_symbol = strict_type_declaration[:type]
-          type_for_symbol(type_symbol)
-        end
       end
     end
   end
