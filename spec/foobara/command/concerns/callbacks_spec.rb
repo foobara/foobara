@@ -32,6 +32,7 @@ RSpec.describe Foobara::Command::Concerns::Callbacks do
     let(:exponent) { 3 }
     let(:command) { command_class.new(base:, exponent:) }
     let(:state_machine) { command.state_machine }
+    let(:called) { [] }
 
     after do
       command_class.remove_all_callbacks
@@ -83,13 +84,12 @@ RSpec.describe Foobara::Command::Concerns::Callbacks do
 
       context "when given a callback with no conditions" do
         before do
-          @around_any_transitions = []
           command_class.around_any_transition do |transition:, **args, &do_it|
             expect(args[:command]).to be(command)
 
             do_it.call
 
-            @around_any_transitions << transition
+            called << transition
           end
         end
 
@@ -99,7 +99,7 @@ RSpec.describe Foobara::Command::Concerns::Callbacks do
           end
 
           it "runs callbacks" do
-            expect(@around_any_transitions).to eq(
+            expect(called).to eq(
               %i[cast_and_validate_inputs
                  load_records
                  validate_records
@@ -108,6 +108,86 @@ RSpec.describe Foobara::Command::Concerns::Callbacks do
                  succeed]
             )
           end
+        end
+      end
+
+      context "when before any transition" do
+        before do
+          command_class.before_any_transition do |transition:, **_args|
+            called << transition
+          end
+        end
+
+        it "calls before callback for every transition" do
+          expect(outcome).to be_success
+
+          expect(called).to eq(
+            %i[
+              cast_and_validate_inputs
+              load_records
+              validate_records
+              validate
+              execute
+              succeed
+            ]
+          )
+        end
+      end
+
+      context "when around a specific transition" do
+        before do
+          command_class.around_validate_records do |transition:, **_args, &do_it|
+            do_it.call
+
+            called << transition
+          end
+        end
+
+        it "calls around callback for that transition" do
+          expect(outcome).to be_success
+
+          expect(called).to eq([:validate_records])
+        end
+      end
+
+      context "when error for any transition" do
+        before do
+          command_class.define_method :validate_records do
+            raise "kaboom!"
+          end
+          command_class.error_any_transition do |error:, command:, state_machine:, from:, to:, transition:|
+            called << { error:, command:, state_machine:, from:, to:, transition: }
+          end
+        end
+
+        it "calls around callback for that transition" do
+          expect {
+            outcome
+          }.to raise_error("kaboom!")
+
+          expect(called.size).to eq(1)
+
+          callback_data = called.first
+
+          error = callback_data[:error]
+          command = callback_data[:command]
+          state_machine = callback_data[:state_machine]
+          from = callback_data[:from]
+          to = callback_data[:to]
+          transition = callback_data[:transition]
+
+          expect(error).to be_a(Foobara::Callback::Runner::UnexpectedErrorWhileRunningCallback)
+          original_error = error.cause
+
+          expect(original_error).to be_a(RuntimeError)
+          expect(original_error.message).to eq("kaboom!")
+
+          expect(state_machine).to be_a(Foobara::StateMachine)
+          expect(command).to be_a(Foobara::Command)
+
+          expect(from).to eq(:loaded_records)
+          expect(transition).to eq(:validate_records)
+          expect(to).to eq(:validated_records)
         end
       end
     end

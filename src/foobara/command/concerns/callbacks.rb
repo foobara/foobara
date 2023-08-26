@@ -29,7 +29,6 @@ module Foobara
         end
 
         included do
-          # TODO: this seems to be polluting Object wtf...
           [self, singleton_class].each do |target|
             %i[before after].each do |type|
               target.define_method "#{type}_any_transition" do |&block|
@@ -46,14 +45,29 @@ module Foobara
                 block.call(command: state_machine.owner, **args, &do_transition_block)
               end
             end
+
+            target.define_method :error_any_transition do |&block|
+              callback_state_machine_target.register_transition_callback(:error) do |error|
+                callback_data = error.callback_data
+
+                state_machine = callback_data[:state_machine]
+                command = state_machine.owner
+                from = callback_data[:from]
+                transition = callback_data[:transition]
+                to = callback_data[:to]
+
+                block.call(error:, command:, state_machine:, from:, to:, transition:)
+              end
+            end
           end
 
           Foobara::Command::StateMachine.transitions.each do |transition|
             [self, singleton_class].each do |target|
               %i[before after].each do |type|
                 target.define_method "#{type}_#{transition}" do |&block|
-                  callback_state_machine_target.register_transition_callback(type,
-                                                                             transition:) do |state_machine:, **args|
+                  callback_state_machine_target.register_transition_callback(
+                    type, transition:
+                  ) do |state_machine:, **args|
                     block.call(command: state_machine.owner, **args)
                   end
                 end
@@ -61,17 +75,9 @@ module Foobara
 
               target.define_method "around_#{transition}" do |&block|
                 callback_state_machine_target.register_transition_callback(
-                  :around
+                  :around, transition:
                 ) do |state_machine:, **args, &do_transition_block|
                   block.call(command: state_machine.owner, **args, &do_transition_block)
-                end
-              end
-
-              %i[error].each do |type|
-                target.define_method "#{type}_any_transition" do |&block|
-                  callback_state_machine_target.register_transition_callback(type) do |error:, state_machine:, **args|
-                    block.call(error:, command: state_machine.owner, **args)
-                  end
                 end
               end
             end
