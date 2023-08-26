@@ -1,7 +1,7 @@
 RSpec.describe Foobara::Domain do
   before do
     described_class.reset_unprocessed_command_classes
-    described_class.install!
+    described_class.reset_all
   end
 
   context "with simple command" do

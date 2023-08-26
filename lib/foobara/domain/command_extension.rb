@@ -25,11 +25,14 @@ module Foobara
         def domain
           return @domain if defined?(@domain)
 
-          namespace = Foobara::Util.module_for(self)
-
-          if namespace&.ancestors&.include?(Foobara::Domain)
-            @domain = namespace
+          Domain.all.each do |domain|
+            if domain.owns_command_class?(self)
+              @domain = domain
+              return domain
+            end
           end
+
+          @domain = nil
         end
       end
     end

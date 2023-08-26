@@ -1,7 +1,6 @@
 RSpec.describe Foobara::Domain::CommandExtension do
   describe "#run_subcommand!" do
     before do
-      Foobara::Domain.install!
       [domain_class1, domain_class2].each do |domain_class|
         stub_const(domain_class.name, domain_class)
         expect(domain_class.instance).to be_a(domain_class)
@@ -27,11 +26,12 @@ RSpec.describe Foobara::Domain::CommandExtension do
       sub_command_class = command_class2
 
       Class.new(Foobara::Command) do
-        depends_on sub_command_class
-
         singleton_class.define_method :name do
           name
         end
+
+        depends_on sub_command_class
+        inputs foo: :integer
 
         define_method :execute do
           run_subcommand!(sub_command_class)

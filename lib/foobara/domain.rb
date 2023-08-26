@@ -6,12 +6,23 @@ module Foobara
     class DomainDependencyNotRegistered < StandardError; end
 
     def initialize
+      Domain.all << self
       @command_classes = []
+    end
+
+    delegate :name, to: :class
+
+    def type_namespace
+      @type_namespace ||= Foobara::TypeDeclarations::Namespace
     end
 
     def command_classes
       Domain.process_command_classes
       @command_classes
+    end
+
+    def owns_command_class?(command_class)
+      command_classes.include?(command_class)
     end
 
     def register_commands(command_classes)
@@ -24,11 +35,10 @@ module Foobara
       @command_classes << command_class
     end
 
-    def depends_on?(domain_name)
-      domain_name = domain_name.name if domain_name.is_a?(Class)
-      domain_name = domain_name.to_sym
+    def depends_on?(domain)
+      domain = domain.name if domain.is_a?(Class) || domain.is_a?(Domain)
 
-      depends_on.include?(domain_name.to_sym)
+      depends_on.include?(domain.to_sym)
     end
 
     def depends_on(*domain_classes)
@@ -56,6 +66,10 @@ module Foobara
     end
 
     class << self
+      def all
+        @all ||= []
+      end
+
       def unprocessed_command_classes
         @unprocessed_command_classes ||= []
       end
@@ -65,14 +79,26 @@ module Foobara
           command_class = unprocessed_command_classes.pop
 
           command_class = const_get(command_class) unless command_class.is_a?(Class)
-          domain = command_class.domain
+          domain = autodetect_domain(command_class)
 
           domain&.register_command(command_class)
         end
       end
 
+      def autodetect_domain(command_class)
+        namespace = Foobara::Util.module_for(command_class)
+
+        if namespace&.ancestors&.include?(Foobara::Domain)
+          namespace
+        end
+      end
+
       def reset_unprocessed_command_classes
         @unprocessed_command_classes = nil
+      end
+
+      def reset_all
+        @all = nil
       end
 
       def install!
@@ -93,3 +119,5 @@ module Foobara
     end
   end
 end
+
+Foobara::Domain.install!
