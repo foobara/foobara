@@ -19,6 +19,14 @@ module Foobara
 
         attr_reader :outcome, :exception
 
+        def run!
+          outcome = run
+
+          outcome.raise!
+
+          outcome.result
+        end
+
         def run
           result = invoke_with_callbacks_and_transition(%i[
                                                           cast_and_validate_inputs
@@ -35,7 +43,9 @@ module Foobara
           @outcome = Outcome.success(result)
         rescue Halt
           if error_collection.empty?
+            # :nocov:
             raise CannotHaltWithoutAddingErrors, "Cannot halt without adding errors first"
+            # :nocov:
           end
 
           state_machine.fail!

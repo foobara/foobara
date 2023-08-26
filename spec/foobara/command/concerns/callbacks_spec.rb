@@ -54,6 +54,7 @@ RSpec.describe Foobara::Command::Concerns::Callbacks do
         context "when success" do
           before do
             expect(outcome).to be_success
+            expect(command).to be_success
           end
 
           it "runs callbacks" do
