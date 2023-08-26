@@ -10,7 +10,9 @@ module Foobara
           if respond_to_missing_for_inputs?(method_name)
             inputs[method_name]
           else
+            # :nocov:
             super
+            # :nocov:
           end
         end
 
@@ -19,7 +21,7 @@ module Foobara
         end
 
         def respond_to_missing_for_inputs?(method_name, _private = false)
-          inputs_type&.element_types&.key?(method_name)
+          inputs_type.element_types.key?(method_name)
         end
 
         delegate :inputs_type, to: :class
@@ -39,8 +41,10 @@ module Foobara
               if error.is_a?(Value::AttributeError)
                 add_input_error(error)
               else
+                # :nocov:
                 # TODO: raise a real error
                 raise "wtf"
+                # :nocov:
               end
             end
           end
