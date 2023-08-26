@@ -8,6 +8,10 @@ module Foobara
           def inputs(inputs_type_declaration)
             @inputs_type = type_for_declaration(inputs_type_declaration)
 
+            if defined?(@error_context_type_map)
+              update_input_error_context_type_map
+            end
+
             register_possible_errors
 
             @inputs_type
