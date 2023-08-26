@@ -52,7 +52,7 @@ RSpec.describe Foobara::Command do
         expect(state_machine).to be_currently_succeeded
         expect(state_machine).to be_ever_succeeded
         expect(state_machine).to be_ever_initialized
-        non_happy_path_transitions = %i[error fail reset abandon]
+        non_happy_path_transitions = %i[error fail reset]
         happy_path_transitions = state_machine.class.transitions - non_happy_path_transitions
         expect(state_machine.log.map(&:transition)).to match_array(happy_path_transitions)
       end

@@ -77,11 +77,6 @@ module Foobara
           raise Halt
         end
 
-        def abandon!
-          state_machine.abandon!
-          halt!
-        end
-
         private
 
         def invoke_with_callbacks_and_transition(transition_or_transitions)
