@@ -13,12 +13,6 @@ module Foobara
             end
           end
 
-          class << self
-            def declaration_data_type_declaration
-              :duck # TODO: expand when we have support for an array of symbols
-            end
-          end
-
           def required_attribute_names
             required
           end

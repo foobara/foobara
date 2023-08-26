@@ -156,10 +156,6 @@ RSpec.describe "custom types" do
           def symbol
             :be_pointless
           end
-
-          def declaration_data_type_declaration
-            :symbol # TODO: use boolean instead once we have one
-          end
         end
 
         def be_pointless

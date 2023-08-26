@@ -5,12 +5,6 @@ module Foobara
         class AllowedAttributes < TypeDeclarations::Validator
           class UnexpectedAttributeError < Foobara::Value::AttributeError; end
 
-          class << self
-            def declaration_data_type_declaration
-              :duck # TODO: expand when we have support for an array of symbols
-            end
-          end
-
           def error_halts_processing?
             true
           end

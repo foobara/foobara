@@ -14,12 +14,6 @@ module Foobara
             end
           end
 
-          class << self
-            def declaration_data_type_declaration
-              :number
-            end
-          end
-
           def max
             declaration_data
           end
