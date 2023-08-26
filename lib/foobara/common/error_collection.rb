@@ -2,6 +2,14 @@ module Foobara
   class ErrorCollection
     class ErrorAlreadySetError < StandardError; end
 
+    class << self
+      def symbolic(errors)
+        new.tap do |collection|
+          collection.add_errors(errors)
+        end.symbolic
+      end
+    end
+
     attr_reader :error_array
 
     def initialize

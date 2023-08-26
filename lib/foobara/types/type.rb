@@ -112,9 +112,9 @@ module Foobara
         end
 
         if value_validator
-          value_validator.process(value).error_collection
+          value_validator.process(value).errors
         else
-          Foobara::ErrorCollection.new
+          []
         end
       end
     end

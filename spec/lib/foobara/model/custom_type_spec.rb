@@ -334,13 +334,54 @@ RSpec.describe "custom types" do
 
           it "can give validation_errors if needed" do
             errors = type.validation_errors([-40, -40])
-            expect(errors.symbolic).to eq(
+            expect(Foobara::ErrorCollection.symbolic(errors)).to eq(
               real_should_not_match_imaginary: {
                 symbol: :real_should_not_match_imaginary,
                 message: "cant be the same!",
                 context: { foo: :bar }
               }
             )
+          end
+
+          context "with a transformer" do
+            let(:transformer_class) do
+              Class.new(Foobara::TypeDeclarations::Transformer) do
+                def always_applicable?
+                  true
+                end
+
+                def transform(value)
+                  value
+                end
+              end
+            end
+
+            let(:transformer) { transformer_class.instance }
+
+            before do
+              type.transformers << transformer
+            end
+
+            it "can give validation_errors if needed" do
+              errors = type.validation_errors([-40, -40])
+              expect(Foobara::ErrorCollection.symbolic(errors)).to eq(
+                real_should_not_match_imaginary: {
+                  symbol: :real_should_not_match_imaginary,
+                  message: "cant be the same!",
+                  context: { foo: :bar }
+                }
+              )
+            end
+
+            context "when no errors" do
+              before do
+                type.validators = []
+              end
+
+              it "is empty" do
+                expect(type.validation_errors([2, -40])).to eq([])
+              end
+            end
           end
         end
       end
