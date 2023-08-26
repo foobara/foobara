@@ -1,29 +1,29 @@
 module Foobara
   module BuiltinTypes
     module Attributes
-      module SupportedTransformers
-        class Defaults < Value::Transformer
+      module SupportedValidators
+        class Required < TypeDeclarations::Validator
           module TypeDeclarationExtension
             module ExtendAttributesTypeDeclaration
               module TypeDeclarationValidators
-                class HashWithSymbolicKeys < TypeDeclarations::TypeDeclarationValidator
-                  class InvalidDefaultValuesGivenError < Value::AttributeError
+                class ArrayOfSymbols < TypeDeclarations::TypeDeclarationValidator
+                  class InvalidRequiredAttributesValuesGivenError < Value::AttributeError
                     class << self
                       def message(_value)
-                        "defaults should be a hash with symbolic keys"
+                        "required should be an array of symbols"
                       end
                     end
                   end
 
                   def applicable?(strict_type_declaration)
-                    strict_type_declaration.is_a?(Hash) && strict_type_declaration.key?(:defaults)
+                    strict_type_declaration.key?(:required)
                   end
 
                   def validation_errors(strict_type_declaration)
-                    defaults = strict_type_declaration[:defaults]
+                    required = strict_type_declaration[:required]
 
-                    unless defaults.is_a?(Hash) && Util.all_symbolic_keys?(defaults)
-                      build_error(context: { defaults: })
+                    unless required.is_a?(::Array) && Util.all_symbolic_elements?(required)
+                      build_error(context: { required: })
                     end
                   end
                 end

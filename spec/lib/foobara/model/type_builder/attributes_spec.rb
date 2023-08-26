@@ -20,7 +20,7 @@ RSpec.describe Foobara::BuiltinTypes::Attributes::SupportedTransformers::Default
           type
         }.to raise_error(
           described_class::TypeDeclarationExtension::ExtendAttributesTypeDeclaration::TypeDeclarationValidators::
-              HashWithSymbolicKeys::InvalidDefaultValuesGiven
+              HashWithSymbolicKeys::InvalidDefaultValuesGivenError
         )
       end
     end
@@ -43,7 +43,7 @@ RSpec.describe Foobara::BuiltinTypes::Attributes::SupportedTransformers::Default
           type
         }.to raise_error(
           described_class::TypeDeclarationExtension::ExtendAttributesTypeDeclaration::TypeDeclarationValidators::
-              ValidAttributeNames::InvalidDefaultValueGiven
+              ValidAttributeNames::InvalidDefaultValueGivenError
         )
       end
     end
@@ -102,6 +102,30 @@ RSpec.describe Foobara::BuiltinTypes::Attributes::SupportedTransformers::Default
   end
 
   describe "required attributes" do
+    context "when required is not an array of symbols" do
+      let(:type_declaration) do
+        {
+          type: :attributes,
+          element_type_declarations: {
+            a: :integer,
+            b: :integer,
+            c: :integer
+          },
+          required: { a: 1 }
+        }
+      end
+
+      it "explodes" do
+        expect {
+          type
+        }.to raise_error(
+          Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::TypeDeclarationExtension::
+              ExtendAttributesTypeDeclaration::TypeDeclarationValidators::ArrayOfSymbols::
+              InvalidRequiredAttributesValuesGivenError
+        )
+      end
+    end
+
     context "when type_declaration has top-level required array" do
       let(:type_declaration) do
         {
