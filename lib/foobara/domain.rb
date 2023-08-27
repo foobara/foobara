@@ -5,7 +5,10 @@ module Foobara
     class AlreadyRegisteredDomainDependency < StandardError; end
     class DomainDependencyNotRegistered < StandardError; end
 
-    def initialize
+    attr_accessor :superdomain
+
+    def initialize(superdomain = nil)
+      self.superdomain = superdomain
       Domain.all << self
       @command_classes = []
     end
@@ -13,7 +16,11 @@ module Foobara
     delegate :name, to: :class
 
     def type_namespace
-      @type_namespace ||= Foobara::TypeDeclarations::Namespace
+      @type_namespace ||= if superdomain
+                            Foobara::TypeDeclarations::Namespace.new(name, accesses: superdomain)
+                          else
+                            Foobara::TypeDeclarations::Namespace.new(name)
+                          end
     end
 
     def command_classes

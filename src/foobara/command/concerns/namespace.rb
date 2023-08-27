@@ -10,7 +10,6 @@ module Foobara
           end
 
           def namespace
-            # TODO: get this in here somehow from the Domain
             TypeDeclarations::Namespace.current
           end
         end

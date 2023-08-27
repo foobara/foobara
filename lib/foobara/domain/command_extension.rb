@@ -34,6 +34,14 @@ module Foobara
 
           @domain = nil
         end
+
+        def namespace
+          if domain.present?
+            domain.type_namespace
+          else
+            super
+          end
+        end
       end
     end
   end

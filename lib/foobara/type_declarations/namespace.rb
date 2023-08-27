@@ -68,13 +68,13 @@ module Foobara
         name,
         type_declaration_handler_registry: TypeDeclarations::TypeDeclarationHandlerRegistry.new(enforce_unique: false),
         type_registry: Types::Registry.new,
-        accesses: [GLOBAL]
+        accesses: GLOBAL
       )
         self.name = name
         self.type_declaration_handler_registry = type_declaration_handler_registry
         self.type_registry = type_registry
 
-        self.accesses = accesses
+        self.accesses = Array.wrap(accesses)
       end
 
       GLOBAL = new(
