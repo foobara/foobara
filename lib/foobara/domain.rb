@@ -59,7 +59,9 @@ module Foobara
         domain_name = domain_class.name.to_sym
 
         if depends_on.include?(domain_name)
+          # :nocov:
           raise AlreadyRegisteredDomainDependency, "Already registered #{domain_class} as a dependency of #{self}"
+          # :nocov:
         end
 
         depends_on << domain_name
@@ -68,7 +70,9 @@ module Foobara
 
     def verify_depends_on!(domain_class)
       unless depends_on?(domain_class)
+        # :nocov:
         raise DomainDependencyNotRegistered, "Need to declare #{domain_class} on #{self} with .depends_on"
+        # :nocov:
       end
     end
 

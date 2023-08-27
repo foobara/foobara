@@ -8,7 +8,11 @@ module Foobara
       end
 
       def root_type=(type)
-        raise "Already registered root type of #{root_type}" if root_type
+        if root_type
+          # :nocov:
+          raise "Already registered root type of #{root_type}"
+          # :nocov:
+        end
 
         @root_type = type
       end

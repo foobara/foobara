@@ -30,7 +30,11 @@ module Foobara
                    end
         end
 
-        raise "No errors given" if errors.empty?
+        if errors.empty?
+          # :nocov:
+          raise "No errors given"
+          # :nocov:
+        end
 
         new.tap do |outcome|
           outcome.add_errors(errors)

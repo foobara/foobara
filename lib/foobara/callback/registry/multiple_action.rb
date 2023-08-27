@@ -89,7 +89,9 @@ module Foobara
             if actions.size == 1
               normalize_actions(first, validate)
             else
+              # :nocov:
               raise ArgumentError, "Not expecting an array of arrays, expected an array of actions"
+              # :nocov:
             end
           elsif actions.empty?
             [nil]

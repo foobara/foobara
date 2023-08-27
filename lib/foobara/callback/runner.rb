@@ -28,11 +28,19 @@ module Foobara
         self.callback_data = if args.empty?
                                opts
                              else
-                               raise "Was not expecting more than one argument" if args.length > 1
+                               if args.length > 1
+                                 # :nocov:
+                                 raise "Was not expecting more than one argument"
+                                 # :nocov:
+                               end
 
                                arg = args.first
                                if opts.present?
-                                 raise "Not sure how to combine #{arg} and #{opts}" unless arg.is_a?(Hash)
+                                 unless arg.is_a?(Hash)
+                                   # :nocov:
+                                   raise "Not sure how to combine #{arg} and #{opts}"
+                                   # :nocov:
+                                 end
 
                                  arg.merge(opts)
                                else

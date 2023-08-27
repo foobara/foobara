@@ -19,7 +19,9 @@ module Foobara
 
           if has_keyword_args? && has_positional_args?
             # TODO: raise a real error
+            # :nocov:
             raise "Expect #{type} block to either take a positional arg or keyword args but not both"
+            # :nocov:
           end
         end
       end

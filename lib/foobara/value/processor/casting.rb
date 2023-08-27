@@ -54,7 +54,9 @@ module Foobara
         def cast_to
           # TODO: isn't there a way to declare declaration_data_type so we don't have to validate here??
           unless declaration_data.key?(:cast_to)
+            # :nocov:
             raise "Missing cast_to"
+            # :nocov:
           end
 
           declaration_data[:cast_to]

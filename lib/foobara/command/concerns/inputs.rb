@@ -41,8 +41,8 @@ module Foobara
               if error.is_a?(Value::AttributeError)
                 add_input_error(error)
               else
-                # :nocov:
                 # TODO: raise a real error
+                # :nocov:
                 raise "wtf"
                 # :nocov:
               end

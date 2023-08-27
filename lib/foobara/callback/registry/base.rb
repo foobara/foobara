@@ -8,7 +8,9 @@ module Foobara
 
         def register_callback(type, *, **, &callback_block)
           unless block_given?
+            # :nocov:
             raise ArgumentError, "Must provide a callback block to register"
+            # :nocov:
           end
 
           validate_type!(type)
@@ -71,7 +73,9 @@ module Foobara
         def validate_type!(type)
           unless Block.types.include?(type)
             # TODO: raise a real error
+            # :nocov:
             raise "bad type #{type} expected one of #{Block.types}"
+            # :nocov:
           end
         end
       end

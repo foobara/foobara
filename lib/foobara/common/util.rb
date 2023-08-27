@@ -145,7 +145,11 @@ module Foobara
         if opts.present?
           arg = args.first
 
-          raise ArgumentError, "Expected #{arg.inspect} to be a Hash" unless arg.is_a?(::Hash)
+          unless arg.is_a?(::Hash)
+            # :nocov:
+            raise ArgumentError, "Expected #{arg.inspect} to be a Hash"
+            # :nocov:
+          end
 
           [arg_and_opts_to_arg(args.first, opts)]
         else

@@ -33,7 +33,9 @@ module Foobara
                 element_processors << processor
               else
                 # TODO: add validator that these are all fine so we don't have to bother here...
+                # :nocov:
                 raise "Not sure where to put #{processor}"
+                # :nocov:
               end
             end
 

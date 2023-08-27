@@ -102,7 +102,9 @@ module Foobara
           handler_class_to_extend = TypeDeclarations::Handlers.const_get(handler_name)
 
           unless handler_class_to_extend
+            # :nocov:
             raise "Couldn't find handler class for #{handler_name}"
+            # :nocov:
           end
 
           handler_to_extend = global_type_declaration_handler_registry.type_declaration_handler_for_handler_class(
@@ -110,7 +112,9 @@ module Foobara
           )
 
           unless handler_to_extend
+            # :nocov:
             raise "Could not find a handler for #{handler_class_to_extend}"
+            # :nocov:
           end
 
           desugarizer_module = Util.constant_value(handler_module, :Desugarizers)

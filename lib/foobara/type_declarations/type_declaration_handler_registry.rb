@@ -1,10 +1,6 @@
 module Foobara
   module TypeDeclarations
     class TypeDeclarationHandlerRegistry < Value::Processor::Selection
-      def always_applicable?
-        true
-      end
-
       def type_declaration_handler_for_handler_class(type_declaration_handler_class)
         processors.find do |type_declaration_handler|
           type_declaration_handler.instance_of?(type_declaration_handler_class)

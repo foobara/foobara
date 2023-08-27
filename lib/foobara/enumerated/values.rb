@@ -15,7 +15,9 @@ module Foobara
 
         def normalize_value(value)
           unless Values.valid_value_type?(value)
+            # :nocov:
             raise BadValueType, "Expected nil, String, or Symbol, but got #{value} which is a #{value.class}"
+            # :nocov:
           end
 
           value&.to_sym
@@ -36,13 +38,17 @@ module Foobara
         def validate_symbol_map_types(symbol_map)
           symbol_map.each_pair do |name, value|
             unless valid_name_type?(name)
+              # :nocov:
               raise BadNameType, "name is #{name} which is a #{name.class} but expected String, or Symbol"
+              # :nocov:
             end
 
             unless valid_value_type?(value)
+              # :nocov:
               raise BadValueType, "#{
-              name
-            } is #{value} which is a #{value.class} but expected nil, String, or Symbol"
+                name
+              } is #{value} which is a #{value.class} but expected nil, String, or Symbol"
+              # :nocov:
             end
           end
         end
@@ -99,7 +105,11 @@ module Foobara
       end
 
       def method_missing(name)
-        super unless respond_to_missing?(name)
+        unless respond_to_missing?(name)
+          # :nocov:
+          super
+          # :nocov:
+        end
 
         @symbol_map[name]
       end

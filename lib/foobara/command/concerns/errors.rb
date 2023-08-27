@@ -48,8 +48,16 @@ module Foobara
 
                     error_args = error_args.except(:input)
 
-                    raise ArgumentError, "missing error symbol" unless symbol
-                    raise ArgumentError, "missing input" unless input
+                    unless symbol
+                      # :nocov:
+                      raise ArgumentError, "missing error symbol"
+                      # :nocov:
+                    end
+                    unless input
+                      # :nocov:
+                      raise ArgumentError, "missing input"
+                      # :nocov:
+                    end
 
                     Value::AttributeError.new(**error_args.merge(path: [input]))
                   else
@@ -77,7 +85,11 @@ module Foobara
                     error_args = opts.merge(args.first || {})
                     symbol = error_args[:symbol]
 
-                    raise ArgumentError, "missing error symbol" unless symbol
+                    unless symbol
+                      # :nocov:
+                      raise ArgumentError, "missing error symbol"
+                      # :nocov:
+                    end
 
                     Foobara::Command::RuntimeCommandError.new(**error_args)
                   else
@@ -99,7 +111,9 @@ module Foobara
           context = error.context
 
           if !message.is_a?(String) || message.empty?
+            # :nocov:
             raise "Bad error message, expected a string"
+            # :nocov:
           end
 
           map = self.class.error_context_type_map
@@ -118,7 +132,9 @@ module Foobara
           possible_error_symbols = map.keys
 
           unless possible_error_symbols.include?(symbol)
+            # :nocov:
             raise "Invalid error symbol #{symbol} expected one of #{possible_error_symbols}"
+            # :nocov:
           end
 
           type_declaration = map[symbol]

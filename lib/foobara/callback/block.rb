@@ -41,7 +41,9 @@ module Foobara
       def validate_original_block!
         unless has_one_or_zero_positional_args?
           # TODO: raise a real error
+          # :nocov:
           raise "Can't pass multiple arguments to a callback. Only 1 or 0 arguments."
+          # :nocov:
         end
       end
 
