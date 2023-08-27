@@ -4,11 +4,8 @@ require "active_support/core_ext/hash/indifferent_access"
 require "active_support/core_ext/module/delegation"
 require "active_support/core_ext/string/inflections"
 
-module Commands
-end
-
 # TODO: break these out into separate gems instead of simulating it here
-require "foobara"
+require "foobara/common"
 require "foobara/value"
 require "foobara/enumerated"
 require "foobara/callback"
@@ -16,8 +13,5 @@ require "foobara/state_machine"
 require "foobara/types"
 require "foobara/type_declarations"
 require "foobara/builtin_types"
-
-Foobara::Util.require_directory("#{__dir__}/../src/")
-
-# would have made more sense for domain to have been the top of this monorepo. Oh well, can break everything out later.
+require "foobara/command"
 require "foobara/domain"
