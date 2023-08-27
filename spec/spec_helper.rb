@@ -12,7 +12,7 @@ SimpleCov.start do
   # minimum_coverage line: 100, branch: 100
 end
 
-require "commands"
+require "foobara"
 
 RSpec.configure do |config|
   config.filter_run_when_matching :focus

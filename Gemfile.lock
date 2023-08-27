@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    commands (0.1.0)
+    foobara (0.1.0)
       activesupport
 
 GEM
@@ -124,7 +124,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  commands!
+  foobara!
   guard-rspec
   pry
   pry-byebug

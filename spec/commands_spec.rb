@@ -1,5 +1,5 @@
-RSpec.describe Commands do
+RSpec.describe Foobara do
   it "has a version number" do
-    expect(Commands::VERSION).to_not be_nil
+    expect(Foobara::VERSION).to_not be_nil
   end
 end

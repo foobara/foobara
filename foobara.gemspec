@@ -1,14 +1,15 @@
-require_relative "lib/commands/version"
+require_relative "lib/foobara/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "commands"
-  spec.version = Commands::VERSION
+  spec.name = "foobara"
+  spec.version = Foobara::VERSION
   spec.authors = ["Miles Georgi"]
   spec.email = ["azimux@gmail.com"]
 
-  spec.summary = "Implements command pattern for encapsulating and managing domain complexity."
+  spec.summary = "Implements command pattern for encapsulating and managing domain complexity " \
+                 "as well as supporting libraries."
   spec.description = spec.summary
-  spec.homepage = "https://github.com/foobara/commands"
+  spec.homepage = "https://github.com/foobara/foobara"
   spec.license = "none yet"
   spec.required_ruby_version = ">= 3.2.0"
 
@@ -30,7 +31,7 @@ Gem::Specification.new do |spec|
   end
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
-  spec.require_paths = %w[lib src]
+  spec.require_paths = %w[lib]
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
