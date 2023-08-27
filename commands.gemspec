@@ -1,4 +1,4 @@
-require_relative "src/commands/version"
+require_relative "lib/commands/version"
 
 Gem::Specification.new do |spec|
   spec.name = "commands"

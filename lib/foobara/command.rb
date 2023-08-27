@@ -1,3 +1,5 @@
+Foobara::Util.require_directory("#{__dir__}/command")
+
 module Foobara
   class Command
     include Concerns::Namespace
