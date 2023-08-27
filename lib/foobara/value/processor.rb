@@ -177,14 +177,22 @@ module Foobara
         s = super
 
         if s.size > 400
+          # :nocov:
           s = "#{s[0..400]}..."
+          # :nocov:
         end
 
         s
       end
 
       def method_missing(method, *args, **opts)
-        method == symbol ? declaration_data : super
+        if method == symbol
+          declaration_data
+        else
+          # :nocov:
+          super
+          # :nocov:
+        end
       end
 
       def respond_to_missing?(method, private = false)

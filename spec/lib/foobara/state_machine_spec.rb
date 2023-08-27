@@ -84,6 +84,28 @@ RSpec.describe Foobara::StateMachine do
           end
         end
 
+        describe "#perform_transition!" do
+          subject { state_machine.perform_transition!(transition) }
+
+          context "when valid transition" do
+            let(:transition) { :start }
+
+            it { is_expected_to change(state_machine, :current_state).from(:unexecuted).to(:running) }
+          end
+
+          context "when invalid transition" do
+            let(:transition) { :bad_transition }
+
+            it { is_expected_to_raise(Foobara::StateMachine::InvalidTransition) }
+          end
+        end
+
+        describe "#allowed_transitions" do
+          it "is the expected allowed transitions" do
+            expect(state_machine.allowed_transitions).to eq(%i[start fail])
+          end
+        end
+
         its(:transition_map) {
           is_expected.to eq(
             running: { fail: :failed, succeed: :succeeded },

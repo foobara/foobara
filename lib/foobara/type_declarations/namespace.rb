@@ -95,10 +95,6 @@ module Foobara
         type_registries.any? { |registry| registry.registered?(symbol) }
       end
 
-      def root_type
-        GLOBAL.type_registry.root_type
-      end
-
       def type_registries
         accesses_up_hierarchy.map(&:type_registry)
       end
@@ -133,18 +129,6 @@ module Foobara
 
           raise NoTypeDeclarationHandlerFoundError, "No type declaration handler found for #{type_declaration}"
         end
-      end
-
-      def type_declaration_handler_for_handler_class(type_declaration_handler_class)
-        type_declaration_handler_registries.each do |registry|
-          registry.processors.each do |type_declaration_handler|
-            if type_declaration_handler.instance_of?(type_declaration_handler_class)
-              return type_declaration_handler
-            end
-          end
-        end
-
-        nil
       end
 
       def handlers
