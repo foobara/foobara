@@ -184,5 +184,23 @@ module Foobara
         # :nocov:
       end
     end
+
+    def const_get_up_hierarchy(mod, name)
+      mod.const_get(name)
+    rescue NameError => e
+      if mod == Object || e.message !~ /uninitialized constant (.*::)?#{name}\z/
+        # :nocov:
+        raise
+        # :nocov:
+      end
+
+      mod = if mod.name&.include?("::")
+              module_for(mod)
+            else
+              Object
+            end
+
+      const_get_up_hierarchy(mod, name)
+    end
   end
 end

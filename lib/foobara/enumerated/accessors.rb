@@ -4,28 +4,6 @@ module Foobara
       class ValueNotAllowed < StandardError; end
       class CannotDetermineModuleAutomatically; end
 
-      class << self
-        def const_get_up_hierarchy(mod, name)
-          mod.const_get(name)
-        rescue NameError
-          if mod == Object
-            # :nocov:
-            raise
-            # :nocov:
-          end
-
-          mod_name = mod.name
-
-          mod = if mod_name
-                  Foobara::Util.module_for(mod)
-                else
-                  Object
-                end
-
-          const_get_up_hierarchy(mod, name)
-        end
-      end
-
       extend ActiveSupport::Concern
 
       class_methods do
@@ -36,7 +14,7 @@ module Foobara
             module_name = attribute_name.to_s.camelize
 
             values_source = begin
-              Accessors.const_get_up_hierarchy(self, module_name)
+              Util.const_get_up_hierarchy(self, module_name)
             rescue NameError
               # :nocov:
               raise CannotDetermineModuleAutomatically,
