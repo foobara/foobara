@@ -23,7 +23,7 @@ module Foobara
 
         delegate :verify_depends_on!, to: :class
 
-        def sub_command?
+        def subcommand?
           is_subcommand
         end
 

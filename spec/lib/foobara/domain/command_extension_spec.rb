@@ -23,18 +23,18 @@ RSpec.describe Foobara::Domain::CommandExtension do
 
     let(:command_class1) {
       name = command_class1_name
-      sub_command_class = command_class2
+      subcommand_class = command_class2
 
       Class.new(Foobara::Command) do
         singleton_class.define_method :name do
           name
         end
 
-        depends_on sub_command_class
+        depends_on subcommand_class
         inputs foo: :integer
 
         define_method :execute do
-          run_subcommand!(sub_command_class)
+          run_subcommand!(subcommand_class)
         end
       end
     }
