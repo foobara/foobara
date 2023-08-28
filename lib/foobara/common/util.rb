@@ -86,31 +86,52 @@ module Foobara
     end
 
     def args_and_opts_to_opts(args, opts)
-      if !args.is_a?(Array) || args.size > 1
+      unless args.is_a?(::Array)
         # :nocov:
         raise ArgumentError, "args must be an array of 0 or 1 hashes but received #{args}"
         # :nocov:
       end
 
-      unless opts.is_a?(Hash)
+      unless opts.is_a?(::Hash)
         # :nocov:
-        raise ArgumentError, "opts must be a hash not a #{opts}"
+        raise ArgumentError, "opts must be a hash not a #{opts.class}"
         # :nocov:
       end
 
-      (args.first || {}).merge(opts)
+      case args.size
+      when 0
+        opts
+      when 1
+        arg = args.first
+
+        if opts.present?
+          unless arg.is_a?(::Hash)
+            # :nocov:
+            raise ArgumentError, "opts must be a hash not a #{arg.class}"
+            # :nocov:
+          end
+
+          arg.merge(opts)
+        else
+          arg
+        end
+      else
+        # :nocov:
+        raise ArgumentError, "args must be an array of 0 or 1 hashes but received #{args}"
+        # :nocov:
+      end
     end
 
     def arg_and_opts_to_arg(arg, opts)
       if arg.present?
         if opts.present?
-          unless opts.is_a?(Hash)
+          unless opts.is_a?(::Hash)
             # :nocov:
             raise ArgumentError, "opts must be a hash not a #{opts}"
             # :nocov:
           end
 
-          unless arg.is_a?(Hash)
+          unless arg.is_a?(::Hash)
             # :nocov:
             raise ArgumentError, "arg must be a hash if present when opts is present"
             # :nocov:
@@ -131,7 +152,7 @@ module Foobara
     # parts of the hash that wind up in opts, this method comines it into an array of 0 or 1
     # argument with stuff merged into the argument if needed.
     def args_and_opts_to_args(args, opts)
-      unless args.is_a?(Array)
+      unless args.is_a?(::Array)
         # :nocov:
         raise ArgumentError, "args must be an array of 0 or 1 hashes but received #{args}"
         # :nocov:

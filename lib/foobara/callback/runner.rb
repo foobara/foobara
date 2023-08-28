@@ -25,28 +25,7 @@ module Foobara
       def callback_data(*args, **opts)
         return @callback_data if args.blank? && opts.blank?
 
-        self.callback_data = if args.empty?
-                               opts
-                             else
-                               if args.length > 1
-                                 # :nocov:
-                                 raise "Was not expecting more than one argument"
-                                 # :nocov:
-                               end
-
-                               arg = args.first
-                               if opts.present?
-                                 unless arg.is_a?(Hash)
-                                   # :nocov:
-                                   raise "Not sure how to combine #{arg} and #{opts}"
-                                   # :nocov:
-                                 end
-
-                                 arg.merge(opts)
-                               else
-                                 arg
-                               end
-                             end
+        self.callback_data = Util.args_and_opts_to_opts(args, opts)
 
         self
       end
