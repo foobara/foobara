@@ -2,14 +2,6 @@ RSpec.describe Foobara::Value::Processor do
   let(:processor_class) {
     Class.new(described_class) do
       self::Error = Class.new(Foobara::Value::AttributeError) do # rubocop:disable RSpec/LeakyConstantDeclaration
-        class << self
-          def context_type_declaration
-            {
-              a: :integer,
-              b: :symbol
-            }
-          end
-        end
       end
 
       def process(_value)

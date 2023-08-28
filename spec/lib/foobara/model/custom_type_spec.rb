@@ -98,10 +98,6 @@ RSpec.describe "custom types" do
         end
 
         delegate :sugar_for_complex?, to: :class
-
-        define_method :casters do
-          c
-        end
       end
     end
 
@@ -111,10 +107,6 @@ RSpec.describe "custom types" do
       Class.new(Foobara::Value::Caster) do
         def applicable?(value)
           value.is_a?(Array) && value.size == 2
-        end
-
-        def applies_message
-          "be an array with two elements"
         end
 
         define_method :cast do |(real, imaginary)|
@@ -132,12 +124,6 @@ RSpec.describe "custom types" do
       Class.new(Foobara::Value::Validator) do
         self::Error = Class.new(Foobara::Value::AttributeError) do # rubocop:disable RSpec/LeakyConstantDeclaration
           class << self
-            def context_type_declaration
-              {
-                foo: :symbol
-              }
-            end
-
             def symbol
               :real_should_not_match_imaginary
             end
@@ -163,7 +149,10 @@ RSpec.describe "custom types" do
         end
 
         def validation_errors(complex)
+          # :nocov:
           return unless be_pointless == :true_symbol
+
+          # :nocov:
 
           if complex.real == complex.imaginary
             build_error
