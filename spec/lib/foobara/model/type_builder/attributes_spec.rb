@@ -126,6 +126,31 @@ RSpec.describe Foobara::BuiltinTypes::Attributes::SupportedTransformers::Default
       end
     end
 
+    context "when required contains an invalid attribute name" do
+      let(:type_declaration) do
+        {
+          type: :attributes,
+          element_type_declarations: {
+            a: :integer,
+            b: :integer,
+            c: :integer
+          },
+          required: %i[a d]
+        }
+      end
+
+      it "explodes" do
+        expect {
+          type
+        }.to raise_error(
+          Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::TypeDeclarationExtension::
+              ExtendAttributesTypeDeclaration::TypeDeclarationValidators::ArrayWithValidAttributeNames::
+              InvalidRequiredAttributeNameGivenError,
+          /\bd\b/
+        )
+      end
+    end
+
     context "when type_declaration has top-level required array" do
       let(:type_declaration) do
         {
