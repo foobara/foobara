@@ -63,8 +63,9 @@ module Foobara
                :symbol,
                to: :class
 
+      # Whoa, forgot this existed. Shouldn't we use this more?
       def runner(value)
-        Runner.new(self, value)
+        self.class::Runner.new(self, value)
       end
 
       def error_symbol

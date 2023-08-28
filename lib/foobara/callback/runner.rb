@@ -45,8 +45,16 @@ module Foobara
           run_callback(around_callback)
         else
           # TODO: raise better errors
-          raise if callback_set.has_before_callbacks?
-          raise if callback_set.has_around_callbacks?
+          if callback_set.has_before_callbacks?
+            # :nocov:
+            raise
+            # :nocov:
+          end
+          if callback_set.has_around_callbacks?
+            # :nocov:
+            raise
+            # :nocov:
+          end
         end
 
         callback_set.each_after do |callback|

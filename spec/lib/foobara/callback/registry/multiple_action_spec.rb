@@ -49,7 +49,7 @@ RSpec.describe Foobara::Callback::Registry::MultipleAction do
 
   describe "#runner" do
     context "when no action given" do
-      let(:runner) { registry.runner.callback_data(foo: :bar) }
+      let(:runner) { registry.runner }
 
       describe "#run" do
         context "with block" do
@@ -57,9 +57,7 @@ RSpec.describe Foobara::Callback::Registry::MultipleAction do
             ran = false
             callback_ran = false
 
-            registry.around do |foo:, &do_it|
-              expect(foo).to eq(:bar)
-
+            registry.around do |&do_it|
               do_it.call
 
               callback_ran = true
@@ -82,8 +80,7 @@ RSpec.describe Foobara::Callback::Registry::MultipleAction do
             expect(registry).to_not have_after_callbacks
             expect(registry).to_not have_error_callbacks
 
-            registry.before do |foo:|
-              expect(foo).to eq(:bar)
+            registry.before do
               callbacks_ran << :before
             end
 
@@ -92,9 +89,8 @@ RSpec.describe Foobara::Callback::Registry::MultipleAction do
             expect(registry).to_not have_after_callbacks
             expect(registry).to_not have_error_callbacks
 
-            registry.around do |foo:, &do_it|
+            registry.around do |&do_it|
               callbacks_ran << :around_start
-              expect(foo).to eq(:bar)
 
               do_it.call
 
@@ -106,8 +102,7 @@ RSpec.describe Foobara::Callback::Registry::MultipleAction do
             expect(registry).to_not have_after_callbacks
             expect(registry).to_not have_error_callbacks
 
-            registry.after do |foo:|
-              expect(foo).to eq(:bar)
+            registry.after do
               callbacks_ran << :after
             end
 

@@ -25,7 +25,6 @@ module Foobara
           self.value = value
         end
 
-        # TODO: feels like caster should be moved to Types
         runner_methods :error_message, :error_context, :process, :process!, :applicable?
       end
     end
