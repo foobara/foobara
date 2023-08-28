@@ -1,5 +1,16 @@
 RSpec.describe Foobara::Util do
-  describe "#args_and_opts_to_args" do
+  describe ".args_and_opts_to_opts" do
+    subject { described_class.args_and_opts_to_opts(args, opts) }
+
+    context "when args is a hash and so is opts" do
+      let(:args) { [{ a: 1, b: 2 }] }
+      let(:opts) { { c: 3, d: 4 } }
+
+      it { is_expected.to eq(a: 1, b: 2, c: 3, d: 4) }
+    end
+  end
+
+  describe ".args_and_opts_to_args" do
     subject { described_class.args_and_opts_to_args(args, opts) }
 
     context "when no args" do
