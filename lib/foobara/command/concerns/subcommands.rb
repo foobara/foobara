@@ -68,7 +68,9 @@ module Foobara
               subcommand_name = subcommand_class.name.to_sym
 
               if depends_on.include?(subcommand_name)
+                # :nocov:
                 raise AlreadyRegisteredSubcommand, "Already registered #{subcommand_class} as a dependency of #{self}"
+                # :nocov:
               end
 
               depends_on << subcommand_name
@@ -86,7 +88,9 @@ module Foobara
 
           def verify_depends_on!(subcommand_class)
             unless depends_on?(subcommand_class)
+              # :nocov:
               raise SubcommandNotRegistered, "Need to declare #{subcommand_class} on #{self} with .depends_on"
+              # :nocov:
             end
           end
         end

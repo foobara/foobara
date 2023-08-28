@@ -57,7 +57,7 @@ RSpec.describe Foobara::Domain::CommandExtension do
         end
 
         def execute
-          100
+          100 if subcommand?
         end
       end
     }
