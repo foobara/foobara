@@ -17,6 +17,9 @@ RSpec/FilePath:
 RSpec/Focus:
   Enabled: <%= ENV["CI"] == "true" %>
 
+RSpec/ImplicitSubject:
+  EnforcedStyle: single_statement_only
+
 RSpec/IndexedLet:
   Enabled: false
 

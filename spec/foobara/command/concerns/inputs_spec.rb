@@ -31,6 +31,25 @@ RSpec.describe Foobara::Command::Concerns::Runtime do
   let(:command) { command_class.new(inputs) }
   let(:inputs) { { base: 4, exponent: 3 } }
 
+  describe ".raw_inputs_type_declaration" do
+    subject { command_class.raw_inputs_type_declaration }
+
+    it { is_expected.to eq(base: :integer, exponent: :integer) }
+  end
+
+  describe ".inputs_type_declaration" do
+    subject { command_class.inputs_type_declaration }
+
+    it {
+      is_expected.to eq(
+        type: :attributes,
+        # TODO: make this work without having to set this value on the type declaration
+        allowed_attributes: %i[exponent base],
+        element_type_declarations: { base: { type: :integer }, exponent: { type: :integer } }
+      )
+    }
+  end
+
   describe "#method_missing" do
     it "gives convenient access to the inputs" do
       command.cast_and_validate_inputs

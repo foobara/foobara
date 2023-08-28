@@ -29,6 +29,10 @@ module Foobara
             inputs_type.raw_declaration_data
           end
 
+          def inputs_type_declaration
+            inputs_type.declaration_data
+          end
+
           private
 
           def register_possible_errors(path = [], type = inputs_type)
