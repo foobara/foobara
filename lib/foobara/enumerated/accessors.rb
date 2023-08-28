@@ -8,7 +8,11 @@ module Foobara
         def const_get_up_hierarchy(mod, name)
           mod.const_get(name)
         rescue NameError
-          raise if mod == Object
+          if mod == Object
+            # :nocov:
+            raise
+            # :nocov:
+          end
 
           mod_name = mod.name
 
@@ -34,8 +38,10 @@ module Foobara
             values_source = begin
               Accessors.const_get_up_hierarchy(self, module_name)
             rescue NameError
+              # :nocov:
               raise CannotDetermineModuleAutomatically,
                     "could not find a module for #{module_name}. Maybe consider passing it in explicitly."
+              # :nocov:
             end
           end
 
@@ -43,7 +49,9 @@ module Foobara
 
           attribute_name = attribute_name.to_sym
 
+          # :nocov:
           unless respond_to?(:enumerated_type_metadata)
+            # :nocov:
             class << self
               attr_accessor :enumerated_type_metadata
             end

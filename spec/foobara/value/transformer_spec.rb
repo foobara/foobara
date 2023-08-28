@@ -14,10 +14,6 @@ RSpec.describe Foobara::Value::Transformer do
           def applicable?(_value)
             false
           end
-
-          def transform(_value)
-            10
-          end
         end
       end
 
