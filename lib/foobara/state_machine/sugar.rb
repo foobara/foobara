@@ -21,7 +21,9 @@ module Foobara
                 transitions_for_state = transition_map[state] ||= {}
 
                 if transitions_for_state.key?(transition)
+                  # :nocov:
                   raise TransitionAlreadyDefinedError, "There's already a #{transition} for #{state}"
+                  # :nocov:
                 end
 
                 transitions_for_state[transition] = next_state
@@ -98,6 +100,14 @@ module Foobara
 
             define_method "ever_#{state}?" do
               current_state == state || log.any? { |log_entry| log_entry.from == state }
+            end
+          end
+        end
+
+        def create_can_methods
+          transitions.each do |transition|
+            define_method "can_#{transition}?" do
+              can?(transition)
             end
           end
         end

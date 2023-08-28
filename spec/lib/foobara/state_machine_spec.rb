@@ -100,6 +100,13 @@ RSpec.describe Foobara::StateMachine do
           end
         end
 
+        describe "dynamically created can predicates" do
+          it "creates can predicates from the transitions" do
+            expect(state_machine.can_start?).to be(true)
+            expect(state_machine.can_succeed?).to be(false)
+          end
+        end
+
         describe "#allowed_transitions" do
           it "is the expected allowed transitions" do
             expect(state_machine.allowed_transitions).to eq(%i[start fail])

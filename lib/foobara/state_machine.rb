@@ -27,6 +27,7 @@ module Foobara
         create_enums
         create_state_predicate_methods
         create_transition_methods
+        create_can_methods
         create_register_callback_methods
       end
     end
