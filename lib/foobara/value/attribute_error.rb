@@ -4,10 +4,8 @@ module Foobara
     class AttributeError < Error
       attr_accessor :path
 
-      def initialize(context:, path: [], **data)
+      def initialize(path: [], **data)
         super(**data)
-
-        self.context = context
 
         self.path = path
       end
