@@ -7,6 +7,64 @@ Foobara::Util.require_directory("#{__dir__}/type_declarations")
 module Foobara
   module TypeDeclarations
     class << self
+      def install!
+        Foobara::Error.include(ErrorExtension)
+
+        Value::Processor::Casting::CannotCastError.singleton_class.define_method :context_type_declaration do
+          {
+            cast_to: :duck,
+            value: :duck,
+            attribute_name: :symbol
+          }
+        end
+
+        Value::Processor::Selection::NoApplicableProcessorError.singleton_class.define_method(
+          :context_type_declaration
+        ) do
+          {
+            processor_names: :duck, # TODO: replace with :array
+            value: :duck
+          }
+        end
+
+        Value::Processor::Selection::MoreThanOneApplicableProcessorError.singleton_class.define_method(
+          :context_type_declaration
+        ) do
+          {
+            applicable_processors: :duck, # TODO: replace with :array
+            processor_names: :duck, # TODO: replace with :array
+            value: :duck
+          }
+        end
+
+        Value::DataError.singleton_class.define_method :context_type_declaration do
+          {
+            attribute_name: :symbol,
+            value: :duck
+          }
+        end
+
+        Foobara::Error.singleton_class.define_method(
+          :subclass
+        ) do |superclass = self, symbol:, context_type_declaration:, message: nil|
+          Class.new(superclass) do
+            singleton_class.define_method :symbol do
+              symbol
+            end
+
+            singleton_class.define_method :context_type_declaration do
+              context_type_declaration
+            end
+
+            if message.present?
+              singleton_class.define_method :message do
+                message
+              end
+            end
+          end
+        end
+      end
+
       def global_type_declaration_handler_registry
         Namespace::GLOBAL.type_declaration_handler_registry
       end
@@ -14,52 +72,9 @@ module Foobara
       def register_type_declaration(type_declaration_handler)
         global_type_declaration_handler_registry.register(type_declaration_handler)
       end
-
-      def error_context_type_declaration(error_class)
-        context_type_declaration = nil
-
-        if error_class.respond_to?(:context_type_declaration)
-          context_type_declaration = error_class.context_type_declaration
-        else
-          # This feels dirty but decouples two projects: Value and Types
-          {
-            Value::Processor::Casting::CannotCastError => {
-              cast_to: :duck,
-              value: :duck,
-              attribute_name: :symbol
-            },
-            Value::Processor::Selection::NoApplicableProcessorError => {
-              processors: :duck,
-              value: :duck
-            },
-            Value::Processor::Selection::MoreThanOneApplicableProcessorError => {
-              processors: :duck,
-              applicable_processors: :duck,
-              value: :duck
-            },
-            Value::DataError => {
-              attribute_name: :symbol,
-              value: :duck
-            }
-
-          }.each_pair do |klass, type_declaration|
-            if klass == error_class || error_class < klass
-              context_type_declaration = type_declaration
-              break
-            end
-          end
-
-          unless context_type_declaration
-            # :nocov:
-            raise "Not sure how to convert #{error_class} into a context type declaration"
-            # :nocov:
-          end
-
-          context_type_declaration
-        end
-      end
     end
 
+    install!
     register_type_declaration(Handlers::RegisteredTypeDeclaration.new)
     register_type_declaration(Handlers::ExtendRegisteredTypeDeclaration.new)
     register_type_declaration(Handlers::ExtendAttributesTypeDeclaration.new)

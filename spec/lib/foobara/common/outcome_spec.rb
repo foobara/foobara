@@ -1,4 +1,10 @@
 RSpec.describe Foobara::Common::Outcome do
+  around do |example|
+    Foobara::TypeDeclarations.with_validate_error_context_disabled do
+      example.run
+    end
+  end
+
   describe ".raise!" do
     subject { described_class.raise!(errors) }
 

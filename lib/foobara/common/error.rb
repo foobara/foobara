@@ -7,25 +7,6 @@ module Foobara
         def symbol
           name.demodulize.underscore.gsub(/_error$/, "").to_sym
         end
-
-        # TODO: move this to TypeDeclarations extension!!
-        def subclass(superclass = self, symbol:, context_type_declaration:, message: nil)
-          Class.new(superclass) do
-            singleton_class.define_method :symbol do
-              symbol
-            end
-
-            singleton_class.define_method :context_type_declaration do
-              context_type_declaration
-            end
-
-            if message.present?
-              singleton_class.define_method :message do
-                message
-              end
-            end
-          end
-        end
       end
 
       def initialize(message: nil, symbol: self.class.symbol, context: {})
