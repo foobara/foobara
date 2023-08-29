@@ -38,46 +38,36 @@ module Foobara
       def has_error?(error)
         unless error.is_a?(Error)
           # :nocov:
-          raise ArgumentError, "Can only check if an Error class is in the collection"
+          raise ArgumentError, "Can only check if an Error instance is in the collection"
           # :nocov:
         end
 
         error_array.include?(error)
       end
 
-      def add_error(*args)
-        error = if args.size == 3
-                  symbol, message, context = args
-
-                  { symbol:, message:, context: }
-                elsif args.size == 1
-                  arg = args.first
-
-                  case arg
-                  when Error
-                    arg
-                  when ErrorCollection
-                    return add_errors(arg.errors)
-                  when Hash
-                    if arg.key?(:symbol) && arg.key?(:message)
-                      arg
-                    else
-                      # :nocov:
-                      raise ArgumentError,
-                            "if passing a hash of error args it must include symbol and message at least"
-                      # :nocov:
-                    end
+      def add_error(error_or_collection_or_error_hash)
+        error = case error_or_collection_or_error_hash
+                when Error
+                  error_or_collection_or_error_hash
+                when ErrorCollection
+                  return add_errors(error_or_collection_or_error_hash.errors)
+                when Hash
+                  if error_or_collection_or_error_hash.key?(:symbol) &&
+                     error_or_collection_or_error_hash.key?(:message)
+                    Error.new(**error_or_collection_or_error_hash)
+                  else
+                    # :nocov:
+                    raise ArgumentError,
+                          "if passing a hash of error args it must include symbol and message at least"
+                    # :nocov:
                   end
+                else
+                  # :nocov:
+                  raise ArgumentError, "Not sure how to convert #{args.inspect} into an error. " \
+                                       "Can handle a hash of error " \
+                                       "args or 3 arguments for symbol, message, and context, or, of course, an Error"
+                  # :nocov:
                 end
-
-        unless error
-          # :nocov:
-          raise ArgumentError, "Not sure how to convert #{args.inspect} into an error. Can handle a hash of error " \
-                               "args or 3 arguments for symbol, message, and context, or, of course, an Error"
-          # :nocov:
-        end
-
-        error = Error.new(**error) unless arg.is_a?(Error)
 
         if has_error?(error)
           raise ErrorAlreadySetError, "cannot set #{error} more than once"
