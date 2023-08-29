@@ -1,14 +1,9 @@
 Naming/AccessorMethodName:
   Enabled: false
 
-Naming/PredicateName:
-  Enabled: false
-
-Naming/VariableNumber:
-  Enabled: false
-
 Naming/FileName:
   ExpectMatchingDefinition: true
+  CheckDefinitionPathHierarchy: true
   Exclude:
     - spec/lib/**/*
     - spec/**/*
@@ -16,6 +11,10 @@ Naming/FileName:
     - lib/foobara/version.rb
     - lib/foobara.rb
     - lib/foobara/common.rb
-  CheckDefinitionPathHierarchyRoots:
-    - ./lib
   IgnoreExecutableScripts: true
+
+Naming/PredicateName:
+  Enabled: false
+
+Naming/VariableNumber:
+  Enabled: false
