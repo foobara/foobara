@@ -77,7 +77,7 @@ RSpec.describe Foobara::Command::Concerns::Errors do
         it "is not success" do
           expect(outcome).to_not be_success
           expect(errors.size).to eq(1)
-          expect(error.class).to eq(Foobara::Value::DataError)
+          expect(error).to be_a(Foobara::Value::DataError)
           expect(error.context).to eq(value: 5, cannot_be: 5)
           expect(error.message).to eq("Cannot be five")
           expect(error.symbol).to eq(:cannot_be_five)
@@ -119,7 +119,7 @@ RSpec.describe Foobara::Command::Concerns::Errors do
         it "is not success" do
           expect(outcome).to_not be_success
           expect(errors.size).to eq(1)
-          expect(error.class).to eq(Foobara::Command::RuntimeCommandError)
+          expect(error).to be_a(Foobara::Command::RuntimeCommandError)
           expect(error.context).to eq(value: 5, cannot_be: 5)
           expect(error.message).to eq("Exponent cannot be five")
           expect(error.symbol).to eq(:exponent_cannot_be_five)

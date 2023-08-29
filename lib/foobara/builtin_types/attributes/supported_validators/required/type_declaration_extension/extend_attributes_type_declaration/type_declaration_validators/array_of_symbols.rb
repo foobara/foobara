@@ -12,6 +12,12 @@ module Foobara
                       def message(_value)
                         "required should be an array of symbols"
                       end
+
+                      def context_type_declaration
+                        {
+                          value: :duck
+                        }
+                      end
                     end
                   end
 
@@ -23,8 +29,12 @@ module Foobara
                     required = strict_type_declaration[:required]
 
                     unless required.is_a?(::Array) && Util.all_symbolic_elements?(required)
-                      build_error(context: { required: })
+                      build_error
                     end
+                  end
+
+                  def error_context(value)
+                    { value: }
                   end
                 end
               end

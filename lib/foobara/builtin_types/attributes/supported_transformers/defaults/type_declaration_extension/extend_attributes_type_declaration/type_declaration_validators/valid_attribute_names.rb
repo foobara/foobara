@@ -8,7 +8,17 @@ module Foobara
               module TypeDeclarationValidators
                 # TODO: rename to remove HashWith
                 class ValidAttributeNames < TypeDeclarations::TypeDeclarationValidator
-                  class InvalidDefaultValueGivenError < Value::DataError; end
+                  class InvalidDefaultValueGivenError < Value::DataError
+                    class << self
+                      def context_type_declaration
+                        {
+                          invalid_key: :symbol,
+                          valid_attribute_names: :duck, # TODO: update with :array
+                          defaults: :duck # TODO: update with :attributes
+                        }
+                      end
+                    end
+                  end
 
                   def applicable?(strict_type_declaration)
                     defaults = strict_type_declaration[:defaults]

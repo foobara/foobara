@@ -135,6 +135,10 @@ RSpec.describe "custom types" do
             def message(_value)
               "cant be the same!"
             end
+
+            def context_type_declaration
+              { foo: :symbol }
+            end
           end
         end
 
@@ -186,6 +190,10 @@ RSpec.describe "custom types" do
             class << self
               def message(_value)
                 "whatevs!"
+              end
+
+              def context_type_declaration
+                { foo: :symbol }
               end
             end
           end

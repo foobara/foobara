@@ -3,7 +3,17 @@ module Foobara
     module Attributes
       module SupportedValidators
         class AllowedAttributes < TypeDeclarations::Validator
-          class UnexpectedAttributeError < Foobara::Value::DataError; end
+          class UnexpectedAttributeError < Foobara::Value::DataError
+            class << self
+              def context_type_declaration
+                {
+                  attribute_name: :symbol,
+                  value: :duck,
+                  allowed_attributes: :duck # TODO: update with :array
+                }
+              end
+            end
+          end
 
           def error_halts_processing?
             true
@@ -20,7 +30,8 @@ module Foobara
                   }. Expected only #{allowed_attributes}",
                 context: {
                   attribute_name: unexpected_attribute_name,
-                  value: attributes_hash[unexpected_attribute_name]
+                  value: attributes_hash[unexpected_attribute_name],
+                  allowed_attributes:
                 }
               )
             end

@@ -6,7 +6,6 @@ module Foobara
     class Processor
       class Selection < Multi
         class NoApplicableProcessorError < DataError; end
-
         class MoreThanOneApplicableProcessorError < DataError; end
 
         attr_accessor :enforce_unique
@@ -80,6 +79,7 @@ module Foobara
           "Could not find processor that is applicable for #{value}"
         end
 
+        # This is a problem... how do we know a base class won't call this for a different error??
         def error_context(value)
           {
             processor_names:,

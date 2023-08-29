@@ -23,7 +23,7 @@ module Foobara
                     defaults = strict_type_declaration[:defaults]
 
                     unless defaults.is_a?(Hash) && Util.all_symbolic_keys?(defaults)
-                      build_error(context: { defaults: })
+                      build_error(context: { attribute_name: :defaults, value: defaults })
                     end
                   end
                 end

@@ -51,50 +51,24 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
   describe ".context_error_map" do
     # TODO: encapsulate sub command errors into a simpler construct?
     it "contains subcommand error information" do
-      expect(command_class.error_context_type_map).to eq(
+      map = command_class.error_context_type_map
+
+      runtime = map[:runtime]
+
+      map = map.except(:runtime)
+
+      expect(map).to eq(
         input: {
           [] => {
-            cannot_cast: {
-              cast_to: :duck, value: :duck, attribute_name: :symbol
-            },
-            unexpected_attribute: {
-              attribute_name: :symbol, value: :duck
-            }
+            cannot_cast: Foobara::Value::Processor::Casting::CannotCastError,
+            unexpected_attribute:
+          Foobara::BuiltinTypes::Attributes::SupportedValidators::AllowedAttributes::UnexpectedAttributeError
           },
-          [:should_fail] => {
-            cannot_cast: {
-              cast_to: :duck,
-              value: :duck,
-              attribute_name: :symbol
-            }
-          }
-        },
-        runtime: {
-          could_not_run_some_subcommand: {
-            input: {
-              [] => {
-                cannot_cast: { cast_to: :duck, value: :duck, attribute_name: :symbol },
-                unexpected_attribute: {
-                  value: :duck,
-                  attribute_name: :symbol
-                }
-              },
-              [:should_fail] => {
-                cannot_cast: {
-                  cast_to: :duck,
-                  value: :duck,
-                  attribute_name: :symbol
-                }
-              }
-            },
-            runtime: {
-              it_failed: {
-                foo: :integer
-              }
-            }
-          }
+          [:should_fail] => { cannot_cast: Foobara::Value::Processor::Casting::CannotCastError }
         }
       )
+      expect(runtime.keys).to eq([:could_not_run_some_subcommand])
+      expect(runtime.values.first.superclass).to be(described_class::FailedToExecuteSubcommand)
     end
   end
 

@@ -82,7 +82,7 @@ RSpec.describe Foobara::Command do
         expect(errors.size).to be(1)
         expect(error.symbol).to eq(:unexpected_attribute)
         expect(error.attribute_name).to eq(:extra_junk)
-        expect(error.context).to eq(attribute_name: :extra_junk, value: 123)
+        expect(error.context).to eq(allowed_attributes: %i[exponent base], attribute_name: :extra_junk, value: 123)
       end
     end
 
