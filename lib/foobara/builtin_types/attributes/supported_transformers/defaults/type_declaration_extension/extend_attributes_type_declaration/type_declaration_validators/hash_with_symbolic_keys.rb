@@ -7,7 +7,7 @@ module Foobara
             module ExtendAttributesTypeDeclaration
               module TypeDeclarationValidators
                 class HashWithSymbolicKeys < TypeDeclarations::TypeDeclarationValidator
-                  class InvalidDefaultValuesGivenError < Value::AttributeError
+                  class InvalidDefaultValuesGivenError < Value::DataError
                     class << self
                       def message(_value)
                         "defaults should be a hash with symbolic keys"

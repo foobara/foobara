@@ -3,7 +3,7 @@ module Foobara
     module Attributes
       module SupportedValidators
         class Required < TypeDeclarations::Validator
-          class MissingRequiredAttributeError < Foobara::Value::AttributeError
+          class MissingRequiredAttributeError < Foobara::Value::DataError
             class << self
               def context_type_declaration
                 {

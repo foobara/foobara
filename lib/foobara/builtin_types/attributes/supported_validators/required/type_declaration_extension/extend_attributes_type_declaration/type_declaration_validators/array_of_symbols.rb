@@ -7,7 +7,7 @@ module Foobara
             module ExtendAttributesTypeDeclaration
               module TypeDeclarationValidators
                 class ArrayOfSymbols < TypeDeclarations::TypeDeclarationValidator
-                  class InvalidRequiredAttributesValuesGivenError < Value::AttributeError
+                  class InvalidRequiredAttributesValuesGivenError < Value::DataError
                     class << self
                       def message(_value)
                         "required should be an array of symbols"

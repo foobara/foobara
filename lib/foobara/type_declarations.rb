@@ -37,7 +37,7 @@ module Foobara
               applicable_processors: :duck,
               value: :duck
             },
-            Value::AttributeError => {
+            Value::DataError => {
               attribute_name: :symbol,
               value: :duck
             }

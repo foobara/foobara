@@ -7,7 +7,7 @@ module Foobara
             module ExtendAttributesTypeDeclaration
               module TypeDeclarationValidators
                 class ArrayWithValidAttributeNames < TypeDeclarations::TypeDeclarationValidator
-                  class InvalidRequiredAttributeNameGivenError < Value::AttributeError; end
+                  class InvalidRequiredAttributeNameGivenError < Value::DataError; end
 
                   def applicable?(strict_type_declaration)
                     required = strict_type_declaration[:required]

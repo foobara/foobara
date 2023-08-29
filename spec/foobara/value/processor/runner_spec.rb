@@ -1,7 +1,7 @@
 RSpec.describe Foobara::Value::Processor::Runner do
   let(:processor_class) {
     Class.new(Foobara::Value::Transformer) do
-      self::Error = Class.new(Foobara::Value::AttributeError) do # rubocop:disable RSpec/LeakyConstantDeclaration
+      self::Error = Class.new(Foobara::Value::DataError) do # rubocop:disable RSpec/LeakyConstantDeclaration
       end
 
       attr_accessor :calls

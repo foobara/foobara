@@ -34,9 +34,9 @@ module Foobara
           error = if args.size == 1 && opts.empty?
                     error = args.first
 
-                    unless error.is_a?(Value::AttributeError)
+                    unless error.is_a?(Value::DataError)
                       # :nocov:
-                      raise ArgumentError, "expected an AttributeError or keyword arguments to construct one"
+                      raise ArgumentError, "expected an DataError or keyword arguments to construct one"
                       # :nocov:
                     end
 
@@ -59,7 +59,7 @@ module Foobara
                       # :nocov:
                     end
 
-                    Value::AttributeError.new(**error_args.merge(path: [input]))
+                    Value::DataError.new(**error_args.merge(path: [input]))
                   else
                     # :nocov:
                     raise ArgumentError, "Invalid arguments given. Expected an error or keyword args for an error"
@@ -121,7 +121,7 @@ module Foobara
           map = case error
                 when Command::RuntimeCommandError
                   map[:runtime]
-                when Value::AttributeError
+                when Value::DataError
                   map[:input][error.path]
                 else
                   # :nocov:

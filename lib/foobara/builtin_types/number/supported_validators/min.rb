@@ -3,7 +3,7 @@ module Foobara
     module Number
       module SupportedValidators
         class Min < TypeDeclarations::Validator
-          class BelowMinimumError < Foobara::Value::AttributeError
+          class BelowMinimumError < Foobara::Value::DataError
             class << self
               def context_type_declaration
                 {

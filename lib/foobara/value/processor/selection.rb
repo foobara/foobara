@@ -5,9 +5,9 @@ module Foobara
   module Value
     class Processor
       class Selection < Multi
-        class NoApplicableProcessorError < AttributeError; end
+        class NoApplicableProcessorError < DataError; end
 
-        class MoreThanOneApplicableProcessorError < AttributeError; end
+        class MoreThanOneApplicableProcessorError < DataError; end
 
         attr_accessor :enforce_unique
 

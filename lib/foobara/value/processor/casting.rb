@@ -5,7 +5,7 @@ module Foobara
     class Processor
       # TODO: at least move this up to Types though that doesn't solve the issue
       class Casting < Selection
-        class CannotCastError < AttributeError; end
+        class CannotCastError < DataError; end
 
         class << self
           def error_classes

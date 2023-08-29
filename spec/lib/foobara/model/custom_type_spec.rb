@@ -122,7 +122,7 @@ RSpec.describe "custom types" do
 
     let(:pointless_validator) do
       Class.new(Foobara::Value::Validator) do
-        self::Error = Class.new(Foobara::Value::AttributeError) do # rubocop:disable RSpec/LeakyConstantDeclaration
+        self::Error = Class.new(Foobara::Value::DataError) do # rubocop:disable RSpec/LeakyConstantDeclaration
           class << self
             def symbol
               :real_should_not_match_imaginary
@@ -182,7 +182,7 @@ RSpec.describe "custom types" do
       let(:type_declaration_handler) { type_declaration_handler_class.new }
       let(:type_declaration_validator_class) {
         Class.new(Foobara::TypeDeclarations::TypeDeclarationValidator) do
-          self::WhateverError = Class.new(Foobara::Value::AttributeError) do # rubocop:disable RSpec/LeakyConstantDeclaration
+          self::WhateverError = Class.new(Foobara::Value::DataError) do # rubocop:disable RSpec/LeakyConstantDeclaration
             class << self
               def message(_value)
                 "whatevs!"

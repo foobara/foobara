@@ -3,7 +3,7 @@ module Foobara
     module Number
       module SupportedValidators
         class Max < TypeDeclarations::Validator
-          class MaxExceededError < Foobara::Value::AttributeError
+          class MaxExceededError < Foobara::Value::DataError
             class << self
               def context_type_declaration
                 {

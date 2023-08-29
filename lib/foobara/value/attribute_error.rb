@@ -1,7 +1,7 @@
 module Foobara
   module Value
     # TODO: this needs a better name
-    class AttributeError < Error
+    class DataError < Error
       attr_accessor :path
 
       def initialize(path: [], **data)
@@ -19,7 +19,7 @@ module Foobara
       end
 
       def eql?(other)
-        super && other.is_a?(AttributeError) && attribute_name == other.attribute_name
+        super && other.is_a?(DataError) && attribute_name == other.attribute_name
       end
     end
   end

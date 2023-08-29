@@ -3,7 +3,7 @@ module Foobara
     module String
       module SupportedValidators
         class MaxLength < TypeDeclarations::Validator
-          class MaxLengthExceededError < Foobara::Value::AttributeError
+          class MaxLengthExceededError < Foobara::Value::DataError
             class << self
               def context_type_declaration
                 {
