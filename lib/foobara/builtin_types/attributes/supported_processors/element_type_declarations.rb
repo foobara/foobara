@@ -40,12 +40,12 @@ module Foobara
               attribute_type.possible_errors.each do |possible_error|
                 path = possible_error[0]
                 symbol = possible_error[1]
-                error_type = possible_error[2]
+                error_class = possible_error[2]
 
                 possibilities << [
                   [attribute_name, *path],
                   symbol,
-                  error_type
+                  error_class
                 ]
               end
             end
