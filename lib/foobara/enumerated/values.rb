@@ -65,31 +65,30 @@ module Foobara
       end
 
       def initialize(*args)
-        symbol_map = if args.size == 1
-                       arg = args.first
+        if args.empty?
+          # :nocov:
+          raise ArgumentError, "Expected Module, Hash, or Array"
+        # :nocov:
+        elsif args.size > 1
+          initialize(args)
+        else
+          symbol_map = args.first
 
-                       case arg
-                       when ::Module
-                         Values.module_to_symbol_map(arg)
-                       when ::Hash
-                         arg
-                       when ::Array
-                         args = arg
-                         nil
-                       end
-                     end
+          case symbol_map
+          when ::Hash
+            Values.validate_symbol_map_types(symbol_map)
 
-        unless symbol_map
-          symbol_map = {}
-
-          args.each do |value|
-            symbol_map[value] = value
+            @symbol_map = Values.normalize_symbol_map(symbol_map)
+          when ::Module
+            initialize(Values.module_to_symbol_map(symbol_map))
+          when ::Array
+            initialize(symbol_map.to_h { |name| [name, name] })
+          else
+            # :nocov:
+            raise ArgumentError, "Expected Module, Hash, or Array"
+            # :nocov:
           end
         end
-
-        Values.validate_symbol_map_types(symbol_map)
-
-        @symbol_map = Values.normalize_symbol_map(symbol_map)
       end
 
       def all
