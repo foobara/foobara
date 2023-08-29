@@ -53,9 +53,12 @@ module Foobara
                 elsif args.size == 1
                   arg = args.first
 
-                  if arg.is_a?(Error)
+                  case arg
+                  when Error
                     arg
-                  elsif arg.is_a?(Hash)
+                  when ErrorCollection
+                    return add_errors(arg.errors)
+                  when Hash
                     if arg.key?(:symbol) && arg.key?(:message)
                       arg
                     else

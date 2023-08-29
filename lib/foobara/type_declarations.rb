@@ -2,6 +2,8 @@ require "active_support/core_ext/object/deep_dup"
 
 Foobara::Util.require_directory("#{__dir__}/type_declarations")
 
+# TODO: extend Error with context_type behavior
+
 module Foobara
   module TypeDeclarations
     class << self

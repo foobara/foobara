@@ -7,7 +7,7 @@ module Foobara
         def initialize(errors)
           self.errors = errors
 
-          message = errors.map(&:message).join
+          message = errors.map(&:message).join(", ")
 
           super(message)
         end
@@ -21,17 +21,9 @@ module Foobara
         end
 
         def errors(*errors)
-          if errors.length == 1
-            errors = errors.first
+          errors = errors.flatten
 
-            errors = if errors.is_a?(ErrorCollection)
-                       errors.errors
-                     else
-                       Array.wrap(errors)
-                     end
-          end
-
-          if errors.empty?
+          if errors.blank?
             # :nocov:
             raise "No errors given"
             # :nocov:
