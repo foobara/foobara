@@ -7,9 +7,21 @@ module Foobara
         class_methods do
           attr_accessor :error_context_type_map
 
-          def possible_input_error(path, symbol, error_context_declaration)
+          def possible_could_not_run_subcommand_error(subcommand_error_class)
+            possible_error(subcommand_error_class.symbol, subcommand_error_class)
+          end
+
+          def possible_error(symbol, error_class_or_context_type_declaration)
+            error_class = to_runtime_error_class(symbol, error_class_or_context_type_declaration)
+
+            error_context_type_map[:runtime][symbol] = error_class
+          end
+
+          def possible_input_error(path, symbol, error_class_or_context_type_declaration)
             path = Array.wrap(path)
-            error_context_type_map[:input][path][symbol] = error_context_declaration
+            error_class = to_input_error_class(symbol, error_class_or_context_type_declaration)
+
+            error_context_type_map[:input][path][symbol] = error_class
           end
 
           def update_input_error_context_type_map
@@ -44,8 +56,49 @@ module Foobara
             end
           end
 
-          def possible_error(symbol, error_class)
-            error_context_type_map[:runtime][symbol] = error_class
+          def lookup_input_error_class(symbol, path)
+            error_context_type_map[:input][path][symbol]
+          end
+
+          def lookup_runtime_error_class(symbol)
+            error_context_type_map[:runtime][symbol]
+          end
+
+          def to_could_not_run_subcommand_error_class(subcommand_class)
+            Subcommands::FailedToExecuteSubcommand.subclass(
+              symbol: could_not_run_subcommand_symbol_for(subcommand_class),
+              # TODO: Figure out how to build a more proper context from subcommand_class.error_context_type_map
+              context_type_declaration: :duck
+            )
+          end
+
+          def could_not_run_subcommand_symbol_for(subcommand_class)
+            "could_not_#{subcommand_class.name.demodulize.underscore}".to_sym
+          end
+
+          # TODO: should we cache these???
+          def to_input_error_class(symbol, error_class_or_context_type_declaration)
+            if error_class_or_context_type_declaration.is_a?(::Class) &&
+               error_class_or_context_type_declaration <= Foobara::Value::DataError
+              error_class_or_context_type_declaration
+            else
+              Foobara::Value::DataError.subclass(
+                symbol:,
+                context_type_declaration: error_class_or_context_type_declaration
+              )
+            end
+          end
+
+          def to_runtime_error_class(symbol, error_class_or_context_type_declaration)
+            if error_class_or_context_type_declaration.is_a?(::Class) &&
+               error_class_or_context_type_declaration <= Foobara::Command::RuntimeCommandError
+              error_class_or_context_type_declaration
+            else
+              Foobara::Command::RuntimeCommandError.subclass(
+                symbol:,
+                context_type_declaration: error_class_or_context_type_declaration
+              )
+            end
           end
         end
       end

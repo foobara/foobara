@@ -38,12 +38,12 @@ module Foobara
             outcome.result
           else
             add_runtime_error(
-              FailedToExecuteSubcommand.new(
-                symbol: self.class.possible_error_symbol_for(subcommand_class),
-                message: "Failed to execute #{subcommand_class.name}",
-                context: subcommand.error_hash,
-                causes: outcome.errors
-              )
+              symbol: self.class.could_not_run_subcommand_symbol_for(subcommand_class),
+              message: "Failed to execute #{subcommand_class.name}",
+              # TODO: how to translate this hash into a context_type_declaration???
+              # Oh... we can just use the error_context_type_map as a type declaration?? Does that actually work?
+              context: subcommand.error_hash,
+              causes: outcome.errors
             )
           end
         end
@@ -75,15 +75,9 @@ module Foobara
 
               depends_on << subcommand_name
 
-              possible_error(
-                possible_error_symbol_for(subcommand_class),
-                subcommand_class.error_context_type_map
-              )
+              error_class = to_could_not_run_subcommand_error_class(subcommand_class)
+              possible_could_not_run_subcommand_error(error_class)
             end
-          end
-
-          def possible_error_symbol_for(command_class)
-            "could_not_#{command_class.name.demodulize.underscore}".to_sym
           end
 
           def verify_depends_on!(subcommand_class)

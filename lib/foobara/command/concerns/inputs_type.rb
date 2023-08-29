@@ -36,14 +36,13 @@ module Foobara
           private
 
           def register_possible_errors(path = [], type = inputs_type)
+            # TODO: can destructure here or no?
             type.possible_errors.each do |possible_error|
               p = possible_error[0]
               symbol = possible_error[1]
               error_class = possible_error[2]
 
-              context_type_declaration = TypeDeclarations.error_context_type_declaration(error_class)
-
-              possible_input_error([*path, *p], symbol, context_type_declaration)
+              possible_input_error([*path, *p], symbol, error_class)
             end
           end
         end

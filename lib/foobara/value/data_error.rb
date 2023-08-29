@@ -1,6 +1,5 @@
 module Foobara
   module Value
-    # TODO: this needs a better name
     class DataError < Error
       attr_accessor :path
 
@@ -9,8 +8,6 @@ module Foobara
 
         self.path = path
       end
-
-      delegate :context_type_declaration, to: :class
 
       def attribute_name
         # TODO: feels awkward... something is not right

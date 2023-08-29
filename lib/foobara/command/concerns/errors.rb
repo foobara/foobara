@@ -44,22 +44,23 @@ module Foobara
                   elsif args.empty? || (args.size == 1 && args.first.is_a?(Hash))
                     error_args = opts.merge(args.first || {})
                     symbol = error_args[:symbol]
-                    input = error_args[:input]
+                    path = Array.wrap(error_args[:input] || error_args[:path])
 
                     error_args = error_args.except(:input)
 
-                    unless symbol
+                    unless symbol.present?
                       # :nocov:
                       raise ArgumentError, "missing error symbol"
                       # :nocov:
                     end
-                    unless input
+                    unless path.present?
                       # :nocov:
                       raise ArgumentError, "missing input"
                       # :nocov:
                     end
 
-                    Value::DataError.new(**error_args.merge(path: [input]))
+                    error_class = self.class.lookup_input_error_class(symbol, path)
+                    error_class.new(**error_args.merge(path:))
                   else
                     # :nocov:
                     raise ArgumentError, "Invalid arguments given. Expected an error or keyword args for an error"
@@ -91,7 +92,8 @@ module Foobara
                       # :nocov:
                     end
 
-                    Foobara::Command::RuntimeCommandError.new(**error_args)
+                    error_class = self.class.lookup_runtime_error_class(symbol)
+                    error_class.new(**error_args)
                   else
                     # :nocov:
                     raise ArgumentError, "Invalid arguments given. Expected an error or keyword args for an error"
@@ -137,8 +139,8 @@ module Foobara
             # :nocov:
           end
 
-          type_declaration = map[symbol]
-          context_type = type_for_declaration(type_declaration)
+          error_class = map[symbol]
+          context_type = error_class.context_type
 
           error.context = context_type.process!(context || {})
 
