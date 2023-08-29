@@ -49,8 +49,7 @@ module Foobara
           if action.nil?
             callback_sets.values.reduce(:|) || Callback::Set.new
           else
-            set = specific_callback_set_for(nil)
-            action ? set | specific_callback_set_for(action) : set
+            specific_callback_set_for(nil) | specific_callback_set_for(action)
           end
         end
 

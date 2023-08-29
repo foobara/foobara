@@ -1,5 +1,6 @@
 RSpec.describe Foobara::Callback::Registry::MultipleAction do
-  let(:registry) { described_class.new(:run, :walk) }
+  let(:registry) { described_class.new(possible_actions) }
+  let(:possible_actions) { %i[run walk] }
 
   describe "#register_callback" do
     let(:action) { :run }
