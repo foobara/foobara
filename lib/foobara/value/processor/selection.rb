@@ -1,5 +1,5 @@
 require "foobara/value/processor/multi"
-require "foobara/value/attribute_error"
+require "foobara/value/data_error"
 
 module Foobara
   module Value
