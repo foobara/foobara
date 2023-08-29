@@ -135,11 +135,40 @@ module Foobara
         type_declaration_handler_registries.map(&:handlers).flatten.sort_by(&:priority)
       end
 
-      def type_for_declaration(type_declaration)
+      def type_for_declaration(*type_declaration_bits)
+        type_declaration = type_declaration_bits_to_type_declaration(type_declaration_bits)
+
         Namespace.using self do
           handler = type_declaration_handler_for(type_declaration)
 
           handler.process!(type_declaration)
+        end
+      end
+
+      def type_declaration_bits_to_type_declaration(type_declaration_bits)
+        case type_declaration_bits.length
+        when 0
+          # :nocov:
+          raise ArgumentError, "Expected a type declaration or type declaration bits, but 0 args given instead."
+          # :nocov:
+        when 1
+          type_declaration_bits.first
+        else
+          type, *symbolic_processors, processor_data = type_declaration_bits
+
+          if symbolic_processors.present?
+            symbolic_processors = symbolic_processors.to_h { |symbol| [symbol, true] }
+
+            if processor_data.present?
+              processor_data.merge(symbolic_processors)
+            else
+              symbolic_processors
+            end
+          elsif processor_data.is_a?(::Hash)
+            processor_data
+          else
+            { processor_data.to_sym => true }
+          end.merge(type:)
         end
       end
     end

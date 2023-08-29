@@ -1,8 +1,8 @@
 RSpec.describe ":associative_array" do
   let(:type) { Foobara::BuiltinTypes[:associative_array] }
 
-  describe "#cast!" do
-    subject { type.cast!(value) }
+  describe "#process!" do
+    subject { type.process!(value) }
 
     context "when array of pairs" do
       let(:value) { [[:a, 1], [:b, 2]] }
@@ -17,13 +17,23 @@ RSpec.describe ":associative_array" do
     end
 
     context "when not castable" do
-      let(:value) { Object.new  }
+      let(:value) { Object.new }
 
       it {
-        is_expected_to_raise(
-          Foobara::Value::Processor::Casting::CannotCastError,
-          /Expected it to be a an array of pairs, or be a Hash/
-        )
+        is_expected_to_raise(Foobara::Value::Processor::Casting::CannotCastError, /Expected it to be a Enumerable/)
+      }
+    end
+  end
+
+  describe "#cast!" do
+    subject { type.cast!(value) }
+
+    context "when not castable" do
+      let(:value) { Object.new }
+
+      it {
+        is_expected_to_raise(Foobara::Value::Processor::Casting::CannotCastError,
+                             /Expected it to be a an array of pairs, or be a Hash\z/)
       }
     end
   end

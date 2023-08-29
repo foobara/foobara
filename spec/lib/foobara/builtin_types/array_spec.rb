@@ -1,8 +1,8 @@
 RSpec.describe ":array" do
   let(:type) { Foobara::BuiltinTypes[:array] }
 
-  describe "#cast!" do
-    subject { type.cast!(value) }
+  describe "#process!" do
+    subject { type.process!(value) }
 
     context "when array" do
       let(:value) { [1, 2] }
@@ -17,13 +17,25 @@ RSpec.describe ":array" do
     end
 
     context "when not castable" do
-      let(:value) { Object.new  }
+      let(:value) { Object.new }
 
       it {
         is_expected_to_raise(
           Foobara::Value::Processor::Casting::CannotCastError,
-          /Expected it to respond to :to_a/
+          /Expected it to be a Enumerable/
         )
+      }
+    end
+  end
+
+  describe "#cast!" do
+    subject { type.cast!(value) }
+
+    context "when not castable" do
+      let(:value) { Object.new }
+
+      it {
+        is_expected_to_raise(Foobara::Value::Processor::Casting::CannotCastError, /Expected it to respond to :to_a\z/)
       }
     end
   end
