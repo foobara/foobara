@@ -1,12 +1,15 @@
 module Foobara
   module Value
     class DataError < Error
-      attr_accessor :path
+      class << self
+        def category
+          :data
+        end
+      end
 
-      def initialize(path: [], **data)
-        super(**data)
-
-        self.path = path
+      def initialize(message: nil, symbol: nil, context: nil, path: nil)
+        args = { message:, symbol:, context:, path: }.compact
+        super(**args.merge(category: self.class.category))
       end
 
       def attribute_name
@@ -16,6 +19,7 @@ module Foobara
       end
 
       def eql?(other)
+        # TODO: this doesn't feel right at all...
         super && other.is_a?(DataError) && attribute_name == other.attribute_name
       end
     end

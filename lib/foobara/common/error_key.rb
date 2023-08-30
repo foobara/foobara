@@ -1,0 +1,82 @@
+module Foobara
+  module Common
+    class ErrorKey
+      # TODO: use this wherever it makes sense
+      EMPTY_PATH = [].freeze
+
+      class << self
+        # key contains.......
+        # a:b:c:d.e.f.g.h
+        # Then a, b, c is the runtime path and d is the category and e,f,g is the data path and h is the symbol
+        def parse(key_string)
+          *runtime_path, key_string = key_string.to_s.split(":")
+          category, *path, symbol = key_string.split(".")
+
+          new(category:, path:, symbol:, runtime_path:)
+        end
+      end
+
+      attr_reader :category, :symbol, :path, :runtime_path
+
+      # TODO: accept error_class instead of symbol/category??
+      def initialize(symbol: nil, category: nil, path: EMPTY_PATH, runtime_path: EMPTY_PATH)
+        self.category = symbolize(category)
+        self.symbol = symbolize(symbol)
+        self.path = symbolize(path)
+        self.runtime_path = symbolize(runtime_path)
+      end
+
+      def symbol=(symbol)
+        @symbol = symbolize(symbol)
+      end
+
+      def category=(category)
+        @category = symbolize(category)
+      end
+
+      def path=(path)
+        @path = symbolize_all(path)
+      end
+
+      def runtime_path=(runtime_path)
+        @runtime_path = symbolize_all(runtime_path)
+      end
+
+      def to_s
+        [
+          *runtime_path,
+          [category, *path, symbol].join(".")
+        ].join(":")
+      end
+
+      private
+
+      def symbolize_all(key_parts)
+        symbolize(Array.wrap(key_parts))
+      end
+
+      def symbolize(key_parts)
+        return nil if key_parts.nil?
+
+        case key_parts
+        when Array
+          key_parts.map do |key_part|
+            symbolize(key_part)
+          end
+        when Symbol
+          key_parts
+        when String
+          if key_parts.blank?
+            nil
+          else
+            key_parts.to_sym
+          end
+        else
+          # :nocov:
+          raise ArgumentError, "expected nil, a symbol, or a string, or an array of such values "
+          # :nocov:
+        end
+      end
+    end
+  end
+end
