@@ -19,18 +19,28 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
 
   let(:subcommand_class) {
     Class.new(Foobara::Command) do
+      # rubocop:disable RSpec/LeakyConstantDeclaration
+      self::ItFailedError = Class.new(Foobara::Command::RuntimeCommandError) do
+        # rubocop:enable RSpec/LeakyConstantDeclaration
+        class << self
+          def name
+            "RunSomeSubcommand::ItFailedError"
+          end
+
+          def context_type_declaration
+            { foo: :integer }
+          end
+        end
+      end
+
       inputs should_fail: :integer
 
-      possible_error(:it_failed, foo: :integer)
+      possible_error(self::ItFailedError)
 
       def execute
         # TODO: add boolean input type as well as symbol and string
         if should_fail == 1
-          add_runtime_error(
-            symbol: :it_failed,
-            message: "It failed!",
-            context: { foo: 10 }
-          )
+          add_runtime_error(self.class::ItFailedError.new(context: { foo: 10 }, message: "It failed!"))
         end
 
         100

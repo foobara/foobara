@@ -11,8 +11,15 @@ module Foobara
             possible_error(subcommand_error_class.symbol, subcommand_error_class)
           end
 
-          def possible_error(symbol, error_class_or_context_type_declaration)
-            error_class = to_runtime_error_class(symbol, error_class_or_context_type_declaration)
+          def possible_error(*args)
+            case args.size
+            when 1
+              error_class = args.first
+              symbol = error_class.symbol
+            when 2
+              symbol, error_class_or_context_type_declaration = args
+              error_class = to_runtime_error_class(symbol, error_class_or_context_type_declaration)
+            end
 
             error_context_type_map[:runtime][symbol] = error_class
           end
