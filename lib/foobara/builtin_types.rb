@@ -68,23 +68,33 @@ module Foobara
           load_processors_classes.call(module_name, extends).map(&:instance)
         }
 
+        casters = load_processors.call(:Caster)
+        transformers = load_processors.call(:Transformer)
+        validators = load_processors.call(:Validator)
+
         desugarizer = TypeDeclarations::Handlers::RegisteredTypeDeclaration::SymbolDesugarizer
         declaration_data = desugarizer.instance.transform(type_symbol)
-
-        casters = load_processors.call(:Caster)
 
         type = Foobara::Types::Type.new(
           declaration_data,
           base_type:,
           name: type_symbol,
-          casters: casters.presence || base_type.casters.dup
+          casters: casters.presence || base_type.casters.dup,
+          transformers:,
+          validators:
         )
+
+        processor_classes = [*transformers, *validators].map(&:class)
 
         %i[SupportedTransformers SupportedValidators SupportedProcessors].each do |module_name|
           load_processors_classes.call(module_name, Value::Processor).each do |processor_class|
             type.register_supported_processor_class(processor_class)
-            install_type_declaration_extensions_for(processor_class)
+            processor_classes << processor_class
           end
+        end
+
+        processor_classes.each do |processor_class|
+          install_type_declaration_extensions_for(processor_class)
         end
 
         type

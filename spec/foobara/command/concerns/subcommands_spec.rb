@@ -62,7 +62,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
           [] => {
             cannot_cast: Foobara::Value::Processor::Casting::CannotCastError,
             unexpected_attribute:
-          Foobara::BuiltinTypes::Attributes::SupportedValidators::AllowedAttributes::UnexpectedAttributeError
+              Foobara::BuiltinTypes::Attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributeError
           },
           [:should_fail] => { cannot_cast: Foobara::Value::Processor::Casting::CannotCastError }
         }

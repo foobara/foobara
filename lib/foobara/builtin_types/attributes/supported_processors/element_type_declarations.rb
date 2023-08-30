@@ -3,12 +3,46 @@ module Foobara
     module Attributes
       module SupportedProcessors
         class ElementTypeDeclarations < TypeDeclarations::ElementProcessor
+          class UnexpectedAttributeError < Foobara::Value::DataError
+            class << self
+              def context_type_declaration
+                {
+                  attribute_name: :symbol,
+                  value: :duck,
+                  allowed_attributes: :duck # TODO: update with :array
+                }
+              end
+            end
+          end
+
           def element_type_declarations
             declaration_data
           end
 
+          def allowed_attributes
+            @allowed_attributes ||= declaration_data.keys
+          end
+
           def process(attributes_hash)
-            return Outcome.success(attributes_hash) unless applicable?(attributes_hash)
+            unexpected_attributes = attributes_hash.keys - allowed_attributes
+
+            unexpected_attribute_errors = unexpected_attributes.map do |unexpected_attribute_name|
+              build_error(
+                attributes_hash,
+                message: "Unexpected attributes #{
+                  unexpected_attribute_name
+                }. Expected only #{allowed_attributes}",
+                context: {
+                  attribute_name: unexpected_attribute_name,
+                  value: attributes_hash[unexpected_attribute_name],
+                  allowed_attributes:
+                }
+              )
+            end
+
+            if unexpected_attribute_errors.present?
+              return Foobara::Value::HaltedOutcome.errors(unexpected_attribute_errors)
+            end
 
             errors = []
 
@@ -32,7 +66,7 @@ module Foobara
           end
 
           def possible_errors
-            possibilities = []
+            possibilities = super
 
             element_type_declarations.each_pair do |attribute_name, attribute_declaration|
               attribute_type = type_for_declaration(attribute_declaration)
@@ -51,10 +85,6 @@ module Foobara
             end
 
             possibilities
-          end
-
-          def priority
-            Priority::LOW
           end
         end
       end

@@ -43,8 +43,6 @@ RSpec.describe Foobara::Command::Concerns::Runtime do
     it {
       is_expected.to eq(
         type: :attributes,
-        # TODO: make this work without having to set this value on the type declaration
-        allowed_attributes: %i[exponent base],
         element_type_declarations: { base: { type: :integer }, exponent: { type: :integer } }
       )
     }
