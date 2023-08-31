@@ -17,7 +17,7 @@ module Foobara
         end
 
         def error_classes
-          [*super, *processors.map(&:error_classes).flatten]
+          normalize_error_classes([*super, *processors.map(&:error_classes).flatten])
         end
 
         def applicable?(value)
@@ -29,7 +29,7 @@ module Foobara
         # maybe [path, error_class] ?
         def possible_errors
           processors.inject(super) do |possibilities, processor|
-            possibilities + processor.possible_errors
+            possibilities.merge(processor.possible_errors)
           end
         end
 
@@ -45,6 +45,17 @@ module Foobara
 
         def process(value)
           process_outcome(Outcome.success(value))
+        end
+
+        private
+
+        def normalize_error_classes(error_classes)
+          cannot_cast_errors, others = error_classes.partition do |c|
+            # TODO: some kind of dependency issue here??
+            c == Foobara::Value::Processor::Casting::CannotCastError
+          end
+
+          [*cannot_cast_errors.uniq, *others]
         end
       end
     end

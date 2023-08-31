@@ -40,13 +40,9 @@ module Foobara
       end
 
       def possible_errors
-        [
-          [
-            [],
-            error_symbol,
-            error_class
-          ]
-        ]
+        key = ErrorKey.new(symbol: error_symbol, category: error_class.category)
+
+        { key.to_s => error_class }
       end
     end
   end

@@ -78,8 +78,8 @@ module Foobara
         end
       end
 
-      def symbolic_errors
-        error_collection.symbolic
+      def errors_hash
+        error_collection.to_h
       end
     end
   end

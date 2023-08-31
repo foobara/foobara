@@ -1,13 +1,14 @@
 module Foobara
   module Common
+    # TODO: inherit array instead of delegating
     class ErrorCollection
       class ErrorAlreadySetError < StandardError; end
 
       class << self
-        def symbolic(errors)
+        def to_h(errors)
           new.tap do |collection|
             collection.add_errors(errors)
-          end.symbolic
+          end.to_h
         end
       end
 
@@ -80,9 +81,9 @@ module Foobara
         Array.wrap(errors).each { |error| add_error(error) }
       end
 
-      def symbolic
+      def to_h
         error_array.to_h do |error|
-          [error.symbol, error.to_h]
+          [error.key, error.to_h]
         end
       end
     end

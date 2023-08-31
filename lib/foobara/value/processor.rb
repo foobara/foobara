@@ -81,10 +81,10 @@ module Foobara
       end
 
       def possible_errors
-        path = []
-
-        error_classes.map do |error_class|
-          [path, error_class.symbol, error_class]
+        error_classes.to_h do |error_class|
+          # TODO: strange that this is set this way?
+          key = ErrorKey.new(symbol: error_class.symbol, category: error_class.category)
+          [key.to_s, error_class]
         end
       end
 

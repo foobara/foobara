@@ -69,14 +69,14 @@ module Foobara
 
               if depends_on.include?(subcommand_name)
                 # :nocov:
-                raise AlreadyRegisteredSubcommand, "Already registered #{subcommand_class} as a dependency of #{self}"
+                raise AlreadyRegisteredSubcommand,
+                      "Already registered #{subcommand_class} as a dependency of #{self}"
                 # :nocov:
               end
 
               depends_on << subcommand_name
 
-              error_class = to_could_not_run_subcommand_error_class(subcommand_class)
-              possible_could_not_run_subcommand_error(error_class)
+              register_possible_subcommand_errors(subcommand_class)
             end
           end
 
@@ -85,6 +85,16 @@ module Foobara
               # :nocov:
               raise SubcommandNotRegistered, "Need to declare #{subcommand_class} on #{self} with .depends_on"
               # :nocov:
+            end
+          end
+
+          private
+
+          def register_possible_subcommand_errors(subcommand_class)
+            subcommand_class.error_context_type_map.each_pair do |key, error_class|
+              error_key = Error.parse_key(key)
+              error_key.runtime_path = [subcommand_class.runtime_path_symbol, *error_key.runtime_path]
+              register_possible_error_class(error_key, error_class)
             end
           end
         end
