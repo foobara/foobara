@@ -14,6 +14,10 @@ module Foobara
 
           new(category:, path:, symbol:, runtime_path:)
         end
+
+        def to_h(key_string)
+          parse(key_string).to_h
+        end
       end
 
       attr_reader :category, :symbol, :path, :runtime_path
@@ -47,6 +51,15 @@ module Foobara
           *runtime_path,
           [category, *path, symbol].join(".")
         ].join(":")
+      end
+
+      def to_h
+        {
+          path:,
+          runtime_path:,
+          category:,
+          symbol:
+        }
       end
 
       private

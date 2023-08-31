@@ -63,17 +63,6 @@ module Foobara
 
         delegate :has_errors?, to: :error_collection
 
-        def error_hash
-          runtime_errors, input_errors = error_collection.partition do |e|
-            e.is_a?(Foobara::Command::RuntimeCommandError)
-          end
-
-          {
-            runtime: runtime_errors.to_h { |error| [error.symbol, error.to_h] },
-            input: input_errors.group_by(&:input).transform_values(&:to_h)
-          }
-        end
-
         private
 
         def add_error(error)
