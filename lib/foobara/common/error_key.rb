@@ -5,6 +5,14 @@ module Foobara
       EMPTY_PATH = [].freeze
 
       class << self
+        def to_s_type(key)
+          unless key.is_a?(ErrorKey)
+            key = parse(key)
+          end
+
+          key.to_s_type
+        end
+
         def prepend_path(key, prepend_part)
           if key.is_a?(ErrorKey)
             key.prepend_path(prepend_part).to_s
@@ -86,11 +94,25 @@ module Foobara
         end
       end
 
-      def to_s
+      INDEX_VALUE = /\A\d+\z/
+
+      def to_s(convert_to_type: false)
+        path = self.path
+
+        if convert_to_type
+          path = path.map do |path_part|
+            path_part =~ INDEX_VALUE ? :"#" : path_part
+          end
+        end
+
         [
           *runtime_path,
           [category, *path, symbol].join(".")
         ].join(":")
+      end
+
+      def to_s_type
+        to_s(convert_to_type: true)
       end
 
       def to_h

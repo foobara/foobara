@@ -18,7 +18,7 @@ module Foobara
 
           def lookup_input_error_class(symbol, path)
             key = ErrorKey.new(symbol:, path:, category: :data)
-            key = key.to_s
+            key = key.to_s_type
 
             unless error_context_type_map.key?(key)
               # :nocov:
@@ -31,7 +31,7 @@ module Foobara
 
           def lookup_runtime_error_class(symbol)
             key = ErrorKey.new(symbol:, category: :runtime)
-            key = key.to_s
+            key = key.to_s_type
 
             unless error_context_type_map.key?(key)
               # :nocov:
@@ -43,7 +43,7 @@ module Foobara
           end
 
           def lookup_error_class(key)
-            key = key.to_s
+            key = ErrorKey.to_s_type(key)
 
             unless error_context_type_map.key?(key)
               # :nocov:
