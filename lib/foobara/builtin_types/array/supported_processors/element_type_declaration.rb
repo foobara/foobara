@@ -1,0 +1,52 @@
+module Foobara
+  module BuiltinTypes
+    module Array
+      module SupportedProcessors
+        class ElementTypeDeclaration < TypeDeclarations::ElementProcessor
+          def element_type_declaration
+            declaration_data
+          end
+
+          def element_type
+            @element_type ||= type_for_declaration(element_type_declaration)
+          end
+
+          def process(array)
+            errors = []
+
+            array.each.with_index do |element, index|
+              element_outcome = element_type.process(element)
+
+              if element_outcome.success?
+                array[index] = element_outcome.result
+              else
+                element_outcome.each_error do |error|
+                  error.path = [index, *error.path]
+
+                  errors << error
+                end
+              end
+            end
+
+            Outcome.new(result: array, errors:)
+          end
+
+          def possible_errors
+            possibilities = super
+
+            element_type.possible_errors.each_pair do |key, error_class|
+              key = Error.parse_key(key)
+
+              # Using # as a placeholder for what will be an index in the actual error key
+              key.path = [:"#", *key.path]
+
+              possibilities[key.to_s] = error_class
+            end
+
+            possibilities
+          end
+        end
+      end
+    end
+  end
+end
