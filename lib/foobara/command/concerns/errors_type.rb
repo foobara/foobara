@@ -72,7 +72,7 @@ module Foobara
           end
 
           def to_runtime_error_class(symbol, context_type_declaration)
-            Foobara::Command::RuntimeCommandError.subclass(
+            Foobara::RuntimeError.subclass(
               symbol:,
               context_type_declaration:
             )

@@ -120,10 +120,10 @@ module Foobara
           error = if args.size == 1 && opts.empty?
                     error = args.first
 
-                    unless error.is_a?(Foobara::Command::RuntimeCommandError)
+                    unless error.is_a?(Foobara::RuntimeError)
                       # :nocov:
                       raise ArgumentError,
-                            "expected a Foobara::Command::RuntimeCommandError or keyword arguments to construct one"
+                            "expected a Foobara::RuntimeError or keyword arguments to construct one"
                       # :nocov:
                     end
 

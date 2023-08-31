@@ -20,7 +20,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
   let(:subcommand_class) {
     Class.new(Foobara::Command) do
       # rubocop:disable RSpec/LeakyConstantDeclaration
-      self::ItFailedError = Class.new(Foobara::Command::RuntimeCommandError) do
+      self::ItFailedError = Class.new(Foobara::RuntimeError) do
         # rubocop:enable RSpec/LeakyConstantDeclaration
         class << self
           def name

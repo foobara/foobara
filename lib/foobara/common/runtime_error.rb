@@ -1,6 +1,9 @@
+require "foobara/common/error"
+
 module Foobara
-  class Command
-    class RuntimeCommandError < Error
+  module Common
+    # NOTE: annoyingly this will clash with ::RuntimeError if not fully qualified when using
+    class RuntimeError < Error
       class << self
         def category
           :runtime

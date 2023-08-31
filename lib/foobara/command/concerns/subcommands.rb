@@ -1,5 +1,3 @@
-require "foobara/command/runtime_command_error"
-
 module Foobara
   class Command
     module Concerns
