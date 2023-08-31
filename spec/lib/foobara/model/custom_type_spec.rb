@@ -220,11 +220,18 @@ RSpec.describe "custom types" do
 
         expect(outcome).to_not be_success
 
-        expect(outcome.symbolic_errors).to eq(whatever: {
-                                                context: { foo: :bar },
-                                                message: "whatevs!",
-                                                symbol: :whatever
-                                              })
+        # TODO: why isn't errors an error collection??
+        expect(outcome.errors_hash).to eq(
+          "data.whatever" => {
+            category: :data,
+            key: "data.whatever",
+            path: [],
+            runtime_path: [],
+            context: { foo: :bar },
+            message: "whatevs!",
+            symbol: :whatever
+          }
+        )
       end
     end
 
@@ -257,6 +264,10 @@ RSpec.describe "custom types" do
           expect(errors.size).to eq(1)
           error = errors.first
           expect(error.to_h).to eq(
+            category: :data,
+            key: "data.c.real_should_not_match_imaginary",
+            path: [:c],
+            runtime_path: [],
             symbol: :real_should_not_match_imaginary,
             context: { foo: :bar },
             message: "cant be the same!"
@@ -327,8 +338,12 @@ RSpec.describe "custom types" do
 
           it "can give validation_errors if needed" do
             errors = type.validation_errors([-40, -40])
-            expect(Foobara::ErrorCollection.symbolic(errors)).to eq(
-              real_should_not_match_imaginary: {
+            expect(Foobara::ErrorCollection.to_h(errors)).to eq(
+              "data.real_should_not_match_imaginary" => {
+                key: "data.real_should_not_match_imaginary",
+                path: [],
+                runtime_path: [],
+                category: :data,
                 symbol: :real_should_not_match_imaginary,
                 message: "cant be the same!",
                 context: { foo: :bar }
@@ -357,8 +372,13 @@ RSpec.describe "custom types" do
 
             it "can give validation_errors if needed" do
               errors = type.validation_errors([-40, -40])
-              expect(Foobara::ErrorCollection.symbolic(errors)).to eq(
-                real_should_not_match_imaginary: {
+
+              expect(Foobara::ErrorCollection.to_h(errors)).to eq(
+                "data.real_should_not_match_imaginary" => {
+                  key: "data.real_should_not_match_imaginary",
+                  path: [],
+                  runtime_path: [],
+                  category: :data,
                   symbol: :real_should_not_match_imaginary,
                   message: "cant be the same!",
                   context: { foo: :bar }

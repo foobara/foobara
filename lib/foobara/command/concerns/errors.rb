@@ -4,6 +4,57 @@ module Foobara
       module Errors
         extend ActiveSupport::Concern
 
+        class_methods do
+          # TODO: what to do if we have two subcommands in different domains with the same name??
+          # Seems like we need to fully qualify these with their domain, right?
+          def runtime_path_symbol
+            symbol = name.demodulize.underscore
+
+            [
+              domain&.runtime_path_symbol,
+              symbol
+            ].compact.join(".").to_sym
+          end
+
+          def lookup_input_error_class(symbol, path)
+            key = ErrorKey.new(symbol:, path:, category: :data)
+            key = key.to_s
+
+            unless error_context_type_map.key?(key)
+              # :nocov:
+              raise "No error class was registered for #{key}"
+              # :nocov:
+            end
+
+            error_context_type_map[key]
+          end
+
+          def lookup_runtime_error_class(symbol)
+            key = ErrorKey.new(symbol:, category: :runtime)
+            key = key.to_s
+
+            unless error_context_type_map.key?(key)
+              # :nocov:
+              raise "No error class was registered for #{key}"
+              # :nocov:
+            end
+
+            error_context_type_map[key]
+          end
+
+          def lookup_error_class(key)
+            key = key.to_s
+
+            unless error_context_type_map.key?(key)
+              # :nocov:
+              raise "No error class was registered for #{key}"
+              # :nocov:
+            end
+
+            error_context_type_map[key]
+          end
+        end
+
         attr_reader :error_collection
 
         def initialize
@@ -70,6 +121,12 @@ module Foobara
           add_error(error)
         end
 
+        def add_subcommand_error(subcommand, error)
+          error.runtime_path = [subcommand.class.runtime_path_symbol, *Array.wrap(error.runtime_path)]
+          add_error(error)
+          halt!
+        end
+
         def add_runtime_error(*args, **opts)
           error = if args.size == 1 && opts.empty?
                     error = args.first
@@ -106,40 +163,11 @@ module Foobara
 
         def process_error(error)
           # it has already been processed when it ran in the sub command
-          return error if error.is_a?(Subcommands::FailedToExecuteSubcommand)
+          return error if error.runtime_path.present?
 
-          symbol = error.symbol
-          message = error.message
           context = error.context
 
-          if !message.is_a?(String) || message.empty?
-            # :nocov:
-            raise "Bad error message, expected a string"
-            # :nocov:
-          end
-
-          map = self.class.error_context_type_map
-
-          map = case error
-                when Command::RuntimeCommandError
-                  map[:runtime]
-                when Value::DataError
-                  map[:input][error.path]
-                else
-                  # :nocov:
-                  raise ArgumentError, "Unexpected error type for #{error}"
-                  # :nocov:
-                end
-
-          possible_error_symbols = map.keys
-
-          unless possible_error_symbols.include?(symbol)
-            # :nocov:
-            raise "Invalid error symbol #{symbol} expected one of #{possible_error_symbols}"
-            # :nocov:
-          end
-
-          error_class = map[symbol]
+          error_class = self.class.lookup_error_class(error.key)
           context_type = error_class.context_type
 
           error.context = context_type.process!(context || {})

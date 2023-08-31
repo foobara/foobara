@@ -76,6 +76,15 @@ module Foobara
       end
     end
 
+    def runtime_path_symbol
+      symbol = name.demodulize.underscore
+
+      [
+        superdomain&.runtime_path_symbol,
+        symbol
+      ].compact.join("::").to_sym
+    end
+
     class << self
       def all
         @all ||= []

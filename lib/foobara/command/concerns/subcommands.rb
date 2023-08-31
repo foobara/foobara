@@ -9,16 +9,6 @@ module Foobara
         class AlreadyRegisteredSubcommand < StandardError; end
         class SubcommandNotRegistered < StandardError; end
 
-        class FailedToExecuteSubcommand < Foobara::Command::RuntimeCommandError
-          attr_accessor :causes
-
-          def initialize(causes:, **args)
-            super(**args)
-
-            self.causes = causes
-          end
-        end
-
         attr_accessor :is_subcommand
 
         delegate :verify_depends_on!, to: :class
@@ -37,14 +27,15 @@ module Foobara
           if outcome.success?
             outcome.result
           else
-            add_runtime_error(
-              symbol: self.class.could_not_run_subcommand_symbol_for(subcommand_class),
-              message: "Failed to execute #{subcommand_class.name}",
-              # TODO: how to translate this hash into a context_type_declaration???
-              # Oh... we can just use the error_context_type_map as a type declaration?? Does that actually work?
-              context: subcommand.error_hash,
-              causes: outcome.errors
-            )
+            outcome.errors.each do |error|
+              # problem... inner command could have a different category but we want this to be a runtime error...
+              # So I guess we should use our error class anyways but override its methods...
+              # Or do we want to let the inner category reign? Issue with that is the subcommand could have the same
+              # name as an input and collide (unlikely but possible.)
+              # So what to do? Wrapper error? Maybe introduce a sub command category for the wrapper?
+              # other solution instead.... add a runtime_path to Error
+              add_subcommand_error(subcommand, error)
+            end
           end
         end
 

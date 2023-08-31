@@ -3,12 +3,11 @@ module Foobara
     module Attributes
       module SupportedProcessors
         class ElementTypeDeclarations < TypeDeclarations::ElementProcessor
-          class UnexpectedAttributeError < Foobara::Value::DataError
+          class UnexpectedAttributesError < Foobara::Value::DataError
             class << self
               def context_type_declaration
                 {
-                  attribute_name: :symbol,
-                  value: :duck,
+                  unexpected_attributes: :duck, # TODO: update with :array
                   allowed_attributes: :duck # TODO: update with :array
                 }
               end
@@ -26,22 +25,20 @@ module Foobara
           def process(attributes_hash)
             unexpected_attributes = attributes_hash.keys - allowed_attributes
 
-            unexpected_attribute_errors = unexpected_attributes.map do |unexpected_attribute_name|
-              build_error(
+            if unexpected_attributes.present?
+              # unexpected_attribute_errors = unexpected_attributes.map do |unexpected_attribute_name|
+              unexpected_attributes_error = build_error(
                 attributes_hash,
                 message: "Unexpected attributes #{
-                  unexpected_attribute_name
+                  unexpected_attributes
                 }. Expected only #{allowed_attributes}",
                 context: {
-                  attribute_name: unexpected_attribute_name,
-                  value: attributes_hash[unexpected_attribute_name],
+                  unexpected_attributes:,
                   allowed_attributes:
                 }
               )
-            end
 
-            if unexpected_attribute_errors.present?
-              return Foobara::Value::HaltedOutcome.errors(unexpected_attribute_errors)
+              return Foobara::Value::HaltedOutcome.error(unexpected_attributes_error)
             end
 
             errors = []
@@ -71,16 +68,12 @@ module Foobara
             element_type_declarations.each_pair do |attribute_name, attribute_declaration|
               attribute_type = type_for_declaration(attribute_declaration)
 
-              attribute_type.possible_errors.each do |possible_error|
-                path = possible_error[0]
-                symbol = possible_error[1]
-                error_class = possible_error[2]
+              attribute_type.possible_errors.each_pair do |key, error_class|
+                key = Error.parse_key(key)
 
-                possibilities << [
-                  [attribute_name, *path],
-                  symbol,
-                  error_class
-                ]
+                key.path = [attribute_name, *key.path]
+
+                possibilities[key.to_s] = error_class
               end
             end
 

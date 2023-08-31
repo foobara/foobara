@@ -58,27 +58,22 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
     stub_const("RunSomeSubcommand", subcommand_class)
   end
 
-  describe ".context_error_map" do
-    # TODO: encapsulate sub command errors into a simpler construct?
+  describe ".error_context_type_map" do
+    let(:error_context_type_map) { command_class.error_context_type_map }
+
     it "contains subcommand error information" do
-      map = command_class.error_context_type_map
-
-      runtime = map[:runtime]
-
-      map = map.except(:runtime)
-
-      expect(map).to eq(
-        input: {
-          [] => {
-            cannot_cast: Foobara::Value::Processor::Casting::CannotCastError,
-            unexpected_attribute:
-              Foobara::BuiltinTypes::Attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributeError
-          },
-          [:should_fail] => { cannot_cast: Foobara::Value::Processor::Casting::CannotCastError }
-        }
+      expect(error_context_type_map).to eq(
+        "data.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
+        "data.unexpected_attributes" =>
+            Foobara::BuiltinTypes::Attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError,
+        "data.should_fail.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
+        "run_some_subcommand:data.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
+        "run_some_subcommand:data.unexpected_attributes" =>
+            Foobara::BuiltinTypes::Attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError,
+        "run_some_subcommand:data.should_fail.cannot_cast" =>
+            Foobara::Value::Processor::Casting::CannotCastError,
+        "run_some_subcommand:runtime.it_failed" => RunSomeSubcommand::ItFailedError
       )
-      expect(runtime.keys).to eq([:could_not_run_some_subcommand])
-      expect(runtime.values.first.superclass).to be(described_class::FailedToExecuteSubcommand)
     end
   end
 
@@ -104,15 +99,23 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
         expect(outcome).to_not be_success
         expect(errors.length).to eq(1)
         error = errors.first
-        expect(error.symbol).to eq(:could_not_run_some_subcommand)
-        expect(error.message).to eq("Failed to execute RunSomeSubcommand")
-        expect(error.context[:runtime]).to eq(
-          it_failed: {
-            symbol: :it_failed,
-            message: "It failed!",
-            context: { foo: 10 }
-          }
+
+        expect(error.to_h).to eq(
+          key: "run_some_subcommand:runtime.it_failed",
+          path: [],
+          runtime_path: [:run_some_subcommand],
+          category: :runtime,
+          symbol: :it_failed,
+          message: "It failed!",
+          context: { foo: 10 }
         )
+
+        key = Foobara::Error.parse_key(error.key)
+
+        expect(key.path).to eq([])
+        expect(key.runtime_path).to eq([:run_some_subcommand])
+        expect(key.category).to eq(:runtime)
+        expect(key.symbol).to eq(:it_failed)
       end
     end
   end
