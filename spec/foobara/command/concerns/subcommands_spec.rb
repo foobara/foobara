@@ -89,8 +89,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
           context_type_declaration: {
             type: :attributes,
             element_type_declarations: {
-              cast_to: { type: :duck },
-              value: { type: :duck },
+              cast_to: { type: :duck }, value: { type: :duck },
               attribute_name: { type: :symbol }
             }
           }
@@ -104,8 +103,8 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
           context_type_declaration: {
             type: :attributes,
             element_type_declarations: {
-              unexpected_attributes: { type: :duck },
-              allowed_attributes: { type: :duck }
+              unexpected_attributes: { type: :array, element_type_declaration: { type: :symbol } },
+              allowed_attributes: { type: :array, element_type_declaration: { type: :symbol } }
             }
           }
         },
@@ -118,8 +117,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
           context_type_declaration: {
             type: :attributes,
             element_type_declarations: {
-              cast_to: { type: :duck },
-              value: { type: :duck },
+              cast_to: { type: :duck }, value: { type: :duck },
               attribute_name: { type: :symbol }
             }
           }
@@ -133,8 +131,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
           context_type_declaration: {
             type: :attributes,
             element_type_declarations: {
-              cast_to: { type: :duck },
-              value: { type: :duck },
+              cast_to: { type: :duck }, value: { type: :duck },
               attribute_name: { type: :symbol }
             }
           }
@@ -148,8 +145,8 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
           context_type_declaration: {
             type: :attributes,
             element_type_declarations: {
-              unexpected_attributes: { type: :duck },
-              allowed_attributes: { type: :duck }
+              unexpected_attributes: { type: :array, element_type_declaration: { type: :symbol } },
+              allowed_attributes: { type: :array, element_type_declaration: { type: :symbol } }
             }
           }
         },
@@ -162,8 +159,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
           context_type_declaration: {
             type: :attributes,
             element_type_declarations: {
-              cast_to: { type: :duck },
-              value: { type: :duck },
+              cast_to: { type: :duck }, value: { type: :duck },
               attribute_name: { type: :symbol }
             }
           }
@@ -175,7 +171,8 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
           symbol: :it_failed,
           key: "run_some_subcommand:runtime.it_failed",
           context_type_declaration: {
-            type: :attributes, element_type_declarations: {
+            type: :attributes,
+            element_type_declarations: {
               foo: { type: :integer }
             }
           }

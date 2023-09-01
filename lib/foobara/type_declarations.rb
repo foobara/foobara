@@ -22,7 +22,7 @@ module Foobara
           :context_type_declaration
         ) do
           {
-            processor_names: :duck, # TODO: replace with :array
+            processor_names: [:symbol],
             value: :duck
           }
         end
@@ -31,8 +31,8 @@ module Foobara
           :context_type_declaration
         ) do
           {
-            applicable_processors: :duck, # TODO: replace with :array
-            processor_names: :duck, # TODO: replace with :array
+            applicable_processor_names: [:symbol],
+            processor_names: [:symbol],
             value: :duck
           }
         end

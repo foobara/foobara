@@ -7,8 +7,8 @@ module Foobara
             class << self
               def context_type_declaration
                 {
-                  unexpected_attributes: :duck, # TODO: update with :array
-                  allowed_attributes: :duck # TODO: update with :array
+                  unexpected_attributes: [:symbol],
+                  allowed_attributes: [:symbol]
                 }
               end
             end

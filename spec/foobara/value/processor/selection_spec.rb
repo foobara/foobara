@@ -4,6 +4,11 @@ RSpec.describe Foobara::Value::Processor::Selection do
 
     let(:processor_a) do
       Class.new(Foobara::Value::Processor) do
+        class << self
+          def name
+            "ProcessorA"
+          end
+        end
         def applicable?(value)
           value == :a
         end
@@ -12,6 +17,11 @@ RSpec.describe Foobara::Value::Processor::Selection do
 
     let(:processor_b) do
       Class.new(Foobara::Value::Processor) do
+        class << self
+          def name
+            "ProcessorB"
+          end
+        end
         def applicable?(value)
           value == :b
         end
