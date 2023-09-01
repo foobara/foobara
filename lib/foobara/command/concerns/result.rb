@@ -11,7 +11,7 @@ module Foobara
         def process_result_using_result_type(result)
           return result unless result_type.present?
 
-          outcome = result_type.process(result)
+          outcome = result_type.process_value(result)
 
           if outcome.success?
             outcome.result

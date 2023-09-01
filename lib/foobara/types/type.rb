@@ -74,11 +74,11 @@ module Foobara
       end
 
       def cast(value)
-        value_caster.process(value)
+        value_caster.process_value(value)
       end
 
       def cast!(value)
-        value_caster.process!(value)
+        value_caster.process_value!(value)
       end
 
       # TODO: an interesting thought... we have Processor and then a subclass of Processor and then an instance of
@@ -111,11 +111,11 @@ module Foobara
       def validation_errors(value)
         value = cast!(value)
         if value_transformer
-          value = value_transformer.process!(value)
+          value = value_transformer.process_value!(value)
         end
 
         if value_validator
-          value_validator.process(value).errors
+          value_validator.process_value(value).errors
         else
           []
         end

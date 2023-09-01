@@ -9,7 +9,7 @@ module Foobara
 
       alias type_declaration_handler_for processor_for!
       alias handlers processors
-      alias type_for process!
+      alias type_for process_value!
     end
   end
 end

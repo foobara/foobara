@@ -30,7 +30,7 @@ RSpec.describe Foobara::Value::Processor do
     context "when is an error" do
       it "raises" do
         expect {
-          processor.process!(123)
+          processor.process_value!(123)
         }.to raise_error(processor_class::Error)
       end
     end

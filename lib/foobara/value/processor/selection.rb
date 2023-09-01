@@ -21,7 +21,7 @@ module Foobara
 
           if outcome.success?
             processor = outcome.result
-            outcome = processor.process(value)
+            outcome = processor.process_value(value)
           end
 
           outcome

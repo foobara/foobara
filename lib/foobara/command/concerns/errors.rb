@@ -159,7 +159,7 @@ module Foobara
           error_class = self.class.lookup_error_class(error.key)
           context_type = error_class.context_type
 
-          error.context = context_type.process!(context || {})
+          error.context = context_type.process_value!(context || {})
 
           error
         end

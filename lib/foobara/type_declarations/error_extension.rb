@@ -47,7 +47,7 @@ module Foobara
       def validate_context!
         if TypeDeclarations.validate_error_context_enabled?
           # TODO: we need to wrap this in a new error here to communicate what's going on a bit better
-          context_type.process!(context)
+          context_type.process_value!(context)
         end
       end
 

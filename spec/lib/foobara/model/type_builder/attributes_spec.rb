@@ -65,13 +65,13 @@ RSpec.describe Foobara::BuiltinTypes::Attributes::SupportedTransformers::Default
       end
 
       it "applies defaults when expected and casts where expected" do
-        attributes = type.process!(a: 100, b: 200, c: "300")
+        attributes = type.process_value!(a: 100, b: 200, c: "300")
         expect(attributes).to eq(a: 100, b: 200, c: 300)
 
-        attributes = type.process!(a: 100, c: "300")
+        attributes = type.process_value!(a: 100, c: "300")
         expect(attributes).to eq(a: 100, b: 1, c: 300)
 
-        attributes = type.process!(a: 100)
+        attributes = type.process_value!(a: 100)
         expect(attributes).to eq(a: 100, b: 1, c: 2)
       end
     end
@@ -89,13 +89,13 @@ RSpec.describe Foobara::BuiltinTypes::Attributes::SupportedTransformers::Default
       end
 
       it "applies defaults when expected" do
-        attributes = type.process!(a: 100, b: 200, c: "300")
+        attributes = type.process_value!(a: 100, b: 200, c: "300")
         expect(attributes).to eq(a: 100, b: 200, c: 300)
 
-        attributes = type.process!(a: 100, c: "300")
+        attributes = type.process_value!(a: 100, c: "300")
         expect(attributes).to eq(a: 100, b: 1, c: 300)
 
-        attributes = type.process!(a: 100)
+        attributes = type.process_value!(a: 100)
         expect(attributes).to eq(a: 100, b: 1, c: 2)
       end
     end
@@ -165,13 +165,13 @@ RSpec.describe Foobara::BuiltinTypes::Attributes::SupportedTransformers::Default
       end
 
       it "gives errors when required fields missing" do
-        outcome = type.process(a: 100, b: 200, c: "300")
+        outcome = type.process_value(a: 100, b: 200, c: "300")
         expect(outcome).to be_success
 
-        outcome = type.process(a: 100, c: "300")
+        outcome = type.process_value(a: 100, c: "300")
         expect(outcome).to be_success
 
-        outcome = type.process(b: 100, c: "300")
+        outcome = type.process_value(b: 100, c: "300")
         expect(outcome).to_not be_success
         expect(outcome.errors.map { |e| [e.attribute_name, e.symbol] }).to eq([
                                                                                 %i[
@@ -179,7 +179,7 @@ RSpec.describe Foobara::BuiltinTypes::Attributes::SupportedTransformers::Default
                                                                                 ]
                                                                               ])
 
-        outcome = type.process(b: 100)
+        outcome = type.process_value(b: 100)
         expect(outcome).to_not be_success
         expect(outcome.errors.map { |e| [e.attribute_name, e.symbol] }).to eq([
                                                                                 %i[
@@ -189,7 +189,7 @@ RSpec.describe Foobara::BuiltinTypes::Attributes::SupportedTransformers::Default
                                                                                    missing_required_attribute]
                                                                               ])
 
-        outcome = type.process({})
+        outcome = type.process_value({})
         expect(outcome).to_not be_success
         expect(outcome.errors.map { |e| [e.attribute_name, e.symbol] }).to eq([
                                                                                 %i[
@@ -214,13 +214,13 @@ RSpec.describe Foobara::BuiltinTypes::Attributes::SupportedTransformers::Default
       end
 
       it "gives errors when required fields missing" do
-        outcome = type.process(a: 100, b: 200, c: "300")
+        outcome = type.process_value(a: 100, b: 200, c: "300")
         expect(outcome).to be_success
 
-        outcome = type.process(a: 100, c: "300")
+        outcome = type.process_value(a: 100, c: "300")
         expect(outcome).to be_success
 
-        outcome = type.process(b: 100, c: "300")
+        outcome = type.process_value(b: 100, c: "300")
         expect(outcome).to_not be_success
         expect(outcome.errors.map { |e| [e.attribute_name, e.symbol] }).to eq([
                                                                                 %i[
@@ -228,7 +228,7 @@ RSpec.describe Foobara::BuiltinTypes::Attributes::SupportedTransformers::Default
                                                                                 ]
                                                                               ])
 
-        outcome = type.process(b: 100)
+        outcome = type.process_value(b: 100)
         expect(outcome).to_not be_success
         expect(outcome.errors.map { |e| [e.attribute_name, e.symbol] }).to eq([
                                                                                 %i[
@@ -238,7 +238,7 @@ RSpec.describe Foobara::BuiltinTypes::Attributes::SupportedTransformers::Default
                                                                                    missing_required_attribute]
                                                                               ])
 
-        outcome = type.process({})
+        outcome = type.process_value({})
         expect(outcome).to_not be_success
         expect(outcome.errors.map { |e| [e.attribute_name, e.symbol] }).to eq([
                                                                                 %i[

@@ -1,8 +1,8 @@
 RSpec.describe ":array" do
   let(:type) { Foobara::BuiltinTypes[:array] }
 
-  describe "#process!" do
-    subject { type.process!(value) }
+  describe "#process_value!" do
+    subject { type.process_value!(value) }
 
     context "when array" do
       let(:value) { [1, 2] }
@@ -49,7 +49,7 @@ RSpec.describe ":array" do
       let(:array) { [1, 2, 3, 4] }
 
       it "can process it" do
-        expect(type.process!(array)).to eq(array)
+        expect(type.process_value!(array)).to eq(array)
       end
     end
 
@@ -57,7 +57,7 @@ RSpec.describe ":array" do
       let(:array) { [1, 2, { not: :valid }, 4] }
 
       it "can process it" do
-        outcome = type.process(array)
+        outcome = type.process_value(array)
         expect(outcome).to_not be_success
 
         expect(outcome.errors_hash).to eq(

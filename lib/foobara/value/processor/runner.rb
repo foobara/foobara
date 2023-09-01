@@ -25,7 +25,13 @@ module Foobara
           self.value = value
         end
 
-        runner_methods :error_message, :error_context, :process, :process!, :applicable?
+        runner_methods :error_message,
+                       :error_context,
+                       :process_value,
+                       :process_value!,
+                       :process_outcome,
+                       :process_outcome!,
+                       :applicable?
       end
     end
   end

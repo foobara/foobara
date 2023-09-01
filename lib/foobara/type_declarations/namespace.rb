@@ -142,7 +142,7 @@ module Foobara
         Namespace.using self do
           handler = type_declaration_handler_for(type_declaration)
 
-          handler.process!(type_declaration)
+          handler.process_value!(type_declaration)
         end
       end
 

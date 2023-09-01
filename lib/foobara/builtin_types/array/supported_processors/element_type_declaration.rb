@@ -15,7 +15,7 @@ module Foobara
             errors = []
 
             array.each.with_index do |element, index|
-              element_outcome = element_type.process(element)
+              element_outcome = element_type.process_value(element)
 
               if element_outcome.success?
                 array[index] = element_outcome.result

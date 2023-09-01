@@ -1,8 +1,8 @@
 RSpec.describe ":associative_array" do
   let(:type) { Foobara::BuiltinTypes[:associative_array] }
 
-  describe "#process!" do
-    subject { type.process!(value) }
+  describe "#process_value!" do
+    subject { type.process_value!(value) }
 
     context "when array of pairs" do
       let(:value) { [[:a, 1], [:b, 2]] }

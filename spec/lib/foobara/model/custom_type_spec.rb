@@ -216,7 +216,7 @@ RSpec.describe "custom types" do
       end
 
       it "cannot get a type from the type declaration handler" do
-        outcome = type_declaration_handler.process(type_declaration)
+        outcome = type_declaration_handler.process_value(type_declaration)
 
         expect(outcome).to_not be_success
 
@@ -243,7 +243,7 @@ RSpec.describe "custom types" do
       context "when valid" do
         it "can process the thing" do
           value = in_namespace do
-            type.process!(n: 5, c: [1, 2])
+            type.process_value!(n: 5, c: [1, 2])
           end
 
           complex = value[:c]
@@ -256,7 +256,7 @@ RSpec.describe "custom types" do
 
       context "when invalid" do
         it "can process the thing" do
-          outcome = in_namespace { type.process(n: 5, c: [2, 2]) }
+          outcome = in_namespace { type.process_value(n: 5, c: [2, 2]) }
 
           expect(outcome).to_not be_success
           errors = outcome.errors
@@ -293,7 +293,7 @@ RSpec.describe "custom types" do
         end
 
         it "can process the thing" do
-          value = type.process!(n: 5, c: [1, 2])
+          value = type.process_value!(n: 5, c: [1, 2])
           complex = value[:c]
 
           expect(complex).to be_a(complex_class)
@@ -315,7 +315,7 @@ RSpec.describe "custom types" do
 
         context "when registered" do
           let(:type_declaration_handler) { type_declaration_handler_class.new }
-          let(:type) { type_declaration_handler.process!(type: :complex, be_pointless: :true_symbol) }
+          let(:type) { type_declaration_handler.process_value!(type: :complex, be_pointless: :true_symbol) }
 
           before do
             namespace.register_type(:complex, type)

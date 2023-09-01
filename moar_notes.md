@@ -90,7 +90,7 @@ Attempt to determine definitions yet again...
             * Domain/Application programmer wants to use domain model to create command
               input_schema(some_ic: :inventory_complex)
             * Application programmer or runtime tooling wants to validate a value
-              ic = inventory_complex_schema.process!({c: {r: 1, i:2}, sku: "abc123")
+              ic = inventory_complex_schema.process_value!({c: {r: 1, i:2}, sku: "abc123")
         * :integer -> Schema::Integer
           * { :integer, max: 10 } -> Schema::Integer.new
       * Value world

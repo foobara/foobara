@@ -2,7 +2,7 @@ RSpec.describe ":string" do
   let(:type) { Foobara::BuiltinTypes[:string] }
 
   describe "#process!" do
-    subject { type.process!(value) }
+    subject { type.process_value!(value) }
 
     context "when string" do
       let(:value) { "foo" }

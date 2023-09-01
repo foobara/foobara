@@ -5,7 +5,7 @@ RSpec.describe Foobara::Types do
     let(:type_declaration) { { foo: :duck } }
 
     describe "#cast_from" do
-      let(:outcome) { type.process(hash) }
+      let(:outcome) { type.process_value(hash) }
       let(:result) { outcome.result }
       let(:errors) { outcome.errors }
 

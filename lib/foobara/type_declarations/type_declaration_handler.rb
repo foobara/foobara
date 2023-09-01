@@ -97,14 +97,14 @@ module Foobara
       end
 
       def desugarize(value)
-        Value::Processor::Pipeline.new(processors: desugarizers).process!(value)
+        Value::Processor::Pipeline.new(processors: desugarizers).process_value!(value)
       end
 
       def type_declaration_validator
         Value::Processor::Pipeline.new(processors: type_declaration_validators)
       end
 
-      alias to_type process!
+      alias to_type process_value!
     end
   end
 end

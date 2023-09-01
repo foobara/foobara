@@ -20,7 +20,7 @@ RSpec.describe Foobara::Value::Transformer do
       let(:transformer) { transformer_class.new }
 
       it "just gives back what was passed in" do
-        expect(transformer.process(15).result).to eq(15)
+        expect(transformer.process_value(15).result).to eq(15)
       end
     end
   end

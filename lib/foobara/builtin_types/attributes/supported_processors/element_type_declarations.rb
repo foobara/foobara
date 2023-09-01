@@ -49,7 +49,7 @@ module Foobara
             attributes_hash.each_pair do |attribute_name, attribute_value|
               attribute_type_declaration = element_type_declarations[attribute_name]
               attribute_type = type_for_declaration(attribute_type_declaration)
-              attribute_outcome = attribute_type.process(attribute_value)
+              attribute_outcome = attribute_type.process_value(attribute_value)
 
               if attribute_outcome.success?
                 attributes_hash[attribute_name] = attribute_outcome.result

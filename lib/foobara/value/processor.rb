@@ -103,20 +103,6 @@ module Foobara
         declaration_data_given
       end
 
-      def process(value_or_outcome)
-        if value_or_outcome.is_a?(Outcome)
-          process_outcome(value_or_outcome)
-        else
-          process_value(value_or_outcome)
-        end
-      end
-
-      def process!(value_or_outcome)
-        outcome = process(value_or_outcome)
-        outcome.raise!
-        outcome.result
-      end
-
       def process_value(_value)
         # :nocov:
         raise "subclass responsibility"
