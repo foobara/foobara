@@ -90,7 +90,6 @@ module Foobara
 
       # A transformer with no declaration data or with declaration data of false is considered to be
       # not applicable. Override this wherever different behavior is needed.
-      # TODO: do any transformers really need this _value argument to determine applicability??
       def applicable?(_value)
         always_applicable?
       end
@@ -98,10 +97,6 @@ module Foobara
       # This means its applicable regardless of value to transform. Override if different behavior is needed.
       def always_applicable?
         declaration_data
-      end
-
-      def applicable_for_outcome?(outcome)
-        applicable?(outcome.result)
       end
 
       def declaration_data_given?
