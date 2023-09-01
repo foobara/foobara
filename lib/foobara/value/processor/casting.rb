@@ -62,7 +62,7 @@ module Foobara
           declaration_data[:cast_to]
         end
 
-        def process(value)
+        def process_value(value)
           outcome = super
 
           outcome.success? ? outcome : HaltedOutcome.error(build_error(value))

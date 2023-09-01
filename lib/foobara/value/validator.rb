@@ -11,7 +11,7 @@ module Foobara
         # :nocov:
       end
 
-      def process(value)
+      def process_value(value)
         return Outcome.success(value) unless applicable?(value)
 
         errors = validation_errors(value)

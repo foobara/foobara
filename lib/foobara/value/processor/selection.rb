@@ -24,7 +24,7 @@ module Foobara
         end
 
         # TODO: move applies_message usage here from casting processor
-        def process(value)
+        def process_value(value)
           outcome = processor_for(value)
 
           if outcome.success?

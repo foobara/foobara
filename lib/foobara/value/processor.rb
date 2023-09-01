@@ -88,24 +88,6 @@ module Foobara
         end
       end
 
-      def process_outcome(old_outcome)
-        return old_outcome if old_outcome.is_a?(Value::HaltedOutcome)
-
-        process(old_outcome.result).tap do |outcome|
-          outcome.add_errors(old_outcome.errors)
-        end
-      end
-
-      def process!(value)
-        outcome = process(value)
-
-        if outcome.success?
-          outcome.result
-        else
-          outcome.raise!
-        end
-      end
-
       # A transformer with no declaration data or with declaration data of false is considered to be
       # not applicable. Override this wherever different behavior is needed.
       # TODO: do any transformers really need this _value argument to determine applicability??
@@ -126,10 +108,44 @@ module Foobara
         declaration_data_given
       end
 
-      def process(_value)
+      def process(value_or_outcome)
+        if value_or_outcome.is_a?(Outcome)
+          process_outcome(value_or_outcome)
+        else
+          process_value(value_or_outcome)
+        end
+      end
+
+      def process!(value_or_outcome)
+        outcome = process(value_or_outcome)
+        outcome.raise!
+        outcome.result
+      end
+
+      def process_value(_value)
         # :nocov:
         raise "subclass responsibility"
         # :nocov:
+      end
+
+      def process_value!(value)
+        outcome = process_value(value)
+        outcome.raise!
+        outcome.result
+      end
+
+      def process_outcome(old_outcome)
+        return old_outcome if old_outcome.is_a?(Value::HaltedOutcome)
+
+        process_value(old_outcome.result).tap do |outcome|
+          outcome.add_errors(old_outcome.errors)
+        end
+      end
+
+      def process_outcome!(old_outcome)
+        outcome = process_outcome(old_outcome)
+        outcome.raise!
+        outcome.result
       end
 
       def error_halts_processing?

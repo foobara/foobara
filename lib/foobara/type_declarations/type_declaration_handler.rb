@@ -84,7 +84,7 @@ module Foobara
         [desugarizer, type_declaration_validator, to_type_transformer]
       end
 
-      def process(raw_type_declaration)
+      def process_value(raw_type_declaration)
         super(raw_type_declaration.deep_dup).tap do |type_outcome|
           if type_outcome.success?
             type_outcome.result.raw_declaration_data = raw_type_declaration

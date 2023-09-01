@@ -4,7 +4,7 @@ RSpec.describe Foobara::Value::Processor do
       self::Error = Class.new(Foobara::Value::DataError) do # rubocop:disable RSpec/LeakyConstantDeclaration
       end
 
-      def process(_value)
+      def process_value(_value)
         Foobara::Outcome.error(build_error(symbol: :foo, message: "some error", context: {}))
       end
     end

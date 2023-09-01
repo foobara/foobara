@@ -37,16 +37,6 @@ module Foobara
           self.processors = [*processors, processor].sort_by(&:priority)
         end
 
-        def process_outcome(_old_outcome)
-          # :nocov:
-          raise "subclass responsibility"
-          # :nocov:
-        end
-
-        def process(value)
-          process_outcome(Outcome.success(value))
-        end
-
         private
 
         def normalize_error_classes(error_classes)

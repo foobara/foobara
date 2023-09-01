@@ -22,7 +22,7 @@ module Foobara
             @allowed_attributes ||= declaration_data.keys
           end
 
-          def process(attributes_hash)
+          def process_value(attributes_hash)
             unexpected_attributes = attributes_hash.keys - allowed_attributes
 
             if unexpected_attributes.present?

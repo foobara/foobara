@@ -20,7 +20,7 @@ module Foobara
         # :nocov:
       end
 
-      def process(value)
+      def process_value(value)
         if applicable?(value)
           value = transform(value)
         end

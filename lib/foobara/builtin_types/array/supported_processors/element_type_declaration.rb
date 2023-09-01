@@ -11,7 +11,7 @@ module Foobara
             @element_type ||= type_for_declaration(element_type_declaration)
           end
 
-          def process(array)
+          def process_value(array)
             errors = []
 
             array.each.with_index do |element, index|
