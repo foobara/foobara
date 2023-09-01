@@ -11,6 +11,10 @@ module Foobara
                   allowed_attributes: [:symbol]
                 }
               end
+
+              def fatal?
+                true
+              end
             end
           end
 
@@ -26,19 +30,18 @@ module Foobara
             unexpected_attributes = attributes_hash.keys - allowed_attributes
 
             if unexpected_attributes.present?
-              # unexpected_attribute_errors = unexpected_attributes.map do |unexpected_attribute_name|
-              unexpected_attributes_error = build_error(
-                attributes_hash,
-                message: "Unexpected attributes #{
+              return Outcome.error(
+                build_error(
+                  attributes_hash,
+                  message: "Unexpected attributes #{
                   unexpected_attributes
                 }. Expected only #{allowed_attributes}",
-                context: {
-                  unexpected_attributes:,
-                  allowed_attributes:
-                }
+                  context: {
+                    unexpected_attributes:,
+                    allowed_attributes:
+                  }
+                )
               )
-
-              return Foobara::Value::HaltedOutcome.error(unexpected_attributes_error)
             end
 
             errors = []

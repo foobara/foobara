@@ -2,7 +2,7 @@ module Foobara
   module Common
     class Error < StandardError
       # TODO: rename :path to data_path
-      attr_accessor :error_key, :message, :context
+      attr_accessor :error_key, :message, :context, :is_fatal
 
       class << self
         def symbol
@@ -28,6 +28,10 @@ module Foobara
         def context
           nil
         end
+
+        def fatal?
+          false
+        end
       end
 
       delegate :runtime_path,
@@ -47,7 +51,8 @@ module Foobara
         category: self.class.category,
         message: self.class.message,
         symbol: self.class.symbol,
-        context: self.class.context
+        context: self.class.context,
+        is_fatal: self.class.fatal?
       )
         self.error_key = ErrorKey.new
 
@@ -57,6 +62,7 @@ module Foobara
         self.category = category
         self.path = path
         self.runtime_path = runtime_path
+        self.is_fatal = is_fatal
 
         if !self.message.is_a?(String) || message.empty?
           # :nocov:
@@ -65,6 +71,10 @@ module Foobara
         end
 
         super(message)
+      end
+
+      def fatal?
+        is_fatal
       end
 
       def key

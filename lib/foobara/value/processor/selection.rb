@@ -15,14 +15,6 @@ module Foobara
           super(*args, **opts)
         end
 
-        def process_outcome(old_outcome)
-          if old_outcome.is_a?(Value::HaltedOutcome)
-            old_outcome
-          else
-            process(old_outcome.result)
-          end
-        end
-
         # TODO: move applies_message usage here from casting processor
         def process_value(value)
           outcome = processor_for(value)

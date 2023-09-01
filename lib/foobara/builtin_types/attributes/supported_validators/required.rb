@@ -10,15 +10,15 @@ module Foobara
                   attribute_name: :symbol
                 }
               end
+
+              def fatal?
+                true
+              end
             end
           end
 
           def required_attribute_names
             required
-          end
-
-          def error_halts_processing?
-            true
           end
 
           def validation_errors(attributes_hash)

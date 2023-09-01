@@ -19,8 +19,7 @@ module Foobara
         if errors.blank?
           Outcome.success(value)
         else
-          klass = error_halts_processing? ? HaltedOutcome : Outcome
-          klass.new(errors:, result: value)
+          Outcome.new(errors:, result: value)
         end
       end
 

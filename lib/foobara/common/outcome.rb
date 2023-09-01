@@ -68,6 +68,10 @@ module Foobara
         !has_errors?
       end
 
+      def fatal?
+        errors.any?(&:fatal?)
+      end
+
       def raise!
         return if success?
 

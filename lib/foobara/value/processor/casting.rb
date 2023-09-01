@@ -5,7 +5,13 @@ module Foobara
     class Processor
       # TODO: at least move this up to Types though that doesn't solve the issue
       class Casting < Selection
-        class CannotCastError < DataError; end
+        class CannotCastError < DataError
+          class << self
+            def fatal?
+              true
+            end
+          end
+        end
 
         class << self
           def error_classes
@@ -60,12 +66,6 @@ module Foobara
           end
 
           declaration_data[:cast_to]
-        end
-
-        def process_value(value)
-          outcome = super
-
-          outcome.success? ? outcome : HaltedOutcome.error(build_error(value))
         end
       end
     end
