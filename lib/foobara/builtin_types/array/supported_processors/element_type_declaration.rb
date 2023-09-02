@@ -21,7 +21,7 @@ module Foobara
                 array[index] = element_outcome.result
               else
                 element_outcome.each_error do |error|
-                  error.path = [index, *error.path]
+                  error.prepend_path!(index)
 
                   errors << error
                 end
@@ -35,12 +35,9 @@ module Foobara
             possibilities = super
 
             element_type.possible_errors.each_pair do |key, error_class|
-              key = Error.parse_key(key)
+              key = ErrorKey.prepend_path(key, ":#")
 
-              # Using # as a placeholder for what will be an index in the actual error key
-              key.path = [:"#", *key.path]
-
-              possibilities[key.to_s] = error_class
+              possibilities[key] = error_class
             end
 
             possibilities

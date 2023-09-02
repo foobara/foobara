@@ -217,7 +217,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
           context: { foo: 10 }
         )
 
-        key = Foobara::Error.parse_key(error.key)
+        key = Foobara::ErrorKey.parse(error.key)
 
         expect(key.path).to eq([])
         expect(key.runtime_path).to eq([:run_some_subcommand])

@@ -5,6 +5,24 @@ module Foobara
       EMPTY_PATH = [].freeze
 
       class << self
+        def prepend_path(key, prepend_part)
+          if key.is_a?(ErrorKey)
+            key.prepend_path(prepend_part).to_s
+          else
+            key = parse(key)
+            key.prepend_path!(prepend_part).to_s
+          end
+        end
+
+        def prepend_runtime_path(key, prepend_part)
+          if key.is_a?(ErrorKey)
+            key.prepend_runtime_path(prepend_part).to_s
+          else
+            key = parse(key)
+            key.prepend_runtime_path!(prepend_part).to_s
+          end
+        end
+
         # key contains.......
         # a:b:c:d.e.f.g.h
         # Then a, b, c is the runtime path and d is the category and e,f,g is the data path and h is the symbol
@@ -44,6 +62,28 @@ module Foobara
 
       def runtime_path=(runtime_path)
         @runtime_path = symbolize_all(runtime_path)
+      end
+
+      def prepend_path!(prepend_parts)
+        self.path = [*prepend_parts, *path]
+        self
+      end
+
+      def prepend_path(prepend_parts)
+        dup.tap do |key|
+          key.path = [*prepend_parts, *path]
+        end
+      end
+
+      def prepend_runtime_path!(prepend_parts)
+        self.runtime_path = [*prepend_parts, *runtime_path]
+        self
+      end
+
+      def prepend_runtime_path(prepend_parts)
+        dup.tap do |key|
+          key.runtime_path = [*prepend_parts, *runtime_path]
+        end
       end
 
       def to_s

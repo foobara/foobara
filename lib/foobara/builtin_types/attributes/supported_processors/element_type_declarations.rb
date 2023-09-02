@@ -69,11 +69,9 @@ module Foobara
               attribute_type = type_for_declaration(attribute_declaration)
 
               attribute_type.possible_errors.each_pair do |key, error_class|
-                key = Error.parse_key(key)
+                key = ErrorKey.prepend_path(key, attribute_name)
 
-                key.path = [attribute_name, *key.path]
-
-                possibilities[key.to_s] = error_class
+                possibilities[key] = error_class
               end
             end
 

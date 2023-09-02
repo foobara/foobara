@@ -28,10 +28,6 @@ module Foobara
         def context
           nil
         end
-
-        def parse_key(key)
-          ErrorKey.parse(key)
-        end
       end
 
       delegate :runtime_path,
@@ -83,6 +79,11 @@ module Foobara
         return false unless other.is_a?(Error)
 
         symbol == other.symbol
+      end
+
+      def prepend_path!(...)
+        error_key.prepend_path!(...)
+        self
       end
 
       def to_h
