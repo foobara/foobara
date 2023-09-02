@@ -14,6 +14,7 @@ module Foobara
           end
 
           def cast(object)
+            # TODO: This is probably too lenient
             object.to_a
           end
         end

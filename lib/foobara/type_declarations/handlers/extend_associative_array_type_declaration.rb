@@ -4,6 +4,7 @@ module Foobara
   module TypeDeclarations
     module Handlers
       class ExtendAssociativeArrayTypeDeclaration < ExtendRegisteredTypeDeclaration
+        # TODO: do we really need this? Isnt this the default?
         def priority
           Priority::MEDIUM
         end

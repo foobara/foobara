@@ -138,7 +138,7 @@ module Foobara
           key_parts.map do |key_part|
             symbolize(key_part)
           end
-        when Symbol
+        when Symbol, Integer
           key_parts
         when String
           if key_parts.blank?
@@ -148,7 +148,7 @@ module Foobara
           end
         else
           # :nocov:
-          raise ArgumentError, "expected nil, a symbol, or a string, or an array of such values "
+          raise ArgumentError, "expected nil, a symbol, or a string, an integer, or an array of such values "
           # :nocov:
         end
       end

@@ -26,6 +26,7 @@ module Foobara
                     :element_processors,
                     :structure_count,
                     :element_types,
+                    :element_type,
                     :raw_declaration_data,
                     :name
 
@@ -37,6 +38,7 @@ module Foobara
         transformers: [],
         validators: [],
         element_processors: nil,
+        element_type: nil,
         element_types: nil,
         structure_count: nil,
         **opts
@@ -48,6 +50,7 @@ module Foobara
         self.element_processors = element_processors
         self.structure_count = structure_count
         self.element_types = element_types
+        self.element_type = element_type
         self.name = name
 
         super(

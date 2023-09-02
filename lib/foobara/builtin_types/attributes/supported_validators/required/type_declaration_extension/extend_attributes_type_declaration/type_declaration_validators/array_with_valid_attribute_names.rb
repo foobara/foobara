@@ -12,8 +12,8 @@ module Foobara
                       def context_type_declaration
                         {
                           invalid_required_attribute_name: :symbol,
-                          valid_attribute_names: :duck, # TODO: replace with :array
-                          required: :duck # TODO: replace with :array
+                          valid_attribute_names: [:symbol],
+                          required: [:symbol]
                         }
                       end
                     end

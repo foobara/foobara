@@ -35,8 +35,49 @@ RSpec.describe ":array" do
       let(:value) { Object.new }
 
       it {
-        is_expected_to_raise(Foobara::Value::Processor::Casting::CannotCastError, /Expected it to respond to :to_a\z/)
+        is_expected_to_raise(
+          Foobara::Value::Processor::Casting::CannotCastError, /Expected it to respond to :to_a\z/
+        )
       }
+    end
+  end
+
+  context "when using an element_type_declaration" do
+    let(:type) { Foobara::TypeDeclarations::Namespace.type_for_declaration([:integer]) }
+
+    context "when element types match the element_type_declaration" do
+      let(:array) { [1, 2, 3, 4] }
+
+      it "can process it" do
+        expect(type.process!(array)).to eq(array)
+      end
+    end
+
+    context "when element types do not match the element_type_declaration" do
+      let(:array) { [1, 2, { not: :valid }, 4] }
+
+      it "can process it" do
+        outcome = type.process(array)
+        expect(outcome).to_not be_success
+
+        expect(outcome.errors_hash).to eq(
+          "data.2.cannot_cast" => {
+            key: "data.2.cannot_cast",
+            path: [2],
+            runtime_path: [],
+            category: :data,
+            symbol: :cannot_cast,
+            message: "Cannot cast {:not=>:valid}. Expected it to be a Integer, " \
+                     "or be a string of digits optionally with a minus sign in front",
+            context: { cast_to: { type: :integer }, value: { not: :valid } }
+          }
+        )
+
+        expect(type.possible_errors).to eq(
+          "data.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
+          "data.#.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError
+        )
+      end
     end
   end
 end

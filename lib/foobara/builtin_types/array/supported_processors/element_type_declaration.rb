@@ -35,7 +35,7 @@ module Foobara
             possibilities = super
 
             element_type.possible_errors.each_pair do |key, error_class|
-              key = ErrorKey.prepend_path(key, ":#")
+              key = ErrorKey.prepend_path(key, :"#")
 
               possibilities[key] = error_class
             end
