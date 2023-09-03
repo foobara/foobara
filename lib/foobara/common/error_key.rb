@@ -13,12 +13,12 @@ module Foobara
           key.to_s_type
         end
 
-        def prepend_path(key, prepend_part)
+        def prepend_path(key, *)
           if key.is_a?(ErrorKey)
-            key.prepend_path(prepend_part).to_s
+            key.prepend_path(*).to_s
           else
             key = parse(key)
-            key.prepend_path!(prepend_part).to_s
+            key.prepend_path!(*).to_s
           end
         end
 
@@ -72,14 +72,22 @@ module Foobara
         @runtime_path = symbolize_all(runtime_path)
       end
 
-      def prepend_path!(prepend_parts)
+      def prepend_path!(*prepend_parts)
+        if prepend_parts.size == 1
+          arg = prepend_parts.first
+
+          if arg.is_a?(Array)
+            prepend_parts = arg
+          end
+        end
+
         self.path = [*prepend_parts, *path]
         self
       end
 
-      def prepend_path(prepend_parts)
+      def prepend_path(*)
         dup.tap do |key|
-          key.path = [*prepend_parts, *path]
+          key.prepend_path!(*)
         end
       end
 
