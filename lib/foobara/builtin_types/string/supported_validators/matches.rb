@@ -2,7 +2,7 @@ module Foobara
   module BuiltinTypes
     module String
       module SupportedValidators
-        class MatchesRegex < TypeDeclarations::Validator
+        class Matches < TypeDeclarations::Validator
           class DoesNotMatchError < Foobara::Value::DataError
             class << self
               def context_type_declaration

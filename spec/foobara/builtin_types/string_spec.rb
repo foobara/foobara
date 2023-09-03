@@ -70,7 +70,7 @@ RSpec.describe ":string" do
 
     context "with :matches validator" do
       let(:type) do
-        Foobara::TypeDeclarations::Namespace.type_for_declaration(:string, matches_regex: /bar/i)
+        Foobara::TypeDeclarations::Namespace.type_for_declaration(:string, matches: /bar/i)
       end
 
       context "when matches" do
@@ -84,7 +84,7 @@ RSpec.describe ":string" do
 
         it {
           is_expected_to_raise(
-            Foobara::BuiltinTypes::String::SupportedValidators::MatchesRegex::DoesNotMatchError,
+            Foobara::BuiltinTypes::String::SupportedValidators::Matches::DoesNotMatchError,
             /\/bar\/i\b/
           ) { |error| expect(error.context[:regex]).to eq(/bar/i.to_s) } # TODO: eliminate this .to_s call
         }
