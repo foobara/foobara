@@ -4,8 +4,12 @@ RSpec.describe Foobara::Value::Processor do
       self::Error = Class.new(Foobara::Value::DataError) do # rubocop:disable RSpec/LeakyConstantDeclaration
       end
 
-      def process_value(_value)
-        Foobara::Outcome.error(build_error(symbol: :foo, message: "some error", context: {}))
+      def process_value(value)
+        if value == 123
+          Foobara::Outcome.error(build_error(symbol: :foo, message: "some error", context: {}))
+        else
+          Foobara::Outcome.success(value)
+        end
       end
     end
   }
@@ -32,6 +36,22 @@ RSpec.describe Foobara::Value::Processor do
         expect {
           processor.process_value!(123)
         }.to raise_error(processor_class::Error)
+      end
+    end
+  end
+
+  describe "#process_outcome!" do
+    context "when is an error" do
+      it "raises" do
+        expect {
+          processor.process_outcome!(Foobara::Outcome.success(123))
+        }.to raise_error(processor_class::Error)
+      end
+    end
+
+    context "when is not an error" do
+      it "gives the result" do
+        expect(processor.process_outcome!(Foobara::Outcome.success(10))).to eq(10)
       end
     end
   end
