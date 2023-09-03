@@ -5,6 +5,7 @@ module Foobara
         runner_methods :validation_errors
       end
 
+      # Should a Validator only return one type of error?
       def validation_errors(_value)
         # :nocov:
         raise "subclass responsibility"

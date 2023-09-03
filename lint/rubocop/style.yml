@@ -45,6 +45,9 @@ Style/OptionalBooleanParameter:
 Style/RedundantFetchBlock:
   Enabled: false
 
+Style/RegexpLiteral:
+  Enabled: false
+
 Style/RescueStandardError:
   EnforcedStyle: implicit
 

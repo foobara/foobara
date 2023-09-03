@@ -8,16 +8,11 @@ module Foobara
         attr_accessor :root_type
       end
 
-      # notes: needed/useful transformers/validators to implement:
+      # TODO: needed/useful transformers/validators to implement:
       #
-      # default (cast from nil at attribute level)
-      # required (validation at attributes level)
       # allow_empty (validation at attribute level)
       # allow_nil (validation at attribute level)
       # one_of (validation at attribute level)
-      # max_length (string validation at attribute level)
-      # max (integer validation at attribute level)
-      # matches (string against a regex)
 
       attr_accessor :base_type,
                     :casters,
@@ -28,7 +23,8 @@ module Foobara
                     :element_types,
                     :element_type,
                     :raw_declaration_data,
-                    :name
+                    :name,
+                    :process_through_base_type_first
 
       def initialize(
         *args,
@@ -41,6 +37,7 @@ module Foobara
         element_type: nil,
         element_types: nil,
         structure_count: nil,
+        process_through_base_type_first: true,
         **opts
       )
         self.base_type = base_type
@@ -52,6 +49,7 @@ module Foobara
         self.element_types = element_types
         self.element_type = element_type
         self.name = name
+        self.process_through_base_type_first = process_through_base_type_first
 
         super(
           *args,
@@ -60,13 +58,19 @@ module Foobara
       end
 
       def processors
-        [
-          base_type,
+        processors = [
           value_caster,
           value_transformer,
           value_validator,
           element_processor
-        ].compact
+        ]
+
+        if process_through_base_type_first
+          processors.unshift(base_type)
+        end
+
+        processors.compact!
+        processors
       end
 
       def value_caster

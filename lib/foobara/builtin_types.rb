@@ -19,12 +19,16 @@ module Foobara
         build_and_register_from_modules_and_install_type_declaration_extensions!(:integer, number)
         # float = build_and_register_from_modules_and_install_type_declaration_extensions!(:float, number)
         # build_and_register_from_modules_and_install_type_declaration_extensions!(:big_decimal, float)
-        build_and_register_from_modules_and_install_type_declaration_extensions!(:string, atomic_duck)
+        string = build_and_register_from_modules_and_install_type_declaration_extensions!(:string, atomic_duck)
         # build_and_register_from_modules_and_install_type_declaration_extensions!(:datetime, atomic_duck)
         # build_and_register_from_modules_and_install_type_declaration_extensions!(:date, atomic_duck)
         # build_and_register_from_modules_and_install_type_declaration_extensions!(:boolean, atomic_duck)
 
-        # email = build_and_register_from_modules_and_install_type_declaration_extensions!(:email, string)
+        build_and_register_from_modules_and_install_type_declaration_extensions!(
+          :email,
+          string,
+          process_through_base_type_first: false
+        )
         # phone_number = build_and_register_from_modules_and_install_type_declaration_extensions!(:phone_number, string)
 
         duckture = build_and_register_from_modules_and_install_type_declaration_extensions!(:duckture)
@@ -45,15 +49,27 @@ module Foobara
         # us_address = build_and_register_from_modules_and_install_type_declaration_extensions!(:us_address, model)
       end
 
-      def build_and_register_from_modules_and_install_type_declaration_extensions!(type_symbol, base_type = root_type)
-        type = build_from_modules_and_install_type_declaration_extensions!(type_symbol, base_type)
+      def build_and_register_from_modules_and_install_type_declaration_extensions!(
+        type_symbol,
+        base_type = root_type,
+        process_through_base_type_first: true
+      )
+        type = build_from_modules_and_install_type_declaration_extensions!(
+          type_symbol,
+          base_type,
+          process_through_base_type_first:
+        )
 
         global_registry.register(type_symbol, type)
 
         type
       end
 
-      def build_from_modules_and_install_type_declaration_extensions!(type_symbol, base_type = root_type)
+      def build_from_modules_and_install_type_declaration_extensions!(
+        type_symbol,
+        base_type = root_type,
+        process_through_base_type_first:
+      )
         module_symbol = type_symbol.to_s.camelize.to_sym
 
         builtin_type_module = const_get(module_symbol, false)
@@ -81,7 +97,8 @@ module Foobara
           name: type_symbol,
           casters: casters.presence || base_type.casters.dup,
           transformers:,
-          validators:
+          validators:,
+          process_through_base_type_first:
         )
 
         processor_classes = [*transformers, *validators].map(&:class)
@@ -101,7 +118,6 @@ module Foobara
       end
 
       def install_type_declaration_extensions_for(processor_class)
-        # TODO: make sure we're not double-registering stuff...
         extension_module = Util.constant_value(processor_class, :TypeDeclarationExtension)
 
         return unless extension_module

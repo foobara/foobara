@@ -72,12 +72,13 @@ module Foobara
         error_class.symbol
       end
 
-      def error_message(value)
-        error_class.message(value)
+      # TODO: probably actually better to pass it through to the error class method. Bring that back.
+      def error_message(_value)
+        error_class.message
       end
 
-      def error_context(value)
-        error_class.context(value)
+      def error_context(_value)
+        error_class.context
       end
 
       def possible_errors

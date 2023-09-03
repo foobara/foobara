@@ -128,11 +128,11 @@ RSpec.describe "custom types" do
               :real_should_not_match_imaginary
             end
 
-            def context(_value)
+            def context
               { foo: :bar }
             end
 
-            def message(_value)
+            def message
               "cant be the same!"
             end
 
@@ -188,7 +188,7 @@ RSpec.describe "custom types" do
         Class.new(Foobara::TypeDeclarations::TypeDeclarationValidator) do
           self::WhateverError = Class.new(Foobara::Value::DataError) do # rubocop:disable RSpec/LeakyConstantDeclaration
             class << self
-              def message(_value)
+              def message
                 "whatevs!"
               end
 
