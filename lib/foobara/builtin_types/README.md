@@ -139,7 +139,7 @@ end
 in `build_and_register_all_builtins_and_install_type_declaration_extensions!` in `lib/foobara/builtin_types.rb`
 
 ```ruby
-string = build_and_register_from_modules_and_install_type_declaration_extensions!(:string, atomic_duck)
+string = build_and_register!(:string, atomic_duck)
 ```
 
 ## Trying it out...
