@@ -8,45 +8,95 @@ module Foobara
       delegate :global_type_declaration_handler_registry, to: TypeDeclarations
 
       def build_and_register_all_builtins_and_install_type_declaration_extensions!
-        duck = build_and_register_from_modules_and_install_type_declaration_extensions!(:duck)
+        duck = build_and_register_from_modules_and_install_type_declaration_extensions!(
+          :duck
+        )
 
         global_registry.root_type = duck
 
-        atomic_duck = build_and_register_from_modules_and_install_type_declaration_extensions!(:atomic_duck)
-
-        build_and_register_from_modules_and_install_type_declaration_extensions!(:symbol, atomic_duck)
-        number = build_and_register_from_modules_and_install_type_declaration_extensions!(:number, atomic_duck)
-        build_and_register_from_modules_and_install_type_declaration_extensions!(:integer, number)
-        # float = build_and_register_from_modules_and_install_type_declaration_extensions!(:float, number)
-        # build_and_register_from_modules_and_install_type_declaration_extensions!(:big_decimal, float)
-        string = build_and_register_from_modules_and_install_type_declaration_extensions!(:string, atomic_duck)
-        # build_and_register_from_modules_and_install_type_declaration_extensions!(:datetime, atomic_duck)
-        # build_and_register_from_modules_and_install_type_declaration_extensions!(:date, atomic_duck)
-        # build_and_register_from_modules_and_install_type_declaration_extensions!(:boolean, atomic_duck)
-
+        atomic_duck = build_and_register_from_modules_and_install_type_declaration_extensions!(
+          :atomic_duck
+        )
+        build_and_register_from_modules_and_install_type_declaration_extensions!(
+          :symbol,
+          atomic_duck
+        )
+        number = build_and_register_from_modules_and_install_type_declaration_extensions!(
+          :number,
+          atomic_duck
+        )
+        build_and_register_from_modules_and_install_type_declaration_extensions!(
+          :integer,
+          number
+        )
+        # float = build_and_register_from_modules_and_install_type_declaration_extensions!(
+        #   :float,
+        #   number
+        # )
+        # build_and_register_from_modules_and_install_type_declaration_extensions!(
+        #   :big_decimal,
+        #   float
+        # )
+        string = build_and_register_from_modules_and_install_type_declaration_extensions!(
+          :string,
+          atomic_duck
+        )
+        # build_and_register_from_modules_and_install_type_declaration_extensions!(
+        #   :datetime,
+        #   atomic_duck
+        # )
+        # build_and_register_from_modules_and_install_type_declaration_extensions!(
+        #   :date,
+        #   atomic_duck
+        # )
+        build_and_register_from_modules_and_install_type_declaration_extensions!(
+          :boolean,
+          atomic_duck
+        )
         build_and_register_from_modules_and_install_type_declaration_extensions!(
           :email,
           string,
           process_through_base_type_first: false
         )
-        # phone_number = build_and_register_from_modules_and_install_type_declaration_extensions!(:phone_number, string)
-
-        duckture = build_and_register_from_modules_and_install_type_declaration_extensions!(:duckture)
-
-        array = build_and_register_from_modules_and_install_type_declaration_extensions!(:array, duckture)
-        # tuple = build_and_register_from_modules_and_install_type_declaration_extensions!(:tuple, array)
+        # phone_number = build_and_register_from_modules_and_install_type_declaration_extensions!(
+        #   :phone_number,
+        #   string
+        # )
+        duckture = build_and_register_from_modules_and_install_type_declaration_extensions!(
+          :duckture
+        )
+        array = build_and_register_from_modules_and_install_type_declaration_extensions!(
+          :array,
+          duckture
+        )
+        # tuple = build_and_register_from_modules_and_install_type_declaration_extensions!(
+        #   :tuple,
+        #   array
+        # )
         associative_array = build_and_register_from_modules_and_install_type_declaration_extensions!(
-          :associative_array, array
+          :associative_array,
+          array
         )
         build_and_register_from_modules_and_install_type_declaration_extensions!(
           :attributes,
           associative_array
         )
-        # model = build_and_register_from_modules_and_install_type_declaration_extensions!(:model, attributes)
-        # entity = build_and_register_from_modules_and_install_type_declaration_extensions!(:entity, model)
-
-        # address = build_and_register_from_modules_and_install_type_declaration_extensions!(:address, model)
-        # us_address = build_and_register_from_modules_and_install_type_declaration_extensions!(:us_address, model)
+        # model = build_and_register_from_modules_and_install_type_declaration_extensions!(
+        #   :model,
+        #   attributes
+        # )
+        # entity = build_and_register_from_modules_and_install_type_declaration_extensions!(
+        #   :entity,
+        #   model
+        # )
+        # address = build_and_register_from_modules_and_install_type_declaration_extensions!(
+        #   :address,
+        #   model
+        # )
+        # us_address = build_and_register_from_modules_and_install_type_declaration_extensions!(
+        #   :us_address,
+        #   model
+        # )
       end
 
       def build_and_register_from_modules_and_install_type_declaration_extensions!(
