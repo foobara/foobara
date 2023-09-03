@@ -19,7 +19,7 @@ module Foobara
           end
 
           def validation_errors(string)
-            if string.length !~ regex
+            if string !~ regex
               build_error(string)
             end
           end

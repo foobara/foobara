@@ -68,6 +68,29 @@ RSpec.describe ":string" do
       end
     end
 
+    context "with :matches validator" do
+      let(:type) do
+        Foobara::TypeDeclarations::Namespace.type_for_declaration(:string, matches_regex: /bar/i)
+      end
+
+      context "when matches" do
+        let(:value) { "Foo Bar" }
+
+        it { is_expected.to eq(value) }
+      end
+
+      context "when does not match" do
+        let(:value) { "Foo Baz" }
+
+        it {
+          is_expected_to_raise(
+            Foobara::BuiltinTypes::String::SupportedValidators::MatchesRegex::DoesNotMatchError,
+            /\/bar\/i\b/
+          ) { |error| expect(error.context[:regex]).to eq(/bar/i.to_s) } # TODO: eliminate this .to_s call
+        }
+      end
+    end
+
     context "with validators and transformers" do
       let(:type) do
         Foobara::TypeDeclarations::Namespace.type_for_declaration(:string, :downcase, max_length: 10)
