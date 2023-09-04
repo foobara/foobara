@@ -35,7 +35,7 @@ RSpec.describe ":boolean" do
     end
 
     context "when not castable" do
-      let(:value) { "fal" }
+      let(:value) { "notcastable" }
 
       it { is_expected_to_raise(Foobara::Value::Processor::Casting::CannotCastError) }
     end

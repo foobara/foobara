@@ -14,7 +14,7 @@ module Foobara
         number = build_and_register!(:number, atomic_duck)
         build_and_register!(:integer, number)
         build_and_register!(:float, number)
-        # build_and_register!(:big_decimal, number)
+        build_and_register!(:big_decimal, number)
         # build_and_register!(:rational, number)
         # build_and_register!(:complex, number)
         string = build_and_register!(:string, atomic_duck)
