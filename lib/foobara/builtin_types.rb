@@ -19,12 +19,12 @@ module Foobara
         # build_and_register!(:datetime, atomic_duck)
         # build_and_register!(:date, atomic_duck)
         build_and_register!(:boolean, atomic_duck)
-        build_and_register!(:email, string, process_through_base_type_first: false)
+        build_and_register!(:email, string)
         # phone_number = build_and_register!(:phone_number, string)
         duckture = build_and_register!(:duckture)
-        array = build_and_register!(:array, duckture)
+        build_and_register!(:array, duckture)
         # tuple = build_and_register!(:tuple, array)
-        associative_array = build_and_register!(:associative_array, array)
+        associative_array = build_and_register!(:associative_array, duckture)
         build_and_register!(:attributes, associative_array)
         # model = build_and_register!(:model, attributes)
         # entity = build_and_register!(:entity, model)
@@ -32,16 +32,8 @@ module Foobara
         # us_address = build_and_register!(:us_address, model)
       end
 
-      def build_and_register!(
-        type_symbol,
-        base_type = root_type,
-        process_through_base_type_first: true
-      )
-        type = build_from_modules_and_install_type_declaration_extensions!(
-          type_symbol,
-          base_type,
-          process_through_base_type_first:
-        )
+      def build_and_register!(type_symbol, base_type = root_type)
+        type = build_from_modules_and_install_type_declaration_extensions!(type_symbol, base_type)
 
         global_registry.register(type_symbol, type)
 
@@ -52,11 +44,7 @@ module Foobara
         type
       end
 
-      def build_from_modules_and_install_type_declaration_extensions!(
-        type_symbol,
-        base_type = root_type,
-        process_through_base_type_first:
-      )
+      def build_from_modules_and_install_type_declaration_extensions!(type_symbol, base_type = root_type)
         module_symbol = type_symbol.to_s.camelize.to_sym
 
         builtin_type_module = const_get(module_symbol, false)
@@ -84,8 +72,7 @@ module Foobara
           name: type_symbol,
           casters: casters.presence || base_type.casters.dup,
           transformers:,
-          validators:,
-          process_through_base_type_first:
+          validators:
         )
 
         processor_classes = [*transformers, *validators].map(&:class)

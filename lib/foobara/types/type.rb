@@ -23,8 +23,7 @@ module Foobara
                     :element_types,
                     :element_type,
                     :raw_declaration_data,
-                    :name,
-                    :process_through_base_type_first
+                    :name
 
       def initialize(
         *args,
@@ -37,7 +36,6 @@ module Foobara
         element_type: nil,
         element_types: nil,
         structure_count: nil,
-        process_through_base_type_first: true,
         **opts
       )
         self.base_type = base_type
@@ -49,7 +47,6 @@ module Foobara
         self.element_types = element_types
         self.element_type = element_type
         self.name = name
-        self.process_through_base_type_first = process_through_base_type_first
 
         super(
           *args,
@@ -58,19 +55,13 @@ module Foobara
       end
 
       def processors
-        processors = [
+        [
+          base_type,
           value_caster,
           value_transformer,
           value_validator,
           element_processor
-        ]
-
-        if process_through_base_type_first
-          processors.unshift(base_type)
-        end
-
-        processors.compact!
-        processors
+        ].compact
       end
 
       def value_caster
