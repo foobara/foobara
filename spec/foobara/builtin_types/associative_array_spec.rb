@@ -11,17 +11,58 @@ RSpec.describe ":associative_array" do
     end
 
     context "when hash" do
-      let(:value) { { a: 1, b: 2 } }
+      let(:value) { { key1 => 1, key2 => 2 } }
+      let(:key1) { Object.new }
+      let(:key2) { Object.new }
 
-      it { is_expected.to eq(a: 1, b: 2) }
+      it { is_expected.to eq(key1 => 1, key2 => 2) }
     end
 
     context "when not castable" do
       let(:value) { Object.new }
 
-      it {
-        is_expected_to_raise(Foobara::Value::Processor::Casting::CannotCastError, /Expected it to be a Enumerable/)
-      }
+      it { is_expected_to_raise(Foobara::Value::Processor::Casting::CannotCastError, /Expected it to be a Enumerable/) }
+    end
+
+    context "when there's a key_type_declaration" do
+      let(:type) do
+        Foobara::TypeDeclarations::Namespace.type_for_declaration(
+          :associative_array,
+          key_type_declaration: :boolean
+        )
+      end
+
+      describe "#possible_errors" do
+        it "contains expected possible errors" do
+          expect(type.possible_errors).to eq(
+            "data.#.key.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
+            "data.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError
+          )
+        end
+      end
+
+      context "when keys adhere to type" do
+        let(:value) do
+          { y: 1, "FaLsE" => 2 }
+        end
+
+        it { is_expected.to eq(true => 1, false => 2) }
+      end
+
+      context "when keys do not adhere" do
+        let(:outcome) { type.process_value(value) }
+        let(:errors) { outcome.errors }
+
+        let(:value) { { a: 1, b: 2 } }
+
+        it "is not success" do
+          expect(outcome).to_not be_success
+
+          expect(errors.size).to eq(2)
+          expect(errors.map(&:path)).to contain_exactly([0, :key], [1, :key])
+          expect(errors).to all be_a(Foobara::Value::Processor::Casting::CannotCastError)
+        end
+      end
     end
   end
 
