@@ -18,7 +18,7 @@ module Foobara
           end
 
           def cast(value)
-            TRUE_VALUES.include?(value.downcase)
+            TRUE_VALUES.include?(value.to_s.downcase)
           end
         end
       end
