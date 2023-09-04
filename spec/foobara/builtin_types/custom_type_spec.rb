@@ -17,7 +17,7 @@ RSpec.describe "custom types" do
         element_type_declarations: {
           n: :integer,
           # not entirely complex since we only support integers for the components for now but whatever
-          c: { type: :complex, be_pointless: :true_symbol }
+          c: { type: :custom_complex, be_pointless: :true_symbol }
         }
       }
     end
@@ -44,7 +44,7 @@ RSpec.describe "custom types" do
           end
 
           def desugarize(_value)
-            { type: :complex }
+            { type: :custom_complex }
           end
         end
 
@@ -56,7 +56,7 @@ RSpec.describe "custom types" do
 
             Foobara::Types::Type.new(
               strict_type_declaration,
-              name: :complex,
+              name: :custom_complex,
               casters: c,
               transformers: [],
               validators:,
@@ -86,7 +86,7 @@ RSpec.describe "custom types" do
         end
 
         def applicable?(sugary_type_declaration)
-          (sugary_type_declaration.is_a?(Hash) && sugary_type_declaration[:type] == :complex) ||
+          (sugary_type_declaration.is_a?(Hash) && sugary_type_declaration[:type] == :custom_complex) ||
             sugar_for_complex?(sugary_type_declaration)
         end
 
@@ -308,21 +308,21 @@ RSpec.describe "custom types" do
         context "when not registered" do
           it "raises" do
             expect {
-              namespace.type_for_declaration(:complex)
+              namespace.type_for_declaration(:custom_complex)
             }.to raise_error(Foobara::TypeDeclarations::Namespace::NoTypeDeclarationHandlerFoundError)
           end
         end
 
         context "when registered" do
           let(:type_declaration_handler) { type_declaration_handler_class.new }
-          let(:type) { type_declaration_handler.process_value!(type: :complex, be_pointless: :true_symbol) }
+          let(:type) { type_declaration_handler.process_value!(type: :custom_complex, be_pointless: :true_symbol) }
 
           before do
-            namespace.register_type(:complex, type)
+            namespace.register_type(:custom_complex, type)
           end
 
           it "gives the complex type for the complex symbol" do
-            expect(namespace.type_for_declaration(:complex)).to be(type)
+            expect(namespace.type_for_declaration(:custom_complex)).to be(type)
           end
 
           it "can cast if needed" do
