@@ -20,7 +20,7 @@ module Foobara
 
       def eql?(other)
         # TODO: this doesn't feel right at all...
-        super && other.is_a?(DataError) && attribute_name == other.attribute_name
+        super && other.is_a?(DataError) && path == other.path
       end
     end
   end

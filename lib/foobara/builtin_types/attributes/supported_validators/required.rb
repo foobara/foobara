@@ -26,10 +26,19 @@ module Foobara
               unless attributes_hash.key?(required_attribute_name)
                 build_error(
                   message: "Missing required attribute #{required_attribute_name}",
-                  context: { attribute_name: required_attribute_name }
+                  context: { attribute_name: required_attribute_name },
+                  path: [required_attribute_name]
                 )
               end
             end.compact
+          end
+
+          def possible_errors
+            key = ErrorKey.new(symbol: error_symbol, category: error_class.category)
+
+            required_attribute_names.to_h do |required_attribute_name|
+              [ErrorKey.prepend_path(key, required_attribute_name), error_class]
+            end
           end
         end
       end
