@@ -64,6 +64,47 @@ RSpec.describe ":associative_array" do
         end
       end
     end
+
+    context "when there's a value_type_declaration" do
+      let(:type) do
+        Foobara::TypeDeclarations::Namespace.type_for_declaration(
+          :associative_array,
+          value_type_declaration: :boolean
+        )
+      end
+
+      describe "#possible_errors" do
+        it "contains expected possible errors" do
+          expect(type.possible_errors).to eq(
+            "data.#.value.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
+            "data.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError
+          )
+        end
+      end
+
+      context "when values adhere to type" do
+        let(:value) do
+          { a: 1, b: "FalsE" }
+        end
+
+        it { is_expected.to eq(a: true, b: false) }
+      end
+
+      context "when values do not adhere" do
+        let(:outcome) { type.process_value(value) }
+        let(:errors) { outcome.errors }
+
+        let(:value) { { a: :foo, b: 2 } }
+
+        it "is not success" do
+          expect(outcome).to_not be_success
+
+          expect(errors.size).to eq(2)
+          expect(errors.map(&:path)).to contain_exactly([0, :value], [1, :value])
+          expect(errors).to all be_a(Foobara::Value::Processor::Casting::CannotCastError)
+        end
+      end
+    end
   end
 
   describe "#cast!" do
