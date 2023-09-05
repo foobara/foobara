@@ -2,12 +2,12 @@ require "foobara/builtin_types/casters/direct_type_match"
 
 module Foobara
   module BuiltinTypes
-    module Date
+    module Datetime
       module Casters
         # TODO: Should we support NaN, Infinity, -Infinity??
-        class Date < BuiltinTypes::Casters::DirectTypeMatch
+        class Datetime < BuiltinTypes::Casters::DirectTypeMatch
           def initialize(*args)
-            super(*args, ruby_classes: ::Date)
+            super(*args, ruby_classes: ::Time)
           end
         end
       end

@@ -1,3 +1,6 @@
+require "date"
+require "time"
+
 Foobara::Util.require_directory("#{__dir__}/builtin_types")
 
 module Foobara
@@ -21,7 +24,7 @@ module Foobara
         # build_and_register!(:complex, number)
         string = build_and_register!(:string, atomic_duck)
         build_and_register!(:date, atomic_duck)
-        # build_and_register!(:datetime, atomic_duck)
+        build_and_register!(:datetime, atomic_duck)
         build_and_register!(:boolean, atomic_duck)
         build_and_register!(:email, string)
         # phone_number = build_and_register!(:phone_number, string)

@@ -3,8 +3,6 @@ module Foobara
     module Date
       module Casters
         class String < Value::Caster
-          FLOAT_REGEX = /^-?\d+(\.\d+)?([eE]-?\d+)?$/
-
           def applicable?(value)
             value.is_a?(::String) && parse(value)
           end
