@@ -15,11 +15,13 @@ module Foobara
         build_and_register!(:integer, number)
         build_and_register!(:float, number)
         build_and_register!(:big_decimal, number)
+        # Let's skip these for now since they rarely come up in business contexts and both could be
+        # represented by a tuple of numbers.
         # build_and_register!(:rational, number)
         # build_and_register!(:complex, number)
         string = build_and_register!(:string, atomic_duck)
+        build_and_register!(:date, atomic_duck)
         # build_and_register!(:datetime, atomic_duck)
-        # build_and_register!(:date, atomic_duck)
         build_and_register!(:boolean, atomic_duck)
         build_and_register!(:email, string)
         # phone_number = build_and_register!(:phone_number, string)
