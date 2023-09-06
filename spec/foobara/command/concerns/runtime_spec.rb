@@ -19,12 +19,6 @@ RSpec.describe Foobara::Command::Concerns::Runtime do
           self.exponential *= base
         end
       end
-
-      class << self
-        def name
-          "CalculateExponential"
-        end
-      end
     end
   }
 

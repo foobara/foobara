@@ -23,16 +23,11 @@ module Foobara
 
       class_methods do
         def domain
-          return @domain if defined?(@domain)
+          mod = Util.module_for(self)
 
-          Domain.all.each do |domain|
-            if domain.owns_command_class?(self)
-              @domain = domain
-              return domain
-            end
+          if mod&.foobara_domain?
+            mod.foobara_domain
           end
-
-          @domain = nil
         end
 
         def namespace

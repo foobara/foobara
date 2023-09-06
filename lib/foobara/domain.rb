@@ -3,24 +3,40 @@ Foobara::Util.require_directory("#{__dir__}/domain")
 module Foobara
   class Domain
     class AlreadyRegisteredDomainDependency < StandardError; end
-    class DomainDependencyNotRegistered < StandardError; end
 
-    attr_accessor :superdomain
+    attr_accessor :organization, :domain_name
 
-    def initialize(superdomain = nil)
-      self.superdomain = superdomain
+    def initialize(domain_name:, organization: nil)
+      self.domain_name = domain_name
+      self.organization = organization
       Domain.all << self
       @command_classes = []
     end
 
-    delegate :name, to: :class
+    delegate :organization_name, :organization_symbol, to: :organization
 
     def type_namespace
-      @type_namespace ||= if superdomain
-                            Foobara::TypeDeclarations::Namespace.new(name, accesses: superdomain)
-                          else
-                            Foobara::TypeDeclarations::Namespace.new(name)
-                          end
+      @type_namespace ||= Foobara::TypeDeclarations::Namespace.new(full_domain_name)
+    end
+
+    def full_domain_name
+      if organization.present?
+        "#{organization_name}::#{domain_name}"
+      else
+        domain_name
+      end
+    end
+
+    def domain_symbol
+      @domain_symbol ||= domain_name.underscore.to_sym
+    end
+
+    def full_domain_symbol
+      @full_domain_symbol ||= if organization.present?
+                                "#{organization_symbol}::#{domain_symbol}".to_sym
+                              else
+                                domain_symbol
+                              end.to_sym
     end
 
     def command_classes
@@ -28,22 +44,14 @@ module Foobara
       @command_classes
     end
 
-    def owns_command_class?(command_class)
-      command_classes.include?(command_class)
-    end
-
-    def register_commands(command_classes)
-      command_classes.each do |command_class|
-        register_command(command_class)
-      end
-    end
-
     def register_command(command_class)
       @command_classes << command_class
     end
 
     def depends_on?(domain)
-      domain = domain.name if domain.is_a?(Class) || domain.is_a?(Domain)
+      if domain.is_a?(Domain)
+        domain = domain.domain_name
+      end
 
       depends_on.include?(domain.to_sym)
     end
@@ -68,26 +76,17 @@ module Foobara
       end
     end
 
-    def verify_depends_on!(domain_class)
-      unless depends_on?(domain_class)
-        # :nocov:
-        raise DomainDependencyNotRegistered, "Need to declare #{domain_class} on #{self} with .depends_on"
-        # :nocov:
-      end
-    end
-
-    def runtime_path_symbol
-      symbol = name.demodulize.underscore
-
-      [
-        superdomain&.runtime_path_symbol,
-        symbol
-      ].compact.join("::").to_sym
-    end
-
     class << self
       def all
         @all ||= []
+      end
+
+      def foobara_organization_modules
+        @foobara_organization_modules ||= []
+      end
+
+      def foobara_domain_modules
+        @foobara_domain_modules ||= []
       end
 
       def unprocessed_command_classes
@@ -97,19 +96,9 @@ module Foobara
       def process_command_classes
         until unprocessed_command_classes.empty?
           command_class = unprocessed_command_classes.pop
-
-          command_class = const_get(command_class) unless command_class.is_a?(Class)
-          domain = autodetect_domain(command_class)
+          domain = command_class.domain
 
           domain&.register_command(command_class)
-        end
-      end
-
-      def autodetect_domain(command_class)
-        namespace = Foobara::Util.module_for(command_class)
-
-        if namespace&.ancestors&.include?(Foobara::Domain)
-          namespace
         end
       end
 
@@ -122,20 +111,21 @@ module Foobara
       end
 
       def install!
-        return if @installed
+        if @installed
+          # :nocov:
+          raise "Already registered Domain"
+          # :nocov:
+        end
 
         @installed = true
+        Module.include(Foobara::Domain::ModuleExtension)
         Foobara::Command.include(Foobara::Domain::CommandExtension)
         Foobara::Command.after_subclass_defined do |subclass|
           unprocessed_command_classes << subclass
         end
       end
 
-      def instance
-        @instance ||= new
-      end
-
-      delegate :depends_on, :depends_on?, :register_command, :register_commands, to: :instance
+      #       delegate :depends_on, :depends_on?, :register_command, :register_commands, to: :instance
     end
   end
 end

@@ -58,6 +58,26 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
     stub_const("RunSomeSubcommand", subcommand_class)
   end
 
+  describe "depends_on?" do
+    context "when command registered via #depends_on" do
+      it "is true" do
+        expect(command_class.depends_on?(subcommand_class)).to be(true)
+      end
+
+      context "when checking by name" do
+        it "is true" do
+          expect(command_class.depends_on?("RunSomeSubcommand")).to be(true)
+        end
+      end
+    end
+
+    context "when command not registered via #depends_on" do
+      it "is false" do
+        expect(command_class.depends_on?(Object)).to be(false)
+      end
+    end
+  end
+
   describe ".error_context_type_map" do
     let(:error_context_type_map) { command_class.error_context_type_map }
 

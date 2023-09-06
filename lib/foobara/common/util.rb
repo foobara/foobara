@@ -4,8 +4,12 @@ module Foobara
       module_function
 
       def module_for(mod)
-        name = mod.name[/(.*)::/, 1]
-        Object.const_get(name) if name
+        name = mod.name
+
+        if name
+          name = mod.name[/(.*)::/, 1]
+          Object.const_get(name) if name
+        end
       end
 
       def power_set(array)

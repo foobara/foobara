@@ -26,12 +26,6 @@ RSpec.describe Foobara::Command::Concerns::Errors do
             self.exponential *= base
           end
         end
-
-        class << self
-          def name
-            "CalculateExponential"
-          end
-        end
       end
     }
 

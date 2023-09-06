@@ -39,9 +39,9 @@ module Foobara
 
         class_methods do
           def depends_on?(subcommand_name)
-            subcommand_name = if subcommand_name.is_a?(Class)
-                                subcommand_name.name
-                              end
+            if subcommand_name.is_a?(Class)
+              subcommand_name = subcommand_name.name
+            end
 
             depends_on.include?(subcommand_name.to_sym)
           end

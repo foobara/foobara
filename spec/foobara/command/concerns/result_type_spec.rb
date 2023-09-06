@@ -8,12 +8,6 @@ RSpec.describe Foobara::Command::Concerns::ResultType do
         def execute
           to_be_result
         end
-
-        class << self
-          def name
-            "PassThrough"
-          end
-        end
       end
     }
 

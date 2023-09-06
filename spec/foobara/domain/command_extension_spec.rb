@@ -1,22 +1,54 @@
 RSpec.describe Foobara::Domain::CommandExtension do
+  after do
+    Foobara::Domain.reset_unprocessed_command_classes
+    Foobara::Domain.reset_all
+    Foobara::Organization.reset_all
+  end
+
   describe "#run_subcommand!" do
     before do
-      [domain_class1, domain_class2].each do |domain_class|
-        stub_const(domain_class.name, domain_class)
-        expect(domain_class.instance).to be_a(domain_class)
+      [domain_module1, domain_module2, domain_module3].each do |domain_module|
+        stub_const(domain_module.name, domain_module)
+        expect(domain_module.foobara_domain).to be_a(Foobara::Domain)
       end
 
-      [command_class1, command_class2].each do |command_class|
+      [command_class1, command_class2, top_level_command_class].each do |command_class|
         stub_const(command_class.name, command_class)
       end
     end
 
-    let(:domain_class1) {
-      Class.new(Foobara::Domain) do
+    let(:domain_module1) {
+      Module.new do
         class << self
           def name
             "SomeDomain1"
           end
+
+          foobara_domain!
+        end
+      end
+    }
+
+    let(:domain_module2) {
+      Module.new do
+        class << self
+          def name
+            "SomeDomain2"
+          end
+
+          foobara_domain!
+        end
+      end
+    }
+
+    let(:domain_module3) {
+      Module.new do
+        class << self
+          def name
+            "SomeDomain3"
+          end
+
+          foobara_domain!
         end
       end
     }
@@ -39,16 +71,6 @@ RSpec.describe Foobara::Domain::CommandExtension do
       end
     }
 
-    let(:domain_class2) {
-      Class.new(Foobara::Domain) do
-        class << self
-          def name
-            "SomeDomain2"
-          end
-        end
-      end
-    }
-
     let(:command_class2) {
       name = command_class2_name
       Class.new(Foobara::Command) do
@@ -58,6 +80,14 @@ RSpec.describe Foobara::Domain::CommandExtension do
 
         def execute
           100 if subcommand?
+        end
+      end
+    }
+
+    let(:top_level_command_class) {
+      Class.new(Foobara::Command) do
+        singleton_class.define_method :name do
+          "TopLevelCommand"
         end
       end
     }
@@ -113,6 +143,12 @@ RSpec.describe Foobara::Domain::CommandExtension do
       it "is not allowed to run the subcommand" do
         expect { outcome }.to raise_error(described_class::CannotAccessDomain)
       end
+
+      describe "#command_clases" do
+        it "has the expected classes" do
+          expect(domain_module1.foobara_domain.command_classes).to eq([command_class1])
+        end
+      end
     end
 
     context "when in different domains with backwards dependency" do
@@ -120,7 +156,7 @@ RSpec.describe Foobara::Domain::CommandExtension do
       let(:command_class2_name) { "SomeDomain2::SomeCommand2" }
 
       before do
-        domain_class2.depends_on(domain_class1)
+        domain_module2.depends_on(domain_module1)
       end
 
       it "is not allowed to run the subcommand" do
@@ -133,12 +169,20 @@ RSpec.describe Foobara::Domain::CommandExtension do
       let(:command_class2_name) { "SomeDomain2::SomeCommand2" }
 
       before do
-        domain_class1.depends_on(domain_class2)
+        domain_module1.depends_on(SomeDomain2, SomeDomain3)
       end
 
       it "is allowed to run the subcommand" do
         expect(outcome).to be_success
         expect(result).to eq(100)
+      end
+
+      describe "#depends_on?" do
+        context "when checking by string" do
+          subject { domain_module1.foobara_domain.depends_on?("SomeDomain2") }
+
+          it { is_expected.to be(true) }
+        end
       end
     end
   end

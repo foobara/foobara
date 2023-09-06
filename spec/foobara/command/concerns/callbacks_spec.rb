@@ -20,12 +20,6 @@ RSpec.describe Foobara::Command::Concerns::Callbacks do
             self.exponential *= base
           end
         end
-
-        class << self
-          def name
-            "CalculateExponential"
-          end
-        end
       end
     }
     let(:base) { 4 }
