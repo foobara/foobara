@@ -111,23 +111,23 @@ module Foobara
       end
 
       def process_value!(value)
-        outcome = process_value(value)
-        outcome.raise!
-        outcome.result
+        process_value(value).result!
       end
 
       def process_outcome(old_outcome)
         return old_outcome if old_outcome.fatal?
 
-        process_value(old_outcome.result).tap do |outcome|
+        value = old_outcome.result
+
+        return old_outcome unless applicable?(value)
+
+        process_value(value).tap do |outcome|
           outcome.add_errors(old_outcome.errors)
         end
       end
 
       def process_outcome!(old_outcome)
-        outcome = process_outcome(old_outcome)
-        outcome.raise!
-        outcome.result
+        process_outcome(old_outcome).result!
       end
 
       def build_error(

@@ -82,6 +82,11 @@ module Foobara
         end
       end
 
+      def result!
+        raise!
+        result
+      end
+
       def errors_hash
         error_collection.to_h
       end

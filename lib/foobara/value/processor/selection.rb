@@ -61,9 +61,7 @@ module Foobara
         end
 
         def processor_for!(value)
-          outcome = processor_for(value)
-
-          outcome.success? ? outcome.result : outcome.raise!
+          processor_for(value).result!
         end
 
         def always_applicable?

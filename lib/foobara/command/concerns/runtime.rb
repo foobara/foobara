@@ -20,11 +20,7 @@ module Foobara
         attr_reader :outcome, :exception
 
         def run!
-          outcome = run
-
-          outcome.raise!
-
-          outcome.result
+          run.result!
         end
 
         def run

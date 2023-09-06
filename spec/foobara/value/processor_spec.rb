@@ -14,17 +14,19 @@ RSpec.describe Foobara::Value::Processor do
     end
   }
 
-  let(:processor) { processor_class.new }
+  let(:processor) { processor_class.new(foo: :bar) }
 
   describe "processor_data_given?" do
     subject { processor.declaration_data_given? }
 
     context "when initialized without data" do
+      let(:processor) { processor_class.new }
+
       it { is_expected.to be_falsey }
     end
 
-    context "when initialized with data" do
-      let(:processor) { processor_class.new(foo: :bar) }
+    context "when initialized with data even if that data is falsey" do
+      let(:processor) { processor_class.new(false) }
 
       it { is_expected.to be_truthy }
     end

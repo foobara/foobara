@@ -6,11 +6,7 @@ module Foobara
       class Pipeline < Multi
         def process_outcome(old_outcome)
           processors.inject(old_outcome) do |outcome, processor|
-            if processor.applicable?(outcome.result)
-              processor.process_outcome(outcome)
-            else
-              outcome
-            end
+            processor.process_outcome(outcome)
           end
         end
 
