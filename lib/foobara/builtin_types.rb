@@ -27,10 +27,11 @@ module Foobara
         build_and_register!(:datetime, atomic_duck)
         build_and_register!(:boolean, atomic_duck)
         build_and_register!(:email, string)
+        # TODO: not urgent
         # phone_number = build_and_register!(:phone_number, string)
         duckture = build_and_register!(:duckture)
-        build_and_register!(:array, duckture)
-        # tuple = build_and_register!(:tuple, array)
+        array = build_and_register!(:array, duckture)
+        build_and_register!(:tuple, array)
         associative_array = build_and_register!(:associative_array, duckture)
         build_and_register!(:attributes, associative_array)
         # model = build_and_register!(:model, attributes)

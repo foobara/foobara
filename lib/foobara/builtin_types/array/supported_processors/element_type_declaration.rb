@@ -3,10 +3,6 @@ module Foobara
     module Array
       module SupportedProcessors
         class ElementTypeDeclaration < TypeDeclarations::ElementProcessor
-          def element_type_declaration
-            declaration_data
-          end
-
           def element_type
             @element_type ||= type_for_declaration(element_type_declaration)
           end
