@@ -9,8 +9,7 @@ module Foobara
         # from validators that are supported and may or may not be applied?
         # OK let's attempt doing this on Type instead.
         module SupportedProcessorRegistration
-          class MissingProcessorError < StandardError
-          end
+          class MissingProcessorError < StandardError; end
 
           def supported_processor_classes
             @supported_processor_classes ||= {}
@@ -28,10 +27,15 @@ module Foobara
           end
 
           def register_supported_processor_class(processor_class, symbol: processor_class.symbol)
-            if !symbol.is_a?(Symbol) || supported_processor_classes.key?(symbol)
+            unless symbol.is_a?(Symbol)
               # :nocov:
-              raise "invalid symbol given or #{processor_class} has an invalid symbol: #{symbol.inspect}. " \
-                    "Should instead be a symbol."
+              raise "Invalid symbol value #{symbol.inspect}. Should instead be a symbol but was a #{symbol.class.name}"
+              # :nocov:
+            end
+
+            if supported_processor_classes.key?(symbol)
+              # :nocov:
+              raise "There's already a processor registered for #{symbol}"
               # :nocov:
             end
 
