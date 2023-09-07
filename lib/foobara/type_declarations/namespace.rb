@@ -136,6 +136,10 @@ module Foobara
         type_declaration_handler_registries.map(&:handlers).flatten.sort_by(&:priority)
       end
 
+      def handler_for_class(klass)
+        handlers.find { |handler| handler.instance_of?(klass) }
+      end
+
       def type_for_declaration(*type_declaration_bits)
         type_declaration = type_declaration_bits_to_type_declaration(type_declaration_bits)
 

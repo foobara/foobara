@@ -51,10 +51,7 @@ module Foobara
         self.name = name
         self.target_classes = Array.wrap(target_classes)
 
-        super(
-          *args,
-  **opts.merge(processors:, prioritize: false)
-)
+        super(*args, **opts.merge(processors:, prioritize: false))
       end
 
       def processors

@@ -16,7 +16,7 @@ module Foobara
             validators = base_type.validators.dup
             element_processors = base_type.element_processors.dup
 
-            additional_processors_to_apply = strict_type_declaration.except(:type)
+            additional_processors_to_apply = strict_type_declaration.except(*non_processor_keys)
 
             additional_processors_to_apply.each_pair do |processor_symbol, declaration_data|
               processor_class = base_type.find_supported_processor_class(processor_symbol)
@@ -39,7 +39,6 @@ module Foobara
               end
             end
 
-            # TODO: how the hell do we get the target_classes into here??
             Types::Type.new(
               strict_type_declaration,
               base_type:,
@@ -48,8 +47,18 @@ module Foobara
               validators:,
               element_processors:,
               # TODO: can't we just set this to [] here??
-              target_classes: target_classes(strict_type_declaration)
+              target_classes: target_classes(strict_type_declaration),
+              name: type_name(strict_type_declaration)
             )
+          end
+
+          # TODO: test that registering a custom type sets its name
+          def type_name(strict_type_declaration)
+            "Anonymous #{strict_type_declaration[:type]} extension"
+          end
+
+          def non_processor_keys
+            [:type]
           end
         end
       end

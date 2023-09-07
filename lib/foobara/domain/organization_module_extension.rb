@@ -1,5 +1,3 @@
-require "foobara/organization"
-
 module Foobara
   class Domain
     module OrganizationModuleExtension

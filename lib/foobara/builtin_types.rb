@@ -2,6 +2,10 @@ require "date"
 require "time"
 require "bigdecimal"
 
+# requiring these here feels awkward...
+require "foobara/model"
+require "foobara/organization"
+
 Foobara::Util.require_directory("#{__dir__}/builtin_types")
 
 module Foobara
@@ -30,7 +34,7 @@ module Foobara
         build_and_register!(:datetime, atomic_duck, ::Time)
         build_and_register!(:boolean, atomic_duck, [::TrueClass, ::FalseClass])
         build_and_register!(:email, string, ::String)
-        # TODO: not urgent
+        # TODO: not urgent and derisked already via :email
         # phone_number = build_and_register!(:phone_number, string)
         # TODO: wtf
         duckture = build_and_register!(:duckture, duck, ::Object)
@@ -38,8 +42,14 @@ module Foobara
         build_and_register!(:tuple, array, ::Array)
         associative_array = build_and_register!(:associative_array, duckture, ::Hash)
         # TODO: uh oh... we do some translations in the casting here...
-        build_and_register!(:attributes, associative_array, nil)
-        # model = build_and_register!(:model, attributes)
+        attributes = build_and_register!(:attributes, associative_array, nil)
+        # What does a model have that :attributes doesnt have?
+        #   name
+        #   a target class (can default to a dynamically created Foobara::Model ??)
+        #     #valid?
+        #     #attributes
+        #     readers/writers for all attributes
+        build_and_register!(:model, attributes, nil)
         # entity = build_and_register!(:entity, model)
         # address = build_and_register!(:address, model)
         # us_address = build_and_register!(:us_address, model)
