@@ -6,17 +6,13 @@ module Foobara
 
         class_methods do
           def errors_type_declaration
-            declaration = {}
-
-            error_context_type_map.each_pair do |key, error_class|
-              declaration[key] = ErrorKey.to_h(key).merge(
+            error_context_type_map.map do |key, error_class|
+              ErrorKey.to_h(key).merge(
                 key:,
                 symbol: error_class.symbol,
                 context_type_declaration: error_class.context_type.declaration_data
               )
             end
-
-            declaration
           end
 
           def possible_error(*args)

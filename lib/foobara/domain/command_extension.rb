@@ -52,11 +52,13 @@ module Foobara
 
         def to_h
           super.merge(
-            domain_name: domain.domain_name,
-            organization_name: domain.organization_name,
+            domain_name:,
+            organization_name:,
             full_command_name:
           )
         end
+
+        delegate :domain_name, :organization_name, to: :domain, allow_nil: true
       end
     end
   end

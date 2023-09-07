@@ -79,10 +79,11 @@ module Foobara
     # commands... types... models... errors?
     def to_h
       {
+        organization_name:,
         domain_name:,
         full_domain_name:,
-        depends_on: depends_on.map(&:full_domain_name).to_a,
-        commands: command_classes.to_h { |command_class| [command_class.command_name.to_sym, command_class.to_h] }
+        depends_on: depends_on.map(&:full_domain_name),
+        commands: command_classes.map(&:command_name)
       }
     end
 

@@ -42,7 +42,7 @@ module Foobara
       {
         # TODO: do we really need symbols and names?? kill one of these...
         organization_name:,
-        domains: domains.to_h { |domain| [domain.domain_name.to_sym, domain.to_h] }
+        domains: domains.map(&:domain_name)
       }
     end
 

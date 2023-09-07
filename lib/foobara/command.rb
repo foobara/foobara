@@ -25,4 +25,8 @@ module Foobara
       super()
     end
   end
+
+  Command.after_subclass_defined do |subclass|
+    Command.all << subclass
+  end
 end

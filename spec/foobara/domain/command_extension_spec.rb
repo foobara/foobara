@@ -1,8 +1,6 @@
 RSpec.describe Foobara::Domain::CommandExtension do
   after do
-    Foobara::Domain.reset_unprocessed_command_classes
-    Foobara::Domain.reset_all
-    Foobara::Organization.reset_all
+    Foobara.reset_alls
   end
 
   describe "#run_subcommand!" do
@@ -138,31 +136,52 @@ RSpec.describe Foobara::Domain::CommandExtension do
       # TODO: this belongs elsewhere
       describe "#to_h" do
         it "gives a whole manifest of everything" do
-          expect(domain_module1.foobara_domain.to_h).to eq(
-            domain_name: "SomeDomain1",
-            full_domain_name: "SomeDomain1",
-            depends_on: [],
-            commands: {
-              SomeCommand1: {
+          expect(Foobara.to_h).to eq(
+            organizations: [],
+            domains: [
+              {
+                organization_name: nil,
+                domain_name: "SomeDomain1",
+                full_domain_name: "SomeDomain1",
+                depends_on: [],
+                commands: %w[SomeCommand1 SomeCommand2]
+              },
+              { organization_name: nil,
+                domain_name: "SomeDomain2",
+                full_domain_name: "SomeDomain2",
+                depends_on: [],
+                commands: [] },
+              {
+                organization_name: nil,
+                domain_name: "SomeDomain3",
+                full_domain_name: "SomeDomain3",
+                depends_on: [],
+                commands: []
+              }
+            ],
+            commands: [
+              {
+                command_name: "SomeCommand2", inputs_type: nil, error_types: [], depends_on: [],
+                domain_name: "SomeDomain1", organization_name: nil, full_command_name: "SomeDomain1::SomeCommand2"
+              },
+              {
                 command_name: "SomeCommand1",
-                inputs_type: { type: :attributes, element_type_declarations: { foo: { type: :integer } } },
-                error_types: {
-                  "data.cannot_cast" => {
-                    path: [],
-                    runtime_path: [],
-                    category: :data,
-                    symbol: :cannot_cast,
-                    key: "data.cannot_cast",
+                inputs_type: {
+                  type: :attributes,
+                  element_type_declarations: { foo: { type: :integer } }
+                },
+                error_types: [
+                  {
+                    path: [], runtime_path: [], category: :data, symbol: :cannot_cast, key: "data.cannot_cast",
                     context_type_declaration: {
                       type: :attributes,
                       element_type_declarations: {
-                        cast_to: { type: :duck },
-                        value: { type: :duck },
+                        cast_to: { type: :duck }, value: { type: :duck },
                         attribute_name: { type: :symbol }
                       }
                     }
                   },
-                  "data.unexpected_attributes" => {
+                  {
                     path: [],
                     runtime_path: [],
                     category: :data,
@@ -175,38 +194,44 @@ RSpec.describe Foobara::Domain::CommandExtension do
                           type: :array,
                           element_type_declaration: { type: :symbol }
                         },
-                        allowed_attributes: { type: :array,
-                                              element_type_declaration: { type: :symbol } }
+                        allowed_attributes: {
+                          type: :array,
+                          element_type_declaration: { type: :symbol }
+                        }
                       }
                     }
                   },
-                  "data.foo.cannot_cast" => {
+                  {
                     path: [:foo],
                     runtime_path: [],
                     category: :data,
                     symbol: :cannot_cast,
                     key: "data.foo.cannot_cast",
-                    context_type_declaration: { type: :attributes,
-                                                element_type_declarations: { cast_to: { type: :duck },
-                                                                             value: { type: :duck },
-                                                                             attribute_name: { type: :symbol } } }
+                    context_type_declaration: {
+                      type: :attributes,
+                      element_type_declarations: {
+                        cast_to: { type: :duck },
+                        value: { type: :duck },
+                        attribute_name: { type: :symbol }
+                      }
+                    }
                   }
-                },
+                ],
                 depends_on: ["SomeDomain1::SomeCommand2"],
                 domain_name: "SomeDomain1",
                 organization_name: nil,
                 full_command_name: "SomeDomain1::SomeCommand1"
               },
-              SomeCommand2: {
-                command_name: "SomeCommand2",
+              {
+                command_name: "TopLevelCommand",
                 inputs_type: nil,
-                error_types: {},
+                error_types: [],
                 depends_on: [],
-                domain_name: "SomeDomain1",
+                domain_name: nil,
                 organization_name: nil,
-                full_command_name: "SomeDomain1::SomeCommand2"
+                full_command_name: "TopLevelCommand"
               }
-            }
+            ]
           )
         end
       end
