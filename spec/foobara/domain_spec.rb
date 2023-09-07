@@ -82,6 +82,8 @@ RSpec.describe Foobara::Domain do
               "SomeOrg::SomeDomain::SomeCommand"
             end
           end
+
+          result({ foo: :string, bar: :integer })
         end
       }
 
@@ -102,6 +104,34 @@ RSpec.describe Foobara::Domain do
         subject { organization.owns_domain?(domain) }
 
         it { is_expected.to be(true) }
+      end
+
+      # TODO: belongs elsewhere
+      describe "#to_h" do
+        it "gives a whole manifest of everything" do
+          expect(organization.to_h).to eq(
+            organization_name: "SomeOrg",
+            domains: {
+              SomeDomain: {
+                domain_name: "SomeDomain",
+                full_domain_name: "SomeOrg::SomeDomain",
+                depends_on: [],
+                commands: {
+                  SomeCommand: { command_name: "SomeCommand",
+                                 inputs_type: nil,
+                                 error_types: {},
+                                 depends_on: [],
+                                 result_type: { type: :attributes,
+                                                element_type_declarations: { foo: { type: :string },
+                                                                             bar: { type: :integer } } },
+                                 domain_name: "SomeDomain",
+                                 organization_name: "SomeOrg",
+                                 full_command_name: "SomeOrg::SomeDomain::SomeCommand" }
+                }
+              }
+            }
+          )
+        end
       end
 
       describe "#command_classes" do

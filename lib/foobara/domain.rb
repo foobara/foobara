@@ -13,7 +13,7 @@ module Foobara
       @command_classes = []
     end
 
-    delegate :organization_name, :organization_symbol, to: :organization
+    delegate :organization_name, :organization_symbol, to: :organization, allow_nil: true
 
     def type_namespace
       @type_namespace ||= Foobara::TypeDeclarations::Namespace.new(full_domain_name)
@@ -76,6 +76,16 @@ module Foobara
       end
     end
 
+    # commands... types... models... errors?
+    def to_h
+      {
+        domain_name:,
+        full_domain_name:,
+        depends_on: depends_on.map(&:full_domain_name).to_a,
+        commands: command_classes.to_h { |command_class| [command_class.command_name.to_sym, command_class.to_h] }
+      }
+    end
+
     class << self
       def all
         @all ||= []
@@ -124,8 +134,6 @@ module Foobara
           unprocessed_command_classes << subclass
         end
       end
-
-      #       delegate :depends_on, :depends_on?, :register_command, :register_commands, to: :instance
     end
   end
 end

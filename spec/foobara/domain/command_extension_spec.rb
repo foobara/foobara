@@ -134,6 +134,82 @@ RSpec.describe Foobara::Domain::CommandExtension do
         expect(outcome).to be_success
         expect(result).to eq(100)
       end
+
+      # TODO: this belongs elsewhere
+      describe "#to_h" do
+        it "gives a whole manifest of everything" do
+          expect(domain_module1.foobara_domain.to_h).to eq(
+            domain_name: "SomeDomain1",
+            full_domain_name: "SomeDomain1",
+            depends_on: [],
+            commands: {
+              SomeCommand1: {
+                command_name: "SomeCommand1",
+                inputs_type: { type: :attributes, element_type_declarations: { foo: { type: :integer } } },
+                error_types: {
+                  "data.cannot_cast" => {
+                    path: [],
+                    runtime_path: [],
+                    category: :data,
+                    symbol: :cannot_cast,
+                    key: "data.cannot_cast",
+                    context_type_declaration: {
+                      type: :attributes,
+                      element_type_declarations: {
+                        cast_to: { type: :duck },
+                        value: { type: :duck },
+                        attribute_name: { type: :symbol }
+                      }
+                    }
+                  },
+                  "data.unexpected_attributes" => {
+                    path: [],
+                    runtime_path: [],
+                    category: :data,
+                    symbol: :unexpected_attributes,
+                    key: "data.unexpected_attributes",
+                    context_type_declaration: {
+                      type: :attributes,
+                      element_type_declarations: {
+                        unexpected_attributes: {
+                          type: :array,
+                          element_type_declaration: { type: :symbol }
+                        },
+                        allowed_attributes: { type: :array,
+                                              element_type_declaration: { type: :symbol } }
+                      }
+                    }
+                  },
+                  "data.foo.cannot_cast" => {
+                    path: [:foo],
+                    runtime_path: [],
+                    category: :data,
+                    symbol: :cannot_cast,
+                    key: "data.foo.cannot_cast",
+                    context_type_declaration: { type: :attributes,
+                                                element_type_declarations: { cast_to: { type: :duck },
+                                                                             value: { type: :duck },
+                                                                             attribute_name: { type: :symbol } } }
+                  }
+                },
+                depends_on: ["SomeDomain1::SomeCommand2"],
+                domain_name: "SomeDomain1",
+                organization_name: nil,
+                full_command_name: "SomeDomain1::SomeCommand1"
+              },
+              SomeCommand2: {
+                command_name: "SomeCommand2",
+                inputs_type: nil,
+                error_types: {},
+                depends_on: [],
+                domain_name: "SomeDomain1",
+                organization_name: nil,
+                full_command_name: "SomeDomain1::SomeCommand2"
+              }
+            }
+          )
+        end
+      end
     end
 
     context "when in different domains with no dependency" do

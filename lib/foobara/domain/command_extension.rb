@@ -37,6 +37,26 @@ module Foobara
             super
           end
         end
+
+        def full_command_name
+          [
+            organization&.organization_name,
+            domain&.domain_name,
+            command_name
+          ].compact.join("::")
+        end
+
+        def organization
+          domain&.organization
+        end
+
+        def to_h
+          super.merge(
+            domain_name: domain.domain_name,
+            organization_name: domain.organization_name,
+            full_command_name:
+          )
+        end
       end
     end
   end
