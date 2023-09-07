@@ -18,24 +18,6 @@ We always need a caster that matches things that don't need to be cast.
 
 (TODO: maybe change this so it's not necessary anymore?)
 
-in `lib/foobara/builtin_types/string/casters/string.rb`
-
-```ruby 
-module Foobara
-  module BuiltinTypes
-    module String
-      module Casters
-        class String < BuiltinTypes::Casters::DirectTypeMatch
-          def initialize(*args)
-            super(*args, ruby_classes: ::String)
-          end
-        end
-      end
-    end
-  end
-end
-```
-
 Let's also support casting Symbol to String...
 
 in `lib/foobara/builtin_types/string/casters/symbol.rb`

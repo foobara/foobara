@@ -22,7 +22,7 @@ RSpec.describe ":array" do
       it {
         is_expected_to_raise(
           Foobara::Value::Processor::Casting::CannotCastError,
-          /Expected it to be a Enumerable/
+          /Expected it to be a Array, or respond to :to_a/
         )
       }
     end
@@ -36,7 +36,7 @@ RSpec.describe ":array" do
 
       it {
         is_expected_to_raise(
-          Foobara::Value::Processor::Casting::CannotCastError, /Expected it to respond to :to_a\z/
+          Foobara::Value::Processor::Casting::CannotCastError, /Expected it to be a Array, or respond to :to_a/
         )
       }
     end

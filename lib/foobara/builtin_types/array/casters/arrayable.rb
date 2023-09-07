@@ -6,7 +6,7 @@ module Foobara
       module Casters
         class Arrayable < Value::Caster
           def applicable?(value)
-            value.respond_to?(:to_a)
+            !value.is_a?(::Array) && value.respond_to?(:to_a)
           end
 
           def applies_message

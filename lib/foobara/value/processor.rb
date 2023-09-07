@@ -58,6 +58,10 @@ module Foobara
         end
       end
 
+      def name
+        (self.class.name || "Anonymous")
+      end
+
       delegate :error_class,
                :error_classes,
                :symbol,

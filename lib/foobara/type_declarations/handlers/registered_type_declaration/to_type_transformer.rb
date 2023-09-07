@@ -4,11 +4,22 @@ module Foobara
   module TypeDeclarations
     module Handlers
       class RegisteredTypeDeclaration < TypeDeclarationHandler
-        # TODO: make a quick way to convert a couple simple procs into a transformer
+        # TODO: seems like we have more base classes than we need
         class ToTypeTransformer < TypeDeclarations::ToTypeTransformer
           def transform(strict_type_declaration)
-            type_symbol = strict_type_declaration[:type]
-            type_for_symbol(type_symbol)
+            registered_type(strict_type_declaration)
+          end
+
+          def type_symbol(strict_type_declaration)
+            strict_type_declaration[:type]
+          end
+
+          def registered_type(strict_type_declaration)
+            type_for_symbol(type_symbol(strict_type_declaration))
+          end
+
+          def target_classes(strict_type_declaration)
+            registered_type(strict_type_declaration).target_classes
           end
         end
       end

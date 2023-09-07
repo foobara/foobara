@@ -11,9 +11,7 @@ module Foobara
         end
 
         def processor_names
-          processors.map do |processor|
-            (processor.class.name || "Anonymous").demodulize
-          end
+          processors.map(&:name)
         end
 
         def error_classes

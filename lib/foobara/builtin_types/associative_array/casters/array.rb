@@ -1,5 +1,3 @@
-require "foobara/builtin_types/casters/direct_type_match"
-
 module Foobara
   module BuiltinTypes
     # TODO: rename to Map to avoid thinking of it as an array of pairs which isn't quite the right mental model.

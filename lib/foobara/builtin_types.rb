@@ -1,5 +1,6 @@
 require "date"
 require "time"
+require "bigdecimal"
 
 Foobara::Util.require_directory("#{__dir__}/builtin_types")
 
@@ -11,10 +12,12 @@ module Foobara
       delegate :global_type_declaration_handler_registry, to: TypeDeclarations
 
       def build_and_register_all_builtins_and_install_type_declaration_extensions!
-        build_and_register!(:duck)
-        atomic_duck = build_and_register!(:atomic_duck)
+        duck = build_and_register!(:duck, nil, ::Object)
+        # TODO: should we ban ::Object that are ::Enumerable from atomic_duck?
+        atomic_duck = build_and_register!(:atomic_duck, duck, ::Object)
         build_and_register!(:symbol, atomic_duck)
-        number = build_and_register!(:number, atomic_duck)
+        # TODO: wtf why pass ::Object? It's to avoid casting? Do we need a way to flag abstract types?
+        number = build_and_register!(:number, atomic_duck, ::Object)
         build_and_register!(:integer, number)
         build_and_register!(:float, number)
         build_and_register!(:big_decimal, number)
@@ -24,24 +27,26 @@ module Foobara
         # build_and_register!(:complex, number)
         string = build_and_register!(:string, atomic_duck)
         build_and_register!(:date, atomic_duck)
-        build_and_register!(:datetime, atomic_duck)
-        build_and_register!(:boolean, atomic_duck)
-        build_and_register!(:email, string)
+        build_and_register!(:datetime, atomic_duck, ::Time)
+        build_and_register!(:boolean, atomic_duck, [::TrueClass, ::FalseClass])
+        build_and_register!(:email, string, ::String)
         # TODO: not urgent
         # phone_number = build_and_register!(:phone_number, string)
-        duckture = build_and_register!(:duckture)
+        # TODO: wtf
+        duckture = build_and_register!(:duckture, duck, ::Object)
         array = build_and_register!(:array, duckture)
-        build_and_register!(:tuple, array)
-        associative_array = build_and_register!(:associative_array, duckture)
-        build_and_register!(:attributes, associative_array)
+        build_and_register!(:tuple, array, ::Array)
+        associative_array = build_and_register!(:associative_array, duckture, ::Hash)
+        # TODO: uh oh... we do some translations in the casting here...
+        build_and_register!(:attributes, associative_array, nil)
         # model = build_and_register!(:model, attributes)
         # entity = build_and_register!(:entity, model)
         # address = build_and_register!(:address, model)
         # us_address = build_and_register!(:us_address, model)
       end
 
-      def build_and_register!(type_symbol, base_type = root_type)
-        type = build_from_modules_and_install_type_declaration_extensions!(type_symbol, base_type)
+      def build_and_register!(type_symbol, base_type, target_classes = const_get("::#{type_symbol.to_s.camelize}"))
+        type = build_from_modules_and_install_type_declaration_extensions!(type_symbol, target_classes, base_type)
 
         global_registry.register(type_symbol, type)
 
@@ -52,7 +57,7 @@ module Foobara
         type
       end
 
-      def build_from_modules_and_install_type_declaration_extensions!(type_symbol, base_type = root_type)
+      def build_from_modules_and_install_type_declaration_extensions!(type_symbol, target_classes, base_type)
         module_symbol = type_symbol.to_s.camelize.to_sym
 
         builtin_type_module = const_get(module_symbol, false)
@@ -78,9 +83,12 @@ module Foobara
           declaration_data,
           base_type:,
           name: type_symbol,
-          casters: casters.presence || base_type.casters.dup,
+          casters: casters.presence || base_type&.casters.dup || [],
           transformers:,
-          validators:
+          validators:,
+          # TODO: this is for controlling casting or not casting but could give the wrong information from a
+          # reflection point of view...
+          target_classes:
         )
 
         processor_classes = [*transformers, *validators].map(&:class)

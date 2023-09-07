@@ -16,7 +16,7 @@ RSpec.describe ":symbol" do
       it {
         is_expected_to_raise(
           Foobara::Value::Processor::Casting::CannotCastError,
-          /Expected it to be a String, or be a Symbol\z/
+          /Expected it to be a Symbol, or be a String\z/
         )
       }
     end

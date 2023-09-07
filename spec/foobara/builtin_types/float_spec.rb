@@ -1,6 +1,34 @@
 RSpec.describe ":float" do
   let(:type) { Foobara::BuiltinTypes[:float] }
 
+  describe "caster names" do
+    it "gives the names of the casters including the dynamically generated class matcher" do
+      expect(type.value_caster.processor_names).to eq(
+        [
+          "no_cast_needed_if_is_a:Float",
+          "Foobara::BuiltinTypes::Float::Casters::Integer",
+          "Foobara::BuiltinTypes::Float::Casters::String"
+        ]
+      )
+    end
+  end
+
+  describe "#needs_cast?" do
+    subject { type.needs_cast?(value) }
+
+    context "when Float" do
+      let(:value) { 1.3 }
+
+      it { is_expected.to be(false) }
+    end
+
+    context "when something else" do
+      let(:value) { Object.new }
+
+      it { is_expected.to be(true) }
+    end
+  end
+
   describe "#process!" do
     subject { type.process_value!(value) }
 

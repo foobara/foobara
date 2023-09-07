@@ -9,7 +9,6 @@ RSpec.describe "custom types" do
         attr_accessor :real, :imaginary
       end
     end
-    # type registration end
 
     let(:type_declaration) do
       {
@@ -23,17 +22,12 @@ RSpec.describe "custom types" do
     end
     let(:type) { namespace.type_for_declaration(type_declaration) }
 
-    # TODO: make sure this is tested
     let(:type_declaration_handler) { namespace.type_declaration_handler_for(type_declaration) }
-    # type registration start
     let(:type_declaration_handler_class) do
       custom_caster = array_to_complex_caster.new
       klass = complex_class
 
-      c = [
-        custom_caster,
-        Foobara::BuiltinTypes::Casters::DirectTypeMatch.new(ruby_classes: klass)
-      ]
+      c = [custom_caster]
 
       pointless = pointless_validator
 
@@ -60,7 +54,8 @@ RSpec.describe "custom types" do
               casters: c,
               transformers: [],
               validators:,
-              element_processors: nil
+              element_processors: nil,
+              target_classes: klass
             )
           end
         end
@@ -251,6 +246,8 @@ RSpec.describe "custom types" do
           expect(complex).to be_a(complex_class)
           expect(complex.real).to eq(1)
           expect(complex.imaginary).to eq(2)
+
+          expect(type.value_caster.processors.map(&:name)).to eq(["Foobara::BuiltinTypes::Attributes::Casters::Hash"])
         end
       end
 

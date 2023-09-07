@@ -19,19 +19,45 @@ module Foobara
           end
         end
 
-        def initialize(*args, casters:)
-          super(*args, processors: casters)
+        attr_accessor :casters, :target_classes
+
+        def initialize(*args, casters:, target_classes: nil)
+          self.target_classes = Array.wrap(target_classes)
+          self.casters = casters
+          super(*args)
         end
 
-        def casters
-          processors
+        def processors
+          [
+            does_not_need_cast_processor,
+            *casters
+          ].compact
+        end
+
+        def needs_cast?(value)
+          !does_not_need_cast_processor.applicable?(value)
+        end
+
+        def does_not_need_cast_processor
+          return @does_not_need_cast_processor if defined?(@does_not_need_cast_processor)
+
+          @does_not_need_cast_processor = if target_classes.present?
+                                            Caster.subclass(
+                                              name: ["no_cast_needed_if_is_a", *target_classes.map(&:name)].join(":"),
+                                              applicable_if: proc do |value|
+                                                target_classes.any? { |target_class| value.is_a?(target_class) }
+                                              end,
+                                              applies_message: "be a #{target_classes.map(&:name).join(" or ")}",
+                                              cast: ->(value) { value }
+                                            ).new(declaration_data)
+                                          end
         end
 
         def error_message(value)
           words_connector = ", "
           last_word_connector = two_words_connector = ", or "
 
-          applies_message = casters.map(&:applies_message).flatten.to_sentence(
+          applies_message = processors.map(&:applies_message).flatten.to_sentence(
             words_connector:,
             last_word_connector:,
             two_words_connector:
@@ -47,14 +73,18 @@ module Foobara
           }
         end
 
-        def build_error(
-          *args,
-          **opts
-        )
-          super(
-            *args,
-            **opts.merge(error_class:)
-          )
+        def build_error(*args, **opts)
+          error_class = opts[:error_class]
+
+          if error_class == NoApplicableProcessorError
+            build_error(*args)
+          elsif error_class == MoreThanOneApplicableProcessorError
+            # :nocov:
+            raise "Matched too many casters for #{args.inspect} with #{opts.inspect}"
+            # :nocov:
+          else
+            super
+          end
         end
 
         def cast_to

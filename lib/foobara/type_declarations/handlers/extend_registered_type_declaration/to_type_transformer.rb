@@ -39,13 +39,16 @@ module Foobara
               end
             end
 
+            # TODO: how the hell do we get the target_classes into here??
             Types::Type.new(
               strict_type_declaration,
               base_type:,
               casters:,
               transformers:,
               validators:,
-              element_processors:
+              element_processors:,
+              # TODO: can't we just set this to [] here??
+              target_classes: target_classes(strict_type_declaration)
             )
           end
         end

@@ -21,7 +21,10 @@ RSpec.describe ":associative_array" do
     context "when not castable" do
       let(:value) { Object.new }
 
-      it { is_expected_to_raise(Foobara::Value::Processor::Casting::CannotCastError, /Expected it to be a Enumerable/) }
+      it {
+        is_expected_to_raise(Foobara::Value::Processor::Casting::CannotCastError,
+                             /Expected it to be a Hash, or be a an array of pairs/)
+      }
     end
 
     context "when there's a key_type_declaration" do
@@ -115,7 +118,7 @@ RSpec.describe ":associative_array" do
 
       it {
         is_expected_to_raise(Foobara::Value::Processor::Casting::CannotCastError,
-                             /Expected it to be a an array of pairs, or be a Hash\z/)
+                             /Expected it to be a Hash, or be a an array of pairs\z/)
       }
     end
   end

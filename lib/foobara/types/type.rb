@@ -23,10 +23,12 @@ module Foobara
                     :element_types,
                     :element_type,
                     :raw_declaration_data,
-                    :name
+                    :name,
+                    :target_classes
 
       def initialize(
         *args,
+        target_classes:,
         base_type: self.class.root_type,
         name: :anonymous,
         casters: [],
@@ -47,11 +49,12 @@ module Foobara
         self.element_types = element_types
         self.element_type = element_type
         self.name = name
+        self.target_classes = Array.wrap(target_classes)
 
         super(
           *args,
-          **opts.merge(processors:, prioritize: false)
-        )
+  **opts.merge(processors:, prioritize: false)
+)
       end
 
       def processors
@@ -65,8 +68,11 @@ module Foobara
       end
 
       def value_caster
-        Value::Processor::Casting.new({ cast_to: declaration_data }, casters:)
+        # TODO: how can declaration_data be blank? That seems really strange...
+        Value::Processor::Casting.new({ cast_to: declaration_data }, casters:, target_classes:)
       end
+
+      delegate :needs_cast?, to: :value_caster
 
       def cast(value)
         value_caster.process_value(value)
