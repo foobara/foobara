@@ -11,13 +11,14 @@ module Foobara
             # TODO: maybe cache this stuff??
             base_type = super
 
-            casters = base_type.casters.dup
+            casters = base_type.casters.map { |caster| caster.class.new(strict_type_declaration) }
             transformers = base_type.transformers.dup
             validators = base_type.validators.dup
             element_processors = base_type.element_processors.dup
 
             additional_processors_to_apply = strict_type_declaration.except(*non_processor_keys)
 
+            # TODO: validate the name
             additional_processors_to_apply.each_pair do |processor_symbol, declaration_data|
               processor_class = base_type.find_supported_processor_class(processor_symbol)
 

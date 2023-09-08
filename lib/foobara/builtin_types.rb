@@ -68,26 +68,33 @@ module Foobara
       end
 
       def build_from_modules_and_install_type_declaration_extensions!(type_symbol, target_classes, base_type)
+        desugarizer = TypeDeclarations::Handlers::RegisteredTypeDeclaration::SymbolDesugarizer
+        declaration_data = desugarizer.instance.transform(type_symbol)
+
         module_symbol = type_symbol.to_s.camelize.to_sym
 
         builtin_type_module = const_get(module_symbol, false)
 
-        load_processors_classes = ->(module_name, extends = Class) {
+        load_processors_classes = ->(module_name, extends = nil) {
           mod = Util.constant_value(builtin_type_module, module_name)
 
-          mod ? Util.constant_values(mod, extends:) : []
+          if mod
+            unless extends
+              symbol = module_name[0..-2].to_sym
+              extends = Value.const_get(symbol)
+            end
+
+            Util.constant_values(mod, extends:)
+          else
+            []
+          end
         }
 
-        load_processors = ->(symbol, module_name: "#{symbol}s", extends: Value.const_get(symbol)) {
-          load_processors_classes.call(module_name, extends).map(&:instance)
-        }
-
-        casters = load_processors.call(:Caster)
-        transformers = load_processors.call(:Transformer)
-        validators = load_processors.call(:Validator)
-
-        desugarizer = TypeDeclarations::Handlers::RegisteredTypeDeclaration::SymbolDesugarizer
-        declaration_data = desugarizer.instance.transform(type_symbol)
+        casters = load_processors_classes.call(:Casters).map do |caster_class|
+          caster_class.new(declaration_data)
+        end
+        transformers = load_processors_classes.call(:Transformers).map(&:instance)
+        validators = load_processors_classes.call(:Validators).map(&:instance)
 
         type = Foobara::Types::Type.new(
           declaration_data,
