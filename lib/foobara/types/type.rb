@@ -56,7 +56,6 @@ module Foobara
 
       def processors
         [
-          base_type,
           value_caster,
           value_transformer,
           value_validator,
