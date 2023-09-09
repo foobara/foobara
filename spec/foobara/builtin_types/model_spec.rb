@@ -6,22 +6,18 @@ RSpec.describe ":model" do
   let(:type_declaration) do
     {
       type: :model,
-      model_name:,
-      element_type_declarations:,
-      model_class:,
-      model_base_class:
+      name: model_name,
+      attributes_declaration:
     }
   end
   let(:model_name) { "SomeModel" }
-  let(:element_type_declarations) do
+  let(:attributes_declaration) do
     {
       foo: :integer,
       # TODO: aren't we supposed to be doing required: false instead??
       bar: { type: :string, required: true }
     }
   end
-  let(:model_class) { nil }
-  let(:model_base_class) { nil }
 
   let(:constructed_model) { type.target_classes.first }
 
@@ -64,5 +60,21 @@ RSpec.describe ":model" do
 
     value = constructed_model.new(foo: 4, bar: "baz")
     expect(value).to be_valid
+  end
+
+  it "sets model_class and model_base_class" do
+    expect(type.declaration_data[:model_class]).to be(constructed_model)
+    expect(type.declaration_data[:model_base_class]).to be(Foobara::Model)
+  end
+
+  context "when instantiating via type declaration instead of class" do
+    let(:value) { type.process_value!(value_hash) }
+    let(:value_hash) do
+      { foo: "10", bar: :baz }
+    end
+
+    it "constructs value" do
+      expect(value).to be_a(constructed_model)
+    end
   end
 end

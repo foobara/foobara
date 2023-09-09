@@ -4,25 +4,21 @@ require "foobara/type_declarations/handlers/extend_associative_array_type_declar
 module Foobara
   module TypeDeclarations
     module Handlers
-      class ExtendModelTypeDeclaration < ExtendAttributesTypeDeclaration
-        class ToTypeTransformer < ExtendAttributesTypeDeclaration::ToTypeTransformer
+      class ExtendModelTypeDeclaration < ExtendRegisteredTypeDeclaration
+        class ToTypeTransformer < ExtendRegisteredTypeDeclaration::ToTypeTransformer
+          # TODO: make declaration validator for model_class and model_base_class
           def target_classes(strict_type_declaration)
-            model_class = strict_type_declaration[:model_class]
-
-            return model_class if model_class
-
-            model_base_class = strict_type_declaration[:model_base_class] || Foobara::Model
-
-            model_base_class.subclass(strict_type_declaration)
+            strict_type_declaration[:model_class]
           end
 
           def type_name(strict_type_declaration)
             strict_type_declaration[:model_name]
           end
 
-          # TODO: create declaration validator for model_name and the others
+          # TODO: create declaration validator for name and the others
+          # TODO: seems like a smell that we don't have processors for these?
           def non_processor_keys
-            %i[type model_name model_class model_base_class]
+            %i[type name model_class model_base_class attributes_declaration]
           end
         end
       end

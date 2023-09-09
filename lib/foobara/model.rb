@@ -4,13 +4,12 @@ module Foobara
       def subclass(strict_type_declaration)
         namespace = TypeDeclarations::Namespace.current
 
-        model_name = strict_type_declaration[:model_name]
+        model_name = strict_type_declaration[:name]
 
-        attributes_type_declaration = strict_type_declaration.except(
-          :model_name, :model_class, :model_base_class
-        ).merge(type: :attributes)
-
-        attributes_type = namespace.type_for_declaration(attributes_type_declaration.merge)
+        # Can we use a symbol instead?
+        handler = namespace.handler_for_class(TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration)
+        attributes_type_declaration = strict_type_declaration[:attributes_declaration]
+        attributes_type = handler.process_value!(attributes_type_declaration)
 
         # How are we going to set the domain and organization?
         Class.new(self) do

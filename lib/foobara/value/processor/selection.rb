@@ -38,9 +38,7 @@ module Foobara
                               error_class: MoreThanOneApplicableProcessorError,
                               message: "More than one processor applicable for #{value}",
                               context: error_context(value).merge(
-                                applicable_processor_names: applicable_processors.map do |processor|
-                                                              processor.class.name
-                                                            end
+                                applicable_processor_names: applicable_processors.map(&:name)
                               )
                             )
                           )

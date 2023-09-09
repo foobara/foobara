@@ -44,9 +44,9 @@ module Foobara
           @does_not_need_cast_processor = if target_classes.present?
                                             Caster.subclass(
                                               name: ["no_cast_needed_if_is_a", *target_classes.map(&:name)].join(":"),
-                                              applicable_if: proc do |value|
+                                              applicable?: ->(value) {
                                                 target_classes.any? { |target_class| value.is_a?(target_class) }
-                                              end,
+                                              },
                                               applies_message: "be a #{target_classes.map(&:name).join(" or ")}",
                                               cast: ->(value) { value }
                                             ).new(declaration_data)
