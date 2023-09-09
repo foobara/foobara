@@ -3,22 +3,42 @@ module Foobara
     # TODO: do we really need these??  Can't just use a transformer?
     class Caster < Transformer
       class << self
-        def subclass(name:, applicable_if:, applies_message:, cast:)
+        def create(options)
+          subclass(options).new(true)
+        end
+
+        def subclass(options)
+          arity_zero = %i[name applies_message]
+          arity_one = %i[applicable? cast]
+          allowed = arity_zero + arity_one
+
+          invalid_options = options.keys - allowed
+
+          if invalid_options.present?
+            # :nocov:
+            raise ArgumentError, "Invalid options #{invalid_options} expected only #{allowed}"
+            # :nocov:
+          end
+
           Class.new(self) do
-            define_method :name do
-              name
+            arity_one.each do |method_name|
+              if options.key?(method_name)
+                method = options[method_name]
+
+                define_method method_name do |value|
+                  method.call(value)
+                end
+              end
             end
 
-            define_method :applicable? do |value|
-              applicable_if.call(value)
-            end
+            arity_zero.each do |method_name|
+              if options.key?(method_name)
+                value = options[method_name]
 
-            define_method :applies_message do
-              applies_message
-            end
-
-            define_method :cast do |value|
-              cast.call(value)
+                define_method method_name do
+                  value
+                end
+              end
             end
           end
         end
@@ -30,7 +50,7 @@ module Foobara
         # :nocov:
       end
 
-      def applies_message(_value)
+      def applies_message
         # :nocov:
         raise "subclass responsibility"
         # :nocov:
