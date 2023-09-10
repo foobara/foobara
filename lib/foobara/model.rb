@@ -1,32 +1,36 @@
 module Foobara
   class Model
     class << self
+      attr_accessor :attributes_type, :namespace
+
+      def attributes(attributes_type_declaration)
+        self.attributes_type = attributes_declaration_to_type(attributes_type_declaration)
+      end
+
       def possible_errors
         attributes_type.possible_errors
       end
 
-      def subclass(strict_type_declaration)
-        namespace = TypeDeclarations::Namespace.current
-
-        model_name = strict_type_declaration[:name]
-
-        # Can we use a symbol instead?
+      def attributes_declaration_to_type(attributes_type_declaration)
         handler = namespace.handler_for_class(TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration)
-        attributes_type_declaration = strict_type_declaration[:attributes_declaration]
-        attributes_type = handler.process_value!(attributes_type_declaration)
+        handler.process_value!(attributes_type_declaration)
+      end
+
+      def subclass(strict_type_declaration)
+        model_name = strict_type_declaration[:name]
 
         # How are we going to set the domain and organization?
         Class.new(self) do
+          self.namespace = TypeDeclarations::Namespace.current
+
+          attributes(strict_type_declaration[:attributes_declaration])
+
           singleton_class.define_method :name do
             model_name
           end
 
           singleton_class.define_method :model_name do
             model_name
-          end
-
-          singleton_class.define_method :attributes_type do
-            attributes_type
           end
 
           attributes_type.element_types.each_key do |attribute_name|
