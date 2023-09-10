@@ -78,5 +78,19 @@ module Foobara
     def validation_errors
       attributes_type.process_value(attributes).errors
     end
+
+    def ==(other)
+      return false unless self.class == other.class
+
+      attributes == other.attributes
+    end
+
+    def eql?(other)
+      self == other
+    end
+
+    def hash
+      attributes.hash
+    end
   end
 end

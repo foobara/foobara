@@ -126,4 +126,55 @@ RSpec.describe ":model" do
       )
     end
   end
+
+  describe "registering model on a namespace" do
+    let(:namespace) do
+      Foobara::TypeDeclarations::Namespace.new("model registration test")
+    end
+
+    around do |example|
+      Foobara::TypeDeclarations::Namespace.using namespace do
+        example.run
+      end
+    end
+
+    before do
+      namespace.register_type(type.name, type)
+    end
+
+    it "can be used by symbol" do
+      expect(namespace.type_for_declaration(:SomeModel)).to be(type)
+    end
+
+    context "when used as attribute type" do
+      let(:new_type) do
+        namespace.type_for_declaration(
+          first_name: :string,
+          some_model: :SomeModel
+        )
+      end
+      let(:actual_value) do
+        new_type.process_value!(
+          first_name: "SomeFirstName",
+          some_model: {
+            foo: "2",
+            bar: :whatever
+          }
+        )
+      end
+      let(:expected_value) do
+        {
+          first_name: "SomeFirstName",
+          some_model: constructed_model.new(foo: 2, bar: "whatever")
+        }
+      end
+
+      it "can process a value" do
+        expect(actual_value).to eq(expected_value)
+        expect(actual_value).to_not be(expected_value)
+        expect(actual_value.hash).to eq(expected_value.hash)
+        expect(actual_value.eql?(expected_value)).to be(true)
+      end
+    end
+  end
 end

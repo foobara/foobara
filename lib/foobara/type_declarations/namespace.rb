@@ -88,7 +88,7 @@ module Foobara
       # types
 
       def register_type(symbol, type)
-        type_registry[symbol] = type
+        type_registry[symbol.to_sym] = type
       end
 
       def type_registered?(symbol)
