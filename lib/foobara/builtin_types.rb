@@ -77,26 +77,25 @@ module Foobara
 
         builtin_type_module = const_get(module_symbol, false)
 
-        load_processors_classes = ->(module_name, extends = nil) {
+        load_processor_classes = ->(module_name) {
           mod = Util.constant_value(builtin_type_module, module_name)
 
           if mod
-            unless extends
-              symbol = module_name[0..-2].to_sym
-              extends = Value.const_get(symbol)
-            end
-
-            Util.constant_values(mod, extends:)
+            Util.constant_values(mod, extends: Value::Processor)
           else
             []
           end
         }
 
-        casters = load_processors_classes.call(:Casters).map do |caster_class|
-          caster_class.new(declaration_data)
-        end
-        transformers = load_processors_classes.call(:Transformers).map(&:instance)
-        validators = load_processors_classes.call(:Validators).map(&:instance)
+        load_processors = ->(module_name) {
+          load_processor_classes.call(module_name).map do |processor_class|
+            processor_class.new_with_agnostic_args(true, declaration_data)
+          end
+        }
+
+        casters = load_processors.call(:Casters)
+        transformers = load_processors.call(:Transformers)
+        validators = load_processors.call(:Validators)
 
         type = Foobara::Types::Type.new(
           declaration_data,
@@ -113,7 +112,7 @@ module Foobara
         processor_classes = [*transformers, *validators].map(&:class)
 
         %i[SupportedTransformers SupportedValidators SupportedProcessors].each do |module_name|
-          load_processors_classes.call(module_name, Value::Processor).each do |processor_class|
+          load_processor_classes.call(module_name).each do |processor_class|
             type.register_supported_processor_class(processor_class)
             processor_classes << processor_class
           end

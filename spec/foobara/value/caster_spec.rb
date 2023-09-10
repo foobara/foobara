@@ -1,5 +1,5 @@
 RSpec.describe Foobara::Value::Caster do
-  let(:caster) { described_class.new }
+  let(:caster) { described_class.instance }
 
   describe ".create" do
     let(:caster) do

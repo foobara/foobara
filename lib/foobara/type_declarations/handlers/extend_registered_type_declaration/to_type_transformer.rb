@@ -7,14 +7,20 @@ module Foobara
       class ExtendRegisteredTypeDeclaration < RegisteredTypeDeclaration
         # TODO: make a quick way to convert a couple simple procs into a transformer
         class ToTypeTransformer < RegisteredTypeDeclaration::ToTypeTransformer
+          def dup_processors(processors, parent_declaration_data)
+            processors&.map do |processor|
+              processor.dup_processor(parent_declaration_data:)
+            end
+          end
+
           def transform(strict_type_declaration)
             # TODO: maybe cache this stuff??
             base_type = super
 
-            casters = base_type.casters.map { |caster| caster.class.new(strict_type_declaration) }
-            transformers = base_type.transformers.dup
-            validators = base_type.validators.dup
-            element_processors = base_type.element_processors.dup
+            casters = dup_processors(base_type.casters, strict_type_declaration)
+            transformers = dup_processors(base_type.transformers, strict_type_declaration)
+            validators = dup_processors(base_type.validators, strict_type_declaration)
+            element_processors = dup_processors(base_type.element_processors, strict_type_declaration)
 
             additional_processors_to_apply = strict_type_declaration.except(*non_processor_keys)
 
@@ -22,7 +28,7 @@ module Foobara
             additional_processors_to_apply.each_pair do |processor_symbol, declaration_data|
               processor_class = base_type.find_supported_processor_class(processor_symbol)
 
-              processor = processor_class.new(declaration_data)
+              processor = processor_class.new_with_agnostic_args(declaration_data, strict_type_declaration)
 
               case processor
               when Value::Validator

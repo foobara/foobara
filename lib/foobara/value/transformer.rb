@@ -14,7 +14,7 @@ module Foobara
         end
 
         def create(options)
-          subclass(options).new(true)
+          subclass(options).instance
         end
 
         def subclass(options)

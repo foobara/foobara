@@ -6,6 +6,10 @@ module Foobara
 
       class << self
         attr_accessor :root_type
+
+        def requires_declaration_data?
+          true
+        end
       end
 
       # TODO: needed/useful transformers/validators to implement:

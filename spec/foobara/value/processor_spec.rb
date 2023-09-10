@@ -16,22 +16,6 @@ RSpec.describe Foobara::Value::Processor do
 
   let(:processor) { processor_class.new(foo: :bar) }
 
-  describe "processor_data_given?" do
-    subject { processor.declaration_data_given? }
-
-    context "when initialized without data" do
-      let(:processor) { processor_class.new }
-
-      it { is_expected.to be_falsey }
-    end
-
-    context "when initialized with data even if that data is falsey" do
-      let(:processor) { processor_class.new(false) }
-
-      it { is_expected.to be_truthy }
-    end
-  end
-
   describe "#process!" do
     context "when is an error" do
       it "raises" do
@@ -54,6 +38,17 @@ RSpec.describe Foobara::Value::Processor do
     context "when is not an error" do
       it "gives the result" do
         expect(processor.process_outcome!(Foobara::Outcome.success(10))).to eq(10)
+      end
+    end
+  end
+
+  describe "#dup_processor" do
+    context "when overriding declaration data" do
+      it "dups the processor" do
+        duped_processor = processor.dup_processor(declaration_data: { bar: "baz" })
+
+        expect(processor.declaration_data).to eq(foo: :bar)
+        expect(duped_processor.declaration_data).to eq(bar: "baz")
       end
     end
   end

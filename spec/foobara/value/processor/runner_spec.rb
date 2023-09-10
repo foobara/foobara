@@ -18,7 +18,7 @@ RSpec.describe Foobara::Value::Processor::Runner do
     end
   }
 
-  let(:processor) { processor_class.new }
+  let(:processor) { processor_class.instance }
 
   let(:runner) { processor.runner(value) }
   let(:value) { 5 }

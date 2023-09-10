@@ -18,10 +18,6 @@ module Foobara
             end
           end
 
-          def element_type_declarations
-            declaration_data
-          end
-
           def allowed_attributes
             @allowed_attributes ||= declaration_data.keys
           end

@@ -5,6 +5,12 @@ module Foobara
     class Desugarizer < Value::Transformer
       include WithRegistries
 
+      class << self
+        def requires_declaration_data?
+          false
+        end
+      end
+
       def transform(value)
         desugarize(value)
       end

@@ -4,6 +4,12 @@ module Foobara
       class Multi < Processor
         attr_accessor :processors, :prioritize
 
+        class << self
+          def requires_declaration_data?
+            false
+          end
+        end
+
         def initialize(*args, processors: [], prioritize: true)
           self.prioritize = prioritize
           self.processors = prioritize ? processors.sort_by(&:priority) : processors

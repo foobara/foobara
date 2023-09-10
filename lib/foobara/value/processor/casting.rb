@@ -17,6 +17,10 @@ module Foobara
           def error_classes
             [CannotCastError]
           end
+
+          def requires_declaration_data?
+            true
+          end
         end
 
         attr_accessor :casters, :target_classes
@@ -49,7 +53,7 @@ module Foobara
                                               },
                                               applies_message: "be a #{target_classes.map(&:name).join(" or ")}",
                                               cast: ->(value) { value }
-                                            ).new(declaration_data)
+                                            ).instance
                                           end
         end
 

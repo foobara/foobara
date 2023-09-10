@@ -9,9 +9,32 @@ module Foobara
       end
 
       class << self
-        # NOTE: obviously can't use this convenience method for processors with declaration data
+        def new_with_agnostic_args(declaration_data, parent_declaration_data)
+          args = if requires_declaration_data?
+                   declaration_data.nil? ? [true] : [declaration_data]
+                 else
+                   []
+                 end
+
+          args << parent_declaration_data if requires_parent_declaration_data?
+
+          if args.empty? || args == [true]
+            instance
+          else
+            new(*args)
+          end
+        end
+
         def instance
-          @instance ||= new
+          @instance ||= begin
+            if requires_parent_declaration_data?
+              # :nocov:
+              raise "Cannot treat processors dependent on parent declaration data as singletons"
+              # :nocov:
+            end
+
+            requires_declaration_data? ? new(true) : new
+          end
         end
 
         def error_classes
@@ -41,20 +64,34 @@ module Foobara
         def symbol
           @symbol ||= name&.demodulize&.gsub(/(Processor|Transformer|Validator)$/, "")&.underscore&.to_sym
         end
+
+        def requires_declaration_data?
+          true
+        end
+
+        def requires_parent_declaration_data?
+          false
+        end
       end
 
-      attr_accessor :declaration_data, :declaration_data_given
+      attr_accessor :declaration_data, :parent_declaration_data
 
       def initialize(*args)
-        args_count = args.size
+        expected_arg_count = requires_declaration_data? ? 1 : 0
+        expected_arg_count += 1 if requires_parent_declaration_data?
 
-        if args_count == 1
-          self.declaration_data = args.first
-          self.declaration_data_given = true
-        elsif args_count != 0
+        unless expected_arg_count == args.count
           # :nocov:
-          raise ArgumentError, "Expected 0 or 1 arguments containing the #{self.class.name} data"
+          raise ArgumentError, "#{name} expected #{expected_arg_count} received #{args.count}"
           # :nocov:
+        end
+
+        if requires_declaration_data?
+          self.declaration_data = args.shift
+        end
+
+        if requires_parent_declaration_data?
+          self.parent_declaration_data = args.first
         end
       end
 
@@ -65,6 +102,8 @@ module Foobara
       delegate :error_class,
                :error_classes,
                :symbol,
+               :requires_declaration_data?,
+               :requires_parent_declaration_data?,
                to: :class
 
       # Whoa, forgot this existed. Shouldn't we use this more?
@@ -102,10 +141,6 @@ module Foobara
       # This means its applicable regardless of value to transform. Override if different behavior is needed.
       def always_applicable?
         declaration_data
-      end
-
-      def declaration_data_given?
-        declaration_data_given
       end
 
       def process_value(_value)
@@ -171,6 +206,31 @@ module Foobara
       # Helps control when it runs in a pipeline
       def priority
         Priority::MEDIUM
+      end
+
+      def dup_processor(**opts)
+        valid_opts = %i[declaration_data parent_declaration_data]
+
+        invalid_opts = opts.keys - valid_opts
+
+        if invalid_opts.present?
+          # :nocov:
+          raise ArgumentError, "Invalid opts #{invalid_opts.inspect} expected only #{valid_opts.inspect}"
+          # :nocov:
+        end
+
+        declaration_data = if opts.key?(:declaration_data)
+                             opts[:declaration_data]
+                           else
+                             self.declaration_data
+                           end
+        parent_declaration_data = if opts.key?(:parent_declaration_data)
+                                    opts[:parent_declaration_data]
+                                  else
+                                    self.parent_declaration_data
+                                  end
+
+        self.class.new_with_agnostic_args(declaration_data, parent_declaration_data)
       end
 
       def inspect

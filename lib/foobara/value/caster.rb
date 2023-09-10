@@ -3,8 +3,12 @@ module Foobara
     # TODO: do we really need these??  Can't just use a transformer?
     class Caster < Transformer
       class << self
+        def requires_declaration_data?
+          false
+        end
+
         def create(options)
-          subclass(options).new(true)
+          subclass(options).instance
         end
 
         def subclass(options)

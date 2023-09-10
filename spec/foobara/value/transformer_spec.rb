@@ -1,5 +1,5 @@
 RSpec.describe Foobara::Value::Transformer do
-  let(:transformer) { described_class.new }
+  let(:transformer) { described_class.instance }
 
   describe ".create" do
     let(:transformer) do
@@ -31,7 +31,7 @@ RSpec.describe Foobara::Value::Transformer do
         end
       end
 
-      let(:transformer) { transformer_class.new }
+      let(:transformer) { transformer_class.instance }
 
       it "just gives back what was passed in" do
         expect(transformer.process_value(15).result).to eq(15)

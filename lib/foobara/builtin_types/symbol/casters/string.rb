@@ -5,6 +5,12 @@ module Foobara
     module Symbol
       module Casters
         class String < Value::Caster
+          class << self
+            def requires_parent_declaration_data?
+              true
+            end
+          end
+
           def applicable?(value)
             value.is_a?(::String)
           end
