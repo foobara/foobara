@@ -13,7 +13,7 @@ RSpec.describe ":model" do
   let(:model_name) { "SomeModel" }
   let(:attributes_declaration) do
     {
-      foo: :integer,
+      foo: { type: :integer, max: 10 },
       # TODO: aren't we supposed to be doing required: false instead??
       bar: { type: :string, required: true }
     }
@@ -55,7 +55,7 @@ RSpec.describe ":model" do
       symbol: :cannot_cast,
       message: "Cannot cast invalid. Expected it to be a Integer, " \
                "or be a string of digits optionally with a minus sign in front",
-      context: { cast_to: { type: :integer }, value: "invalid" }
+      context: { cast_to: { type: :integer, max: 10 }, value: "invalid" }
     )
 
     value = constructed_model.new(foo: 4, bar: "baz")
@@ -67,14 +67,63 @@ RSpec.describe ":model" do
     expect(type.declaration_data[:model_base_class]).to be(Foobara::Model)
   end
 
-  context "when instantiating via type declaration instead of class" do
-    let(:value) { type.process_value!(value_hash) }
-    let(:value_hash) do
-      { foo: "10", bar: :baz }
+  describe "#process_value!" do
+    let(:value) { type.process_value!(value_to_process) }
+
+    context "when instantiating via type declaration instead of class" do
+      let(:value_to_process) do
+        { foo: "10", bar: :baz }
+      end
+
+      it "constructs value" do
+        expect(value).to be_a(constructed_model)
+      end
     end
 
-    it "constructs value" do
-      expect(value).to be_a(constructed_model)
+    context "when instantiating via model instance" do
+      let(:value_to_process) do
+        constructed_model.new(attributes)
+      end
+
+      let(:attributes) do
+        { "foo" => 10, "bar" => :baz }
+      end
+
+      it "constructs value" do
+        expect(value).to be_a(constructed_model)
+        expect(value).to be(value_to_process)
+        expect(value).to be_valid
+      end
+
+      context "when invalid attributes" do
+        let(:attributes) do
+          { foo: "invalid", bar: :baz }
+        end
+
+        it "explodes" do
+          expect { value }.to raise_error(
+            Foobara::Value::Processor::Casting::CannotCastError,
+            /Expected it to be a Integer, or be a string of digits optionally with a minus sign in front\z/
+          ) { |error| expect(error.path).to eq([:foo]) }
+        end
+      end
+    end
+  end
+
+  describe "#possible_errors" do
+    it "gives expected possible errors" do
+      expect(type.possible_errors).to eq(
+        "data.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
+        "data.missing_required_attribute" => Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::
+            MissingRequiredAttributeError,
+        "data.unexpected_attributes" => Foobara::BuiltinTypes::Attributes::SupportedProcessors::
+            ElementTypeDeclarations::UnexpectedAttributesError,
+        "data.bar.missing_required_attribute" => Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::
+            MissingRequiredAttributeError,
+        "data.foo.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
+        "data.foo.max_exceeded" => Foobara::BuiltinTypes::Number::SupportedValidators::Max::MaxExceededError,
+        "data.bar.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError
+      )
     end
   end
 end

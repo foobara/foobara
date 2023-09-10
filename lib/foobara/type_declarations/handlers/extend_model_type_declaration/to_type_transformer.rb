@@ -11,8 +11,9 @@ module Foobara
             strict_type_declaration[:model_class]
           end
 
+          # TODO: must explode if name missing...
           def type_name(strict_type_declaration)
-            strict_type_declaration[:model_name]
+            strict_type_declaration[:name]
           end
 
           # TODO: create declaration validator for name and the others

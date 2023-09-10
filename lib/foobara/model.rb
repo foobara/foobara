@@ -1,6 +1,10 @@
 module Foobara
   class Model
     class << self
+      def possible_errors
+        attributes_type.possible_errors
+      end
+
       def subclass(strict_type_declaration)
         namespace = TypeDeclarations::Namespace.current
 
@@ -32,13 +36,7 @@ module Foobara
 
             # TODO: let's cache validation_errors and clobber caches when updating this for performance reasons
             define_method "#{attribute_name}=" do |value|
-              attribute_type = attributes_type.element_types[attribute_name]
-
-              outcome = attribute_type.process_value(value)
-
-              value = outcome.result if outcome.success?
-
-              attributes[attribute_name] = value
+              write_attribute(attribute_name, value)
             end
           end
         end
@@ -50,7 +48,7 @@ module Foobara
 
     def initialize(attributes = nil)
       attributes&.each_pair do |attribute_name, value|
-        send("#{attribute_name}=", value)
+        write_attribute(attribute_name, value)
       end
     end
 
@@ -59,6 +57,18 @@ module Foobara
 
     def attributes
       @attributes ||= {}
+    end
+
+    def write_attribute(attribute_name, value)
+      attribute_type = attributes_type.element_types[attribute_name]
+
+      if attribute_type
+        outcome = attribute_type.process_value(value)
+
+        value = outcome.result if outcome.success?
+      end
+
+      attributes[attribute_name] = value
     end
 
     def valid?
