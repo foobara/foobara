@@ -28,7 +28,8 @@ module Foobara
                     :element_type,
                     :raw_declaration_data,
                     :name,
-                    :target_classes
+                    :target_classes,
+                    :manifest_processor
 
       def initialize(
         *args,
@@ -42,6 +43,7 @@ module Foobara
         element_type: nil,
         element_types: nil,
         structure_count: nil,
+        manifest_processor: nil,
         **opts
       )
         self.base_type = base_type
@@ -54,6 +56,7 @@ module Foobara
         self.element_type = element_type
         self.name = name
         self.target_classes = Array.wrap(target_classes)
+        self.manifest_processor = manifest_processor
 
         super(*args, **opts.merge(processors:, prioritize: false))
       end
@@ -123,11 +126,13 @@ module Foobara
       end
 
       def manifest
-        {
+        manifest = {
           declaration_data:,
           raw_declaration_data:,
           supported_processors: all_supported_processor_classes.map(&:manifest)
         }
+
+        manifest_processor ? manifest_processor.process_value!(manifest) : manifest
       end
     end
   end

@@ -6,6 +6,30 @@ module Foobara
     module Handlers
       class ExtendModelTypeDeclaration < ExtendRegisteredTypeDeclaration
         class ToTypeTransformer < ExtendRegisteredTypeDeclaration::ToTypeTransformer
+          def process_value(strict_type_declaration)
+            super.tap do |outcome|
+              if outcome.success?
+                outcome.result.manifest_processor = Transformer.create(
+                  name: "Make model type declarations serializable",
+                  always_applicable?: true,
+                  transform: ->(manifest) {
+                    manifest = manifest.dup
+
+                    manifest[:declaration_data] = manifest[:declaration_data].transform_values do |value|
+                      value.is_a?(::Class) ? value.name : value
+                    end
+
+                    manifest[:raw_declaration_data] = manifest[:raw_declaration_data].transform_values do |value|
+                      value.is_a?(::Class) ? value.name : value
+                    end
+
+                    manifest
+                  }
+                )
+              end
+            end
+          end
+
           # TODO: make declaration validator for model_class and model_base_class
           def target_classes(strict_type_declaration)
             strict_type_declaration[:model_class]

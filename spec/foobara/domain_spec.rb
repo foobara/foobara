@@ -174,8 +174,8 @@ RSpec.describe Foobara::Domain do
                   declaration_data: {
                     type: :model,
                     name: "SomeNewModel",
-                    model_class:, # TODO: fix this...
-                    model_base_class: Foobara::Model, # TODO: fix this...
+                    model_class: "SomeDomain::SomeNewModel",
+                    model_base_class: "Foobara::Model",
                     attributes_declaration: {
                       type: :attributes,
                       element_type_declarations: { a: { type: :integer },
@@ -185,8 +185,8 @@ RSpec.describe Foobara::Domain do
                   raw_declaration_data: {
                     type: :model,
                     name: "SomeNewModel",
-                    model_class: SomeDomain::SomeNewModel,
-                    model_base_class: Foobara::Model,
+                    model_class: "SomeDomain::SomeNewModel",
+                    model_base_class: "Foobara::Model",
                     attributes_declaration: {
                       type: :attributes,
                       element_type_declarations: { a: { type: :integer },
