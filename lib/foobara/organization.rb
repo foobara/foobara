@@ -38,7 +38,7 @@ module Foobara
     #     type
     #       Error
     #
-    def to_h
+    def manifest
       {
         # TODO: do we really need symbols and names?? kill one of these...
         organization_name:,

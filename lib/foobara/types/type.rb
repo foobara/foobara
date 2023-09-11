@@ -122,11 +122,11 @@ module Foobara
         end
       end
 
-      def to_h
+      def manifest
         {
           declaration_data:,
           raw_declaration_data:,
-          supported_processors: all_supported_processor_classes.map(&:to_h)
+          supported_processors: all_supported_processor_classes.map(&:manifest)
         }
       end
     end

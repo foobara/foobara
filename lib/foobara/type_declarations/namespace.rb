@@ -179,8 +179,8 @@ module Foobara
         end
       end
 
-      def to_h
-        all_types.map(&:to_h)
+      def manifest
+        all_types.map(&:manifest)
       end
     end
   end

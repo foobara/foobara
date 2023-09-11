@@ -50,7 +50,7 @@ module Foobara
           domain&.organization
         end
 
-        def to_h
+        def manifest
           super.merge(
             domain_name:,
             organization_name:,

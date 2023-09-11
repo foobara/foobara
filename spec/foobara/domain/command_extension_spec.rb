@@ -134,9 +134,9 @@ RSpec.describe Foobara::Domain::CommandExtension do
       end
 
       # TODO: this belongs elsewhere
-      describe "#to_h" do
+      describe "#manifest" do
         it "gives a whole manifest of everything" do
-          expect(Foobara.to_h).to eq(
+          expect(Foobara.manifest).to eq(
             organizations: [],
             domains: [
               {

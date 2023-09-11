@@ -105,9 +105,9 @@ RSpec.describe Foobara::Domain do
       end
 
       # TODO: belongs elsewhere
-      describe "#to_h" do
+      describe "#manifest" do
         it "gives a whole manifest of everything" do
-          expect(Foobara.to_h).to eq(
+          expect(Foobara.manifest).to eq(
             organizations: [{ organization_name: "SomeOrg", domains: ["SomeDomain"] }],
             domains: [{ organization_name: "SomeOrg",
                         domain_name: "SomeDomain",
@@ -157,9 +157,9 @@ RSpec.describe Foobara::Domain do
       expect(domain_module.const_get(:SomeNewModel).domain).to eq(domain)
     end
 
-    describe "#to_h" do
+    describe "#manifest" do
       it "gives a whole manifest of everything" do
-        expect(Foobara.to_h).to eq(
+        expect(Foobara.manifest).to eq(
           organizations: [],
           domains: [
             {

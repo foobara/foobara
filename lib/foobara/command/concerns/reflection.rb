@@ -18,7 +18,7 @@ module Foobara
             @all = nil
           end
 
-          def to_h
+          def manifest
             h = {
               command_name:,
               inputs_type: inputs_type&.declaration_data,

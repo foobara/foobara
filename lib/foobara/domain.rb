@@ -83,7 +83,7 @@ module Foobara
     end
 
     # commands... types... models... errors?
-    def to_h
+    def manifest
       {
         organization_name:,
         domain_name:,
@@ -91,7 +91,7 @@ module Foobara
         depends_on: depends_on.map(&:full_domain_name),
         commands: command_classes.map(&:command_name),
         models: model_classes.map(&:model_name),
-        types: type_namespace.to_h
+        types: type_namespace.manifest
       }
     end
 

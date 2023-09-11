@@ -20,11 +20,11 @@ module Foobara
   class << self
     # TODO: rename this to manifest...
     # TODO: come up with a way to change a type's manifest... Or maybe treat Model very differently?
-    def to_h
+    def manifest
       {
-        organizations: all_organizations.map(&:to_h),
-        domains: all_domains.map(&:to_h),
-        commands: all_commands.map(&:to_h)
+        organizations: all_organizations.map(&:manifest),
+        domains: all_domains.map(&:manifest),
+        commands: all_commands.map(&:manifest)
         # TODO: types
         # TODO: errors?
       }
