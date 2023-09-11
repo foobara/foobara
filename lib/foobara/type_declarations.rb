@@ -7,7 +7,19 @@ Foobara::Util.require_directory("#{__dir__}/type_declarations")
 module Foobara
   module TypeDeclarations
     class << self
+      def reset_all
+        Foobara::TypeDeclarations::Namespace.reset_all
+
+        register_type_declaration(Handlers::RegisteredTypeDeclaration.new)
+        register_type_declaration(Handlers::ExtendRegisteredTypeDeclaration.new)
+        register_type_declaration(Handlers::ExtendArrayTypeDeclaration.new)
+        register_type_declaration(Handlers::ExtendAttributesTypeDeclaration.new)
+        register_type_declaration(Handlers::ExtendTupleTypeDeclaration.new)
+        register_type_declaration(Handlers::ExtendModelTypeDeclaration.new)
+      end
+
       def install!
+        reset_all
         Foobara::Error.include(ErrorExtension)
 
         Value::Processor::Casting::CannotCastError.singleton_class.define_method :context_type_declaration do
@@ -66,7 +78,7 @@ module Foobara
       end
 
       def global_type_declaration_handler_registry
-        Namespace::GLOBAL.type_declaration_handler_registry
+        Namespace.global.type_declaration_handler_registry
       end
 
       def register_type_declaration(type_declaration_handler)
@@ -75,12 +87,6 @@ module Foobara
     end
 
     install!
-    register_type_declaration(Handlers::RegisteredTypeDeclaration.new)
-    register_type_declaration(Handlers::ExtendRegisteredTypeDeclaration.new)
-    register_type_declaration(Handlers::ExtendArrayTypeDeclaration.new)
-    register_type_declaration(Handlers::ExtendAttributesTypeDeclaration.new)
-    register_type_declaration(Handlers::ExtendTupleTypeDeclaration.new)
-    register_type_declaration(Handlers::ExtendModelTypeDeclaration.new)
   end
 end
 

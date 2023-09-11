@@ -21,13 +21,7 @@ module Foobara
     # TODO: rename this to manifest...
     # TODO: come up with a way to change a type's manifest... Or maybe treat Model very differently?
     def manifest
-      {
-        organizations: all_organizations.map(&:manifest),
-        domains: all_domains.map(&:manifest),
-        commands: all_commands.map(&:manifest)
-        # TODO: types
-        # TODO: errors?
-      }
+      all_organizations.map(&:manifest_hash).inject(:merge)
     end
 
     def all_organizations
@@ -35,18 +29,29 @@ module Foobara
     end
 
     def all_domains
-      Domain.all
+      Domain.all.values
     end
 
     def all_commands
       Command.all
     end
 
+    def all_types
+      all_namespaces.map(&:all_types).flatten
+    end
+
+    def all_namespaces
+      [*all_domains.map(&:type_namespace), TypeDeclarations::Namespace.global]
+    end
+
     def reset_alls
-      Foobara::Domain.reset_unprocessed_command_classes
       Foobara::Domain.reset_all
+      Foobara::Model.reset_all
       Foobara::Command.reset_all
       Foobara::Organization.reset_all
+      Foobara::Types.reset_all
+      Foobara::TypeDeclarations.reset_all
+      Foobara::BuiltinTypes.reset_all
     end
   end
 end

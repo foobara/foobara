@@ -121,12 +121,17 @@ module Foobara
         end
       end
 
-      def reset_unprocessed_command_classes
-        @unprocessed_command_classes = nil
-      end
-
       def reset_all
-        @all = nil
+        %w[
+          all
+          global
+          foobara_organization_modules
+          foobara_domain_modules
+          unprocessed_command_classes
+        ].each do |var_name|
+          var_name = "@#{var_name}"
+          remove_instance_variable(var_name) if instance_variable_defined?(var_name)
+        end
       end
 
       def install!

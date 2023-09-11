@@ -5,6 +5,12 @@ module Foobara
 
       delegate :organization, to: :domain, allow_nil: true
 
+      def reset_all
+        Foobara::Util.constant_values(self, extends: Foobara::Model).each do |dynamic_model|
+          remove_const(dynamic_model.name.demodulize)
+        end
+      end
+
       def update_namespace
         mod = Util.module_for(self)
 

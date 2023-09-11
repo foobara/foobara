@@ -15,6 +15,10 @@ module Foobara
       delegate :[], :[]=, :registered?, :root_type, :root_type=, to: :global_registry
       delegate :global_type_declaration_handler_registry, to: TypeDeclarations
 
+      def reset_all
+        build_and_register_all_builtins_and_install_type_declaration_extensions!
+      end
+
       def build_and_register_all_builtins_and_install_type_declaration_extensions!
         duck = build_and_register!(:duck, nil, ::Object)
         # TODO: should we ban ::Object that are ::Enumerable from atomic_duck?
@@ -106,7 +110,8 @@ module Foobara
           validators:,
           # TODO: this is for controlling casting or not casting but could give the wrong information from a
           # reflection point of view...
-          target_classes:
+          target_classes:,
+          type_registry: Types.global_registry
         )
 
         processor_classes = [*transformers, *validators].map(&:class)

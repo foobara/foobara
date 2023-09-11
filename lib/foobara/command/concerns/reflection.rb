@@ -15,7 +15,7 @@ module Foobara
           end
 
           def reset_all
-            @all = nil
+            remove_instance_variable("@all") if instance_variable_defined?("@all")
           end
 
           def manifest

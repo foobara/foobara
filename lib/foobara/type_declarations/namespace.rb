@@ -10,6 +10,19 @@ module Foobara
           end
         end
 
+        def global
+          @global ||= new(
+            :global,
+            type_registry: Types.global_registry,
+            accesses: []
+          )
+        end
+
+        def reset_all
+          remove_instance_variable("@global") if instance_variable_defined?("@global")
+          remove_instance_variable("@namespaces") if instance_variable_defined?("@namespaces")
+        end
+
         def namespaces
           @namespaces ||= []
         end
@@ -27,7 +40,7 @@ module Foobara
         end
 
         def current
-          Thread.current[:foobara_namespace]
+          Thread.current[:foobara_namespace] || global
         end
 
         def using(namespace_or_symbol)
@@ -41,7 +54,7 @@ module Foobara
                         # :nocov:
                       end
 
-          old_namespace = current
+          old_namespace = Thread.current[:foobara_namespace]
 
           begin
             Thread.current[:foobara_namespace] = namespace
@@ -67,8 +80,8 @@ module Foobara
       def initialize(
         name,
         type_declaration_handler_registry: TypeDeclarations::TypeDeclarationHandlerRegistry.new(enforce_unique: false),
-        type_registry: Types::Registry.new,
-        accesses: GLOBAL
+        type_registry: Types::Registry.new(name),
+        accesses: self.class.global
       )
         self.name = name
         self.type_declaration_handler_registry = type_declaration_handler_registry
@@ -78,14 +91,6 @@ module Foobara
       end
 
       delegate :all_types, to: :type_registry
-
-      GLOBAL = new(
-        :global,
-        type_registry: Types.global_registry,
-        accesses: []
-      )
-
-      Thread.current[:foobara_namespace] = GLOBAL
 
       # types
 
@@ -180,7 +185,7 @@ module Foobara
       end
 
       def manifest
-        all_types.map(&:manifest)
+        all_types.map(&:manifest_hash).inject(:merge) || {}
       end
     end
   end

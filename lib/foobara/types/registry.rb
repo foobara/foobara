@@ -2,8 +2,10 @@ module Foobara
   module Types
     class Registry
       attr_reader :root_type
+      attr_accessor :name
 
-      def initialize
+      def initialize(name)
+        self.name = name
         self.registry = {}
       end
 

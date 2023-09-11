@@ -4,20 +4,48 @@ module Foobara
 
     class << self
       def all
-        @all ||= []
+        @all ||= [global]
+      end
+
+      def global
+        return @global if defined?(@global)
+
+        @global = new(global: true)
+      end
+
+      def reset_all
+        remove_instance_variable("@all") if instance_variable_defined?("@all")
+        remove_instance_variable("@global") if instance_variable_defined?("@global")
       end
     end
 
-    attr_accessor :domains, :organization_name
+    attr_accessor :domains, :organization_name, :is_global
 
-    def initialize(organization_name:)
-      self.organization_name = organization_name
-      Organization.all << self
+    def initialize(organization_name: nil, global: false)
+      self.is_global = global
       @domains = []
+
+      unless global
+        Organization.all << self
+
+        if organization_name.blank?
+          # :nocov:
+          raise ArgumentError, "Must provide an organization_name:"
+          # :nocov:
+        end
+
+        self.organization_name = organization_name
+      end
+    end
+
+    def global?
+      is_global
     end
 
     def organization_symbol
-      @organization_symbol ||= organization_name.underscore.to_sym
+      return @organization_symbol if defined?(@organization_symbol)
+
+      @organization_symbol = organization_name&.underscore&.to_sym
     end
 
     def owns_domain?(domain)
