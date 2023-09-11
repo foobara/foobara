@@ -77,6 +77,8 @@ module Foobara
         self.accesses = Array.wrap(accesses)
       end
 
+      delegate :all_types, to: :type_registry
+
       GLOBAL = new(
         :global,
         type_registry: Types.global_registry,
@@ -175,6 +177,10 @@ module Foobara
             { processor_data.to_sym => true }
           end.merge(type:)
         end
+      end
+
+      def to_h
+        all_types.map(&:to_h)
       end
     end
   end

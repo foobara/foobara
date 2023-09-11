@@ -45,6 +45,10 @@ module Foobara
         registry.key?(symbol)
       end
 
+      def all_types
+        registry.values
+      end
+
       private
 
       attr_accessor :registry

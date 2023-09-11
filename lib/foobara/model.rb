@@ -1,10 +1,49 @@
 module Foobara
   class Model
     class << self
-      attr_accessor :attributes_type, :namespace
+      attr_accessor :attributes_type, :namespace, :domain
+
+      delegate :organization, to: :domain, allow_nil: true
+
+      def update_namespace
+        mod = Util.module_for(self)
+
+        if mod&.foobara_domain?
+          self.domain = mod.foobara_domain
+          self.namespace = domain.type_namespace
+        else
+          self.namespace = TypeDeclarations::Namespace::GLOBAL
+        end
+      end
+
+      def model_type
+        return @model_type if defined?(@model_type)
+
+        @model_type = namespace.type_for_declaration(model_type_declaration)
+      end
+
+      def model_type_declaration
+        {
+          type: :model,
+          name: model_name,
+          model_class: self,
+          model_base_class: superclass,
+          attributes_declaration: attributes_type.declaration_data
+        }
+      end
+
+      def model_name
+        name.demodulize
+      end
 
       def attributes(attributes_type_declaration)
+        update_namespace
         self.attributes_type = attributes_declaration_to_type(attributes_type_declaration)
+        register_model_type
+      end
+
+      def register_model_type
+        domain&.register_model(self)
       end
 
       def possible_errors
@@ -19,7 +58,7 @@ module Foobara
       def subclass(strict_type_declaration)
         model_name = strict_type_declaration[:name]
 
-        # How are we going to set the domain and organization?
+        # TODO: How are we going to set the domain and organization?
         Class.new(self) do
           self.namespace = TypeDeclarations::Namespace.current
 
@@ -47,9 +86,6 @@ module Foobara
       end
     end
 
-    # TODO: how are we going to set this??
-    attr_accessor :domain
-
     def initialize(attributes = nil)
       attributes&.each_pair do |attribute_name, value|
         write_attribute(attribute_name, value)
@@ -57,7 +93,6 @@ module Foobara
     end
 
     delegate :model_name, :attributes_type, to: :class
-    delegate :organization, to: :domain, allow_nil: true
 
     def attributes
       @attributes ||= {}

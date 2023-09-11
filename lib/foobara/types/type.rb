@@ -121,6 +121,14 @@ module Foobara
           []
         end
       end
+
+      def to_h
+        {
+          declaration_data:,
+          raw_declaration_data:,
+          supported_processors: all_supported_processor_classes.map(&:to_h)
+        }
+      end
     end
   end
 end

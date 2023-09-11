@@ -15,6 +15,14 @@ module Foobara
             @supported_processor_classes ||= {}
           end
 
+          def all_supported_processor_classes
+            if base_type
+              supported_processor_classes.values + base_type.all_supported_processor_classes
+            else
+              supported_processor_classes.values
+            end
+          end
+
           def find_supported_processor_class(processor_symbol)
             if supported_processor_classes.key?(processor_symbol)
               supported_processor_classes[processor_symbol]

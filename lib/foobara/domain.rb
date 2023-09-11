@@ -4,13 +4,14 @@ module Foobara
   class Domain
     class AlreadyRegisteredDomainDependency < StandardError; end
 
-    attr_accessor :organization, :domain_name
+    attr_accessor :organization, :domain_name, :model_classes
 
     def initialize(domain_name:, organization: nil)
       self.domain_name = domain_name
       self.organization = organization
       Domain.all << self
       @command_classes = []
+      @model_classes = []
     end
 
     delegate :organization_name, :organization_symbol, to: :organization, allow_nil: true
@@ -48,6 +49,11 @@ module Foobara
       @command_classes << command_class
     end
 
+    def register_model(model_class)
+      @model_classes << model_class
+      type_namespace.register_type(model_class.model_name, model_class.model_type)
+    end
+
     def depends_on?(domain)
       if domain.is_a?(Domain)
         domain = domain.domain_name
@@ -83,7 +89,9 @@ module Foobara
         domain_name:,
         full_domain_name:,
         depends_on: depends_on.map(&:full_domain_name),
-        commands: command_classes.map(&:command_name)
+        commands: command_classes.map(&:command_name),
+        models: model_classes.map(&:model_name),
+        types: type_namespace.to_h
       }
     end
 

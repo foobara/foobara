@@ -144,19 +144,25 @@ RSpec.describe Foobara::Domain::CommandExtension do
                 domain_name: "SomeDomain1",
                 full_domain_name: "SomeDomain1",
                 depends_on: [],
-                commands: %w[SomeCommand1 SomeCommand2]
+                commands: %w[SomeCommand1 SomeCommand2],
+                models: [],
+                types: []
               },
               { organization_name: nil,
                 domain_name: "SomeDomain2",
                 full_domain_name: "SomeDomain2",
                 depends_on: [],
-                commands: [] },
+                commands: [],
+                models: [],
+                types: [] },
               {
                 organization_name: nil,
                 domain_name: "SomeDomain3",
                 full_domain_name: "SomeDomain3",
                 depends_on: [],
-                commands: []
+                commands: [],
+                models: [],
+                types: []
               }
             ],
             commands: [
