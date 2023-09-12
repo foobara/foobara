@@ -222,6 +222,7 @@ RSpec.describe "custom types" do
             key: "data.whatever",
             path: [],
             runtime_path: [],
+            is_fatal: false,
             context: { foo: :bar },
             message: "whatevs!",
             symbol: :whatever
@@ -265,6 +266,7 @@ RSpec.describe "custom types" do
             key: "data.c.real_should_not_match_imaginary",
             path: [:c],
             runtime_path: [],
+            is_fatal: false,
             symbol: :real_should_not_match_imaginary,
             context: { foo: :bar },
             message: "cant be the same!"
@@ -340,6 +342,7 @@ RSpec.describe "custom types" do
                 key: "data.real_should_not_match_imaginary",
                 path: [],
                 runtime_path: [],
+                is_fatal: false,
                 category: :data,
                 symbol: :real_should_not_match_imaginary,
                 message: "cant be the same!",
@@ -375,6 +378,7 @@ RSpec.describe "custom types" do
                   key: "data.real_should_not_match_imaginary",
                   path: [],
                   runtime_path: [],
+                  is_fatal: false,
                   category: :data,
                   symbol: :real_should_not_match_imaginary,
                   message: "cant be the same!",

@@ -9,6 +9,12 @@ module Foobara
         def requires_declaration_data?
           false
         end
+
+        def manifest
+          # :nocov:
+          super.merge(processor_type: :desugarizer)
+          # :nocov:
+        end
       end
 
       def transform(value)

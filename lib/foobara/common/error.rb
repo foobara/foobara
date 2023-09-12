@@ -32,6 +32,16 @@ module Foobara
         def fatal?
           false
         end
+
+        def to_h
+          {
+            category:,
+            symbol:,
+            # TODO: this is a bad dependency direction but maybe time to bite the bullet and finally merge these...
+            context_type_declaration: context_type.declaration_data,
+            is_fatal: fatal?
+          }
+        end
       end
 
       delegate :runtime_path,
@@ -45,6 +55,7 @@ module Foobara
                to: :error_key
 
       # TODO: seems like we should not allow the symbol to vary within instances of a class
+      # TODO: any items serializable in self.class.to_h should not be overrideable like this...
       def initialize(
         path: self.class.path,
         runtime_path: self.class.runtime_path,
@@ -104,7 +115,8 @@ module Foobara
           category:,
           symbol:,
           message:,
-          context:
+          context:,
+          is_fatal: fatal?
         }
       end
     end

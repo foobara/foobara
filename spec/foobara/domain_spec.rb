@@ -107,30 +107,12 @@ RSpec.describe Foobara::Domain do
       # TODO: belongs elsewhere
       describe "#manifest" do
         it "gives a whole manifest of everything" do
-          expect(Foobara.manifest).to eq(
-            organizations: [{ organization_name: "SomeOrg", domains: ["SomeDomain"] }],
-            domains: [{ organization_name: "SomeOrg",
-                        domain_name: "SomeDomain",
-                        full_domain_name: "SomeOrg::SomeDomain",
-                        depends_on: [],
-                        commands: ["SomeCommand"],
-                        models: [],
-                        types: [] }],
-            commands: [{ command_name: "SomeCommand",
-                         inputs_type: nil,
-                         error_types: [],
-                         depends_on: [],
-                         result_type: {
-                           type: :attributes,
-                           element_type_declarations: {
-                             foo: { type: :string },
-                             bar: { type: :integer }
-                           }
-                         },
-                         domain_name: "SomeDomain",
-                         organization_name: "SomeOrg",
-                         full_command_name: "SomeOrg::SomeDomain::SomeCommand" }]
-          )
+          command_manifest = Foobara.manifest[:SomeOrg][:SomeDomain][:commands][:SomeCommand]
+          expect(command_manifest[:result_type][:element_type_declarations][:bar][:type]).to eq(:integer)
+
+          expect(Foobara.all_organizations).to include(organization)
+          expect(Foobara.all_domains).to include(domain)
+          expect(Foobara.all_commands).to include(command_class)
         end
       end
 
@@ -157,55 +139,15 @@ RSpec.describe Foobara::Domain do
       expect(domain_module.const_get(:SomeNewModel).domain).to eq(domain)
     end
 
-    describe "#manifest" do
+    # TODO: this belongs elsewhere"
+    describe ".manifest" do
+      let(:manifest) { Foobara.manifest }
+
       it "gives a whole manifest of everything" do
-        expect(Foobara.manifest).to eq(
-          organizations: [],
-          domains: [
-            {
-              organization_name: nil,
-              domain_name: "SomeDomain",
-              full_domain_name: "SomeDomain",
-              depends_on: [],
-              commands: ["SomeCommand"],
-              models: ["SomeNewModel"],
-              types: [
-                {
-                  declaration_data: {
-                    type: :model,
-                    name: "SomeNewModel",
-                    model_class: "SomeDomain::SomeNewModel",
-                    model_base_class: "Foobara::Model",
-                    attributes_declaration: {
-                      type: :attributes,
-                      element_type_declarations: { a: { type: :integer },
-                                                   b: { type: :symbol } }
-                    }
-                  },
-                  raw_declaration_data: {
-                    type: :model,
-                    name: "SomeNewModel",
-                    model_class: "SomeDomain::SomeNewModel",
-                    model_base_class: "Foobara::Model",
-                    attributes_declaration: {
-                      type: :attributes,
-                      element_type_declarations: { a: { type: :integer },
-                                                   b: { type: :symbol } }
-                    }
-                  },
-                  supported_processors: []
-                }
-              ]
-            }
-          ],
-          commands: [{ command_name: "SomeCommand",
-                       inputs_type: nil,
-                       error_types: [],
-                       depends_on: [],
-                       domain_name: "SomeDomain",
-                       organization_name: nil,
-                       full_command_name: "SomeDomain::SomeCommand" }]
-        )
+        expect(manifest).to be_a(Hash)
+        model_manifest = manifest[:global_organization][:SomeDomain][:types][:SomeNewModel]
+        expect(model_manifest[:base_type]).to eq(:model)
+        expect(model_manifest[:target_classes]).to eq(["SomeDomain::SomeNewModel"])
       end
     end
   end

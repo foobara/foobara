@@ -5,6 +5,12 @@ module Foobara
         runner_methods :validation_errors
       end
 
+      class << self
+        def manifest
+          super.merge(processor_type: :transformer)
+        end
+      end
+
       # Should a Validator only return one type of error?
       def validation_errors(_value)
         # :nocov:
@@ -42,7 +48,7 @@ module Foobara
       def possible_errors
         key = ErrorKey.new(symbol: error_symbol, category: error_class.category)
 
-        { key.to_s => error_class }
+        { key.to_sym => error_class }
       end
     end
   end

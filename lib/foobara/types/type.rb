@@ -28,14 +28,15 @@ module Foobara
                     :element_type,
                     :raw_declaration_data,
                     :name,
-                    :target_classes,
-                    :manifest_processor
+                    :type_registry,
+                    :target_classes
 
       def initialize(
         *args,
         target_classes:,
+        type_registry: Types.global_registry,
         base_type: self.class.root_type,
-        name: :anonymous,
+        name: "anonymous",
         casters: [],
         transformers: [],
         validators: [],
@@ -43,7 +44,6 @@ module Foobara
         element_type: nil,
         element_types: nil,
         structure_count: nil,
-        manifest_processor: nil,
         **opts
       )
         self.base_type = base_type
@@ -52,11 +52,12 @@ module Foobara
         self.validators = validators
         self.element_processors = element_processors
         self.structure_count = structure_count
+        # TODO: combine these maybe with the term "children_types"?
         self.element_types = element_types
         self.element_type = element_type
         self.name = name
         self.target_classes = Array.wrap(target_classes)
-        self.manifest_processor = manifest_processor
+        self.type_registry = type_registry
 
         super(*args, **opts.merge(processors:, prioritize: false))
       end
@@ -125,14 +126,112 @@ module Foobara
         end
       end
 
-      def manifest
-        manifest = {
-          declaration_data:,
-          raw_declaration_data:,
-          supported_processors: all_supported_processor_classes.map(&:manifest)
-        }
+      def full_type_name
+        type_registry_name = type_registry&.name.presence
 
-        manifest_processor ? manifest_processor.process_value!(manifest) : manifest
+        if type_registry_name
+          "#{type_registry_name}::#{name}"
+        else
+          name
+        end
+      end
+
+      def manifest
+        Util.remove_empty(
+          target_classes: target_classes.map(&:name),
+          base_type: base_type&.full_type_name,
+          declaration_data:,
+          supported_processors: supported_processor_manifest,
+          processors: processor_manifest
+        )
+      end
+
+      def manifest_hash
+        {
+          name.to_sym => manifest
+        }
+      end
+
+      def supported_processor_manifest
+        supported_transformers = {}
+        supported_validators = {}
+        supported_processors = {}
+
+        all_supported_processor_classes.each do |processor_class|
+          processor_manifest = processor_class.manifest
+
+          target = if processor_class < Value::Transformer
+                     supported_transformers
+                   elsif processor_class < Value::Validator
+                     supported_validators
+                   else
+                     supported_processors
+                   end
+
+          symbol = processor_class.symbol
+
+          if target.key?(symbol)
+            # :nocov:
+            raise "Already registered #{symbol}"
+            # :nocov:
+          end
+
+          target[symbol] = processor_manifest
+        end
+
+        Util.remove_empty(
+          supported_transformers:,
+          supported_validators:,
+          supported_processors:
+        )
+      end
+
+      def processor_manifest
+        casters_manifest = {}
+        transformers_manifest = {}
+        validators_manifest = {}
+
+        casters.each do |caster|
+          symbol = caster.symbol
+
+          if casters_manifest.key?(symbol)
+            # :nocov:
+            raise "Already registered casters_manifest with #{symbol.inspect}"
+            # :nocov:
+          end
+
+          casters_manifest[symbol] = caster.manifest
+        end
+
+        transformers.each do |transformer|
+          symbol = transformer.symbol
+
+          if transformers_manifest.key?(symbol)
+            # :nocov:
+            raise "Already registered transformers_manifest with #{symbol.inspect}"
+            # :nocov:
+          end
+
+          transformers_manifest[symbol] = transformer.manifest
+        end
+
+        validators.each do |validator|
+          symbol = validator.symbol
+
+          if validators_manifest.key?(symbol)
+            # :nocov:
+            raise "Already registered validators_manifest with #{symbol.inspect}"
+            # :nocov:
+          end
+
+          validators_manifest[symbol] = validator.manifest
+        end
+
+        Util.remove_empty(
+          casters: casters_manifest,
+          transformers: transformers_manifest,
+          validators: validators_manifest
+        )
       end
     end
   end

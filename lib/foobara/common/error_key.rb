@@ -119,6 +119,10 @@ module Foobara
         ].join(":")
       end
 
+      def to_sym(**)
+        to_s(**).to_sym
+      end
+
       def to_s_type
         to_s(convert_to_type: true)
       end

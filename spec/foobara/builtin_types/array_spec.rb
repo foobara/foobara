@@ -65,6 +65,7 @@ RSpec.describe ":array" do
             key: "data.2.cannot_cast",
             path: [2],
             runtime_path: [],
+            is_fatal: true,
             category: :data,
             symbol: :cannot_cast,
             message: "Cannot cast {:not=>:valid}. Expected it to be a Integer, " \
@@ -74,8 +75,8 @@ RSpec.describe ":array" do
         )
 
         expect(type.possible_errors).to eq(
-          "data.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
-          "data.#.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError
+          "data.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+          "data.#.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError
         )
       end
     end

@@ -134,110 +134,10 @@ RSpec.describe Foobara::Domain::CommandExtension do
       end
 
       # TODO: this belongs elsewhere
-      describe "#manifest" do
-        it "gives a whole manifest of everything" do
-          expect(Foobara.manifest).to eq(
-            organizations: [],
-            domains: [
-              {
-                organization_name: nil,
-                domain_name: "SomeDomain1",
-                full_domain_name: "SomeDomain1",
-                depends_on: [],
-                commands: %w[SomeCommand1 SomeCommand2],
-                models: [],
-                types: []
-              },
-              { organization_name: nil,
-                domain_name: "SomeDomain2",
-                full_domain_name: "SomeDomain2",
-                depends_on: [],
-                commands: [],
-                models: [],
-                types: [] },
-              {
-                organization_name: nil,
-                domain_name: "SomeDomain3",
-                full_domain_name: "SomeDomain3",
-                depends_on: [],
-                commands: [],
-                models: [],
-                types: []
-              }
-            ],
-            commands: [
-              {
-                command_name: "SomeCommand2", inputs_type: nil, error_types: [], depends_on: [],
-                domain_name: "SomeDomain1", organization_name: nil, full_command_name: "SomeDomain1::SomeCommand2"
-              },
-              {
-                command_name: "SomeCommand1",
-                inputs_type: {
-                  type: :attributes,
-                  element_type_declarations: { foo: { type: :integer } }
-                },
-                error_types: [
-                  {
-                    path: [], runtime_path: [], category: :data, symbol: :cannot_cast, key: "data.cannot_cast",
-                    context_type_declaration: {
-                      type: :attributes,
-                      element_type_declarations: {
-                        cast_to: { type: :duck }, value: { type: :duck },
-                        attribute_name: { type: :symbol }
-                      }
-                    }
-                  },
-                  {
-                    path: [],
-                    runtime_path: [],
-                    category: :data,
-                    symbol: :unexpected_attributes,
-                    key: "data.unexpected_attributes",
-                    context_type_declaration: {
-                      type: :attributes,
-                      element_type_declarations: {
-                        unexpected_attributes: {
-                          type: :array,
-                          element_type_declaration: { type: :symbol }
-                        },
-                        allowed_attributes: {
-                          type: :array,
-                          element_type_declaration: { type: :symbol }
-                        }
-                      }
-                    }
-                  },
-                  {
-                    path: [:foo],
-                    runtime_path: [],
-                    category: :data,
-                    symbol: :cannot_cast,
-                    key: "data.foo.cannot_cast",
-                    context_type_declaration: {
-                      type: :attributes,
-                      element_type_declarations: {
-                        cast_to: { type: :duck },
-                        value: { type: :duck },
-                        attribute_name: { type: :symbol }
-                      }
-                    }
-                  }
-                ],
-                depends_on: ["SomeDomain1::SomeCommand2"],
-                domain_name: "SomeDomain1",
-                organization_name: nil,
-                full_command_name: "SomeDomain1::SomeCommand1"
-              },
-              {
-                command_name: "TopLevelCommand",
-                inputs_type: nil,
-                error_types: [],
-                depends_on: [],
-                domain_name: nil,
-                organization_name: nil,
-                full_command_name: "TopLevelCommand"
-              }
-            ]
+      describe ".manifest" do
+        it "contains the depends_on information for the commands" do
+          expect(Foobara.manifest[:global_organization][:SomeDomain1][:commands][:SomeCommand1][:depends_on]).to eq(
+            ["SomeDomain1::SomeCommand2"]
           )
         end
       end
@@ -289,6 +189,15 @@ RSpec.describe Foobara::Domain::CommandExtension do
           subject { domain_module1.foobara_domain.depends_on?("SomeDomain2") }
 
           it { is_expected.to be(true) }
+        end
+      end
+
+      # TODO: this belongs elsewhere
+      describe ".manifest" do
+        it "contains the depends_on information for the commands" do
+          expect(Foobara.manifest[:global_organization][:SomeDomain1][:depends_on]).to eq(
+            %w[SomeDomain2 SomeDomain3]
+          )
         end
       end
     end

@@ -3,6 +3,10 @@ module Foobara
     # TODO: do we really need these??  Can't just use a transformer?
     class Caster < Transformer
       class << self
+        def manifest
+          super.merge(processor_type: :caster)
+        end
+
         def requires_declaration_data?
           false
         end

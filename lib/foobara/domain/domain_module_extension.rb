@@ -7,13 +7,11 @@ module Foobara
 
           organization = if org_module&.foobara_organization?
                            org_module.foobara_organization
+                         else
+                           Organization.global
                          end
 
-          domain = Domain.new(domain_name: name.demodulize, organization:)
-
-          organization&.register_domain(domain)
-
-          domain
+          Domain.new(domain_name: name.demodulize, organization:)
         end
       end
 
@@ -21,7 +19,7 @@ module Foobara
         true
       end
 
-      delegate :depends_on, to: :foobara_domain
+      delegate :depends_on, :type_for_declaration, to: :foobara_domain
     end
   end
 end

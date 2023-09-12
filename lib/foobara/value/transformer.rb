@@ -9,6 +9,10 @@ module Foobara
       end
 
       class << self
+        def manifest
+          super.merge(processor_type: :transformer)
+        end
+
         def error_classes
           []
         end

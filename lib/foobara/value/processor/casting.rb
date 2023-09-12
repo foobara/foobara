@@ -14,6 +14,12 @@ module Foobara
         end
 
         class << self
+          def manifest
+            # :nocov:
+            super.merge(processor_type: :casting)
+            # :nocov:
+          end
+
           def error_classes
             [CannotCastError]
           end

@@ -38,8 +38,8 @@ RSpec.describe ":associative_array" do
       describe "#possible_errors" do
         it "contains expected possible errors" do
           expect(type.possible_errors).to eq(
-            "data.#.key.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
-            "data.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError
+            "data.#.key.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+            "data.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError
           )
         end
       end
@@ -79,8 +79,8 @@ RSpec.describe ":associative_array" do
       describe "#possible_errors" do
         it "contains expected possible errors" do
           expect(type.possible_errors).to eq(
-            "data.#.value.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
-            "data.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError
+            "data.#.value.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+            "data.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError
           )
         end
       end

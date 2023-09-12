@@ -70,7 +70,7 @@ module Foobara
               attribute_type.possible_errors.each_pair do |key, error_class|
                 key = ErrorKey.prepend_path(key, attribute_name)
 
-                possibilities[key] = error_class
+                possibilities[key.to_sym] = error_class
               end
             end
 

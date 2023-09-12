@@ -37,7 +37,7 @@ module Foobara
             key = ErrorKey.new(symbol: error_symbol, category: error_class.category)
 
             required_attribute_names.to_h do |required_attribute_name|
-              [ErrorKey.prepend_path(key, required_attribute_name), error_class]
+              [ErrorKey.prepend_path(key, required_attribute_name).to_sym, error_class]
             end
           end
         end

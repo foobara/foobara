@@ -4,40 +4,70 @@ module Foobara
   class Domain
     class AlreadyRegisteredDomainDependency < StandardError; end
 
-    attr_accessor :organization, :domain_name, :model_classes
+    attr_accessor :organization, :domain_name, :model_classes, :is_global
 
-    def initialize(domain_name:, organization: nil)
-      self.domain_name = domain_name
+    def initialize(domain_name: nil, organization: Organization.global, global: false)
+      self.is_global = global
+
+      if global?
+        @type_namespace = TypeDeclarations::Namespace.global
+      else
+        if domain_name.blank?
+          # :nocov:
+          raise ArgumentError, "Must provide an domain_name:"
+          # :nocov:
+        end
+
+        self.domain_name = domain_name
+      end
+
       self.organization = organization
-      Domain.all << self
+      organization.register_domain(self)
+      # TODO: explode if same name used twice
+      Domain.all[all_key] = self
       @command_classes = []
       @model_classes = []
     end
 
     delegate :organization_name, :organization_symbol, to: :organization, allow_nil: true
+    delegate :type_for_declaration, to: :type_namespace
 
-    def type_namespace
-      @type_namespace ||= Foobara::TypeDeclarations::Namespace.new(full_domain_name)
+    def global?
+      is_global
     end
 
-    def full_domain_name
-      if organization.present?
-        "#{organization_name}::#{domain_name}"
+    def all_key
+      if global?
+        nil
       else
-        domain_name
+        full_domain_name.to_sym
       end
     end
 
+    def type_namespace
+      @type_namespace ||= TypeDeclarations::Namespace.new(full_domain_name)
+    end
+
+    def full_domain_name
+      [
+        organization_name,
+        domain_name
+      ].compact.join("::").presence
+    end
+
     def domain_symbol
-      @domain_symbol ||= domain_name.underscore.to_sym
+      @domain_symbol ||= unless global?
+                           domain_name.underscore.to_sym
+                         end
     end
 
     def full_domain_symbol
-      @full_domain_symbol ||= if organization.present?
-                                "#{organization_symbol}::#{domain_symbol}".to_sym
-                              else
-                                domain_symbol
-                              end.to_sym
+      return @full_domain_symbol if defined?(@full_domain_symbol)
+
+      @full_domain_symbol = [
+        organization_symbol,
+        domain_symbol
+      ].compact.join("::").presence&.to_sym
     end
 
     def command_classes
@@ -54,27 +84,29 @@ module Foobara
       type_namespace.register_type(model_class.model_name, model_class.model_type)
     end
 
-    def depends_on?(domain)
-      if domain.is_a?(Domain)
-        domain = domain.domain_name
-      end
+    def depends_on?(other_domain)
+      return true if global?
 
-      depends_on.include?(domain.to_sym)
+      other_domain = self.class.to_domain(other_domain)
+
+      other_domain.global? || other_domain == self || depends_on.include?(other_domain.all_key)
     end
 
-    def depends_on(*domain_classes)
-      return @depends_on ||= Set.new if domain_classes.empty?
+    def depends_on(*domains)
+      return @depends_on ||= Set.new if domains.empty?
 
-      if domain_classes.length == 1
-        domain_classes = Array.wrap(domain_classes.first)
+      if domains.length == 1
+        domains = Array.wrap(domains.first)
       end
 
-      domain_classes.each do |domain_class|
-        domain_name = domain_class.name.to_sym
+      domains.each do |domain|
+        # It very likely could be a module extended with domain methods...
+        domain = self.class.to_domain(domain)
+        domain_name = domain.all_key
 
         if depends_on.include?(domain_name)
           # :nocov:
-          raise AlreadyRegisteredDomainDependency, "Already registered #{domain_class} as a dependency of #{self}"
+          raise AlreadyRegisteredDomainDependency, "Already registered #{domain_name} as a dependency of #{self}"
           # :nocov:
         end
 
@@ -82,22 +114,46 @@ module Foobara
       end
     end
 
-    # commands... types... models... errors?
     def manifest
-      {
-        organization_name:,
-        domain_name:,
-        full_domain_name:,
-        depends_on: depends_on.map(&:full_domain_name),
-        commands: command_classes.map(&:command_name),
-        models: model_classes.map(&:model_name),
+      Util.remove_empty(
+        depends_on: depends_on.map(&:to_s),
+        commands: command_classes.map(&:manifest_hash).inject(:merge) || {},
         types: type_namespace.manifest
+      )
+    end
+
+    def manifest_hash
+      key = domain_name || "global_domain"
+
+      {
+        key.to_sym => manifest
       }
     end
 
     class << self
+      def to_domain(object)
+        case object
+        when ::String, ::Symbol
+          Domain.all[object.to_sym]
+        when Domain
+          object
+        when DomainModuleExtension
+          object.foobara_domain
+        else
+          # :nocov:
+          raise ArgumentError, "Couldn't determine domain for #{object}"
+          # :nocov:
+        end
+      end
+
+      def global
+        return @global if defined?(@global)
+
+        @global = new(global: true, organization: Organization.global)
+      end
+
       def all
-        @all ||= []
+        @all ||= {}
       end
 
       def foobara_organization_modules

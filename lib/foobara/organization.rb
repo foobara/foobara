@@ -57,27 +57,16 @@ module Foobara
       @domains << domain
     end
 
-    # Organization
-    #   Domain
-    #     Command
-    #       input type
-    #       possible errors
-    #       result type
-    #     type
-    #       Error
-    #
     def manifest
-      {
-        # TODO: do we really need symbols and names?? kill one of these...
-        organization_name:,
-        domains: domains.map(&:domain_name)
-      }
+      domains.map(&:manifest_hash).inject(:merge) || {}
     end
 
-    class << self
-      def reset_all
-        @all = nil
-      end
+    def manifest_hash
+      key = global? ? :global_organization : organization_name
+
+      {
+        key.to_sym => manifest
+      }
     end
   end
 end

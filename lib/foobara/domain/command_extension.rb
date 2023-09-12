@@ -9,13 +9,15 @@ module Foobara
       def run_subcommand!(subcommand_class, inputs = {})
         domain = self.class.domain
 
-        if domain
-          sub_domain = subcommand_class.domain
+        return super if domain.global?
 
-          if sub_domain && (sub_domain != domain && !domain.depends_on?(sub_domain))
-            raise CannotAccessDomain,
-                  "Cannot access #{sub_domain} or its commands because #{domain} does not depend on it"
-          end
+        sub_domain = subcommand_class.domain
+
+        return super if sub_domain.global?
+
+        unless domain.depends_on?(sub_domain)
+          raise CannotAccessDomain,
+                "Cannot access #{sub_domain} or its commands because #{domain} does not depend on it"
         end
 
         super
@@ -27,35 +29,27 @@ module Foobara
 
           if mod&.foobara_domain?
             mod.foobara_domain
-          end
+          end || Domain.global
         end
 
         def namespace
-          if domain.present?
-            domain.type_namespace
-          else
-            super
-          end
+          domain.type_namespace
         end
 
         def full_command_name
           [
-            organization&.organization_name,
-            domain&.domain_name,
+            organization.organization_name,
+            domain.domain_name,
             command_name
-          ].compact.join("::")
+          ].compact.join("::").presence
         end
 
         def organization
-          domain&.organization
+          domain.organization
         end
 
         def manifest
-          super.merge(
-            domain_name:,
-            organization_name:,
-            full_command_name:
-          )
+          super.merge(full_command_name:)
         end
 
         delegate :domain_name, :organization_name, to: :domain, allow_nil: true

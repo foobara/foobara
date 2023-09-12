@@ -90,6 +90,10 @@ module Foobara
         array.all? { |key| key.is_a?(Symbol) || key.is_a?(String) }
       end
 
+      def remove_empty(hash)
+        hash.reject { |_k, v| (v.is_a?(::Hash) || v.is_a?(::Array)) && v.empty? }
+      end
+
       def args_and_opts_to_opts(args, opts)
         unless args.is_a?(::Array)
           # :nocov:

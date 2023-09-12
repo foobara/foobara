@@ -113,16 +113,16 @@ RSpec.describe ":model" do
   describe "#possible_errors" do
     it "gives expected possible errors" do
       expect(type.possible_errors).to eq(
-        "data.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
-        "data.missing_required_attribute" => Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::
+        "data.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+        "data.missing_required_attribute": Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::
             MissingRequiredAttributeError,
-        "data.unexpected_attributes" => Foobara::BuiltinTypes::Attributes::SupportedProcessors::
+        "data.unexpected_attributes": Foobara::BuiltinTypes::Attributes::SupportedProcessors::
             ElementTypeDeclarations::UnexpectedAttributesError,
-        "data.bar.missing_required_attribute" => Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::
+        "data.bar.missing_required_attribute": Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::
             MissingRequiredAttributeError,
-        "data.foo.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
-        "data.foo.max_exceeded" => Foobara::BuiltinTypes::Number::SupportedValidators::Max::MaxExceededError,
-        "data.bar.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError
+        "data.foo.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+        "data.foo.max_exceeded": Foobara::BuiltinTypes::Number::SupportedValidators::Max::MaxExceededError,
+        "data.bar.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError
       )
     end
   end
@@ -174,6 +174,14 @@ RSpec.describe ":model" do
         expect(actual_value).to_not be(expected_value)
         expect(actual_value.hash).to eq(expected_value.hash)
         expect(actual_value.eql?(expected_value)).to be(true)
+      end
+
+      describe "Foobara.manifest" do
+        it "contains the type for the model" do
+          expect(
+            Foobara.manifest[:global_organization][:global_domain][:types][:SomeModel][:declaration_data][:name]
+          ).to eq("SomeModel")
+        end
       end
     end
   end

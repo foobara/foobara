@@ -9,6 +9,17 @@ module Foobara
       end
 
       class << self
+        def processor_name
+          name || "Anonymous"
+        end
+
+        def manifest
+          {
+            name: processor_name,
+            processor_type: :processor
+          }
+        end
+
         def new_with_agnostic_args(declaration_data, parent_declaration_data)
           args = if requires_declaration_data?
                    declaration_data.nil? ? [true] : [declaration_data]
@@ -96,7 +107,7 @@ module Foobara
       end
 
       def name
-        (self.class.name || "Anonymous")
+        self.class.processor_name
       end
 
       delegate :error_class,
@@ -128,7 +139,7 @@ module Foobara
         error_classes.to_h do |error_class|
           # TODO: strange that this is set this way?
           key = ErrorKey.new(symbol: error_class.symbol, category: error_class.category)
-          [key.to_s, error_class]
+          [key.to_sym, error_class]
         end
       end
 
@@ -243,6 +254,20 @@ module Foobara
         end
 
         s
+      end
+
+      def manifest
+        manifest = self.class.manifest.merge(possible_errors: possible_errors.transform_values(&:to_h))
+
+        if requires_declaration_data?
+          manifest[:declaration_data] = declaration_data
+        end
+
+        if requires_parent_declaration_data?
+          manifest[:parent_declaration_data] = parent_declaration_data
+        end
+
+        Util.remove_empty(manifest)
       end
 
       def method_missing(method, *args, **opts)

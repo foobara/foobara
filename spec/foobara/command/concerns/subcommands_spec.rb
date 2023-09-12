@@ -85,13 +85,12 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
       expect(error_context_type_map).to eq(
         "data.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
         "data.unexpected_attributes" =>
-            Foobara::BuiltinTypes::Attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError,
+          Foobara::BuiltinTypes::Attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError,
         "data.should_fail.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
         "run_some_subcommand:data.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
         "run_some_subcommand:data.unexpected_attributes" =>
-            Foobara::BuiltinTypes::Attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError,
-        "run_some_subcommand:data.should_fail.cannot_cast" =>
-            Foobara::Value::Processor::Casting::CannotCastError,
+          Foobara::BuiltinTypes::Attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError,
+        "run_some_subcommand:data.should_fail.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
         "run_some_subcommand:runtime.it_failed" => RunSomeSubcommand::ItFailedError
       )
     end
@@ -107,6 +106,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
             category: :data,
             symbol: :cannot_cast,
             key: "data.cannot_cast",
+            is_fatal: true,
             context_type_declaration: {
               type: :attributes,
               element_type_declarations: {
@@ -120,6 +120,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
             runtime_path: [],
             category: :data,
             symbol: :unexpected_attributes,
+            is_fatal: true,
             key: "data.unexpected_attributes",
             context_type_declaration: {
               type: :attributes,
@@ -137,6 +138,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
             category: :data,
             symbol: :cannot_cast,
             key: "data.should_fail.cannot_cast",
+            is_fatal: true,
             context_type_declaration: {
               type: :attributes,
               element_type_declarations: {
@@ -151,6 +153,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
             category: :data,
             symbol: :cannot_cast,
             key: "run_some_subcommand:data.cannot_cast",
+            is_fatal: true,
             context_type_declaration: {
               type: :attributes,
               element_type_declarations: {
@@ -164,6 +167,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
             runtime_path: [:run_some_subcommand],
             category: :data,
             symbol: :unexpected_attributes,
+            is_fatal: true,
             key: "run_some_subcommand:data.unexpected_attributes",
             context_type_declaration: {
               type: :attributes,
@@ -181,6 +185,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
             category: :data,
             symbol: :cannot_cast,
             key: "run_some_subcommand:data.should_fail.cannot_cast",
+            is_fatal: true,
             context_type_declaration: {
               type: :attributes,
               element_type_declarations: {
@@ -194,6 +199,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
             runtime_path: [:run_some_subcommand],
             category: :runtime,
             symbol: :it_failed,
+            is_fatal: false,
             key: "run_some_subcommand:runtime.it_failed",
             context_type_declaration: {
               type: :attributes,
@@ -235,6 +241,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
           path: [],
           runtime_path: [:run_some_subcommand],
           category: :runtime,
+          is_fatal: false,
           symbol: :it_failed,
           message: "It failed!",
           context: { foo: 10 }

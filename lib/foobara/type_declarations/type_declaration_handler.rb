@@ -2,6 +2,12 @@ module Foobara
   module TypeDeclarations
     class TypeDeclarationHandler < Value::Processor::Pipeline
       class << self
+        def manifest
+          # :nocov:
+          super.merge(processor_type: :type_declaration_handler)
+          # :nocov:
+        end
+
         def starting_desugarizers
           starting_desugarizers_with_inherited
         end

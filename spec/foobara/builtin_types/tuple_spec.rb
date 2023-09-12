@@ -32,14 +32,13 @@ RSpec.describe ":tuple" do
     describe "#possible_errors" do
       it "converts to strict type declaration successfully" do
         expect(type.possible_errors).to eq(
-          "data.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
-          "data.incorrect_tuple_size" =>
-            Foobara::BuiltinTypes::Array::SupportedValidators::Size::IncorrectTupleSizeError,
-          "data.0.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
-          "data.1.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
-          "data.1.unexpected_attributes" =>
+          "data.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+          "data.incorrect_tuple_size": Foobara::BuiltinTypes::Array::SupportedValidators::Size::IncorrectTupleSizeError,
+          "data.0.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+          "data.1.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+          "data.1.unexpected_attributes":
             Foobara::BuiltinTypes::Attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError,
-          "data.1.a.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError
+          "data.1.a.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError
         )
       end
     end
@@ -80,6 +79,7 @@ RSpec.describe ":tuple" do
             path: [1, :a],
             runtime_path: [],
             category: :data,
+            is_fatal: true,
             symbol: :cannot_cast,
             message: "Cannot cast not valid. Expected it to be a Integer, " \
                      "or be a string of digits optionally with a minus sign in front",

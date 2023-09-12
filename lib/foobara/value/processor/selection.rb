@@ -8,6 +8,14 @@ module Foobara
         class NoApplicableProcessorError < DataError; end
         class MoreThanOneApplicableProcessorError < DataError; end
 
+        class << self
+          def manifest
+            # :nocov:
+            super.merge(processor_type: :selection)
+            # :nocov:
+          end
+        end
+
         attr_accessor :enforce_unique
 
         def initialize(*args, enforce_unique: true, **opts)

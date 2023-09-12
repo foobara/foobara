@@ -11,7 +11,8 @@ module Foobara
             symbol = name.demodulize.underscore
 
             [
-              domain&.runtime_path_symbol,
+              # TODO: Broken project dependency here...
+              domain.full_domain_symbol,
               symbol
             ].compact.join(".").to_sym
           end
