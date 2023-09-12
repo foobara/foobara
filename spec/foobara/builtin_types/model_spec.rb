@@ -1,4 +1,8 @@
 RSpec.describe ":model" do
+  after do
+    Foobara.reset_alls
+  end
+
   let(:type) do
     Foobara::TypeDeclarations::Namespace.type_for_declaration(type_declaration)
   end
@@ -23,7 +27,7 @@ RSpec.describe ":model" do
 
   it "creates a type that targets a Model subclass" do
     expect(type).to be_a(Foobara::Types::Type)
-    expect(constructed_model.name).to eq("SomeModel")
+    expect(constructed_model.name).to eq("Foobara::Model::SomeModel")
 
     value = constructed_model.new
 
@@ -52,6 +56,7 @@ RSpec.describe ":model" do
       path: [:foo],
       runtime_path: [],
       category: :data,
+      is_fatal: true,
       symbol: :cannot_cast,
       message: "Cannot cast invalid. Expected it to be a Integer, " \
                "or be a string of digits optionally with a minus sign in front",
@@ -63,8 +68,8 @@ RSpec.describe ":model" do
   end
 
   it "sets model_class and model_base_class" do
-    expect(type.declaration_data[:model_class]).to be(constructed_model)
-    expect(type.declaration_data[:model_base_class]).to be(Foobara::Model)
+    expect(type.declaration_data[:model_class]).to eq("Foobara::Model::SomeModel")
+    expect(type.declaration_data[:model_base_class]).to eq("Foobara::Model")
   end
 
   describe "#process_value!" do
@@ -182,6 +187,60 @@ RSpec.describe ":model" do
             Foobara.manifest[:global_organization][:global_domain][:types][:SomeModel][:declaration_data][:name]
           ).to eq("SomeModel")
         end
+      end
+    end
+  end
+
+  describe "using model_module to specify domain" do
+    let(:domain_module) {
+      Module.new do
+        class << self
+          def name
+            "SomeDomain"
+          end
+
+          foobara_domain!
+        end
+      end
+    }
+    let(:type_declaration) do
+      {
+        type: :model,
+        name: model_name,
+        attributes_declaration:,
+        model_module:
+      }
+    end
+    let(:model_module) { domain_module }
+    let(:type) do
+      domain_module.type_for_declaration(type_declaration)
+    end
+
+    let(:constructed_model) do
+      type.target_classes.first
+    end
+
+    before do
+      stub_const(domain_module.name, domain_module)
+    end
+
+    it "can be used by symbol" do
+      expect(type.name).to eq("SomeModel")
+      expect(domain_module.type_for_declaration(:SomeModel)).to be(type)
+    end
+
+    it "is registered where expected" do
+      expect(type.full_type_name).to eq("SomeDomain::SomeModel")
+      expect(constructed_model.domain.domain_name).to eq("SomeDomain")
+      expect(constructed_model.domain).to be(domain_module.foobara_domain)
+    end
+
+    context "when using domain name instead" do
+      let(:model_module) { "SomeDomain" }
+
+      it "still works" do
+        expect(type.full_type_name).to eq("SomeDomain::SomeModel")
+        expect(constructed_model.domain.domain_name).to eq("SomeDomain")
       end
     end
   end

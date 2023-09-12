@@ -14,7 +14,7 @@ module Foobara
           end
 
           def model_class
-            parent_declaration_data[:model_class]
+            Object.const_get(parent_declaration_data[:model_class])
           end
         end
       end

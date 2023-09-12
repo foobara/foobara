@@ -8,13 +8,12 @@ module Foobara
           end
 
           def desugarize(sugary_type_declaration)
-            handler = Namespace.current.handler_for_class(ExtendAttributesTypeDeclaration)
+            handler = handler_for_class(ExtendAttributesTypeDeclaration)
             attributes_type_declaration = sugary_type_declaration[:attributes_declaration]
-            attributes_type = handler.process_value!(attributes_type_declaration)
 
-            sugary_type_declaration.merge(
-              attributes_declaration: attributes_type.declaration_data
-            )
+            sugary_type_declaration[:attributes_declaration] = handler.desugarize(attributes_type_declaration)
+
+            sugary_type_declaration
           end
         end
       end

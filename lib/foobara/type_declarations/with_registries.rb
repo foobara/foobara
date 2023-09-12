@@ -19,12 +19,17 @@ module Foobara
         def type_registered?(...)
           Namespace.current.type_registered?(...)
         end
+
+        def handler_for_class(...)
+          Namespace.current.handler_for_class(...)
+        end
       end
 
       delegate :type_for_declaration,
                :type_declaration_handler_for,
                :type_for_symbol,
                :type_registered?,
+               :handler_for_class,
                to: :class
     end
   end

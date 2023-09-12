@@ -130,13 +130,14 @@ RSpec.describe Foobara::Domain do
     before do
       domain_module.const_set("SomeNewModel", model_class)
 
-      model_class.class_eval do
-        attributes(a: :integer, b: :symbol)
-      end
+      model_class.attributes(a: :integer, b: :symbol)
     end
 
     it "automatically registers it" do
       expect(domain_module.const_get(:SomeNewModel).domain).to eq(domain)
+      type = domain_module.type_for_declaration(:SomeNewModel)
+      expect(type.full_type_name).to eq("SomeDomain::SomeNewModel")
+      expect(Foobara.all_types).to include(type)
     end
 
     # TODO: this belongs elsewhere"
@@ -149,6 +150,25 @@ RSpec.describe Foobara::Domain do
         expect(model_manifest[:base_type]).to eq(:model)
         expect(model_manifest[:target_classes]).to eq(["SomeDomain::SomeNewModel"])
       end
+    end
+  end
+
+  context "when creating a model from a module and an existing class but by name" do
+    let(:model_class) { Class.new(Foobara::Model) }
+
+    before do
+      domain_module.const_set("SomeNewModel", model_class)
+    end
+
+    it "automatically registers it" do
+      type = domain_module.type_for_declaration(
+        type: :model,
+        name: :SomeNewModel,
+        model_module: domain_module,
+        attributes_declaration: { a: :integer, b: :symbol }
+      )
+      expect(type.full_type_name).to eq("SomeDomain::SomeNewModel")
+      expect(Foobara.all_types).to include(type)
     end
   end
 end

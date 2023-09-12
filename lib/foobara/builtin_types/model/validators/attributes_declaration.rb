@@ -2,7 +2,7 @@ module Foobara
   module BuiltinTypes
     module Model
       module Validators
-        class AttributesDeclaration < TypeDeclarations::Validator
+        class AttributesDeclaration < TypeDeclarations::Processor
           class << self
             def requires_parent_declaration_data?
               true
@@ -13,12 +13,21 @@ module Foobara
             true
           end
 
-          def validation_errors(model_instance)
-            model_instance.validation_errors
+          def process_value(model_instance)
+            Outcome.new(
+              result: model_instance,
+              errors: model_instance.validation_errors
+            )
           end
 
           def possible_errors
-            parent_declaration_data[:model_class].possible_errors
+            model_class_name = parent_declaration_data[:model_class]
+
+            if model_class_name
+              Object.const_get(model_class_name).possible_errors
+            else
+              super
+            end
           end
         end
       end

@@ -1,7 +1,8 @@
 module Foobara
   class Model
     class << self
-      attr_accessor :attributes_type, :namespace, :domain
+      attr_accessor :domain
+      attr_reader :model_type
 
       delegate :organization, to: :domain, allow_nil: true
 
@@ -12,83 +13,110 @@ module Foobara
       end
 
       def update_namespace
+        return if @namespace_updated
+
+        @namespace_updated = true
+
         mod = Util.module_for(self)
 
-        if mod&.foobara_domain?
-          self.domain = mod.foobara_domain
-          self.namespace = domain.type_namespace
-        else
-          self.namespace = TypeDeclarations::Namespace::GLOBAL
+        self.domain = if mod&.foobara_domain?
+                        mod.foobara_domain
+                      else
+                        Domain.global
+                      end
+      end
+
+      def inherited(subclass)
+        super
+        subclass.update_namespace unless subclass.name.blank?
+      end
+
+      def attributes_type
+        model_type.element_types
+      end
+
+      def namespace
+        domain.type_namespace
+      end
+
+      def model_type=(model_type)
+        if @model_type
+          # :nocov:
+          raise "Already set model type"
+          # :nocov:
+        end
+
+        @model_type = model_type
+
+        update_namespace
+
+        attributes_type.element_types.each_key do |attribute_name|
+          define_method attribute_name do
+            attributes[attribute_name]
+          end
+
+          # TODO: let's cache validation_errors and clobber caches when updating this for performance reasons
+          define_method "#{attribute_name}=" do |value|
+            write_attribute(attribute_name, value)
+          end
         end
       end
 
-      def model_type
-        return @model_type if defined?(@model_type)
-
-        @model_type = namespace.type_for_declaration(model_type_declaration)
-      end
-
-      def model_type_declaration
-        {
-          type: :model,
-          name: model_name,
-          model_class: self,
-          model_base_class: superclass,
-          attributes_declaration: attributes_type.declaration_data
-        }
-      end
-
       def model_name
+        # TODO: should get this from the declaration_data instead, right??
         name.demodulize
       end
 
       def attributes(attributes_type_declaration)
         update_namespace
-        self.attributes_type = attributes_declaration_to_type(attributes_type_declaration)
-        register_model_type
-      end
 
-      def register_model_type
-        domain&.register_model(self)
+        namespace.type_for_declaration(
+          type: :model,
+          name: model_name,
+          model_class: self,
+          model_base_class: superclass,
+          attributes_declaration: attributes_type_declaration
+        )
+
+        unless @model_type
+          # :nocov:
+          raise "Expected model type to automatically be registered"
+          # :nocov:
+        end
+
+        attributes_type
       end
 
       def possible_errors
         attributes_type.possible_errors
       end
 
-      def attributes_declaration_to_type(attributes_type_declaration)
-        handler = namespace.handler_for_class(TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration)
-        handler.process_value!(attributes_type_declaration)
-      end
+      def subclass(**opts)
+        allowed_opts = %i[name model_module]
 
-      def subclass(strict_type_declaration)
-        model_name = strict_type_declaration[:name]
+        invalid_opts = opts.keys - allowed_opts
+
+        if invalid_opts.present?
+          # :nocov:
+          raise ArgumentError, "Invalid opts #{invalid_opts} expected only #{allowed_opts}"
+          # :nocov:
+        end
+
+        model_name = opts[:name]
 
         # TODO: How are we going to set the domain and organization?
-        Class.new(self) do
-          self.namespace = TypeDeclarations::Namespace.current
-
-          attributes(strict_type_declaration[:attributes_declaration])
-
-          singleton_class.define_method :name do
-            model_name
-          end
-
+        model_class = Class.new(self) do
           singleton_class.define_method :model_name do
             model_name
           end
-
-          attributes_type.element_types.each_key do |attribute_name|
-            define_method attribute_name do
-              attributes[attribute_name]
-            end
-
-            # TODO: let's cache validation_errors and clobber caches when updating this for performance reasons
-            define_method "#{attribute_name}=" do |value|
-              write_attribute(attribute_name, value)
-            end
-          end
         end
+
+        if opts.key?(:model_module)
+          model_module = opts[:model_module]
+          model_module.const_set(model_class.model_name, model_class)
+        end
+
+        model_class
       end
     end
 
