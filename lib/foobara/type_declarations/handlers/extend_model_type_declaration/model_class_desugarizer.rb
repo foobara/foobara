@@ -44,8 +44,6 @@ module Foobara
                                 model_module:
                               )
 
-                              model_module.const_set(model_class.model_name, model_class)
-
                               model_class
                             end
                           end

@@ -113,7 +113,7 @@ module Foobara
 
         if opts.key?(:model_module)
           model_module = opts[:model_module]
-          model_module.const_set(model_class.model_name, model_class)
+          model_module.const_set(model_name, model_class)
         end
 
         model_class
