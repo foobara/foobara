@@ -27,7 +27,6 @@ module Foobara
             # TODO: validate the name
             additional_processors_to_apply.each_pair do |processor_symbol, declaration_data|
               processor_class = base_type.find_supported_processor_class(processor_symbol)
-
               processor = processor_class.new_with_agnostic_args(declaration_data, strict_type_declaration)
 
               case processor

@@ -14,10 +14,7 @@ module Foobara
           end
 
           def process_value(model_instance)
-            Outcome.new(
-              result: model_instance,
-              errors: model_instance.validation_errors
-            )
+            Outcome.new(result: model_instance, errors: model_instance.validation_errors)
           end
 
           def possible_errors

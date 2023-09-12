@@ -170,7 +170,7 @@ RSpec.describe ":model" do
       let(:expected_value) do
         {
           first_name: "SomeFirstName",
-          some_model: constructed_model.new(foo: 2, bar: "whatever")
+          some_model: constructed_model.new({ foo: 2, bar: "whatever" }, validate: false)
         }
       end
 

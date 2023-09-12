@@ -1,5 +1,10 @@
 module Foobara
+  # TODO: either make this an abstract base class of ValueModel and Entity or rename it to ValueModel
+  # and have Entity inherit from it...
+  # TODO: also, why is this at the root level instead of in a project??
   class Model
+    class NoSuchAttributeError < StandardError; end
+
     class << self
       attr_accessor :domain
       attr_reader :model_type
@@ -52,13 +57,27 @@ module Foobara
 
         attributes_type.element_types.each_key do |attribute_name|
           define_method attribute_name do
-            attributes[attribute_name]
+            read_attribute(attribute_name)
           end
 
           # TODO: let's cache validation_errors and clobber caches when updating this for performance reasons
           define_method "#{attribute_name}=" do |value|
             write_attribute(attribute_name, value)
           end
+        end
+      end
+
+      def attribute_names
+        attributes_type.element_types.keys
+      end
+
+      def valid_attribute_name?(attribute_name)
+        attribute_names.include?(attribute_name.to_sym)
+      end
+
+      def validate_attribute_name!(attribute_name)
+        unless valid_attribute_name?(attribute_name)
+          raise NoSuchAttributeError, "No such attribute #{attribute_name} expected one of #{attribute_names}"
         end
       end
 
@@ -70,35 +89,47 @@ module Foobara
       def attributes(attributes_type_declaration)
         update_namespace
 
-        namespace.type_for_declaration(
+        @attributes_type_declaration = attributes_type_declaration
+
+        set_model_type
+      end
+
+      def set_model_type
+        if @attributes_type_declaration
+          namespace.type_for_declaration(type_declaration(@attributes_type_declaration))
+
+          unless @model_type
+            # :nocov:
+            raise "Expected model type to automatically be registered"
+            # :nocov:
+          end
+        end
+      end
+
+      def type_declaration(attributes_declaration)
+        {
           type: :model,
           name: model_name,
           model_class: self,
           model_base_class: superclass,
-          attributes_declaration: attributes_type_declaration
-        )
-
-        unless @model_type
-          # :nocov:
-          raise "Expected model type to automatically be registered"
-          # :nocov:
-        end
-
-        attributes_type
+          attributes_declaration:
+        }
       end
 
       def possible_errors
         attributes_type.possible_errors
       end
 
-      def subclass(**opts)
-        allowed_opts = %i[name model_module]
+      def allowed_subclass_opts
+        %i[name model_module]
+      end
 
-        invalid_opts = opts.keys - allowed_opts
+      def subclass(**opts)
+        invalid_opts = opts.keys - allowed_subclass_opts
 
         if invalid_opts.present?
           # :nocov:
-          raise ArgumentError, "Invalid opts #{invalid_opts} expected only #{allowed_opts}"
+          raise ArgumentError, "Invalid opts #{invalid_opts} expected only #{allowed_subclass_opts}"
           # :nocov:
         end
 
@@ -120,28 +151,71 @@ module Foobara
       end
     end
 
-    def initialize(attributes = nil)
+    def initialize(attributes = nil, options = {})
+      allowed_options = [:validate]
+      invalid_options = options.keys - allowed_options
+
+      if invalid_options.present?
+        # :nocov:
+        raise ArgumentError, "Invalid options #{invalid_options} expected only #{allowed_options}"
+        # :nocov:
+      end
+
       attributes&.each_pair do |attribute_name, value|
         write_attribute(attribute_name, value)
       end
+
+      if options[:validate]
+        validate!
+      end
     end
 
-    delegate :model_name, :attributes_type, to: :class
+    delegate :model_name, :attributes_type, :valid_attribute_name?, :validate_attribute_name!, to: :class
 
     def attributes
       @attributes ||= {}
     end
 
     def write_attribute(attribute_name, value)
+      attribute_name = attribute_name.to_sym
+      outcome = cast_attribute(attribute_name, value)
+      attributes[attribute_name] = outcome.success? ? outcome.result : value
+    end
+
+    def write_attribute!(attribute_name, value)
+      attribute_name = attribute_name.to_sym
+      attributes[attribute_name] = cast_attribute!(attribute_name, value)
+    end
+
+    def read_attribute(attribute_name)
+      attributes[attribute_name.to_sym]
+    end
+
+    def read_attribute!(attribute_name)
+      validate_attribute_name!(attribute_name)
+      read_attribute(attribute_name)
+    end
+
+    def cast_attribute(attribute_name, value)
       attribute_type = attributes_type.element_types[attribute_name]
 
-      if attribute_type
-        outcome = attribute_type.process_value(value)
+      return Outcome.success(value) unless attribute_type
 
-        value = outcome.result if outcome.success?
+      attribute_type.process_value(value).tap do |outcome|
+        unless outcome.success?
+          outcome.errors.each do |error|
+            error.prepend_path!(attribute_name)
+          end
+        end
       end
+    end
 
-      attributes[attribute_name] = value
+    def cast_attribute!(attribute_name, value)
+      validate_attribute_name!(attribute_name)
+
+      outcome = cast_attribute(attribute_name, value)
+      outcome.raise!
+      outcome.result
     end
 
     def valid?
@@ -152,10 +226,12 @@ module Foobara
       attributes_type.process_value(attributes).errors
     end
 
-    def ==(other)
-      return false unless self.class == other.class
+    def validate!
+      attributes_type.process_value!(attributes)
+    end
 
-      attributes == other.attributes
+    def ==(other)
+      self.class == other.class && attributes == other.attributes
     end
 
     def eql?(other)
