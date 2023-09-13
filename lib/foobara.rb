@@ -12,11 +12,14 @@ require "foobara/callback"
 require "foobara/state_machine"
 require "foobara/types"
 require "foobara/type_declarations"
+# TODO: awkward to have model, etc, at top level like this. Maybe group it with
+# command and domain and organization into a project??
 require "foobara/command"
 require "foobara/domain"
 require "foobara/organization"
 require "foobara/model"
 require "foobara/entity"
+require "foobara/persistence"
 require "foobara/builtin_types"
 
 module Foobara
