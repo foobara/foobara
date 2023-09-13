@@ -2,10 +2,6 @@ require "date"
 require "time"
 require "bigdecimal"
 
-# requiring these here feels awkward...
-require "foobara/model"
-require "foobara/organization"
-
 Foobara::Util.require_directory("#{__dir__}/builtin_types")
 
 module Foobara
@@ -55,8 +51,8 @@ module Foobara
         #     readers/writers for all attributes
         # NOTE: A model isn't attributes!!! it has attributes. It is instead an atomic duck.
         # Subtypes should not use ::Hash as the target type. This is a confusing hack.
-        build_and_register!(:model, atomic_duck, nil)
-        # entity = build_and_register!(:entity, model)
+        model = build_and_register!(:model, atomic_duck, nil)
+        build_and_register!(:entity, model, nil)
         # address = build_and_register!(:address, model)
         # us_address = build_and_register!(:us_address, model)
       end

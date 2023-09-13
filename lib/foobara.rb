@@ -12,9 +12,12 @@ require "foobara/callback"
 require "foobara/state_machine"
 require "foobara/types"
 require "foobara/type_declarations"
-require "foobara/builtin_types"
 require "foobara/command"
 require "foobara/domain"
+require "foobara/organization"
+require "foobara/model"
+require "foobara/entity"
+require "foobara/builtin_types"
 
 module Foobara
   class << self
@@ -47,6 +50,7 @@ module Foobara
     def reset_alls
       Foobara::Domain.reset_all
       Foobara::Model.reset_all
+      Foobara::Entity.reset_all
       Foobara::Command.reset_all
       Foobara::Organization.reset_all
       Foobara::Types.reset_all

@@ -1,3 +1,5 @@
+require "foobara/type_declarations/with_registries"
+
 module Foobara
   module TypeDeclarations
     class TypeDeclarationHandler < Value::Processor::Pipeline
