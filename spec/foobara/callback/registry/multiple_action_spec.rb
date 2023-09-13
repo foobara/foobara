@@ -103,7 +103,7 @@ RSpec.describe Foobara::Callback::Registry::MultipleAction do
             expect(registry).to_not have_after_callbacks
             expect(registry).to_not have_error_callbacks
 
-            registry.after do
+            registry.after  do
               callbacks_ran << :after
             end
 

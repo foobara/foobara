@@ -15,8 +15,8 @@ module Foobara
           super(possible_conditions)
         end
 
-        def unioned_callback_set_for(**)
-          super.union(other_conditions_registry.unioned_callback_set_for(**))
+        def unioned_callback_set_for(...)
+          super.union(other_conditions_registry.unioned_callback_set_for(...))
         end
       end
     end

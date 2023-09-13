@@ -68,13 +68,19 @@ module Foobara
           has_callbacks?(:error, *, **)
         end
 
+        attr_writer :allowed_types
+
+        def allowed_types
+          @allowed_types = Block.types
+        end
+
         private
 
         def validate_type!(type)
-          unless Block.types.include?(type)
+          unless allowed_types.include?(type)
             # TODO: raise a real error
             # :nocov:
-            raise "bad type #{type} expected one of #{Block.types}"
+            raise "bad type #{type} expected one of #{allowed_types}"
             # :nocov:
           end
         end

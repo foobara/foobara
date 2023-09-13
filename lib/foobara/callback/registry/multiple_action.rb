@@ -1,3 +1,5 @@
+require "foobara/callback/registry/base"
+
 module Foobara
   module Callback
     module Registry
