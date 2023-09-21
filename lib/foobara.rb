@@ -19,7 +19,6 @@ require "foobara/type_declarations"
 # command and domain and organization into a project??
 require "foobara/command"
 require "foobara/domain"
-require "foobara/organization"
 require "foobara/model"
 require "foobara/entity"
 require "foobara/persistence"

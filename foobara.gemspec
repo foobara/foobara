@@ -45,6 +45,7 @@ Gem::Specification.new do |spec|
     command/lib
     entity/lib
     persistence/lib
+    domain/lib
     lib
   ]
 
