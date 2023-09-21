@@ -1,4 +1,4 @@
-Foobara::Util.require_project_file("persistence/entity_attributes_crud_driver")
+Foobara.require_file("persistence", "entity_attributes_crud_driver")
 
 module Foobara
   module Persistence

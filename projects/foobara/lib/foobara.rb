@@ -4,24 +4,12 @@ require "active_support/core_ext/hash/indifferent_access"
 require "active_support/core_ext/module/delegation"
 require "active_support/core_ext/string/inflections"
 
-require "foobara/util"
-require "foobara/thread_parent"
-require "foobara/weak_object_set"
-require "foobara/common"
-require "foobara/value"
-require "foobara/enumerated"
-require "foobara/callback"
-require "foobara/state_machine"
-require "foobara/types"
-require "foobara/type_declarations"
-require "foobara/command"
-require "foobara/domain"
-require "foobara/entity"
-require "foobara/persistence"
-require "foobara/builtin_types"
-
 module Foobara
   class << self
+    def require_file(project, path)
+      Util.require_project_file(project, path)
+    end
+
     # TODO: rename this to manifest...
     # TODO: come up with a way to change a type's manifest... Or maybe treat Model very differently?
     def manifest
@@ -61,3 +49,19 @@ module Foobara
     end
   end
 end
+
+require "foobara/util"
+require "foobara/thread_parent"
+require "foobara/weak_object_set"
+require "foobara/common"
+require "foobara/value"
+require "foobara/enumerated"
+require "foobara/callback"
+require "foobara/state_machine"
+require "foobara/types"
+require "foobara/type_declarations"
+require "foobara/command"
+require "foobara/domain"
+require "foobara/entity"
+require "foobara/persistence"
+require "foobara/builtin_types"

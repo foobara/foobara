@@ -1,4 +1,4 @@
-Foobara::Util.require_project_file("value/data_error")
+Foobara.require_file("value", "data_error")
 
 module Foobara
   module Value

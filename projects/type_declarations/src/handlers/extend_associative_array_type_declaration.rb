@@ -1,4 +1,4 @@
-Foobara::Util.require_project_file("type_declarations/handlers/extend_registered_type_declaration")
+Foobara.require_file("type_declarations", "handlers/extend_registered_type_declaration")
 
 module Foobara
   module TypeDeclarations

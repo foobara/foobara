@@ -1,4 +1,4 @@
-Foobara::Util.require_project_file("callback/registry/multiple_action")
+Foobara.require_file("callback", "registry/multiple_action")
 
 module Foobara
   module Callback

@@ -1,4 +1,4 @@
-Foobara::Util.require_project_file("type_declarations/handlers/extend_model_type_declaration/model_class_desugarizer")
+Foobara.require_file("type_declarations", "handlers/extend_model_type_declaration/model_class_desugarizer")
 
 module Foobara
   module TypeDeclarations

@@ -1,4 +1,4 @@
-Foobara::Util.require_project_file("entity/model")
+Foobara.require_file("entity", "model")
 
 module Foobara
   class Entity < Model
