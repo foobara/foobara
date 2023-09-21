@@ -3,6 +3,14 @@ RSpec.describe ":entity" do
     Foobara.reset_alls
   end
 
+  around do |example|
+    Foobara::Persistence.default_crud_driver = Foobara::Persistence::EntityAttributesCrudDrivers::InMemory.new
+
+    Foobara::Persistence.default_base.transaction do
+      example.run
+    end
+  end
+
   let(:type) do
     Foobara::TypeDeclarations::Namespace.type_for_declaration(type_declaration)
   end

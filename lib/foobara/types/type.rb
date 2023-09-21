@@ -62,6 +62,10 @@ module Foobara
         super(*args, **opts.merge(processors:, prioritize: false))
       end
 
+      def extends_type?(type)
+        base_type == type || base_type&.extends_type?(type)
+      end
+
       def processors
         [
           value_caster,

@@ -62,6 +62,7 @@ module Foobara
       Foobara::Types.reset_all
       Foobara::TypeDeclarations.reset_all
       Foobara::BuiltinTypes.reset_all
+      Foobara::Persistence.reset_all
     end
   end
 end
