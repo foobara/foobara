@@ -38,6 +38,8 @@ Gem::Specification.new do |spec|
     enumerated/lib
     callback/lib
     state_machine/lib
+    weak_object_set/lib
+    thread_parent/lib
     lib
   ]
 
