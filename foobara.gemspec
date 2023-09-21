@@ -40,6 +40,7 @@ Gem::Specification.new do |spec|
     state_machine/lib
     weak_object_set/lib
     thread_parent/lib
+    types/lib
     lib
   ]
 
