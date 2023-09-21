@@ -1,4 +1,4 @@
-require "foobara/callback/registry/conditioned"
+Foobara::Util.require_project_file("callback/registry/conditioned")
 
 module Foobara
   module Callback

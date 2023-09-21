@@ -36,6 +36,7 @@ Gem::Specification.new do |spec|
     builtin_types/lib
     value/lib
     enumerated/lib
+    callback/lib
     lib
   ]
 

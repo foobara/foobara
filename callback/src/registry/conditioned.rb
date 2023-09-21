@@ -1,4 +1,4 @@
-require "foobara/callback/registry/base"
+Foobara::Util.require_project_file("callback/registry/base")
 
 module Foobara
   module Callback
