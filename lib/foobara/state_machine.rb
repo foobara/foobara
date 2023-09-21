@@ -45,6 +45,11 @@ module Foobara
 
       transition_map = self.class.transition_map
 
+      if in_terminal_state?
+        raise InvalidTransition,
+              "#{current_state} is a terminal state so no transitions from here are allowed."
+      end
+
       unless transition_map[current_state].key?(transition)
         raise InvalidTransition,
               "Cannot perform #{transition} from #{current_state}. Expected one of #{allowed_transitions}."
@@ -61,7 +66,11 @@ module Foobara
     end
 
     def allowed_transitions
-      self.class.transition_map[current_state].keys
+      if in_terminal_state?
+        []
+      else
+        self.class.transition_map[current_state].keys
+      end
     end
 
     def can?(transition)
@@ -71,6 +80,10 @@ module Foobara
     def update_current_state(**conditions)
       self.current_state = conditions[:to]
       log_transition(**conditions)
+    end
+
+    def in_terminal_state?
+      self.class.terminal_states.include?(current_state)
     end
   end
 end

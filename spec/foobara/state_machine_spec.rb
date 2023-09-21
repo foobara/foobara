@@ -96,7 +96,26 @@ RSpec.describe Foobara::StateMachine do
           context "when invalid transition" do
             let(:transition) { :bad_transition }
 
-            it { is_expected_to_raise(Foobara::StateMachine::InvalidTransition) }
+            # TODO: use two different exceptions to avoid checking the error message
+            it { is_expected_to_raise(Foobara::StateMachine::InvalidTransition, /Expected one of/) }
+          end
+
+          context "when in terminal state" do
+            let(:transition) { :fail }
+
+            before do
+              state_machine.start!
+              state_machine.succeed!
+            end
+
+            it "explodes" do
+              expect(state_machine).to be_in_terminal_state
+              expect(state_machine.allowed_transitions).to be_empty
+
+              expect {
+                state_machine.fail!
+              }.to raise_error(Foobara::StateMachine::InvalidTransition, /is a terminal state/)
+            end
           end
         end
 

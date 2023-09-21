@@ -114,8 +114,8 @@ module Foobara
 
         def create_transition_methods
           transitions.each do |transition|
-            define_method "#{transition}!" do
-              perform_transition!(transition)
+            define_method "#{transition}!" do |&block|
+              perform_transition!(transition, &block)
             end
           end
         end
