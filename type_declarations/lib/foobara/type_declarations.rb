@@ -1,6 +1,6 @@
 require "active_support/core_ext/object/deep_dup"
 
-Foobara::Util.require_directory("#{__dir__}/type_declarations")
+Foobara::Util.require_directory("#{__dir__}/../../src")
 
 # TODO: extend Error with context_type behavior
 

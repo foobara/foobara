@@ -1,4 +1,4 @@
-require "foobara/type_declarations/transformer"
+Foobara::Util.require_project_file("type_declarations/transformer")
 
 module Foobara
   module TypeDeclarations

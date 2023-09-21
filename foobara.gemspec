@@ -41,6 +41,7 @@ Gem::Specification.new do |spec|
     weak_object_set/lib
     thread_parent/lib
     types/lib
+    type_declarations/lib
     lib
   ]
 
