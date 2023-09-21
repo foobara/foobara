@@ -2,14 +2,14 @@ module Foobara
   class Command
     module Concerns
       module Reflection
-        extend ActiveSupport::Concern
+        include Concern
 
         def initialize(...)
           self.class.all << self
           super(...)
         end
 
-        class_methods do
+        module ClassMethods
           def all
             @all ||= []
           end

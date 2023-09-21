@@ -2,7 +2,7 @@ module Foobara
   class Command
     module Concerns
       module Result
-        extend ActiveSupport::Concern
+        include Concern
 
         class CouldNotProcessResult < Outcome::UnsuccessfulOutcomeError; end
 

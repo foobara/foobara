@@ -4,9 +4,9 @@ module Foobara
       class TransitionAlreadyDefinedError < StandardError; end
       class BadInitialState < StandardError; end
 
-      extend ActiveSupport::Concern
+      include Concern
 
-      class_methods do
+      module ClassMethods
         def desugarize_transition_map
           self.transition_map = {}
 

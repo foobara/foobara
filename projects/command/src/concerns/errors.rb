@@ -2,9 +2,9 @@ module Foobara
   class Command
     module Concerns
       module Errors
-        extend ActiveSupport::Concern
+        include Concern
 
-        class_methods do
+        module ClassMethods
           # TODO: what to do if we have two subcommands in different domains with the same name??
           # Seems like we need to fully qualify these with their domain, right?
           def runtime_path_symbol

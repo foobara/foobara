@@ -4,7 +4,7 @@ module Foobara
   class Entity < Model
     module Concerns
       module Callbacks
-        extend ActiveSupport::Concern
+        include Concern
 
         # owner helps with determining the relevant object when running class-registered state transition callbacks
         attr_accessor :callback_registry
@@ -21,7 +21,7 @@ module Foobara
 
         delegate :register_callback, to: :callback_registry
 
-        class_methods do
+        module ClassMethods
           def class_callback_registry
             @class_callback_registry ||= Callback::Registry::MultipleAction.new(
               :dirtied,
@@ -42,7 +42,7 @@ module Foobara
           delegate :register_callback, :possible_actions, to: :class_callback_registry
         end
 
-        included do
+        on_include do
           class_callback_registry.allowed_types.each do |type|
             [self, singleton_class].each do |target|
               method_name = "#{type}_any_action"

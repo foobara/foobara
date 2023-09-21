@@ -1,7 +1,7 @@
 module Foobara
   class StateMachine
     module Callbacks
-      extend ActiveSupport::Concern
+      include Concern
 
       # owner helps with determining the relevant object when running class-registered state transition callbacks
       attr_accessor :callback_registry, :owner
@@ -24,7 +24,7 @@ module Foobara
         callback_registry.register_callback(type, **, &)
       end
 
-      class_methods do
+      module ClassMethods
         def class_callback_registry
           @class_callback_registry ||= Callback::Registry::Conditioned.new(
             from: states,

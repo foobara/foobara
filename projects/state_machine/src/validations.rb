@@ -1,7 +1,7 @@
 module Foobara
   class StateMachine
     module Validations
-      extend ActiveSupport::Concern
+      include Concern
 
       class UnexpectedTerminalStates < StandardError; end
       class MissingStates < StandardError; end
@@ -10,7 +10,7 @@ module Foobara
       class ExtraTransitions < StandardError; end
       class MissingTerminalStates < StandardError; end
 
-      class_methods do
+      module ClassMethods
         def validate_terminal_states(computed_terminal_states, all_states)
           unexpected_terminal_states = computed_terminal_states - terminal_states
 

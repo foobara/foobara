@@ -1,7 +1,7 @@
 module Foobara
   class StateMachine
     module TransitionLog
-      extend ActiveSupport::Concern
+      include Concern
 
       attr_accessor :log
 

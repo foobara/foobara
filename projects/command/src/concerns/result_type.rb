@@ -2,9 +2,9 @@ module Foobara
   class Command
     module Concerns
       module ResultType
-        extend ActiveSupport::Concern
+        include Concern
 
-        class_methods do
+        module ClassMethods
           def result(result_type_declaration)
             @result_type = type_for_declaration(result_type_declaration)
           end

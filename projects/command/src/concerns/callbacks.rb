@@ -2,9 +2,9 @@ module Foobara
   class Command
     module Concerns
       module Callbacks
-        extend ActiveSupport::Concern
+        include Concern
 
-        class_methods do
+        module ClassMethods
           def subclass_defined_callbacks
             @subclass_defined_callbacks ||= Foobara::Callback::Registry::SingleAction.new
           end
@@ -26,7 +26,7 @@ module Foobara
           delegate :remove_all_callbacks, to: :callback_state_machine_target
         end
 
-        included do
+        on_include do
           [self, singleton_class].each do |target|
             %i[before after].each do |type|
               target.define_method "#{type}_any_transition" do |&block|

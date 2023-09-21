@@ -2,7 +2,7 @@ module Foobara
   class Domain
     # TODO: should we just couple domain project and commands project to simplify this connection?
     module CommandExtension
-      extend ActiveSupport::Concern
+      include Concern
 
       class CannotAccessDomain < StandardError; end
 
@@ -23,7 +23,7 @@ module Foobara
         super
       end
 
-      class_methods do
+      module ClassMethods
         def domain
           mod = Util.module_for(self)
 

@@ -4,9 +4,9 @@ module Foobara
       class ValueNotAllowed < StandardError; end
       class CannotDetermineModuleAutomatically; end
 
-      extend ActiveSupport::Concern
+      include Concern
 
-      class_methods do
+      module ClassMethods
         def enumerated(attribute_name, values_source = nil)
           original_values_source = values_source
 

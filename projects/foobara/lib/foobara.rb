@@ -1,4 +1,3 @@
-require "active_support/concern"
 require "active_support/core_ext/array/wrap"
 require "active_support/core_ext/hash/indifferent_access"
 require "active_support/core_ext/module/delegation"
@@ -59,7 +58,8 @@ module Foobara
   require_project "util"
 
   # could be independent projects
-  require_project "thread_parent",
+  require_project "concerns",
+                  "thread_parent",
                   "weak_object_set",
                   "enumerated",
                   "callback",

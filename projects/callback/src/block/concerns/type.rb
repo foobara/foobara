@@ -3,9 +3,9 @@ module Foobara
     class Block
       module Concerns
         module Type
-          extend ActiveSupport::Concern
+          include Concern
 
-          class_methods do
+          module ClassMethods
             def type
               @type ||= name.demodulize.gsub(/Block$/, "").underscore.to_sym
             end

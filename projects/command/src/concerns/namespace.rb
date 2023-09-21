@@ -2,9 +2,9 @@ module Foobara
   class Command
     module Concerns
       module Namespace
-        extend ActiveSupport::Concern
+        include Concern
 
-        class_methods do
+        module ClassMethods
           def type_for_declaration(...)
             namespace.type_for_declaration(...)
           end
