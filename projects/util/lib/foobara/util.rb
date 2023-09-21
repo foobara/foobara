@@ -75,7 +75,7 @@ module Foobara
 
     def require_project_file(path)
       project, *path_parts = path.split("/")
-      require_relative("../../#{project}/src/#{path_parts.join("/")}")
+      require_relative("../../../#{project}/src/#{path_parts.join("/")}")
     end
 
     def all_symbolic_keys?(hash)

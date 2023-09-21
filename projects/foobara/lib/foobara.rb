@@ -4,6 +4,7 @@ require "active_support/core_ext/hash/indifferent_access"
 require "active_support/core_ext/module/delegation"
 require "active_support/core_ext/string/inflections"
 
+require "foobara/util"
 require "foobara/thread_parent"
 require "foobara/weak_object_set"
 require "foobara/common"
