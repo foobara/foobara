@@ -81,7 +81,7 @@ module Foobara
 
     def register_model(model_class)
       @model_classes << model_class
-      type_namespace.register_type(model_class.model_name, model_class.model_type)
+      type_namespace.register_type(model_class.model_symbol, model_class.model_type)
     end
 
     def depends_on?(other_domain)

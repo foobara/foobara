@@ -65,6 +65,23 @@ RSpec.describe ":model" do
 
     value = constructed_model.new(foo: 4, bar: "baz")
     expect(value).to be_valid
+
+    value.write_attribute!(:foo, 5)
+    expect(value.foo).to eq(5)
+
+    expect {
+      value.write_attribute!(:foo, "asdf")
+    }.to raise_error(Foobara::Value::Processor::Casting::CannotCastError)
+
+    value.write_attributes(foo: 6)
+    expect(value.foo).to eq(6)
+
+    value.write_attributes!(foo: 7)
+    expect(value.foo).to eq(7)
+
+    expect {
+      value.write_attributes!(foo: "asdf")
+    }.to raise_error(Foobara::Value::Processor::Casting::CannotCastError)
   end
 
   it "sets model_class and model_base_class" do

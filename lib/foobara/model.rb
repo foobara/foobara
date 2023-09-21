@@ -9,7 +9,7 @@ module Foobara
       attr_accessor :domain
       attr_reader :model_type
 
-      delegate :organization, to: :domain, allow_nil: true
+      delegate :organization, :organization_name, :domain_name, to: :domain, allow_nil: true
 
       def reset_all
         Foobara::Util.constant_values(self, extends: Foobara::Model).each do |dynamic_model|
@@ -84,6 +84,18 @@ module Foobara
       def model_name
         # TODO: should get this from the declaration_data instead, right??
         name.demodulize
+      end
+
+      def model_symbol
+        model_name.to_sym
+      end
+
+      def full_model_name
+        [
+          organization_name,
+          domain_name,
+          model_name
+        ].compact.join("::")
       end
 
       def attributes(attributes_type_declaration)
@@ -161,13 +173,21 @@ module Foobara
         # :nocov:
       end
 
-      attributes&.each_pair do |attribute_name, value|
-        write_attribute(attribute_name, value)
+      validate = options[:validate]
+
+      if attributes.blank?
+        if validate
+          # :nocov:
+          raise ArgumentError, "Cannot use validate option without attributes"
+          # :nocov:
+        end
+      else
+        attributes.each_pair do |attribute_name, value|
+          write_attribute(attribute_name, value)
+        end
       end
 
-      if options[:validate]
-        validate!
-      end
+      validate! if validate
     end
 
     delegate :model_name, :attributes_type, :valid_attribute_name?, :validate_attribute_name!, to: :class
@@ -185,6 +205,18 @@ module Foobara
     def write_attribute!(attribute_name, value)
       attribute_name = attribute_name.to_sym
       attributes[attribute_name] = cast_attribute!(attribute_name, value)
+    end
+
+    def write_attributes(attributes)
+      attributes.each_pair do |attribute_name, value|
+        write_attribute(attribute_name, value)
+      end
+    end
+
+    def write_attributes!(attributes)
+      attributes.each_pair do |attribute_name, value|
+        write_attribute!(attribute_name, value)
+      end
     end
 
     def read_attribute(attribute_name)
