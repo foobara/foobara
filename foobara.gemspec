@@ -44,6 +44,7 @@ Gem::Specification.new do |spec|
     type_declarations/lib
     command/lib
     entity/lib
+    persistence/lib
     lib
   ]
 

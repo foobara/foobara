@@ -1,6 +1,4 @@
-require "concurrent/atomic/thread_local_var"
-
-Foobara::Util.require_directory("#{__dir__}/persistence")
+Foobara::Util.require_directory("#{__dir__}/../../src")
 
 module Foobara
   module Persistence
