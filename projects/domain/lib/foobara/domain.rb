@@ -198,7 +198,6 @@ module Foobara
         end
 
         @installed = true
-        Module.include(Foobara::Domain::ModuleExtension)
         Foobara::Command.include(Foobara::Domain::CommandExtension)
         Foobara::Command.after_subclass_defined do |subclass|
           unprocessed_command_classes << subclass
@@ -207,5 +206,3 @@ module Foobara
     end
   end
 end
-
-Foobara::Domain.install!

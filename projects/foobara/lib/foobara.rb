@@ -10,6 +10,12 @@ module Foobara
       Util.require_project_file(project, path)
     end
 
+    def require_project(*projects)
+      projects.each do |project|
+        require "foobara/#{project}"
+      end
+    end
+
     # TODO: rename this to manifest...
     # TODO: come up with a way to change a type's manifest... Or maybe treat Model very differently?
     def manifest
@@ -37,31 +43,40 @@ module Foobara
     end
 
     def reset_alls
-      Foobara::Domain.reset_all
-      Foobara::Model.reset_all
-      Foobara::Entity.reset_all
-      Foobara::Command.reset_all
-      Foobara::Organization.reset_all
-      Foobara::Types.reset_all
-      Foobara::TypeDeclarations.reset_all
-      Foobara::BuiltinTypes.reset_all
-      Foobara::Persistence.reset_all
+      Domain.reset_all
+      Model.reset_all
+      Entity.reset_all
+      Command.reset_all
+      Organization.reset_all
+      Types.reset_all
+      TypeDeclarations.reset_all
+      BuiltinTypes.reset_all
+      Persistence.reset_all
     end
   end
-end
 
-require "foobara/util"
-require "foobara/thread_parent"
-require "foobara/weak_object_set"
-require "foobara/common"
-require "foobara/value"
-require "foobara/enumerated"
-require "foobara/callback"
-require "foobara/state_machine"
-require "foobara/types"
-require "foobara/type_declarations"
-require "foobara/command"
-require "foobara/domain"
-require "foobara/entity"
-require "foobara/persistence"
-require "foobara/builtin_types"
+  # universal
+  require_project "util"
+
+  # could be independent projects
+  require_project "thread_parent",
+                  "weak_object_set",
+                  "enumerated",
+                  "callback",
+                  "state_machine"
+
+  # various components of the foobara framework that have some level of coupling.
+  # for example, Error in common knows about (or could be implemented to know about)
+  # type declarations to expose its context type.
+  require_project "common",
+                  "value",
+                  "types",
+                  "type_declarations",
+                  "builtin_types",
+                  "domain",
+                  "entity",
+                  "command",
+                  "persistence"
+
+  Domain.install!
+end

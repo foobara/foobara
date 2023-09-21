@@ -40,3 +40,5 @@ module Foobara
     end
   end
 end
+
+Module.include(Foobara::Domain::ModuleExtension)
