@@ -5,7 +5,26 @@ module Foobara
     module Handlers
       class ExtendEntityTypeDeclaration < ExtendModelTypeDeclaration
         class ToTypeTransformer < ExtendModelTypeDeclaration::ToTypeTransformer
-          # TODO: need primary key type declaration validator!!!
+          class EntityPrimaryKeyCaster < Value::Caster
+            class << self
+              def requires_declaration_data?
+                true
+              end
+            end
+
+            def entity_class
+              declaration_data
+            end
+
+            def applicable?(value)
+              entity_class.primary_key_type.applicable?(value)
+            end
+
+            def transform(primary_key)
+              entity_class.new(primary_key)
+            end
+          end
+
           def non_processor_keys
             [:primary_key, *super]
           end
@@ -20,6 +39,8 @@ module Foobara
                 if entity_class.primary_key_attribute.blank?
                   entity_class.primary_key(strict_declaration_type[:primary_key])
                 end
+
+                type.casters << EntityPrimaryKeyCaster.new(entity_class)
               end
             end
           end

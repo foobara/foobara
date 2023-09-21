@@ -76,6 +76,10 @@ module Foobara
         Value::Processor::Casting.new({ cast_to: declaration_data }, casters:, target_classes:)
       end
 
+      def applicable?(value)
+        value_caster.can_cast?(value)
+      end
+
       delegate :needs_cast?, to: :value_caster
 
       def cast(value)

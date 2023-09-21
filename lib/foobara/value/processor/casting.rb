@@ -48,6 +48,10 @@ module Foobara
           !does_not_need_cast_processor.applicable?(value)
         end
 
+        def can_cast?(value)
+          processors.any? { |processor| processor.applicable?(value) }
+        end
+
         def does_not_need_cast_processor
           return @does_not_need_cast_processor if defined?(@does_not_need_cast_processor)
 

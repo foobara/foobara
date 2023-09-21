@@ -151,7 +151,7 @@ module Foobara
 
       # This means its applicable regardless of value to transform. Override if different behavior is needed.
       def always_applicable?
-        declaration_data
+        !!declaration_data
       end
 
       def process_value(_value)
