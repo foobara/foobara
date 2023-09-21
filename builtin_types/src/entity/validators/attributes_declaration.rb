@@ -1,4 +1,4 @@
-require "foobara/builtin_types/model/validators/attributes_declaration"
+Foobara::Util.require_project_file "builtin_types/model/validators/attributes_declaration"
 
 module Foobara
   module BuiltinTypes

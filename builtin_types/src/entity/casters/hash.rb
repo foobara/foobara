@@ -1,4 +1,4 @@
-require "foobara/builtin_types/model/casters/hash"
+Foobara::Util.require_project_file "builtin_types/model/casters/hash"
 
 module Foobara
   module BuiltinTypes

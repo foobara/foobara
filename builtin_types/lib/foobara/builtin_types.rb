@@ -2,7 +2,7 @@ require "date"
 require "time"
 require "bigdecimal"
 
-Foobara::Util.require_directory("#{__dir__}/builtin_types")
+Foobara::Util.require_directory("#{__dir__}/../../src")
 
 module Foobara
   module BuiltinTypes
