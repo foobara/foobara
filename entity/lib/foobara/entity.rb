@@ -1,4 +1,4 @@
-require "foobara/entity/concerns/callbacks"
+Foobara::Util.require_directory("#{__dir__}/../../src")
 
 # TODO: move to separate file
 module Foobara

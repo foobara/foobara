@@ -43,6 +43,7 @@ Gem::Specification.new do |spec|
     types/lib
     type_declarations/lib
     command/lib
+    entity/lib
     lib
   ]
 
