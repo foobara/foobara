@@ -1,4 +1,4 @@
-require_relative "foobara/lib/version"
+require_relative "projects/foobara/lib/version"
 
 Gem::Specification.new do |spec|
   spec.name = "foobara"
@@ -31,23 +31,8 @@ Gem::Specification.new do |spec|
   end
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
-  spec.require_paths = %w[
-    common/lib
-    builtin_types/lib
-    value/lib
-    enumerated/lib
-    callback/lib
-    state_machine/lib
-    weak_object_set/lib
-    thread_parent/lib
-    types/lib
-    type_declarations/lib
-    command/lib
-    entity/lib
-    persistence/lib
-    domain/lib
-    foobara/lib
-  ]
+
+  spec.require_paths = Dir["./projects/*/lib"]
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html
