@@ -1,4 +1,4 @@
-Foobara::Util.require_directory("#{__dir__}/state_machine")
+Foobara::Util.require_directory("#{__dir__}/../../src")
 
 module Foobara
   class StateMachine

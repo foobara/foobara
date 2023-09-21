@@ -37,6 +37,7 @@ Gem::Specification.new do |spec|
     value/lib
     enumerated/lib
     callback/lib
+    state_machine/lib
     lib
   ]
 
