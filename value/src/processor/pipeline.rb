@@ -1,4 +1,4 @@
-require "foobara/value/processor/multi"
+Foobara::Util.require_project_file("value/processor/multi")
 
 module Foobara
   module Value

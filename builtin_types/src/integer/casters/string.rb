@@ -1,5 +1,3 @@
-require "foobara/value/caster"
-
 module Foobara
   module BuiltinTypes
     module Integer

@@ -1,5 +1,5 @@
-require "foobara/value/processor"
-require "foobara/value/processor/runner"
+Foobara::Util.require_project_file("value/processor")
+Foobara::Util.require_project_file("value/processor/runner")
 
 module Foobara
   module Value

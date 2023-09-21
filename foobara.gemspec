@@ -34,6 +34,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = %w[
     common/lib
     builtin_types/lib
+    value/lib
     lib
   ]
 
