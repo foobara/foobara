@@ -1,4 +1,4 @@
-require_relative "lib/foobara/version"
+require_relative "foobara/lib/version"
 
 Gem::Specification.new do |spec|
   spec.name = "foobara"
@@ -46,7 +46,7 @@ Gem::Specification.new do |spec|
     entity/lib
     persistence/lib
     domain/lib
-    lib
+    foobara/lib
   ]
 
   # For more information and examples about making a new gem, check out our

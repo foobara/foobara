@@ -1,3 +1,5 @@
+Foobara::Util.require_project_file("entity/model")
+
 module Foobara
   class Entity < Model
     module Concerns

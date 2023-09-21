@@ -6,8 +6,6 @@ require "active_support/core_ext/string/inflections"
 
 require "foobara/thread_parent"
 require "foobara/weak_object_set"
-
-# TODO: break these out into separate gems instead of simulating it here
 require "foobara/common"
 require "foobara/value"
 require "foobara/enumerated"
@@ -15,11 +13,8 @@ require "foobara/callback"
 require "foobara/state_machine"
 require "foobara/types"
 require "foobara/type_declarations"
-# TODO: awkward to have model, etc, at top level like this. Maybe group it with
-# command and domain and organization into a project??
 require "foobara/command"
 require "foobara/domain"
-require "foobara/model"
 require "foobara/entity"
 require "foobara/persistence"
 require "foobara/builtin_types"
