@@ -5,6 +5,8 @@ require "active_support/core_ext/module/delegation"
 require "active_support/core_ext/string/inflections"
 
 require "foobara/thread_parent"
+require "foobara/weak_object_set"
+
 # TODO: break these out into separate gems instead of simulating it here
 require "foobara/common"
 require "foobara/value"
