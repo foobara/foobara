@@ -2,7 +2,7 @@ module Foobara
   class Command
     module Concerns
       module Inputs
-        extend ActiveSupport::Concern
+        include Concern
 
         attr_reader :inputs
 

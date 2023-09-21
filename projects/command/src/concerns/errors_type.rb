@@ -2,9 +2,9 @@ module Foobara
   class Command
     module Concerns
       module ErrorsType
-        extend ActiveSupport::Concern
+        include Concern
 
-        class_methods do
+        module ClassMethods
           def errors_type_declaration
             error_context_type_map.map do |key, error_class|
               error_class.to_h.merge(ErrorKey.to_h(key)).merge(key:)

@@ -2,9 +2,9 @@ module Foobara
   class Command
     module Concerns
       module InputsType
-        extend ActiveSupport::Concern
+        include Concern
 
-        class_methods do
+        module ClassMethods
           def inputs(inputs_type_declaration)
             @inputs_type = type_for_declaration(inputs_type_declaration)
 
