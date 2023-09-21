@@ -10,7 +10,10 @@ Naming/FileName:
     - bin/*
     - lib/foobara/version.rb
     - lib/foobara.rb
-    - lib/foobara/common.rb
+    - '*/lib/foobara/*.rb'
+  CheckDefinitionPathHierarchyRoots:
+    - src
+    - spec
   IgnoreExecutableScripts: true
 
 Naming/PredicateName:

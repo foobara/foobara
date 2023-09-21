@@ -1,4 +1,4 @@
-RSpec.describe Foobara::Common::DataPath do
+RSpec.describe Foobara::DataPath do
   let(:key) { described_class.new(path) }
 
   let(:category) { "some_category" }

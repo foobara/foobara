@@ -1,95 +1,93 @@
 module Foobara
-  module Common
-    class Outcome
-      class UnsuccessfulOutcomeError < StandardError
-        attr_accessor :errors
+  class Outcome
+    class UnsuccessfulOutcomeError < StandardError
+      attr_accessor :errors
 
-        def initialize(errors)
-          self.errors = errors
+      def initialize(errors)
+        self.errors = errors
 
-          message = errors.map(&:message).join(", ")
+        message = errors.map(&:message).join(", ")
 
-          super(message)
+        super(message)
+      end
+    end
+
+    class << self
+      def success(result)
+        new.tap do |outcome|
+          outcome.result = result
         end
       end
 
-      class << self
-        def success(result)
-          new.tap do |outcome|
-            outcome.result = result
-          end
+      def errors(*errors)
+        errors = errors.flatten
+
+        if errors.blank?
+          # :nocov:
+          raise "No errors given"
+          # :nocov:
         end
 
-        def errors(*errors)
-          errors = errors.flatten
-
-          if errors.blank?
-            # :nocov:
-            raise "No errors given"
-            # :nocov:
-          end
-
-          new.tap do |outcome|
-            outcome.add_errors(errors)
-          end
-        end
-
-        def error(error)
-          errors(Array.wrap(error))
-        end
-
-        def raise!(errors)
-          self.errors(errors).raise! if errors.present?
+        new.tap do |outcome|
+          outcome.add_errors(errors)
         end
       end
 
-      attr_accessor :result
-      attr_reader :error_collection
-
-      def initialize(result: nil, errors: nil, error_collection: ErrorCollection.new)
-        @error_collection = error_collection
-
-        self.result = result
-
-        if errors.present?
-          add_errors(errors)
-        end
+      def error(error)
+        errors(Array.wrap(error))
       end
 
-      delegate :has_errors?,
-               :errors,
-               :each_error,
-               :has_error?,
-               :add_error,
-               :add_errors,
-               to: :error_collection
-
-      def success?
-        !has_errors?
+      def raise!(errors)
+        self.errors(errors).raise! if errors.present?
       end
+    end
 
-      def fatal?
-        errors.any?(&:fatal?)
+    attr_accessor :result
+    attr_reader :error_collection
+
+    def initialize(result: nil, errors: nil, error_collection: ErrorCollection.new)
+      @error_collection = error_collection
+
+      self.result = result
+
+      if errors.present?
+        add_errors(errors)
       end
+    end
 
-      def raise!
-        return if success?
+    delegate :has_errors?,
+             :errors,
+             :each_error,
+             :has_error?,
+             :add_error,
+             :add_errors,
+             to: :error_collection
 
-        if errors.size == 1
-          raise errors.first
-        else
-          raise UnsuccessfulOutcomeError, errors
-        end
+    def success?
+      !has_errors?
+    end
+
+    def fatal?
+      errors.any?(&:fatal?)
+    end
+
+    def raise!
+      return if success?
+
+      if errors.size == 1
+        raise errors.first
+      else
+        raise UnsuccessfulOutcomeError, errors
       end
+    end
 
-      def result!
-        raise!
-        result
-      end
+    def result!
+      raise!
+      result
+    end
 
-      def errors_hash
-        error_collection.to_h
-      end
+    def errors_hash
+      error_collection.to_h
     end
   end
 end

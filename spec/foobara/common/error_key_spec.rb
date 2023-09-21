@@ -1,4 +1,4 @@
-RSpec.describe Foobara::Common::ErrorKey do
+RSpec.describe Foobara::ErrorKey do
   let(:key) { described_class.new(category:, path:, runtime_path:, symbol:) }
 
   let(:category) { "some_category" }

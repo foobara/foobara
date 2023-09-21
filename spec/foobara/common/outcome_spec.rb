@@ -1,4 +1,4 @@
-RSpec.describe Foobara::Common::Outcome do
+RSpec.describe Foobara::Outcome do
   around do |example|
     Foobara::TypeDeclarations.with_validate_error_context_disabled do
       example.run
@@ -38,7 +38,7 @@ RSpec.describe Foobara::Common::Outcome do
         )
       end
 
-      it { is_expected_to_raise(Foobara::Common::Outcome::UnsuccessfulOutcomeError, /message1, message2/) }
+      it { is_expected_to_raise(Foobara::Outcome::UnsuccessfulOutcomeError, /message1, message2/) }
     end
 
     context "when no errors" do
