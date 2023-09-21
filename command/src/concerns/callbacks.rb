@@ -1,5 +1,3 @@
-require "foobara/command/state_machine"
-
 module Foobara
   class Command
     module Concerns

@@ -42,6 +42,7 @@ Gem::Specification.new do |spec|
     thread_parent/lib
     types/lib
     type_declarations/lib
+    command/lib
     lib
   ]
 
