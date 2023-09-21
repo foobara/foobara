@@ -35,6 +35,7 @@ Gem::Specification.new do |spec|
     common/lib
     builtin_types/lib
     value/lib
+    enumerated/lib
     lib
   ]
 

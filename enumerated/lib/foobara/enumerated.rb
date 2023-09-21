@@ -1,6 +1,1 @@
-Foobara::Util.require_directory("#{__dir__}/enumerated")
-
-module Foobara
-  module Enumerated
-  end
-end
+Foobara::Util.require_directory("#{__dir__}/../../src")
