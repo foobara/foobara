@@ -1,5 +1,6 @@
 module Foobara
   module Common
+    # TODO: path's have use outside of errors. Make this more general.
     class ErrorKey
       # TODO: use this wherever it makes sense
       EMPTY_PATH = [].freeze
