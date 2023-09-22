@@ -57,7 +57,7 @@ module Foobara
         # us_address = build_and_register!(:us_address, model)
       end
 
-      def build_and_register!(type_symbol, base_type, target_classes = const_get("::#{type_symbol.to_s.camelize}"))
+      def build_and_register!(type_symbol, base_type, target_classes = const_get("::#{Util.classify(type_symbol)}"))
         type = build_from_modules_and_install_type_declaration_extensions!(type_symbol, target_classes, base_type)
 
         global_registry.register(type_symbol, type)
@@ -73,7 +73,7 @@ module Foobara
         desugarizer = TypeDeclarations::Handlers::RegisteredTypeDeclaration::SymbolDesugarizer
         declaration_data = desugarizer.instance.transform(type_symbol)
 
-        module_symbol = type_symbol.to_s.camelize.to_sym
+        module_symbol = Util.classify(type_symbol).to_sym
 
         builtin_type_module = const_get(module_symbol, false)
 

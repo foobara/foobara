@@ -11,7 +11,7 @@ module Foobara
           original_values_source = values_source
 
           if values_source.nil?
-            module_name = attribute_name.to_s.camelize
+            module_name = Util.classify(attribute_name)
 
             values_source = begin
               Util.const_get_up_hierarchy(self, module_name)

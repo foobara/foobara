@@ -15,6 +15,33 @@ module Foobara
       underscore(non_full_name(mod))
     end
 
+    def classify(string)
+      camelize(string, true)
+    end
+
+    def camelize(string, upcase_first = false)
+      return nil if string.nil?
+
+      if string.is_a?(::Symbol)
+        string = string.to_s
+      end
+
+      retval = ""
+
+      string.each_char do |char|
+        if char == "_"
+          upcase_first = true
+        elsif upcase_first
+          retval << char.upcase
+          upcase_first = false
+        else
+          retval << char.downcase
+        end
+      end
+
+      retval
+    end
+
     CAPS = ("A".."Z")
 
     def constantify(string)
@@ -37,11 +64,12 @@ module Foobara
 
     def underscore(string)
       return nil if string.nil?
-      return "" if string.empty?
 
       if string.is_a?(::Symbol)
         string = string.to_s
       end
+
+      return "" if string.empty?
 
       retval = nil
 
