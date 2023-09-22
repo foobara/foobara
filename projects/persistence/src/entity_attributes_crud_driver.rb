@@ -56,7 +56,7 @@ module Foobara
           attr_accessor :record_id
 
           def verb
-            match = /^Cannot(\w+)Error$/.match(self.class.name.demodulize)
+            match = /^Cannot(\w+)Error$/.match(Util.non_full_name(self.class))
 
             unless match
               # :nocov:

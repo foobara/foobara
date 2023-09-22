@@ -41,7 +41,7 @@ module Foobara
 
       def reset_all
         Util.constant_values(self, extends: Foobara::Entity).each do |dynamic_model|
-          remove_const(dynamic_model.name.demodulize)
+          remove_const(Util.non_full_name(dynamic_model))
         end
       end
 

@@ -7,7 +7,7 @@ module Foobara
 
           module ClassMethods
             def type
-              @type ||= name.demodulize.gsub(/Block$/, "").underscore.to_sym
+              @type ||= Util.non_full_name(self).gsub(/Block$/, "").underscore.to_sym
             end
           end
         end

@@ -2,7 +2,7 @@ module Foobara
   class Domain
     module OrganizationModuleExtension
       def foobara_organization
-        @foobara_organization ||= Organization.new(organization_name: name.demodulize)
+        @foobara_organization ||= Organization.new(organization_name: Util.non_full_name(self))
       end
 
       def foobara_organization?

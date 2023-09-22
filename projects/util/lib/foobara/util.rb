@@ -3,12 +3,12 @@ module Foobara
     module_function
 
     def module_for(mod)
-      name = mod.name
+      name = mod.name&.[](/(.*)::/, 1)
+      Object.const_get(name) if name
+    end
 
-      if name
-        name = mod.name[/(.*)::/, 1]
-        Object.const_get(name) if name
-      end
+    def non_full_name(mod)
+      mod.name&.[](/([^:]+)\z/, 1)
     end
 
     def power_set(array)

@@ -132,7 +132,7 @@ module Foobara
         return unless extension_module
 
         Util.constant_values(extension_module, is_a: ::Module).each do |handler_module|
-          handler_name = handler_module.name.demodulize
+          handler_name = Util.non_full_name(handler_module)
           handler_class_to_extend = TypeDeclarations::Handlers.const_get(handler_name)
 
           unless handler_class_to_extend

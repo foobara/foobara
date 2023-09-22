@@ -13,7 +13,7 @@ module Foobara
 
       def reset_all
         Foobara::Util.constant_values(self, extends: Foobara::Model).each do |dynamic_model|
-          remove_const(dynamic_model.name.demodulize)
+          remove_const(Util.non_full_name(dynamic_model))
         end
       end
 
@@ -83,7 +83,7 @@ module Foobara
 
       def model_name
         # TODO: should get this from the declaration_data instead, right??
-        name.demodulize
+        Util.non_full_name(self)
       end
 
       def model_symbol
