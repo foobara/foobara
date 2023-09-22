@@ -25,7 +25,7 @@ module Foobara
           end
 
           def desugarize(sugary_type_declaration)
-            sugary_type_declaration = sugary_type_declaration.deep_dup
+            sugary_type_declaration = Util.deep_dup(sugary_type_declaration)
 
             Util.symbolize_keys!(sugary_type_declaration)
 

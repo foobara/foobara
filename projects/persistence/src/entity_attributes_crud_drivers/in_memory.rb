@@ -50,7 +50,7 @@ module Foobara
           end
 
           def find(record_id)
-            records[record_id].deep_dup
+            Util.deep_dup(records[record_id])
           end
 
           def find!(record_id)
@@ -64,7 +64,7 @@ module Foobara
           end
 
           def insert(attributes)
-            attributes = attributes.deep_dup
+            attributes = Util.deep_dup(attributes)
 
             record_id = record_id_for(attributes)
 
@@ -90,7 +90,7 @@ module Foobara
               # :nocov:
             end
 
-            records[record_id] = attributes.deep_dup
+            records[record_id] = Util.deep_dup(attributes)
             find(record_id)
           end
 

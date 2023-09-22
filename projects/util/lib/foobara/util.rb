@@ -219,6 +219,17 @@ module Foobara
       string
     end
 
+    def deep_dup(object)
+      case object
+      when ::Array
+        object.map { |element| deep_dup(element) }
+      when ::Hash
+        object.to_h { |k, v| [deep_dup(k), deep_dup(v)] }
+      else
+        object.dup
+      end
+    end
+
     def all_symbolic_keys?(hash)
       all_symbolic_elements?(hash.keys)
     end
