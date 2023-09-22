@@ -12,7 +12,7 @@ module Foobara
           end
 
           def cast(hash)
-            hash = hash.symbolize_keys
+            hash = Util.symbolize_keys(hash)
 
             ::Date.new(hash[:year], hash[:month], hash[:day])
           end

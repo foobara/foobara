@@ -11,7 +11,7 @@ module Foobara
             return false unless sugary_type_declaration.is_a?(::Hash)
             return false unless Util.all_symbolizable_keys?(sugary_type_declaration)
 
-            sugary_type_declaration = sugary_type_declaration.symbolize_keys
+            sugary_type_declaration = Util.symbolize_keys(sugary_type_declaration)
 
             return true unless sugary_type_declaration.key?(:type)
 
@@ -27,7 +27,7 @@ module Foobara
           def desugarize(sugary_type_declaration)
             sugary_type_declaration = sugary_type_declaration.deep_dup
 
-            sugary_type_declaration.symbolize_keys!
+            Util.symbolize_keys!(sugary_type_declaration)
 
             unless strictish_type_declaration?(sugary_type_declaration)
               sugary_type_declaration = {
@@ -36,7 +36,7 @@ module Foobara
               }
             end
 
-            sugary_type_declaration[:element_type_declarations].symbolize_keys!
+            Util.symbolize_keys!(sugary_type_declaration[:element_type_declarations])
 
             sugary_type_declaration
           end
