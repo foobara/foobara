@@ -224,7 +224,7 @@ module Foobara
 
         invalid_opts = opts.keys - valid_opts
 
-        if invalid_opts.present?
+        unless invalid_opts.empty?
           # :nocov:
           raise ArgumentError, "Invalid opts #{invalid_opts.inspect} expected only #{valid_opts.inspect}"
           # :nocov:
