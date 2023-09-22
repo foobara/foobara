@@ -8,7 +8,6 @@ Naming/FileName:
     - spec/lib/**/*
     - spec/**/*
     - bin/*
-    - projects/foobara/lib/version.rb
     - 'projects/*/lib/foobara/*.rb'
   CheckDefinitionPathHierarchyRoots:
     - src

@@ -2,7 +2,7 @@ require_relative "projects/foobara/src/version"
 
 Gem::Specification.new do |spec|
   spec.name = "foobara"
-  spec.version = Foobara::VERSION
+  spec.version = Foobara::Version::VERSION
   spec.authors = ["Miles Georgi"]
   spec.email = ["azimux@gmail.com"]
 
