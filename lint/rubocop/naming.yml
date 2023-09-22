@@ -12,6 +12,7 @@ Naming/FileName:
     - 'projects/*/lib/foobara/*.rb'
   CheckDefinitionPathHierarchyRoots:
     - src
+    - extensions
     - spec
   IgnoreExecutableScripts: true
 

@@ -1,19 +1,3 @@
-# require "active_support/core_ext/module/delegation"
-
-# TODO: move this to a better spot
-class Module
-  def foobara_delegate(*method_names, to:, allow_nil: false)
-    method_names.each do |method_name|
-      define_method method_name do |*args, **opts, &block|
-        target = to.is_a?(::Symbol) || to.is_a?(::String) ? send(to) : to
-        return nil if target.nil? && allow_nil
-
-        target.send(method_name, *args, **opts, &block)
-      end
-    end
-  end
-end
-
 module Foobara
   class << self
     def require_file(project, path)
@@ -67,6 +51,8 @@ module Foobara
 
   # universal
   require_project "util"
+
+  Util.require_directory("#{__dir__}/../src")
 
   # could be independent projects
   require_project "concerns",
