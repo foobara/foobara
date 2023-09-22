@@ -168,7 +168,7 @@ module Foobara
       end
 
       def type_declaration(...)
-        raise "No primary key set yet" unless primary_key_attribute.present?
+        raise "No primary key set yet" unless primary_key_attribute
 
         super.merge(type: :entity, primary_key: primary_key_attribute)
       end
@@ -176,13 +176,13 @@ module Foobara
       attr_reader :primary_key_attribute
 
       def primary_key(attribute_name)
-        if primary_key_attribute.present?
+        if primary_key_attribute
           # :nocov:
           raise "Primary key already set to #{primary_key_attribute}"
           # :nocov:
         end
 
-        if attribute_name.blank?
+        if attribute_name.nil? || attribute_name.empty?
           # :nocov:
           raise ArgumentError, "Primary key can't be blank"
           # :nocov:
@@ -194,7 +194,7 @@ module Foobara
       end
 
       def set_model_type
-        if primary_key_attribute.present?
+        if primary_key_attribute
           super
         end
       end

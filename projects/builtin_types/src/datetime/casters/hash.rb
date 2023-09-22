@@ -29,7 +29,7 @@ module Foobara
             milliseconds = hash[:milliseconds]
             zone = hash[:zone]
 
-            if milliseconds.present?
+            if milliseconds
               seconds = seconds.to_r + (milliseconds.to_r / 1000)
             end
 
@@ -63,12 +63,12 @@ module Foobara
               day = hash[:day]
               zone = hash[:zone]
 
-              ::Date.valid_date?(year, month, day) && (zone.blank? || valid_zone?(zone))
+              ::Date.valid_date?(year, month, day) && (zone.nil? || valid_zone?(zone))
             end
           end
 
           def valid_zone?(zone)
-            Time.zone_offset(zone).present?
+            !!Time.zone_offset(zone)
           end
         end
       end

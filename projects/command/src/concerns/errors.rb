@@ -89,12 +89,13 @@ module Foobara
 
                     error_args = error_args.except(:input)
 
-                    unless symbol.present?
+                    unless symbol
                       # :nocov:
                       raise ArgumentError, "missing error symbol"
                       # :nocov:
                     end
-                    unless path.present?
+
+                    unless path
                       # :nocov:
                       raise ArgumentError, "missing input"
                       # :nocov:
@@ -152,8 +153,7 @@ module Foobara
         end
 
         def process_error(error)
-          # it has already been processed when it ran in the sub command
-          return error if error.runtime_path.present?
+          return error unless error.runtime_path.empty?
 
           context = error.context
 

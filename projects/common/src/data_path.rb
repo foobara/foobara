@@ -172,7 +172,7 @@ module Foobara
       when Integer
         key_parts
       when String
-        if key_parts.blank?
+        if key_parts.empty?
           nil
         elsif key_parts =~ INDEX_VALUE
           key_parts.to_i

@@ -49,7 +49,7 @@ module Foobara
         end
 
         def has_callbacks?(type, *, **)
-          unioned_callback_set_for(*, **)[type].present?
+          !unioned_callback_set_for(*, **)[type].empty?
         end
 
         def has_before_callbacks?(*, **)

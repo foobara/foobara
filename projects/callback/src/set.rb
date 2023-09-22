@@ -48,7 +48,7 @@ module Foobara
         end
 
         define_method "has_#{type}_callbacks?" do
-          send(type).present?
+          !send(type).empty?
         end
       end
     end
