@@ -1,7 +1,3 @@
-require "singleton"
-
-Foobara.load_project(__dir__)
-
 module Foobara
   module Types
     class << self

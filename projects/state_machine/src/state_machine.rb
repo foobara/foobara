@@ -1,4 +1,8 @@
 module Foobara
+  require_file("state_machine", "sugar")
+  require_file("state_machine", "callbacks")
+  require_file("state_machine", "validations")
+
   class StateMachine
     include Sugar
     include Callbacks

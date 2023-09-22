@@ -1,8 +1,9 @@
-Foobara.load_project(__dir__)
-
 # TODO: extend Error with context_type behavior
 
 module Foobara
+  require_file("type_declarations", "namespace")
+  require_file("type_declarations", "error_extension")
+
   module TypeDeclarations
     class << self
       def reset_all

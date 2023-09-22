@@ -1,5 +1,3 @@
-require "weakref"
-
 module Foobara
   class WeakObjectSet
     class GarbageCleaner
