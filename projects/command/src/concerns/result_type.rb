@@ -22,7 +22,7 @@ module Foobara
           end
         end
 
-        delegate :result_type, :raw_result_type_declaration, to: :class
+        foobara_delegate :result_type, :raw_result_type_declaration, to: :class
       end
     end
   end

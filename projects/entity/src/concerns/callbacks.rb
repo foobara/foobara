@@ -19,7 +19,7 @@ module Foobara
           callback_registry.runner(action).callback_data(data.merge(record: self, action:)).run
         end
 
-        delegate :register_callback, to: :callback_registry
+        foobara_delegate :register_callback, to: :callback_registry
 
         module ClassMethods
           def class_callback_registry
@@ -39,7 +39,7 @@ module Foobara
             end
           end
 
-          delegate :register_callback, :possible_actions, to: :class_callback_registry
+          foobara_delegate :register_callback, :possible_actions, to: :class_callback_registry
         end
 
         on_include do

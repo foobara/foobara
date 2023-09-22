@@ -62,7 +62,7 @@ module Foobara
           @error_collection = ErrorCollection.new
         end
 
-        delegate :has_errors?, to: :error_collection
+        foobara_delegate :has_errors?, to: :error_collection
 
         private
 

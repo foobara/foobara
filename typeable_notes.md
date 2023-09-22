@@ -50,7 +50,7 @@ class MinValidator
     self.data = data
   end
   
-  delegate :error_context_type, :data_type, to: :class
+  foobara_delegate :error_context_type, :data_type, to: :class
   
   def min
     data

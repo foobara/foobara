@@ -8,7 +8,7 @@ module Foobara
 
         class InvalidConditions < StandardError; end
 
-        delegate :possible_conditions, :possible_condition_keys, to: :other_conditions_registry
+        foobara_delegate :possible_conditions, :possible_condition_keys, to: :other_conditions_registry
 
         def initialize(other_conditions_registry)
           self.other_conditions_registry = other_conditions_registry

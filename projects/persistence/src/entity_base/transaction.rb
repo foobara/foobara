@@ -12,7 +12,7 @@ module Foobara
           self.tables = {}
         end
 
-        delegate :entity_attributes_crud_driver, to: :entity_base
+        foobara_delegate :entity_attributes_crud_driver, to: :entity_base
 
         def open?
           state_machine.currently_open?

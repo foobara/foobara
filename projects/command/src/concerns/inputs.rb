@@ -24,7 +24,7 @@ module Foobara
           inputs_type.element_types.key?(method_name)
         end
 
-        delegate :inputs_type, to: :class
+        foobara_delegate :inputs_type, to: :class
 
         def cast_and_validate_inputs
           if inputs_type.blank? && raw_inputs.blank?

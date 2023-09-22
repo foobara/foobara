@@ -92,7 +92,7 @@ RSpec.describe "custom types" do
           ]
         end
 
-        delegate :sugar_for_complex?, to: :class
+        foobara_delegate :sugar_for_complex?, to: :class
       end
     end
 

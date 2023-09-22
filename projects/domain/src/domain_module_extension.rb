@@ -19,7 +19,7 @@ module Foobara
         true
       end
 
-      delegate :depends_on, :type_for_declaration, to: :foobara_domain
+      foobara_delegate :depends_on, :type_for_declaration, to: :foobara_domain
     end
   end
 end

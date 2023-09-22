@@ -218,7 +218,7 @@ module Foobara
 
     attr_accessor :transaction, :is_loaded, :is_persisted, :is_hard_deleted, :persisted_attributes
 
-    delegate :primary_key_attribute, :full_entity_name, :entity_name, to: :class
+    foobara_delegate :primary_key_attribute, :full_entity_name, :entity_name, to: :class
 
     # simplify this initialize stuff by avoiding .new() for multiple use cases
     # TODO: eliminate validate here??

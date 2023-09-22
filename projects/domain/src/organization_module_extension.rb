@@ -9,7 +9,7 @@ module Foobara
         true
       end
 
-      delegate :depends_on, to: :foobara_organization
+      foobara_delegate :depends_on, to: :foobara_organization
     end
   end
 end

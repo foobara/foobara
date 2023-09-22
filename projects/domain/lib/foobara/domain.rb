@@ -29,8 +29,8 @@ module Foobara
       @model_classes = []
     end
 
-    delegate :organization_name, :organization_symbol, to: :organization, allow_nil: true
-    delegate :type_for_declaration, to: :type_namespace
+    foobara_delegate :organization_name, :organization_symbol, to: :organization, allow_nil: true
+    foobara_delegate :type_for_declaration, to: :type_namespace
 
     def global?
       is_global

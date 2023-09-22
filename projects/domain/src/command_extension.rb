@@ -52,7 +52,7 @@ module Foobara
           super.merge(full_command_name:)
         end
 
-        delegate :domain_name, :organization_name, to: :domain, allow_nil: true
+        foobara_delegate :domain_name, :organization_name, to: :domain, allow_nil: true
       end
     end
   end

@@ -1,5 +1,3 @@
-require "active_support/core_ext/module/delegation"
-
 module Foobara
   class << self
     def require_file(project, path)
@@ -53,6 +51,8 @@ module Foobara
 
   # universal
   require_project "util"
+
+  Util.require_directory("#{__dir__}/../src")
 
   # could be independent projects
   require_project "concerns",
