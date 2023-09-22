@@ -16,6 +16,14 @@ RSpec.describe Foobara::Util do
     end
   end
 
+  describe ".underscore" do
+    context "when symbol" do
+      it "still works" do
+        expect(described_class.underscore(:ClassMethods)).to eq("class_methods")
+      end
+    end
+  end
+
   describe ".args_and_opts_to_opts" do
     subject { described_class.args_and_opts_to_opts(args, opts) }
 

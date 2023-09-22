@@ -12,7 +12,7 @@ RSpec.describe Foobara::Concern do
 
         on_include do
           singleton_class.define_method :name_under do
-            name.underscore
+            Foobara::Util.underscore(name)
           end
         end
       end

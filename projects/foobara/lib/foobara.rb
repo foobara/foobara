@@ -1,5 +1,4 @@
 require "active_support/core_ext/module/delegation"
-require "active_support/core_ext/string/inflections"
 
 module Foobara
   class << self

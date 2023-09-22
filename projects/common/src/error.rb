@@ -5,7 +5,7 @@ module Foobara
 
     class << self
       def symbol
-        Util.non_full_name(self).underscore.gsub(/_error$/, "").to_sym
+        Util.non_full_name_underscore(self).gsub(/_error$/, "").to_sym
       end
 
       def path
