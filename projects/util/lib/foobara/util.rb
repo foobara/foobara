@@ -183,7 +183,7 @@ module Foobara
       when 1
         arg = args.first
 
-        if opts.present?
+        if opts && !opts.empty?
           unless arg.is_a?(::Hash)
             # :nocov:
             raise ArgumentError, "opts must be a hash not a #{arg.class}"
@@ -202,8 +202,8 @@ module Foobara
     end
 
     def arg_and_opts_to_arg(arg, opts)
-      if arg.present?
-        if opts.present?
+      if arg && !arg.empty?
+        if opts && !opts.empty?
           unless opts.is_a?(::Hash)
             # :nocov:
             raise ArgumentError, "opts must be a hash not a #{opts}"
@@ -220,8 +220,8 @@ module Foobara
         else
           arg
         end
-      else
-        opts.presence
+      elsif opts && !opts.empty?
+        opts
       end
     end
 
@@ -242,7 +242,7 @@ module Foobara
         Util.array(arg_and_opts_to_arg(nil, opts))
       when 1
         # Do not go from 1 argument to 0. ie, [nil] should return [nil] not [].
-        if opts.present?
+        if opts && !opts.empty?
           arg = args.first
 
           unless arg.is_a?(::Hash)
