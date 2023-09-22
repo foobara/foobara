@@ -204,6 +204,21 @@ module Foobara
       to_sentence(strings, connector, ", or ")
     end
 
+    def humanize(string)
+      return nil if string.nil?
+
+      if string.is_a?(::Symbol)
+        string = string.to_s
+      end
+
+      return "" if string.empty?
+
+      string = string.gsub("_", " ")
+      string[0] = string[0].upcase
+
+      string
+    end
+
     def all_symbolic_keys?(hash)
       all_symbolic_elements?(hash.keys)
     end

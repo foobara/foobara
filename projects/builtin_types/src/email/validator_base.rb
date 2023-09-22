@@ -21,7 +21,7 @@ module Foobara
                 end
 
                 def message
-                  symbol.to_s.humanize
+                  Util.humanize(symbol)
                 end
               end
             end
