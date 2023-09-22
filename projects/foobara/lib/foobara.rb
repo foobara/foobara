@@ -1,4 +1,26 @@
-require "active_support/core_ext/module/delegation"
+# require "active_support/core_ext/module/delegation"
+
+# TODO: move this to a better spot
+class Module
+  def delegate(*method_names, to:, allow_nil: false)
+    method_names.each do |method_name|
+      define_method method_name do |*args, **opts, &block|
+        target = if to.is_a?(::Symbol) || to.is_a?(::String)
+                   send(to)
+                 else
+                   # TODO: elminate
+                   to
+                 end
+
+        if target.nil? && allow_nil
+          return nil
+        end
+
+        target.send(method_name, *args, **opts, &block)
+      end
+    end
+  end
+end
 
 module Foobara
   class << self
