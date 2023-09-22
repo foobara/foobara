@@ -13,6 +13,9 @@ module Foobara
         BuiltinTypes.build_and_register!(:entity, model, nil)
         # address = build_and_register!(:address, model)
         # us_address = build_and_register!(:us_address, model)
+
+        TypeDeclarations.register_type_declaration(TypeDeclarations::Handlers::ExtendModelTypeDeclaration.new)
+        TypeDeclarations.register_type_declaration(TypeDeclarations::Handlers::ExtendEntityTypeDeclaration.new)
       end
 
       def reset_all

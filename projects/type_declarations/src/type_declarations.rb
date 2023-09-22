@@ -14,8 +14,6 @@ module Foobara
         register_type_declaration(Handlers::ExtendArrayTypeDeclaration.new)
         register_type_declaration(Handlers::ExtendAttributesTypeDeclaration.new)
         register_type_declaration(Handlers::ExtendTupleTypeDeclaration.new)
-        register_type_declaration(Handlers::ExtendModelTypeDeclaration.new)
-        register_type_declaration(Handlers::ExtendEntityTypeDeclaration.new)
       end
 
       def install!
