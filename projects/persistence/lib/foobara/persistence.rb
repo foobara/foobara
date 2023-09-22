@@ -58,7 +58,7 @@ module Foobara
       end
 
       def to_bases(object)
-        objects_to_bases(Array.wrap(object))
+        objects_to_bases(Util.array(object))
       end
 
       def objects_to_bases(objects)

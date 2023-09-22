@@ -34,7 +34,7 @@ module Foobara
       end
 
       def error(error)
-        errors(Array.wrap(error))
+        errors(Util.array(error))
       end
 
       def raise!(errors)

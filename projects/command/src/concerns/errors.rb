@@ -85,7 +85,7 @@ module Foobara
                   elsif args.empty? || (args.size == 1 && args.first.is_a?(Hash))
                     error_args = opts.merge(args.first || {})
                     symbol = error_args[:symbol]
-                    path = Array.wrap(error_args[:input] || error_args[:path])
+                    path = Util.array(error_args[:input] || error_args[:path])
 
                     error_args = error_args.except(:input)
 
@@ -112,7 +112,7 @@ module Foobara
         end
 
         def add_subcommand_error(subcommand, error)
-          error.runtime_path = [subcommand.class.runtime_path_symbol, *Array.wrap(error.runtime_path)]
+          error.runtime_path = [subcommand.class.runtime_path_symbol, *Util.array(error.runtime_path)]
           add_error(error)
           halt!
         end

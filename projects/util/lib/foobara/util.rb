@@ -19,6 +19,17 @@ module Foobara
       subsets + subsets.map { |subset| [head, *subset] }
     end
 
+    def array(object)
+      case object
+      when nil
+        []
+      when Array
+        object
+      else
+        [object]
+      end
+    end
+
     def constant_value(mod, constant, inherit: false)
       if mod.constants(inherit).include?(constant.to_sym)
         mod.const_get(constant, inherit)
@@ -45,8 +56,8 @@ module Foobara
           ]
         end
       else
-        is_a = Array.wrap(is_a)
-        extends = Array.wrap(extends)
+        is_a = Util.array(is_a)
+        extends = Util.array(extends)
 
         mod.constants.map { |const| constant_value(mod, const) }.select do |object|
           (is_a.blank? || is_a.any? { |klass| object.is_a?(klass) }) &&
@@ -172,7 +183,7 @@ module Foobara
 
       case args.size
       when 0
-        Array.wrap(arg_and_opts_to_arg(nil, opts))
+        Util.array(arg_and_opts_to_arg(nil, opts))
       when 1
         # Do not go from 1 argument to 0. ie, [nil] should return [nil] not [].
         if opts.present?

@@ -12,7 +12,7 @@ module Foobara
                   end
 
                   def desugarize(rawish_type_declaration)
-                    required_attributes = ::Array.wrap(rawish_type_declaration[:required])
+                    required_attributes = Util.array(rawish_type_declaration[:required])
 
                     element_type_declarations = rawish_type_declaration[:element_type_declarations]
 

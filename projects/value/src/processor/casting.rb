@@ -32,7 +32,7 @@ module Foobara
         attr_accessor :casters, :target_classes
 
         def initialize(*args, casters:, target_classes: nil)
-          self.target_classes = Array.wrap(target_classes)
+          self.target_classes = Util.array(target_classes)
           self.casters = casters
           super(*args)
         end

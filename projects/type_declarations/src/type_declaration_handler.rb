@@ -54,8 +54,8 @@ module Foobara
           # :nocov:
         end
 
-        self.desugarizers = Array.wrap(desugarizers)
-        self.type_declaration_validators = Array.wrap(type_declaration_validators)
+        self.desugarizers = Util.array(desugarizers)
+        self.type_declaration_validators = Util.array(type_declaration_validators)
 
         super(*Util.args_and_opts_to_args(args, opts))
       end

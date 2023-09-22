@@ -206,7 +206,7 @@ module Foobara
 
       # TODO: does this make sense to have something called attribute_name here??
       def error_path
-        Array.wrap(attribute_name)
+        Util.array(attribute_name)
       end
 
       # TODO: this is a bit problematic. Maybe eliminate this instead of assuming it's generally useful

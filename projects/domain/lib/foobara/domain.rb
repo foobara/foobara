@@ -96,7 +96,7 @@ module Foobara
       return @depends_on ||= Set.new if domains.empty?
 
       if domains.length == 1
-        domains = Array.wrap(domains.first)
+        domains = Util.array(domains.first)
       end
 
       domains.each do |domain|

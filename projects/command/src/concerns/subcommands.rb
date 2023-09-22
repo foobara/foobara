@@ -50,7 +50,7 @@ module Foobara
             return @depends_on ||= Set.new if subcommand_classes.empty?
 
             if subcommand_classes.length == 1
-              subcommand_classes = Array.wrap(subcommand_classes.first)
+              subcommand_classes = Util.array(subcommand_classes.first)
             end
 
             subcommand_classes.each do |subcommand_class|
