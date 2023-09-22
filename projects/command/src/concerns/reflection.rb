@@ -42,7 +42,7 @@ module Foobara
           end
 
           def command_name
-            name&.demodulize
+            Util.non_full_name(self)
           end
         end
 

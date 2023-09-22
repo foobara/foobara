@@ -8,7 +8,7 @@ module Foobara
           # TODO: what to do if we have two subcommands in different domains with the same name??
           # Seems like we need to fully qualify these with their domain, right?
           def runtime_path_symbol
-            symbol = name.demodulize.underscore
+            symbol = Util.non_full_name(self).underscore
 
             [
               # TODO: Broken project dependency here...

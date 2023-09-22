@@ -11,7 +11,7 @@ module Foobara
                            Organization.global
                          end
 
-          Domain.new(domain_name: name.demodulize, organization:)
+          Domain.new(domain_name: Util.non_full_name(self), organization:)
         end
       end
 

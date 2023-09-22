@@ -73,7 +73,7 @@ module Foobara
         end
 
         def symbol
-          @symbol ||= name&.demodulize&.gsub(/(Processor|Transformer|Validator)$/, "")&.underscore&.to_sym
+          @symbol ||= Util.non_full_name(self)&.gsub(/(Processor|Transformer|Validator)$/, "")&.underscore&.to_sym
         end
 
         def requires_declaration_data?
