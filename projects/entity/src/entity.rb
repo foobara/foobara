@@ -1,5 +1,3 @@
-Foobara.load_project(__dir__)
-
 # TODO: move to separate file
 module Foobara
   class Entity < Model
