@@ -135,9 +135,9 @@ module Foobara
       end
 
       def full_type_name
-        type_registry_name = type_registry&.name.presence
+        type_registry_name = type_registry&.name
 
-        if type_registry_name
+        if type_registry_name && !type_registry_name.empty?
           "#{type_registry_name}::#{name}"
         else
           name

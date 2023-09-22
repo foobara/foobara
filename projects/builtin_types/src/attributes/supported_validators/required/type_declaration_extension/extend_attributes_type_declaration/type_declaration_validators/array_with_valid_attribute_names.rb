@@ -41,7 +41,7 @@ module Foobara
                           }
                         )
                       end
-                    end.compact.presence
+                    end.compact
                   end
                 end
               end
