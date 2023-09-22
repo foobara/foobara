@@ -1,4 +1,5 @@
-Foobara.require_file("type_declarations", "handlers/extend_model_type_declaration/to_type_transformer")
+Foobara.require_file("entity",
+                     "extensions/type_declarations/handlers/extend_model_type_declaration/to_type_transformer")
 
 module Foobara
   module TypeDeclarations

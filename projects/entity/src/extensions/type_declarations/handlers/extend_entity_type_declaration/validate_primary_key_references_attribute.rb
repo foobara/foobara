@@ -1,6 +1,4 @@
-Foobara.require_file("type_declarations", "type_declaration_error")
-Foobara.require_file("type_declarations", "handlers/extend_model_type_declaration")
-Foobara.require_file("type_declarations", "type_declaration_validator")
+Foobara.require_file("entity", "extensions/type_declarations/handlers/extend_model_type_declaration")
 
 module Foobara
   module TypeDeclarations

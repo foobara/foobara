@@ -1,5 +1,3 @@
-Foobara.require_file("type_declarations", "handlers/extend_registered_type_declaration")
-
 module Foobara
   module TypeDeclarations
     module Handlers
