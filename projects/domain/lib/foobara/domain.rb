@@ -49,10 +49,16 @@ module Foobara
     end
 
     def full_domain_name
-      [
+      names = [
         organization_name,
         domain_name
-      ].compact.join("::").presence
+      ].compact
+
+      if names.empty?
+        nil
+      else
+        names.join("::")
+      end
     end
 
     def domain_symbol
@@ -64,10 +70,12 @@ module Foobara
     def full_domain_symbol
       return @full_domain_symbol if defined?(@full_domain_symbol)
 
-      @full_domain_symbol = [
+      names = [
         organization_symbol,
         domain_symbol
-      ].compact.join("::").presence&.to_sym
+      ].compact
+
+      @full_domain_symbol = names.empty? ? nil : names.join("::").to_sym
     end
 
     def command_classes

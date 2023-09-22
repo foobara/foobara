@@ -37,11 +37,13 @@ module Foobara
         end
 
         def full_command_name
-          [
+          names = [
             organization.organization_name,
             domain.domain_name,
             command_name
-          ].compact.join("::").presence
+          ].compact
+
+          names.empty? ? nil : names.join("::")
         end
 
         def organization
