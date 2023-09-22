@@ -192,6 +192,18 @@ module Foobara
       hash.transform_keys!(&:to_sym)
     end
 
+    def to_sentence(strings, connector = ", ", last_connector = ", and ")
+      return "" if strings.empty?
+
+      *strings, last = strings
+
+      [strings.join(connector), last].join(last_connector)
+    end
+
+    def to_or_sentence(strings, connector = ", ")
+      to_sentence(strings, connector, ", or ")
+    end
+
     def all_symbolic_keys?(hash)
       all_symbolic_elements?(hash.keys)
     end
