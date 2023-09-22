@@ -35,18 +35,6 @@ module Foobara
         associative_array = build_and_register!(:associative_array, duckture, ::Hash)
         # TODO: uh oh... we do some translations in the casting here...
         build_and_register!(:attributes, associative_array, nil)
-        # What does a model have that :attributes doesnt have?
-        #   name
-        #   a target class (can default to a dynamically created Foobara::Model ??)
-        #     #valid?
-        #     #attributes
-        #     readers/writers for all attributes
-        # NOTE: A model isn't attributes!!! it has attributes. It is instead an atomic duck.
-        # Subtypes should not use ::Hash as the target type. This is a confusing hack.
-        model = build_and_register!(:model, atomic_duck, nil)
-        build_and_register!(:entity, model, nil)
-        # address = build_and_register!(:address, model)
-        # us_address = build_and_register!(:us_address, model)
       end
     end
 
