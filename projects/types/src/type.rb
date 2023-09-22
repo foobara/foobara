@@ -99,7 +99,7 @@ module Foobara
       # method in the instance of the processor as needed. This means it can't really memoize stuff. Should we create
       # an instance of something from the instance of the processor and then ask it questions?? TODO: try this
       def value_transformer
-        if transformers.present?
+        if transformers && !transformers.empty?
           Value::Processor::Pipeline.new(processors: transformers)
         end
       end
@@ -108,13 +108,13 @@ module Foobara
       # A good way, but potentially a decent amount of work, is to have a class that takes value to its initialize
       # method.
       def value_validator
-        if validators.present?
+        if validators && !validators.empty?
           Value::Processor::Pipeline.new(processors: validators)
         end
       end
 
       def element_processor
-        if element_processors.present?
+        if element_processors && !element_processors.empty?
           Value::Processor::Pipeline.new(processors: element_processors)
         end
       end

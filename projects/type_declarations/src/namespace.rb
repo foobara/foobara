@@ -168,10 +168,10 @@ module Foobara
         else
           type, *symbolic_processors, processor_data = type_declaration_bits
 
-          if symbolic_processors.present?
+          if !symbolic_processors.empty?
             symbolic_processors = symbolic_processors.to_h { |symbol| [symbol, true] }
 
-            if processor_data.present?
+            if processor_data.is_a?(::Hash) && !processor_data.empty?
               processor_data.merge(symbolic_processors)
             else
               symbolic_processors

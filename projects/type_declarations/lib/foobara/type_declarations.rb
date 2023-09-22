@@ -69,7 +69,7 @@ module Foobara
               context_type_declaration
             end
 
-            if message.present?
+            if message
               singleton_class.define_method :message do
                 message
               end

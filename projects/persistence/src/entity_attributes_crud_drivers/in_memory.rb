@@ -68,7 +68,7 @@ module Foobara
 
             record_id = record_id_for(attributes)
 
-            if record_id.present?
+            if record_id
               if exists?(record_id)
                 raise CannotInsertError.new(record_id, "already exists")
               end

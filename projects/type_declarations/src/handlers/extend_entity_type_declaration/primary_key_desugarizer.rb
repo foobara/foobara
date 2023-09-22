@@ -8,7 +8,7 @@ module Foobara
           def applicable?(sugary_type_declaration)
             primary_key = sugary_type_declaration[:primary_key]
 
-            primary_key.present? && primary_key.is_a?(::String)
+            primary_key.is_a?(::String)
           end
 
           def desugarize(sugary_type_declaration)

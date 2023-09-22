@@ -51,7 +51,19 @@ module Foobara
         end
 
         def find_tracked(record_id)
-          if record_id.blank?
+          unless record_id
+            # :nocov:
+            raise ArgumentError, "Cannot use a blank primary key value"
+            # :nocov:
+          end
+
+          if record_id.is_a?(::String) && record_id.empty?
+            # :nocov:
+            raise ArgumentError, "Cannot use a blank primary key value"
+            # :nocov:
+          end
+
+          if record_id.is_a?(::Symbol) && record_id.to_s.empty?
             # :nocov:
             raise ArgumentError, "Cannot use a blank primary key value"
             # :nocov:
@@ -87,7 +99,19 @@ module Foobara
               # :nocov:
             end
 
-            if record_id.blank?
+            unless record_id
+              # :nocov:
+              raise ArgumentError, "Cannot use a blank primary key value"
+              # :nocov:
+            end
+
+            if record_id.is_a?(::String) && record_id.empty?
+              # :nocov:
+              raise ArgumentError, "Cannot use a blank primary key value"
+              # :nocov:
+            end
+
+            if record_id.is_a?(::Symbol) && record_id.to_s.empty?
               # :nocov:
               raise ArgumentError, "Cannot use a blank primary key value"
               # :nocov:
@@ -150,7 +174,20 @@ module Foobara
                 # :nocov:
               end
 
-              if record_id.blank?
+              # TODO: encapsulate this record_id verification
+              unless record_id
+                # :nocov:
+                raise ArgumentError, "Cannot use a blank primary key value"
+                # :nocov:
+              end
+
+              if record_id.is_a?(::String) && record_id.empty?
+                # :nocov:
+                raise ArgumentError, "Cannot use a blank primary key value"
+                # :nocov:
+              end
+
+              if record_id.is_a?(::Symbol) && record_id.to_s.empty?
                 # :nocov:
                 raise ArgumentError, "Cannot use a blank primary key value"
                 # :nocov:
