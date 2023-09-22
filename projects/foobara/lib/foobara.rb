@@ -8,6 +8,18 @@ module Foobara
       project = project_dir[/([^\/]+)\/lib(\/|$)/, 1]
       Util.require_directory("#{__dir__}/../../#{project}/src")
     end
+
+    def reset_alls
+      Types.reset_all
+      TypeDeclarations.reset_all
+      BuiltinTypes.reset_all
+      Domain.reset_all
+      Model.reset_all
+      Entity.reset_all
+      Command.reset_all
+      Organization.reset_all
+      Persistence.reset_all
+    end
   end
 
   # universal

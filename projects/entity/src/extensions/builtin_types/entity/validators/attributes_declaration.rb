@@ -1,4 +1,4 @@
-Foobara.require_file("builtin_types", "model/validators/attributes_declaration")
+Foobara.require_file("entity", "extensions/builtin_types/model/validators/attributes_declaration")
 
 module Foobara
   module BuiltinTypes

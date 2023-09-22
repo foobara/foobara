@@ -37,12 +37,6 @@ module Foobara
     class << self
       prepend FindExistingRecordIfExists
 
-      def reset_all
-        Util.constant_values(self, extends: Foobara::Entity).each do |dynamic_model|
-          remove_const(Util.non_full_name(dynamic_model))
-        end
-      end
-
       def associations
         @associations ||= construct_associations
       end
