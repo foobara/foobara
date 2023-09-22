@@ -64,15 +64,15 @@ module Foobara
           end
         end
 
-        delegate :type_registered,
-                 :type_registries,
-                 :type_for_symbol,
-                 :type_declaration_handler_registries,
-                 :type_declaration_handler_for,
-                 :type_declaration_handler_for_handler_class,
-                 :handlers,
-                 :type_for_declaration,
-                 to: :current
+        foobara_delegate :type_registered,
+                         :type_registries,
+                         :type_for_symbol,
+                         :type_declaration_handler_registries,
+                         :type_declaration_handler_for,
+                         :type_declaration_handler_for_handler_class,
+                         :handlers,
+                         :type_for_declaration,
+                         to: :current
       end
 
       attr_accessor :name, :type_declaration_handler_registry, :type_registry, :accesses
@@ -90,7 +90,7 @@ module Foobara
         self.accesses = Util.array(accesses)
       end
 
-      delegate :all_types, to: :type_registry
+      foobara_delegate :all_types, to: :type_registry
 
       # types
 

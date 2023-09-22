@@ -25,12 +25,12 @@ module Foobara
         end
       end
 
-      delegate :type_for_declaration,
-               :type_declaration_handler_for,
-               :type_for_symbol,
-               :type_registered?,
-               :handler_for_class,
-               to: :class
+      foobara_delegate :type_for_declaration,
+                       :type_declaration_handler_for,
+                       :type_for_symbol,
+                       :type_registered?,
+                       :handler_for_class,
+                       to: :class
     end
   end
 end

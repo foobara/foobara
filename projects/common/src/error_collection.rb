@@ -25,7 +25,7 @@ module Foobara
       !empty?
     end
 
-    delegate :empty?, :partition, :size, to: :error_array
+    foobara_delegate :empty?, :partition, :size, to: :error_array
 
     def errors
       error_array

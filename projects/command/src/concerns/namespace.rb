@@ -17,7 +17,7 @@ module Foobara
           end
         end
 
-        delegate :type_for_declaration, to: :class
+        foobara_delegate :type_for_declaration, to: :class
       end
     end
   end

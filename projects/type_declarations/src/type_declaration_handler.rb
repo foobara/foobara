@@ -60,11 +60,11 @@ module Foobara
         super(*Util.args_and_opts_to_args(args, opts))
       end
 
-      delegate :starting_desugarizers,
-               :starting_desugarizers_with_inherited,
-               :starting_desugarizers_without_inherited,
-               :starting_type_declaration_validators,
-               to: :class
+      foobara_delegate :starting_desugarizers,
+                       :starting_desugarizers_with_inherited,
+                       :starting_desugarizers_without_inherited,
+                       :starting_type_declaration_validators,
+                       to: :class
 
       def to_type_transformer
         self.class::ToTypeTransformer.instance

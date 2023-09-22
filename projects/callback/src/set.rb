@@ -11,7 +11,7 @@ module Foobara
         end
       end
 
-      delegate :size, to: :callbacks
+      foobara_delegate :size, to: :callbacks
 
       def union(set)
         unioned = Set.new(callbacks)

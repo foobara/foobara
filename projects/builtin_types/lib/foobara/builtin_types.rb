@@ -7,9 +7,9 @@ Foobara::Util.require_directory("#{__dir__}/../../src")
 module Foobara
   module BuiltinTypes
     class << self
-      delegate :global_registry, to: Types
-      delegate :[], :[]=, :registered?, :root_type, :root_type=, to: :global_registry
-      delegate :global_type_declaration_handler_registry, to: TypeDeclarations
+      foobara_delegate :global_registry, to: Types
+      foobara_delegate :[], :[]=, :registered?, :root_type, :root_type=, to: :global_registry
+      foobara_delegate :global_type_declaration_handler_registry, to: TypeDeclarations
 
       def reset_all
         build_and_register_all_builtins_and_install_type_declaration_extensions!

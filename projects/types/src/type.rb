@@ -84,7 +84,7 @@ module Foobara
         value_caster.can_cast?(value)
       end
 
-      delegate :needs_cast?, to: :value_caster
+      foobara_delegate :needs_cast?, to: :value_caster
 
       def cast(value)
         value_caster.process_value(value)

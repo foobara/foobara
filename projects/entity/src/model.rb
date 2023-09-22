@@ -9,7 +9,7 @@ module Foobara
       attr_accessor :domain
       attr_reader :model_type
 
-      delegate :organization, :organization_name, :domain_name, to: :domain, allow_nil: true
+      foobara_delegate :organization, :organization_name, :domain_name, to: :domain, allow_nil: true
 
       def reset_all
         Foobara::Util.constant_values(self, extends: Foobara::Model).each do |dynamic_model|
@@ -190,7 +190,7 @@ module Foobara
       validate! if validate
     end
 
-    delegate :model_name, :attributes_type, :valid_attribute_name?, :validate_attribute_name!, to: :class
+    foobara_delegate :model_name, :attributes_type, :valid_attribute_name?, :validate_attribute_name!, to: :class
 
     def attributes
       @attributes ||= {}

@@ -23,7 +23,7 @@ module Foobara
             Foobara::Command::StateMachine
           end
 
-          delegate :remove_all_callbacks, to: :callback_state_machine_target
+          foobara_delegate :remove_all_callbacks, to: :callback_state_machine_target
         end
 
         on_include do

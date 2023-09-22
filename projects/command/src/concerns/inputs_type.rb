@@ -39,7 +39,7 @@ module Foobara
           end
         end
 
-        delegate :inputs_type, :raw_inputs_type_declaration, to: :class
+        foobara_delegate :inputs_type, :raw_inputs_type_declaration, to: :class
       end
     end
   end

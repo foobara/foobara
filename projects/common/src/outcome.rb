@@ -55,13 +55,13 @@ module Foobara
       end
     end
 
-    delegate :has_errors?,
-             :errors,
-             :each_error,
-             :has_error?,
-             :add_error,
-             :add_errors,
-             to: :error_collection
+    foobara_delegate :has_errors?,
+                     :errors,
+                     :each_error,
+                     :has_error?,
+                     :add_error,
+                     :add_errors,
+                     to: :error_collection
 
     def success?
       !has_errors?

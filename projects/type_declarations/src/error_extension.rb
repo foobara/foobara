@@ -50,7 +50,7 @@ module Foobara
         end
       end
 
-      delegate :context_type, :context_type_declaration, to: :class
+      foobara_delegate :context_type, :context_type_declaration, to: :class
     end
   end
 end

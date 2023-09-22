@@ -7,7 +7,7 @@ module Foobara
 
         module Concerns
           module StateTransitions
-            delegate :close!, :currently_open?, to: :state_machine
+            foobara_delegate :close!, :currently_open?, to: :state_machine
 
             def open!
               state_machine.open! do

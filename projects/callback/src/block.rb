@@ -26,7 +26,7 @@ module Foobara
         validate_original_block!
       end
 
-      delegate :type, to: :class
+      foobara_delegate :type, to: :class
 
       def call(...)
         to_proc.call(...)

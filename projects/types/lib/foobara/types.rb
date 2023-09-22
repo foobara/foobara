@@ -14,7 +14,7 @@ module Foobara
         remove_instance_variable("@global_registry") if instance_variable_defined?("@global_registry")
       end
 
-      delegate :[], :[]=, :registered?, :register, to: :global_registry
+      foobara_delegate :[], :[]=, :registered?, :register, to: :global_registry
     end
   end
 end
