@@ -42,7 +42,7 @@ module Foobara
       def to_base(object)
         bases = to_bases(object)
 
-        if bases.blank?
+        if bases.empty?
           # :nocov:
           raise "Could not find a base for #{object}"
           # :nocov:

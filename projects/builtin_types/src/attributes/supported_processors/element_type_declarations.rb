@@ -25,7 +25,7 @@ module Foobara
           def process_value(attributes_hash)
             unexpected_attributes = attributes_hash.keys - allowed_attributes
 
-            if unexpected_attributes.present?
+            unless unexpected_attributes.empty?
               return Outcome.error(
                 build_error(
                   attributes_hash,

@@ -45,7 +45,7 @@ module Foobara
 
         def load(record_or_entity_class, record_id = nil)
           entity_or_id = if record_or_entity_class.is_a?(Entity)
-                           if record_id.present?
+                           if record_id
                              # :nocov:
                              raise ArgumentError, "Do not give a record_id when also giving a record"
                              # :nocov:
@@ -53,7 +53,7 @@ module Foobara
 
                            record_or_entity_class
                          else
-                           unless record_id.present?
+                           unless record_id
                              # :nocov:
                              raise ArgumentError, "Must give a record_id when passing in an entity class"
                              # :nocov:

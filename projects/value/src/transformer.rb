@@ -28,7 +28,7 @@ module Foobara
 
           invalid_options = options.keys - allowed
 
-          if invalid_options.present?
+          unless invalid_options.empty?
             # :nocov:
             raise ArgumentError, "Invalid options #{invalid_options} expected only #{allowed}"
             # :nocov:

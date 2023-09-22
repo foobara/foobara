@@ -62,7 +62,7 @@ module Foobara
 
         global_registry.register(type_symbol, type)
 
-        if global_registry.root_type.blank?
+        unless global_registry.root_type
           global_registry.root_type = type
         end
 

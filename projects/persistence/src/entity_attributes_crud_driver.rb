@@ -176,7 +176,7 @@ module Foobara
         end
 
         def exists?(record_id)
-          find(record_id).present?
+          !!find(record_id)
         end
 
         def all_exist?(record_ids)

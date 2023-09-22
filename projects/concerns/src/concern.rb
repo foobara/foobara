@@ -5,12 +5,12 @@ module Foobara
         if Concern.foobara_concern?(klass)
           if const_defined?(:ClassMethods, false)
             unless klass.const_defined?(:ClassMethods, false)
-              class_methods_module_name = if klass.name.present?
+              class_methods_module_name = if klass.name
                                             "#{klass.name}::ClassMethods"
                                           end
 
               klass.const_set(:ClassMethods, Module.new do
-                                               if class_methods_module_name.present?
+                                               if class_methods_module_name
                                                  singleton_class.define_method :name do
                                                    class_methods_module_name
                                                  end

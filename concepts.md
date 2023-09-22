@@ -189,7 +189,7 @@ class AtLeastOnePresent < ValueValidator
   end
   
   def applicable?(_attributes_hash)
-    attribute_names.present? 
+    !!attribute_names 
   end
   
   def call(attributes_hash)

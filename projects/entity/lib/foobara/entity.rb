@@ -168,7 +168,7 @@ module Foobara
       end
 
       def type_declaration(...)
-        raise "No primary key set yet" unless primary_key_attribute.present?
+        raise "No primary key set yet" unless primary_key_attribute
 
         super.merge(type: :entity, primary_key: primary_key_attribute)
       end
@@ -176,13 +176,13 @@ module Foobara
       attr_reader :primary_key_attribute
 
       def primary_key(attribute_name)
-        if primary_key_attribute.present?
+        if primary_key_attribute
           # :nocov:
           raise "Primary key already set to #{primary_key_attribute}"
           # :nocov:
         end
 
-        if attribute_name.blank?
+        if attribute_name.nil? || attribute_name.empty?
           # :nocov:
           raise ArgumentError, "Primary key can't be blank"
           # :nocov:
@@ -194,7 +194,7 @@ module Foobara
       end
 
       def set_model_type
-        if primary_key_attribute.present?
+        if primary_key_attribute
           super
         end
       end
@@ -243,7 +243,7 @@ module Foobara
         else
           super(nil, validate:)
 
-          if arg.blank?
+          if arg.nil?
             # :nocov:
             raise ArgumentError, "Primary key cannot be blank"
             # :nocov:
@@ -311,7 +311,7 @@ module Foobara
     def ==(other)
       # Should both records be required to be persisted to be considered equal when having matching primary keys?
       # For now we will consider them equal but it could make sense to consider them not equal.
-      equal?(other) || (self.class == other.class && primary_key.present? && primary_key == other.primary_key)
+      equal?(other) || (self.class == other.class && primary_key && primary_key == other.primary_key)
     end
 
     def hash
@@ -340,7 +340,7 @@ module Foobara
                          if attribute_name_or_attributes.keys.size == 1
                            attribute_name_or_attributes.keys.first.to_sym
                          end
-                       elsif attribute_name_or_attributes.present?
+                       elsif attribute_name_or_attributes
                          attribute_name_or_attributes.to_sym
                        end
 
@@ -384,6 +384,24 @@ module Foobara
         attribute_name = attribute_name.to_sym
 
         if attribute_name == primary_key_attribute
+          if value.nil?
+            # :nocov:
+            raise "Primary key cannot be set to a blank value"
+            # :nocov:
+          end
+
+          if value.is_a?(::String) && value.empty?
+            # :nocov:
+            raise "Primary key cannot be set to a blank value"
+            # :nocov:
+          end
+
+          if value.is_a?(::Symbol) && value.to_s.empty?
+            # :nocov:
+            raise "Primary key cannot be set to a blank value"
+            # :nocov:
+          end
+
           write_attribute!(attribute_name, value)
         else
           attribute_name = attribute_name.to_sym
@@ -408,7 +426,7 @@ module Foobara
 
         attribute_name = attribute_name.to_sym
 
-        if attribute_name == primary_key_attribute && primary_key.present?
+        if attribute_name == primary_key_attribute && primary_key
           outcome = cast_attribute(attribute_name, value)
 
           if outcome.success?

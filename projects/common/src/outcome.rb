@@ -22,7 +22,7 @@ module Foobara
       def errors(*errors)
         errors = errors.flatten
 
-        if errors.blank?
+        if errors.empty?
           # :nocov:
           raise "No errors given"
           # :nocov:
@@ -38,7 +38,7 @@ module Foobara
       end
 
       def raise!(errors)
-        self.errors(errors).raise! if errors.present?
+        self.errors(errors).raise! unless errors.empty?
       end
     end
 
@@ -50,7 +50,7 @@ module Foobara
 
       self.result = result
 
-      if errors.present?
+      if errors
         add_errors(errors)
       end
     end

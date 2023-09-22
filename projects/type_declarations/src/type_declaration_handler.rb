@@ -48,7 +48,7 @@ module Foobara
         type_declaration_validators: starting_type_declaration_validators,
         **opts
       )
-        if processors.present?
+        if processors && !processors.empty?
           # :nocov:
           raise ArgumentError, "Cannot set processors directly for a type declaration handler"
           # :nocov:

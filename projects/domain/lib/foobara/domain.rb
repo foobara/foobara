@@ -12,7 +12,7 @@ module Foobara
       if global?
         @type_namespace = TypeDeclarations::Namespace.global
       else
-        if domain_name.blank?
+        if domain_name.nil? || domain_name.empty?
           # :nocov:
           raise ArgumentError, "Must provide an domain_name:"
           # :nocov:

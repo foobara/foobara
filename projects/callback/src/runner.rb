@@ -23,7 +23,7 @@ module Foobara
       end
 
       def callback_data(*args, **opts)
-        return @callback_data if args.blank? && opts.blank?
+        return @callback_data if args.empty? && opts.empty?
 
         self.callback_data = Util.args_and_opts_to_opts(args, opts)
 
@@ -76,7 +76,7 @@ module Foobara
       end
 
       def run_callback(callback, &)
-        if error.present?
+        if error
           callback.call(error)
         elsif has_callback_data?
           callback.call(callback_data, &)

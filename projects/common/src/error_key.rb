@@ -153,7 +153,7 @@ module Foobara
       when Symbol, Integer
         key_parts
       when String
-        if key_parts.blank?
+        if key_parts.empty?
           nil
         else
           key_parts.to_sym

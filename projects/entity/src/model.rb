@@ -33,7 +33,7 @@ module Foobara
 
       def inherited(subclass)
         super
-        subclass.update_namespace unless subclass.name.blank?
+        subclass.update_namespace if subclass.name
       end
 
       def attributes_type
@@ -139,7 +139,7 @@ module Foobara
       def subclass(**opts)
         invalid_opts = opts.keys - allowed_subclass_opts
 
-        if invalid_opts.present?
+        unless invalid_opts.empty?
           # :nocov:
           raise ArgumentError, "Invalid opts #{invalid_opts} expected only #{allowed_subclass_opts}"
           # :nocov:
@@ -167,7 +167,7 @@ module Foobara
       allowed_options = [:validate]
       invalid_options = options.keys - allowed_options
 
-      if invalid_options.present?
+      unless invalid_options.empty?
         # :nocov:
         raise ArgumentError, "Invalid options #{invalid_options} expected only #{allowed_options}"
         # :nocov:
@@ -175,7 +175,7 @@ module Foobara
 
       validate = options[:validate]
 
-      if attributes.blank?
+      if attributes.nil?
         if validate
           # :nocov:
           raise ArgumentError, "Cannot use validate option without attributes"

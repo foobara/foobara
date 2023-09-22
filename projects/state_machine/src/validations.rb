@@ -14,7 +14,7 @@ module Foobara
         def validate_terminal_states(computed_terminal_states, all_states)
           unexpected_terminal_states = computed_terminal_states - terminal_states
 
-          if unexpected_terminal_states.present?
+          unless unexpected_terminal_states.empty?
             raise UnexpectedTerminalStates, "#{
             unexpected_terminal_states
           } do(es) not have transitions even though they are not in the explicit list of terminal states #{
@@ -24,7 +24,7 @@ module Foobara
 
           missing_terminal_states = terminal_states - all_states
 
-          if missing_terminal_states.present?
+          unless missing_terminal_states.empty?
             raise MissingTerminalStates, "#{
             missing_terminal_states
           } was/were included explicitly in terminal_states but didn't appear in the transition map"
@@ -34,14 +34,14 @@ module Foobara
         def validate_states(computed_states)
           missing_states = states - computed_states
 
-          if missing_states.present?
+          unless missing_states.empty?
             raise MissingStates,
                   "#{missing_states} is/are explicitly declared as states but do(es)n't appear in the transition map"
           end
 
           extra_states = computed_states - states
 
-          if extra_states.present?
+          unless extra_states.empty?
             raise ExtraStates,
                   "#{extra_states} appeared in the transition map but were not explicitly declared as states"
           end
@@ -50,7 +50,7 @@ module Foobara
         def validate_transitions(computed_transitions)
           missing_transitions = transitions - computed_transitions
 
-          if missing_transitions.present?
+          unless missing_transitions.empty?
             raise MissingTransitions, "#{
             missing_transitions
           } is/are explicitly declared as transitions but do(es)n't appear in the transition map"
@@ -58,7 +58,7 @@ module Foobara
 
           extra_transitions = computed_transitions - transitions
 
-          if extra_transitions.present?
+          unless extra_transitions.empty?
             raise ExtraTransitions,
                   "#{extra_transitions} appeared in the transition map but were not explicitly declared as transitions"
           end

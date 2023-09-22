@@ -28,7 +28,7 @@ module Foobara
       unless global
         Organization.all << self
 
-        if organization_name.blank?
+        if organization_name.nil? || organization_name.empty?
           # :nocov:
           raise ArgumentError, "Must provide an organization_name:"
           # :nocov:

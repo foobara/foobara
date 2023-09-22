@@ -36,7 +36,7 @@ module Foobara
 
                 entity_class = type.target_classes.first
 
-                if entity_class.primary_key_attribute.blank?
+                unless entity_class.primary_key_attribute
                   entity_class.primary_key(strict_declaration_type[:primary_key])
                 end
 

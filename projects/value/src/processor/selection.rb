@@ -57,12 +57,10 @@ module Foobara
                         processors.find { |processor| processor.applicable?(value) }
                       end
 
-          if processor.blank?
-            Outcome.error(
-              build_error(value, error_class: NoApplicableProcessorError)
-            )
-          else
+          if processor
             Outcome.success(processor)
+          else
+            Outcome.error(build_error(value, error_class: NoApplicableProcessorError))
           end
         end
 

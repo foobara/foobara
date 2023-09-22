@@ -9,7 +9,7 @@ module Foobara
                 class SetSize < TypeDeclarations::Desugarizer
                   def applicable?(value)
                     if value.is_a?(::Hash)
-                      value[:element_type_declarations].present? && value[:type] == :tuple && !value.key?(:size)
+                      value.key?(:element_type_declarations) && value[:type] == :tuple && !value.key?(:size)
                     end
                   end
 

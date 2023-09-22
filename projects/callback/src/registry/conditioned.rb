@@ -24,7 +24,7 @@ module Foobara
         end
 
         def unioned_callback_set_for(**conditions)
-          return specific_callback_set_for if conditions.blank?
+          return specific_callback_set_for if conditions.empty?
 
           full_callback_key = condition_hash_to_callback_key(conditions)
           all_sets = callback_key_permutations(full_callback_key).map do |callback_key|
