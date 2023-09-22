@@ -4,17 +4,6 @@ module Foobara
       Util.require_project_file(project, path)
     end
 
-    def require_project(*projects)
-      projects.each do |project|
-        require "foobara/#{project}"
-      end
-    end
-
-    def load_project(project_dir)
-      project = project_dir[/([^\/]+)\/lib\//, 1]
-      Util.require_directory("#{__dir__}/../../#{project}/src")
-    end
-
     # TODO: rename this to manifest...
     # TODO: come up with a way to change a type's manifest... Or maybe treat Model very differently?
     def manifest
@@ -53,32 +42,4 @@ module Foobara
       Persistence.reset_all
     end
   end
-
-  # universal
-  require_project "util"
-
-  Util.require_directory("#{__dir__}/../src")
-
-  # could be independent projects
-  require_project "concerns",
-                  "thread_parent",
-                  "weak_object_set",
-                  "enumerated",
-                  "callback",
-                  "state_machine"
-
-  # various components of the foobara framework that have some level of coupling.
-  # for example, Error in common knows about (or could be implemented to know about)
-  # type declarations to expose its context type.
-  require_project "common",
-                  "value",
-                  "types",
-                  "type_declarations",
-                  "builtin_types",
-                  "domain",
-                  "entity",
-                  "command",
-                  "persistence"
-
-  Domain.install!
 end
