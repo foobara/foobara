@@ -1,5 +1,3 @@
-Foobara.load_project(__dir__)
-
 module Foobara
   class Command
     include Concerns::Namespace
