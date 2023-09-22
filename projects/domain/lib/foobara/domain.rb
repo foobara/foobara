@@ -57,7 +57,7 @@ module Foobara
 
     def domain_symbol
       @domain_symbol ||= unless global?
-                           domain_name.underscore.to_sym
+                           Util.underscore_sym(domain_name)
                          end
     end
 

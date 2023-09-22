@@ -11,6 +11,60 @@ module Foobara
       mod.name&.[](/([^:]+)\z/, 1)
     end
 
+    def non_full_name_underscore(mod)
+      underscore(non_full_name(mod))
+    end
+
+    CAPS = ("A".."Z")
+
+    def constantify(string)
+      return nil if string.nil?
+
+      if string.is_a?(::Symbol)
+        string = string.to_s
+      end
+
+      if string.chars.all? { |char| CAPS.include?(char) }
+        string.dup
+      else
+        underscore(string).upcase
+      end
+    end
+
+    def constantify_sym(string)
+      constantify(string)&.to_sym
+    end
+
+    def underscore(string)
+      return nil if string.nil?
+      return "" if string.empty?
+
+      if string.is_a?(::Symbol)
+        string = string.to_s
+      end
+
+      retval = nil
+
+      string.each_char do |char|
+        if retval
+          if CAPS.include?(char)
+            retval << "_"
+            retval << char.downcase
+          else
+            retval << char
+          end
+        else
+          retval = char.downcase
+        end
+      end
+
+      retval
+    end
+
+    def underscore_sym(string)
+      underscore(string)&.to_sym
+    end
+
     def power_set(array)
       return [[]] if array.empty?
 

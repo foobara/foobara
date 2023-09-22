@@ -64,7 +64,7 @@ module Foobara
               # :nocov:
             end
 
-            match[1].underscore
+            Util.underscore(match[1])
           end
 
           def initialize(record_id, submessage = nil)
@@ -86,7 +86,7 @@ module Foobara
 
         attr_accessor :table_name, :entity_class, :raw_connection
 
-        def initialize(entity_class, raw_connection, table_name = entity_class.entity_name.underscore)
+        def initialize(entity_class, raw_connection, table_name = Util.underscore(entity_class.entity_name))
           self.entity_class = entity_class
           # what is this used for?
           self.raw_connection = raw_connection

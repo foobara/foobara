@@ -57,7 +57,7 @@ module Foobara
           normalized = {}
 
           symbol_map.each_pair do |name, value|
-            normalized[name.to_s.underscore.upcase.to_sym] = value && value.to_sym
+            normalized[Util.constantify_sym(name)] = value&.to_sym
           end
 
           normalized.freeze

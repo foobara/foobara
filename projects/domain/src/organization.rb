@@ -45,7 +45,7 @@ module Foobara
     def organization_symbol
       return @organization_symbol if defined?(@organization_symbol)
 
-      @organization_symbol = organization_name&.underscore&.to_sym
+      @organization_symbol = Util.underscore_sym(organization_name)
     end
 
     def owns_domain?(domain)
