@@ -1,5 +1,3 @@
-Foobara.load_project(__dir__)
-
 module Foobara
   class Domain
     class AlreadyRegisteredDomainDependency < StandardError; end
