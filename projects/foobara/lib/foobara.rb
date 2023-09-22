@@ -10,6 +10,11 @@ module Foobara
       end
     end
 
+    def load_project(project_dir)
+      project = project_dir[/([^\/]+)\/lib\//, 1]
+      Util.require_directory("#{__dir__}/../../#{project}/src")
+    end
+
     # TODO: rename this to manifest...
     # TODO: come up with a way to change a type's manifest... Or maybe treat Model very differently?
     def manifest

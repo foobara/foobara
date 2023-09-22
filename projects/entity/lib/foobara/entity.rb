@@ -1,4 +1,4 @@
-Foobara::Util.require_directory("#{__dir__}/../../src")
+Foobara.load_project(__dir__)
 
 # TODO: move to separate file
 module Foobara

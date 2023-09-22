@@ -1,6 +1,6 @@
 require "singleton"
 
-Foobara::Util.require_directory("#{__dir__}/../../src")
+Foobara.load_project(__dir__)
 
 module Foobara
   module Types
