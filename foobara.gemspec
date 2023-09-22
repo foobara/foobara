@@ -1,4 +1,4 @@
-require_relative "projects/foobara/lib/version"
+require_relative "projects/foobara/src/version"
 
 Gem::Specification.new do |spec|
   spec.name = "foobara"
