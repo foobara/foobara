@@ -2,12 +2,12 @@ module Foobara
   class Command
     module Concerns
       module Runtime
-        extend ActiveSupport::Concern
+        include Concern
 
         class CannotHaltWithoutAddingErrors < StandardError; end
         class Halt < StandardError; end
 
-        class_methods do
+        module ClassMethods
           def run(inputs)
             new(inputs).run
           end

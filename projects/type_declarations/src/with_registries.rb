@@ -1,9 +1,9 @@
 module Foobara
   module TypeDeclarations
     module WithRegistries
-      extend ActiveSupport::Concern
+      include Concern
 
-      class_methods do
+      module ClassMethods
         def type_for_declaration(...)
           Namespace.current.type_for_declaration(...)
         end

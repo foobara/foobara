@@ -2,7 +2,7 @@ module Foobara
   class Command
     module Concerns
       module Subcommands
-        extend ActiveSupport::Concern
+        include Concern
 
         class AlreadyRegisteredSubcommand < StandardError; end
         class SubcommandNotRegistered < StandardError; end
@@ -37,7 +37,7 @@ module Foobara
           end
         end
 
-        class_methods do
+        module ClassMethods
           def depends_on?(subcommand_name)
             if subcommand_name.is_a?(Class)
               subcommand_name = subcommand_name.name

@@ -22,11 +22,10 @@ module Foobara
     self.validate_error_context_enabled = true
 
     module ErrorExtension
-      extend ActiveSupport::Concern
-
+      include Concern
       include WithRegistries
 
-      class_methods do
+      module ClassMethods
         def context_type
           type_for_declaration(context_type_declaration)
         end
