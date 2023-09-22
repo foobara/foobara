@@ -76,7 +76,7 @@ module Foobara
           }
         }.each do |negate, rule_set|
           rule_set.each_pair do |symbol, regex|
-            class_name = symbol.to_s.camelize
+            class_name = Util.classify(symbol)
 
             klass = Class.new(Email::ValidatorBase) do
               define_method :regex do
