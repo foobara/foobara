@@ -68,14 +68,7 @@ module Foobara
         end
 
         def error_message(value)
-          words_connector = ", "
-          last_word_connector = two_words_connector = ", or "
-
-          applies_message = processors.map(&:applies_message).flatten.to_sentence(
-            words_connector:,
-            last_word_connector:,
-            two_words_connector:
-          )
+          applies_message = Util.to_or_sentence(processors.map(&:applies_message).flatten)
 
           "Cannot cast #{value}. Expected it to #{applies_message}"
         end
