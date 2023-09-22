@@ -18,7 +18,7 @@ module Foobara
             if non_symbolic_keys.empty?
               hash
             else
-              hash.symbolize_keys
+              Util.symbolize_keys(hash)
             end
           end
         end
