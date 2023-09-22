@@ -121,7 +121,7 @@ module Foobara
     end
 
     def values_at(objects, parts = path)
-      objects = Array.wrap(objects)
+      objects = Util.array(objects)
 
       return objects if parts.empty?
 
@@ -156,7 +156,7 @@ module Foobara
     private
 
     def normalize_all(key_parts)
-      normalize(Array.wrap(key_parts))
+      normalize(Util.array(key_parts))
     end
 
     def normalize(key_parts)

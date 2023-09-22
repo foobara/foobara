@@ -77,7 +77,7 @@ module Foobara
     end
 
     def add_errors(errors)
-      Array.wrap(errors).each { |error| add_error(error) }
+      Util.array(errors).each { |error| add_error(error) }
     end
 
     def to_h

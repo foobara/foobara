@@ -47,7 +47,7 @@ module Foobara
         **opts
       )
         self.base_type = base_type
-        self.casters = Array.wrap(casters)
+        self.casters = Util.array(casters)
         self.transformers = transformers
         self.validators = validators
         self.element_processors = element_processors
@@ -56,7 +56,7 @@ module Foobara
         self.element_types = element_types
         self.element_type = element_type
         self.name = name
-        self.target_classes = Array.wrap(target_classes)
+        self.target_classes = Util.array(target_classes)
         self.type_registry = type_registry
 
         super(*args, **opts.merge(processors:, prioritize: false))

@@ -139,7 +139,7 @@ module Foobara
     private
 
     def symbolize_all(key_parts)
-      symbolize(Array.wrap(key_parts))
+      symbolize(Util.array(key_parts))
     end
 
     def symbolize(key_parts)

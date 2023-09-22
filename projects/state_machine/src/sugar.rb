@@ -11,7 +11,7 @@ module Foobara
           self.transition_map = {}
 
           raw_transition_map.each_pair do |from_state, transitions|
-            Array.wrap(from_state).each do |state|
+            Util.array(from_state).each do |state|
               state = state.to_sym
 
               transitions.each_pair do |transition, next_state|

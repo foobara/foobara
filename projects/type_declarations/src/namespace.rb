@@ -87,7 +87,7 @@ module Foobara
         self.type_declaration_handler_registry = type_declaration_handler_registry
         self.type_registry = type_registry
 
-        self.accesses = Array.wrap(accesses)
+        self.accesses = Util.array(accesses)
       end
 
       delegate :all_types, to: :type_registry

@@ -454,7 +454,7 @@ module Foobara
         return
       end
 
-      attribute_names = Array.wrap(attribute_names)
+      attribute_names = Util.array(attribute_names)
 
       old_is_dirty = dirty? # TODO: don't bother with this check unless there are relevant callbacks
       old_is_valid = valid? # TODO: don't bother with this check unless there are relevant callbacks
