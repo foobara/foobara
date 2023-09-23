@@ -46,7 +46,8 @@ module Foobara
                   "domain",
                   "entity",
                   "command",
-                  "persistence"
+                  "persistence",
+                  "in_memory_crud_driver"
 
   Domain.install!
 end

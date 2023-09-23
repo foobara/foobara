@@ -1,9 +1,8 @@
-Foobara.require_file("persistence", "entity_attributes_crud_driver")
-
 module Foobara
   module Persistence
-    module EntityAttributesCrudDrivers
+    module CrudDrivers
       class InMemory < EntityAttributesCrudDriver
+        # TODO: delete
         def open_connection(_connection_or_credentials)
           # TODO: figure out what we expect here when there is no connection necessary
           Object.new
