@@ -32,7 +32,7 @@ RSpec.describe Foobara::Entity do
 
   context "with transaction" do
     around do |example|
-      Foobara::Persistence.default_crud_driver = Foobara::Persistence::EntityAttributesCrudDrivers::InMemory.new
+      Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
 
       Foobara::Persistence.default_base.transaction do
         example.run
