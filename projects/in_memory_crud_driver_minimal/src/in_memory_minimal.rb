@@ -1,7 +1,7 @@
 module Foobara
   module Persistence
     module CrudDrivers
-      class InMemory < EntityAttributesCrudDriver
+      class InMemoryMinimal < EntityAttributesCrudDriver
         # TODO: delete
         def open_connection(_connection_or_credentials)
           # TODO: figure out what we expect here when there is no connection necessary

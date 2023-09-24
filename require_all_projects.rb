@@ -29,6 +29,7 @@ module Foobara
              "entity",
              "command",
              "persistence",
+             "in_memory_crud_driver_minimal",
              "in_memory_crud_driver"
 
     install!

@@ -1,0 +1,1 @@
+module Foobara::InMemoryCrudDriverMinimal; end
