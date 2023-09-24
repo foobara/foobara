@@ -125,6 +125,14 @@ module Foobara
         current_transaction_table.all(&)
       end
 
+      def find_by(attributes)
+        current_transaction_table.find_by(attributes)
+      end
+
+      def find_many_by(attributes)
+        current_transaction_table.find_many_by(attributes)
+      end
+
       def load(record_id)
         current_transaction_table.load(record_id)
       end
@@ -554,6 +562,10 @@ module Foobara
 
     def hard_deleted?
       @is_hard_deleted
+    end
+
+    def inspect
+      "<#{entity_name}:#{primary_key}>"
     end
   end
 end

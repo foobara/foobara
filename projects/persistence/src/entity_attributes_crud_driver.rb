@@ -124,26 +124,26 @@ module Foobara
           end
         end
 
-        def find_by(attributes)
-          casted_attributes = entity_class.attributes_type.process_value!(attributes)
-
+        def find_by(attributes_filter)
           all.each do |found_attributes|
-            if casted_attributes.all? { |attribute_name, value| found_attributes[attribute_name] == value }
+            if matches_attributes_filter?(found_attributes, attributes_filter)
               return found_attributes
             end
           end
         end
 
-        def find_many_by(attributes)
-          casted_attributes = entity_class.attributes_type.process_value!(attributes)
-
+        def find_many_by(attributes_filter)
           Enumerator.new do |yielder|
             all.each do |found_attributes|
-              if casted_attributes.all? { |attribute_name, value| found_attributes[attribute_name] == value }
+              if matches_attributes_filter?(found_attributes, attributes_filter)
                 yielder << found_attributes
               end
             end
           end
+        end
+
+        def matches_attributes_filter?(attributes, attributes_filter)
+          attributes_filter.all? { |attribute_name, value| attributes[attribute_name] == value }
         end
 
         def insert(_attributes)

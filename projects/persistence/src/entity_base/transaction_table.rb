@@ -222,6 +222,55 @@ module Foobara
           end
         end
 
+        def find_by(attributes_filter)
+          attributes_filter = entity_class.attributes_type.process_value!(attributes_filter)
+
+          tracked_records.each do |record|
+            next if hard_deleted?(record)
+
+            if entity_attributes_crud_driver_table.matches_attributes_filter?(record.attributes, attributes_filter)
+              return record
+            end
+          end
+
+          found_attributes = entity_attributes_crud_driver_table.find_by(attributes_filter)
+
+          if found_attributes
+            record_id = primary_key_for_attributes(found_attributes)
+            record = entity_class.new(record_id)
+            record.successfully_loaded(found_attributes)
+            record
+          end
+        end
+
+        def find_many_by(attributes_filter)
+          attributes_filter = entity_class.attributes_type.process_value!(attributes_filter)
+
+          yielded_ids = Set.new
+
+          Enumerator.new do |yielder|
+            tracked_records.each do |record|
+              next if hard_deleted?(record)
+
+              if entity_attributes_crud_driver_table.matches_attributes_filter?(record.attributes, attributes_filter)
+                yielded_ids << record.primary_key
+                yielder << record
+              end
+            end
+
+            entity_attributes_crud_driver_table.find_many_by(attributes_filter).each do |found_attributes|
+              record_id = primary_key_for_attributes(found_attributes)
+
+              next if yielded_ids.include?(record_id)
+
+              record = entity_class.new(record_id)
+              record.successfully_loaded(found_attributes)
+
+              yielder << record
+            end
+          end
+        end
+
         def track_unloaded_thunk(record)
           tracked(record)
           setup(record)

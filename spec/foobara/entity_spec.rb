@@ -205,4 +205,10 @@ RSpec.describe Foobara::Entity do
       end
     end
   end
+
+  describe "#inpsect" do
+    subject { entity_class.build(pk: 5).inspect }
+
+    it { is_expected.to eq("<SomeEntity:5>") }
+  end
 end
