@@ -19,7 +19,7 @@ module Foobara
             end
 
             def transform(primary_key)
-              entity_class.new(primary_key)
+              entity_class.thunk(primary_key)
             end
           end
 

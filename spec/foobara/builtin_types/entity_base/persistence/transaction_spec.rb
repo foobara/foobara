@@ -30,11 +30,11 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
   describe ".transaction" do
     it "can create, load, and update records" do
       expect {
-        entity_class.new(foo: 1, bar: :baz)
+        entity_class.create(foo: 1, bar: :baz)
       }.to raise_error(Foobara::Entity::NoCurrentTransactionError)
 
       entity1 = entity_class.transaction do
-        entity = entity_class.new(foo: 1, bar: :baz)
+        entity = entity_class.create(foo: 1, bar: :baz)
 
         expect(entity).to be_a(entity_class)
         expect(entity).to_not be_persisted
@@ -52,7 +52,7 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
       expect(entity1).to be_loaded
 
       entity_class.transaction do
-        entity = entity_class.new(entity1.primary_key)
+        entity = entity_class.thunk(entity1.primary_key)
 
         expect(entity).to be_a(entity_class)
         expect(entity).to be_persisted
@@ -62,7 +62,7 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
 
         expect(entity).to be_loaded
 
-        singleton = entity_class.new(entity.primary_key)
+        singleton = entity_class.thunk(entity.primary_key)
         expect(singleton).to be(entity)
 
         entity.bar = "bazbaz"
@@ -78,11 +78,11 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
 
     it "can rollback" do
       entity1 = entity_class.transaction do
-        entity_class.new(foo: 10, bar: :baz)
+        entity_class.create(foo: 10, bar: :baz)
       end
 
       entity_class.transaction do |tx|
-        entity = entity_class.new(entity1.primary_key)
+        entity = entity_class.thunk(entity1.primary_key)
         expect(entity.foo).to eq(10)
 
         entity.foo = 20
@@ -130,7 +130,7 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
     it "can hard delete" do
       entity_class.transaction do
         expect(entity_class.all.to_a).to be_empty
-        entity = entity_class.new(foo: 10, bar: :baz)
+        entity = entity_class.create(foo: 10, bar: :baz)
         expect(entity_class.all.to_a).to eq([entity])
         entity.hard_delete!
         expect(entity_class.all.to_a).to be_empty
@@ -138,11 +138,11 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
 
       entity1 = entity_class.transaction do
         expect(entity_class.all.to_a).to be_empty
-        entity_class.new(foo: 10, bar: :baz)
+        entity_class.create(foo: 10, bar: :baz)
       end
 
       entity_class.transaction do
-        entity = entity_class.new(entity1.primary_key)
+        entity = entity_class.thunk(entity1.primary_key)
         expect(entity.foo).to eq(10)
 
         entity.hard_delete!
@@ -166,7 +166,7 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
       entity_class.transaction do
         # TODO: make calling #to_a not necessary
         expect(entity_class.all.to_a).to eq([entity1])
-        entity = entity_class.new(entity1.primary_key)
+        entity = entity_class.thunk(entity1.primary_key)
 
         expect(entity).to be_persisted
         expect(entity).to_not be_hard_deleted
@@ -194,7 +194,7 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
 
         entity_class.transaction do
           4.times do
-            entity = entity_class.new(foo: 1, bar: :baz)
+            entity = entity_class.create(foo: 1, bar: :baz)
             entities << entity
           end
 
@@ -218,7 +218,7 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
           expect(entity_ids).to contain_exactly(1, 2, 3, 4)
 
           4.times do
-            entity = entity_class.new(foo: 1, bar: :baz)
+            entity = entity_class.create(foo: 1, bar: :baz)
             entities << entity
           end
 
@@ -240,7 +240,7 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
       it "deletes everything" do
         entity_class.transaction do
           4.times do
-            entity_class.new(foo: 1, bar: :baz)
+            entity_class.create(foo: 1, bar: :baz)
           end
 
           # TODO: make calling #to_a not necessary
@@ -275,7 +275,7 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
             { foo: 33, bar: :baz },
             { foo: 44, bar: :baz }
           ].map do |attributes|
-            entity_class.new(attributes)
+            entity_class.create(attributes)
           end
 
           expect(entity_class.count).to eq(4)
@@ -292,7 +292,7 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
         end
 
         entity_class.transaction do
-          entity_class.load_many([entity_class.new(1)])
+          entity_class.load_many([entity_class.thunk(1)])
           loaded_entities = entity_class.load_many(entity_ids)
           expect(loaded_entities).to all be_loaded
           expect(loaded_entities).to eq(entities)
@@ -311,7 +311,7 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
             { foo: 33, bar: :baz },
             { foo: 44, bar: :baz }
           ].map do |attributes|
-            entity_class.new(attributes)
+            entity_class.create(attributes)
           end
 
           entity_class.all do |record|
@@ -333,11 +333,11 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
       context "when record was dirty when hard deleted" do
         it "is still dirty" do
           entity = entity_class.transaction do
-            entity_class.new({ foo: 11, bar: :baz })
+            entity_class.create(foo: 11, bar: :baz)
           end
 
           entity_class.transaction do
-            entity = entity_class.new(entity.primary_key)
+            entity = entity_class.thunk(entity.primary_key)
 
             expect(entity).to be_persisted
 
@@ -377,11 +377,11 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
         entity_class.transaction do
           expect(entity_class.all_exist?([101, 102])).to be(false)
 
-          entity_class.new(foo: 11, bar: :baz, pk: 101)
+          entity_class.create(foo: 11, bar: :baz, pk: 101)
 
           expect(entity_class.exists?(101)).to be(true)
 
-          entity_class.new(foo: 11, bar: :baz)
+          entity_class.create(foo: 11, bar: :baz)
 
           expect(entity_class.exists?(1)).to be(false)
         end
@@ -398,12 +398,12 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
     context "when creating a record with an already-in-use key" do
       it "explodes" do
         entity_class.transaction do
-          entity_class.new(foo: 11, bar: :baz, pk: 101)
+          entity_class.create(foo: 11, bar: :baz, pk: 101)
         end
 
         expect {
           entity_class.transaction do
-            entity_class.new(foo: 11, bar: :baz, pk: 101)
+            entity_class.create(foo: 11, bar: :baz, pk: 101)
           end
         }.to raise_error(Foobara::Persistence::EntityAttributesCrudDriver::Table::CannotInsertError)
       end
@@ -412,7 +412,7 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
     context "when restoring with a created record" do
       it "hard deletes it" do
         entity_class.transaction do |tx|
-          record = entity_class.new(foo: 11, bar: :baz, pk: 101)
+          record = entity_class.create(foo: 11, bar: :baz, pk: 101)
 
           tx.revert!
 
@@ -451,15 +451,15 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
         some_entity2 = nil
 
         some_entity1 = entity_class.transaction do
-          some_entity2 = entity_class.new(foo: 11, bar: :baz)
-          entity_class.new(foo: 11, bar: :baz, pk: 101)
+          some_entity2 = entity_class.create(foo: 11, bar: :baz)
+          entity_class.create(foo: 11, bar: :baz, pk: 101)
         end
 
         entity_class.transaction do
-          some_entity3 = entity_class.new(foo: 11, bar: :baz, pk: 102)
-          some_entity4 = entity_class.new(foo: 11, bar: :baz)
+          some_entity3 = entity_class.create(foo: 11, bar: :baz, pk: 102)
+          some_entity4 = entity_class.create(foo: 11, bar: :baz)
 
-          aggregate_class.new(
+          aggregate_class.create(
             foo: 30,
             some_entities: [
               1,
@@ -480,10 +480,10 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
           expect(loaded_aggregate.some_entities).to all be_a(SomeEntity)
           expect(loaded_aggregate.some_entities.map(&:primary_key)).to contain_exactly(1, 2, 101, 102)
 
-          new_aggregate = aggregate_class.new(
+          new_aggregate = aggregate_class.create(
             foo: 30,
             some_entities: [
-              entity_class.new(foo: 11, bar: :baz)
+              entity_class.create(foo: 11, bar: :baz)
             ]
           )
 

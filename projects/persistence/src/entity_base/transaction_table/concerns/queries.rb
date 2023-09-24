@@ -22,10 +22,7 @@ module Foobara
                   primary_key = primary_key_for_attributes(attributes)
                   next if tracked_records.include_key?(primary_key)
 
-                  record = entity_class.new(primary_key)
-                  record.successfully_loaded(attributes)
-
-                  yielder << record
+                  yielder << entity_class.loaded(attributes)
                 end
               end
 

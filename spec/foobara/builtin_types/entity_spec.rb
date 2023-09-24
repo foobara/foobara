@@ -40,7 +40,7 @@ RSpec.describe ":entity" do
     expect(type).to be_a(Foobara::Types::Type)
     expect(constructed_model.name).to eq("Foobara::Entity::SomeEntity")
 
-    value = constructed_model.new
+    value = constructed_model.create
 
     expect(value.model_name).to eq("SomeEntity")
 
@@ -74,87 +74,37 @@ RSpec.describe ":entity" do
       context: { cast_to: { type: :integer, max: 10 }, value: "invalid" }
     )
 
-    value = constructed_model.new(foo: 4, bar: "baz")
+    value = constructed_model.create(foo: 4, bar: "baz")
     expect(value).to be_valid
+  end
+
+  describe "#read_attribute!" do
+    context "when bad attribute" do
+      it "explodes" do
+        expect {
+          constructed_model.create.read_attribute!("asdfasdf")
+        }.to raise_error(Foobara::Model::NoSuchAttributeError)
+      end
+    end
+
+    context "when good attribute" do
+      it "doesn't explode" do
+        expect(constructed_model.create.read_attribute!("foo")).to be_nil
+      end
+    end
+  end
+
+  describe "#validate!" do
+    it "raises validation errors" do
+      expect {
+        constructed_model.create.validate!
+      }.to raise_error(Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::MissingRequiredAttributeError)
+    end
   end
 
   it "sets model_class and model_base_class" do
     expect(type.declaration_data[:model_class]).to eq("Foobara::Entity::SomeEntity")
     expect(type.declaration_data[:model_base_class]).to eq("Foobara::Entity")
-  end
-
-  describe "constructed model" do
-    describe ".new with validate: true" do
-      let(:attributes) do
-        {
-          foo: 10,
-          pk: 1,
-          bar: "baz"
-        }
-      end
-
-      let(:record) { constructed_model.new(attributes, validate: true) }
-
-      context "with invalid attributes" do
-        let(:attributes) do
-          {
-            foo: 11,
-            pk: 1,
-            bar: "baz"
-          }
-        end
-
-        it "explodes" do
-          expect {
-            record
-          }.to raise_error(
-            Foobara::BuiltinTypes::Number::SupportedValidators::Max::MaxExceededError
-          ) { |error| expect(error.path).to eq([:foo]) }
-        end
-      end
-
-      describe "#write_attribute" do
-        context "when writing value that makes record invalid" do
-          it "is not valid" do
-            expect(record).to be_valid
-
-            record.write_attribute(:not_a_real_attribute, :whatever)
-
-            expect(record).to_not be_valid
-          end
-        end
-      end
-
-      describe "#write_attribute!" do
-        context "when writing value that makes record invalid" do
-          it "explodes" do
-            expect(record).to be_valid
-
-            expect {
-              record.write_attribute!(:foo, 11)
-            }.to raise_error(
-              Foobara::BuiltinTypes::Number::SupportedValidators::Max::MaxExceededError
-            ) { |error| expect(error.path).to eq([:foo]) }
-          end
-        end
-      end
-
-      describe "#read_attribute!" do
-        context "when attribute doesn't exist" do
-          it "explodes" do
-            expect {
-              record.read_attribute!(:no_such_attribute)
-            }.to raise_error(Foobara::Model::NoSuchAttributeError)
-          end
-        end
-
-        context "when attribute exists" do
-          it "returns expected value" do
-            expect(record.read_attribute!(:foo)).to eq(10)
-          end
-        end
-      end
-    end
   end
 
   context "when primary key doesn't point at a real attribute" do
@@ -215,7 +165,7 @@ RSpec.describe ":entity" do
 
     context "when instantiating via type declaration instead of class" do
       let(:value_to_process) do
-        { foo: "10", bar: :baz }
+        "10"
       end
 
       it "constructs value" do
@@ -225,7 +175,7 @@ RSpec.describe ":entity" do
 
     context "when instantiating via model instance" do
       let(:value_to_process) do
-        constructed_model.new(attributes)
+        constructed_model.create(attributes)
       end
 
       let(:attributes) do
@@ -237,36 +187,13 @@ RSpec.describe ":entity" do
         expect(value).to be(value_to_process)
         expect(value).to be_valid
       end
-
-      context "when invalid attributes" do
-        let(:attributes) do
-          { foo: "invalid", bar: :baz }
-        end
-
-        it "explodes" do
-          expect { value }.to raise_error(
-            Foobara::Value::Processor::Casting::CannotCastError,
-            /Expected it to be a Integer, or be a string of digits optionally with a minus sign in front\z/
-          ) { |error|            expect(error.path).to eq([:foo]) }
-        end
-      end
     end
   end
 
   describe "#possible_errors" do
     it "gives expected possible errors" do
       expect(type.possible_errors).to eq(
-        "data.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
-        "data.pk.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
-        "data.missing_required_attribute": Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::
-            MissingRequiredAttributeError,
-        "data.unexpected_attributes": Foobara::BuiltinTypes::Attributes::SupportedProcessors::
-            ElementTypeDeclarations::UnexpectedAttributesError,
-        "data.bar.missing_required_attribute": Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::
-            MissingRequiredAttributeError,
-        "data.foo.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
-        "data.foo.max_exceeded": Foobara::BuiltinTypes::Number::SupportedValidators::Max::MaxExceededError,
-        "data.bar.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError
+        "data.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError
       )
     end
   end
@@ -297,20 +224,17 @@ RSpec.describe ":entity" do
           some_model: :SomeEntity
         )
       end
+      let(:record) { constructed_model.create(pk: 500, foo: 3, bar: "whatasdfsever") }
       let(:actual_value) do
         new_type.process_value!(
           first_name: "SomeFirstName",
-          some_model: {
-            foo: "2",
-            bar: :whatever,
-            pk: 500
-          }
+          some_model: record.pk
         )
       end
       let(:expected_value) do
         {
           first_name: "SomeFirstName",
-          some_model: constructed_model.new(pk: 500, foo: 3, bar: "whatasdfsever")
+          some_model: record
         }
       end
 

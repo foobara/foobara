@@ -32,10 +32,10 @@ RSpec.describe Foobara::Persistence::CrudDrivers::InMemoryMinimal do
       entity1 = entity2 = entity3 = entity4 = nil
 
       entity_class.transaction do
-        entity1 = entity_class.new(foo: 11, bar: :baz)
-        entity2 = entity_class.new(foo: 22, bar: :baz)
-        entity3 = entity_class.new(foo: 33, bar: :basil)
-        entity4 = entity_class.new(foo: 44, bar: :basil)
+        entity1 = entity_class.create(foo: 11, bar: :baz)
+        entity2 = entity_class.create(foo: 22, bar: :baz)
+        entity3 = entity_class.create(foo: 33, bar: :basil)
+        entity4 = entity_class.create(foo: 44, bar: :basil)
 
         # non-persisted records
         expect(entity_class.find_by(foo: "22")).to eq(entity2)
@@ -44,10 +44,10 @@ RSpec.describe Foobara::Persistence::CrudDrivers::InMemoryMinimal do
       end
 
       entity_class.transaction do
-        entity5 = entity_class.new(foo: 55, bar: :baz)
-        entity6 = entity_class.new(foo: 66, bar: :baz)
-        entity7 = entity_class.new(foo: 77, bar: :basil)
-        entity8 = entity_class.new(foo: 88, bar: :basil)
+        entity5 = entity_class.create(foo: 55, bar: :baz)
+        entity6 = entity_class.create(foo: 66, bar: :baz)
+        entity7 = entity_class.create(foo: 77, bar: :basil)
+        entity8 = entity_class.create(foo: 88, bar: :basil)
 
         # mixture of persisted and non-persisted records
         expect(entity_class.find_by(foo: "22")).to eq(entity2)
