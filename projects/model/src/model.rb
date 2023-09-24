@@ -11,12 +11,6 @@ module Foobara
 
       foobara_delegate :organization, :organization_name, :domain_name, to: :domain, allow_nil: true
 
-      def reset_all
-        Foobara::Util.constant_values(self, extends: Foobara::Model).each do |dynamic_model|
-          remove_const(Util.non_full_name(dynamic_model))
-        end
-      end
-
       def update_namespace
         return if @namespace_updated
 
@@ -29,11 +23,6 @@ module Foobara
                       else
                         Domain.global
                       end
-      end
-
-      def inherited(subclass)
-        super
-        subclass.update_namespace if subclass.name
       end
 
       def attributes_type

@@ -1,8 +1,3 @@
-Foobara.require_file(
-  "entity",
-  "extensions/type_declarations/handlers/extend_model_type_declaration/attributes_handler_desugarizer"
-)
-
 module Foobara
   module TypeDeclarations
     module Handlers

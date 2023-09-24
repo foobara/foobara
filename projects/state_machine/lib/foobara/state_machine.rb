@@ -1,1 +1,1 @@
-Foobara.load_project(__dir__)
+class Foobara::StateMachine; end

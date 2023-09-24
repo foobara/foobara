@@ -1,5 +1,3 @@
-Foobara.require_file("entity", "model")
-
 module Foobara
   class Entity < Model
     module Concerns
