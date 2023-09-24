@@ -119,12 +119,31 @@ module Foobara
         end
 
         def find_many!(record_ids)
-          # TODO: add a test for a driver that doesn't override this and remove these :nocov: comments
-          # :nocov:
           record_ids.each.lazy.map do |record_id|
             find!(record_id)
           end
-          # :nocov:
+        end
+
+        def find_by(attributes)
+          casted_attributes = entity_class.attributes_type.process_value!(attributes)
+
+          all.each do |found_attributes|
+            if casted_attributes.all? { |attribute_name, value| found_attributes[attribute_name] == value }
+              return found_attributes
+            end
+          end
+        end
+
+        def find_many_by(attributes)
+          casted_attributes = entity_class.attributes_type.process_value!(attributes)
+
+          Enumerator.new do |yielder|
+            all.each do |found_attributes|
+              if casted_attributes.all? { |attribute_name, value| found_attributes[attribute_name] == value }
+                yielder << found_attributes
+              end
+            end
+          end
         end
 
         def insert(_attributes)
