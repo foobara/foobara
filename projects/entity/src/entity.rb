@@ -1,22 +1,3 @@
-# TODO: move to separate file
-module Foobara
-  class Entity < Model
-    module FindExistingRecordIfExists
-      def new(*args, validate: false, outside_transaction: false, **opts)
-        arg = Util.args_and_opts_to_opts(args, opts)
-
-        if arg.is_a?(::Hash)
-          super(arg, validate:, outside_transaction:)
-        elsif outside_transaction
-          super(arg, outside_transaction: true)
-        else
-          current_transaction_table.find_tracked(arg) || super(arg)
-        end
-      end
-    end
-  end
-end
-
 module Foobara
   # TODO: either make this an abstract base class of ValueModel and Entity or rename it to ValueModel
   # and have Entity inherit from it...
@@ -33,84 +14,13 @@ module Foobara
     class UnknownIfPersisted < StandardError; end
 
     include Concerns::Callbacks
+    include Concerns::Associations
 
     class << self
-      prepend FindExistingRecordIfExists
-
-      def associations
-        @associations ||= construct_associations
-      end
-
-      def construct_associations(type = attributes_type, path = DataPath.new, result = {})
-        if entity_type?(type)
-          result[path.to_s] = type
-        elsif array_type?(type)
-          # TODO: what to do about an associative array type?? Unclear how to make a key from that...
-          # TODO: raise if associative array contains a non-persisted record to handle this edge case for now.
-          construct_associations(type.element_type, path.append(:"#"), result)
-        elsif attributes_type?(type)
-          type.element_types.each_pair do |attribute_name, element_type|
-            construct_associations(element_type, path.append(attribute_name), result)
-          end
-        elsif associative_array_type?(type)
-          # not going to bother testing this for now
-          # :nocov:
-          if contains_associations?(type)
-            raise "Associative array types with associations in them are not currently supported. " \
-                  "Use attributes type if you can or set the key_type and/or value_type to duck type"
-          end
-          # :nocov:
-        end
-
-        result
-      end
+      prepend NewPreprend
 
       def entity_type
         model_type
-      end
-
-      def contains_associations?(type = entity_type, initial = true)
-        if entity_type?(type)
-          if initial
-            contains_associations?(type.element_types, false)
-          else
-            true
-          end
-        elsif array_type?(type)
-          # TODO: what to do about an associative array type?? Unclear how to make a key from that...
-          # TODO: raise if associative array contains a non-persisted record to handle this edge case for now.
-          contains_associations?(type.element_type, false)
-        elsif attributes_type?(type)
-          type.element_types.values.any? do |element_type|
-            contains_associations?(element_type, false)
-          end
-        elsif associative_array_type?(type)
-          # not going to bother testing this for now
-          # :nocov:
-          contains_associations?(type.key_type, false) || contains_associations?(type.value_type, false)
-          # :nocov:
-        end
-      end
-
-      # TODO: these don't really belong on this class...
-      def type_extends?(type, symbol)
-        type.extends_type?(namespace.type_for_symbol(symbol))
-      end
-
-      def attributes_type?(type)
-        type_extends?(type, :attributes)
-      end
-
-      def associative_array_type?(type)
-        type_extends?(type, :associative_array)
-      end
-
-      def array_type?(type)
-        type_extends?(type, :array)
-      end
-
-      def entity_type?(type)
-        type_extends?(type, :entity)
       end
 
       def current_transaction_table
