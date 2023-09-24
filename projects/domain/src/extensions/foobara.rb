@@ -1,9 +1,5 @@
 module Foobara
   class << self
-    def require_file(project, path)
-      Util.require_project_file(project, path)
-    end
-
     # TODO: rename this to manifest...
     # TODO: come up with a way to change a type's manifest... Or maybe treat Model very differently?
     def manifest

@@ -1,5 +1,3 @@
-Foobara.require_file("entity", "extensions/builtin_types/model/casters/hash")
-
 module Foobara
   module BuiltinTypes
     module Entity

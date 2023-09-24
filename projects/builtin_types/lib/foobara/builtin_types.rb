@@ -2,12 +2,10 @@ require "date"
 require "time"
 require "bigdecimal"
 
-Foobara.load_project(__dir__)
-
 module Foobara
   module BuiltinTypes
     class << self
-      def build_and_register_all_builtins_and_install_type_declaration_extensions!
+      def install!
         duck = build_and_register!(:duck, nil, ::Object)
         # TODO: should we ban ::Object that are ::Enumerable from atomic_duck?
         atomic_duck = build_and_register!(:atomic_duck, duck, ::Object)
@@ -36,8 +34,10 @@ module Foobara
         # TODO: uh oh... we do some translations in the casting here...
         build_and_register!(:attributes, associative_array, nil)
       end
-    end
 
-    build_and_register_all_builtins_and_install_type_declaration_extensions!
+      def reset_all
+        install!
+      end
+    end
   end
 end

@@ -8,7 +8,7 @@ Naming/FileName:
     - spec/lib/**/*
     - spec/**/*
     - bin/*
-    - 'projects/*/lib/foobara/*.rb'
+    - ./require_all_projects.rb
   CheckDefinitionPathHierarchyRoots:
     - src
     - extensions

@@ -1,3 +1,3 @@
 require "weakref"
 
-Foobara.load_project(__dir__)
+class Foobara::WeakObjectSet; end

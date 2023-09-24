@@ -9,10 +9,6 @@ module Foobara
       foobara_delegate :[], :[]=, :registered?, :root_type, :root_type=, to: :global_registry
       foobara_delegate :global_type_declaration_handler_registry, to: TypeDeclarations
 
-      def reset_all
-        build_and_register_all_builtins_and_install_type_declaration_extensions!
-      end
-
       def build_and_register!(type_symbol, base_type, target_classes = const_get("::#{Util.classify(type_symbol)}"))
         type = build_from_modules_and_install_type_declaration_extensions!(type_symbol, target_classes, base_type)
 

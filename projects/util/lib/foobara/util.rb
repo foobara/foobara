@@ -7,7 +7,7 @@ module Foobara
     end
 
     def require_pattern(glob)
-      files = Dir[glob].sort_by(&:length).reverse
+      files = Dir[glob]
 
       if files.empty?
         # :nocov:
@@ -15,11 +15,9 @@ module Foobara
         # :nocov:
       end
 
-      files.each do |f|
+      files.sort_by(&:length).reverse.each do |f|
         require f
       end
     end
   end
-
-  load_project(__dir__)
 end

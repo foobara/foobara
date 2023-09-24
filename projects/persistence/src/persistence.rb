@@ -23,10 +23,6 @@ module Foobara
                           end
       end
 
-      def reset_all
-        @tables_for_entity_class_name = @bases = @default_crud_driver = @default_base = nil
-      end
-
       # TODO: support transactions across multiple bases
       def current_transaction(object)
         base = to_base(object)
