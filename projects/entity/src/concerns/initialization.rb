@@ -33,11 +33,9 @@ module Foobara
 
             return record if record
 
-            record = __new_with_transaction__
+            record = __private_new__
             record.is_persisted = true
             record.write_attributes_without_callbacks(primary_key_attribute => record_id)
-
-            record.transaction.track_unloaded_thunk(record)
 
             record.fire(:initialized)
             record.fire(:initialized_thunk)

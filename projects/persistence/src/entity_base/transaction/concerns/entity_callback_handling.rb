@@ -29,10 +29,6 @@ module Foobara
           binding.pry
         end
 
-        Entity.after_initialized_thunk do |record:, **|
-          binding.pry
-        end
-
         Entity.after_initialized do |record:, **|
           if !record.built? && !record.transaction
             tx = Foobara::Persistence.current_transaction(record)
@@ -55,6 +51,11 @@ module Foobara
         Entity.after_initialized_created do |record:, **|
           # TODO: don't store transaction directly on the record
           record.transaction.track_created(record)
+        end
+
+        Entity.after_initialized_thunk do |record:, **|
+          # TODO: don't store transaction directly on the record
+          record.transaction.track_unloaded_thunk(record)
         end
       end
     end
