@@ -32,7 +32,7 @@ RSpec.describe Foobara::Entity::Concerns::Callbacks do
   end
 
   describe ".after_any_action" do
-    let(:record) { entity_class.new(foo: 10) }
+    let(:record) { entity_class.create(foo: 10) }
 
     let(:calls) { [] }
 

@@ -50,13 +50,13 @@ RSpec.describe Foobara::Entity do
     end
 
     let(:loaded_and_persisted_record) do
-      entity_class.new(attributes)
+      entity_class.create(attributes)
     end
     let(:unloaded_thunk_record) do
-      entity_class.new(pk)
+      entity_class.thunk(pk)
     end
     let(:not_persisted_record) do
-      entity_class.new(attributes)
+      entity_class.create(attributes)
     end
 
     let(:pk) { loaded_and_persisted_record.pk }
@@ -82,7 +82,7 @@ RSpec.describe Foobara::Entity do
 
         expect(loaded_and_persisted_record.primary_key).to eq(1)
         entity_class.transaction(:use_existing) do
-          record = entity_class.new(loaded_and_persisted_record.primary_key)
+          record = entity_class.thunk(loaded_and_persisted_record.primary_key)
           expect(record.primary_key).to eq(1)
           record.pk = "1"
           expect(record.primary_key).to eq(1)
@@ -95,7 +95,7 @@ RSpec.describe Foobara::Entity do
 
     describe "#write_attribute_without_callbacks!" do
       it "blows up on invalid values" do
-        record = entity_class.new
+        record = entity_class.create
 
         record.write_attribute_without_callbacks!(:foo, 5)
         expect(record.foo).to eq(5)
@@ -118,22 +118,13 @@ RSpec.describe Foobara::Entity do
       end
     end
     let(:unloaded_thunk_record) do
-      entity_class.build(pk).tap do |record|
-        expect(record).to be_persisted
-        expect(record).to_not be_loaded
-      end
+      entity_class.build(pk:)
     end
     let(:not_persisted_record) do
-      entity_class.build(attributes).tap do |record|
-        expect(record).to_not be_persisted
-        expect(record).to_not be_loaded
-      end
+      entity_class.build(attributes)
     end
     let(:not_persisted_record_with_pk) do
-      entity_class.build(attributes.merge(pk:)).tap do |record|
-        expect(record).to_not be_persisted
-        expect(record).to_not be_loaded
-      end
+      entity_class.build(attributes.merge(pk:))
     end
 
     let(:pk) { 10 }

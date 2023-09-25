@@ -28,44 +28,6 @@ module Foobara
 
     foobara_delegate :full_entity_name, :entity_name, to: :class
 
-    # simplify this initialize stuff by avoiding .new() for multiple use cases
-    # TODO: eliminate validate here??
-    def initialize(*args, validate: false, outside_transaction: false, **opts)
-      arg = Util.args_and_opts_to_opts(args, opts)
-
-      unless outside_transaction
-        tx = Persistence.current_transaction(self)
-
-        unless tx
-          raise NoCurrentTransactionError, "Cannot build #{entity_name} because not currently in a transaction."
-        end
-      end
-
-      without_callbacks do
-        if args.empty? || arg.is_a?(::Hash)
-          super(arg, validate:)
-          # can we eliminate this smell somehow?
-          tx&.create(self)
-
-          self.is_persisted = false
-        else
-          super(nil, validate:)
-
-          if arg.nil?
-            # :nocov:
-            raise ArgumentError, "Primary key cannot be blank"
-            # :nocov:
-          end
-
-          self.is_persisted = true
-
-          build(primary_key_attribute => arg)
-
-          tx&.track_unloaded_thunk(self)
-        end
-      end
-    end
-
     def dup
       # TODO: Maybe raise instead?
       self

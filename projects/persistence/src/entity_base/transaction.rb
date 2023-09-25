@@ -69,8 +69,12 @@ module Foobara
           table_for(entity).track_unloaded_thunk(entity)
         end
 
-        def create(entity)
-          table_for(entity).create(entity)
+        def track_loaded(entity)
+          table_for(entity).track_loaded(entity)
+        end
+
+        def track_created(entity)
+          table_for(entity).track_created(entity)
         end
 
         def created?(record)

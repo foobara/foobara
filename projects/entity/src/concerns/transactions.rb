@@ -2,7 +2,6 @@ module Foobara
   class Entity < Model
     module Concerns
       module Transactions
-        class NoCurrentTransactionError < StandardError; end
         class CurrentTransactionIsClosed < StandardError; end
 
         include Concern

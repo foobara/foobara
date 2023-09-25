@@ -124,7 +124,7 @@ module Foobara
                 return entity
               end
             else
-              entity = entity_class.new(record_id)
+              entity = entity_class.thunk(record_id)
             end
           end
 
@@ -200,7 +200,7 @@ module Foobara
                   entities[record_id] = entity
                 end
               else
-                entities[record_id] = entity_class.new(record_id)
+                entities[record_id] = entity_class.thunk(record_id)
                 to_load_record_ids << record_id
               end
             end
@@ -236,10 +236,7 @@ module Foobara
           found_attributes = entity_attributes_crud_driver_table.find_by(attributes_filter)
 
           if found_attributes
-            record_id = primary_key_for_attributes(found_attributes)
-            record = entity_class.new(record_id)
-            record.successfully_loaded(found_attributes)
-            record
+            entity_class.loaded(found_attributes)
           end
         end
 
@@ -263,10 +260,7 @@ module Foobara
 
               next if yielded_ids.include?(record_id)
 
-              record = entity_class.new(record_id)
-              record.successfully_loaded(found_attributes)
-
-              yielder << record
+              yielder << entity_class.loaded(found_attributes)
             end
           end
         end
@@ -276,7 +270,7 @@ module Foobara
           setup(record)
         end
 
-        def create(entity)
+        def track_created(entity)
           if entity.persisted?
             # :nocov:
             raise "Cannot insert #{entity} because it's already persisted."
@@ -284,6 +278,11 @@ module Foobara
           end
 
           created(entity)
+          setup(entity)
+        end
+
+        def track_loaded(entity)
+          tracked_records << entity
           setup(entity)
         end
 

@@ -73,19 +73,6 @@ module Foobara
           end
         end
 
-        def successfully_loaded(attributes)
-          already_loaded = loaded?
-
-          write_attributes_without_callbacks(attributes)
-          self.is_loaded = true
-
-          save_persisted_attributes
-
-          unless already_loaded
-            fire(:loaded)
-          end
-        end
-
         def unhard_delete!(skip_callbacks: false)
           self.is_hard_deleted = false
 
