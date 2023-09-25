@@ -395,6 +395,10 @@ module Foobara
 
           reverted
         end
+
+        def tracking?(record)
+          tracked_records.include?(record)
+        end
       end
     end
   end

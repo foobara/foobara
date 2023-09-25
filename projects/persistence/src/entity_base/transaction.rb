@@ -4,12 +4,13 @@ module Foobara
       class Transaction
         include Concerns::StateTransitions
         include Concerns::EntityCallbackHandling
+        include Concerns::TransactionTracking
 
         attr_accessor :state_machine, :entity_base, :raw_tx, :tables
 
         def initialize(entity_base)
           self.entity_base = entity_base
-          self.state_machine = StateMachine.new
+          self.state_machine = StateMachine.new(owner: self)
           self.tables = {}
         end
 
@@ -24,6 +25,10 @@ module Foobara
         end
 
         def loading?(record)
+          table_for(record).loading?(record)
+        end
+
+        def tracking?(record)
           table_for(record).loading?(record)
         end
 
