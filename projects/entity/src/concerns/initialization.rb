@@ -57,6 +57,7 @@ module Foobara
             end
 
             record = __private_new__
+
             record.successfully_loaded(attributes)
 
             unless record.primary_key
@@ -76,6 +77,7 @@ module Foobara
 
             record.write_attributes_without_callbacks(attributes)
 
+            # TODO: delete :initialized if unused
             record.fire(:initialized)
             record.fire(:initialized_created)
 
@@ -90,6 +92,7 @@ module Foobara
             # :nocov:
           end
 
+          # TODO: why would we proceed if this is the case? Maybe raise?
           already_loaded = loaded?
 
           self.is_persisted = true

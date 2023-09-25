@@ -52,6 +52,9 @@ module Foobara
         end
 
         def load_if_necessary!(attribute_name_or_attributes)
+          # TODO: Maybe change the name of this variable or have a separate one to disable loading?
+          return if @callbacks_disabled
+          return if built?
           return if loaded?
           return unless persisted?
 
@@ -65,6 +68,9 @@ module Foobara
 
           # TODO: are these symbols or not?
           return if attribute_name == primary_key_attribute.to_sym
+
+          # TODO: how to get this out of here??
+          transaction = Foobara::Persistence::EntityBase::Transaction.open_transaction_for(self)
 
           unless transaction.loading?(self)
             transaction.load(self)
