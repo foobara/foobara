@@ -9,24 +9,24 @@ module Foobara
           end
         end
 
-        # Entity.after_subclass_defined do |entity_class|
-        # end
-
-        # TODO: maybe use class-level callbacks to improve performance?
         Entity.after_dirtied do |record:, **|
-          binding.pry
+          # TODO: don't store transaction directly on the record
+          record.transaction.updated(record)
         end
 
         Entity.after_undirtied do |record:, **|
-          binding.pry
+          # TODO: don't store transaction directly on the record
+          record.transaction.updated(record)
         end
 
         Entity.after_hard_deleted do |record:, **|
-          binding.pry
+          # TODO: don't store transaction directly on the record
+          record.transaction.hard_deleted(record)
         end
 
         Entity.after_unhard_deleted do |record:, **|
-          binding.pry
+          # TODO: don't store transaction directly on the record
+          record.transaction.unhard_deleted(record)
         end
 
         Entity.after_initialized do |record:, **|

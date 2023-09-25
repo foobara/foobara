@@ -23,8 +23,6 @@ module Foobara
         def setup(object)
           case object
           when Entity
-            # object.transaction = transaction
-
             # TODO: maybe use class-level callbacks to improve performance?
             object.after_dirtied do |record:, **|
               updated(record)

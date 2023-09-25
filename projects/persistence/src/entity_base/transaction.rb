@@ -36,6 +36,22 @@ module Foobara
           tables[entity_class] ||= TransactionTable.new(self, entity_class)
         end
 
+        def updated(record)
+          table_for(record).updated(record)
+        end
+
+        def updated(record)
+          table_for(record).updated(record)
+        end
+
+        def hard_deleted(record)
+          table_for(record).hard_deleted(record)
+        end
+
+        def unhard_deleted(record)
+          table_for(record).unhard_deleted(record)
+        end
+
         def truncate!
           each_table(&:hard_delete_all!)
         end
