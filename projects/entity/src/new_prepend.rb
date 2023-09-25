@@ -1,6 +1,6 @@
 module Foobara
   class Entity < Model
-    module NewPreprend
+    module NewPrepend
       def new(*args, validate: false, outside_transaction: false, **opts)
         arg = Util.args_and_opts_to_opts(args, opts)
 

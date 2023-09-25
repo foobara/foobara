@@ -17,6 +17,17 @@ module Foobara
           callback_registry.runner(action).callback_data(data.merge(record: self, action:)).run
         end
 
+        def without_callbacks
+          old_callbacks_enabled = @callbacks_disabled
+
+          begin
+            @callbacks_disabled = true
+            yield
+          ensure
+            @callbacks_disabled = old_callbacks_enabled
+          end
+        end
+
         foobara_delegate :register_callback, to: :callback_registry
 
         module ClassMethods

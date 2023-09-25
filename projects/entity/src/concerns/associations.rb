@@ -12,7 +12,8 @@ module Foobara
           def construct_associations(type = attributes_type, path = DataPath.new, result = {})
             if type.extends_type?(namespace.type_for_symbol(:entity))
               result[path.to_s] = type
-            elsif type.extends_type?(namespace.type_for_symbol(:array)) # TODO: what to do about an associative array type?? Unclear how to make a key from that...
+            elsif type.extends_type?(namespace.type_for_symbol(:array))
+              # TODO: what to do about an associative array type?? Unclear how to make a key from that...
               # TODO: raise if associative array contains a non-persisted record to handle this edge case for now.
               construct_associations(type.element_type, path.append(:"#"), result)
             elsif type.extends_type?(namespace.type_for_symbol(:attributes))
