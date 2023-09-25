@@ -78,6 +78,30 @@ RSpec.describe ":entity" do
     expect(value).to be_valid
   end
 
+  describe "#read_attribute!" do
+    context "when bad attribute" do
+      it "explodes" do
+        expect {
+          constructed_model.create.read_attribute!("asdfasdf")
+        }.to raise_error(Foobara::Model::NoSuchAttributeError)
+      end
+    end
+
+    context "when good attribute" do
+      it "doesn't explode" do
+        expect(constructed_model.create.read_attribute!("foo")).to be_nil
+      end
+    end
+  end
+
+  describe "#validate!" do
+    it "raises validation errors" do
+      expect {
+        constructed_model.create.validate!
+      }.to raise_error(Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::MissingRequiredAttributeError)
+    end
+  end
+
   it "sets model_class and model_base_class" do
     expect(type.declaration_data[:model_class]).to eq("Foobara::Entity::SomeEntity")
     expect(type.declaration_data[:model_base_class]).to eq("Foobara::Entity")
@@ -137,14 +161,7 @@ RSpec.describe ":entity" do
   end
 
   describe "#process_value!" do
-    let(:value) {
-      begin
-        type.process_value!(value_to_process)
-      rescue => e
-        binding.pry
-        raise
-      end
-    }
+    let(:value) { type.process_value!(value_to_process) }
 
     context "when instantiating via type declaration instead of class" do
       let(:value_to_process) do

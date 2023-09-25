@@ -9,7 +9,7 @@ module Foobara
         module ClassMethods
           def build(attributes)
             entity = __private_new__
-            entity.write_attributes_without_callbacks(attributes)
+            entity.build(attributes)
             entity
           end
 
@@ -24,7 +24,7 @@ module Foobara
             end
 
             # check if tracked already...
-            record = current_transaction_table.tracked_records.find_by_key(record_id)
+            record = current_transaction_table.find_tracked(record_id)
 
             return record if record
 
@@ -40,10 +40,12 @@ module Foobara
 
             record_id = attributes[primary_key_attribute]
 
-            record = current_transaction_table.tracked_records.find_by_key(record_id)
+            record = current_transaction_table.find_tracked(record_id)
 
             if record
+              # :nocov:
               raise "Already loaded for #{attributes}. Bug maybe?"
+              # :nocov:
             end
 
             record = __new_with_transaction__
@@ -52,7 +54,9 @@ module Foobara
             record.transaction.track_loaded(record)
 
             unless record.primary_key
+              # :nocov:
               raise "Expected primary key #{primary_key_attribute} to be present!"
+              # :nocov:
             end
 
             record
@@ -84,7 +88,9 @@ module Foobara
 
         def successfully_loaded(attributes)
           if hard_deleted?
+            # :nocov:
             raise "Not expecting to load a hard deleted record"
+            # :nocov:
           end
 
           already_loaded = loaded?
