@@ -28,9 +28,7 @@ module Foobara
 
       VALID_MODES = [:use_existing, :open_nested, :open_new, nil].freeze
 
-      def transaction(mode = nil, tx: nil)
-        existing_transaction = tx
-
+      def transaction(mode = nil, existing_transaction: nil)
         unless VALID_MODES.include?(mode)
           # :nocov:
           raise ArgumentError, "Mode was #{mode} but expected one of #{VALID_MODES}"
@@ -50,7 +48,6 @@ module Foobara
               return old_transaction
             end
           elsif mode != :open_nested && mode != :open_new
-            binding.pry
             raise "Transaction already open. " \
                   "Use mode :use_existing if you want to make use of the existing transaction. " \
                   "Use mode :open_nested if you are actually trying to nest transactions."
@@ -58,11 +55,13 @@ module Foobara
         end
 
         unless block_given?
-          return tx || Transaction.new(self)
+          return existing_transaction || Transaction.new(self)
         end
 
         begin
-          unless existing_transaction
+          if existing_transaction
+            tx = existing_transaction
+          else
             tx = Transaction.new(self)
             tx.open!
           end
