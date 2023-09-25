@@ -29,7 +29,7 @@ module Foobara
         end
 
         def tracking?(record)
-          table_for(record).loading?(record)
+          table_for(record).tracking?(record)
         end
 
         def table_for(entity_class)

@@ -30,7 +30,7 @@ module Foobara
 
               def open_transaction_for(record)
                 # let's check the current_transaction first since that usually will match
-                tx = current_transaction(record)
+                tx = Persistence.current_transaction(record)
 
                 if tx&.tracking?(record)
                   tx

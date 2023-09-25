@@ -14,7 +14,7 @@ module Foobara
                 # TODO: do all this in an install! method and make sure Entity.reset_all clears it.
                 Entity.after_dirtied do |record:, **|
                   # TODO: don't store transaction directly on the record
-                  record.transaction.updated(record)
+                  Transaction.open_transaction_for(record).updated(record)
                 end
 
                 Entity.after_undirtied do |record:, **|
