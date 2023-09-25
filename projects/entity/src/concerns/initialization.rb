@@ -76,11 +76,9 @@ module Foobara
           end
 
           def create(attributes = {})
-            record = __new_with_transaction__
+            record = __private_new__
 
             record.write_attributes_without_callbacks(attributes)
-            # can we eliminate this smell somehow?
-            record.transaction.track_created(record)
 
             record.fire(:initialized)
             record.fire(:initialized_created)

@@ -46,6 +46,11 @@ module Foobara
           @is_loaded
         end
 
+        # TODO: rename, maybe #detatched? or something?
+        def built?
+          @is_built
+        end
+
         def load_if_necessary!(attribute_name_or_attributes)
           return if loaded?
           return unless persisted?

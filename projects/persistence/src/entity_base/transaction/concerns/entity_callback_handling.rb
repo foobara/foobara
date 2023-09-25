@@ -33,12 +33,28 @@ module Foobara
           binding.pry
         end
 
+        Entity.after_initialized do |record:, **|
+          if !record.built? && !record.transaction
+            binding.pry
+            tx = Foobara::Persistence.current_transaction(record)
+
+            unless tx
+              # TODO: rename
+              raise Foobara::Entity::NoCurrentTransactionError,
+                    "Cannot track #{record.entity_name} because not currently in a transaction."
+            end
+
+            record.transaction = tx
+          end
+        end
+
         Entity.after_initialized_loaded do |record:, **|
           binding.pry
         end
 
         Entity.after_initialized_created do |record:, **|
-          binding.pry
+          # TODO: don't store transaction directly on the record
+          record.transaction.track_created(record)
         end
       end
     end
