@@ -55,6 +55,11 @@ module Foobara
               # :nocov:
             end
           end
+
+          def that_owns(record)
+            associations
+            binding.pry
+          end
         end
       end
     end
