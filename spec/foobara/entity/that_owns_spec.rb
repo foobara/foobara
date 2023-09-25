@@ -19,95 +19,132 @@ RSpec.describe Foobara::Entity do
   #
   # otherwise an exception will be thrown from .that_own
   describe ".that_owns" do
-    let(:entity_class) do
+    after do
+      Foobara.reset_alls
+    end
+
+    before do
+      Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
+
       stub_class = ->(klass) { stub_const(klass.name, klass) }
 
       Class.new(Foobara::Entity) do
         class << self
           def name
-            "SomeEntity"
+            "User"
           end
         end
 
         stub_class.call(self)
 
-        attributes pk: :integer,
-                   foo: :integer,
-                   bar: :symbol
+        attributes id: :integer,
+                   name: :string
 
-        primary_key :pk
+        primary_key :id
+      end
+
+      Class.new(Foobara::Entity) do
+        class << self
+          def name
+            "Applicant"
+          end
+        end
+
+        stub_class.call(self)
+
+        attributes id: :integer,
+                   user: User
+
+        primary_key :id
+      end
+
+      Class.new(Foobara::Entity) do
+        class << self
+          def name
+            "Package"
+          end
+        end
+
+        stub_class.call(self)
+
+        attributes id: :integer,
+                   applicant: Applicant,
+                   is_active: :boolean
+
+        primary_key :id
+      end
+
+      Class.new(Foobara::Entity) do
+        class << self
+          def name
+            "Assignment"
+          end
+        end
+
+        stub_class.call(self)
+
+        attributes id: :integer,
+                   package: Package
+
+        primary_key :id
+      end
+
+      Class.new(Foobara::Entity) do
+        class << self
+          def name
+            "Employee"
+          end
+        end
+
+        stub_class.call(self)
+
+        attributes id: :integer,
+                   user: User,
+                   assignments: { type: :array, element_type_declaration: Assignment, default: [] },
+                   past_assignments: [Assignment]
+
+        primary_key :id
+      end
+
+      User.transaction do
+        applicants = []
+        employees = []
+        packages  = []
+
+        10.times do |i|
+          user = User.create(name: "applicant user#{i}")
+          applicants << Applicant.create(user:)
+
+          user = User.create(name: "employee user#{i}")
+          employees << Employee.create(user:)
+        end
+
+        20.times do |i|
+          packages << Package.create(is_active: i < 3, applicant: applicants[i % 3])
+        end
+
+        15.times do |i|
+          package = packages[i]
+
+          assignment = Assignment.create(package:)
+
+          if i < 10
+            employees[i % 4].assignments += [assignment]
+
+            if i.even?
+              employees[(i % 4) + 1].assignments += [assignment]
+            end
+          else
+            employees[0].past_assignments ||= []
+            employees[0].past_assignments += [assignment]
+          end
+        end
       end
     end
 
-    let(:aggregate_class) do
-      # TODO: refactor into a rspec helper for creating a properly stubbed class with a name
-      stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-      Class.new(Foobara::Entity) do
-        class << self
-          def name
-            "SomeAggregate"
-          end
-        end
-
-        stub_class.call(self)
-
-        attributes pk: :integer,
-                   foo: :integer,
-                   some_entities: [SomeEntity]
-
-        primary_key :pk
-      end
+    it "can find the appropriate records through various that_owns/that_own calls" do
+      expect(true).to be(true)
+      binding.pry
     end
   end
 end
-
-=begin
-assignment
-package
-employee
-applicant
-
-employee
-user
-
-employee is many-to-many with packages through
-
-class Assignment
-  attributes id: :integer,
-             package: Package
-
-  primary_key :id
-end
-
-class Employee
-  attributes id: :integer,
-             user: User,
-             assignments: [Assignment],
-             past_assignments: [Assignment]
-
-  primary_key :id
-end
-
-class User
-  attributes id: :integer,
-             name: :string
-
-  primary_key :id
-end
-
-class Package
-  attributes id: :integer,
-             applicant: Applicant
-
-  primary_key :id
-end
-
-class Applicant
-  attributes id: :integer.
-             name: :string
-
-  primary_key :id
-end
-
-=end

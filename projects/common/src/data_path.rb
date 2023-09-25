@@ -144,7 +144,7 @@ module Foobara
                   # :nocov:
                   raise "Bad path part #{path_part}"
                   # :nocov:
-                end
+                end.compact
 
       values_at(objects, parts)
     end
