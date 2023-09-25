@@ -129,7 +129,7 @@ module Foobara
 
       objects = case path_part
                 when :"#"
-                  objects.flatten
+                  objects.flatten.uniq
                 when Symbol
                   objects.map do |object|
                     if object.is_a?(::Hash)

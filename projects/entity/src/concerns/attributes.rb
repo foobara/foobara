@@ -154,6 +154,12 @@ module Foobara
             end
           end
         end
+
+        def values_at(data_path)
+          data_path = DataPath.new(data_path) unless data_path.is_a?(DataPath)
+
+          data_path.values_at(self)
+        end
       end
     end
   end

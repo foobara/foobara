@@ -143,8 +143,10 @@ RSpec.describe Foobara::Entity do
     end
 
     it "can find the appropriate records through various that_owns/that_own calls" do
-      expect(true).to be(true)
-      binding.pry
+      User.transaction do
+        expect(true).to be(true)
+        binding.pry
+      end
     end
   end
 end
