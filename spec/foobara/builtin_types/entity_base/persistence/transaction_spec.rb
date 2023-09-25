@@ -31,21 +31,27 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
     it "can create, load, and update records" do
       expect {
         entity_class.create(foo: 1, bar: :baz)
-      }.to raise_error(Foobara::Entity::NoCurrentTransactionError)
+      }.to raise_error(Foobara::Persistence::EntityBase::Transaction::NoCurrentTransactionError)
 
-      entity1 = entity_class.transaction do
+      transaction = nil
+
+      entity1 = entity_class.transaction do |tx|
+        transaction = tx
+
         entity = entity_class.create(foo: 1, bar: :baz)
 
         expect(entity).to be_a(entity_class)
         expect(entity).to_not be_persisted
         expect(entity).to_not be_loaded
 
-        expect(entity.transaction).to be_open
+        expect(tx).to be_open
+        expect(Foobara::Persistence.current_transaction(entity)).to be(tx)
 
         entity
       end
 
-      expect(entity1.transaction).to be_closed
+      expect(transaction).to be_closed
+      expect(Foobara::Persistence.current_transaction(entity1)).to be_nil
 
       expect(entity1).to be_a(entity_class)
       expect(entity1).to be_persisted
@@ -98,7 +104,7 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
 
         expect {
           entity.foo = 20
-        }.to raise_error(Foobara::Entity::CurrentTransactionIsClosed)
+        }.to raise_error(Foobara::Persistence::EntityBase::Transaction::NoCurrentTransactionError)
       end
 
       entity_class.transaction do |tx|

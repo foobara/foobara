@@ -68,7 +68,7 @@ module Foobara
                 entity_attributes_crud_driver.close_transaction(raw_tx)
               end
 
-              unless because_of
+              if !because_of && (self == entity_base.current_transaction)
                 raise RolledBack, "intentionally rolled back"
               end
             rescue

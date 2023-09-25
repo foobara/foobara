@@ -3,16 +3,36 @@ module Foobara
     class EntityBase
       class Transaction
         include Concerns::StateTransitions
+        include Concerns::EntityCallbackHandling
+        include Concerns::TransactionTracking
 
         attr_accessor :state_machine, :entity_base, :raw_tx, :tables
 
         def initialize(entity_base)
           self.entity_base = entity_base
-          self.state_machine = StateMachine.new
+          self.state_machine = StateMachine.new(owner: self)
           self.tables = {}
         end
 
         foobara_delegate :entity_attributes_crud_driver, to: :entity_base
+
+        def create(entity_class, attributes = {})
+          Persistence.to_base(entity_class).transaction(existing_transaction: self) do
+            entity_class.create(attributes)
+          end
+        end
+
+        def thunk(entity_class, record_id)
+          Persistence.to_base(entity_class).transaction(existing_transaction: self) do
+            entity_class.thunk(record_id)
+          end
+        end
+
+        def loaded(entity_class, attributes)
+          Persistence.to_base(entity_class).transaction(existing_transaction: self) do
+            entity_class.loaded(attributes)
+          end
+        end
 
         def open?
           state_machine.currently_open?
@@ -26,6 +46,10 @@ module Foobara
           table_for(record).loading?(record)
         end
 
+        def tracking?(record)
+          table_for(record).tracking?(record)
+        end
+
         def table_for(entity_class)
           if entity_class.is_a?(Entity)
             entity_class = entity_class.class
@@ -33,6 +57,18 @@ module Foobara
 
           # TODO: so much passing self around...
           tables[entity_class] ||= TransactionTable.new(self, entity_class)
+        end
+
+        def updated(record)
+          table_for(record).updated(record)
+        end
+
+        def hard_deleted(record)
+          table_for(record).hard_deleted(record)
+        end
+
+        def unhard_deleted(record)
+          table_for(record).unhard_deleted(record)
         end
 
         def truncate!

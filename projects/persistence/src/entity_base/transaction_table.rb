@@ -20,36 +20,6 @@ module Foobara
           super()
         end
 
-        def setup(object)
-          case object
-          when Entity
-            object.transaction = transaction
-
-            # TODO: maybe use class-level callbacks to improve performance?
-            object.after_dirtied do |record:, **|
-              updated(record)
-            end
-
-            object.after_undirtied do |record:, **|
-              updated(record)
-            end
-
-            object.after_hard_deleted do |record:, **|
-              hard_deleted(record)
-            end
-
-            object.after_unhard_deleted do |record:, **|
-              unhard_deleted(record)
-            end
-
-            object
-          else
-            # :nocov:
-            raise "Can't handle #{object}"
-            # :nocov:
-          end
-        end
-
         def find_tracked(record_id)
           unless record_id
             # :nocov:
@@ -119,16 +89,24 @@ module Foobara
 
             entity = tracked_records.find_by_key(record_id)
 
-            if entity
-              if entity.loaded?
-                return entity
-              end
-            else
-              entity = entity_class.thunk(record_id)
+            if entity&.loaded?
+              return entity
             end
           end
 
-          loading(entity) do
+          if entity
+            loading(entity) do
+              attributes = entity_attributes_crud_driver_table.find!(record_id)
+
+              unless attributes
+                # :nocov:
+                raise NoRecordFound, "could not find record for #{entity_class.full_entity_name}:#{record_id}"
+                # :nocov:
+              end
+
+              entity.successfully_loaded(attributes)
+            end
+          else
             attributes = entity_attributes_crud_driver_table.find!(record_id)
 
             unless attributes
@@ -137,7 +115,7 @@ module Foobara
               # :nocov:
             end
 
-            entity.successfully_loaded(attributes)
+            transaction.loaded(entity_class, attributes)
           end
         end
 
@@ -267,7 +245,6 @@ module Foobara
 
         def track_unloaded_thunk(record)
           tracked(record)
-          setup(record)
         end
 
         def track_created(entity)
@@ -278,12 +255,10 @@ module Foobara
           end
 
           created(entity)
-          setup(entity)
         end
 
         def track_loaded(entity)
           tracked_records << entity
-          setup(entity)
         end
 
         def hard_delete_all!
@@ -427,6 +402,10 @@ module Foobara
           marked_created.each(&:restore_without_callbacks!)
 
           reverted
+        end
+
+        def tracking?(record)
+          tracked_records.include?(record)
         end
       end
     end

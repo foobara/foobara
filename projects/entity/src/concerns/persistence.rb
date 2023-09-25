@@ -7,7 +7,7 @@ module Foobara
 
         include Concern
 
-        attr_accessor :is_loaded, :is_persisted, :is_hard_deleted, :persisted_attributes
+        attr_accessor :is_loaded, :is_persisted, :is_hard_deleted, :is_built, :persisted_attributes
 
         module ClassMethods
           def entity_base
@@ -46,7 +46,13 @@ module Foobara
           @is_loaded
         end
 
+        # TODO: rename, maybe #detatched? or something?
+        def built?
+          @is_built
+        end
+
         def load_if_necessary!(attribute_name_or_attributes)
+          return if built?
           return if loaded?
           return unless persisted?
 
@@ -60,6 +66,9 @@ module Foobara
 
           # TODO: are these symbols or not?
           return if attribute_name == primary_key_attribute.to_sym
+
+          # TODO: how to get this out of here??
+          transaction = Foobara::Persistence::EntityBase::Transaction.open_transaction_for(self)
 
           unless transaction.loading?(self)
             transaction.load(self)

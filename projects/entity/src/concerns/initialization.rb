@@ -8,9 +8,14 @@ module Foobara
 
         module ClassMethods
           def build(attributes)
-            entity = __private_new__
-            entity.build(attributes)
-            entity
+            record = __private_new__
+            record.build(attributes)
+            record.is_built = true
+
+            record.fire(:initialized)
+            record.fire(:initialized_built)
+
+            record
           end
 
           def thunk(record_id)
@@ -28,11 +33,14 @@ module Foobara
 
             return record if record
 
-            record = __new_with_transaction__
+            record = __private_new__
             record.is_persisted = true
             record.write_attributes_without_callbacks(primary_key_attribute => record_id)
 
-            record.transaction.track_unloaded_thunk(record)
+            record.fire(:initialized)
+            record.fire(:initialized_thunk)
+
+            record
           end
 
           def loaded(attributes)
@@ -48,10 +56,9 @@ module Foobara
               # :nocov:
             end
 
-            record = __new_with_transaction__
-            record.successfully_loaded(attributes)
+            record = __private_new__
 
-            record.transaction.track_loaded(record)
+            record.successfully_loaded(attributes)
 
             unless record.primary_key
               # :nocov:
@@ -59,28 +66,20 @@ module Foobara
               # :nocov:
             end
 
+            record.fire(:initialized)
+            record.fire(:initialized_loaded)
+
             record
           end
 
           def create(attributes = {})
-            record = __new_with_transaction__
-
-            record.write_attributes_without_callbacks(attributes)
-            # can we eliminate this smell somehow?
-            record.transaction.track_created(record)
-          end
-
-          def __new_with_transaction__
             record = __private_new__
 
-            tx = Foobara::Persistence.current_transaction(self)
+            record.write_attributes_without_callbacks(attributes)
 
-            unless tx
-              raise Foobara::Entity::NoCurrentTransactionError,
-                    "Cannot build #{entity_name} because not currently in a transaction."
-            end
-
-            record.transaction = tx
+            # TODO: delete :initialized if unused
+            record.fire(:initialized)
+            record.fire(:initialized_created)
 
             record
           end
@@ -93,6 +92,7 @@ module Foobara
             # :nocov:
           end
 
+          # TODO: why would we proceed if this is the case? Maybe raise?
           already_loaded = loaded?
 
           self.is_persisted = true

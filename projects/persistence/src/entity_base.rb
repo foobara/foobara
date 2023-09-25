@@ -28,7 +28,7 @@ module Foobara
 
       VALID_MODES = [:use_existing, :open_nested, :open_new, nil].freeze
 
-      def transaction(mode = nil)
+      def transaction(mode = nil, existing_transaction: nil)
         unless VALID_MODES.include?(mode)
           # :nocov:
           raise ArgumentError, "Mode was #{mode} but expected one of #{VALID_MODES}"
@@ -41,7 +41,7 @@ module Foobara
         end
 
         if old_transaction&.currently_open?
-          if mode == :use_existing
+          if mode == :use_existing || existing_transaction == old_transaction
             if block_given?
               return yield old_transaction
             else
@@ -54,16 +54,21 @@ module Foobara
           end
         end
 
-        # TODO: handle nested versus new somehow
-        tx = Transaction.new(self)
-
-        return tx unless block_given?
+        unless block_given?
+          return existing_transaction || Transaction.new(self)
+        end
 
         begin
-          tx.open!
+          if existing_transaction
+            tx = existing_transaction
+          else
+            tx = Transaction.new(self)
+            tx.open!
+          end
+
           set_current_transaction(tx)
           result = yield tx
-          tx.commit! if tx.currently_open?
+          tx.commit! if tx.currently_open? && !existing_transaction
           result
         rescue Foobara::Persistence::EntityBase::Transaction::RolledBack # rubocop:disable Lint/SuppressedException
         rescue => e

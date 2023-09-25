@@ -13,7 +13,6 @@ module Foobara
         end
 
         def write_attribute(attribute_name, value)
-          verify_transaction_is_open!
           verify_not_hard_deleted!
 
           with_changed_attribute_callbacks(attribute_name) do
@@ -56,7 +55,6 @@ module Foobara
         end
 
         def write_attribute!(attribute_name, value)
-          verify_transaction_is_open!
           verify_not_hard_deleted!
 
           with_changed_attribute_callbacks(attribute_name) do
@@ -91,7 +89,6 @@ module Foobara
         end
 
         def write_attributes(attributes)
-          verify_transaction_is_open!
           verify_not_hard_deleted!
 
           with_changed_attribute_callbacks(attributes.keys) do

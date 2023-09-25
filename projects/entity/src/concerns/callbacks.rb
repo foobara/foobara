@@ -4,6 +4,12 @@ module Foobara
       module Callbacks
         include Concern
 
+        class << self
+          def reset_all
+            Entity.instance_variable_set("@class_callback_registry", nil)
+          end
+        end
+
         # owner helps with determining the relevant object when running class-registered state transition callbacks
         attr_accessor :callback_registry
 
@@ -32,19 +38,32 @@ module Foobara
 
         module ClassMethods
           def class_callback_registry
-            @class_callback_registry ||= Callback::Registry::MultipleAction.new(
-              :dirtied,
-              :undirtied,
-              :attribute_changed,
-              :reverted,
-              :loaded,
-              :persisted,
-              :hard_deleted,
-              :unhard_deleted,
-              :invalidated,
-              :uninvalidated
-            ).tap do |registry|
-              registry.allowed_types = [:after]
+            @class_callback_registry ||= begin
+              actions = %i[
+                initialized
+                initialized_built
+                initialized_thunk
+                initialized_loaded
+                initialized_created
+                dirtied
+                undirtied
+                attribute_changed
+                reverted
+                loaded
+                persisted
+                hard_deleted
+                unhard_deleted
+                invalidated
+                uninvalidated
+              ]
+
+              if self == Entity
+                Callback::Registry::MultipleAction.new(actions).tap do |registry|
+                  registry.allowed_types = [:after]
+                end
+              else
+                Callback::Registry::ChainedMultipleAction.new(superclass.class_callback_registry)
+              end
             end
           end
 
