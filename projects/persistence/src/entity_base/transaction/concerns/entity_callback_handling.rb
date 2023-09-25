@@ -16,7 +16,8 @@ module Foobara
               def install!
                 # TODO: do all this in an install! method and make sure Entity.reset_all clears it.
                 Entity.after_dirtied do |record:, **|
-                  transaction = Persistence.current_transaction(record)
+                  transaction = Transaction.open_transaction_for(record)
+
                   unless transaction
                     raise NoCurrentTransactionError,
                           "Cannot modify #{record} because there's no current transaction"
@@ -27,11 +28,12 @@ module Foobara
                           "Cannot modify #{record} because current transaction is not open"
                   end
 
-                  Transaction.open_transaction_for(record).updated(record)
+                  transaction.updated(record)
                 end
 
                 Entity.after_undirtied do |record:, **|
-                  transaction = Persistence.current_transaction(record)
+                  transaction = Transaction.open_transaction_for(record)
+
                   unless transaction
                     raise NoCurrentTransactionError,
                           "Cannot modify #{record} because there's no current transaction"
@@ -42,11 +44,12 @@ module Foobara
                           "Cannot modify #{record} because current transaction is not open"
                   end
 
-                  Transaction.open_transaction_for(record).updated(record)
+                  transaction.updated(record)
                 end
 
                 Entity.after_hard_deleted do |record:, **|
-                  transaction = Persistence.current_transaction(record)
+                  transaction = Transaction.open_transaction_for(record)
+
                   unless transaction
                     raise NoCurrentTransactionError,
                           "Cannot modify #{record} because there's no current transaction"
@@ -57,11 +60,12 @@ module Foobara
                           "Cannot modify #{record} because current transaction is not open"
                   end
 
-                  Transaction.open_transaction_for(record).hard_deleted(record)
+                  transaction.hard_deleted(record)
                 end
 
                 Entity.after_unhard_deleted do |record:, **|
-                  transaction = Persistence.current_transaction(record)
+                  transaction = Transaction.open_transaction_for(record)
+
                   unless transaction
                     raise NoCurrentTransactionError,
                           "Cannot modify #{record} because there's no current transaction"
@@ -72,7 +76,7 @@ module Foobara
                           "Cannot modify #{record} because current transaction is not open"
                   end
 
-                  Transaction.open_transaction_for(record).unhard_deleted(record)
+                  transaction.unhard_deleted(record)
                 end
 
                 Entity.after_initialized_loaded do |record:, **|

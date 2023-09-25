@@ -52,8 +52,6 @@ module Foobara
         end
 
         def load_if_necessary!(attribute_name_or_attributes)
-          # TODO: Maybe change the name of this variable or have a separate one to disable loading?
-          return if @callbacks_disabled
           return if built?
           return if loaded?
           return unless persisted?

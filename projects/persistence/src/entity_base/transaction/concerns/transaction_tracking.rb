@@ -33,12 +33,14 @@ module Foobara
                 tx = Persistence.current_transaction(record)
 
                 if tx&.tracking?(record)
-                  tx
+                  return tx
                 else
-                  open_transactions.find do |transaction|
+                  tx = open_transactions.find do |transaction|
                     transaction.tracking?(record)
                   end
                 end
+
+                tx
               end
             end
           end

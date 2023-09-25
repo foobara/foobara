@@ -16,6 +16,24 @@ module Foobara
 
         foobara_delegate :entity_attributes_crud_driver, to: :entity_base
 
+        def create(entity_class, attributes = {})
+          Persistence.to_base(entity_class).transaction(tx: self) do
+            entity_class.create(attributes)
+          end
+        end
+
+        def thunk(entity_class, record_id)
+          Persistence.to_base(entity_class).transaction(tx: self) do
+            entity_class.thunk(record_id)
+          end
+        end
+
+        def loaded(entity_class, attributes)
+          Persistence.to_base(entity_class).transaction(tx: self) do
+            entity_class.loaded(attributes)
+          end
+        end
+
         def open?
           state_machine.currently_open?
         end

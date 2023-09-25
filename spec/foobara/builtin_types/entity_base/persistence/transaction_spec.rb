@@ -104,7 +104,7 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
 
         expect {
           entity.foo = 20
-        }.to raise_error(Foobara::Persistence::EntityBase::Transaction::CurrentTransactionIsClosedError)
+        }.to raise_error(Foobara::Persistence::EntityBase::Transaction::NoCurrentTransactionError)
       end
 
       entity_class.transaction do |tx|
