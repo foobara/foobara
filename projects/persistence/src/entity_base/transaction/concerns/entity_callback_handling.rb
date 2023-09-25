@@ -19,17 +19,17 @@ module Foobara
 
                 Entity.after_undirtied do |record:, **|
                   # TODO: don't store transaction directly on the record
-                  record.transaction.updated(record)
+                  Transaction.open_transaction_for(record).updated(record)
                 end
 
                 Entity.after_hard_deleted do |record:, **|
                   # TODO: don't store transaction directly on the record
-                  record.transaction.hard_deleted(record)
+                  Transaction.open_transaction_for(record).hard_deleted(record)
                 end
 
                 Entity.after_unhard_deleted do |record:, **|
                   # TODO: don't store transaction directly on the record
-                  record.transaction.unhard_deleted(record)
+                  Transaction.open_transaction_for(record).unhard_deleted(record)
                 end
 
                 Entity.after_initialized do |record:, **|
@@ -42,23 +42,24 @@ module Foobara
                             "Cannot track #{record.entity_name} because not currently in a transaction."
                     end
 
+                    # TODO: stop this...
                     record.transaction = tx
                   end
                 end
 
                 Entity.after_initialized_loaded do |record:, **|
-                  # TODO: don't store transaction directly on the record
-                  record.transaction.track_loaded(record)
+                  # TODO: we need a way to not blow up here in case of non-block form of transaction
+                  Persistence.current_transaction(record).track_loaded(record)
                 end
 
                 Entity.after_initialized_created do |record:, **|
-                  # TODO: don't store transaction directly on the record
-                  record.transaction.track_created(record)
+                  # TODO: we need a way to not blow up here in case of non-block form of transaction
+                  Persistence.current_transaction(record).track_created(record)
                 end
 
                 Entity.after_initialized_thunk do |record:, **|
-                  # TODO: don't store transaction directly on the record
-                  record.transaction.track_unloaded_thunk(record)
+                  # TODO: we need a way to not blow up here in case of non-block form of transaction
+                  Persistence.current_transaction(record).track_unloaded_thunk(record)
                 end
               end
             end
