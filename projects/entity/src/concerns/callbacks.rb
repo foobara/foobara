@@ -31,20 +31,47 @@ module Foobara
         foobara_delegate :register_callback, to: :callback_registry
 
         module ClassMethods
+          def subclass_defined_callbacks
+            @subclass_defined_callbacks ||= Foobara::Callback::Registry::SingleAction.new
+          end
+
+          def inherited(subclass)
+            super
+
+            subclass_defined_callbacks.runner.callback_data(subclass).run
+          end
+
+          def after_subclass_defined(&)
+            subclass_defined_callbacks.register_callback(:after, &)
+          end
+
           def class_callback_registry
-            @class_callback_registry ||= Callback::Registry::MultipleAction.new(
-              :dirtied,
-              :undirtied,
-              :attribute_changed,
-              :reverted,
-              :loaded,
-              :persisted,
-              :hard_deleted,
-              :unhard_deleted,
-              :invalidated,
-              :uninvalidated
-            ).tap do |registry|
-              registry.allowed_types = [:after]
+            @class_callback_registry ||= begin
+              actions = %i[
+                initialized
+                initialized_built
+                initialized_thunk
+                initialized_loaded
+                initialized_created
+                dirtied
+                undirtied
+                attribute_changed
+                reverted
+                loaded
+                persisted
+                hard_deleted
+                unhard_deleted
+                invalidated
+                uninvalidated
+              ]
+
+              if self == Entity
+                Callback::Registry::MultipleAction.new(actions).tap do |registry|
+                  registry.allowed_types = [:after]
+                end
+              else
+                Callback::Registry::ChainedMultipleAction.new(superclass.class_callback_registry)
+              end
             end
           end
 

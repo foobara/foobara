@@ -7,7 +7,7 @@ module Foobara
 
         include Concern
 
-        attr_accessor :is_loaded, :is_persisted, :is_hard_deleted, :persisted_attributes
+        attr_accessor :is_loaded, :is_persisted, :is_hard_deleted, :is_built, :persisted_attributes
 
         module ClassMethods
           def entity_base

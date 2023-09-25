@@ -3,6 +3,7 @@ module Foobara
     class EntityBase
       class Transaction
         include Concerns::StateTransitions
+        include Concerns::EntityCallbackHandling
 
         attr_accessor :state_machine, :entity_base, :raw_tx, :tables
 

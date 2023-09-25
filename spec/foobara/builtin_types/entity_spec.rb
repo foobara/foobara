@@ -40,6 +40,8 @@ RSpec.describe ":entity" do
     expect(type).to be_a(Foobara::Types::Type)
     expect(constructed_model.name).to eq("Foobara::Entity::SomeEntity")
 
+    binding.pry
+
     value = constructed_model.create
 
     expect(value.model_name).to eq("SomeEntity")
