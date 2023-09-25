@@ -19,6 +19,7 @@ module Foobara
           end
 
           def thunk(record_id)
+            binding.pry unless record_id
             record_id = primary_key_type.process_value!(record_id)
 
             # TODO: is this possible?

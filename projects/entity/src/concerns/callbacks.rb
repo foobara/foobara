@@ -4,6 +4,14 @@ module Foobara
       module Callbacks
         include Concern
 
+        class << self
+          def reset_all
+            # wtf
+            # Entity.instance_variable_set("@subclass_defined_callbacks", nil)
+            # Entity.instance_variable_set("@class_callback_registry", nil)
+          end
+        end
+
         # owner helps with determining the relevant object when running class-registered state transition callbacks
         attr_accessor :callback_registry
 
