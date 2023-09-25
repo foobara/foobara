@@ -29,18 +29,14 @@ RSpec.describe ":entity" do
   let(:constructed_model) { type.target_classes.first }
 
   context "when non-block form of transaction" do
-    let(:tx) { constructed_model.transaction }
-
     before do
       Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
-      tx.open!
-    end
-
-    after do
-      tx.commit!
     end
 
     it "creates a type that targets a Model subclass" do
+      tx = constructed_model.transaction
+      tx.open!
+
       expect(type).to be_a(Foobara::Types::Type)
       expect(constructed_model.name).to eq("Foobara::Entity::SomeEntity")
 
@@ -61,6 +57,12 @@ RSpec.describe ":entity" do
       expect(value).to be_valid
       expect(value.validation_errors).to be_empty
 
+      tx.commit!
+      tx = constructed_model.transaction
+      tx.open!
+
+      value = tx.load(constructed_model, value.primary_key)
+
       value.foo = "invalid"
 
       expect(value).to_not be_valid
@@ -79,8 +81,12 @@ RSpec.describe ":entity" do
                    value: "invalid" }
       )
 
+      value.hard_delete!
+
       value = tx.create(constructed_model, foo: 4, bar: "baz")
       expect(value).to be_valid
+
+      tx.rollback!
     end
   end
 

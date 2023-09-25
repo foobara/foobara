@@ -89,16 +89,24 @@ module Foobara
 
             entity = tracked_records.find_by_key(record_id)
 
-            if entity
-              if entity.loaded?
-                return entity
-              end
-            else
-              entity = entity_class.thunk(record_id)
+            if entity && entity.loaded?
+              return entity
             end
           end
 
-          loading(entity) do
+          if entity
+            loading(entity) do
+              attributes = entity_attributes_crud_driver_table.find!(record_id)
+
+              unless attributes
+                # :nocov:
+                raise NoRecordFound, "could not find record for #{entity_class.full_entity_name}:#{record_id}"
+                # :nocov:
+              end
+
+              entity.successfully_loaded(attributes)
+            end
+          else
             attributes = entity_attributes_crud_driver_table.find!(record_id)
 
             unless attributes
@@ -107,7 +115,7 @@ module Foobara
               # :nocov:
             end
 
-            entity.successfully_loaded(attributes)
+            transaction.loaded(entity_class, attributes)
           end
         end
 

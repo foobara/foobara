@@ -43,13 +43,14 @@ module Foobara
         end
 
         if old_transaction&.currently_open?
-          if mode == :use_existing
+          if mode == :use_existing || existing_transaction == old_transaction
             if block_given?
               return yield old_transaction
             else
               return old_transaction
             end
           elsif mode != :open_nested && mode != :open_new
+            binding.pry
             raise "Transaction already open. " \
                   "Use mode :use_existing if you want to make use of the existing transaction. " \
                   "Use mode :open_nested if you are actually trying to nest transactions."
