@@ -6,8 +6,6 @@ module Foobara
 
         class << self
           def reset_all
-            binding.pry
-            Entity.instance_variable_set("@subclass_defined_callbacks", nil)
             Entity.instance_variable_set("@class_callback_registry", nil)
           end
         end
@@ -39,20 +37,6 @@ module Foobara
         foobara_delegate :register_callback, to: :callback_registry
 
         module ClassMethods
-          def subclass_defined_callbacks
-            @subclass_defined_callbacks ||= Foobara::Callback::Registry::SingleAction.new
-          end
-
-          def inherited(subclass)
-            super
-
-            subclass_defined_callbacks.runner.callback_data(subclass).run
-          end
-
-          def after_subclass_defined(&)
-            subclass_defined_callbacks.register_callback(:after, &)
-          end
-
           def class_callback_registry
             @class_callback_registry ||= begin
               actions = %i[

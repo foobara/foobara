@@ -14,7 +14,6 @@ module Foobara
       end
 
       def reset_all
-        binding.pry
         Entity::Concerns::Callbacks.reset_all
 
         Util.constant_values(self, extends: Foobara::Entity).each do |dynamic_model|

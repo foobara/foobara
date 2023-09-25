@@ -19,7 +19,6 @@ module Foobara
           end
 
           def thunk(record_id)
-            binding.pry unless record_id
             record_id = primary_key_type.process_value!(record_id)
 
             # TODO: is this possible?
@@ -79,21 +78,6 @@ module Foobara
 
             record.fire(:initialized)
             record.fire(:initialized_created)
-
-            record
-          end
-
-          def __new_with_transaction__
-            record = __private_new__
-
-            tx = Foobara::Persistence.current_transaction(self)
-
-            unless tx
-              raise Foobara::Entity::NoCurrentTransactionError,
-                    "Cannot build #{entity_name} because not currently in a transaction."
-            end
-
-            record.transaction = tx
 
             record
           end

@@ -40,10 +40,6 @@ module Foobara
           table_for(record).updated(record)
         end
 
-        def updated(record)
-          table_for(record).updated(record)
-        end
-
         def hard_deleted(record)
           table_for(record).hard_deleted(record)
         end
