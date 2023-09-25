@@ -9,6 +9,24 @@ module Foobara
             @associations ||= construct_associations
           end
 
+          def deep_associations
+            @deep_associations ||= begin
+              deep = {}
+
+              associations.each_pair do |data_path, type|
+                deep[data_path] = type
+
+                entity_class = type.target_classes.first
+
+                entity_class.deep_associations.each_pair do |sub_data_path, sub_type|
+                  deep["#{data_path}.#{sub_data_path}"] = sub_type
+                end
+              end
+
+              deep
+            end
+          end
+
           def construct_associations(type = attributes_type, path = DataPath.new, result = {})
             if type.extends_type?(namespace.type_for_symbol(:entity))
               result[path.to_s] = type

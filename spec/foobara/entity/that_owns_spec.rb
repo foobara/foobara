@@ -68,7 +68,7 @@ RSpec.describe Foobara::Entity do
         stub_class.call(self)
 
         attributes id: :integer,
-                   applicant: Applicant,
+                   applicants: [Applicant],
                    is_active: :boolean
 
         primary_key :id
@@ -120,7 +120,7 @@ RSpec.describe Foobara::Entity do
         end
 
         20.times do |i|
-          packages << Package.create(is_active: i < 3, applicant: applicants[i % 3])
+          packages << Package.create(is_active: i < 3, applicants: [applicants[i % 3]])
         end
 
         15.times do |i|
@@ -142,7 +142,7 @@ RSpec.describe Foobara::Entity do
       end
     end
 
-    it "can find the appropriate records through various that_owns/that_own calls" do
+    it "can find the appropriate records through various that_owns/that_own calls", :focus do
       User.transaction do
         expect(true).to be(true)
         binding.pry
