@@ -89,7 +89,7 @@ module Foobara
 
             entity = tracked_records.find_by_key(record_id)
 
-            if entity && entity.loaded?
+            if entity&.loaded?
               return entity
             end
           end

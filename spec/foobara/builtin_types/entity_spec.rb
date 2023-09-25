@@ -61,7 +61,15 @@ RSpec.describe ":entity" do
       tx = constructed_model.transaction
       tx.open!
 
+      value = tx.thunk(constructed_model, value.primary_key)
+      expect(value.foo).to be(10)
+
+      tx.commit!
+      tx = constructed_model.transaction
+      tx.open!
+
       value = tx.load(constructed_model, value.primary_key)
+      expect(value.foo).to be(10)
 
       value.foo = "invalid"
 
@@ -161,7 +169,9 @@ RSpec.describe ":entity" do
       it "raises validation errors" do
         expect {
           constructed_model.create.validate!
-        }.to raise_error(Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::MissingRequiredAttributeError)
+        }.to raise_error(
+          Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::MissingRequiredAttributeError
+        )
       end
     end
 

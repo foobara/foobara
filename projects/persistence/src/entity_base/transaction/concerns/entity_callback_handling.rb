@@ -24,8 +24,10 @@ module Foobara
                   end
 
                   unless transaction.open?
+                    # :nocov:
                     raise CurrentTransactionIsClosedError,
                           "Cannot modify #{record} because current transaction is not open"
+                    # :nocov:
                   end
 
                   transaction.updated(record)
@@ -35,13 +37,17 @@ module Foobara
                   transaction = Transaction.open_transaction_for(record)
 
                   unless transaction
+                    # :nocov:
                     raise NoCurrentTransactionError,
                           "Cannot modify #{record} because there's no current transaction"
+                    # :nocov:
                   end
 
                   unless transaction.open?
+                    # :nocov:
                     raise CurrentTransactionIsClosedError,
                           "Cannot modify #{record} because current transaction is not open"
+                    # :nocov:
                   end
 
                   transaction.updated(record)
@@ -51,13 +57,17 @@ module Foobara
                   transaction = Transaction.open_transaction_for(record)
 
                   unless transaction
+                    # :nocov:
                     raise NoCurrentTransactionError,
                           "Cannot modify #{record} because there's no current transaction"
+                    # :nocov:
                   end
 
                   unless transaction.open?
+                    # :nocov:
                     raise CurrentTransactionIsClosedError,
                           "Cannot modify #{record} because current transaction is not open"
+                    # :nocov:
                   end
 
                   transaction.hard_deleted(record)
@@ -67,13 +77,17 @@ module Foobara
                   transaction = Transaction.open_transaction_for(record)
 
                   unless transaction
+                    # :nocov:
                     raise NoCurrentTransactionError,
                           "Cannot modify #{record} because there's no current transaction"
+                    # :nocov:
                   end
 
                   unless transaction.open?
+                    # :nocov:
                     raise CurrentTransactionIsClosedError,
                           "Cannot modify #{record} because current transaction is not open"
+                    # :nocov:
                   end
 
                   transaction.unhard_deleted(record)
@@ -82,13 +96,17 @@ module Foobara
                 Entity.after_initialized_loaded do |record:, **|
                   transaction = Persistence.current_transaction(record)
                   unless transaction
+                    # :nocov:
                     raise NoCurrentTransactionError,
                           "Cannot initialize #{record} because there's no current transaction"
+                    # :nocov:
                   end
 
                   unless transaction.open?
+                    # :nocov:
                     raise CurrentTransactionIsClosedError,
                           "Cannot initialize #{record} because current transaction is not open"
+                    # :nocov:
                   end
                   # TODO: we need a way to not blow up here in case of non-block form of transaction
                   transaction.track_loaded(record)
@@ -102,8 +120,10 @@ module Foobara
                   end
 
                   unless transaction.open?
+                    # :nocov:
                     raise CurrentTransactionIsClosedError,
                           "Cannot initialize #{record} because current transaction is not open"
+                    # :nocov:
                   end
                   # TODO: we need a way to not blow up here in case of non-block form of transaction
                   transaction.track_created(record)
@@ -112,13 +132,17 @@ module Foobara
                 Entity.after_initialized_thunk do |record:, **|
                   transaction = Persistence.current_transaction(record)
                   unless transaction
+                    # :nocov:
                     raise NoCurrentTransactionError,
                           "Cannot initialize #{record} because there's no current transaction"
+                    # :nocov:
                   end
 
                   unless transaction.open?
+                    # :nocov:
                     raise CurrentTransactionIsClosedError,
                           "Cannot initialize #{record} because current transaction is not open"
+                    # :nocov:
                   end
                   # TODO: we need a way to not blow up here in case of non-block form of transaction
                   transaction.track_unloaded_thunk(record)
