@@ -3,6 +3,7 @@ module Foobara
     class << self
       def reset_all
         @tables_for_entity_class_name = @bases = @default_crud_driver = @default_base = nil
+        EntityBase::Transaction::Concerns::EntityCallbackHandling.reset_all
       end
 
       def install!

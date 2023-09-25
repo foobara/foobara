@@ -6,9 +6,9 @@ module Foobara
 
         class << self
           def reset_all
-            # wtf
-            # Entity.instance_variable_set("@subclass_defined_callbacks", nil)
-            # Entity.instance_variable_set("@class_callback_registry", nil)
+            binding.pry
+            Entity.instance_variable_set("@subclass_defined_callbacks", nil)
+            Entity.instance_variable_set("@class_callback_registry", nil)
           end
         end
 

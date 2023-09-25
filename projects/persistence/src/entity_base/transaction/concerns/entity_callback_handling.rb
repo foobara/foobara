@@ -6,8 +6,11 @@ module Foobara
           # NOTE: not really a concern...
           module EntityCallbackHandling
             class << self
+              def reset_all
+                install!
+              end
+
               def install!
-                binding.pry
                 # TODO: do all this in an install! method and make sure Entity.reset_all clears it.
                 Entity.after_dirtied do |record:, **|
                   # TODO: don't store transaction directly on the record
