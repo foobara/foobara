@@ -35,7 +35,6 @@ module Foobara
 
         Entity.after_initialized do |record:, **|
           if !record.built? && !record.transaction
-            binding.pry
             tx = Foobara::Persistence.current_transaction(record)
 
             unless tx
@@ -49,7 +48,8 @@ module Foobara
         end
 
         Entity.after_initialized_loaded do |record:, **|
-          binding.pry
+          # TODO: don't store transaction directly on the record
+          record.transaction.track_loaded(record)
         end
 
         Entity.after_initialized_created do |record:, **|

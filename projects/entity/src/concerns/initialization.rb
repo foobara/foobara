@@ -58,10 +58,8 @@ module Foobara
               # :nocov:
             end
 
-            record = __new_with_transaction__
+            record = __private_new__
             record.successfully_loaded(attributes)
-
-            record.transaction.track_loaded(record)
 
             unless record.primary_key
               # :nocov:
