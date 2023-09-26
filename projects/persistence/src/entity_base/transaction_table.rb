@@ -222,9 +222,6 @@ module Foobara
           if found_attributes
             entity_class.loaded(found_attributes)
           end
-        rescue => e
-          binding.pry
-          raise
         end
 
         def find_by(attributes_filter)
@@ -352,6 +349,7 @@ module Foobara
 
             flush_created_associations!(record)
 
+            # TODO: do this in bulk
             attributes = entity_attributes_crud_driver_table.insert(to_persistable(record))
             record.write_attributes_without_callbacks(attributes)
 

@@ -23,6 +23,8 @@ module Foobara
           end
 
           def process_value(attributes_hash)
+            attributes_hash = Util.deep_dup(attributes_hash)
+
             unexpected_attributes = attributes_hash.keys - allowed_attributes
 
             unless unexpected_attributes.empty?
