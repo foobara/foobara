@@ -157,6 +157,20 @@ module Foobara
           end
 
           def that_owns(record, filters = [])
+            containing_records = that_own(record, filters)
+
+            unless containing_records.empty?
+              if containing_records.size == 1
+                containing_records.first
+              else
+                # :nocov:
+                raise "Expected only one record to own #{record} but found #{containing_records.size}"
+                # :nocov:
+              end
+            end
+          end
+
+          def that_own(record, filters = [])
             association_key = association_for([record.class, *filters])
 
             data_path = DataPath.new(association_key)
@@ -194,15 +208,7 @@ module Foobara
               done = true unless containing_records
             end
 
-            unless containing_records.empty?
-              if containing_records.size == 1
-                containing_records.first
-              else
-                # :nocov:
-                raise "Expected only one record to own #{record} but found #{containing_records.size}"
-                # :nocov:
-              end
-            end
+            containing_records
           end
         end
       end
