@@ -109,12 +109,19 @@ RSpec.describe Foobara::Entity do
       end
 
       User.transaction do
+      end
+    end
+
+    it "can find the appropriate records through various that_owns/that_own calls", :focus do
+      User.transaction do
         applicants = []
         employees = []
         packages  = []
+        users = []
 
         10.times do |i|
           user = User.create(name: "applicant user#{i}")
+          users << user
           applicants << Applicant.create(user:)
         end
 
@@ -143,10 +150,17 @@ RSpec.describe Foobara::Entity do
             employees[0].past_assignments += [assignment]
           end
         end
-      end
-    end
 
-    it "can find the appropriate records through various that_owns/that_own calls", :focus do
+        expect(Employee.all[1].past_users).to eq([])
+        expect(Employee.all[0].past_users).to contain_exactly(users[0], users[1], users[2])
+
+        applicant = Applicant.all.first
+        user = applicant.user
+
+        expect(Applicant.that_owns(user)).to be(applicant)
+        expect(Employee.that_owns(users[0], "past_")).to eq(Employee.all.first)
+      end
+
       User.transaction do
         expect(Employee.all[1].past_users).to eq([])
         expect(Employee.all[0].past_users).to contain_exactly(User.thunk(1), User.thunk(2), User.thunk(3))
@@ -154,7 +168,6 @@ RSpec.describe Foobara::Entity do
         applicant = Applicant.all.first
         user = applicant.user
 
-        $stop = true
         expect(Applicant.that_owns(user)).to be(applicant)
         expect(Employee.that_owns(User.thunk(1), "past_")).to eq(Employee.all.first)
       end
