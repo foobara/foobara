@@ -125,7 +125,6 @@ module Foobara
         end
 
         def find_by_attribute_containing(attribute_name, value)
-          binding.pry
           # TODO: can we use #select instead??
           all.each do |found_attributes|
             if found_attributes[attribute_name]&.include?(value)

@@ -41,7 +41,9 @@ module Foobara
                 values
               else
                 if values.size > 1
+                  # :nocov:
                   raise "Multiple records found for #{name} association but only expected 0 or 1."
+                  # :nocov:
                 end
 
                 unless values.empty?
@@ -65,15 +67,19 @@ module Foobara
             end
 
             if result.empty?
+              # :nocov:
               raise "Could not find association matching #{association_filters}"
+              # :nocov:
             elsif result.size > 1
+              # :nocov:
               raise "Multiple associations matched by #{association_filters}"
+              # :nocov:
             else
               result.first
             end
           end
 
-          def filtered_associations(filter, association_keys)
+          def filtered_associations(filter, association_keys = deep_associations.keys)
             if filter.is_a?(::Symbol)
               filter = filter.to_s
             end
@@ -97,7 +103,9 @@ module Foobara
                 entity_class == filter || entity_class < filter
               end
             else
+              # :nocov:
               raise "Not sure how to apply filter #{filter}"
+              # :nocov:
             end
           end
 
@@ -164,13 +172,13 @@ module Foobara
                 method = :find_all_by_attribute_containing_any_of
                 attribute_name = data_path.path[-2]
                 data_path = DataPath.new(data_path.path[0..-3])
-                containing_entity_class_path = data_path.to_s
               else
                 method = :find_all_by_attribute_any_of
                 attribute_name = last
                 data_path = DataPath.new(data_path.path[0..-2])
-                containing_entity_class_path = data_path.to_s
               end
+
+              containing_entity_class_path = data_path.to_s
 
               entity_class = if containing_entity_class_path.empty?
                                done = true
@@ -181,11 +189,7 @@ module Foobara
                                ].target_classes.first
                              end
 
-              old_containing_records = containing_records
-
               containing_records = entity_class.send(method, attribute_name, containing_records).to_a
-
-              binding.pry if $stop
 
               done = true unless containing_records
             end
@@ -194,7 +198,9 @@ module Foobara
               if containing_records.size == 1
                 containing_records.first
               else
+                # :nocov:
                 raise "Expected only one record to own #{record} but found #{containing_records.size}"
+                # :nocov:
               end
             end
           end

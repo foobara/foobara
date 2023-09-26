@@ -101,18 +101,21 @@ RSpec.describe Foobara::Entity do
         attributes id: :integer,
                    user: User,
                    assignments: { type: :array, element_type_declaration: Assignment, default: [] },
-                   past_assignments: [Assignment]
+                   past_assignments: [Assignment],
+                   priority_assignment: Assignment
 
         primary_key :id
 
         association :past_users, "past_assignments.#.package.applicants.#.user"
-      end
-
-      User.transaction do
+        association :priority_package, :"priority_assignment.package"
       end
     end
 
-    it "can find the appropriate records through various that_owns/that_own calls", :focus do
+    it "can find the appropriate records through various that_owns/that_own calls" do
+      expect(Employee.filtered_associations(:Assignment)).to eq(
+        ["assignments.#", "past_assignments.#", "priority_assignment"]
+      )
+
       User.transaction do
         applicants = []
         employees = []
@@ -151,6 +154,9 @@ RSpec.describe Foobara::Entity do
           end
         end
 
+        employee = Employee.all[0]
+        employee.priority_assignment = employee.assignments.first
+
         expect(Employee.all[1].past_users).to eq([])
         expect(Employee.all[0].past_users).to contain_exactly(users[0], users[1], users[2])
 
@@ -161,15 +167,36 @@ RSpec.describe Foobara::Entity do
         expect(Employee.that_owns(users[0], "past_")).to eq(Employee.all.first)
       end
 
+      employee_id = nil
+      assignment_id = nil
+
       User.transaction do
         expect(Employee.all[1].past_users).to eq([])
-        expect(Employee.all[0].past_users).to contain_exactly(User.thunk(1), User.thunk(2), User.thunk(3))
+        # TODO: create .first query
+        employee = Employee.all.first
+        employee_id = employee.primary_key
+
+        expect(employee.past_users).to contain_exactly(User.thunk(1), User.thunk(2), User.thunk(3))
+        expect(employee.past_users).to eq(employee.values_at("past_assignments.#.package.applicants.#.user"))
+        assignment_id = employee.past_assignments.first
+        expect(
+          Employee.find_by_attribute_containing(:past_assignments, employee.past_assignments.first)
+        ).to be(employee)
 
         applicant = Applicant.all.first
         user = applicant.user
 
         expect(Applicant.that_owns(user)).to be(applicant)
         expect(Employee.that_owns(User.thunk(1), "past_")).to eq(Employee.all.first)
+
+        expect(employee.priority_package).to be_a(Package)
+      end
+
+      User.transaction do
+        expect(
+          Employee.find_by_attribute_containing(:past_assignments, assignment_id).primary_key
+        ).to be(employee_id)
+        expect(User.find_by_attribute(:name, "applicant user5")).to be(User.thunk(6))
       end
     end
   end

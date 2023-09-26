@@ -49,6 +49,7 @@ module Foobara
 
     # TODO: accept error_class instead of symbol/category??
     def initialize(path = [])
+      path = path.to_s if path.is_a?(::Symbol)
       path = path.split(".") if path.is_a?(::String)
 
       self.path = path
