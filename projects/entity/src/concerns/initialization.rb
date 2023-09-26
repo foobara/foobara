@@ -75,6 +75,11 @@ module Foobara
           def create(attributes = {})
             record = __private_new__
 
+            defaults = attributes_type.declaration_data[:defaults]
+            if defaults && !defaults.empty?
+              record.write_attributes_without_callbacks(defaults)
+            end
+
             record.write_attributes_without_callbacks(attributes)
 
             # TODO: delete :initialized if unused
