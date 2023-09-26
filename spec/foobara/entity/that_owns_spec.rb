@@ -149,8 +149,12 @@ RSpec.describe Foobara::Entity do
     it "can find the appropriate records through various that_owns/that_own calls", :focus do
       User.transaction do
         expect(Employee.all[1].past_users).to eq([])
-        binding.pry
         expect(Employee.all[0].past_users).to contain_exactly(User.thunk(1), User.thunk(2), User.thunk(3))
+
+        applicant = Applicant.all.first
+        user = applicant.user
+
+        expect(Applicant.that_owns(user)).to be(applicant)
       end
     end
   end

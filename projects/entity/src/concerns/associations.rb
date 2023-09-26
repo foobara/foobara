@@ -65,8 +65,10 @@ module Foobara
             end
 
             if result.empty?
+              binding.pry
               raise "Could not find association matching #{association_filters}"
             elsif result.size > 1
+              binding.pry
               raise "Multiple associations matched by #{association_filters}"
             else
               result.first
@@ -90,11 +92,11 @@ module Foobara
                   key.include?(filter)
                 end
               end
-            elsif filter.is_a?(::Class) && filter < ::Entity
+            elsif filter.is_a?(::Class) && filter < Entity
               association_keys.select do |key|
                 type = deep_associations[key]
                 entity_class = type.target_classes.first
-                entity_class < filter
+                entity_class == filter || entity_class < filter
               end
             else
               raise "Not sure how to apply filter #{filter}"
@@ -148,8 +150,53 @@ module Foobara
             end
           end
 
-          def that_owns(record)
-            associations
+          def that_owns(record, filters = [])
+            association_key = association_for([record.class, *filters])
+
+            data_path = DataPath.new(association_key)
+
+            last = data_path.path_parts.last
+
+            done = false
+
+            containing_record = nil
+
+            until done
+              containing_record = if last == "#"
+                                    attribute_name = data_path.path_parts[-2]
+
+                                    containing_entity_class_path = DataPath.to_s(data_path.path_parts[0..-3])
+
+                                    entity_class = if containing_entity_class_path.empty?
+                                                     done = true
+                                                   else
+                                                     deep_associations[
+                                                       containing_entity_class_path
+                                                     ].target_classes.first
+                                                   end
+
+                                    entity_class.current_transaction_table.find_by_containing(
+                                      attribute_name, record
+                                    )
+                                  else
+                                    attribute_name = last
+                                    containing_entity_class_path = DataPath.to_s(data_path.path_parts[0..-2])
+
+                                    entity_class = if containing_entity_class_path.empty?
+                                                     done = true
+                                                   else
+                                                     deep_associations[
+                                                       containing_entity_class_path
+                                                     ].target_classes.first
+                                                   end
+
+                                    entity_class.current_transaction_table.find_by(attribute_name, record)
+                                  end
+
+              done unless containing_record
+            end
+
+            containing_record
           end
         end
       end
