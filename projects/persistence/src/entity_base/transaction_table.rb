@@ -278,7 +278,7 @@ module Foobara
         end
 
         def find_all_by_attribute_containing_any_of(attribute_name, values)
-          values = Array.wrap(values)
+          values = Util.array(values)
           return [] if values.empty?
 
           value_type = entity_class.attributes_type.element_types[attribute_name].element_type
@@ -323,10 +323,11 @@ module Foobara
         end
 
         def find_all_by_attribute_any_of(attribute_name, values)
-          values = Array.wrap(values)
+          values = Util.array(values)
           return [] if values.empty?
 
-          value_type = entity_class.attributes_type.element_types[attribute_name].element_type
+          value_type = entity_class.attributes_type.element_types[attribute_name]
+          binding.pry if value_type.nil?
 
           values = values.map do |value|
             to_persistable(value_type.process_value!(value), false)

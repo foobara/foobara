@@ -155,7 +155,7 @@ module Foobara
 
             done = false
 
-            containing_record = record
+            containing_records = Util.array(record)
 
             until done
               last = data_path.path.last
@@ -181,16 +181,22 @@ module Foobara
                                ].target_classes.first
                              end
 
-              old_containing_records = containing_record
+              old_containing_records = containing_records
 
-              containing_record = entity_class.send(method, attribute_name, containing_record)
+              containing_records = entity_class.send(method, attribute_name, containing_records).to_a
 
               binding.pry if $stop
 
-              done = true unless containing_record
+              done = true unless containing_records
             end
 
-            containing_record
+            unless containing_records.empty?
+              if containing_records.size == 1
+                containing_records.first
+              else
+                raise "Expected only one record to own #{record} but found #{containing_records.size}"
+              end
+            end
           end
         end
       end
