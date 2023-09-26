@@ -284,7 +284,7 @@ module Foobara
           value_type = entity_class.attributes_type.element_types[attribute_name].element_type
 
           values = values.map do |value|
-            to_persistable(value_type.process_value!(value), false)
+            value_type.process_value!(value)
           end
 
           yielded_ids = Set.new
@@ -297,8 +297,6 @@ module Foobara
               next unless record_values
               next if record_values.empty?
 
-              record_values = record_values.map { |record_value| to_persistable(record_value, false) }
-
               # TODO: what if there are multiple??
               values.each do |value|
                 if record_values.include?(value)
@@ -306,6 +304,10 @@ module Foobara
                   yielder << record
                 end
               end
+            end
+
+            values = values.map do |value|
+              to_persistable(value, false)
             end
 
             entity_attributes_crud_driver_table.find_all_by_attribute_containing_any_of(
@@ -327,10 +329,9 @@ module Foobara
           return [] if values.empty?
 
           value_type = entity_class.attributes_type.element_types[attribute_name]
-          binding.pry if value_type.nil?
 
           values = values.map do |value|
-            to_persistable(value_type.process_value!(value), false)
+            value_type.process_value!(value)
           end
 
           yielded_ids = Set.new
@@ -340,13 +341,16 @@ module Foobara
               next if hard_deleted?(record)
 
               record_value = record.read_attribute(attribute_name)
-              record_value = to_persistable(record_value, false)
 
               # TODO: what if there are multiple??
               if values.include?(record_value)
                 yielded_ids << record.primary_key
                 yielder << record
               end
+            end
+
+            values = values.map do |value|
+              to_persistable(value, false)
             end
 
             entity_attributes_crud_driver_table.find_all_by_attribute_any_of(
