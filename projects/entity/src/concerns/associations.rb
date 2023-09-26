@@ -27,29 +27,27 @@ module Foobara
             end
           end
 
-          def one_association(name, *association_identifiers)
+          # TODO: stamp this metadata out somewhere, preferably on deep_associations hash somehow
+          def association(name, *association_identifiers)
             target_association_key = association_for(association_identifiers)
+
+            is_many = target_association_key.include?("#")
 
             define_method name do
               # TODO: memomize but with some smart cache busting
               values = Foobara::DataPath.values_at(target_association_key, self)
 
-              if values.size > 1
-                raise "Multiple records found for #{name} association but only expected 0 or 1."
+              if is_many
+                values
+              else
+                if values.size > 1
+                  raise "Multiple records found for #{name} association but only expected 0 or 1."
+                end
+
+                unless values.empty?
+                  values.first
+                end
               end
-
-              unless values.empty?
-                values.first
-              end
-            end
-          end
-
-          def many_association(name, *association_identifiers)
-            target_association_key = association_for(association_identifiers)
-
-            define_method name do
-              # TODO: memomize but with some smart cache busting
-              Foobara::DataPath.values_at(target_association_key, self)
             end
           end
 
@@ -57,8 +55,8 @@ module Foobara
             if association_filters.size == 1
               data_path = association_filters.first.to_s
 
-              if deep_assocations.key?(data_path)
-                return deep_associations[data_path]
+              if deep_associations.key?(data_path)
+                return data_path
               end
             end
 

@@ -116,7 +116,9 @@ RSpec.describe Foobara::Entity do
         10.times do |i|
           user = User.create(name: "applicant user#{i}")
           applicants << Applicant.create(user:)
+        end
 
+        10.times do |i|
           user = User.create(name: "employee user#{i}")
           employees << Employee.create(user:)
         end
@@ -146,7 +148,9 @@ RSpec.describe Foobara::Entity do
 
     it "can find the appropriate records through various that_owns/that_own calls", :focus do
       User.transaction do
-        expect(true).to be(true)
+        expect(Employee.all[1].past_users).to eq([])
+        binding.pry
+        expect(Employee.all[0].past_users).to contain_exactly(User.thunk(1), User.thunk(2), User.thunk(3))
       end
     end
   end
