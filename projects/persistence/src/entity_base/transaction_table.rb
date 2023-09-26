@@ -200,8 +200,35 @@ module Foobara
           end
         end
 
+        def find_by_attribute(attribute_name, value)
+          find_by(attribute_name => value)
+        end
+
+        def find_by_attribute_containing(attribute_name, value)
+          value = entity_class.attributes_type.element_types[attribute_name].element_type.process_value!(value)
+
+          tracked_records.each do |record|
+            next if hard_deleted?(record)
+
+            # TODO: what if there are multiple??
+            if record.read_attribute(attribute_name).include?(value)
+              return record
+            end
+          end
+
+          found_attributes = entity_attributes_crud_driver_table.find_by_attribute_containing(
+            attribute_name,
+            to_persistable(value, false)
+          )
+
+          if found_attributes
+            entity_class.loaded(found_attributes)
+          end
+        end
+
         def find_by(attributes_filter)
           attributes_filter = entity_class.attributes_type.process_value!(attributes_filter)
+          attributes_filter = to_persistable(attributes_filter, false)
 
           tracked_records.each do |record|
             next if hard_deleted?(record)
@@ -214,6 +241,11 @@ module Foobara
           found_attributes = entity_attributes_crud_driver_table.find_by(attributes_filter)
 
           if found_attributes
+            record_id = primary_key_for_attributes(found_attributes)
+
+            record = find_tracked(record_id)
+            return record if record
+
             entity_class.loaded(found_attributes)
           end
         end
@@ -238,7 +270,99 @@ module Foobara
 
               next if yielded_ids.include?(record_id)
 
-              yielder << entity_class.loaded(found_attributes)
+              record = find_tracked(record_id) || entity_class.loaded(found_attributes)
+
+              yielder << record
+            end
+          end
+        end
+
+        def find_all_by_attribute_containing_any_of(attribute_name, values)
+          values = Util.array(values)
+          return [] if values.empty?
+
+          value_type = entity_class.attributes_type.element_types[attribute_name].element_type
+
+          values = values.map do |value|
+            value_type.process_value!(value)
+          end
+
+          yielded_ids = Set.new
+
+          Enumerator.new do |yielder|
+            tracked_records.each do |record|
+              next if hard_deleted?(record)
+
+              record_values = record.read_attribute(attribute_name)
+              next unless record_values
+              next if record_values.empty?
+
+              # TODO: what if there are multiple??
+              values.each do |value|
+                if record_values.include?(value)
+                  yielded_ids << record.primary_key
+                  yielder << record
+                end
+              end
+            end
+
+            values = values.map do |value|
+              to_persistable(value, false)
+            end
+
+            entity_attributes_crud_driver_table.find_all_by_attribute_containing_any_of(
+              attribute_name, values
+            ).each do |found_attributes|
+              record_id = primary_key_for_attributes(found_attributes)
+
+              next if yielded_ids.include?(record_id)
+
+              record = find_tracked(record_id) || entity_class.loaded(found_attributes)
+
+              yielder << record
+            end
+          end
+        end
+
+        def find_all_by_attribute_any_of(attribute_name, values)
+          values = Util.array(values)
+          return [] if values.empty?
+
+          value_type = entity_class.attributes_type.element_types[attribute_name]
+
+          values = values.map do |value|
+            value_type.process_value!(value)
+          end
+
+          yielded_ids = Set.new
+
+          Enumerator.new do |yielder|
+            tracked_records.each do |record|
+              next if hard_deleted?(record)
+
+              record_value = record.read_attribute(attribute_name)
+
+              # TODO: what if there are multiple??
+              if values.include?(record_value)
+                yielded_ids << record.primary_key
+                yielder << record
+              end
+            end
+
+            values = values.map do |value|
+              to_persistable(value, false)
+            end
+
+            entity_attributes_crud_driver_table.find_all_by_attribute_any_of(
+              attribute_name, values
+            ).each do |found_attributes|
+              record_id = primary_key_for_attributes(found_attributes)
+
+              next if yielded_ids.include?(record_id)
+
+              record = find_tracked(record_id) || entity_class.loaded(found_attributes)
+
+              yielder << record
             end
           end
         end
@@ -325,6 +449,7 @@ module Foobara
 
             flush_created_associations!(record)
 
+            # TODO: do this in bulk
             attributes = entity_attributes_crud_driver_table.insert(to_persistable(record))
             record.write_attributes_without_callbacks(attributes)
 

@@ -124,12 +124,40 @@ module Foobara
           end
         end
 
+        def find_by_attribute_containing(attribute_name, value)
+          # TODO: can we use #select instead??
+          all.each do |found_attributes|
+            if found_attributes[attribute_name]&.include?(value)
+              return found_attributes
+            end
+          end
+
+          nil
+        end
+
+        def find_all_by_attribute_any_of(attribute_name, values)
+          all.select do |attributes|
+            values.include?(attributes[attribute_name])
+          end
+        end
+
+        def find_all_by_attribute_containing_any_of(attribute_name, values)
+          all.select do |attributes|
+            attributes[attribute_name]&.any? do |attribute_value|
+              values.include?(attribute_value)
+            end
+          end
+        end
+
         def find_by(attributes_filter)
+          # TODO: can we use #select instead??
           all.each do |found_attributes|
             if matches_attributes_filter?(found_attributes, attributes_filter)
               return found_attributes
             end
           end
+
+          nil
         end
 
         def find_many_by(attributes_filter)
