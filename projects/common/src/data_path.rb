@@ -8,7 +8,7 @@ module Foobara
     class << self
       def to_s_type(key)
         unless key.is_a?(DataPath)
-          key = parse(key)
+          key = new(key)
         end
 
         key.to_s_type
@@ -16,7 +16,7 @@ module Foobara
 
       def values_at(data_path, object)
         unless data_path.is_a?(DataPath)
-          data_path = parse(data_path)
+          data_path = new(data_path)
         end
 
         data_path.values_at(object)
@@ -26,7 +26,7 @@ module Foobara
         if key.is_a?(DataPath)
           key.prepend(*)
         else
-          key = parse(key)
+          key = new(key)
           key.prepend!(*).to_s
         end
       end
@@ -35,7 +35,7 @@ module Foobara
         if key.is_a?(DataPath)
           key.append(*)
         else
-          key = parse(key)
+          key = new(key)
           key.append!(*).to_s
         end
       end

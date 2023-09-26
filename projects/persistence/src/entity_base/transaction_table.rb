@@ -200,6 +200,29 @@ module Foobara
           end
         end
 
+        def find_by_attribute(attribute_name, value)
+          find_by(attribute_name => value)
+        end
+
+        def find_by_attribute_containing(attribute_name, value)
+          value = entity_class.attributes_type.element_types[attribute_name].element_type.process_value!(value)
+
+          tracked_records.each do |record|
+            next if hard_deleted?(record)
+
+            # TODO: what if there are multiple??
+            if record.read_attribute(attribute_name).include?(value)
+              return record
+            end
+          end
+
+          found_attributes = entity_attributes_crud_driver_table.find_by_attribute_containing(to_persistable(value))
+
+          if found_attributes
+            entity_class.loaded(found_attributes)
+          end
+        end
+
         def find_by(attributes_filter)
           attributes_filter = entity_class.attributes_type.process_value!(attributes_filter)
 

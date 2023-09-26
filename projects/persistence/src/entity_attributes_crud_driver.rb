@@ -124,6 +124,14 @@ module Foobara
           end
         end
 
+        def find_by_attribute_containing(attribute_name, value)
+          all.each do |found_attributes|
+            if found_attributes[attribute_name].include?(value)
+              return found_attributes
+            end
+          end
+        end
+
         def find_by(attributes_filter)
           all.each do |found_attributes|
             if matches_attributes_filter?(found_attributes, attributes_filter)

@@ -34,7 +34,7 @@ module Foobara
             is_many = target_association_key.include?("#")
 
             define_method name do
-              # TODO: memomize but with some smart cache busting
+              # TODO: memoize but with some smart cache busting
               values = Foobara::DataPath.values_at(target_association_key, self)
 
               if is_many
@@ -65,10 +65,8 @@ module Foobara
             end
 
             if result.empty?
-              binding.pry
               raise "Could not find association matching #{association_filters}"
             elsif result.size > 1
-              binding.pry
               raise "Multiple associations matched by #{association_filters}"
             else
               result.first
@@ -155,34 +153,37 @@ module Foobara
 
             data_path = DataPath.new(association_key)
 
-            last = data_path.path_parts.last
-
             done = false
 
-            containing_record = nil
+            containing_record = record
 
             until done
-              if last == "#"
-                method = :find_by_containing
-                attribute_name = data_path.path_parts[-2]
-                containing_entity_class_path = DataPath.to_s(data_path.path_parts[0..-3])
+              last = data_path.path.last
+
+              if last == :"#"
+                method = :find_by_attribute_containing
+                attribute_name = data_path.path[-2]
+                data_path = DataPath.new(data_path.path[0..-3])
+                containing_entity_class_path = data_path.to_s
               else
-                method = :find_by
+                method = :find_by_attribute
                 attribute_name = last
-                containing_entity_class_path = DataPath.to_s(data_path.path_parts[0..-2])
+                data_path = DataPath.new(data_path.path[0..-2])
+                containing_entity_class_path = data_path.to_s
               end
 
               entity_class = if containing_entity_class_path.empty?
                                done = true
+                               self
                              else
                                deep_associations[
                                  containing_entity_class_path
                                ].target_classes.first
                              end
 
-              containing_record = entity_class.current_transaction_table.send(method, attribute_name, record)
+              containing_record = entity_class.send(method, attribute_name, containing_record)
 
-              done unless containing_record
+              done = true unless containing_record
             end
 
             containing_record
