@@ -104,6 +104,8 @@ RSpec.describe Foobara::Entity do
                    past_assignments: [Assignment]
 
         primary_key :id
+
+        association :past_users, "past_assignments.#.package.applicants.#.user"
       end
 
       User.transaction do
@@ -145,7 +147,6 @@ RSpec.describe Foobara::Entity do
     it "can find the appropriate records through various that_owns/that_own calls", :focus do
       User.transaction do
         expect(true).to be(true)
-        binding.pry
       end
     end
   end

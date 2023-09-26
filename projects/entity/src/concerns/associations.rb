@@ -27,6 +27,82 @@ module Foobara
             end
           end
 
+          def one_association(name, *association_identifiers)
+            target_association_key = association_for(association_identifiers)
+
+            define_method name do
+              # TODO: memomize but with some smart cache busting
+              values = Foobara::DataPath.values_at(target_association_key, self)
+
+              if values.size > 1
+                raise "Multiple records found for #{name} association but only expected 0 or 1."
+              end
+
+              unless values.empty?
+                values.first
+              end
+            end
+          end
+
+          def many_association(name, *association_identifiers)
+            target_association_key = association_for(association_identifiers)
+
+            define_method name do
+              # TODO: memomize but with some smart cache busting
+              Foobara::DataPath.values_at(target_association_key, self)
+            end
+          end
+
+          def association_for(association_filters)
+            if association_filters.size == 1
+              data_path = association_filters.first.to_s
+
+              if deep_assocations.key?(data_path)
+                return deep_associations[data_path]
+              end
+            end
+
+            result = association_filters.inject(deep_associations.keys) do |filtered, filter|
+              filtered_associations(filter, filtered)
+            end
+
+            if result.empty?
+              raise "Could not find association matching #{association_filters}"
+            elsif result.size > 1
+              raise "Multiple associations matched by #{association_filters}"
+            else
+              result.first
+            end
+          end
+
+          def filtered_associations(filter, association_keys)
+            if filter.is_a?(::Symbol)
+              filter = filter.to_s
+            end
+
+            if filter.is_a?(::String)
+              if filter =~ /[A-Z]/
+                association_keys.select do |key|
+                  type = deep_associations[key]
+                  entity_class = type.target_classes.first
+                  entity_class.full_entity_name.include?(filter)
+                end
+              else
+                association_keys.select do |key|
+                  key.include?(filter)
+                end
+              end
+            elsif filter.is_a?(::Class) && filter < ::Entity
+              association_keys.select do |key|
+                type = deep_associations[key]
+                entity_class = type.target_classes.first
+                entity_class < filter
+              end
+            else
+              raise "Not sure how to apply filter #{filter}"
+            end
+          end
+
           def construct_associations(type = attributes_type, path = DataPath.new, result = {})
             if type.extends_type?(namespace.type_for_symbol(:entity))
               result[path.to_s] = type
@@ -76,7 +152,6 @@ module Foobara
 
           def that_owns(record)
             associations
-            binding.pry
           end
         end
       end

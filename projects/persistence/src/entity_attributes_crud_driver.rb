@@ -49,9 +49,6 @@ module Foobara
         key = entity_class.full_entity_name
 
         tables[key] ||= self.class::Table.new(entity_class, raw_connection)
-      rescue => e
-        binding.pry
-        raise
       end
 
       class Table
