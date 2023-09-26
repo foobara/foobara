@@ -155,6 +155,7 @@ RSpec.describe Foobara::Entity do
         user = applicant.user
 
         expect(Applicant.that_owns(user)).to be(applicant)
+        expect(Employee.that_owns(User.thunk(1), "past_")).to eq(Employee.all.first)
       end
     end
   end

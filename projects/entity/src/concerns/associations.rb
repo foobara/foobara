@@ -162,36 +162,25 @@ module Foobara
             containing_record = nil
 
             until done
-              containing_record = if last == "#"
-                                    attribute_name = data_path.path_parts[-2]
+              if last == "#"
+                method = :find_by_containing
+                attribute_name = data_path.path_parts[-2]
+                containing_entity_class_path = DataPath.to_s(data_path.path_parts[0..-3])
+              else
+                method = :find_by
+                attribute_name = last
+                containing_entity_class_path = DataPath.to_s(data_path.path_parts[0..-2])
+              end
 
-                                    containing_entity_class_path = DataPath.to_s(data_path.path_parts[0..-3])
+              entity_class = if containing_entity_class_path.empty?
+                               done = true
+                             else
+                               deep_associations[
+                                 containing_entity_class_path
+                               ].target_classes.first
+                             end
 
-                                    entity_class = if containing_entity_class_path.empty?
-                                                     done = true
-                                                   else
-                                                     deep_associations[
-                                                       containing_entity_class_path
-                                                     ].target_classes.first
-                                                   end
-
-                                    entity_class.current_transaction_table.find_by_containing(
-                                      attribute_name, record
-                                    )
-                                  else
-                                    attribute_name = last
-                                    containing_entity_class_path = DataPath.to_s(data_path.path_parts[0..-2])
-
-                                    entity_class = if containing_entity_class_path.empty?
-                                                     done = true
-                                                   else
-                                                     deep_associations[
-                                                       containing_entity_class_path
-                                                     ].target_classes.first
-                                                   end
-
-                                    entity_class.current_transaction_table.find_by(attribute_name, record)
-                                  end
+              containing_record = entity_class.current_transaction_table.send(method, attribute_name, record)
 
               done unless containing_record
             end
