@@ -216,11 +216,15 @@ module Foobara
             end
           end
 
-          found_attributes = entity_attributes_crud_driver_table.find_by_attribute_containing(to_persistable(value))
+          found_attributes = entity_attributes_crud_driver_table.find_by_attribute_containing(attribute_name,
+                                                                                              to_persistable(value))
 
           if found_attributes
             entity_class.loaded(found_attributes)
           end
+        rescue => e
+          binding.pry
+          raise
         end
 
         def find_by(attributes_filter)
