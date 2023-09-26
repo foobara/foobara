@@ -161,12 +161,12 @@ module Foobara
               last = data_path.path.last
 
               if last == :"#"
-                method = :find_by_attribute_containing
+                method = :find_all_by_attribute_containing_any_of
                 attribute_name = data_path.path[-2]
                 data_path = DataPath.new(data_path.path[0..-3])
                 containing_entity_class_path = data_path.to_s
               else
-                method = :find_by_attribute
+                method = :find_all_by_attribute_any_of
                 attribute_name = last
                 data_path = DataPath.new(data_path.path[0..-2])
                 containing_entity_class_path = data_path.to_s
@@ -181,7 +181,11 @@ module Foobara
                                ].target_classes.first
                              end
 
+              old_containing_records = containing_record
+
               containing_record = entity_class.send(method, attribute_name, containing_record)
+
+              binding.pry if $stop
 
               done = true unless containing_record
             end

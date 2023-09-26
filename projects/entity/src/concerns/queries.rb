@@ -17,6 +17,14 @@ module Foobara
             current_transaction_table.find_by_attribute_containing(attribute_name, value)
           end
 
+          def find_all_by_attribute_containing_any_of(attribute_name, values)
+            current_transaction_table.find_all_by_attribute_containing_any_of(attribute_name, values)
+          end
+
+          def find_all_by_attribute_any_of(attribute_name, values)
+            current_transaction_table.find_all_by_attribute_any_of(attribute_name, values)
+          end
+
           def find_by(attributes)
             current_transaction_table.find_by(attributes)
           end
