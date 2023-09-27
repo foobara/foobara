@@ -13,6 +13,8 @@ module Foobara
     include Concerns::Runtime
     include Concerns::Callbacks
     include Concerns::StateMachine
+    include Concerns::Transactions
+    include Concerns::Entities
     include Concerns::Subcommands
     include Concerns::Reflection
 

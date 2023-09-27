@@ -38,10 +38,10 @@ RSpec.describe Foobara::Command::Concerns::Callbacks do
 
       context "when there are various instance callbacks" do
         before do
-          @before_execute_called = false
-          command.before_execute do |**args|
+          @before_run_execute_called = false
+          command.before_run_execute do |**args|
             expect(args[:command]).to be(command)
-            @before_execute_called = true
+            @before_run_execute_called = true
           end
         end
 
@@ -52,17 +52,17 @@ RSpec.describe Foobara::Command::Concerns::Callbacks do
           end
 
           it "runs callbacks" do
-            expect(@before_execute_called).to be(true)
+            expect(@before_run_execute_called).to be(true)
           end
         end
       end
 
       context "when there are various class callbacks" do
         before do
-          @before_execute_called = false
-          command_class.before_execute do |**args|
+          @before_run_execute_called = false
+          command_class.before_run_execute do |**args|
             expect(args[:command]).to be(command)
-            @before_execute_called = true
+            @before_run_execute_called = true
           end
         end
 
@@ -72,7 +72,7 @@ RSpec.describe Foobara::Command::Concerns::Callbacks do
           end
 
           it "runs callbacks" do
-            expect(@before_execute_called).to be(true)
+            expect(@before_run_execute_called).to be(true)
           end
         end
       end
@@ -95,12 +95,16 @@ RSpec.describe Foobara::Command::Concerns::Callbacks do
 
           it "runs callbacks" do
             expect(called).to eq(
-              %i[cast_and_validate_inputs
-                 load_records
-                 validate_records
-                 validate
-                 execute
-                 succeed]
+              %i[
+                open_transaction
+                cast_and_validate_inputs
+                load_records
+                validate_records
+                validate
+                run_execute
+                commit_transaction
+                succeed
+              ]
             )
           end
         end
@@ -118,11 +122,13 @@ RSpec.describe Foobara::Command::Concerns::Callbacks do
 
           expect(called).to eq(
             %i[
+              open_transaction
               cast_and_validate_inputs
               load_records
               validate_records
               validate
-              execute
+              run_execute
+              commit_transaction
               succeed
             ]
           )

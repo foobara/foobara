@@ -24,19 +24,22 @@ module Foobara
         end
 
         def run
-          result = invoke_with_callbacks_and_transition(%i[
-                                                          cast_and_validate_inputs
-                                                          load_records
-                                                          validate_records
-                                                          validate
-                                                          execute
-                                                        ])
+          invoke_with_callbacks_and_transition(:open_transaction)
 
-          result = process_result_using_result_type(result)
+          invoke_with_callbacks_and_transition_in_transaction(%i[
+                                                                cast_and_validate_inputs
+                                                                load_records
+                                                                validate_records
+                                                                validate
+                                                                run_execute
+                                                              ])
 
-          state_machine.succeed!
+          invoke_with_callbacks_and_transition(%i[
+                                                 commit_transaction
+                                                 succeed
+                                               ])
 
-          @outcome = Outcome.success(result)
+          @outcome
         rescue Halt
           if error_collection.empty?
             # :nocov:
@@ -44,11 +47,13 @@ module Foobara
             # :nocov:
           end
 
+          rollback_transaction
           state_machine.fail!
 
           @outcome = Outcome.errors(error_collection)
         rescue => e
           @exception = e
+          rollback_transaction
           state_machine.error!
           raise
         end
@@ -57,8 +62,13 @@ module Foobara
           outcome&.success?
         end
 
-        def load_records
-          # noop
+        def run_execute
+          result = process_result_using_result_type(execute)
+          @outcome = Outcome.success(result)
+        end
+
+        def succeed
+          # noop but for now helpful for carrying out state transition
         end
 
         def validate_records
@@ -74,6 +84,12 @@ module Foobara
         end
 
         private
+
+        def invoke_with_callbacks_and_transition_in_transaction(transition_or_transitions)
+          Persistence::EntityBase.using_transactions(transactions) do
+            invoke_with_callbacks_and_transition(transition_or_transitions)
+          end
+        end
 
         def invoke_with_callbacks_and_transition(transition_or_transitions)
           result = nil
