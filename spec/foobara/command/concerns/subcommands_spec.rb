@@ -199,7 +199,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
             runtime_path: [:run_some_subcommand],
             category: :runtime,
             symbol: :it_failed,
-            is_fatal: false,
+            is_fatal: true,
             key: "run_some_subcommand:runtime.it_failed",
             context_type_declaration: {
               type: :attributes,
@@ -241,7 +241,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
           path: [],
           runtime_path: [:run_some_subcommand],
           category: :runtime,
-          is_fatal: false,
+          is_fatal: true,
           symbol: :it_failed,
           message: "It failed!",
           context: { foo: 10 }

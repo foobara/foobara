@@ -7,6 +7,10 @@ module Foobara
       def category
         :runtime
       end
+
+      def fatal?
+        true
+      end
     end
 
     def initialize(message: nil, symbol: nil, context: nil, path: nil)
