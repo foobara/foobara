@@ -23,6 +23,29 @@ module Foobara
                           end
       end
 
+      # TODO: automatically order these by dependency...
+      # TODO: also, consider automatically opening transactions for dependent entities automatically...
+      def transaction(*objects, mode: nil, &block)
+        # def transaction(mode = nil, existing_transaction: nil)
+        bases = objects_to_bases(objects)
+
+        if bases.empty?
+          # :nocov:
+          raise "No bases found for #{objects}"
+          # :nocov:
+        end
+
+        if bases.size == 1
+          bases.first.transaction(mode, &block)
+        else
+          bases.inject(block) do |nested_proc, base|
+            proc do
+              base.transaction(mode, &nested_proc)
+            end
+          end.call
+        end
+      end
+
       # TODO: support transactions across multiple bases
       def current_transaction(object)
         base = to_base(object)
@@ -63,6 +86,12 @@ module Foobara
 
       def object_to_base(object)
         case object
+        when EntityBase
+          object
+        when ::String
+          bases[object]
+        when ::Symbol
+          bases[object.to_s]
         when Class
           base_for_entity_class(object)
         when Entity
@@ -105,6 +134,14 @@ module Foobara
       def register_base(base)
         # TODO: add some validations here
         bases[base.name] = base
+      end
+
+      def register_entity(base, entity_class)
+        base = to_base(base)
+
+        table = EntityBase::Table.new(entity_class.full_entity_name, base)
+        base.register_table(table)
+        tables_for_entity_class_name[entity_class.full_entity_name] = table
       end
 
       def tables_for_entity_class_name

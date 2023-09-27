@@ -56,6 +56,7 @@ module Foobara
               # :nocov:
             end
 
+            # TODO: this belongs elsewhere
             def each_table(&)
               tables.each_value(&)
             end

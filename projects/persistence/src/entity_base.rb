@@ -3,6 +3,24 @@ module Foobara
     class EntityBase
       attr_accessor :tables, :name, :entity_attributes_crud_driver
 
+      class << self
+        def using_transactions(existing_transactions, &block)
+          if existing_transactions.empty?
+            block.call
+          elsif existing_transactions.size == 1
+            existing_transaction = existing_transactions.first
+
+            existing_transaction.entity_base.using_transaction(existing_transaction, &block)
+          else
+            existing_transactions.inject(block) do |nested_proc, existing_transaction|
+              proc do
+                existing_transaction.entity_base.using_transaction(existing_transaction, &nested_proc)
+              end
+            end.call
+          end
+        end
+      end
+
       def initialize(name, entity_attributes_crud_driver:)
         self.entity_attributes_crud_driver = entity_attributes_crud_driver
         self.tables = {}
@@ -27,6 +45,10 @@ module Foobara
       end
 
       VALID_MODES = [:use_existing, :open_nested, :open_new, nil].freeze
+
+      def using_transaction(existing_transaction, &)
+        transaction(existing_transaction:, &)
+      end
 
       def transaction(mode = nil, existing_transaction: nil)
         unless VALID_MODES.include?(mode)
