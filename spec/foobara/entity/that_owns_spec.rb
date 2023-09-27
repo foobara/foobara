@@ -59,13 +59,28 @@ RSpec.describe Foobara::Entity do
       Class.new(Base) do
         class << self
           def name
+            "Person"
+          end
+        end
+
+        abstract
+
+        stub_class.call(self)
+
+        attributes user: User
+      end
+
+      Class.new(Person) do
+        class << self
+          def name
             "Applicant"
           end
         end
 
         stub_class.call(self)
 
-        attributes user: User
+        # TODO: make sure this isn't necessary outside of test suite where name is created later...
+        set_model_type
       end
 
       Class.new(Base) do
@@ -93,7 +108,7 @@ RSpec.describe Foobara::Entity do
         attributes package: Package
       end
 
-      Class.new(Base) do
+      Class.new(Person) do
         class << self
           def name
             "Employee"
@@ -102,8 +117,7 @@ RSpec.describe Foobara::Entity do
 
         stub_class.call(self)
 
-        attributes user: User,
-                   assignments: { type: :array, element_type_declaration: Assignment, default: [] },
+        attributes assignments: { type: :array, element_type_declaration: Assignment, default: [] },
                    past_assignments: [Assignment],
                    priority_assignment: Assignment
 

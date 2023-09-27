@@ -4,6 +4,8 @@ require "bigdecimal"
 
 module Foobara
   class Entity < Model
+    abstract
+
     class << self
       def install!
         model = TypeDeclarations::Namespace.type_for_symbol(:model)
