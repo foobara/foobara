@@ -29,7 +29,7 @@ module Foobara
 
                 type.element_types = handler.process_value!(attributes_type_declaration)
 
-                model_class = type.target_classes.first
+                model_class = type.target_class
                 model_class.model_type ||= type
 
                 model_class.domain.register_model(model_class)

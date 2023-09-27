@@ -32,7 +32,7 @@ module Foobara
               if outcome.success?
                 type = outcome.result
 
-                entity_class = type.target_classes.first
+                entity_class = type.target_class
 
                 unless entity_class.primary_key_attribute
                   entity_class.primary_key(strict_declaration_type[:primary_key])

@@ -23,7 +23,7 @@ RSpec.describe ":model" do
     }
   end
 
-  let(:constructed_model) { type.target_classes.first }
+  let(:constructed_model) { type.target_class }
 
   it "creates a type that targets a Model subclass" do
     expect(type).to be_a(Foobara::Types::Type)
@@ -234,7 +234,7 @@ RSpec.describe ":model" do
     end
 
     let(:constructed_model) do
-      type.target_classes.first
+      type.target_class
     end
 
     before do

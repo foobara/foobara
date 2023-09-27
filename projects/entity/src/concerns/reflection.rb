@@ -12,7 +12,7 @@ module Foobara
             deep_associations = {}
 
             self.associations.each_pair do |path, type|
-              entity_class = type.target_classes.first
+              entity_class = type.target_class
               entity_name = entity_class.full_entity_name
 
               depends_on << entity_name
@@ -21,7 +21,7 @@ module Foobara
             end
 
             self.deep_associations.each_pair do |path, type|
-              entity_class = type.target_classes.first
+              entity_class = type.target_class
               entity_name = entity_class.full_entity_name
 
               deep_depends_on << entity_name

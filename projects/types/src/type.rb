@@ -62,6 +62,20 @@ module Foobara
         super(*args, **opts.merge(processors:, prioritize: false))
       end
 
+      def target_class
+        if target_classes.empty?
+          # :nocov:
+          raise "No target classes"
+          # :nocov:
+        elsif target_classes.size > 1
+          # :nocov:
+          raise "Cannot use #target_class because this type has multiple target_classes"
+          # :nocov:
+        end
+
+        target_classes.first
+      end
+
       def extends_type?(type)
         base_type == type || base_type&.extends_type?(type)
       end

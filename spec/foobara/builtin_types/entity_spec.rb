@@ -26,7 +26,7 @@ RSpec.describe ":entity" do
     }
   end
 
-  let(:constructed_model) { type.target_classes.first }
+  let(:constructed_model) { type.target_class }
 
   context "when non-block form of transaction" do
     before do
@@ -355,7 +355,7 @@ RSpec.describe ":entity" do
       end
 
       let(:constructed_model) do
-        type.target_classes.first
+        type.target_class
       end
 
       before do

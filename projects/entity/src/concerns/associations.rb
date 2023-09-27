@@ -16,7 +16,7 @@ module Foobara
               associations.each_pair do |data_path, type|
                 deep[data_path] = type
 
-                entity_class = type.target_classes.first
+                entity_class = type.target_class
 
                 entity_class.deep_associations.each_pair do |sub_data_path, sub_type|
                   deep["#{data_path}.#{sub_data_path}"] = sub_type
@@ -88,7 +88,7 @@ module Foobara
               if filter =~ /[A-Z]/
                 association_keys.select do |key|
                   type = deep_associations[key]
-                  entity_class = type.target_classes.first
+                  entity_class = type.target_class
                   entity_class.full_entity_name.include?(filter)
                 end
               else
@@ -99,7 +99,7 @@ module Foobara
             elsif filter.is_a?(::Class) && filter < Entity
               association_keys.select do |key|
                 type = deep_associations[key]
-                entity_class = type.target_classes.first
+                entity_class = type.target_class
                 entity_class == filter || entity_class < filter
               end
             else
@@ -200,7 +200,7 @@ module Foobara
                              else
                                deep_associations[
                                  containing_entity_class_path
-                               ].target_classes.first
+                               ].target_class
                              end
 
               containing_records = entity_class.send(method, attribute_name, containing_records).to_a
