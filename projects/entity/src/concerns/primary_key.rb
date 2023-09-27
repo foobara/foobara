@@ -7,8 +7,6 @@ module Foobara
         foobara_delegate :primary_key_attribute, to: :class
 
         module ClassMethods
-          attr_reader :primary_key_attribute
-
           def primary_key(attribute_name)
             if primary_key_attribute
               # :nocov:
@@ -25,6 +23,14 @@ module Foobara
             @primary_key_attribute = attribute_name.to_sym
 
             set_model_type
+          end
+
+          def primary_key_attribute
+            return @primary_key_attribute if @primary_key_attribute
+
+            unless superclass == Entity
+              @primary_key_attribute = superclass.primary_key_attribute
+            end
           end
         end
 

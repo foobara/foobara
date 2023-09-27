@@ -39,6 +39,10 @@ module Foobara
         registry[symbol] = type
       end
 
+      def unregister(symbol)
+        registry.delete(symbol)
+      end
+
       def []=(symbol, type)
         register(symbol, type)
       end

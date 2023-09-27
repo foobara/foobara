@@ -8,18 +8,60 @@ module Foobara
 
         module ClassMethods
           attr_reader :model_type
+          attr_writer :attributes_type
 
-          def attributes(attributes_type_declaration)
+          def attributes(additional_attributes_type_declaration)
             update_namespace
 
-            @attributes_type_declaration = attributes_type_declaration
+            additional_type = namespace.type_for_declaration(additional_attributes_type_declaration)
+
+            existing_types = [*superclass.attributes_type, *attributes_type]
+
+            if existing_types.empty?
+              self.attributes_type = additional_type
+            else
+              # TODO: make a first-class way to update types!!
+
+              element_type_declarations = {}
+              required = []
+              defaults = {}
+
+              [*existing_types, additional_type].each do |type|
+                element_type_declarations.merge!(type.declaration_data[:element_type_declarations])
+                type_defaults = type.declaration_data[:defaults]
+                type_required = type.declaration_data[:required]
+
+                if type_defaults && !type_defaults.empty?
+                  defaults.merge!(type_defaults)
+                end
+
+                if type_required && !type_required.empty?
+                  required += type_required
+                end
+              end
+
+              self.attributes_type = namespace.type_for_declaration(
+                type: :attributes,
+                element_type_declarations:,
+                required:,
+                defaults:
+              )
+            end
 
             set_model_type
           end
 
           def set_model_type
-            if @attributes_type_declaration
-              namespace.type_for_declaration(type_declaration(@attributes_type_declaration))
+            return if abstract?
+
+            if attributes_type
+              declaration = type_declaration(attributes_type.declaration_data)
+
+              registry = namespace.registry_for_symbol(model_symbol)
+
+              registry&.unregister(model_symbol)
+
+              namespace.type_for_declaration(declaration)
 
               unless @model_type
                 # :nocov:
@@ -40,7 +82,9 @@ module Foobara
           end
 
           def attributes_type
-            model_type.element_types
+            return @attributes_type if @attributes_type
+
+            @attributes_type = model_type&.element_types
           end
 
           def model_type=(model_type)

@@ -29,6 +29,22 @@ RSpec.describe Foobara::Entity do
       stub_class = ->(klass) { stub_const(klass.name, klass) }
 
       Class.new(Foobara::Entity) do
+        abstract
+
+        class << self
+          def name
+            "Base"
+          end
+        end
+
+        stub_class.call(self)
+
+        attributes id: :integer
+
+        primary_key :id
+      end
+
+      Class.new(Base) do
         class << self
           def name
             "User"
@@ -37,13 +53,10 @@ RSpec.describe Foobara::Entity do
 
         stub_class.call(self)
 
-        attributes id: :integer,
-                   name: :string
-
-        primary_key :id
+        attributes name: { type: :string, required: true }
       end
 
-      Class.new(Foobara::Entity) do
+      Class.new(Base) do
         class << self
           def name
             "Applicant"
@@ -52,13 +65,10 @@ RSpec.describe Foobara::Entity do
 
         stub_class.call(self)
 
-        attributes id: :integer,
-                   user: User
-
-        primary_key :id
+        attributes user: User
       end
 
-      Class.new(Foobara::Entity) do
+      Class.new(Base) do
         class << self
           def name
             "Package"
@@ -67,14 +77,11 @@ RSpec.describe Foobara::Entity do
 
         stub_class.call(self)
 
-        attributes id: :integer,
-                   applicants: [Applicant],
+        attributes applicants: [Applicant],
                    is_active: :boolean
-
-        primary_key :id
       end
 
-      Class.new(Foobara::Entity) do
+      Class.new(Base) do
         class << self
           def name
             "Assignment"
@@ -83,13 +90,10 @@ RSpec.describe Foobara::Entity do
 
         stub_class.call(self)
 
-        attributes id: :integer,
-                   package: Package
-
-        primary_key :id
+        attributes package: Package
       end
 
-      Class.new(Foobara::Entity) do
+      Class.new(Base) do
         class << self
           def name
             "Employee"
@@ -98,13 +102,10 @@ RSpec.describe Foobara::Entity do
 
         stub_class.call(self)
 
-        attributes id: :integer,
-                   user: User,
+        attributes user: User,
                    assignments: { type: :array, element_type_declaration: Assignment, default: [] },
                    past_assignments: [Assignment],
                    priority_assignment: Assignment
-
-        primary_key :id
 
         association :past_users, "past_assignments.#.package.applicants.#.user"
         association :priority_package, :"priority_assignment.package"

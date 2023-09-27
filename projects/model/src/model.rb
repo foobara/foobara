@@ -8,9 +8,17 @@ module Foobara
     include Concerns::Types
 
     class << self
-      attr_accessor :domain
+      attr_accessor :domain, :is_abstract
 
       foobara_delegate :organization, :organization_name, :domain_name, to: :domain, allow_nil: true
+
+      def abstract
+        @is_abstract = true
+      end
+
+      def abstract?
+        @is_abstract
+      end
 
       def update_namespace
         return if @namespace_updated
