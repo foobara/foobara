@@ -145,13 +145,21 @@ module Foobara
       end
 
       def manifest
-        Util.remove_empty(
+        h = Util.remove_empty(
           target_classes: target_classes.map(&:name),
           base_type: base_type&.full_type_name,
           declaration_data:,
           supported_processors: supported_processor_manifest,
           processors: processor_manifest
         )
+
+        target_classes.each do |target_class|
+          if target_class.respond_to?(:foobara_manifest)
+            h.merge!(target_class.foobara_manifest)
+          end
+        end
+
+        h
       end
 
       def manifest_hash

@@ -9,6 +9,7 @@ module Foobara
     include Concerns::PrimaryKey
     include Concerns::Persistence
     include Concerns::Initialization
+    include Concerns::Reflection
 
     class << self
       prepend NewPrepend
