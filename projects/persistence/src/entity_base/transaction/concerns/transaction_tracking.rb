@@ -35,8 +35,10 @@ module Foobara
                 if tx&.tracking?(record)
                   return tx
                 else
+                  entity_base = record.class.entity_base
+
                   tx = open_transactions.find do |transaction|
-                    transaction.tracking?(record)
+                    transaction.entity_base == entity_base && transaction.tracking?(record)
                   end
                 end
 
