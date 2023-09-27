@@ -7,7 +7,7 @@ module Foobara
 
         include Concern
 
-        attr_accessor :is_loaded, :is_persisted, :is_hard_deleted, :is_built, :persisted_attributes
+        attr_accessor :is_loaded, :is_persisted, :is_hard_deleted, :is_built, :is_created, :persisted_attributes
 
         module ClassMethods
           def entity_base
@@ -42,13 +42,17 @@ module Foobara
           is_persisted
         end
 
+        def created?
+          is_created
+        end
+
         def loaded?
-          @is_loaded
+          is_loaded
         end
 
         # TODO: rename, maybe #detatched? or something?
         def built?
-          @is_built
+          is_built
         end
 
         def load_if_necessary!(attribute_name_or_attributes)

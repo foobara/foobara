@@ -10,6 +10,7 @@ module Foobara
           def build(attributes)
             record = __private_new__
             record.build(attributes)
+            # TODO: rename to something like "detached"
             record.is_built = true
 
             record.fire(:initialized)
@@ -74,6 +75,7 @@ module Foobara
 
           def create(attributes = {})
             record = __private_new__
+            record.is_created = true
 
             defaults = attributes_type.declaration_data[:defaults]
             if defaults && !defaults.empty?

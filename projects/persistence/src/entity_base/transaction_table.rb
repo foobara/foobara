@@ -458,6 +458,7 @@ module Foobara
             tracked_records << record
 
             record.is_persisted = record.is_loaded = true
+            record.is_created = false
             record.save_persisted_attributes
           end
 
@@ -479,12 +480,23 @@ module Foobara
           tracked_records << record
 
           record.is_persisted = record.is_loaded = true
+          record.is_created = false
           record.save_persisted_attributes
         end
 
         def flush_created_associations!(record)
           entity_class.associations.each_key do |association_data_path|
             DataPath.values_at(association_data_path, record).each do |associated_record|
+              next unless associated_record.created?
+
+              transaction = Persistence::EntityBase::Transaction.open_transaction_for(associated_record)
+
+              unless transaction
+                # :nocov:
+                raise "No open transaction for #{associated_record}"
+                # :nocov:
+              end
+
               if transaction.created?(associated_record)
                 transaction.flush_created_record!(associated_record)
               end
