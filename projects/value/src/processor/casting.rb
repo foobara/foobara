@@ -68,9 +68,11 @@ module Foobara
         end
 
         def error_message(value)
-          applies_message = Util.to_or_sentence(processors.map(&:applies_message).flatten)
+          "Cannot cast #{value.inspect}. Expected it to #{applies_message}"
+        end
 
-          "Cannot cast #{value}. Expected it to #{applies_message}"
+        def applies_message
+          Util.to_or_sentence(processors.map(&:applies_message).flatten)
         end
 
         def error_context(value)

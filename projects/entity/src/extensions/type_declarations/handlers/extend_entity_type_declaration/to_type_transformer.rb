@@ -14,12 +14,20 @@ module Foobara
               declaration_data
             end
 
+            def primary_key_type
+              entity_class.primary_key_type
+            end
+
             def applicable?(value)
-              entity_class.primary_key_type.applicable?(value)
+              primary_key_type.applicable?(value)
             end
 
             def transform(primary_key)
               entity_class.thunk(primary_key)
+            end
+
+            def applies_message
+              primary_key_type.value_caster.applies_message
             end
           end
 

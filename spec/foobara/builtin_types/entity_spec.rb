@@ -83,7 +83,7 @@ RSpec.describe ":entity" do
         category: :data,
         is_fatal: true,
         symbol: :cannot_cast,
-        message: "Cannot cast invalid. Expected it to be a Integer, " \
+        message: 'Cannot cast "invalid". Expected it to be a Integer, ' \
                  "or be a string of digits optionally with a minus sign in front",
         context: { cast_to: { type: :integer, max: 10 },
                    value: "invalid" }
@@ -140,7 +140,7 @@ RSpec.describe ":entity" do
         category: :data,
         is_fatal: true,
         symbol: :cannot_cast,
-        message: "Cannot cast invalid. Expected it to be a Integer, " \
+        message: 'Cannot cast "invalid". Expected it to be a Integer, ' \
                  "or be a string of digits optionally with a minus sign in front",
         context: { cast_to: { type: :integer, max: 10 }, value: "invalid" }
       )

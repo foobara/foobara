@@ -81,7 +81,7 @@ RSpec.describe ":tuple" do
             category: :data,
             is_fatal: true,
             symbol: :cannot_cast,
-            message: "Cannot cast not valid. Expected it to be a Integer, " \
+            message: 'Cannot cast "not valid". Expected it to be a Integer, ' \
                      "or be a string of digits optionally with a minus sign in front",
             context: { cast_to: { type: :integer }, value: "not valid" }
           )
