@@ -40,7 +40,12 @@ RSpec.describe Foobara::Entity do
     end
 
     before do
-      Foobara::Persistence.default_base.transaction(:open_new) do
+      # TODO: move these checks to a persistence_spec
+      expect(Foobara::Persistence.object_to_base(entity_class)).to eq(Foobara::Persistence.default_base)
+      expect(Foobara::Persistence.object_to_base(:default_entity_base)).to eq(Foobara::Persistence.default_base)
+      expect(Foobara::Persistence.object_to_base("default_entity_base")).to eq(Foobara::Persistence.default_base)
+
+      Foobara::Persistence.transaction(entity_class, mode: :open_new) do
         loaded_and_persisted_record
       end
 
@@ -56,7 +61,11 @@ RSpec.describe Foobara::Entity do
       entity_class.thunk(pk)
     end
     let(:not_persisted_record) do
-      entity_class.create(attributes)
+      # Just testing some un-tested code with this pointless transaction block...
+      transactions = [Foobara::Persistence.default_base.current_transaction]
+      Foobara::Persistence::EntityBase.using_transactions(transactions) do
+        entity_class.create(attributes)
+      end
     end
 
     let(:pk) { loaded_and_persisted_record.pk }

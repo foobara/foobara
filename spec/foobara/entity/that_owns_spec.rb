@@ -202,6 +202,7 @@ RSpec.describe Foobara::Entity do
         user = applicant.user
 
         expect(Applicant.that_owns(user)).to be(applicant)
+        expect(Applicant.find_all_by_attribute_any_of(:user, user).to_a).to eq([applicant])
         expect(Employee.that_owns(User.thunk(1), "past_")).to eq(Employee.all.first)
 
         expect(employee.priority_package).to be_a(Package)

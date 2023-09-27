@@ -20,7 +20,11 @@ module Foobara
               associations[path] = entity_name
             end
 
-            self.deep_associations.each_pair do |path, type|
+            h = self.deep_associations.sort_by do |path, _type|
+              [DataPath.new(path).path.size, path]
+            end.to_h
+
+            h.each_pair do |path, type|
               entity_class = type.target_class
               entity_name = entity_class.full_entity_name
 
@@ -30,8 +34,8 @@ module Foobara
             end
 
             {
-              depends_on:,
-              deep_depends_on:,
+              depends_on: depends_on.uniq,
+              deep_depends_on: deep_depends_on.uniq,
               associations:,
               deep_associations:
             }
