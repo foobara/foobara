@@ -93,6 +93,7 @@ RSpec.describe Foobara::Command::Concerns::Entities do
         attributes user: User
       end
 
+      # TODO: how to support self-referential models??
       Class.new(Person) do
         class << self
           def name
@@ -102,8 +103,8 @@ RSpec.describe Foobara::Command::Concerns::Entities do
 
         stub_class.call(self)
 
-        # TODO: make sure this isn't necessary outside of test suite where name is created later...
-        set_model_type
+        attributes is_active: { type: :boolean, default: true },
+                   friends: [User]
       end
 
       Class.new(Base) do
@@ -433,6 +434,72 @@ RSpec.describe Foobara::Command::Concerns::Entities do
           result = outcome.result
           expect(result.name).to eq("Some Name")
           expect(result.id).to be_a(Integer)
+        end
+      end
+    end
+
+    describe "update command" do
+      context "with entity class as inputs" do
+        let(:update_command) do
+          stub_class = ->(klass) { stub_const(klass.name, klass) }
+
+          Class.new(Foobara::Command) do
+            class << self
+              def name
+                "UpdateApplicant"
+              end
+            end
+
+            stub_class.call(self)
+
+            # TODO: does this work with User instead of :User ?
+            # We can't come up with a cleaner way to do this?
+            inputs Foobara::Command::EntityHelpers.type_declaration_for_record_update(Applicant)
+            result Applicant # seems like we should just use nil?
+
+            def execute
+              update_applicant
+
+              applicant
+            end
+
+            attr_accessor :applicant
+
+            def load_records
+              self.applicant = Applicant.load(id)
+            end
+
+            def update_applicant
+              inputs.each_pair do |attribute_name, value|
+                applicant.write_attribute(attribute_name, value)
+              end
+            end
+          end
+        end
+
+        let(:applicant) { Applicant.create(user:, is_active: true) }
+        let(:user) { User.create(name: "first user") }
+
+        it "can update an applicant" do
+          applicant_id = Applicant.transaction { applicant }.id
+
+          Applicant.transaction do
+            expect {
+              update_command.run!(id: applicant_id, is_active: false)
+            }.to change { Applicant.load(applicant_id).is_active }.from(true).to(false)
+
+            expect {
+              update_command.run!(id: applicant_id, is_active: true)
+            }.to change { Applicant.load(applicant_id).is_active }.from(false).to(true)
+          end
+
+          new_user_id = User.transaction(skip_dependent_transactions: true) { User.create(name: "second user") }.id
+
+          Applicant.transaction do
+            expect {
+              update_command.run!(id: applicant_id, user: new_user_id)
+            }.to change { Applicant.load(applicant_id).user.name }.from("first user").to("second user")
+          end
         end
       end
     end
