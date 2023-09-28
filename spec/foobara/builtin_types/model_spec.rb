@@ -89,6 +89,10 @@ RSpec.describe ":model" do
     expect(type.declaration_data[:model_base_class]).to eq("Foobara::Model")
   end
 
+  it "extends duck" do
+    expect(type.extends_type?(Foobara::Types.global_registry[:duck])).to be(true)
+  end
+
   describe "#process_value!" do
     let(:value) { type.process_value!(value_to_process) }
 

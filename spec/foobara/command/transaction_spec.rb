@@ -104,7 +104,13 @@ RSpec.describe Foobara::Command::Concerns::Entities do
         stub_class.call(self)
 
         attributes is_active: { type: :boolean, default: true },
-                   friends: [User]
+                   friends: [User],
+                   attrs: {
+                     foo: :symbol,
+                     bar: [:integer],
+                     duckfoo: :duck,
+                     duckbar: [:duck]
+                   }
       end
 
       Class.new(Base) do
@@ -499,6 +505,99 @@ RSpec.describe Foobara::Command::Concerns::Entities do
             expect {
               update_command.run!(id: applicant_id, user: new_user_id)
             }.to change { Applicant.load(applicant_id).user.name }.from("first user").to("second user")
+          end
+        end
+      end
+    end
+
+    describe "update aggregate command" do
+      context "with helper method result for inputs" do
+        let(:update_command) do
+          stub_class = ->(klass) { stub_const(klass.name, klass) }
+
+          Class.new(Foobara::Command) do
+            class << self
+              def name
+                "UpdateApplicantAggregate"
+              end
+            end
+
+            stub_class.call(self)
+
+            # TODO: does this work with User instead of :User ?
+            # We can't come up with a cleaner way to do this?
+            inputs Foobara::Command::EntityHelpers.type_declaration_for_record_aggregate_update(Applicant)
+            result Applicant # seems like we should just use nil?
+
+            def execute
+              update_applicant
+
+              applicant
+            end
+
+            attr_accessor :applicant
+
+            def load_records
+              self.applicant = Applicant.load(id)
+            end
+
+            def update_applicant
+              Foobara::Command::EntityHelpers.update_aggregate(applicant, inputs)
+            end
+          end
+        end
+
+        let(:applicant) do
+          Applicant.create(
+            user:,
+            is_active: true,
+            attrs: {
+              foo: :fooooo,
+              bar: [1, 2, 3, 4],
+              duckfoo: "asdfasdf",
+              duckbar: ["asdf", 5]
+            }
+          )
+        end
+        let(:user) { User.create(name: "old name") }
+
+        it "can update an applicant" do
+          applicant_id = Applicant.transaction { applicant }.id
+          user_id = User.transaction { user }.id
+
+          Applicant.transaction do
+            expect {
+              update_command.run!(id: applicant_id, is_active: false)
+            }.to change { Applicant.load(applicant_id).is_active }.from(true).to(false)
+
+            expect {
+              update_command.run!(id: applicant_id, is_active: true)
+            }.to change { Applicant.load(applicant_id).is_active }.from(false).to(true)
+          end
+
+          Applicant.transaction do
+            update_command.run!(
+              id: applicant_id,
+              user: { name: "new name" },
+              attrs: {
+                foo: :food,
+                bar: [10, 11],
+                duckfoo: "df",
+                duckbar: %w[db asdf]
+              }
+            )
+          end
+
+          Applicant.transaction do
+            applicant = Applicant.load(applicant_id)
+            expect(applicant.user.name).to eq("new name")
+            expect(applicant.user.id).to eq(user_id)
+            expect(applicant.attrs).to eq(
+              foo: :food,
+              bar: [10, 11],
+              duckfoo: "df",
+              duckbar: %w[db asdf]
+            )
           end
         end
       end
