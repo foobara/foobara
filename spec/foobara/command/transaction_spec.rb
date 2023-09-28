@@ -493,6 +493,14 @@ RSpec.describe Foobara::Command::Concerns::Entities do
               update_command.run!(id: applicant_id, is_active: true)
             }.to change { Applicant.load(applicant_id).is_active }.from(false).to(true)
           end
+
+          new_user_id = User.transaction { User.create(name: "second user") }.id
+
+          Applicant.transaction do
+            expect {
+              update_command.run!(id: applicant_id, user: new_user_id)
+            }.to change { Applicant.load(applicant_id).user.name }.from("first user").to("second user")
+          end
         end
       end
     end
