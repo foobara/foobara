@@ -3,6 +3,7 @@ module Foobara
     module Handlers
       class ExtendEntityTypeDeclaration < ExtendModelTypeDeclaration
         class ToTypeTransformer < ExtendModelTypeDeclaration::ToTypeTransformer
+          # TODO: move this to a more appropriate place
           class EntityPrimaryKeyCaster < Value::Caster
             class << self
               def requires_declaration_data?
@@ -44,6 +45,12 @@ module Foobara
 
                 unless entity_class.primary_key_attribute
                   entity_class.primary_key(strict_declaration_type[:primary_key])
+                end
+
+                unless entity_class.can_be_created_through_casting?
+                  type.casters = type.casters.reject do |caster|
+                    caster.is_a?(Foobara::BuiltinTypes::Entity::Casters::Hash)
+                  end
                 end
 
                 type.casters << EntityPrimaryKeyCaster.new(entity_class)

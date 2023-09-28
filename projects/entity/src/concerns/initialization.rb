@@ -7,6 +7,10 @@ module Foobara
         include Concern
 
         module ClassMethods
+          def can_be_created_through_casting?
+            true
+          end
+
           def build(attributes)
             record = __private_new__
             record.build(attributes)
