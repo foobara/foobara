@@ -3,7 +3,7 @@ module Foobara
     module EntityHelpers
       module_function
 
-      def type_declaration_for_record_update(entity_class)
+      def type_declaration_for_record_atom_update(entity_class)
         declaration = entity_class.attributes_type.declaration_data
         # TODO: just slice out the element type declarations
         declaration = Util.deep_dup(declaration)

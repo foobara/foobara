@@ -438,8 +438,8 @@ RSpec.describe Foobara::Command::Concerns::Entities do
       end
     end
 
-    describe "update command" do
-      context "with entity class as inputs" do
+    describe "update atom command" do
+      context "with helper method result for inputs" do
         let(:update_command) do
           stub_class = ->(klass) { stub_const(klass.name, klass) }
 
@@ -454,7 +454,7 @@ RSpec.describe Foobara::Command::Concerns::Entities do
 
             # TODO: does this work with User instead of :User ?
             # We can't come up with a cleaner way to do this?
-            inputs Foobara::Command::EntityHelpers.type_declaration_for_record_update(Applicant)
+            inputs Foobara::Command::EntityHelpers.type_declaration_for_record_atom_update(Applicant)
             result Applicant # seems like we should just use nil?
 
             def execute
