@@ -29,7 +29,8 @@ module Foobara
                     :raw_declaration_data,
                     :name,
                     :type_registry,
-                    :target_classes
+                    :target_classes,
+                    :type_symbol
 
       def initialize(
         *args,

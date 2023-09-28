@@ -36,6 +36,14 @@ module Foobara
           # :nocov:
         end
 
+        if type.type_symbol && type.type_symbol != symbol
+          # :nocov:
+          raise "#{type} already has #{type.type_symbol} as its type symbol"
+          # :nocov:
+        end
+
+        type.type_symbol = symbol
+
         registry[symbol] = type
       end
 
