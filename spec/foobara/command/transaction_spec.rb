@@ -93,6 +93,7 @@ RSpec.describe Foobara::Command::Concerns::Entities do
         attributes user: User
       end
 
+      # TODO: how to support self-referential models??
       Class.new(Person) do
         class << self
           def name
@@ -102,10 +103,8 @@ RSpec.describe Foobara::Command::Concerns::Entities do
 
         stub_class.call(self)
 
-        attributes type: :attributes, element_type_declarations: { is_active: :boolean }, defaults: { is_active: true }
-
-        # TODO: make sure this isn't necessary outside of test suite where name is created later...
-        set_model_type
+        attributes is_active: { type: :boolean, default: true },
+                   friends: [User]
       end
 
       Class.new(Base) do
@@ -494,7 +493,7 @@ RSpec.describe Foobara::Command::Concerns::Entities do
             }.to change { Applicant.load(applicant_id).is_active }.from(false).to(true)
           end
 
-          new_user_id = User.transaction { User.create(name: "second user") }.id
+          new_user_id = User.transaction(skip_dependent_transactions: true) { User.create(name: "second user") }.id
 
           Applicant.transaction do
             expect {
