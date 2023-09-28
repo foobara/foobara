@@ -25,8 +25,7 @@ module Foobara
 
           entity_classes = entity_classes.map do |entity_class|
             entity_class.deep_associations.values
-          end.flatten.map(&:target_class)
-
+          end.flatten.map(&:target_class) + Util.array(self.class.inputs_entity_class)
           bases_needing_transaction = entity_classes.map(&:entity_base).uniq - bases_not_needing_transaction
 
           bases_needing_transaction.each do |entity_base|

@@ -1,4 +1,4 @@
-RSpec.describe Foobara::Command do
+RSpec.describe Foobara::Command::Concerns::Entities do
   describe "#run" do
     after do
       Foobara.reset_alls
@@ -357,6 +357,83 @@ RSpec.describe Foobara::Command do
             Applicant
           ]
         )
+      end
+    end
+
+    describe "create command" do
+      context "with entity class as inputs" do
+        let(:create_command) do
+          stub_class = ->(klass) { stub_const(klass.name, klass) }
+
+          Class.new(Foobara::Command) do
+            class << self
+              def name
+                "CreateUser"
+              end
+            end
+
+            stub_class.call(self)
+
+            # TODO: does this work with User instead of :User ?
+            # We can't come up with a cleaner way to do this?
+            inputs User
+            result User
+
+            def execute
+              user
+            end
+          end
+        end
+
+        it "can create an user" do
+          command = create_command.new(name: "Some Name")
+          outcome = command.run
+
+          expect(outcome).to be_success
+          expect(command.user).to be_a(User)
+
+          result = outcome.result
+          expect(result.name).to eq("Some Name")
+          expect(result.id).to be_a(Integer)
+        end
+      end
+
+      context "with normal attributes inputs" do
+        let(:create_command) do
+          stub_class = ->(klass) { stub_const(klass.name, klass) }
+
+          Class.new(Foobara::Command) do
+            class << self
+              def name
+                "CreateUser"
+              end
+            end
+
+            stub_class.call(self)
+
+            # TODO: does this work with User instead of :User ?
+            # We can't come up with a cleaner way to do this?
+            inputs user: User
+            result User
+
+            def execute
+              user
+            end
+          end
+        end
+
+        it "can create an user" do
+          command = create_command.new(user: { name: "Some Name" })
+          outcome = Foobara::Persistence.transaction(Employee, User, mode: :use_existing) do
+            command.run
+          end
+          expect(outcome).to be_success
+          expect(command.user).to be_a(User)
+
+          result = outcome.result
+          expect(result.name).to eq("Some Name")
+          expect(result.id).to be_a(Integer)
+        end
       end
     end
   end
