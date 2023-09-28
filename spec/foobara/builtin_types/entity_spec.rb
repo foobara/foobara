@@ -266,7 +266,17 @@ RSpec.describe ":entity" do
     describe "#possible_errors" do
       it "gives expected possible errors" do
         expect(type.possible_errors).to eq(
-          "data.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError
+          "data.bar.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+          "data.bar.missing_required_attribute":
+            Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::MissingRequiredAttributeError,
+          "data.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+          "data.foo.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+          "data.foo.max_exceeded": Foobara::BuiltinTypes::Number::SupportedValidators::Max::MaxExceededError,
+          "data.missing_required_attribute":
+            Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::MissingRequiredAttributeError,
+          "data.pk.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+          "data.unexpected_attributes":
+            Foobara::BuiltinTypes::Attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError
         )
       end
     end

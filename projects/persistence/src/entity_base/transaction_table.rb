@@ -204,6 +204,10 @@ module Foobara
           find_by(attribute_name => value)
         end
 
+        def find_all_by_attribute(attribute_name, value)
+          find_many_by(attribute_name => value)
+        end
+
         def find_by_attribute_containing(attribute_name, value)
           value = entity_class.attributes_type.element_types[attribute_name].element_type.process_value!(value)
 

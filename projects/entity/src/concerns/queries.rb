@@ -13,6 +13,10 @@ module Foobara
             current_transaction_table.find_by_attribute(attribute_name, value)
           end
 
+          def find_all_by_attribute(attribute_name, value)
+            current_transaction_table.find_all_by_attribute(attribute_name, value)
+          end
+
           def find_by_attribute_containing(attribute_name, value)
             current_transaction_table.find_by_attribute_containing(attribute_name, value)
           end
