@@ -14,7 +14,7 @@ module Foobara
         # expect all associations to be expressed as primary key values
         # TODO: should we have a special type for encapsulating primary keys types??
         entity_class.associations.each_pair do |data_path, type|
-          if type.extends_type?(entity_class.namespace.type_for_symbol(:entity))
+          if type.extends_symbol?(:entity)
             target_class = type.target_class
             # TODO: do we really need declaration_data? Why cant we use the type directly?
             # TODO: make this work with the type directly for performance reasons.

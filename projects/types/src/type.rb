@@ -81,6 +81,10 @@ module Foobara
         base_type == type || base_type&.extends_type?(type)
       end
 
+      def extends_symbol?(symbol)
+        type_symbol == symbol || base_type&.extends_symbol?(symbol)
+      end
+
       def processors
         [
           value_caster,
