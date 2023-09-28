@@ -90,7 +90,7 @@ RSpec.describe Foobara::Entity do
         expect(not_persisted_record.primary_key).to eq(6)
 
         expect(loaded_and_persisted_record.primary_key).to eq(1)
-        entity_class.transaction(:use_existing) do
+        entity_class.transaction(mode: :use_existing) do
           record = entity_class.thunk(loaded_and_persisted_record.primary_key)
           expect(record.primary_key).to eq(1)
           record.pk = "1"

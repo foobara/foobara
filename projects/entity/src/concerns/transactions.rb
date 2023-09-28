@@ -9,8 +9,16 @@ module Foobara
             Foobara::Persistence.current_transaction_table(self)
           end
 
-          def transaction(...)
-            entity_base.transaction(...)
+          def transaction(mode: nil, skip_dependent_transactions: false, &block)
+            if skip_dependent_transactions
+              entity_base.transaction(mode, &block)
+            else
+              Foobara::Persistence.transaction(
+                self, *deep_depends_on,
+                mode:,
+                &block
+              )
+            end
           end
         end
       end
