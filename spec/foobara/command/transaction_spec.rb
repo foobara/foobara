@@ -383,11 +383,22 @@ RSpec.describe Foobara::Command::Concerns::Entities do
 
             # TODO: does this work with User instead of :User ?
             # We can't come up with a cleaner way to do this?
-            inputs User
+            inputs User.attributes_type.declaration_data
             result User
 
+            # TODO: automatically include result type if it's an entity to avoid this in such cases
+            depends_on_entities User
+
             def execute
+              create_user
+
               user
+            end
+
+            attr_accessor :user
+
+            def create_user
+              self.user = User.create(inputs)
             end
           end
         end

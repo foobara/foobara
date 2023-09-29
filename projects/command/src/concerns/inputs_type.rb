@@ -6,26 +6,7 @@ module Foobara
 
         module ClassMethods
           def inputs(inputs_type_declaration)
-            @inputs_type = if inputs_type_declaration.is_a?(Class) && inputs_type_declaration < Entity
-                             # TODO: Allowing this seems risky and complicated. reconsider this.
-                             entity_class = inputs_type_declaration
-                             depends_on_entities << entity_class
-
-                             method_name = Util.underscore(entity_class.entity_name)
-
-                             define_method method_name do
-                               var_name = "@#{method_name}"
-                               if instance_variable_defined?(var_name)
-                                 instance_variable_get(var_name)
-                               else
-                                 instance_variable_set(var_name, entity_class.create(inputs))
-                               end
-                             end
-
-                             entity_class.attributes_type
-                           else
-                             type_for_declaration(inputs_type_declaration)
-                           end
+            @inputs_type = type_for_declaration(inputs_type_declaration)
 
             register_possible_input_errors
 

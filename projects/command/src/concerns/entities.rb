@@ -6,8 +6,14 @@ module Foobara
 
         module ClassMethods
           # Only needed for entities not discoverable through the inputs
-          def depends_on_entities
-            @depends_on_entities ||= Set.new
+          def depends_on_entities(*entities_to_add)
+            if entities_to_add.empty?
+              @depends_on_entities ||= Set.new
+            else
+              entities_to_add.each do |entity_class|
+                depends_on_entities << entity_class
+              end
+            end
           end
 
           def entity_class_paths
