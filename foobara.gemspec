@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.email = ["azimux@gmail.com"]
 
   spec.summary = "Implements command pattern for encapsulating and managing domain complexity " \
-                 "as well as supporting libraries."
+                 "as well as many supporting libraries including entities."
   spec.description = spec.summary
   spec.homepage = "https://github.com/foobara/foobara"
   spec.license = "none yet"
