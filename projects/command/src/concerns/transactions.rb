@@ -12,21 +12,40 @@ module Foobara
           @opened_transactions ||= []
         end
 
+        def auto_detect_current_transactions
+          bases = relevant_entity_classes.map(&:entity_base).uniq
+
+          bases.each do |base|
+            tx = base.current_transaction
+            transactions << tx if tx
+          end
+        end
+
+        def relevant_entity_classes
+          @relevant_entity_classes ||= begin
+            entity_classes = if inputs_type
+                               Entity.construct_associations(
+                                 inputs_type,
+                                 type_namespace: self.class.namespace
+                               ).values.uniq.map(&:target_class)
+                             else
+                               []
+                             end
+
+            entity_classes += entity_classes.map do |entity_class|
+              entity_class.deep_associations.values
+            end.flatten.uniq.map(&:target_class)
+
+            [*entity_classes, *self.class.depends_on_entities].uniq
+          end
+        end
+
         def open_transaction
-          return unless inputs_type
+          auto_detect_current_transactions
 
           bases_not_needing_transaction = transactions.map(&:entity_base)
 
-          # TODO: create a Entity.construct_deep_associations method
-          entity_classes = Entity.construct_associations(
-            inputs_type,
-            type_namespace: self.class.namespace
-          ).values.uniq.map(&:target_class)
-
-          entity_classes = entity_classes.map do |entity_class|
-            entity_class.deep_associations.values
-          end.flatten.map(&:target_class) + self.class.depends_on_entities.to_a
-          bases_needing_transaction = entity_classes.map(&:entity_base).uniq - bases_not_needing_transaction
+          bases_needing_transaction = relevant_entity_classes.map(&:entity_base).uniq - bases_not_needing_transaction
 
           bases_needing_transaction.each do |entity_base|
             transaction = entity_base.transaction
