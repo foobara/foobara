@@ -613,5 +613,57 @@ RSpec.describe Foobara::Command::Concerns::Entities do
         end
       end
     end
+
+    describe "delete command" do
+      let(:delete_command) do
+        stub_class = ->(klass) { stub_const(klass.name, klass) }
+
+        Class.new(Foobara::Command) do
+          class << self
+            def name
+              "DeleteApplicant"
+            end
+          end
+
+          stub_class.call(self)
+
+          # TODO: does this work with User instead of :User ?
+          # We can't come up with a cleaner way to do this?
+          inputs applicant: Applicant
+          result Applicant
+
+          load_all
+
+          def execute
+            delete_applicant
+
+            applicant
+          end
+
+          def delete_applicant
+            applicant.hard_delete!
+          end
+        end
+      end
+
+      let(:applicant) { Applicant.create(user:) }
+      let(:user) { User.create(name: "old name") }
+
+      it "deletes the applicant" do
+        applicant_id = Applicant.transaction { applicant }.id
+
+        Applicant.transaction do
+          expect {
+            delete_command.run!(applicant: applicant_id)
+          }.to change(Applicant, :count).by(-1)
+        end
+
+        Applicant.transaction do
+          expect {
+            Applicant.load(applicant_id)
+          }.to raise_error(Foobara::Persistence::EntityAttributesCrudDriver::Table::CannotFindError)
+        end
+      end
+    end
   end
 end
