@@ -41,3 +41,6 @@ RSpec/NoExpectationExample:
 
 RSpec/NotToNot:
   EnforcedStyle: to_not
+
+RSpec/SpecFilePathFormat:
+  Enabled: false

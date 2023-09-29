@@ -1,6 +1,10 @@
 require "foobara/monorepo"
 
 module Foobara
+  module All
+    # just makes Rubocop happy
+  end
+
   module Monorepo
     # universal
     project "util"
