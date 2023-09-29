@@ -5,13 +5,11 @@ module Foobara
         include Concern
 
         module ClassMethods
-          attr_accessor :inputs_entity_class
-
           def inputs(inputs_type_declaration)
             @inputs_type = if inputs_type_declaration.is_a?(Class) && inputs_type_declaration < Entity
                              # TODO: Allowing this seems risky and complicated. reconsider this.
                              entity_class = inputs_type_declaration
-                             self.inputs_entity_class = entity_class
+                             depends_on_entities << entity_class
 
                              method_name = Util.underscore(entity_class.entity_name)
 
@@ -26,7 +24,6 @@ module Foobara
 
                              entity_class.attributes_type
                            else
-                             self.inputs_entity_class = nil
                              type_for_declaration(inputs_type_declaration)
                            end
 

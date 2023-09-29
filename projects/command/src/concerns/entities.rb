@@ -5,6 +5,11 @@ module Foobara
         include Concern
 
         module ClassMethods
+          # Only needed for entities not discoverable through the inputs
+          def depends_on_entities
+            @depends_on_entities ||= Set.new
+          end
+
           def entity_class_paths
             # TODO: bust this cache when changing inputs_type??
             @entity_class_paths ||= Entity.construct_associations(
