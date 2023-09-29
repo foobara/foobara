@@ -18,11 +18,17 @@ module Foobara
 
                     element_type_declarations.each_pair do |attribute_name, attribute_type_declaration|
                       if attribute_type_declaration.is_a?(::Hash) && attribute_type_declaration.key?(:required)
-                        required = !attribute_type_declaration.key?(:required) || attribute_type_declaration[:required]
+                        is_required = attribute_type_declaration[:required]
 
-                        element_type_declarations[attribute_name] = attribute_type_declaration.except(:required)
+                        if [true, false].include?(is_required)
+                          element_type_declarations[attribute_name] = attribute_type_declaration.except(:required)
 
-                        required_attributes << attribute_name if required
+                          if is_required
+                            required_attributes << attribute_name
+                          else
+                            required_attributes.delete(attribute_name)
+                          end
+                        end
                       end
                     end
 
