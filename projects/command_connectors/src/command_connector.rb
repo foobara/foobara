@@ -4,7 +4,7 @@ module Foobara
       attr_accessor :command_registry
 
       def initialize
-        command_registry.new
+        self.command_registry = CommandRegistry.new
       end
 
       def connect(...)

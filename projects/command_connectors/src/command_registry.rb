@@ -29,7 +29,7 @@ module Foobara
         allowed_rule:
       )
 
-      registry[command_class.full_entity_name] = entry
+      registry[command_class.full_command_name] = entry
     end
 
     def registry

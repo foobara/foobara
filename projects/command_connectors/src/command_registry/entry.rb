@@ -8,7 +8,7 @@ module Foobara
                     :errors_transformer,
                     :allowed_rule
 
-      def register(command_class, inputs_transformer:, result_transformer:, errors_transformer:, allowed_rule:)
+      def initialize(command_class, inputs_transformer:, result_transformer:, errors_transformer:, allowed_rule:)
         self.command_class = command_class
         self.inputs_transformer = inputs_transformer
         self.result_transformer = result_transformer

@@ -46,7 +46,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
     let(:inputs) { { base: 2, exponent: 3 } }
     let(:outcome) { command_connector.run(command_class.name, inputs) }
 
-    it "runs the command" do
+    it "runs the command", :focus do
       expect(outcome).to be_success
     end
   end
