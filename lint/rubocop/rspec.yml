@@ -44,3 +44,7 @@ RSpec/NotToNot:
 
 RSpec/SpecFilePathFormat:
   Enabled: false
+
+# where is something mentioning Rails coming from?? Built into the rspec cops?
+RSpec/Rails/HaveHttpStatus:
+  Enabled: false
