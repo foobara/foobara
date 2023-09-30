@@ -32,6 +32,16 @@ module Foobara
       registry[command_class.full_command_name] = entry
     end
 
+    def [](name)
+      key = if name.is_a?(Class)
+              name.full_command_name
+            else
+              name.to_s
+            end
+
+      registry[key]
+    end
+
     def registry
       @registry ||= {}
     end

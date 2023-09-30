@@ -33,20 +33,22 @@ module Foobara
 
         reasons = not_allowed_to_run_reasons(registry_entry, command)
 
+        # TODO: this isn't right
+        if reasons
+          raise NotAllowedError, reasons
+        end
+
         command.run
       end
 
       def not_allowed_to_run_reasons(registry_entry, command)
         # TODO: Need to move the command into the load_records state but not close the transaction...
-        allowed_rules = registry_entry.allowed_rules
+        allowed_rule = registry_entry.allowed_rule
 
-        if allowed_rules.any? do |allowed_rule|
-          block = proc do
-            allowed_rule.block.call(request)
-          end
+        return nil unless allowed_rule
 
-          command.instance_eval(&allowed_rule.block)
-        end
+        unless command.instance_eval(&allowed_rule.block)
+          allowed_rule.explanation
         end
       end
 
