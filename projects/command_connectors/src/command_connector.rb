@@ -1,5 +1,5 @@
 module Foobara
-  module Connectors
+  module CommandConnectors
     class CommandConnector
       attr_accessor :command_registry
 
