@@ -1,14 +1,13 @@
 module Foobara
   module CommandConnectors
     class Http < CommandConnector
-      class Request
+      class Request < RunCommandAttempt
         attr_accessor :path,
                       :query_string,
                       :method,
                       :body,
                       :headers,
-                      :action,
-                      :command
+                      :action
 
         def initialize(path, method, headers, query_string, body)
           self.path = path[1..]
@@ -21,6 +20,8 @@ module Foobara
 
           self.action = action
           self.command_name = command_name
+
+          super(inputs)
         end
 
         def inputs

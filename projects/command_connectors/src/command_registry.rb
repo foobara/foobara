@@ -68,5 +68,8 @@ module Foobara
         allowed_rule(allowed_rule)
       end
     end
+
+    def run_request(request)
+    end
   end
 end
