@@ -52,14 +52,14 @@ RSpec.describe Foobara::CommandConnectors::Http do
   let(:query_string) { "base=#{base}" }
   let(:body) { "{\"exponent\":#{exponent}}" }
 
-  describe "#run_command", :focus do
+  describe "#run_command" do
     before do
       command_connector.connect(command_class)
     end
 
     it "runs the command" do
       expect(outcome).to be_success
-      expect(result).to be(3)
+      expect(result).to be(8)
     end
   end
 end

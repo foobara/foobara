@@ -1,7 +1,7 @@
 module Foobara
   module CommandConnector
     class Request
-      attr_accessor :registry, :command
+      attr_accessor :registry, :command, :transformed_inputs, :outcome
 
       def initialize(registry)
         self.registry = registry
@@ -15,9 +15,16 @@ module Foobara
         raise "subclass responsibility"
       end
 
-      def command_class
-        @command_class ||= registry[full_command_name]
+      def registry_entry
+        @registry_entry ||= registry[full_command_name]
       end
+
+      foobara_delegate :command_class,
+                       :inputs_transformer,
+                       :result_transformer,
+                       :errors_transformer,
+                       :allowed_rule,
+                       to: :registry_entry
 
       def run
         transform_inputs
@@ -30,13 +37,15 @@ module Foobara
       end
 
       def transform_inputs
-        if inputs_transformer
-          self.transformed_inputs = if inputs_transformer.arity > 1
+        self.transformed_inputs = if inputs_transformer
+                                    if inputs_transformer.arity > 1
                                       inputs_transformer.call(untransformed_inputs, self)
                                     else
                                       inputs_transformer.call(untransformed_inputs)
                                     end
-        end
+                                  else
+                                    untransformed_inputs
+                                  end
       end
 
       def construct_command
@@ -59,7 +68,15 @@ module Foobara
       end
 
       def run_command
-        command.run
+        self.outcome = command.run
+      end
+
+      def result
+        outcome.result
+      end
+
+      def errors
+        outcome.errors
       end
 
       def transform_outcome
@@ -72,14 +89,14 @@ module Foobara
 
       def transform_result
         if result_transformer
-          result = if result_transformer.arity > 1
-                     result_transformer.call(self.result, self)
-                   else
-                     result_transformer.call(self.result)
-                   end
-
-          self.outcome = Outcome.success(result)
+          self.result = if result_transformer.arity > 1
+                          result_transformer.call(result, self)
+                        else
+                          result_transformer.call(result)
+                        end
         end
+
+        self.outcome = Outcome.success(result)
       end
 
       def transform_errors
@@ -96,7 +113,7 @@ module Foobara
 
       def method_missing(method_name, *, **, &)
         if command.respond_to?(method_name)
-          command.send(method_name, *, **, &block)
+          command.send(method_name, *, **, &)
         else
           super
         end

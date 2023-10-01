@@ -144,8 +144,8 @@ module Foobara
         mod.constants.map { |const| constant_value(mod, const) }.select do |object|
           (is_a.nil? || is_a.empty? || is_a.any? { |klass| object.is_a?(klass) }) &&
             (extends.nil? || extends.empty? || (object.is_a?(Class) && extends.any? do |klass|
-                                                  object.ancestors.include?(klass)
-                                                end))
+              object.ancestors.include?(klass)
+            end))
         end
       end
     end
@@ -179,7 +179,11 @@ module Foobara
 
       *strings, last = strings
 
-      [strings.join(connector), last].join(last_connector)
+      if strings.empty?
+        last
+      else
+        [strings.join(connector), last].join(last_connector)
+      end
     end
 
     def to_or_sentence(strings, connector = ", ")

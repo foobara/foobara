@@ -7,7 +7,8 @@ module Foobara
                       :method,
                       :body,
                       :headers,
-                      :action
+                      :action,
+                      :full_command_name
 
         def initialize(registry, path:, method:, headers:, query_string:, body:)
           self.path = path[1..]
@@ -25,12 +26,19 @@ module Foobara
         end
 
         def untransformed_inputs
-          @untransformed_inputs ||= begin
-            body_inputs = body.empty? ? {} : JSON.parse(body)
-            query_string_inputs = query_string.empty? ? {} : ::Rack::Utils.parse_nested_query(query_string)
+          @untransformed_inputs ||= parsed_body.merge(parsed_query_string)
+        end
 
-            body_inputs.merge(query_string_inputs)
-          end
+        def parsed_body
+          body.empty? ? {} : JSON.parse(body)
+        end
+
+        def parsed_query_string
+          @parsed_query_string ||= if query_string.empty?
+                                     {}
+                                   else
+                                     CGI.parse(query_string).transform_values!(&:first)
+                                   end
         end
       end
     end
