@@ -2,6 +2,8 @@ module Foobara
   module CommandConnectors
     class Http < CommandConnector
       def route(request)
+        # we should put a foobara request on the env??
+        # and a command on the request?
         response = case action
                    when "run"
                      registry_entry = command_registry[command_name]
@@ -25,22 +27,6 @@ module Foobara
         response || Response.new(404, {}, "No route for #{action}")
       end
 
-      def run_command(registry_entry, inputs)
-        command_class = registry_entry.command_class
-        inputs = registry_entry.transform_inputs(inputs)
-
-        command = command_class.new(inputs)
-
-        reasons = not_allowed_to_run_reasons(registry_entry, command)
-
-        # TODO: this isn't right
-        if reasons
-          raise NotAllowedError, reasons
-        end
-
-        command.run
-      end
-
       def not_allowed_to_run_reasons(registry_entry, command)
         # TODO: Need to move the command into the load_records state but not close the transaction...
         allowed_rule = registry_entry.allowed_rule
@@ -60,6 +46,35 @@ module Foobara
           body = registry_entry.transform_errors(outcome.errors)
           Request.new(422, {}, body)
         end
+      end
+
+      def run_command(request)
+        registry_entry = command_registry[command_name]
+
+        unless registry_entry
+          raise "No command class registered for #{command_name}"
+        end
+
+        command_class = registry_entry.command_class
+        command = command_class.new(inputs)
+
+        request.command = command
+
+        allowed_rule = registry_entry.allowed_rule
+
+        if allowed_rule
+          command.after_load_records do |command:, **|
+            is_allowed = request.instance_eval(&allowed_rule)
+
+            unless is_allowed
+              # fail the command...
+              command.not_allowed!
+              return Outcome.error(NotAllowedError.new(allowed_rule.explanation))
+            end
+          end
+        end
+
+        command.run
       end
     end
   end

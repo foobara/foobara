@@ -38,7 +38,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
     described_class.new
   end
 
-  describe "#run_command" do
+  describe "#run_command", :focus do
     before do
       command_connector.connect(command_class)
     end
