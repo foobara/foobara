@@ -1,7 +1,7 @@
 module Foobara
   module CommandConnectors
     class Http < CommandConnector
-      class Request < RunCommandAttempt
+      class Request < Foobara::CommandConnector::Request
         attr_accessor :path,
                       :query_string,
                       :method,
@@ -9,23 +9,23 @@ module Foobara
                       :headers,
                       :action
 
-        def initialize(path, method, headers, query_string, body)
+        def initialize(registry, path:, method:, headers:, query_string:, body:)
           self.path = path[1..]
           self.query_string = query_string
           self.method = method
           self.body = body
           self.headers = headers
 
-          action, command_name = self.path.split("/")
+          action, full_command_name = self.path.split("/")
 
           self.action = action
-          self.command_name = command_name
+          self.full_command_name = full_command_name
 
-          super(inputs)
+          super(registry)
         end
 
-        def inputs
-          @inputs ||= begin
+        def untransformed_inputs
+          @untransformed_inputs ||= begin
             body_inputs = body.empty? ? {} : JSON.parse(body)
             query_string_inputs = query_string.empty? ? {} : ::Rack::Utils.parse_nested_query(query_string)
 

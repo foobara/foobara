@@ -48,33 +48,14 @@ module Foobara
         end
       end
 
-      def run_command(request)
-        registry_entry = command_registry[command_name]
+      def run(path:, method:, headers:, query_string:, body:)
+        request = self.class::Request.new(command_registry, path:, method:, headers:, query_string:, body:)
+        run_request(request)
+        request
+      end
 
-        unless registry_entry
-          raise "No command class registered for #{command_name}"
-        end
-
-        command_class = registry_entry.command_class
-        command = command_class.new(inputs)
-
-        request.command = command
-
-        allowed_rule = registry_entry.allowed_rule
-
-        if allowed_rule
-          command.after_load_records do |command:, **|
-            is_allowed = request.instance_eval(&allowed_rule)
-
-            unless is_allowed
-              # fail the command...
-              command.not_allowed!
-              return Outcome.error(NotAllowedError.new(allowed_rule.explanation))
-            end
-          end
-        end
-
-        command.run
+      def run_request(request)
+        request.run
       end
     end
   end

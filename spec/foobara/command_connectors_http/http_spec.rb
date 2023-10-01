@@ -15,6 +15,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
       inputs exponent: :integer,
              base: :integer
+      result :integer
 
       attr_accessor :exponential
 
@@ -38,16 +39,27 @@ RSpec.describe Foobara::CommandConnectors::Http do
     described_class.new
   end
 
+  let(:base) { 2 }
+  let(:exponent) { 3 }
+
+  let(:request) { command_connector.run(path:, method:, headers:, query_string:, body:) }
+  let(:outcome) { request.outcome }
+  let(:result) { request.result }
+
+  let(:path) { "/run/ComputeExponential" }
+  let(:method) { "POST" }
+  let(:headers) { { some_header_name: "some_header_value" } }
+  let(:query_string) { "base=#{base}" }
+  let(:body) { "{\"exponent\":#{exponent}}" }
+
   describe "#run_command", :focus do
     before do
       command_connector.connect(command_class)
     end
 
-    let(:inputs) { { base: 2, exponent: 3 } }
-    let(:outcome) { command_connector.run(command_class.name, inputs) }
-
     it "runs the command" do
       expect(outcome).to be_success
+      expect(result).to be(3)
     end
   end
 end

@@ -11,17 +11,12 @@ module Foobara
         command_registry.register(...)
       end
 
+      def run(...)
+        raise "subclass responsibility"
+      end
+
       def run_request(request)
-        registry_entry = command_registry[request.command_name]
-        registry_entry.transform_inputs(request)
-        registry_entry.construct_command(request)
-        registry_entry.apply_allowed_rule(request)
-
-        command.run
-
-        registry_entry.transform_outcome(request)
-
-        request.outcome
+        request.run
       end
     end
   end
