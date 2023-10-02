@@ -1,28 +1,29 @@
 module Foobara
   module CommandConnectors
     class Http < CommandConnector
-      def route(request)
-        # we should put a foobara request on the env??
-        # and a command on the request?
-        response = case action
-                   when "run"
-                     registry_entry = command_registry[command_name]
+      def route(**context)
+        request = context_to_request(**context)
 
-                     unless registry_entry
-                       Response.new(404, {}, "No command found for #{command_name}")
-                     end
+        action = request.action
 
-                     outcome = run_command(registry_entry, request.inputs)
-                     outcome_to_response(registry_entry, outcome)
-                   when "manifest"
-                     get_manifest
-                   when "commands"
-                     get_commands
-                   when "types"
-                     get_types
-                   when "entities"
-                     get_entities
-                   end
+        if action != "run"
+          command_name = case action
+                         when "manifest"
+                           "QueryManifest"
+                         when "commands"
+                           "QueryCommands"
+                         when "types"
+                           "QueryTypes"
+                         when "entities"
+                           "QueryEntities"
+                         else
+                           raise "Not sure what to do with #{action}"
+                         end
+
+          request = route(context.merge(path: "/run/Foobara::CommandConnector::#{command_name}"))
+        end
+
+        request.run_for_context(**context)
 
         response || Response.new(404, {}, "No route for #{action}")
       end
@@ -35,16 +36,6 @@ module Foobara
 
         unless command.instance_eval(&allowed_rule.block)
           allowed_rule.explanation
-        end
-      end
-
-      def outcome_to_response(registry_entry, outcome)
-        if outcome.success?
-          body = registry_entry.transform_result(outcome.result)
-          Request.new(200, {}, body)
-        else
-          body = registry_entry.transform_errors(outcome.errors)
-          Request.new(422, {}, body)
         end
       end
 

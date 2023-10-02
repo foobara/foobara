@@ -1,8 +1,9 @@
 #!/usr/bin/env ruby
 
 require "bundler/setup"
-require "foobara"
+require "foobara/all"
 
 require "irb"
 require "pry"
+
 IRB.start(__FILE__)

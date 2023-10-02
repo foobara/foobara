@@ -40,7 +40,37 @@ module Foobara
                                      CGI.parse(query_string).transform_values!(&:first)
                                    end
         end
+
+        # TODO: how to transform into body + headers headers cleanly?? Maybe subclass of Outcome?
+        def response
+          @response ||= begin
+                          if outcome.success?
+                            body = JSON.fast_generate(outcome.result)
+                            status = 200
+                          else
+                            body = JSON.fast_generate(outcome.errors_hash)
+
+                            errors = outcome.errors
+
+                            status = if errors.size == 1
+                                       error = errors.first
+
+                                       case error
+                                       when UnknownError
+                                         500
+                                       when NotFoundError
+                                         404
+                                       when UnauthenticatedError
+                                         401
+                                       when UnauthorizedError
+                                         403
+                                       end
+                                     end || 422
+                          end
+
+                          Response.new(status, {}, body)
+                        end
+        end
       end
     end
   end
-end
