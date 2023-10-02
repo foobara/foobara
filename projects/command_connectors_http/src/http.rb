@@ -1,12 +1,6 @@
 module Foobara
   module CommandConnectors
     class Http < CommandConnector
-      def route(**)
-        request = context_to_request(**)
-
-        run_request(request)
-      end
-
       def not_allowed_to_run_reasons(registry_entry, command)
         # TODO: Need to move the command into the load_records state but not close the transaction...
         allowed_rule = registry_entry.allowed_rule

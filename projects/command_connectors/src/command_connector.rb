@@ -17,12 +17,8 @@ module Foobara
         # :nocov:
       end
 
-      def run_for_context(...)
+      def run(...)
         request = context_to_request(...)
-        run_request(request)
-      end
-
-      def run_request(request)
         request.run
         request
       end
