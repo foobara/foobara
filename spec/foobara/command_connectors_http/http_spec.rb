@@ -83,6 +83,26 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
     end
 
+    context "unknown error" do
+      before do
+        command_class.define_method :execute do
+          raise "kaboom!"
+        end
+      end
+
+      it "fails" do
+        expect(outcome).to_not be_success
+
+        expect(response.status).to be(500)
+        expect(response.headers).to eq({})
+
+        error = JSON.parse(response.body)["runtime.unknown"]
+
+        expect(error["message"]).to eq("kaboom!")
+        expect(error["is_fatal"]).to be(true)
+      end
+    end
+
     context "without querystring" do
       let(:query_string) { "" }
       let(:body) { "{\"exponent\":#{exponent},\"base\":#{base}}" }

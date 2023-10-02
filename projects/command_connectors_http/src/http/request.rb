@@ -1,10 +1,26 @@
 module Foobara
   module CommandConnectors
     class Http < CommandConnector
-      class UnknownError < StandardError; end
-      class NotFoundError < StandardError; end
-      class UnauthenticatedError < StandardError; end
-      class UnauthorizedError < StandardError; end
+      class UnknownError < Foobara::RuntimeError
+        attr_accessor :error
+
+        class << self
+          def context_type_declaration
+            {}
+          end
+        end
+
+        def initialize(error)
+          # TODO: can we just use #cause for this?
+          self.error = error
+
+          super(message: error.message, context: {})
+        end
+      end
+
+      class NotFoundError < Error; end
+      class UnauthenticatedError < Error; end
+      class UnauthorizedError < Error; end
 
       class Request < Foobara::CommandConnector::Request
         attr_accessor :path,
@@ -68,6 +84,12 @@ module Foobara
 
             Response.new(status, {}, body)
           end
+        end
+
+        def run
+          super
+        rescue => e
+          self.outcome = Outcome.error(UnknownError.new(e))
         end
       end
     end
