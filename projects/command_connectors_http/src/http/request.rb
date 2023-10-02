@@ -1,6 +1,11 @@
 module Foobara
   module CommandConnectors
     class Http < CommandConnector
+      class UnknownError < StandardError; end
+      class NotFoundError < StandardError; end
+      class UnauthenticatedError < StandardError; end
+      class UnauthorizedError < StandardError; end
+
       class Request < Foobara::CommandConnector::Request
         attr_accessor :path,
                       :query_string,

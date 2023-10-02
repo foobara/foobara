@@ -67,6 +67,22 @@ RSpec.describe Foobara::CommandConnectors::Http do
       expect(response.body).to eq("8")
     end
 
+    context "when inputs are bad" do
+      let(:query_string) { "some_bad_input=10" }
+
+      it "fails" do
+        expect(outcome).to_not be_success
+
+        expect(response.status).to be(422)
+        expect(response.headers).to eq({})
+
+        error = JSON.parse(response.body)["data.unexpected_attributes"]
+        unexpected_attributes = error["context"]["unexpected_attributes"]
+
+        expect(unexpected_attributes).to eq(["some_bad_input"])
+      end
+    end
+
     context "without querystring" do
       let(:query_string) { "" }
       let(:body) { "{\"exponent\":#{exponent},\"base\":#{base}}" }
