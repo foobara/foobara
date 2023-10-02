@@ -42,7 +42,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
   let(:base) { 2 }
   let(:exponent) { 3 }
 
-  let(:request) { command_connector.run(path:, method:, headers:, query_string:, body:) }
+  let(:request) { command_connector.run_for_context(path:, method:, headers:, query_string:, body:) }
   let(:outcome) { request.outcome }
   let(:result) { request.result }
 
@@ -60,6 +60,16 @@ RSpec.describe Foobara::CommandConnectors::Http do
     it "runs the command" do
       expect(outcome).to be_success
       expect(result).to be(8)
+    end
+
+    context "without querystring" do
+      let(:query_string) { "" }
+      let(:body) { "{\"exponent\":#{exponent},\"base\":#{base}}" }
+
+      it "runs the command" do
+        expect(outcome).to be_success
+        expect(result).to be(8)
+      end
     end
   end
 end

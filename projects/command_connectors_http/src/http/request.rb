@@ -10,7 +10,7 @@ module Foobara
                       :action,
                       :full_command_name
 
-        def initialize(registry, path:, method:, headers:, query_string:, body:)
+        def initialize(registry, path:, method:, headers: nil, query_string: nil, body: nil)
           self.path = path[1..]
           self.query_string = query_string
           self.method = method
@@ -30,11 +30,11 @@ module Foobara
         end
 
         def parsed_body
-          body.empty? ? {} : JSON.parse(body)
+          body.nil? || body.empty? ? {} : JSON.parse(body)
         end
 
         def parsed_query_string
-          @parsed_query_string ||= if query_string.empty?
+          @parsed_query_string ||= if query_string.nil? || query_string.empty?
                                      {}
                                    else
                                      CGI.parse(query_string).transform_values!(&:first)

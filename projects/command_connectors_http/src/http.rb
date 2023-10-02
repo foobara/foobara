@@ -48,14 +48,8 @@ module Foobara
         end
       end
 
-      def run(path:, method:, headers:, query_string:, body:)
-        request = self.class::Request.new(command_registry, path:, method:, headers:, query_string:, body:)
-        run_request(request)
-        request
-      end
-
-      def run_request(request)
-        request.run
+      def context_to_request(path:, method:, headers:, query_string:, body:)
+        self.class::Request.new(command_registry, path:, method:, headers:, query_string:, body:)
       end
     end
   end
