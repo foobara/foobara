@@ -6,23 +6,16 @@ module Foobara
                       :query_string,
                       :method,
                       :body,
-                      :headers,
-                      :action,
-                      :full_command_name
+                      :headers
 
-        def initialize(registry, path:, method:, headers: nil, query_string: nil, body: nil)
+        def initialize(registry_entry, path: nil, method: nil, headers: nil, query_string: nil, body: nil)
           self.path = path[1..]
           self.query_string = query_string
           self.method = method
           self.body = body
           self.headers = headers
 
-          action, full_command_name = self.path.split("/")
-
-          self.action = action
-          self.full_command_name = full_command_name
-
-          super(registry)
+          super(registry_entry)
         end
 
         def untransformed_inputs
@@ -44,33 +37,34 @@ module Foobara
         # TODO: how to transform into body + headers headers cleanly?? Maybe subclass of Outcome?
         def response
           @response ||= begin
-                          if outcome.success?
-                            body = JSON.fast_generate(outcome.result)
-                            status = 200
-                          else
-                            body = JSON.fast_generate(outcome.errors_hash)
+            if outcome.success?
+              body = JSON.fast_generate(outcome.result)
+              status = 200
+            else
+              body = JSON.fast_generate(outcome.errors_hash)
 
-                            errors = outcome.errors
+              errors = outcome.errors
 
-                            status = if errors.size == 1
-                                       error = errors.first
+              status = if errors.size == 1
+                         error = errors.first
 
-                                       case error
-                                       when UnknownError
-                                         500
-                                       when NotFoundError
-                                         404
-                                       when UnauthenticatedError
-                                         401
-                                       when UnauthorizedError
-                                         403
-                                       end
-                                     end || 422
-                          end
+                         case error
+                         when UnknownError
+                           500
+                         when NotFoundError
+                           404
+                         when UnauthenticatedError
+                           401
+                         when UnauthorizedError
+                           403
+                         end
+                       end || 422
+            end
 
-                          Response.new(status, {}, body)
-                        end
+            Response.new(status, {}, body)
+          end
         end
       end
     end
   end
+end

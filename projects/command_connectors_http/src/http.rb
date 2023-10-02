@@ -39,8 +39,38 @@ module Foobara
         end
       end
 
-      def context_to_request(path:, method:, headers:, query_string:, body:)
-        self.class::Request.new(command_registry, path:, method:, headers:, query_string:, body:)
+      def context_to_request(**context)
+        path = context[:path]
+
+        action, full_command_name = path[1..].split("/")
+
+        if action != "run"
+          command_name = case action
+                         when "manifest"
+                           "QueryManifest"
+                         when "commands"
+                           "QueryCommands"
+                         when "types"
+                           "QueryTypes"
+                         when "entities"
+                           "QueryEntities"
+                         else
+                           raise "Not sure what to do with #{action}"
+                         end
+
+          full_command_name = "Foobara::CommandConnector::#{command_name}"
+        end
+
+        registry_entry = command_registry[full_command_name]
+
+        unless registry_entry
+          raise "Could not find command registered for #{path}"
+        end
+
+        self.class::Request.new(registry_entry, **context)
+      rescue => e
+        binding.pry
+        raise
       end
     end
   end

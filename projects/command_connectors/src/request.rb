@@ -1,10 +1,10 @@
 module Foobara
   module CommandConnector
     class Request
-      attr_accessor :registry, :command, :transformed_inputs, :outcome
+      attr_accessor :registry_entry, :command, :transformed_inputs, :outcome
 
-      def initialize(registry)
-        self.registry = registry
+      def initialize(registry_entry)
+        self.registry_entry = registry_entry
       end
 
       def full_command_name
@@ -13,10 +13,6 @@ module Foobara
 
       def untransformed_inputs
         raise "subclass responsibility"
-      end
-
-      def registry_entry
-        @registry_entry ||= registry[full_command_name]
       end
 
       foobara_delegate :command_class,
