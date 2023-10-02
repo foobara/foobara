@@ -42,7 +42,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
   let(:base) { 2 }
   let(:exponent) { 3 }
 
-  let(:request) { command_connector.run_for_context(path:, method:, headers:, query_string:, body:) }
+  let(:request) { command_connector.route(path:, method:, headers:, query_string:, body:) }
   let(:response) { request.response }
   let(:outcome) { request.outcome }
   let(:result) { request.result }

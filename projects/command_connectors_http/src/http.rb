@@ -1,31 +1,10 @@
 module Foobara
   module CommandConnectors
     class Http < CommandConnector
-      def route(**context)
-        request = context_to_request(**context)
+      def route(**)
+        request = context_to_request(**)
 
-        action = request.action
-
-        if action != "run"
-          command_name = case action
-                         when "manifest"
-                           "QueryManifest"
-                         when "commands"
-                           "QueryCommands"
-                         when "types"
-                           "QueryTypes"
-                         when "entities"
-                           "QueryEntities"
-                         else
-                           raise "Not sure what to do with #{action}"
-                         end
-
-          request = route(context.merge(path: "/run/Foobara::CommandConnector::#{command_name}"))
-        end
-
-        request.run_for_context(**context)
-
-        response || Response.new(404, {}, "No route for #{action}")
+        run_request(request)
       end
 
       def not_allowed_to_run_reasons(registry_entry, command)
@@ -68,9 +47,6 @@ module Foobara
         end
 
         self.class::Request.new(registry_entry, **context)
-      rescue => e
-        binding.pry
-        raise
       end
     end
   end

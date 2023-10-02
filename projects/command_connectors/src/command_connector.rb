@@ -11,12 +11,6 @@ module Foobara
         command_registry.register(...)
       end
 
-      def run(...)
-        # :nocov:
-        raise "subclass responsibility"
-        # :nocov:
-      end
-
       def context_to_request(...)
         # :nocov:
         raise "subclass responsibility"
@@ -26,11 +20,11 @@ module Foobara
       def run_for_context(...)
         request = context_to_request(...)
         run_request(request)
-        request
       end
 
       def run_request(request)
         request.run
+        request
       end
     end
   end
