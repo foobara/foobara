@@ -1,6 +1,27 @@
 module Foobara
   module CommandConnectors
     class Http < CommandConnector
+      class UnknownError < Foobara::RuntimeError
+        attr_accessor :error
+
+        class << self
+          def context_type_declaration
+            {}
+          end
+        end
+
+        def initialize(error)
+          # TODO: can we just use #cause for this?
+          self.error = error
+
+          super(message: error.message, context: {})
+        end
+      end
+
+      class NotFoundError < Error; end
+      class UnauthenticatedError < Error; end
+      class UnauthorizedError < Error; end
+
       def not_allowed_to_run_reasons(registry_entry, command)
         # TODO: Need to move the command into the load_records state but not close the transaction...
         allowed_rule = registry_entry.allowed_rule

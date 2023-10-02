@@ -83,7 +83,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
     end
 
-    context "unknown error" do
+    context "when unknown error" do
       before do
         command_class.define_method :execute do
           raise "kaboom!"
@@ -100,6 +100,77 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         expect(error["message"]).to eq("kaboom!")
         expect(error["is_fatal"]).to be(true)
+      end
+    end
+
+    context "with an entity input" do
+      before do
+        Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
+      end
+
+      after do
+        Foobara.reset_alls
+      end
+
+      let(:command_class) do
+        user_class
+
+        stub_class = ->(klass) { stub_const(klass.name, klass) }
+
+        Class.new(Foobara::Command) do
+          class << self
+            def name
+              "QueryUser"
+            end
+          end
+
+          stub_class.call(self)
+
+          inputs user: User
+          result :User
+
+          load_all
+
+          def execute
+            user
+          end
+        end
+      end
+
+      let(:path) { "/run/QueryUser" }
+
+      let(:user_class) do
+        stub_class = ->(klass) { stub_const(klass.name, klass) }
+
+        Class.new(Foobara::Entity) do
+          class << self
+            def name
+              "User"
+            end
+          end
+
+          stub_class.call(self)
+
+          attributes id: :integer
+          primary_key :id
+        end
+      end
+
+      context "when not found error" do
+        let(:query_string) { "user=100" }
+        let(:body) { "" }
+
+        it "fails" do
+          expect(outcome).to_not be_success
+
+          expect(response.status).to be(404)
+          expect(response.headers).to eq({})
+
+          errors = JSON.parse(response.body)
+
+          expect(errors.size).to eq(1)
+          expect(errors.keys.first).to eq("runtime.user_not_found")
+        end
       end
     end
 

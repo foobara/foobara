@@ -1,27 +1,6 @@
 module Foobara
   module CommandConnectors
     class Http < CommandConnector
-      class UnknownError < Foobara::RuntimeError
-        attr_accessor :error
-
-        class << self
-          def context_type_declaration
-            {}
-          end
-        end
-
-        def initialize(error)
-          # TODO: can we just use #cause for this?
-          self.error = error
-
-          super(message: error.message, context: {})
-        end
-      end
-
-      class NotFoundError < Error; end
-      class UnauthenticatedError < Error; end
-      class UnauthorizedError < Error; end
-
       class Request < Foobara::CommandConnector::Request
         attr_accessor :path,
                       :query_string,
@@ -72,7 +51,8 @@ module Foobara
                          case error
                          when UnknownError
                            500
-                         when NotFoundError
+                         when NotFoundError, Foobara::Command::Concerns::Entities::NotFoundError
+                           # TODO: we should not be coupled to Entities here...
                            404
                          when UnauthenticatedError
                            401
