@@ -2,6 +2,7 @@ module Foobara
   # TODO: move to foobara monorepo if this is generic...
   class CommandRegistry
     class Entry
+      # TODO: add request transformers and response transformers
       attr_accessor :command_class,
                     :inputs_transformers,
                     :result_transformers,

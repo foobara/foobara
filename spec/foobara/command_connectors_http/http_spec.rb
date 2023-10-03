@@ -52,10 +52,13 @@ RSpec.describe Foobara::CommandConnectors::Http do
   let(:headers) { { some_header_name: "some_header_value" } }
   let(:query_string) { "base=#{base}" }
   let(:body) { "{\"exponent\":#{exponent}}" }
+  let(:inputs_transformers) { nil }
+  let(:result_transformers) { nil }
+  let(:errors_transformers) { nil }
 
   describe "#run_command" do
     before do
-      command_connector.connect(command_class)
+      command_connector.connect(command_class, inputs_transformers:, result_transformers:, errors_transformers:)
     end
 
     it "runs the command" do
@@ -100,6 +103,31 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         expect(error["message"]).to eq("kaboom!")
         expect(error["is_fatal"]).to be(true)
+      end
+    end
+
+    context "with various transformers" do
+      let(:query_string) { "bbaassee=#{base}" }
+
+      let(:inputs_transformers) { [inputs_transformer] }
+      let(:inputs_transformer) do
+        Class.new(Foobara::Value::Transformer) do
+          def transform(inputs)
+            {
+              base: inputs["bbaassee"],
+              exponent: inputs["exponent"]
+            }
+          end
+        end
+      end
+
+      it "runs the command" do
+        expect(outcome).to be_success
+        expect(result).to be(8)
+
+        expect(response.status).to be(200)
+        expect(response.headers).to eq({})
+        expect(response.body).to eq("8")
       end
     end
 

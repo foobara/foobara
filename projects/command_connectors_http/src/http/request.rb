@@ -67,6 +67,7 @@ module Foobara
         end
 
         def run
+          # TODO: handle this through a transformer? Or no?
           super
         rescue => e
           self.outcome = Outcome.error(UnknownError.new(e))
