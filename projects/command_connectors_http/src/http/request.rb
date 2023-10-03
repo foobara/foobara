@@ -69,6 +69,7 @@ module Foobara
         def run
           super
         rescue => e
+          raise # disable when debugged stuff
           self.outcome = Outcome.error(UnknownError.new(e))
         end
       end

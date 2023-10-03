@@ -16,9 +16,9 @@ module Foobara
       end
 
       foobara_delegate :command_class,
-                       :inputs_transformer,
-                       :result_transformer,
-                       :errors_transformer,
+                       :inputs_transformers,
+                       :result_transformers,
+                       :errors_transformers,
                        :allowed_rule,
                        to: :registry_entry
 
@@ -33,15 +33,44 @@ module Foobara
       end
 
       def transform_inputs
-        self.transformed_inputs = if inputs_transformer
-                                    if inputs_transformer.arity > 1
-                                      inputs_transformer.call(untransformed_inputs, self)
-                                    else
-                                      inputs_transformer.call(untransformed_inputs)
-                                    end
-                                  else
-                                    untransformed_inputs
-                                  end
+        self.transformed_inputs = inputs_transformer.process_value!(untransformed_inputs)
+      end
+
+      def transform_result
+        self.outcome = Outcome.success(result_transformer.process_value!(result))
+      end
+
+      def transform_errors
+        self.outcome = Outcome.errors(errors_transformer.process_value!(errors))
+      end
+
+      def inputs_transformer(inputs)
+        processors = transformers_to_processors(inputs_transformers)
+        Value::Processor::Pipeline.new(processors).process_value!(inputs)
+      end
+
+      def result_transformer
+        processors = transformers_to_processors(result_transformers)
+        Value::Processor::Pipeline.new(processors).process_value!(result)
+      end
+
+      def errors_transformer
+        processors = transformers_to_processors(errors_transformers)
+        Value::Processor::Pipeline.new(processors).process_value!(errors)
+      end
+
+      def transformers_to_processors(transformers)
+        transformers.map do |transformer|
+          if transformer.is_a?(Class)
+            transformer.new(self)
+          elsif transformer.is_a?(Value::Processor)
+            transformer
+          elsif transformer.respond_to?(:call)
+            Value::Transformer.subclass(transform: transformer)
+          else
+            raise "Not sure how to apply #{inputs_transformer}"
+          end
+        end
       end
 
       def construct_command
@@ -80,30 +109,6 @@ module Foobara
           transform_result
         else
           transform_errors
-        end
-      end
-
-      def transform_result
-        if result_transformer
-          self.result = if result_transformer.arity > 1
-                          result_transformer.call(result, self)
-                        else
-                          result_transformer.call(result)
-                        end
-        end
-
-        self.outcome = Outcome.success(result)
-      end
-
-      def transform_errors
-        if errors_transformer
-          errors = if errors_transformer.arity > 1
-                     errors_transformer.call(self.errors, self)
-                   else
-                     errors_transformer.call(self.errors)
-                   end
-
-          self.outcome = Outcome.errors(errors)
         end
       end
 

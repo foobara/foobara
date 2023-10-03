@@ -58,7 +58,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
       command_connector.connect(command_class)
     end
 
-    it "runs the command" do
+    it "runs the command", :focus do
+      binding.pry
       expect(outcome).to be_success
       expect(result).to be(8)
 
