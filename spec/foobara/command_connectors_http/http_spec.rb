@@ -130,6 +130,19 @@ RSpec.describe Foobara::CommandConnectors::Http do
         expect(response.headers).to eq({})
         expect(response.body).to eq("16")
       end
+
+      context "with transformer instance instead of class" do
+        let(:inputs_transformers) { [inputs_transformer.instance] }
+
+        it "runs the command" do
+          expect(outcome).to be_success
+          expect(result).to be(16)
+
+          expect(response.status).to be(200)
+          expect(response.headers).to eq({})
+          expect(response.body).to eq("16")
+        end
+      end
     end
 
     context "with an entity input" do
