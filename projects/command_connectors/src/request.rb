@@ -124,7 +124,9 @@ module Foobara
         if command.respond_to?(method_name)
           command.send(method_name, *, **, &)
         else
+          # :nocov:
           super
+          # :nocov:
         end
       end
 
