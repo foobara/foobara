@@ -88,7 +88,8 @@ module Foobara
 
         if rule
           command.after_load_records do |command:, **|
-            is_allowed = instance_eval(&rule)
+            # use validation errors instead???
+            is_allowed = instance_eval { rule.call }
 
             unless is_allowed
               command.not_allowed!

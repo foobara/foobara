@@ -55,10 +55,17 @@ RSpec.describe Foobara::CommandConnectors::Http do
   let(:inputs_transformers) { nil }
   let(:result_transformers) { nil }
   let(:errors_transformers) { nil }
+  let(:allowed_rule) { nil }
 
   describe "#run_command" do
     before do
-      command_connector.connect(command_class, inputs_transformers:, result_transformers:, errors_transformers:)
+      command_connector.connect(
+        command_class,
+        inputs_transformers:,
+        result_transformers:,
+        errors_transformers:,
+        allowed_rule:
+      )
     end
 
     it "runs the command" do
@@ -141,6 +148,23 @@ RSpec.describe Foobara::CommandConnectors::Http do
           expect(response.status).to be(200)
           expect(response.headers).to eq({})
           expect(response.body).to eq("16")
+        end
+      end
+    end
+
+    context "with allowed rule" do
+      let(:allowed_rule) do
+        -> { base == 2 }
+      end
+
+      context "when allowed" do
+        it "runs the command" do
+          expect(outcome).to be_success
+          expect(result).to be(8)
+
+          expect(response.status).to be(200)
+          expect(response.headers).to eq({})
+          expect(response.body).to eq("8")
         end
       end
     end
