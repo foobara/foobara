@@ -44,19 +44,19 @@ module Foobara
         self.outcome = Outcome.errors(errors_transformer.process_value!(errors))
       end
 
-      def inputs_transformer(inputs)
+      def inputs_transformer
         processors = transformers_to_processors(inputs_transformers)
-        Value::Processor::Pipeline.new(processors).process_value!(inputs)
+        Value::Processor::Pipeline.new(processors:)
       end
 
       def result_transformer
         processors = transformers_to_processors(result_transformers)
-        Value::Processor::Pipeline.new(processors).process_value!(result)
+        Value::Processor::Pipeline.new(processors:)
       end
 
       def errors_transformer
         processors = transformers_to_processors(errors_transformers)
-        Value::Processor::Pipeline.new(processors).process_value!(errors)
+        Value::Processor::Pipeline.new(processors:)
       end
 
       def transformers_to_processors(transformers)
