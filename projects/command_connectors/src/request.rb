@@ -1,5 +1,5 @@
 module Foobara
-  module CommandConnector
+  class CommandConnector
     class Request
       attr_accessor :registry_entry, :command, :transformed_inputs, :outcome
 
@@ -93,15 +93,31 @@ module Foobara
             is_allowed = instance_eval(&rule)
 
             unless is_allowed
-              command.not_allowed!
-              command.outcome = Outcome.error(NotAllowedError.new(allowed_rule.explanation))
+              explanation = allowed_rule.explanation
+
+              if explanation.is_a?(Proc)
+                explanation = instance_eval(&explanation)
+              end
+
+              if explanation.nil?
+                explanation = allowed_rule.block.source || "No explanation."
+              end
+
+              self.outcome = Outcome.error(CommandConnector::NotAllowedError.new(explanation))
+
+              command.state_machine.error!
+              command.halt!
             end
           end
         end
       end
 
       def run_command
-        self.outcome = command.run
+        outcome = command.run
+
+        if outcome
+          self.outcome = outcome
+        end
       end
 
       def result

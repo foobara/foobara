@@ -47,7 +47,7 @@ module Foobara
         inputs_transformers: [*inputs_transformers, *default_inputs_transformers],
         result_transformers: [*result_transformers, *default_result_transformers],
         errors_transformers: [*errors_transformers, *default_errors_transformers],
-        allowed_rule:
+        allowed_rule: allowed_rule && AllowedRule.to_allowed_rule(allowed_rule)
       )
 
       registry[command_class.full_command_name] = entry

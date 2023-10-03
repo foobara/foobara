@@ -49,14 +49,14 @@ module Foobara
                          error = errors.first
 
                          case error
-                         when UnknownError
+                         when CommandConnector::UnknownError
                            500
-                         when NotFoundError, Foobara::Command::Concerns::Entities::NotFoundError
+                         when CommandConnector::NotFoundError, Foobara::Command::Concerns::Entities::NotFoundError
                            # TODO: we should not be coupled to Entities here...
                            404
-                         when UnauthenticatedError
+                         when CommandConnector::UnauthenticatedError
                            401
-                         when UnauthorizedError
+                         when CommandConnector::NotAllowedError
                            403
                          end
                        end || 422
@@ -71,7 +71,7 @@ module Foobara
         rescue => e
           # raise # uncomment when debugging
           # TODO: move to superclass?
-          self.outcome = Outcome.error(UnknownError.new(e))
+          self.outcome = Outcome.error(CommandConnector::UnknownError.new(e))
         end
       end
     end

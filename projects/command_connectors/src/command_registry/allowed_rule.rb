@@ -20,10 +20,17 @@ module Foobara
           when ::Hash
             rule_attributes = allowed_rule_attributes_type.process_value!(object)
 
-            allowed_rule = to_allowed_rule(object[:logic])
+            allowed_rule = to_allowed_rule(rule_attributes[:logic])
 
-            allowed_rule.symbol = rule_attributes[:symbol]
-            allowed_rule.explanation ||= rule_attributes[:explanation]
+            if rule_attributes.key?(:symbol)
+              allowed_rule.symbol = rule_attributes[:symbol]
+            end
+
+            if rule_attributes.key?(:explanation)
+              allowed_rule.explanation = rule_attributes[:explanation]
+            end
+
+            allowed_rule.explanation ||= allowed_rule.symbol
 
             allowed_rule
           when ::Array
@@ -54,7 +61,8 @@ module Foobara
         def allowed_rule_attributes_type
           @allowed_rule_attributes_type ||= TypeDeclarations::Namespace.global.type_for_declaration(
             symbol: :symbol,
-            explanation: :string,
+            # TODO: add a function type and a way to union two types so that we can string or function type checking
+            explanation: :duck,
             logic: :duck
           )
         end
@@ -65,11 +73,15 @@ module Foobara
       def initialize(symbol: nil, explanation: nil, &block)
         self.symbol = symbol
         self.block = block
-        self.explanation = explanation
+        self.explanation = explanation || symbol
       end
 
       def call
         block.call
+      end
+
+      def to_proc
+        block
       end
     end
   end

@@ -41,13 +41,17 @@ module Foobara
 
           @outcome
         rescue Halt
+          rollback_transaction
+
+          return outcome if state_machine.currently_errored?
+
           if error_collection.empty?
             # :nocov:
-            raise CannotHaltWithoutAddingErrors, "Cannot halt without adding errors first"
+            raise CannotHaltWithoutAddingErrors, "Cannot halt without adding errors first. " \
+                                                 "Either add errors or use error! transition instead."
             # :nocov:
           end
 
-          rollback_transaction
           state_machine.fail!
 
           @outcome = Outcome.errors(error_collection)
