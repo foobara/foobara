@@ -120,14 +120,15 @@ RSpec.describe Foobara::CommandConnectors::Http do
           end
         end
       end
+      let(:result_transformers) { [->(result) { result * 2 }] }
 
       it "runs the command" do
         expect(outcome).to be_success
-        expect(result).to be(8)
+        expect(result).to be(16)
 
         expect(response.status).to be(200)
         expect(response.headers).to eq({})
-        expect(response.body).to eq("8")
+        expect(response.body).to eq("16")
       end
     end
 

@@ -21,6 +21,7 @@ module Foobara
           subclass(options).instance
         end
 
+        # TODO: make transform the first argument for convenience
         def subclass(options)
           arity_zero = %i[name always_applicable? priority]
           arity_one = %i[applicable? transform]

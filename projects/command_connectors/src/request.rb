@@ -66,7 +66,7 @@ module Foobara
           elsif transformer.is_a?(Value::Processor)
             transformer
           elsif transformer.respond_to?(:call)
-            Value::Transformer.subclass(transform: transformer)
+            Value::Transformer.create(transform: transformer)
           else
             raise "Not sure how to apply #{inputs_transformer}"
           end
