@@ -8,11 +8,15 @@ module Foobara
       end
 
       def full_command_name
+        # :nocov:
         raise "subclass responsibility"
+        # :nocov:
       end
 
       def untransformed_inputs
+        # :nocov:
         raise "subclass responsibility"
+        # :nocov:
       end
 
       foobara_delegate :command_class,
@@ -68,7 +72,9 @@ module Foobara
           elsif transformer.respond_to?(:call)
             Value::Transformer.create(transform: transformer)
           else
+            # :nocov:
             raise "Not sure how to apply #{inputs_transformer}"
+            # :nocov:
           end
         end
       end
