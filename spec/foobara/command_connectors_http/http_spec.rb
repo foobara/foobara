@@ -193,6 +193,20 @@ RSpec.describe Foobara::CommandConnectors::Http do
           expect(response.headers).to eq({})
           expect(JSON.parse(response.body)["runtime.not_allowed"]["message"]).to eq("Must be 1900 but was 2")
         end
+
+        context "without explanation" do
+          let(:allowed_rule) do
+            proc { base == 1900 }
+          end
+
+          it "runs the command" do
+            expect(outcome).to_not be_success
+
+            expect(response.status).to be(403)
+            expect(response.headers).to eq({})
+            expect(JSON.parse(response.body)["runtime.not_allowed"]["message"]).to match(/base == 1900/)
+          end
+        end
       end
     end
 
