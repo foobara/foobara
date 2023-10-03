@@ -88,8 +88,9 @@ module Foobara
 
         if rule
           command.after_load_records do |command:, **|
-            # use validation errors instead???
-            is_allowed = instance_eval { rule.call }
+            # NOTE: apparently no way to convert a lambda to a proc but lambda's won't work here...
+            # TODO: raise exception here if rule.lambda? is true, if this starts becoming a common error
+            is_allowed = instance_eval(&rule)
 
             unless is_allowed
               command.not_allowed!

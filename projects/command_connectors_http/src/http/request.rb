@@ -69,6 +69,7 @@ module Foobara
         def run
           super
         rescue => e
+          # raise # uncomment when debugging
           # TODO: move to superclass?
           self.outcome = Outcome.error(UnknownError.new(e))
         end

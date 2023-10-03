@@ -154,7 +154,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
     context "with allowed rule" do
       let(:allowed_rule) do
-        -> { base == 2 }
+        proc { base == 2 }
       end
 
       context "when allowed" do
