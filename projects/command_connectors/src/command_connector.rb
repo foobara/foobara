@@ -24,12 +24,19 @@ module Foobara
     end
 
     class NotFoundError < CommandConnectorError; end
-    class UnauthenticatedError < CommandConnectorError; end
+
+    class UnauthenticatedError < CommandConnectorError
+      def initialize
+        super("Unauthenticated")
+      end
+    end
+
     class NotAllowedError < CommandConnectorError; end
 
-    attr_accessor :command_registry
+    attr_accessor :command_registry, :authenticator
 
-    def initialize
+    def initialize(authenticator: nil)
+      self.authenticator = authenticator
       self.command_registry = CommandRegistry.new
     end
 

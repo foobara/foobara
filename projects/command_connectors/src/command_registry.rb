@@ -35,19 +35,30 @@ module Foobara
                      :default_allowed_rule,
                      to: :class
 
+    attr_accessor :registry, :authenticator
+
+    def initialize(authenticator: nil)
+      self.authenticator = authenticator
+      self.registry = {}
+    end
+
     def register(
       command_class,
       inputs_transformers: nil,
       result_transformers: nil,
       errors_transformers: nil,
-      allowed_rule: default_allowed_rule
+      allowed_rule: default_allowed_rule,
+      requires_authentication: nil,
+      authenticator: self.authenticator
     )
       entry = Entry.new(
         command_class,
         inputs_transformers: [*inputs_transformers, *default_inputs_transformers],
         result_transformers: [*result_transformers, *default_result_transformers],
         errors_transformers: [*errors_transformers, *default_errors_transformers],
-        allowed_rule: allowed_rule && AllowedRule.to_allowed_rule(allowed_rule)
+        allowed_rule: allowed_rule && AllowedRule.to_allowed_rule(allowed_rule),
+        requires_authentication:,
+        authenticator:
       )
 
       registry[command_class.full_command_name] = entry
@@ -61,10 +72,6 @@ module Foobara
             end
 
       registry[key]
-    end
-
-    def registry
-      @registry ||= {}
     end
 
     def allowed_rule_registry

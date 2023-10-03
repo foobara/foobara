@@ -1,7 +1,7 @@
 module Foobara
   class CommandConnector
     class Request
-      attr_accessor :registry_entry, :command, :transformed_inputs, :outcome
+      attr_accessor :registry_entry, :command, :transformed_inputs, :outcome, :authenticated_user
 
       def initialize(registry_entry)
         self.registry_entry = registry_entry
@@ -24,16 +24,22 @@ module Foobara
                        :result_transformers,
                        :errors_transformers,
                        :allowed_rule,
+                       :authenticator,
                        to: :registry_entry
 
       def run
         transform_inputs
         construct_command
+        authenticate if requires_authentication?
         apply_allowed_rule
         run_command
         transform_outcome
 
         outcome
+      end
+
+      def requires_authentication?
+        registry_entry.requires_authentication
       end
 
       def transform_inputs
@@ -81,6 +87,19 @@ module Foobara
 
       def construct_command
         self.command = command_class.new(transformed_inputs)
+      end
+
+      def authenticate
+        command.after_load_records do |command:, **|
+          self.authenticated_user = instance_eval(&:authenticator)
+
+          unless authenticated_user
+            self.outcome = Outcome.error(CommandConnector::UnauthenticatedError.new)
+
+            command.state_machine.error!
+            command.halt!
+          end
+        end
       end
 
       def apply_allowed_rule

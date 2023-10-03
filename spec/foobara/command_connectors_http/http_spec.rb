@@ -36,8 +36,10 @@ RSpec.describe Foobara::CommandConnectors::Http do
   end
 
   let(:command_connector) do
-    described_class.new
+    described_class.new(authenticator:)
   end
+
+  let(:authenticator) { nil }
 
   let(:base) { 2 }
   let(:exponent) { 3 }
@@ -56,6 +58,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
   let(:result_transformers) { nil }
   let(:errors_transformers) { nil }
   let(:allowed_rule) { nil }
+  let(:requires_authentication) { nil }
 
   describe "#run_command" do
     before do
@@ -64,7 +67,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
         inputs_transformers:,
         result_transformers:,
         errors_transformers:,
-        allowed_rule:
+        allowed_rule:,
+        requires_authentication:
       )
     end
 
@@ -186,7 +190,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
           }
         end
 
-        it "runs the command" do
+        it "fails with 401 and relevant error" do
           expect(outcome).to_not be_success
 
           expect(response.status).to be(403)
@@ -199,12 +203,26 @@ RSpec.describe Foobara::CommandConnectors::Http do
             proc { base == 1900 }
           end
 
-          it "runs the command" do
+          it "fails with 401 and relevant error" do
             expect(outcome).to_not be_success
 
             expect(response.status).to be(403)
             expect(response.headers).to eq({})
             expect(JSON.parse(response.body)["runtime.not_allowed"]["message"]).to match(/base == 1900/)
+          end
+        end
+      end
+
+      context "when authentication required" do
+        let(:requires_authentication) { true }
+
+        context "when unauthenticated" do
+          it "is 401" do
+            expect(outcome).to_not be_success
+
+            expect(response.status).to be(401)
+            expect(response.headers).to eq({})
+            expect(JSON.parse(response.body).keys).to eq(["runtime.unauthenticated"])
           end
         end
       end
