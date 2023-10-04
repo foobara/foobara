@@ -37,7 +37,7 @@ module Foobara
 
     def initialize(authenticator: nil)
       self.authenticator = authenticator
-      self.command_registry = CommandRegistry.new
+      self.command_registry = CommandRegistry.new(authenticator:)
     end
 
     def connect(...)

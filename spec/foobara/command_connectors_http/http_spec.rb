@@ -131,6 +131,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
           end
         end
       end
+
       let(:result_transformers) { [->(result) { result * 2 }] }
 
       it "runs the command" do
@@ -223,6 +224,22 @@ RSpec.describe Foobara::CommandConnectors::Http do
             expect(response.status).to be(401)
             expect(response.headers).to eq({})
             expect(JSON.parse(response.body).keys).to eq(["runtime.unauthenticated"])
+          end
+        end
+
+        context "when authenticated" do
+          let(:authenticator) do
+            # normally we would return a user but we'll just generate a pointless integer
+            # to test proxying to the request
+            proc { path.length }
+          end
+
+          it "is 200" do
+            expect(outcome).to be_success
+
+            expect(response.status).to be(200)
+            expect(response.headers).to eq({})
+            expect(JSON.parse(response.body)).to eq(8)
           end
         end
       end
