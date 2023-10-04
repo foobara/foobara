@@ -177,47 +177,51 @@ RSpec.describe Foobara::CommandConnectors::Http do
     end
 
     context "with allowed rule" do
-      let(:allowed_rule) do
-        logic = proc { base == 2 }
-
-        {
-          logic:,
-          symbol: :must_be_base_2
-        }
-      end
-
-      context "when allowed" do
-        it "runs the command" do
-          expect(request).to respond_to(:base)
-
-          expect(outcome).to be_success
-          expect(result).to be(8)
-
-          expect(response.status).to be(200)
-          expect(response.headers).to eq({})
-          expect(response.body).to eq("8")
-        end
-      end
-
-      context "when not allowed" do
+      context "when declared with a hash" do
         let(:allowed_rule) do
-          logic = proc { base == 1900 }
+          logic = proc { base == 2 }
 
           {
             logic:,
-            symbol: :must_be_base_1900,
-            explanation: proc { "Must be 1900 but was #{base}" }
+            symbol: :must_be_base_2
           }
         end
 
-        it "fails with 401 and relevant error" do
-          expect(outcome).to_not be_success
+        context "when allowed" do
+          it "runs the command" do
+            expect(request).to respond_to(:base)
 
-          expect(response.status).to be(403)
-          expect(response.headers).to eq({})
-          expect(JSON.parse(response.body)["runtime.not_allowed"]["message"]).to eq("Must be 1900 but was 2")
+            expect(outcome).to be_success
+            expect(result).to be(8)
+
+            expect(response.status).to be(200)
+            expect(response.headers).to eq({})
+            expect(response.body).to eq("8")
+          end
         end
 
+        context "when not allowed" do
+          let(:allowed_rule) do
+            logic = proc { base == 1900 }
+
+            {
+              logic:,
+              symbol: :must_be_base_1900,
+              explanation: proc { "Must be 1900 but was #{base}" }
+            }
+          end
+
+          it "fails with 401 and relevant error" do
+            expect(outcome).to_not be_success
+
+            expect(response.status).to be(403)
+            expect(response.headers).to eq({})
+            expect(JSON.parse(response.body)["runtime.not_allowed"]["message"]).to eq("Must be 1900 but was 2")
+          end
+        end
+      end
+
+      context "when declared with a proc" do
         context "without explanation" do
           let(:allowed_rule) do
             proc { base == 1900 }
