@@ -63,7 +63,6 @@ module Foobara
     def allowed_rules(hash)
       hash.map do |symbol, ruleish|
         allowed_rule = to_allowed_rule(ruleish)
-        binding.pry
         allowed_rule.symbol = symbol
 
         allowed_rule(allowed_rule)
@@ -104,7 +103,6 @@ module Foobara
         allowed_rule = allowed_rule_registry[object]
 
         unless allowed_rule
-          binding.pry
           raise "No allowed rule found for #{object}"
         end
 

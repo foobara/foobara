@@ -241,7 +241,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
         end
 
         context "when allowed" do
-          it "runs the command", :focus do
+          it "runs the command" do
             expect(request).to respond_to(:base)
 
             expect(outcome).to be_success
