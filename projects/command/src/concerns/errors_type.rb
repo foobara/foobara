@@ -44,15 +44,7 @@ module Foobara
           end
 
           def register_possible_error_class(key, error_class)
-            key = key.to_s
-
-            if error_context_type_map.key?(key)
-              # :nocov:
-              raise "Cannot set #{key} twice"
-              # :nocov:
-            end
-
-            error_context_type_map[key] = error_class
+            error_context_type_map[key.to_s] = error_class
           end
 
           # TODO: should we cache these???
