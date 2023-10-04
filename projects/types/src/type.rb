@@ -164,14 +164,23 @@ module Foobara
         end
       end
 
-      def manifest
+      def manifest(verbose: true)
+        return type_symbol if !verbose && registered?
+
         h = Util.remove_empty(
           target_classes: target_classes.map(&:name),
           base_type: base_type&.full_type_name,
-          declaration_data:,
-          supported_processors: supported_processor_manifest,
-          processors: processor_manifest
+          declaration_data:
         )
+
+        if verbose
+          h = h.merge(
+            Util.remove_empty(
+              supported_processors: supported_processor_manifest,
+              processors: processor_manifest
+            )
+          )
+        end
 
         target_classes.each do |target_class|
           if target_class.respond_to?(:foobara_manifest)
