@@ -62,5 +62,41 @@ module Foobara
       request.run
       request
     end
+
+    def command_manifest
+      h = {}
+
+      types_depended_on = Set.new
+
+      # TODO: should group by org and domain...
+      command_registry.registry.each_value.each do |entry|
+        manifest = entry.manifest
+
+        organization_name = manifest[:organization_name] || :global_organization
+        domain_name = manifest[:domain_name] || :global_domain
+        command_name = manifest[:command_name]
+
+        org = h[organization_name.to_sym] ||= {}
+        domain = org[domain_name.to_sym] ||= { commands: {}, types: {} }
+
+        domain[:commands][command_name.to_sym] = manifest
+
+        types_depended_on += entry.types_depended_on
+      end
+
+      types_depended_on.select(&:registered?).each do |type|
+        domain = Domain.to_domain(type)
+
+        organization_name = domain.organization_name || :global_organization
+        domain_name = domain.domain_name || :global_domain
+
+        org = h[organization_name.to_sym] ||= {}
+        domain = org[domain_name.to_sym] ||= { commands: {}, types: {} }
+
+        domain[:types][type.type_symbol] = type.manifest
+      end
+
+      h
+    end
   end
 end
