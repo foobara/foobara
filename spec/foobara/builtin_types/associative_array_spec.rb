@@ -35,6 +35,12 @@ RSpec.describe ":associative_array" do
         )
       end
 
+      describe "#types_depended_on" do
+        it "includes the key type" do
+          expect(type.registered_types_depended_on.map(&:type_symbol)).to include(:boolean)
+        end
+      end
+
       describe "#possible_errors" do
         it "contains expected possible errors" do
           expect(type.possible_errors).to eq(

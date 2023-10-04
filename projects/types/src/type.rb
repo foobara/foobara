@@ -3,6 +3,7 @@ module Foobara
     # TODO: move casting interface to here?
     class Type < Value::Processor::Pipeline
       include Concerns::SupportedProcessorRegistration
+      include Concerns::Reflection
 
       class << self
         attr_accessor :root_type
@@ -267,6 +268,10 @@ module Foobara
           transformers: transformers_manifest,
           validators: validators_manifest
         )
+      end
+
+      def registered?
+        !!type_symbol
       end
     end
   end
