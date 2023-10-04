@@ -14,7 +14,7 @@ module Foobara
               value_type_declaration = type.declaration_data[:value_type_declaration]
 
               if key_type_declaration || value_type_declaration
-                type.element_type = [
+                type.element_types = [
                   type_for_declaration(key_type_declaration || :duck),
                   type_for_declaration(value_type_declaration || :duck)
                 ]

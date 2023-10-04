@@ -30,7 +30,7 @@ module Foobara
                   end
                 end
               when ::Array
-                element.each do |type|
+                element_types.each do |type|
                   type.types_depended_on(result)
                 end
               end
