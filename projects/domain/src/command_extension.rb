@@ -50,8 +50,17 @@ module Foobara
           domain.organization
         end
 
-        def manifest
-          super.merge(full_command_name:)
+        def manifest(verbose: false)
+          if verbose
+            super.merge(
+              command_name:,
+              domain_name:,
+              organization_name:
+            )
+          else
+            # TODO: this seems awkward
+            super(verbose: true)
+          end
         end
 
         foobara_delegate :domain_name, :organization_name, to: :domain, allow_nil: true

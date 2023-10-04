@@ -18,7 +18,7 @@ module Foobara
             remove_instance_variable("@all") if instance_variable_defined?("@all")
           end
 
-          def manifest
+          def manifest(verbose: false)
             h = Util.remove_empty(
               error_types: errors_type_declaration,
               depends_on: depends_on.map(&:to_s)
@@ -30,6 +30,10 @@ module Foobara
 
             if result_type
               h[:result_type] = result_type.declaration_data
+            end
+
+            if verbose
+              h[:full_command_name] = full_command_name
             end
 
             h
