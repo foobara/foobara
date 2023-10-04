@@ -21,10 +21,6 @@ module Foobara
         self.explanation = explanation || symbol
       end
 
-      def call
-        block.call
-      end
-
       def to_proc
         block
       end

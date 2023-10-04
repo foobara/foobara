@@ -54,7 +54,9 @@ module Foobara
       allowed_rule = to_allowed_rule(ruleish)
 
       unless allowed_rule.symbol
+        # :nocov:
         raise "Cannot register a rule without a symbol"
+        # :nocov:
       end
 
       allowed_rule_registry[allowed_rule.symbol] = allowed_rule
@@ -103,7 +105,9 @@ module Foobara
         allowed_rule = allowed_rule_registry[object]
 
         unless allowed_rule
+          # :nocov:
           raise "No allowed rule found for #{object}"
+          # :nocov:
         end
 
         allowed_rule
@@ -143,7 +147,9 @@ module Foobara
         if object.respond_to?(:call)
           AllowedRule.new(&object)
         else
+          # :nocov:
           raise "Not sure how to convert #{object} into an AllowedRule object"
+          # :nocov:
         end
       end
     end

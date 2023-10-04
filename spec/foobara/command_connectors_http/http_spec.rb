@@ -261,6 +261,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
           end
 
           it "fails with 401 and relevant error" do
+            expect(command_connector.command_registry[ComputeExponential].command_class).to eq(ComputeExponential)
+
             expect(outcome).to_not be_success
 
             expect(response.status).to be(403)
