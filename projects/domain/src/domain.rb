@@ -145,11 +145,18 @@ module Foobara
           object
         when DomainModuleExtension
           object.foobara_domain
+        when Types::Type
+          namespace = TypeDeclarations::Namespace.namespace_for_type(object)
+          domain_for_namespace(namespace)
         else
           # :nocov:
           raise ArgumentError, "Couldn't determine domain for #{object}"
           # :nocov:
         end
+      end
+
+      def domain_for_namespace(namespace)
+        all.values.find { |domain| domain.type_namespace == namespace }
       end
 
       def global

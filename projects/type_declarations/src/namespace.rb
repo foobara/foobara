@@ -39,6 +39,14 @@ module Foobara
           namespace
         end
 
+        def namespace_for_type(type)
+          namespace_for_type_registry(type.type_registry)
+        end
+
+        def namespace_for_type_registry(type_registry)
+          namespaces.find { |namespace| namespace.type_registry == type_registry }
+        end
+
         def current
           Thread.current[:foobara_namespace] || global
         end

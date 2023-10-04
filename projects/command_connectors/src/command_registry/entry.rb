@@ -33,6 +33,10 @@ module Foobara
         # TODO: need to delegate to the transformers when present, not the command!
         command_class.manifest(verbose: true)
       end
+
+      def types_depended_on
+        command_class.types_depended_on
+      end
     end
   end
 end
