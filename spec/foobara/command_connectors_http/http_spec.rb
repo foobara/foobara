@@ -263,6 +263,12 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
 
       let(:path) { "/run/QueryUser" }
+      let(:query_string) { "user=#{user_id}" }
+      let(:body) { "" }
+
+      let(:result_transformers) {
+        [proc { |user| user.attributes }]
+      }
 
       let(:user_class) do
         stub_class = ->(klass) { stub_const(klass.name, klass) }
@@ -276,14 +282,29 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
           stub_class.call(self)
 
-          attributes id: :integer
+          attributes id: :integer, name: :string
           primary_key :id
         end
       end
 
+      context "when user exists" do
+        let(:user_id) do
+          User.transaction do
+            User.create(name: :whatever)
+          end.id
+        end
+
+        it "finds the user" do
+          expect(outcome).to be_success
+
+          expect(response.status).to be(200)
+          expect(response.headers).to eq({})
+          expect(JSON.parse(response.body)).to eq("id" => user_id, "name" => "whatever")
+        end
+      end
+
       context "when not found error" do
-        let(:query_string) { "user=100" }
-        let(:body) { "" }
+        let(:user_id) { 100 }
 
         it "fails" do
           expect(outcome).to_not be_success
