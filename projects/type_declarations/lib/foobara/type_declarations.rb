@@ -7,6 +7,7 @@ module Foobara
         register_type_declaration(Handlers::RegisteredTypeDeclaration.new)
         register_type_declaration(Handlers::ExtendRegisteredTypeDeclaration.new)
         register_type_declaration(Handlers::ExtendArrayTypeDeclaration.new)
+        register_type_declaration(Handlers::ExtendAssociativeArrayTypeDeclaration.new)
         register_type_declaration(Handlers::ExtendAttributesTypeDeclaration.new)
         register_type_declaration(Handlers::ExtendTupleTypeDeclaration.new)
       end
