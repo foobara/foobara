@@ -48,6 +48,20 @@ module Foobara
           def command_name
             Util.non_full_name(self)
           end
+
+          def types_depended_on
+            types = if inputs_type
+                      inputs_type.types_depended_on
+                    else
+                      Set.new
+                    end
+
+            if result_type
+              types | result_type.types_depended_on
+            else
+              types
+            end
+          end
         end
 
         foobara_delegate :type_for_declaration, to: :class
