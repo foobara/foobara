@@ -28,7 +28,7 @@ module Foobara
         inputs_transformers: [*inputs_transformers, *default_inputs_transformers],
         result_transformers: [*result_transformers, *default_result_transformers],
         errors_transformers: [*errors_transformers, *default_errors_transformers],
-        allowed_rule: allowed_rule && AllowedRule.to_allowed_rule(allowed_rule),
+        allowed_rule: allowed_rule && to_allowed_rule(allowed_rule),
         requires_authentication:,
         authenticator:
       )
@@ -51,18 +51,19 @@ module Foobara
     end
 
     def allowed_rule(ruleish)
-      allowed_rule = AllowedRule.to_allowed_rule(ruleish)
+      allowed_rule = to_allowed_rule(ruleish)
 
       unless allowed_rule.symbol
         raise "Cannot register a rule without a symbol"
       end
 
-      @allowed_rule_registry[allowed_rule.symbol] = allowed_rule
+      allowed_rule_registry[allowed_rule.symbol] = allowed_rule
     end
 
     def allowed_rules(hash)
       hash.map do |symbol, ruleish|
         allowed_rule = to_allowed_rule(ruleish)
+        binding.pry
         allowed_rule.symbol = symbol
 
         allowed_rule(allowed_rule)
@@ -91,6 +92,62 @@ module Foobara
 
     def add_default_errors_transformer(transformer)
       default_errors_transformers << transformer
+    end
+
+    def to_allowed_rule(object)
+      case object
+      when AllowedRule, nil
+        object
+      when ::String
+        to_allowed_rule(object.to_sym)
+      when ::Symbol
+        allowed_rule = allowed_rule_registry[object]
+
+        unless allowed_rule
+          binding.pry
+          raise "No allowed rule found for #{object}"
+        end
+
+        allowed_rule
+      when ::Hash
+        rule_attributes = AllowedRule.allowed_rule_attributes_type.process_value!(object)
+
+        allowed_rule = to_allowed_rule(rule_attributes[:logic])
+
+        if rule_attributes.key?(:symbol)
+          allowed_rule.symbol = rule_attributes[:symbol]
+        end
+
+        if rule_attributes.key?(:explanation)
+          allowed_rule.explanation = rule_attributes[:explanation]
+        end
+
+        allowed_rule.explanation ||= allowed_rule.symbol
+
+        allowed_rule
+      when ::Array
+        rules = object.map { |ruleish| to_allowed_rule(ruleish) }
+
+        procs = rules.map(&:block)
+
+        block = proc do
+          procs.any?(&:call)
+        end
+
+        allowed_rule = AllowedRule.new(&block)
+
+        if rules.all?(&:explanation)
+          allowed_rule.explanation = Util.to_or_sentence(rules.map(&:explanation))
+        end
+
+        allowed_rule
+      else
+        if object.respond_to?(:call)
+          AllowedRule.new(&object)
+        else
+          raise "Not sure how to convert #{object} into an AllowedRule object"
+        end
+      end
     end
   end
 end

@@ -36,6 +36,8 @@ module Foobara
     foobara_delegate :add_default_inputs_transformer,
                      :add_default_result_transformer,
                      :add_default_errors_transformer,
+                     :allowed_rule,
+                     :allowed_rules,
                      to: :command_registry
 
     attr_accessor :command_registry, :authenticator

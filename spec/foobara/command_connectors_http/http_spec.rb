@@ -58,10 +58,15 @@ RSpec.describe Foobara::CommandConnectors::Http do
   let(:result_transformers) { nil }
   let(:errors_transformers) { nil }
   let(:allowed_rule) { nil }
+  let(:allowed_rules) { nil }
   let(:requires_authentication) { nil }
 
   describe "#run_command" do
     before do
+      if allowed_rules
+        command_connector.allowed_rules(allowed_rules)
+      end
+
       command_connector.connect(
         command_class,
         inputs_transformers:,
@@ -211,6 +216,54 @@ RSpec.describe Foobara::CommandConnectors::Http do
             }
           end
 
+          it "fails with 403 and relevant error" do
+            expect(outcome).to_not be_success
+
+            expect(response.status).to be(403)
+            expect(response.headers).to eq({})
+            expect(JSON.parse(response.body)["runtime.not_allowed"]["message"]).to eq("Must be 1900 but was 2")
+          end
+        end
+      end
+
+      context "when declared with the rule registry" do
+        let(:allowed_rule) do
+          :must_be_base_2
+        end
+
+        let(:allowed_rules) do
+          {
+            allowed_rule => {
+              logic: proc { base == 2 },
+              explanation: "Must be base 2"
+            }
+          }
+        end
+
+        context "when allowed" do
+          it "runs the command", :focus do
+            expect(request).to respond_to(:base)
+
+            expect(outcome).to be_success
+            expect(result).to be(8)
+
+            expect(response.status).to be(200)
+            expect(response.headers).to eq({})
+            expect(response.body).to eq("8")
+          end
+        end
+
+        context "when not allowed" do
+          let(:allowed_rule) do
+            logic = proc { base == 1900 }
+
+            {
+              logic:,
+              symbol: :must_be_base_1900,
+              explanation: proc { "Must be 1900 but was #{base}" }
+            }
+          end
+
           it "fails with 401 and relevant error" do
             expect(outcome).to_not be_success
 
@@ -236,34 +289,34 @@ RSpec.describe Foobara::CommandConnectors::Http do
           end
         end
       end
+    end
 
-      context "when authentication required" do
-        let(:requires_authentication) { true }
+    context "when authentication required" do
+      let(:requires_authentication) { true }
 
-        context "when unauthenticated" do
-          it "is 401" do
-            expect(outcome).to_not be_success
+      context "when unauthenticated" do
+        it "is 401" do
+          expect(outcome).to_not be_success
 
-            expect(response.status).to be(401)
-            expect(response.headers).to eq({})
-            expect(JSON.parse(response.body).keys).to eq(["runtime.unauthenticated"])
-          end
+          expect(response.status).to be(401)
+          expect(response.headers).to eq({})
+          expect(JSON.parse(response.body).keys).to eq(["runtime.unauthenticated"])
+        end
+      end
+
+      context "when authenticated" do
+        let(:authenticator) do
+          # normally we would return a user but we'll just generate a pointless integer
+          # to test proxying to the request
+          proc { path.length }
         end
 
-        context "when authenticated" do
-          let(:authenticator) do
-            # normally we would return a user but we'll just generate a pointless integer
-            # to test proxying to the request
-            proc { path.length }
-          end
+        it "is 200" do
+          expect(outcome).to be_success
 
-          it "is 200" do
-            expect(outcome).to be_success
-
-            expect(response.status).to be(200)
-            expect(response.headers).to eq({})
-            expect(JSON.parse(response.body)).to eq(8)
-          end
+          expect(response.status).to be(200)
+          expect(response.headers).to eq({})
+          expect(JSON.parse(response.body)).to eq(8)
         end
       end
     end
