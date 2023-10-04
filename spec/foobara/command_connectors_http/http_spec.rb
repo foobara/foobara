@@ -424,5 +424,91 @@ RSpec.describe Foobara::CommandConnectors::Http do
         expect(response.body).to eq("8")
       end
     end
+
+    describe "connector manifest" do
+      describe "#command_manifest" do
+        let(:command_manifest) { command_connector.command_manifest }
+
+        it "returns metadata about the commands" do
+          expect(
+            command_manifest[:global_organization][:global_domain][:commands][:ComputeExponential][:result_type]
+          ).to eq(type: :integer)
+        end
+
+        context "with an entity input" do
+          before do
+            Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
+          end
+
+          after do
+            Foobara.reset_alls
+          end
+
+          let(:command_class) do
+            user_class
+
+            stub_class = ->(klass) { stub_const(klass.name, klass) }
+
+            Class.new(Foobara::Command) do
+              class << self
+                def name
+                  "QueryUser"
+                end
+              end
+
+              stub_class.call(self)
+
+              inputs user: User
+              result :User
+            end
+          end
+
+          let(:path) { "/run/QueryUser" }
+          let(:query_string) { "user=#{user_id}" }
+          let(:body) { "" }
+
+          let(:result_transformers) {
+            [proc { |user| user.attributes }]
+          }
+
+          let(:user_class) do
+            stub_class = ->(klass) { stub_const(klass.name, klass) }
+
+            Class.new(Foobara::Entity) do
+              class << self
+                def name
+                  "User"
+                end
+              end
+
+              stub_class.call(self)
+
+              attributes id: :integer, name: :string
+              primary_key :id
+            end
+          end
+
+          it "returns metadata about the types" do
+            expect(
+              command_manifest[:global_organization][:global_domain][:types].keys
+            ).to match_array(
+              %i[
+                User
+                associative_array
+                atomic_duck
+                attributes
+                duck
+                duckture
+                entity
+                integer
+                model
+                number
+                string
+              ]
+            )
+          end
+        end
+      end
+    end
   end
 end
