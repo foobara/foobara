@@ -5,38 +5,42 @@ module Foobara
         module Reflection
           include Concern
 
-          def types_depended_on
-            result = Set.new
+          def types_depended_on(result = Set.new)
+            return if result.include?(self)
+
             result << self
 
-            if element_type
-              result |= element_type.types_depended_on
-            end
+            base_type&.types_depended_on(result)
+            element_type&.types_depended_on(result)
 
             if element_types
               case element_types
               when Type
-                result |= element_types.types_depended_on
+                element_types.types_depended_on(result)
               when ::Hash
                 element_types.each_key do |key|
                   if key.is_a?(Type)
-                    result |= key.types_depended_on
+                    key.types_depended_on(result)
                   end
                 end
 
                 element_types.each_value do |value|
                   if value.is_a?(Type)
-                    result |= value.types_depended_on
+                    value.types_depended_on(result)
                   end
                 end
               when ::Array
                 element.each do |type|
-                  result |= type.types_depended_on
+                  type.types_depended_on(result)
                 end
               end
             end
 
             result
+          end
+
+          def registered_types_depended_on
+            types_depended_on.select(&:registered?)
           end
         end
       end

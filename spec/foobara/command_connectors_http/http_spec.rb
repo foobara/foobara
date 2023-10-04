@@ -460,12 +460,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
               inputs user: User
               result :User
-
-              load_all
-
-              def execute
-                user
-              end
             end
           end
 
@@ -497,7 +491,21 @@ RSpec.describe Foobara::CommandConnectors::Http do
           it "returns metadata about the types" do
             expect(
               command_manifest[:global_organization][:global_domain][:types].keys
-            ).to match_array(%i[integer string User])
+            ).to match_array(
+              %i[
+                User
+                associative_array
+                atomic_duck
+                attributes
+                duck
+                duckture
+                entity
+                integer
+                model
+                number
+                string
+              ]
+            )
           end
         end
       end
