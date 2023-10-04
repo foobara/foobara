@@ -18,12 +18,6 @@ module Foobara
               when Type
                 element_types.types_depended_on(result)
               when ::Hash
-                element_types.each_key do |key|
-                  if key.is_a?(Type)
-                    key.types_depended_on(result)
-                  end
-                end
-
                 element_types.each_value do |value|
                   if value.is_a?(Type)
                     value.types_depended_on(result)
