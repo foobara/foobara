@@ -227,20 +227,22 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
 
       context "when declared with the rule registry" do
-        let(:allowed_rule) do
-          :must_be_base_2
-        end
-
         let(:allowed_rules) do
           {
-            allowed_rule => {
+            must_be_base_2: {
               logic: proc { base == 2 },
               explanation: "Must be base 2"
+            },
+            must_be_base_1900: {
+              logic: proc { base == 1900 },
+              explanation: proc { "Must be base 1900 but was #{base}" }
             }
           }
         end
 
         context "when allowed" do
+          let(:allowed_rule) { [:must_be_base_1900, "must_be_base_2"] }
+
           it "runs the command" do
             expect(request).to respond_to(:base)
 
@@ -255,13 +257,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         context "when not allowed" do
           let(:allowed_rule) do
-            logic = proc { base == 1900 }
-
-            {
-              logic:,
-              symbol: :must_be_base_1900,
-              explanation: proc { "Must be 1900 but was #{base}" }
-            }
+            :must_be_base_1900
           end
 
           it "fails with 401 and relevant error" do
@@ -269,7 +265,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
             expect(response.status).to be(403)
             expect(response.headers).to eq({})
-            expect(JSON.parse(response.body)["runtime.not_allowed"]["message"]).to eq("Must be 1900 but was 2")
+            expect(JSON.parse(response.body)["runtime.not_allowed"]["message"]).to eq("Must be base 1900 but was 2")
           end
         end
       end
