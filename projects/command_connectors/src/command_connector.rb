@@ -62,5 +62,23 @@ module Foobara
       request.run
       request
     end
+
+    def command_manifest
+      h = {}
+
+      # TODO: should group by org and domain...
+      command_registry.registry.values.map(&:manifest).each do |manifest|
+        organization_name = manifest[:organization_name] || :global_organization
+        domain_name = manifest[:domain_name] || :global_domain
+        command_name = manifest[:command_name]
+
+        org = h[organization_name.to_sym] ||= {}
+        domain = org[domain_name.to_sym] ||= {}
+
+        domain[command_name.to_sym] = manifest
+      end
+
+      h
+    end
   end
 end

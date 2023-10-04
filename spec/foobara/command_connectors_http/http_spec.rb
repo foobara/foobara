@@ -424,5 +424,17 @@ RSpec.describe Foobara::CommandConnectors::Http do
         expect(response.body).to eq("8")
       end
     end
+
+    describe "connector manifest" do
+      describe "#command_manifest" do
+        let(:command_manifest) { command_connector.command_manifest }
+
+        it "returns metadata about the commands" do
+          expect(
+            command_manifest[:global_organization][:global_domain][:ComputeExponential][:result_type]
+          ).to eq(type: :integer)
+        end
+      end
+    end
   end
 end

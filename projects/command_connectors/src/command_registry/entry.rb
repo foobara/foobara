@@ -28,6 +28,11 @@ module Foobara
         self.requires_authentication = requires_authentication
         self.authenticator = authenticator
       end
+
+      def manifest
+        # TODO: need to delegate to the transformers when present, not the command!
+        command_class.manifest(verbose: true)
+      end
     end
   end
 end
