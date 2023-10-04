@@ -33,6 +33,11 @@ module Foobara
 
     class NotAllowedError < CommandConnectorError; end
 
+    foobara_delegate :add_default_inputs_transformer,
+                     :add_default_result_transformer,
+                     :add_default_errors_transformer,
+                     to: :command_registry
+
     attr_accessor :command_registry, :authenticator
 
     def initialize(authenticator: nil)

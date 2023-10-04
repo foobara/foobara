@@ -81,6 +81,25 @@ RSpec.describe Foobara::CommandConnectors::Http do
       expect(response.body).to eq("8")
     end
 
+    context "with default transformers" do
+      before do
+        identity = proc { |x| x }
+
+        command_connector.add_default_inputs_transformer(identity)
+        command_connector.add_default_result_transformer(identity)
+        command_connector.add_default_errors_transformer(identity)
+      end
+
+      it "runs the command" do
+        expect(outcome).to be_success
+        expect(result).to be(8)
+
+        expect(response.status).to be(200)
+        expect(response.headers).to eq({})
+        expect(response.body).to eq("8")
+      end
+    end
+
     context "when inputs are bad" do
       let(:query_string) { "some_bad_input=10" }
 

@@ -1,41 +1,13 @@
 module Foobara
   # TODO: move to foobara monorepo if this is generic...
   class CommandRegistry
-    class << self
-      attr_accessor :default_allowed_rule
-
-      def default_inputs_transformers
-        @default_inputs_transformers ||= []
-      end
-
-      def add_default_inputs_transformer(transformer)
-        default_inputs_transformers << transformer
-      end
-
-      def default_result_transformers
-        @default_result_transformers ||= []
-      end
-
-      def add_default_result_transformer(transformer)
-        default_result_transformers << transformer
-      end
-
-      def default_errors_transformers
-        @default_errors_transformers ||= []
-      end
-
-      def add_default_errors_transformer(transformer)
-        default_errors_transformers << transformer
-      end
-    end
-
     foobara_delegate :default_inputs_transformers,
                      :default_result_transformers,
                      :default_errors_transformers,
                      :default_allowed_rule,
                      to: :class
 
-    attr_accessor :registry, :authenticator
+    attr_accessor :registry, :authenticator, :default_allowed_rule
 
     def initialize(authenticator: nil)
       self.authenticator = authenticator
@@ -95,6 +67,30 @@ module Foobara
 
         allowed_rule(allowed_rule)
       end
+    end
+
+    def default_inputs_transformers
+      @default_inputs_transformers ||= []
+    end
+
+    def add_default_inputs_transformer(transformer)
+      default_inputs_transformers << transformer
+    end
+
+    def default_result_transformers
+      @default_result_transformers ||= []
+    end
+
+    def add_default_result_transformer(transformer)
+      default_result_transformers << transformer
+    end
+
+    def default_errors_transformers
+      @default_errors_transformers ||= []
+    end
+
+    def add_default_errors_transformer(transformer)
+      default_errors_transformers << transformer
     end
   end
 end
