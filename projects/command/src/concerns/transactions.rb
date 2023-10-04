@@ -32,7 +32,14 @@ module Foobara
                                []
                              end
 
-            entity_classes += entity_classes.map do |entity_class|
+            if result_type
+              entity_classes += Entity.construct_associations(
+                result_type,
+                type_namespace: self.class.namespace
+              ).values.uniq.map(&:target_class)
+            end
+
+            entity_classes += entity_classes.uniq.map do |entity_class|
               entity_class.deep_associations.values
             end.flatten.uniq.map(&:target_class)
 
