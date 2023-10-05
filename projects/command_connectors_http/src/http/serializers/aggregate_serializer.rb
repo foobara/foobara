@@ -2,8 +2,8 @@ module Foobara
   module CommandConnectors
     class Http < CommandConnector
       module Serializers
-        class AggregateSerializer < Value::Transformer
-          def transform(object)
+        class AggregateSerializer < SuccessSerializer
+          def serialize(object)
             case object
             when Entity
               # TODO: handle polymorphism? Would require iterating over the result type not the object!

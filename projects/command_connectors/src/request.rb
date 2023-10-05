@@ -23,6 +23,7 @@ module Foobara
                        :inputs_transformers,
                        :result_transformers,
                        :errors_transformers,
+                       :serializers,
                        :allowed_rule,
                        :authenticator,
                        to: :registry_entry
@@ -78,6 +79,18 @@ module Foobara
         return nil if result_transformers.empty?
 
         transformers = transformers_to_processors(result_transformers)
+
+        if transformers.size == 1
+          transformers.first
+        else
+          Value::Processor::Pipeline.new(processors: transformers)
+        end
+      end
+
+      def serializer
+        return nil if serializers.empty?
+
+        transformers = transformers_to_processors(serializers)
 
         if transformers.size == 1
           transformers.first

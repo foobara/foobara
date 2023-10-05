@@ -1,12 +1,6 @@
 module Foobara
   # TODO: move to foobara monorepo if this is generic...
   class CommandRegistry
-    foobara_delegate :default_inputs_transformers,
-                     :default_result_transformers,
-                     :default_errors_transformers,
-                     :default_allowed_rule,
-                     to: :class
-
     attr_accessor :registry, :authenticator, :default_allowed_rule
 
     def initialize(authenticator: nil)
@@ -19,6 +13,7 @@ module Foobara
       inputs_transformers: nil,
       result_transformers: nil,
       errors_transformers: nil,
+      serializers: nil,
       allowed_rule: default_allowed_rule,
       requires_authentication: nil,
       authenticator: self.authenticator
@@ -28,6 +23,7 @@ module Foobara
         inputs_transformers: [*inputs_transformers, *default_inputs_transformers],
         result_transformers: [*result_transformers, *default_result_transformers],
         errors_transformers: [*errors_transformers, *default_errors_transformers],
+        serializers: [*serializers, *default_serializers],
         allowed_rule: allowed_rule && to_allowed_rule(allowed_rule),
         requires_authentication:,
         authenticator:
@@ -93,6 +89,14 @@ module Foobara
 
     def add_default_errors_transformer(transformer)
       default_errors_transformers << transformer
+    end
+
+    def default_serializers
+      @default_serializers ||= []
+    end
+
+    def add_default_serializer(serializer)
+      default_serializers << serializer
     end
 
     def to_allowed_rule(object)
