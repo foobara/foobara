@@ -36,10 +36,13 @@ RSpec.describe Foobara::CommandConnectors::Http do
   end
 
   let(:command_connector) do
-    described_class.new(authenticator:)
+    described_class.new(authenticator:, default_serializers:)
   end
 
   let(:authenticator) { nil }
+  let(:default_serializers) do
+    [Foobara::CommandConnectors::ErrorsSerializer, Foobara::CommandConnectors::JsonSerializer]
+  end
 
   let(:base) { 2 }
   let(:exponent) { 3 }
@@ -57,6 +60,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
   let(:inputs_transformers) { nil }
   let(:result_transformers) { nil }
   let(:errors_transformers) { nil }
+  let(:serializers) { nil }
   let(:allowed_rule) { nil }
   let(:allowed_rules) { nil }
   let(:requires_authentication) { nil }
@@ -72,6 +76,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
         inputs_transformers:,
         result_transformers:,
         errors_transformers:,
+        serializers:,
         allowed_rule:,
         requires_authentication:
       )
@@ -95,6 +100,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
         command_connector.add_default_errors_transformer(identity)
       end
 
+      let(:default_serializers) { Foobara::CommandConnectors::JsonSerializer }
+
       it "runs the command" do
         expect(outcome).to be_success
         expect(result).to be(8)
@@ -105,8 +112,24 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
     end
 
+    context "without serializers" do
+      let(:default_serializers) { nil }
+
+      it "runs the command" do
+        expect(outcome).to be_success
+        expect(result).to be(8)
+
+        expect(response.status).to be(200)
+        expect(response.headers).to eq({})
+        expect(response.body).to eq(8)
+      end
+    end
+
     context "when inputs are bad" do
       let(:query_string) { "some_bad_input=10" }
+
+      let(:default_serializers) { Foobara::CommandConnectors::JsonSerializer }
+      let(:serializers) { Foobara::CommandConnectors::ErrorsSerializer }
 
       it "fails" do
         expect(outcome).to_not be_success
@@ -126,6 +149,10 @@ RSpec.describe Foobara::CommandConnectors::Http do
         command_class.define_method :execute do
           raise "kaboom!"
         end
+      end
+
+      let(:default_serializers) do
+        [Foobara::CommandConnectors::ErrorsSerializer, Foobara::CommandConnectors::JsonSerializer]
       end
 
       it "fails" do
@@ -513,7 +540,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
         end
 
         context "with AtomicSerializer" do
-          let(:result_transformers) { described_class::Serializers::AtomicSerializer }
+          let(:serializers) { described_class::Serializers::AtomicSerializer }
 
           context "when user exists with a referral" do
             let(:user) do
@@ -544,7 +571,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
         end
 
         context "with AggregateSerializer" do
-          let(:result_transformers) { described_class::Serializers::AggregateSerializer }
+          let(:serializers) { described_class::Serializers::AggregateSerializer }
 
           context "when user exists with a referral" do
             let(:user) do
@@ -574,7 +601,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
         end
 
         context "with RecordStoreSerializer" do
-          let(:result_transformers) { described_class::Serializers::RecordStoreSerializer }
+          let(:serializers) { described_class::Serializers::RecordStoreSerializer }
 
           context "when user exists with a referral" do
             let(:user) do
@@ -672,7 +699,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
           let(:query_string) { "user=#{user_id}" }
           let(:body) { "" }
 
-          let(:result_transformers) {
+          let(:serializers) {
             [proc { |user| user.attributes }]
           }
 

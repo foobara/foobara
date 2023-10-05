@@ -37,15 +37,14 @@ module Foobara
         # TODO: how to transform into body + headers headers cleanly?? Maybe subclass of Outcome?
         def response
           @response ||= begin
-            if outcome.success?
-              body = JSON.fast_generate(outcome.result)
-              status = 200
-            else
-              body = JSON.fast_generate(outcome.errors_hash)
+            body = serialize_result
 
-              errors = outcome.errors
+            status = if outcome.success?
+                       200
+                     else
+                       errors = outcome.errors
 
-              status = if errors.size == 1
+                       if errors.size == 1
                          error = errors.first
 
                          case error
@@ -60,7 +59,7 @@ module Foobara
                            403
                          end
                        end || 422
-            end
+                     end
 
             Response.new(status, {}, body)
           end

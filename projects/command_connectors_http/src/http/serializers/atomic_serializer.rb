@@ -2,8 +2,8 @@ module Foobara
   module CommandConnectors
     class Http < CommandConnector
       module Serializers
-        class AtomicSerializer < Value::Transformer
-          def transform(object)
+        class AtomicSerializer < SuccessSerializer
+          def serialize(object)
             if object.is_a?(Model)
               if object.is_a?(Entity) && !object.loaded?
                 # :nocov:
@@ -14,10 +14,10 @@ module Foobara
               object = object.attributes
             end
 
-            deep_transform(object)
+            deep_serialize(object)
           end
 
-          def deep_transform(object)
+          def deep_serialize(object)
             case object
             when Entity
               # TODO: handle polymorphism? Would require iterating over the result type not the object!
@@ -26,10 +26,10 @@ module Foobara
             when Model
               object.attributes
             when Array
-              object.map { |element| deep_transform(element) }
+              object.map { |element| deep_serialize(element) }
             when Hash
               object.to_h do |key, value|
-                [deep_transform(key), deep_transform(value)]
+                [deep_serialize(key), deep_serialize(value)]
               end
             else
               object

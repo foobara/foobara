@@ -2,12 +2,12 @@ module Foobara
   module CommandConnectors
     class Http < CommandConnector
       module Serializers
-        class RecordStoreSerializer < Value::Transformer
+        class RecordStoreSerializer < SuccessSerializer
           def atomic_serializer
             @atomic_serializer ||= AtomicSerializer.new(declaration_data)
           end
 
-          def transform(_object)
+          def serialize(_object)
             store = {}
 
             declaration_data.command.transactions.each do |tx|

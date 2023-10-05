@@ -36,15 +36,20 @@ module Foobara
     foobara_delegate :add_default_inputs_transformer,
                      :add_default_result_transformer,
                      :add_default_errors_transformer,
+                     :add_default_serializer,
                      :allowed_rule,
                      :allowed_rules,
                      to: :command_registry
 
     attr_accessor :command_registry, :authenticator
 
-    def initialize(authenticator: nil)
+    def initialize(authenticator: nil, default_serializers: nil)
       self.authenticator = authenticator
       self.command_registry = CommandRegistry.new(authenticator:)
+
+      Util.array(default_serializers).each do |serializer|
+        add_default_serializer(serializer)
+      end
     end
 
     def connect(...)
