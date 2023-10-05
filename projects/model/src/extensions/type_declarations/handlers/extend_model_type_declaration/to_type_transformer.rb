@@ -30,9 +30,25 @@ module Foobara
                 type.element_types = handler.process_value!(attributes_type_declaration)
 
                 model_class = type.target_class
-                model_class.model_type ||= type
+                existing_model_type = model_class.model_type
 
-                model_class.domain.register_model(model_class)
+                if existing_model_type
+                  domain = model_class.domain
+
+                  if existing_model_type.declaration_data != type.declaration_data
+                    if domain.type_registered?(existing_model_type)
+                      model_symbol = model_class.model_symbol
+                      registry = domain.type_namespace.registry_for_symbol(model_symbol)
+                      registry.unregister(model_symbol)
+                    end
+
+                    model_class.model_type = type
+                    domain.register_model(model_class)
+                  end
+                else
+                  model_class.model_type = type
+                  model_class.domain.register_model(model_class)
+                end
               end
             end
           end

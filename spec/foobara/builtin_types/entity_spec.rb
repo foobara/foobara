@@ -375,6 +375,7 @@ RSpec.describe ":entity" do
       it "can be used by symbol" do
         expect(type.name).to eq("SomeEntity")
         expect(domain_module.type_for_declaration(:SomeEntity)).to be(type)
+        expect(constructed_model.domain.type_registered?("SomeEntity")).to be(true)
       end
 
       it "is registered where expected" do

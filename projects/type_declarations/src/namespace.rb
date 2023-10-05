@@ -107,7 +107,12 @@ module Foobara
       end
 
       def type_registered?(symbol)
-        symbol = symbol.to_sym if symbol.is_a?(::String)
+        if symbol.is_a?(::String)
+          symbol = symbol.to_sym
+        elsif symbol.is_a?(Types::Type)
+          symbol = symbol.type_symbol
+        end
+
         type_registries.any? { |registry| registry.registered?(symbol) }
       end
 

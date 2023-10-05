@@ -46,6 +46,10 @@ module Foobara
       @type_namespace ||= TypeDeclarations::Namespace.new(full_domain_name)
     end
 
+    def type_registered?(type_or_symbol)
+      type_namespace.type_registered?(type_or_symbol)
+    end
+
     def full_domain_name
       names = [
         organization_name,

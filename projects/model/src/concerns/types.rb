@@ -58,10 +58,6 @@ module Foobara
             if attributes_type
               declaration = type_declaration(attributes_type.declaration_data)
 
-              registry = namespace.registry_for_symbol(model_symbol)
-
-              registry&.unregister(model_symbol)
-
               namespace.type_for_declaration(declaration)
 
               unless @model_type
@@ -93,12 +89,6 @@ module Foobara
           end
 
           def model_type=(model_type)
-            if @model_type
-              # :nocov:
-              raise "Already set model type"
-              # :nocov:
-            end
-
             @model_type = model_type
 
             update_namespace
