@@ -409,6 +409,53 @@ RSpec.describe Foobara::CommandConnectors::Http do
           expect(errors.keys.first).to eq("runtime.user_not_found")
         end
       end
+
+      context "with an association" do
+        let(:referral_class) do
+          stub_class = ->(klass) { stub_const(klass.name, klass) }
+
+          Class.new(Foobara::Entity) do
+            class << self
+              def name
+                "Referral"
+              end
+            end
+
+            stub_class.call(self)
+
+            attributes id: :integer, email: :email
+            primary_key :id
+          end
+        end
+
+        before do
+          User.attributes referral: referral_class
+        end
+
+        context "with AtomSerializer" do
+          let(:result_transformers) { described_class::Serializers::AtomicSerializer }
+
+          context "when user exists with a referral" do
+            let(:user) do
+              User.transaction do
+                referral = referral_class.create(email: "Some@email.com")
+                User.create(name: "Some Name", referral:)
+              end
+            end
+            let(:user_id) { user.id }
+
+            let(:referral_id) {  user.referral.id }
+
+            it "serializes as an atom" do
+              expect(outcome).to be_success
+
+              expect(response.status).to be(200)
+              expect(response.headers).to eq({})
+              expect(JSON.parse(response.body)).to eq("id" => user_id, "name" => "Some Name", "referral" => referral_id)
+            end
+          end
+        end
+      end
     end
 
     context "without querystring" do
