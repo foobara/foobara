@@ -404,7 +404,13 @@ RSpec.describe Foobara::CommandConnectors::Http do
           load_all
 
           def execute
+            load_user_aggregate
+
             user
+          end
+
+          def load_user_aggregate
+            User.load_aggregate(user)
           end
         end
       end
@@ -469,6 +475,22 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
 
       context "with an association" do
+        let(:point_class) do
+          stub_class = ->(klass) { stub_const(klass.name, klass) }
+
+          Class.new(Foobara::Model) do
+            class << self
+              def name
+                "Point"
+              end
+            end
+
+            stub_class.call(self)
+
+            attributes x: :integer, y: :integer
+          end
+        end
+
         let(:referral_class) do
           stub_class = ->(klass) { stub_const(klass.name, klass) }
 
@@ -487,7 +509,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
         end
 
         before do
-          User.attributes referral: referral_class
+          User.attributes referral: referral_class, point: point_class
         end
 
         context "with AtomicSerializer" do
@@ -497,9 +519,10 @@ RSpec.describe Foobara::CommandConnectors::Http do
             let(:user) do
               User.transaction do
                 referral = referral_class.create(email: "Some@email.com")
-                User.create(name: "Some Name", referral:, ratings: [1, 2, 3])
+                User.create(name: "Some Name", referral:, ratings: [1, 2, 3], point: { x: 1, y: 2 })
               end
             end
+
             let(:user_id) { user.id }
 
             let(:referral_id) {  user.referral.id }
@@ -513,7 +536,38 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 "id" => user_id,
                 "name" => "Some Name",
                 "referral" => referral_id,
-                "ratings" => [1, 2, 3]
+                "ratings" => [1, 2, 3],
+                "point" => { "x" => 1, "y" => 2 }
+              )
+            end
+          end
+        end
+
+        context "with AggregateSerializer" do
+          let(:result_transformers) { described_class::Serializers::AggregateSerializer }
+
+          context "when user exists with a referral" do
+            let(:user) do
+              User.transaction do
+                referral = referral_class.create(email: "Some@email.com")
+                User.create(name: "Some Name", referral:, ratings: [1, 2, 3], point: { x: 1, y: 2 })
+              end
+            end
+            let(:user_id) { user.id }
+
+            let(:referral_id) {  user.referral.id }
+
+            it "serializes as an aggregate" do
+              expect(outcome).to be_success
+
+              expect(response.status).to be(200)
+              expect(response.headers).to eq({})
+              expect(JSON.parse(response.body)).to eq(
+                "id" => user_id,
+                "name" => "Some Name",
+                "referral" => { "id" => referral_id, "email" => "some@email.com" },
+                "ratings" => [1, 2, 3],
+                "point" => { "x" => 1, "y" => 2 }
               )
             end
           end
