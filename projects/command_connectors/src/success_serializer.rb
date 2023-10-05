@@ -4,7 +4,7 @@ module Foobara
   module CommandConnectors
     class SuccessSerializer < Serializer
       # TODO: always_applicable? instead?
-      def applicable?(_value)
+      def always_applicable?
         request.outcome.success?
       end
     end
