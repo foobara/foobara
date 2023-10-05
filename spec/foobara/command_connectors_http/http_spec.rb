@@ -168,6 +168,25 @@ RSpec.describe Foobara::CommandConnectors::Http do
         expect(response.body).to eq("16")
       end
 
+      context "when error" do
+        let(:query_string) { "foo=bar" }
+
+        it "is not success" do
+          expect(outcome).to_not be_success
+          errors = request.errors
+
+          expect(errors.size).to eq(1)
+
+          error = errors.first
+
+          expect(error.symbol).to eq(:cannot_cast)
+
+          expect(response.status).to be(422)
+          expect(response.headers).to eq({})
+          expect(response.body).to include("cannot_cast")
+        end
+      end
+
       context "with multiple transformers" do
         let(:identity) { ->(x) { x } }
 
@@ -182,6 +201,25 @@ RSpec.describe Foobara::CommandConnectors::Http do
           expect(response.status).to be(200)
           expect(response.headers).to eq({})
           expect(response.body).to eq("16")
+        end
+
+        context "when error" do
+          let(:query_string) { "foo=bar" }
+
+          it "is not success" do
+            expect(outcome).to_not be_success
+            errors = request.errors
+
+            expect(errors.size).to eq(1)
+
+            error = errors.first
+
+            expect(error.symbol).to eq(:cannot_cast)
+
+            expect(response.status).to be(422)
+            expect(response.headers).to eq({})
+            expect(response.body).to include("cannot_cast")
+          end
         end
       end
 
