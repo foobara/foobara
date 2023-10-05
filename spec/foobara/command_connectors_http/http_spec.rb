@@ -60,6 +60,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
   let(:inputs_transformers) { nil }
   let(:result_transformers) { nil }
   let(:errors_transformers) { nil }
+  let(:pre_commit_transformers) { nil }
   let(:serializers) { nil }
   let(:allowed_rule) { nil }
   let(:allowed_rules) { nil }
@@ -78,7 +79,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
         errors_transformers:,
         serializers:,
         allowed_rule:,
-        requires_authentication:
+        requires_authentication:,
+        pre_commit_transformers:
       )
     end
 
@@ -98,6 +100,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
         command_connector.add_default_inputs_transformer(identity)
         command_connector.add_default_result_transformer(identity)
         command_connector.add_default_errors_transformer(identity)
+        command_connector.add_default_pre_commit_transformer(identity)
       end
 
       let(:default_serializers) { Foobara::CommandConnectors::JsonSerializer }
@@ -219,7 +222,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         let(:inputs_transformers) { [identity, inputs_transformer] }
         let(:result_transformers) { [->(result) { result * 2 }, identity] }
-        let(:errors_transformers) { [->(errors) { errors }, identity] }
+        let(:errors_transformers) { [identity, identity] }
+        let(:pre_commit_transformers) { [identity, identity] }
 
         it "runs the command" do
           expect(outcome).to be_success
@@ -431,13 +435,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
           load_all
 
           def execute
-            load_user_aggregate
-
             user
-          end
-
-          def load_user_aggregate
-            User.load_aggregate(user)
           end
         end
       end
@@ -445,10 +443,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
       let(:path) { "/run/QueryUser" }
       let(:query_string) { "user=#{user_id}" }
       let(:body) { "" }
-
-      let(:result_transformers) {
-        [proc { |user| user.attributes }]
-      }
 
       let(:user_class) do
         stub_class = ->(klass) { stub_const(klass.name, klass) }
@@ -464,7 +458,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
           attributes id: :integer,
                      name: :string,
-                     ratings: [:integer]
+                     ratings: [:integer],
+                     junk: { type: :associative_array, value_type_declaration: :array }
           primary_key :id
         end
       end
@@ -475,6 +470,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
             User.create(name: :whatever)
           end.id
         end
+
+        let(:result_transformers) { [proc { |user| user.attributes }] }
 
         it "finds the user" do
           expect(outcome).to be_success
@@ -572,16 +569,51 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         context "with AggregateSerializer" do
           let(:serializers) { described_class::Serializers::AggregateSerializer }
+          let(:pre_commit_transformers) { Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer }
 
           context "when user exists with a referral" do
+            let(:command_class) do
+              user_class
+              referral_class
+
+              stub_class = ->(klass) { stub_const(klass.name, klass) }
+
+              Class.new(Foobara::Command) do
+                class << self
+                  def name
+                    "QueryUser"
+                  end
+                end
+
+                stub_class.call(self)
+
+                inputs user: User
+                result stuff: [User, Referral]
+
+                load_all
+
+                def execute
+                  {
+                    stuff: [user, user.referral]
+                  }
+                end
+              end
+            end
+
             let(:user) do
               User.transaction do
                 referral = referral_class.create(email: "Some@email.com")
-                User.create(name: "Some Name", referral:, ratings: [1, 2, 3], point: { x: 1, y: 2 })
+                User.create(
+                  name: "Some Name",
+                  referral:,
+                  ratings: [1, 2, 3],
+                  point: { x: 1, y: 2 },
+                  junk: { [1, 2, 3] => [1, 2, 3] }
+                )
               end
             end
-            let(:user_id) { user.id }
 
+            let(:user_id) { user.id }
             let(:referral_id) {  user.referral.id }
 
             it "serializes as an aggregate" do
@@ -590,11 +622,20 @@ RSpec.describe Foobara::CommandConnectors::Http do
               expect(response.status).to be(200)
               expect(response.headers).to eq({})
               expect(JSON.parse(response.body)).to eq(
-                "id" => user_id,
-                "name" => "Some Name",
-                "referral" => { "id" => referral_id, "email" => "some@email.com" },
-                "ratings" => [1, 2, 3],
-                "point" => { "x" => 1, "y" => 2 }
+                "stuff" => [
+                  {
+                    "id" => 1,
+                    # TODO: This is kind of crazy that we can only have strings as keys. Should raise exception.
+                    "junk" => { "[1, 2, 3]" => [1, 2, 3] },
+                    "name" => "Some Name",
+                    "point" => { "x" => 1, "y" => 2 },
+                    "ratings" => [1, 2, 3],
+                    "referral" => { "email" => "some@email.com", "id" => 1 }
+                  },
+                  {
+                    "email" => "some@email.com", "id" => 1
+                  }
+                ]
               )
             end
           end
@@ -602,6 +643,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         context "with RecordStoreSerializer" do
           let(:serializers) { described_class::Serializers::RecordStoreSerializer }
+          let(:pre_commit_transformers) { Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer }
 
           context "when user exists with a referral" do
             let(:user) do

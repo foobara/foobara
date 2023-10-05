@@ -32,10 +32,10 @@ module Foobara
                                                                 validate_records
                                                                 validate
                                                                 run_execute
+                                                                commit_transaction
                                                               ])
 
           invoke_with_callbacks_and_transition(%i[
-                                                 commit_transaction
                                                  succeed
                                                ])
 

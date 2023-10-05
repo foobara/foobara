@@ -23,6 +23,7 @@ module Foobara
                        :inputs_transformers,
                        :result_transformers,
                        :errors_transformers,
+                       :pre_commit_transformers,
                        :serializers,
                        :allowed_rule,
                        :authenticator,
@@ -33,6 +34,7 @@ module Foobara
         construct_command
         authenticate if requires_authentication?
         apply_allowed_rule
+        apply_pre_commit_transformers # TODO: give a better name??
         run_command
         transform_outcome
 
@@ -111,6 +113,19 @@ module Foobara
         end
       end
 
+      # TODO: memoize
+      def pre_commit_transformer
+        return nil if pre_commit_transformers.empty?
+
+        transformers = transformers_to_processors(pre_commit_transformers)
+
+        if transformers.size == 1
+          transformers.first
+        else
+          Value::Processor::Pipeline.new(processors: transformers)
+        end
+      end
+
       def transformers_to_processors(transformers)
         transformers.map do |transformer|
           if transformer.is_a?(Class)
@@ -169,6 +184,14 @@ module Foobara
               command.state_machine.error!
               command.halt!
             end
+          end
+        end
+      end
+
+      def apply_pre_commit_transformers
+        if pre_commit_transformer
+          command.before_commit_transaction do |**|
+            pre_commit_transformer.process_value!(self)
           end
         end
       end

@@ -7,6 +7,7 @@ module Foobara
                     :inputs_transformers,
                     :result_transformers,
                     :errors_transformers,
+                    :pre_commit_transformers,
                     :serializers,
                     :allowed_rule,
                     :requires_authentication,
@@ -17,6 +18,7 @@ module Foobara
         inputs_transformers:,
         result_transformers:,
         errors_transformers:,
+        pre_commit_transformers:,
         serializers:,
         allowed_rule:,
         requires_authentication:,
@@ -26,6 +28,7 @@ module Foobara
         self.inputs_transformers = Util.array(inputs_transformers)
         self.result_transformers = Util.array(result_transformers)
         self.errors_transformers = Util.array(errors_transformers)
+        self.pre_commit_transformers = Util.array(pre_commit_transformers)
         self.serializers = Util.array(serializers)
         self.allowed_rule = allowed_rule
         self.requires_authentication = requires_authentication
