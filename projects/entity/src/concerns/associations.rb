@@ -117,10 +117,20 @@ module Foobara
           )
             if type.extends_symbol?(:entity)
               result[path.to_s] = type
+            elsif type.extends_symbol?(:tuple)
+              element_types = type.element_types
+
+              element_types&.each&.with_index do |element_type, index|
+                construct_associations(element_type, path.append(index), result, type_namespace:)
+              end
             elsif type.extends_symbol?(:array)
               # TODO: what to do about an associative array type?? Unclear how to make a key from that...
               # TODO: raise if associative array contains a non-persisted record to handle this edge case for now.
-              construct_associations(type.element_type, path.append(:"#"), result, type_namespace:)
+              element_type = type.element_type
+
+              if element_type
+                construct_associations(element_type, path.append(:"#"), result, type_namespace:)
+              end
             elsif type.extends_symbol?(:attributes)
               type.element_types.each_pair do |attribute_name, element_type|
                 construct_associations(element_type, path.append(attribute_name), result, type_namespace:)
@@ -148,17 +158,24 @@ module Foobara
             elsif type.extends_symbol?(:array)
               # TODO: what to do about an associative array type?? Unclear how to make a key from that...
               # TODO: raise if associative array contains a non-persisted record to handle this edge case for now.
-              contains_associations?(type.element_type, false, type_namespace:)
+              element_type = type.element_type
+
+              if element_type
+                contains_associations?(element_type, false, type_namespace:)
+              end
             elsif type.extends_symbol?(:attributes)
               type.element_types.values.any? do |element_type|
                 contains_associations?(element_type, false, type_namespace:)
               end
             elsif type.extends_symbol?(:associative_array)
-              # not going to bother testing this for now
-              # :nocov:
-              contains_associations?(type.key_type, false, type_namespace:) ||
-                contains_associations?(type.value_type, false, type_namespace:)
-              # :nocov:
+              element_types = type.element_types
+
+              if element_types
+                key_type, value_type = element_types
+
+                contains_associations?(key_type, false, type_namespace:) ||
+                  contains_associations?(value_type, false, type_namespace:)
+              end
             end
           end
 
