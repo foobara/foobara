@@ -34,20 +34,6 @@ module Foobara
                                    end
         end
 
-        def serialize_result
-          body = if outcome.success?
-                   outcome.result
-                 else
-                   outcome.errors_hash
-                 end
-
-          if serializer
-            serializer.process_value!(body)
-          else
-            body
-          end
-        end
-
         # TODO: how to transform into body + headers headers cleanly?? Maybe subclass of Outcome?
         def response
           @response ||= begin

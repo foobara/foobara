@@ -197,6 +197,20 @@ module Foobara
         end
       end
 
+      def serialize_result
+        body = if outcome.success?
+                 outcome.result
+               else
+                 outcome.errors
+               end
+
+        if serializer
+          serializer.process_value!(body)
+        else
+          body
+        end
+      end
+
       def method_missing(method_name, *, **, &)
         if command.respond_to?(method_name)
           command.send(method_name, *, **, &)
