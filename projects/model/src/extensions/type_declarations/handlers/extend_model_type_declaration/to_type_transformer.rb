@@ -35,11 +35,7 @@ module Foobara
                 if existing_model_type
                   domain = model_class.domain
 
-                  if existing_model_type.declaration_data == type.declaration_data
-                    unless domain.type_registered?(existing_model_type)
-                      domain.register_model(model_class)
-                    end
-                  else
+                  if existing_model_type.declaration_data != type.declaration_data
                     if domain.type_registered?(existing_model_type)
                       model_symbol = model_class.model_symbol
                       registry = domain.type_namespace.registry_for_symbol(model_symbol)

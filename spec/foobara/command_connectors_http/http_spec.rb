@@ -423,7 +423,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
             stub_class.call(self)
 
-            attributes id: :integer, email: :email
+            attributes id: :integer, email: :email, ratings: [:integer]
             primary_key :id
           end
         end
@@ -439,7 +439,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
             let(:user) do
               User.transaction do
                 referral = referral_class.create(email: "Some@email.com")
-                User.create(name: "Some Name", referral:)
+                User.create(name: "Some Name", referral:, ratings: [1, 2, 3])
               end
             end
             let(:user_id) { user.id }
@@ -451,7 +451,12 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
               expect(response.status).to be(200)
               expect(response.headers).to eq({})
-              expect(JSON.parse(response.body)).to eq("id" => user_id, "name" => "Some Name", "referral" => referral_id)
+              expect(JSON.parse(response.body)).to eq(
+                "id" => user_id,
+                "name" => "Some Name",
+                "referral" => referral_id,
+                "ratings" => [1, 2, 3]
+              )
             end
           end
         end
