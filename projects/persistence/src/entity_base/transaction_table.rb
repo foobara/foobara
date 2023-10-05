@@ -1,5 +1,15 @@
 module Foobara
   module Persistence
+    class InvalidRecordError < StandardError
+      attr_accessor :record
+
+      def initialize(record)
+        self.record = record
+
+        super("Cannot persist invalid record #{record}: #{record.validation_errors}")
+      end
+    end
+
     class EntityBase
       # TODO: move this under Transaction
       class TransactionTable
@@ -447,6 +457,20 @@ module Foobara
           end
         end
 
+        def validate!
+          marked_created.each do |record|
+            unless record.valid?
+              raise InvalidRecordError, record
+            end
+          end
+
+          marked_updated.each do |record|
+            unless record.valid?
+              raise InvalidRecordError, record
+            end
+          end
+        end
+
         def flush_created!
           marked_created.each do |record|
             tracked_records.delete(record)
@@ -529,9 +553,12 @@ module Foobara
 
         def rollback!
           # TODO: could pause record tracking while doing this as a performance boost
+          # is it really safe to do this without callbacks?? What about other systems listening
+          # to those callbacks? This feels wrong.
+          # TODO: fix this
           marked_updated.each(&:restore_without_callbacks!)
           marked_hard_deleted.each(&:restore_without_callbacks!)
-          marked_created.each(&:hard_delete!)
+          marked_created.each(&:hard_delete_without_callbacks!)
 
           rolled_back
         end

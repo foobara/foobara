@@ -17,6 +17,7 @@ module Foobara
 
             def flush!
               state_machine.flush! do
+                each_table(&:validate!)
                 each_table(&:flush_created!)
                 each_table(&:flush_updated_and_hard_deleted!)
               end
@@ -42,6 +43,7 @@ module Foobara
 
             def commit!
               state_machine.commit! do
+                each_table(&:validate!)
                 each_table(&:flush_created!)
                 each_table do |table|
                   table.flush_updated_and_hard_deleted!

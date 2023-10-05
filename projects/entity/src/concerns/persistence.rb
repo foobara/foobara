@@ -16,8 +16,12 @@ module Foobara
         end
 
         def hard_delete!
-          @is_hard_deleted = true
+          hard_delete_without_callbacks!
           fire(:hard_deleted)
+        end
+
+        def hard_delete_without_callbacks!
+          @is_hard_deleted = true
         end
 
         def save_persisted_attributes

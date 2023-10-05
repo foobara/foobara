@@ -429,7 +429,9 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
           stub_class.call(self)
 
-          attributes id: :integer, name: :string
+          attributes id: :integer,
+                     name: :string,
+                     ratings: [:integer]
           primary_key :id
         end
       end
@@ -479,7 +481,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
             stub_class.call(self)
 
-            attributes id: :integer, email: :email, ratings: [:integer]
+            attributes id: :integer, email: :email
             primary_key :id
           end
         end
@@ -488,7 +490,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
           User.attributes referral: referral_class
         end
 
-        context "with AtomSerializer" do
+        context "with AtomicSerializer" do
           let(:result_transformers) { described_class::Serializers::AtomicSerializer }
 
           context "when user exists with a referral" do
