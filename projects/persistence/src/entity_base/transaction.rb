@@ -107,6 +107,36 @@ module Foobara
           table_for(record_or_entity_class).load(entity_or_id)
         end
 
+        def load_aggregates(to_load_records)
+          to_load = Set.new
+
+          to_load_records.group_by(&:class).each_pair do |entity_class, records|
+            unloaded = records.reject(&:loaded?)
+            entity_class.current_transaction_table.load_many(unloaded)
+
+            associations = entity_class.associations
+
+            records.each do |record|
+              associations.each_key do |data_path|
+                # TODO: is there a more performant way to append an array to a set? probably.
+                Foobara::DataPath.values_at(data_path, record).each do |value|
+                  to_load << value
+                end
+              end
+            end
+          end
+
+          unless to_load.empty?
+            load_aggregates(to_load)
+          end
+
+          to_load_records
+        end
+
+        def load_aggregate(record)
+          load_aggregates([record]).first
+        end
+
         def track_unloaded_thunk(entity)
           table_for(entity).track_unloaded_thunk(entity)
         end

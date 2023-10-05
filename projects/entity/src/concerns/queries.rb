@@ -41,6 +41,16 @@ module Foobara
             current_transaction_table.load(record_id)
           end
 
+          def load_aggregate(record_or_record_id)
+            record = if record_or_record_id.is_a?(Entity)
+                       record_or_record_id
+                     else
+                       thunk(record_or_record_id)
+                     end
+
+            current_transaction.load_aggregate(record)
+          end
+
           def load_many(*record_ids)
             if record_ids.size == 1 && record_ids.first.is_a?(::Array)
               record_ids = record_ids.first

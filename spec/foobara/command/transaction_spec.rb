@@ -503,7 +503,7 @@ RSpec.describe Foobara::Command::Concerns::Entities do
           Applicant.transaction do
             expect {
               update_command.run!(id: applicant_id, is_active: false)
-            }.to change { Applicant.load(applicant_id).is_active }.from(true).to(false)
+            }.to change { Applicant.load_aggregate(applicant_id).is_active }.from(true).to(false)
 
             expect {
               update_command.run!(id: applicant_id, is_active: true)
