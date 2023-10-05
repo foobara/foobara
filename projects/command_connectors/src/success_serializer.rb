@@ -7,10 +7,6 @@ module Foobara
       def applicable?(_value)
         request.outcome.success?
       end
-
-      def serialize(object)
-        transform(object)
-      end
     end
   end
 end

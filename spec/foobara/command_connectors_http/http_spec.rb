@@ -36,10 +36,11 @@ RSpec.describe Foobara::CommandConnectors::Http do
   end
 
   let(:command_connector) do
-    described_class.new(authenticator:, default_serializers: Foobara::CommandConnectors::JsonSerializer)
+    described_class.new(authenticator:, default_serializers:)
   end
 
   let(:authenticator) { nil }
+  let(:default_serializers) { Foobara::CommandConnectors::JsonSerializer }
 
   let(:base) { 2 }
   let(:exponent) { 3 }
@@ -104,6 +105,19 @@ RSpec.describe Foobara::CommandConnectors::Http do
         expect(response.status).to be(200)
         expect(response.headers).to eq({})
         expect(response.body).to eq("8")
+      end
+    end
+
+    context "without serializers" do
+      let(:default_serializers) { nil }
+
+      it "runs the command" do
+        expect(outcome).to be_success
+        expect(result).to be(8)
+
+        expect(response.status).to be(200)
+        expect(response.headers).to eq({})
+        expect(response.body).to eq(8)
       end
     end
 
