@@ -13,6 +13,7 @@ module Foobara
       inputs_transformers: nil,
       result_transformers: nil,
       errors_transformers: nil,
+      pre_commit_transformers: nil,
       serializers: nil,
       allowed_rule: default_allowed_rule,
       requires_authentication: nil,
@@ -23,6 +24,7 @@ module Foobara
         inputs_transformers: [*inputs_transformers, *default_inputs_transformers],
         result_transformers: [*result_transformers, *default_result_transformers],
         errors_transformers: [*errors_transformers, *default_errors_transformers],
+        pre_commit_transformers: [*pre_commit_transformers, *default_pre_commit_transformers],
         serializers: [*serializers, *default_serializers],
         allowed_rule: allowed_rule && to_allowed_rule(allowed_rule),
         requires_authentication:,
@@ -89,6 +91,14 @@ module Foobara
 
     def add_default_errors_transformer(transformer)
       default_errors_transformers << transformer
+    end
+
+    def default_pre_commit_transformers
+      @default_pre_commit_transformers ||= []
+    end
+
+    def add_default_pre_commit_transformer(transformer)
+      default_pre_commit_transformers << transformer
     end
 
     def default_serializers

@@ -60,6 +60,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
   let(:inputs_transformers) { nil }
   let(:result_transformers) { nil }
   let(:errors_transformers) { nil }
+  let(:pre_commit_transformers) { nil }
   let(:serializers) { nil }
   let(:allowed_rule) { nil }
   let(:allowed_rules) { nil }
@@ -78,7 +79,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
         errors_transformers:,
         serializers:,
         allowed_rule:,
-        requires_authentication:
+        requires_authentication:,
+        pre_commit_transformers:
       )
     end
 
@@ -431,13 +433,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
           load_all
 
           def execute
-            load_user_aggregate
-
             user
-          end
-
-          def load_user_aggregate
-            User.load_aggregate(user)
           end
         end
       end
@@ -572,6 +568,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         context "with AggregateSerializer" do
           let(:serializers) { described_class::Serializers::AggregateSerializer }
+          let(:pre_commit_transformers) { Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer }
 
           context "when user exists with a referral" do
             let(:user) do
@@ -602,6 +599,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         context "with RecordStoreSerializer" do
           let(:serializers) { described_class::Serializers::RecordStoreSerializer }
+          let(:pre_commit_transformers) { Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer }
 
           context "when user exists with a referral" do
             let(:user) do

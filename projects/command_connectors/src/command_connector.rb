@@ -36,6 +36,7 @@ module Foobara
     foobara_delegate :add_default_inputs_transformer,
                      :add_default_result_transformer,
                      :add_default_errors_transformer,
+                     :add_default_pre_commit_transformer,
                      :add_default_serializer,
                      :allowed_rule,
                      :allowed_rules,
