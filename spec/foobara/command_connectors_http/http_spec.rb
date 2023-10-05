@@ -157,6 +157,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
 
       let(:result_transformers) { [->(result) { result * 2 }] }
+      let(:errors_transformers) { [->(errors) { errors }] }
 
       it "runs the command" do
         expect(outcome).to be_success
@@ -165,6 +166,23 @@ RSpec.describe Foobara::CommandConnectors::Http do
         expect(response.status).to be(200)
         expect(response.headers).to eq({})
         expect(response.body).to eq("16")
+      end
+
+      context "with multiple transformers" do
+        let(:identity) { ->(x) { x } }
+
+        let(:inputs_transformers) { [identity, inputs_transformer] }
+        let(:result_transformers) { [->(result) { result * 2 }, identity] }
+        let(:errors_transformers) { [->(errors) { errors }, identity] }
+
+        it "runs the command" do
+          expect(outcome).to be_success
+          expect(result).to be(16)
+
+          expect(response.status).to be(200)
+          expect(response.headers).to eq({})
+          expect(response.body).to eq("16")
+        end
       end
 
       context "with transformer instance instead of class" do
