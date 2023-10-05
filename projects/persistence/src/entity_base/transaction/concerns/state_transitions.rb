@@ -45,10 +45,7 @@ module Foobara
               state_machine.commit! do
                 each_table(&:validate!)
                 each_table(&:flush_created!)
-                each_table do |table|
-                  table.flush_updated_and_hard_deleted!
-                  table.committed
-                end
+                each_table(&:flush_updated_and_hard_deleted!)
                 entity_attributes_crud_driver.close_transaction(raw_tx)
               end
             rescue => e

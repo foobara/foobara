@@ -572,6 +572,47 @@ RSpec.describe Foobara::CommandConnectors::Http do
             end
           end
         end
+
+        context "with RecordStoreSerializer" do
+          let(:result_transformers) { described_class::Serializers::RecordStoreSerializer }
+
+          context "when user exists with a referral" do
+            let(:user) do
+              User.transaction do
+                referral = referral_class.create(email: "Some@email.com")
+                User.create(name: "Some Name", referral:, ratings: [1, 2, 3], point: { x: 1, y: 2 })
+              end
+            end
+
+            let(:user_id) { user.id }
+
+            let(:referral_id) { user.referral.id }
+
+            it "serializes as a record store" do
+              expect(outcome).to be_success
+
+              expect(response.status).to be(200)
+              expect(response.headers).to eq({})
+              expect(JSON.parse(response.body)).to eq(
+                "User" => {
+                  "1" => {
+                    "id" => 1,
+                    "name" => "Some Name",
+                    "referral" => 1,
+                    "ratings" => [1, 2, 3],
+                    "point" => { "x" => 1, "y" => 2 }
+                  }
+                },
+                "Referral" => {
+                  "1" => {
+                    "id" => 1,
+                    "email" => "some@email.com"
+                  }
+                }
+              )
+            end
+          end
+        end
       end
     end
 

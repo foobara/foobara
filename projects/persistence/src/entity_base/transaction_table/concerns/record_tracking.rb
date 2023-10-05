@@ -85,10 +85,6 @@ module Foobara
               end
             end
 
-            def committed
-              tracked_records.clear
-            end
-
             def rolled_back
               marked_hard_deleted.clear
               marked_updated.clear
