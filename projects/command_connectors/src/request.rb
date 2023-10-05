@@ -43,30 +43,59 @@ module Foobara
       end
 
       def transform_inputs
-        self.transformed_inputs = inputs_transformer.process_value!(untransformed_inputs)
+        self.transformed_inputs = if inputs_transformer
+                                    inputs_transformer.process_value!(untransformed_inputs)
+                                  else
+                                    untransformed_inputs
+                                  end
       end
 
       def transform_result
-        self.outcome = Outcome.success(result_transformer.process_value!(result))
+        if result_transformer
+          self.outcome = Outcome.success(result_transformer.process_value!(result))
+        end
       end
 
       def transform_errors
-        self.outcome = Outcome.errors(errors_transformer.process_value!(errors))
+        if errors_transformer
+          self.outcome = Outcome.errors(errors_transformer.process_value!(errors))
+        end
       end
 
       def inputs_transformer
-        processors = transformers_to_processors(inputs_transformers)
-        Value::Processor::Pipeline.new(processors:)
+        return nil if inputs_transformers.empty?
+
+        transformers = transformers_to_processors(inputs_transformers)
+
+        if transformers.size == 1
+          transformers.first
+        else
+          Value::Processor::Pipeline.new(processors: transformers)
+        end
       end
 
       def result_transformer
-        processors = transformers_to_processors(result_transformers)
-        Value::Processor::Pipeline.new(processors:)
+        return nil if result_transformers.empty?
+
+        transformers = transformers_to_processors(result_transformers)
+
+        if transformers.size == 1
+          transformers.first
+        else
+          Value::Processor::Pipeline.new(processors: transformers)
+        end
       end
 
       def errors_transformer
-        processors = transformers_to_processors(errors_transformers)
-        Value::Processor::Pipeline.new(processors:)
+        return nil if errors_transformers.empty?
+
+        transformers = transformers_to_processors(errors_transformers)
+
+        if transformers.size == 1
+          transformers.first
+        else
+          Value::Processor::Pipeline.new(processors: transformers)
+        end
       end
 
       def transformers_to_processors(transformers)

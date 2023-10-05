@@ -157,6 +157,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
 
       let(:result_transformers) { [->(result) { result * 2 }] }
+      let(:errors_transformers) { [->(errors) { errors }] }
 
       it "runs the command" do
         expect(outcome).to be_success
@@ -165,6 +166,61 @@ RSpec.describe Foobara::CommandConnectors::Http do
         expect(response.status).to be(200)
         expect(response.headers).to eq({})
         expect(response.body).to eq("16")
+      end
+
+      context "when error" do
+        let(:query_string) { "foo=bar" }
+
+        it "is not success" do
+          expect(outcome).to_not be_success
+          errors = request.errors
+
+          expect(errors.size).to eq(1)
+
+          error = errors.first
+
+          expect(error.symbol).to eq(:cannot_cast)
+
+          expect(response.status).to be(422)
+          expect(response.headers).to eq({})
+          expect(response.body).to include("cannot_cast")
+        end
+      end
+
+      context "with multiple transformers" do
+        let(:identity) { ->(x) { x } }
+
+        let(:inputs_transformers) { [identity, inputs_transformer] }
+        let(:result_transformers) { [->(result) { result * 2 }, identity] }
+        let(:errors_transformers) { [->(errors) { errors }, identity] }
+
+        it "runs the command" do
+          expect(outcome).to be_success
+          expect(result).to be(16)
+
+          expect(response.status).to be(200)
+          expect(response.headers).to eq({})
+          expect(response.body).to eq("16")
+        end
+
+        context "when error" do
+          let(:query_string) { "foo=bar" }
+
+          it "is not success" do
+            expect(outcome).to_not be_success
+            errors = request.errors
+
+            expect(errors.size).to eq(1)
+
+            error = errors.first
+
+            expect(error.symbol).to eq(:cannot_cast)
+
+            expect(response.status).to be(422)
+            expect(response.headers).to eq({})
+            expect(response.body).to include("cannot_cast")
+          end
+        end
       end
 
       context "with transformer instance instead of class" do
@@ -407,6 +463,58 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
           expect(errors.size).to eq(1)
           expect(errors.keys.first).to eq("runtime.user_not_found")
+        end
+      end
+
+      context "with an association" do
+        let(:referral_class) do
+          stub_class = ->(klass) { stub_const(klass.name, klass) }
+
+          Class.new(Foobara::Entity) do
+            class << self
+              def name
+                "Referral"
+              end
+            end
+
+            stub_class.call(self)
+
+            attributes id: :integer, email: :email, ratings: [:integer]
+            primary_key :id
+          end
+        end
+
+        before do
+          User.attributes referral: referral_class
+        end
+
+        context "with AtomSerializer" do
+          let(:result_transformers) { described_class::Serializers::AtomicSerializer }
+
+          context "when user exists with a referral" do
+            let(:user) do
+              User.transaction do
+                referral = referral_class.create(email: "Some@email.com")
+                User.create(name: "Some Name", referral:, ratings: [1, 2, 3])
+              end
+            end
+            let(:user_id) { user.id }
+
+            let(:referral_id) {  user.referral.id }
+
+            it "serializes as an atom" do
+              expect(outcome).to be_success
+
+              expect(response.status).to be(200)
+              expect(response.headers).to eq({})
+              expect(JSON.parse(response.body)).to eq(
+                "id" => user_id,
+                "name" => "Some Name",
+                "referral" => referral_id,
+                "ratings" => [1, 2, 3]
+              )
+            end
+          end
         end
       end
     end
