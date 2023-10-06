@@ -29,7 +29,7 @@ RSpec.describe Foobara::Command do
 
         class << self
           def name
-            "CalculateExponential"
+            "CalculateExponent"
           end
         end
       end

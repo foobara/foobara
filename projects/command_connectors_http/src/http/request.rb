@@ -30,6 +30,7 @@ module Foobara
           @parsed_query_string ||= if query_string.nil? || query_string.empty?
                                      {}
                                    else
+                                     # TODO: override this in rack connector to use better rack utils
                                      CGI.parse(query_string).transform_values!(&:first)
                                    end
         end

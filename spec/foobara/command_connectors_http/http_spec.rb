@@ -7,7 +7,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
     Class.new(Foobara::Command) do
       class << self
         def name
-          "ComputeExponential"
+          "ComputeExponent"
         end
       end
 
@@ -52,7 +52,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
   let(:outcome) { request.outcome }
   let(:result) { request.result }
 
-  let(:path) { "/run/ComputeExponential" }
+  let(:path) { "/run/ComputeExponent" }
   let(:method) { "POST" }
   let(:headers) { { some_header_name: "some_header_value" } }
   let(:query_string) { "base=#{base}" }
@@ -348,7 +348,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
           end
 
           it "fails with 401 and relevant error" do
-            expect(command_connector.command_registry[ComputeExponential].command_class).to eq(ComputeExponential)
+            expect(command_connector.command_registry[ComputeExponent].command_class).to eq(ComputeExponent)
 
             expect(outcome).to_not be_success
 
@@ -705,7 +705,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         it "returns metadata about the commands" do
           expect(
-            command_manifest[:global_organization][:global_domain][:commands][:ComputeExponential][:result_type]
+            command_manifest[:global_organization][:global_domain][:commands][:ComputeExponent][:result_type]
           ).to eq(type: :integer)
         end
 

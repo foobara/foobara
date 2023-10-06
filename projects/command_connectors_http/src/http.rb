@@ -1,14 +1,14 @@
 module Foobara
   module CommandConnectors
     class Http < CommandConnector
-      def context_to_request(**context)
+      def context_to_request!(**context)
         path = context[:path]
 
         action, full_command_name = path[1..].split("/")
 
         if action != "run"
           # :nocov:
-          raise "Not sure what to do with #{action}"
+          raise InvalidContextError, "Not sure what to do with #{action}"
           # :nocov:
         end
 
@@ -16,7 +16,7 @@ module Foobara
 
         unless registry_entry
           # :nocov:
-          raise "Could not find command registered for #{path}"
+          raise NoCommandFoundError, "Could not find command registered for #{full_command_name}"
           # :nocov:
         end
 

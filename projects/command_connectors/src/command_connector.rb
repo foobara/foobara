@@ -33,6 +33,9 @@ module Foobara
 
     class NotAllowedError < CommandConnectorError; end
 
+    class NoCommandFoundError < CommandConnectorError; end
+    class InvalidContextError < CommandConnectorError; end
+
     foobara_delegate :add_default_inputs_transformer,
                      :add_default_result_transformer,
                      :add_default_errors_transformer,
@@ -64,7 +67,7 @@ module Foobara
     end
 
     def run(...)
-      request = context_to_request(...)
+      request = context_to_request!(...)
       request.run
       request
     end
