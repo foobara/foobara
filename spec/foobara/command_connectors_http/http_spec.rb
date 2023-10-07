@@ -699,6 +699,16 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
     end
 
+    describe "with describe path" do
+      let(:path) { "/describe/ComputeExponent" }
+
+      it "describes the command" do
+        expect(outcome).to be_success
+        json = JSON.parse(response.body)
+        expect(json["inputs_type"]["element_type_declarations"]["base"]["type"]).to eq("integer")
+      end
+    end
+
     describe "connector manifest" do
       describe "#command_manifest" do
         let(:command_manifest) { command_connector.command_manifest }

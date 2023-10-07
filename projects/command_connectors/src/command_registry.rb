@@ -8,7 +8,14 @@ module Foobara
       self.registry = {}
     end
 
-    def register(
+    def register(...)
+      entry = build_registry_entry(...)
+      command_class = entry.command_class
+
+      registry[command_class.full_command_name] = entry
+    end
+
+    def build_registry_entry(
       command_class,
       inputs_transformers: nil,
       result_transformers: nil,
@@ -19,7 +26,7 @@ module Foobara
       requires_authentication: nil,
       authenticator: self.authenticator
     )
-      entry = Entry.new(
+      Entry.new(
         command_class,
         inputs_transformers: [*inputs_transformers, *default_inputs_transformers],
         result_transformers: [*result_transformers, *default_result_transformers],
@@ -30,8 +37,6 @@ module Foobara
         requires_authentication:,
         authenticator:
       )
-
-      registry[command_class.full_command_name] = entry
     end
 
     def [](name)
