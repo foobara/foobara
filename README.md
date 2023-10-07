@@ -30,30 +30,4 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 Commands is treated like the top-level project for pointless historic reasons
 
-The projects can be found by looking at commands.rb
-
-The project list with known dependencies look like this:
-
-* common (everything depends on this at least for Util.require_directory)
-* value
-* enumerated
-* callback
-* state_machine
-  * callback
-* types
-  * value
-* type_declarations
-  * types
-* builtin_types
-  * type_declarations
-* commands
-  * builtin_types
-  * state_machine
-* domain
-  * commands
-  * builtin_types
-
-Should we add a model project again? It would basically contain additional
-types that would otherwise go into builtin_types
-
-Other option is to rename builtin_types to model
+The projects can be found by looking at projects/ directory
