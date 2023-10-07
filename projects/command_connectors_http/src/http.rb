@@ -1,9 +1,11 @@
 module Foobara
   module CommandConnectors
     class Http < CommandConnector
-      def context_to_request!(**context)
-        path = context[:path]
-
+      def context_to_request!(path:,
+                              method: nil,
+                              headers: {},
+                              query_string: "",
+                              body: "")
         action, full_command_name = path[1..].split("/")
 
         if action != "run"
@@ -20,7 +22,11 @@ module Foobara
           # :nocov:
         end
 
-        self.class::Request.new(registry_entry, **context)
+        self.class::Request.new(registry_entry, path:,
+                                                method:,
+                                                headers:,
+                                                query_string:,
+                                                body:)
       end
     end
   end
