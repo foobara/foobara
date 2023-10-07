@@ -11,17 +11,15 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     name: Ruby ${{ matrix.ruby }}
-    strategy:
-      matrix:
-        ruby:
-          - '3.2.1'
-
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: ${{ matrix.ruby }}
-        bundler-cache: true
-    - name: Run rubocop
-      run: bundle exec rubocop
+      - uses: actions/checkout@v3
+      - name: set ruby version
+        run: |
+          echo ruby_version=`cat .ruby-version` >> "$GITHUB_ENV"
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Run rubocop
+        run: bundle exec rubocop
