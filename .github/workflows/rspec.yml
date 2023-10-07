@@ -10,7 +10,7 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
-    name: Ruby ${{ matrix.ruby }}
+    name: RSpec and Rubocop
     steps:
       - uses: actions/checkout@v3
       - name: set ruby version
@@ -21,5 +21,7 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - name: Run the default task
+      - name: Run rspec
         run: bundle exec rspec
+      - name: Run rubocop
+        run: bundle exec rubocop
