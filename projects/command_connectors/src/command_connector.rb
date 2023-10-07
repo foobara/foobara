@@ -43,6 +43,7 @@ module Foobara
                      :add_default_serializer,
                      :allowed_rule,
                      :allowed_rules,
+                     :build_registry_entry,
                      to: :command_registry
 
     attr_accessor :command_registry, :authenticator

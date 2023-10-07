@@ -6,14 +6,22 @@ module Foobara
                       :query_string,
                       :method,
                       :body,
-                      :headers
+                      :headers,
+                      :original_context
 
-        def initialize(registry_entry, path: nil, method: nil, headers: nil, query_string: nil, body: nil)
+        def initialize(registry_entry,
+                       path: nil,
+                       method: nil,
+                       headers: nil,
+                       query_string: nil,
+                       body: nil,
+                       original_context: nil)
           self.path = path[1..]
           self.query_string = query_string
           self.method = method
           self.body = body
           self.headers = headers
+          self.original_context = original_context
 
           super(registry_entry)
         end

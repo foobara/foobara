@@ -1,4 +1,6 @@
 module Foobara
+  foobara_organization!
+
   class Domain
     class << self
       def reset_all

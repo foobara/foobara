@@ -5,5 +5,6 @@ require "json"
 
 module Foobara
   module CommandConnectors
+    foobara_domain!
   end
 end
