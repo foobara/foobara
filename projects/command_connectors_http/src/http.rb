@@ -6,15 +6,17 @@ module Foobara
                               headers: {},
                               query_string: "",
                               body: "")
+
         action, full_command_name = path[1..].split("/")
 
-        if action != "run"
-          # :nocov:
-          raise InvalidContextError, "Not sure what to do with #{action}"
-          # :nocov:
-        end
-
-        registry_entry = command_registry[full_command_name]
+        registry_entry = case action
+                         when "run"
+                           command_registry[full_command_name]
+                         else
+                           # :nocov:
+                           raise InvalidContextError, "Not sure what to do with #{action}"
+                           # :nocov:
+                         end
 
         unless registry_entry
           # :nocov:
