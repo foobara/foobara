@@ -4,8 +4,6 @@ module Foobara
       def context_to_request!(context)
         action = context.action
         full_command_name = context.full_command_name
-
-        registry_entry = nil
         inputs = nil
 
         registry_entry = command_registry[full_command_name]
@@ -19,7 +17,6 @@ module Foobara
             # :nocov:
           end
 
-          full_command_name = context.full_command_name
           inputs = context.inputs
         when "describe"
           unless registry_entry
