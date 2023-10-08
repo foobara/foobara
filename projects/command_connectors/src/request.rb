@@ -1,19 +1,22 @@
 module Foobara
   class CommandConnector
+    # TODO: rename to command runner
     class Request
-      attr_accessor :registry_entry, :command, :transformed_inputs, :outcome, :authenticated_user
+      attr_accessor :registry_entry,
+                    :untransformed_inputs,
+                    :context,
+                    :transformed_inputs,
+                    :command,
+                    :outcome,
+                    :authenticated_user
 
-      def initialize(registry_entry)
+      def initialize(registry_entry, untransformed_inputs, context)
         self.registry_entry = registry_entry
+        self.untransformed_inputs = untransformed_inputs
+        self.context = context
       end
 
       def full_command_name
-        # :nocov:
-        raise "subclass responsibility"
-        # :nocov:
-      end
-
-      def untransformed_inputs
         # :nocov:
         raise "subclass responsibility"
         # :nocov:
@@ -34,7 +37,7 @@ module Foobara
         construct_command
         authenticate if requires_authentication?
         apply_allowed_rule
-        apply_pre_commit_transformers # TODO: give a better name??
+        apply_pre_commit_transformers
         run_command
         transform_outcome
 

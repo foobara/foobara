@@ -1,6 +1,4 @@
 module Foobara
-  foobara_organization!
-
   class Domain
     class << self
       def reset_all
@@ -26,6 +24,7 @@ module Foobara
         end
 
         @installed = true
+        Foobara.foobara_organization!
         Foobara::Command.include(Foobara::Domain::CommandExtension)
         Foobara::Command.after_subclass_defined do |subclass|
           unprocessed_command_classes << subclass

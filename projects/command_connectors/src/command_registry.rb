@@ -9,7 +9,10 @@ module Foobara
     end
 
     def register(...)
-      registry[command_class.full_command_name] = build_registry_entry(...)
+      entry = build_registry_entry(...)
+      command_class = entry.command_class
+
+      registry[command_class.full_command_name] = entry
     end
 
     def build_registry_entry(
