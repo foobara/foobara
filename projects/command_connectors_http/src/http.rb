@@ -35,7 +35,6 @@ module Foobara
           # :nocov:
         end
 
-        # TODO: why not pass the command_class to the request?
         self.class::Request.new(registry_entry, inputs, context)
       end
     end
