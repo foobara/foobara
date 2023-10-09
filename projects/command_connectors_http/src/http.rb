@@ -19,17 +19,15 @@ module Foobara
 
           inputs = context.inputs
         when "describe"
-          unless registry_entry
-            # :nocov:
-            raise NoCommandFoundError,
-                  "Could not find command registered for #{full_command_name}"
-            # :nocov:
-          end
-
-          command_class = Foobara::CommandConnectors::DescribeCommand
+          command_class = Foobara::CommandConnectors::Commands::DescribeCommand
           full_command_name = command_class.full_command_name
 
           inputs = { runnable: registry_entry }
+          registry_entry = command_registry[full_command_name] || build_registry_entry(command_class)
+        when "ping"
+          command_class = Foobara::CommandConnectors::Commands::Ping
+          full_command_name = command_class.full_command_name
+
           registry_entry = command_registry[full_command_name] || build_registry_entry(command_class)
         else
           # :nocov:
