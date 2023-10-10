@@ -12,7 +12,7 @@ module Foobara
 
       def initialize(registry_entry, untransformed_inputs, context)
         self.registry_entry = registry_entry
-        self.untransformed_inputs = untransformed_inputs
+        self.untransformed_inputs = untransformed_inputs || {}
         self.context = context
       end
 
