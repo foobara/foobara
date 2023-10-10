@@ -33,7 +33,7 @@ module Foobara
         # TODO: maybe treat serializer as a result transformer instead??
         serializers: [*serializers, *default_serializers],
         # TODO: Maybe treat these three as a pre-execute validator??
-        allowed_rule:,
+        allowed_rule: allowed_rule && to_allowed_rule(allowed_rule),
         requires_authentication:,
         authenticator:
       )

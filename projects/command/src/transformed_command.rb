@@ -2,6 +2,7 @@ module Foobara
   class TransformedCommand
     class << self
       attr_accessor :command_class,
+                    :capture_unknown_error,
                     :inputs_transformers,
                     :result_transformers,
                     :errors_transformers,
@@ -21,10 +22,12 @@ module Foobara
         serializers:,
         allowed_rule:,
         requires_authentication:,
-        authenticator:
+        authenticator:,
+        capture_unknown_error: true
       )
         Class.new(self).tap do |klass|
           klass.command_class = command_class
+          klass.capture_unknown_error = capture_unknown_error
           klass.inputs_transformers = Util.array(inputs_transformers)
           klass.result_transformers = Util.array(result_transformers)
           klass.errors_transformers = Util.array(errors_transformers)
@@ -36,27 +39,19 @@ module Foobara
         end
       end
 
-      def manifest
-        # TODO: need to delegate to the transformers when present, not the command!
-        command_class.manifest(verbose: true)
-      end
-
-      def types_depended_on
-        command_class.types_depended_on
-      end
+      foobara_delegate :full_command_name, to: :command_class
 
       def manifest
         # TODO: need to delegate to the transformers when present, not the command!
         command_class.manifest(verbose: true)
       end
 
-      # TODO: what is this used for??
       def types_depended_on
         command_class.types_depended_on
       end
     end
 
-    attr_accessor :command, :untransformed_inputs, :transformed_inputs, :outcome
+    attr_accessor :command, :untransformed_inputs, :transformed_inputs, :outcome, :authenticated_user
 
     def initialize(untransformed_inputs)
       self.untransformed_inputs = untransformed_inputs || {}
@@ -67,6 +62,7 @@ module Foobara
 
     foobara_delegate :full_command_name, to: :command_class
     foobara_delegate :command_class,
+                     :capture_unknown_error,
                      :inputs_transformers,
                      :result_transformers,
                      :errors_transformers,
@@ -244,9 +240,14 @@ module Foobara
 
     def run_command
       outcome = command.run
-
-      if outcome
-        self.outcome = outcome
+      self.outcome = outcome if outcome
+    rescue => e
+      # raise # uncomment when debugging. TODO: figure out how to make this not necessary
+      if capture_unknown_error
+        # TODO: move to superclass?
+        self.outcome = Outcome.error(CommandConnector::UnknownError.new(e))
+      else
+        raise
       end
     end
 

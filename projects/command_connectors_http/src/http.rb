@@ -5,11 +5,11 @@ module Foobara
         action = context.action
         inputs = nil
 
+        full_command_name = context.full_command_name
+        transformed_command_class = command_registry[full_command_name]
+
         case action
         when "run"
-          full_command_name = context.full_command_name
-          transformed_command_class = command_registry[full_command_name]
-
           unless transformed_command_class
             # :nocov:
             raise NoCommandFoundError,

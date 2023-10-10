@@ -47,10 +47,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
   let(:base) { 2 }
   let(:exponent) { 3 }
 
-  let(:request) { command_connector.run(path:, method:, headers:, query_string:, body:) }
-  let(:response) { request.response }
-  let(:outcome) { request.outcome }
-  let(:result) { request.result }
+  let(:response) { command_connector.run(path:, method:, headers:, query_string:, body:) }
 
   let(:path) { "/run/ComputeExponent" }
   let(:method) { "POST" }
@@ -85,9 +82,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
     end
 
     it "runs the command" do
-      expect(outcome).to be_success
-      expect(result).to be(8)
-
       expect(response.status).to be(200)
       expect(response.headers).to eq({})
       expect(response.body).to eq("8")
@@ -106,9 +100,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
       let(:default_serializers) { Foobara::CommandConnectors::JsonSerializer }
 
       it "runs the command" do
-        expect(outcome).to be_success
-        expect(result).to be(8)
-
         expect(response.status).to be(200)
         expect(response.headers).to eq({})
         expect(response.body).to eq("8")
@@ -119,9 +110,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
       let(:default_serializers) { nil }
 
       it "runs the command" do
-        expect(outcome).to be_success
-        expect(result).to be(8)
-
         expect(response.status).to be(200)
         expect(response.headers).to eq({})
         expect(response.body).to eq(8)
@@ -135,8 +123,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
       let(:serializers) { Foobara::CommandConnectors::ErrorsSerializer }
 
       it "fails" do
-        expect(outcome).to_not be_success
-
         expect(response.status).to be(422)
         expect(response.headers).to eq({})
 
@@ -159,8 +145,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
 
       it "fails" do
-        expect(outcome).to_not be_success
-
         expect(response.status).to be(500)
         expect(response.headers).to eq({})
 
@@ -190,9 +174,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
       let(:errors_transformers) { [->(errors) { errors }] }
 
       it "runs the command" do
-        expect(outcome).to be_success
-        expect(result).to be(16)
-
         expect(response.status).to be(200)
         expect(response.headers).to eq({})
         expect(response.body).to eq("16")
@@ -202,15 +183,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
         let(:query_string) { "foo=bar" }
 
         it "is not success" do
-          expect(outcome).to_not be_success
-          errors = request.errors
-
-          expect(errors.size).to eq(1)
-
-          error = errors.first
-
-          expect(error.symbol).to eq(:cannot_cast)
-
           expect(response.status).to be(422)
           expect(response.headers).to eq({})
           expect(response.body).to include("cannot_cast")
@@ -226,9 +198,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
         let(:pre_commit_transformers) { [identity, identity] }
 
         it "runs the command" do
-          expect(outcome).to be_success
-          expect(result).to be(16)
-
           expect(response.status).to be(200)
           expect(response.headers).to eq({})
           expect(response.body).to eq("16")
@@ -238,15 +207,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
           let(:query_string) { "foo=bar" }
 
           it "is not success" do
-            expect(outcome).to_not be_success
-            errors = request.errors
-
-            expect(errors.size).to eq(1)
-
-            error = errors.first
-
-            expect(error.symbol).to eq(:cannot_cast)
-
             expect(response.status).to be(422)
             expect(response.headers).to eq({})
             expect(response.body).to include("cannot_cast")
@@ -258,9 +218,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
         let(:inputs_transformers) { [inputs_transformer.instance] }
 
         it "runs the command" do
-          expect(outcome).to be_success
-          expect(result).to be(16)
-
           expect(response.status).to be(200)
           expect(response.headers).to eq({})
           expect(response.body).to eq("16")
@@ -281,11 +238,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         context "when allowed" do
           it "runs the command" do
-            expect(request).to respond_to(:base)
-
-            expect(outcome).to be_success
-            expect(result).to be(8)
-
             expect(response.status).to be(200)
             expect(response.headers).to eq({})
             expect(response.body).to eq("8")
@@ -304,8 +256,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
           end
 
           it "fails with 403 and relevant error" do
-            expect(outcome).to_not be_success
-
             expect(response.status).to be(403)
             expect(response.headers).to eq({})
             expect(JSON.parse(response.body)["runtime.not_allowed"]["message"]).to eq("Must be 1900 but was 2")
@@ -331,11 +281,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
           let(:allowed_rule) { [:must_be_base_1900, "must_be_base_2"] }
 
           it "runs the command" do
-            expect(request).to respond_to(:base)
-
-            expect(outcome).to be_success
-            expect(result).to be(8)
-
             expect(response.status).to be(200)
             expect(response.headers).to eq({})
             expect(response.body).to eq("8")
@@ -349,8 +294,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
           it "fails with 401 and relevant error" do
             expect(command_connector.command_registry[ComputeExponent].command_class).to eq(ComputeExponent)
-
-            expect(outcome).to_not be_success
 
             expect(response.status).to be(403)
             expect(response.headers).to eq({})
@@ -366,8 +309,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
           end
 
           it "fails with 401 and relevant error" do
-            expect(outcome).to_not be_success
-
             expect(response.status).to be(403)
             expect(response.headers).to eq({})
             expect(JSON.parse(response.body)["runtime.not_allowed"]["message"]).to match(/base == 1900/)
@@ -381,8 +322,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
       context "when unauthenticated" do
         it "is 401" do
-          expect(outcome).to_not be_success
-
           expect(response.status).to be(401)
           expect(response.headers).to eq({})
           expect(JSON.parse(response.body).keys).to eq(["runtime.unauthenticated"])
@@ -397,8 +336,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
         end
 
         it "is 200" do
-          expect(outcome).to be_success
-
           expect(response.status).to be(200)
           expect(response.headers).to eq({})
           expect(JSON.parse(response.body)).to eq(8)
@@ -474,8 +411,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
         let(:result_transformers) { [proc { |user| user.attributes }] }
 
         it "finds the user" do
-          expect(outcome).to be_success
-
           expect(response.status).to be(200)
           expect(response.headers).to eq({})
           expect(JSON.parse(response.body)).to eq("id" => user_id, "name" => "whatever")
@@ -486,8 +421,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
         let(:user_id) { 100 }
 
         it "fails" do
-          expect(outcome).to_not be_success
-
           expect(response.status).to be(404)
           expect(response.headers).to eq({})
 
@@ -552,8 +485,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
             let(:referral_id) {  user.referral.id }
 
             it "serializes as an atom" do
-              expect(outcome).to be_success
-
               expect(response.status).to be(200)
               expect(response.headers).to eq({})
               expect(JSON.parse(response.body)).to eq(
@@ -617,8 +548,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
             let(:referral_id) {  user.referral.id }
 
             it "serializes as an aggregate" do
-              expect(outcome).to be_success
-
               expect(response.status).to be(200)
               expect(response.headers).to eq({})
               expect(JSON.parse(response.body)).to eq(
@@ -658,8 +587,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
             let(:referral_id) { user.referral.id }
 
             it "serializes as a record store" do
-              expect(outcome).to be_success
-
               expect(response.status).to be(200)
               expect(response.headers).to eq({})
               expect(JSON.parse(response.body)).to eq(
@@ -690,9 +617,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
       let(:body) { "{\"exponent\":#{exponent},\"base\":#{base}}" }
 
       it "runs the command" do
-        expect(outcome).to be_success
-        expect(result).to be(8)
-
         expect(response.status).to be(200)
         expect(response.headers).to eq({})
         expect(response.body).to eq("8")
@@ -703,7 +627,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
       let(:path) { "/describe/ComputeExponent" }
 
       it "describes the command" do
-        expect(outcome).to be_success
         json = JSON.parse(response.body)
         expect(json["inputs_type"]["element_type_declarations"]["base"]["type"]).to eq("integer")
       end
