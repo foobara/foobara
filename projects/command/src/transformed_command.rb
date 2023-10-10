@@ -242,12 +242,13 @@ module Foobara
       outcome = command.run
       self.outcome = outcome if outcome
     rescue => e
-      # raise # uncomment when debugging. TODO: figure out how to make this not necessary
       if capture_unknown_error
         # TODO: move to superclass?
         self.outcome = Outcome.error(CommandConnector::UnknownError.new(e))
       else
+        # :nocov:
         raise
+        # :nocov:
       end
     end
 

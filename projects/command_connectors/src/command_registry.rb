@@ -15,6 +15,7 @@ module Foobara
 
     def transform_command_class(
       command_class,
+      capture_unknown_error: true,
       inputs_transformers: nil,
       result_transformers: nil,
       errors_transformers: nil,
@@ -26,6 +27,7 @@ module Foobara
     )
       Foobara::TransformedCommand.subclass(
         command_class,
+        capture_unknown_error:,
         inputs_transformers: [*inputs_transformers, *default_inputs_transformers],
         result_transformers: [*result_transformers, *default_result_transformers],
         errors_transformers: [*errors_transformers, *default_errors_transformers],

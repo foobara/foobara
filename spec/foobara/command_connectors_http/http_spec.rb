@@ -62,6 +62,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
   let(:allowed_rule) { nil }
   let(:allowed_rules) { nil }
   let(:requires_authentication) { nil }
+  let(:capture_unknown_error) { false }
 
   describe "#run_command" do
     before do
@@ -77,7 +78,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
         serializers:,
         allowed_rule:,
         requires_authentication:,
-        pre_commit_transformers:
+        pre_commit_transformers:,
+        capture_unknown_error:
       )
     end
 
@@ -134,14 +136,15 @@ RSpec.describe Foobara::CommandConnectors::Http do
     end
 
     context "when unknown error" do
+      let(:capture_unknown_error) { true }
+      let(:default_serializers) do
+        [Foobara::CommandConnectors::ErrorsSerializer, Foobara::CommandConnectors::JsonSerializer]
+      end
+
       before do
         command_class.define_method :execute do
           raise "kaboom!"
         end
-      end
-
-      let(:default_serializers) do
-        [Foobara::CommandConnectors::ErrorsSerializer, Foobara::CommandConnectors::JsonSerializer]
       end
 
       it "fails" do
@@ -228,7 +231,11 @@ RSpec.describe Foobara::CommandConnectors::Http do
     context "with allowed rule" do
       context "when declared with a hash" do
         let(:allowed_rule) do
-          logic = proc { base == 2 }
+          logic = proc {
+            raise unless respond_to?(:base)
+
+            base == 2
+          }
 
           {
             logic:,
