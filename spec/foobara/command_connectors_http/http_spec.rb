@@ -281,7 +281,9 @@ RSpec.describe Foobara::CommandConnectors::Http do
           it "fails with 403 and relevant error" do
             expect(response.status).to be(403)
             expect(response.headers).to eq({})
-            expect(JSON.parse(response.body)["runtime.not_allowed"]["message"]).to eq("Must be 1900 but was 2")
+            expect(JSON.parse(response.body)["runtime.not_allowed"]["message"]).to eq(
+              "Not allowed: Must be 1900 but was 2"
+            )
           end
         end
       end
@@ -308,6 +310,15 @@ RSpec.describe Foobara::CommandConnectors::Http do
             expect(response.headers).to eq({})
             expect(response.body).to eq("8")
           end
+
+          describe "#command_manifest" do
+            it "contains the errors for not allowed" do
+              domain_manifest = command_connector.command_manifest[:global_organization][:global_domain]
+              error_manifest = domain_manifest[:commands][:ComputeExponent][:error_types]
+
+              expect(error_manifest.keys).to include("runtime.not_allowed")
+            end
+          end
         end
 
         context "when not allowed" do
@@ -320,7 +331,9 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
             expect(response.status).to be(403)
             expect(response.headers).to eq({})
-            expect(JSON.parse(response.body)["runtime.not_allowed"]["message"]).to eq("Must be base 1900 but was 2")
+            expect(JSON.parse(response.body)["runtime.not_allowed"]["message"]).to eq(
+              "Not allowed: Must be base 1900 but was 2"
+            )
           end
         end
       end
@@ -342,6 +355,15 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
     context "when authentication required" do
       let(:requires_authentication) { true }
+
+      describe "#command_manifest" do
+        it "contains the errors for not allowed" do
+          domain_manifest = command_connector.command_manifest[:global_organization][:global_domain]
+          error_manifest = domain_manifest[:commands][:ComputeExponent][:error_types]
+
+          expect(error_manifest.keys).to include("runtime.unauthenticated")
+        end
+      end
 
       context "when unauthenticated" do
         it "is 401" do
