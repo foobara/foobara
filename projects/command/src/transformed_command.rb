@@ -43,7 +43,25 @@ module Foobara
 
       def manifest
         # TODO: need to delegate to the transformers when present, not the command!
-        command_class.manifest(verbose: true)
+        h = command_class.manifest(verbose: true)
+
+        input_transformer = inputs_transformers.find do |transformer|
+          transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer && transformer.input_type
+        end
+
+        if input_transformer
+          h[:inputs_type] = input_transformer.input_type.declaration_data
+        end
+
+        output_transformer = result_transformers.reverse.find do |transformer|
+          transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer && transformer.output_type
+        end
+
+        if output_transformer
+          h[:result_type] = output_transformer.output_type.declaration_data
+        end
+
+        h
       end
 
       def types_depended_on

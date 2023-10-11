@@ -630,64 +630,85 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
     end
 
-    describe "with describe path" do
-      let(:path) { "/describe/ComputeExponent" }
+    context "manifest with various transformers" do
+      let(:query_string) { "bbaassee=#{base}" }
 
-      it "describes the command" do
-        json = JSON.parse(response.body)
-        expect(json["inputs_type"]["element_type_declarations"]["base"]["type"]).to eq("integer")
-      end
-
-      context "with various transformers" do
-        let(:query_string) { "bbaassee=#{base}" }
-
-        let(:inputs_transformers) { [inputs_transformer] }
-        let(:inputs_transformer) do
-          Class.new(Foobara::TypeDeclarations::TypedTransformer) do
+      let(:inputs_transformers) { [inputs_transformer] }
+      let(:inputs_transformer) do
+        Class.new(Foobara::TypeDeclarations::TypedTransformer) do
+          class << self
             def input_type_declaration
               {
                 bbaassee: :string,
                 exponent: :string
               }
             end
+          end
 
-            def transform(inputs)
-              {
-                base: inputs["bbaassee"],
-                exponent: inputs["exponent"]
-              }
-            end
+          def transform(inputs)
+            {
+              base: inputs["bbaassee"],
+              exponent: inputs["exponent"]
+            }
           end
         end
+      end
 
-        let(:result_transformers) { [result_transformer] }
-        let(:result_transformer) do
-          Class.new(Foobara::TypeDeclarations::TypedTransformer) do
+      let(:result_transformers) { [result_transformer] }
+      let(:result_transformer) do
+        Class.new(Foobara::TypeDeclarations::TypedTransformer) do
+          class << self
             def output_type_declaration
               { answer: :string }
             end
+          end
 
-            def transform(result)
-              {
-                answer: result
-              }
-            end
+          def transform(result)
+            {
+              answer: result.to_s
+            }
           end
         end
+      end
 
-        describe "#command_manifest" do
-          let(:command_manifest) { command_connector.command_manifest }
+      it "runs the command" do
+        expect(response.status).to be(200)
+        expect(response.headers).to eq({})
+        expect(JSON.parse(response.body)).to eq("answer" => "8")
+      end
 
-          it "uses types from the transformers", :focus do
-            binding.pry
-            expect(command_manifest).to eq(foo: :bar)
-            h = command_manifest[:global_organization][:global_domain][:commands][:ComputeExponent]
-            inputs_type = h[:inputs_type]
-            result_type = h[:result_type]
-            # {:type=>:attributes,
-            # :element_type_declarations=>{:exponent=>{:type=>:integer}, :base=>{:type=>:integer}}}
-          end
+      describe "#command_manifest" do
+        let(:command_manifest) { command_connector.command_manifest }
+
+        it "uses types from the transformers" do
+          h = command_manifest[:global_organization][:global_domain][:commands][:ComputeExponent]
+
+          inputs_type = h[:inputs_type]
+          result_type = h[:result_type]
+
+          expect(inputs_type).to eq(
+            type: :attributes,
+            element_type_declarations: {
+              exponent: { type: :string },
+              bbaassee: { type: :string }
+            }
+          )
+          expect(result_type).to eq(
+            type: :attributes,
+            element_type_declarations: {
+              answer: { type: :string }
+            }
+          )
         end
+      end
+    end
+
+    describe "with describe path" do
+      let(:path) { "/describe/ComputeExponent" }
+
+      it "describes the command" do
+        json = JSON.parse(response.body)
+        expect(json["inputs_type"]["element_type_declarations"]["base"]["type"]).to eq("integer")
       end
     end
 
