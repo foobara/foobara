@@ -630,12 +630,37 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
     end
 
-    describe "with describe path" do
+    describe "with describe path", :focus do
       let(:path) { "/describe/ComputeExponent" }
 
       it "describes the command" do
         json = JSON.parse(response.body)
         expect(json["inputs_type"]["element_type_declarations"]["base"]["type"]).to eq("integer")
+      end
+
+      context "with various transformers" do
+        let(:query_string) { "bbaassee=#{base}" }
+
+        let(:inputs_transformers) { [inputs_transformer] }
+        let(:inputs_transformer) do
+          Class.new(Foobara::Value::TypedTransformer) do
+            def transform(inputs)
+              {
+                base: inputs["bbaassee"],
+                exponent: inputs["exponent"]
+              }
+            end
+          end
+        end
+
+        let(:result_transformers) { [result_transformer] }
+        let(:result_transformer) do
+          Class.new(Foobara::Value::TypedTransformer) do
+            def transform(result)
+              result * 2
+            end
+          end
+        end
       end
     end
 
