@@ -42,26 +42,34 @@ module Foobara
       foobara_delegate :full_command_name, to: :command_class
 
       def manifest
-        # TODO: need to delegate to the transformers when present, not the command!
-        h = command_class.manifest(verbose: true)
+        command_class.manifest(verbose: true).merge(
+          inputs_type: inputs_type.declaration_data,
+          result_type: result_type.declaration_data
+        )
+      end
 
+      def inputs_type
         input_transformer = inputs_transformers.find do |transformer|
           transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer && transformer.input_type
         end
 
         if input_transformer
-          h[:inputs_type] = input_transformer.input_type.declaration_data
+          input_transformer.input_type
+        else
+          command_class.inputs_type
         end
+      end
 
+      def result_type
         output_transformer = result_transformers.reverse.find do |transformer|
           transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer && transformer.output_type
         end
 
         if output_transformer
-          h[:result_type] = output_transformer.output_type.declaration_data
+          output_transformer.output_type
+        else
+          command_class.result_type
         end
-
-        h
       end
 
       def types_depended_on
