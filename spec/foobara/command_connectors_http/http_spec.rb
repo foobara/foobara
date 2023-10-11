@@ -5,6 +5,22 @@ RSpec.describe Foobara::CommandConnectors::Http do
     stub_class = ->(klass) { stub_const(klass.name, klass) }
 
     Class.new(Foobara::Command) do
+      error_klass = Class.new(Foobara::RuntimeError) do
+        class << self
+          def name
+            "SomeRuntimeError"
+          end
+
+          def context_type_declaration
+            :duck
+          end
+        end
+
+        stub_class.call(self)
+      end
+
+      possible_error error_klass
+
       class << self
         def name
           "ComputeExponent"
@@ -665,9 +681,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
             end
 
             def transform(result)
-              {
-                answer: result.to_s
-              }
+              { answer: result.to_s }
             end
           end
         end
@@ -759,6 +773,14 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 is_fatal: true,
                 path: [:bbaassee],
                 runtime_path: []
+              },
+              "runtime.some_runtime" => {
+                category: :runtime,
+                context_type_declaration: { type: :duck },
+                is_fatal: true,
+                path: [],
+                runtime_path: [],
+                symbol: :some_runtime
               }
             )
           end
