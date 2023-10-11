@@ -77,7 +77,7 @@ module Foobara
         type = inputs_type
 
         if type == command_class.inputs_type
-          possible_errors = command_class.error_context_type_map
+          possible_errors = command_class.error_context_type_map.dup
         else
           possible_errors = type.possible_errors.transform_keys(&:to_s)
 
@@ -88,6 +88,14 @@ module Foobara
               possible_errors[key] = error_class
             end
           end
+        end
+
+        if requires_authentication
+          possible_errors["runtime.unauthenticated"] = CommandConnector::UnauthenticatedError
+        end
+
+        if allowed_rule
+          possible_errors["runtime.not_allowed"] = CommandConnector::NotAllowedError
         end
 
         possible_errors.to_h do |key, error_class|
@@ -270,7 +278,8 @@ module Foobara
               explanation = allowed_rule.block.source || "No explanation."
             end
 
-            self.outcome = Outcome.error(CommandConnector::NotAllowedError.new(explanation))
+            error = CommandConnector::NotAllowedError.new(rule_symbol: rule.symbol, explanation:)
+            self.outcome = Outcome.error(error)
 
             command.state_machine.error!
             command.halt!
