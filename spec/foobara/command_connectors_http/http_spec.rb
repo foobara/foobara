@@ -630,7 +630,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
     end
 
-    describe "with describe path", :focus do
+    describe "with describe path" do
       let(:path) { "/describe/ComputeExponent" }
 
       it "describes the command" do
@@ -643,7 +643,14 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         let(:inputs_transformers) { [inputs_transformer] }
         let(:inputs_transformer) do
-          Class.new(Foobara::Value::TypedTransformer) do
+          Class.new(Foobara::TypeDeclarations::TypedTransformer) do
+            def input_type_declaration
+              {
+                bbaassee: :string,
+                exponent: :string
+              }
+            end
+
             def transform(inputs)
               {
                 base: inputs["bbaassee"],
@@ -655,10 +662,30 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         let(:result_transformers) { [result_transformer] }
         let(:result_transformer) do
-          Class.new(Foobara::Value::TypedTransformer) do
-            def transform(result)
-              result * 2
+          Class.new(Foobara::TypeDeclarations::TypedTransformer) do
+            def output_type_declaration
+              { answer: :string }
             end
+
+            def transform(result)
+              {
+                answer: result
+              }
+            end
+          end
+        end
+
+        describe "#command_manifest" do
+          let(:command_manifest) { command_connector.command_manifest }
+
+          it "uses types from the transformers", :focus do
+            binding.pry
+            expect(command_manifest).to eq(foo: :bar)
+            h = command_manifest[:global_organization][:global_domain][:commands][:ComputeExponent]
+            inputs_type = h[:inputs_type]
+            result_type = h[:result_type]
+            # {:type=>:attributes,
+            # :element_type_declarations=>{:exponent=>{:type=>:integer}, :base=>{:type=>:integer}}}
           end
         end
       end
