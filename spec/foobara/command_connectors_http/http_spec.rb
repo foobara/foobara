@@ -681,7 +681,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
         describe "#command_manifest" do
           let(:command_manifest) { command_connector.command_manifest }
 
-          it "uses types from the transformers", :focus do
+          it "uses types from the transformers" do
             h = command_manifest[:global_organization][:global_domain][:commands][:ComputeExponent]
 
             inputs_type = h[:inputs_type]
@@ -725,7 +725,10 @@ RSpec.describe Foobara::CommandConnectors::Http do
                     unexpected_attributes: { type: :array, element_type_declaration: { type: :symbol } },
                     allowed_attributes: { type: :array, element_type_declaration: { type: :symbol } }
                   }
-                }, is_fatal: true, path: [], runtime_path: []
+                },
+                is_fatal: true,
+                path: [],
+                runtime_path: []
               },
               "data.exponent.cannot_cast" => {
                 category: :data,
@@ -742,7 +745,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 path: [:exponent],
                 runtime_path: []
               },
-              "data.base.cannot_cast" => {
+              "data.bbaassee.cannot_cast" => {
                 category: :data,
                 symbol: :cannot_cast,
                 context_type_declaration: {
@@ -754,7 +757,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
                   }
                 },
                 is_fatal: true,
-                path: [:base],
+                path: [:bbaassee],
                 runtime_path: []
               }
             )
