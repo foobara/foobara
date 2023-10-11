@@ -44,7 +44,8 @@ module Foobara
       def manifest
         command_class.manifest(verbose: true).merge(
           inputs_type: inputs_type.declaration_data,
-          result_type: result_type.declaration_data
+          result_type: result_type.declaration_data,
+          error_types: error_types_manifest
         )
       end
 
@@ -69,6 +70,28 @@ module Foobara
           output_transformer.output_type
         else
           command_class.result_type
+        end
+      end
+
+      def error_types_manifest
+        type = inputs_type
+
+        if type == command_class.inputs_type
+          possible_errors = command_class.error_context_type_map
+        else
+          possible_errors = type.possible_errors.transform_keys(&:to_s)
+
+          command_class.error_context_type_map.each_pair do |key, error_class|
+            manifest = ErrorKey.to_h(key)
+
+            if manifest[:category] != :data
+              possible_errors[key] = error_class
+            end
+          end
+        end
+
+        possible_errors.to_h do |key, error_class|
+          [key, error_class.to_h.merge(ErrorKey.to_h(key))]
         end
       end
 
