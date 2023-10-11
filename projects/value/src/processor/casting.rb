@@ -11,6 +11,14 @@ module Foobara
               true
             end
           end
+
+          def message
+            if path.empty?
+              super
+            else
+              "At #{path.join(".")}: #{super}"
+            end
+          end
         end
 
         class << self
@@ -68,7 +76,10 @@ module Foobara
         end
 
         def error_message(value)
-          "Cannot cast #{value.inspect}. Expected it to #{applies_message}"
+          type = declaration_data[:cast_to][:type].to_s
+          article = type =~ /^[aeiouy]/i ? "an" : "a"
+
+          "Cannot cast #{value.inspect} to #{article} #{type}. Expected it to #{applies_message}"
         end
 
         def applies_message
