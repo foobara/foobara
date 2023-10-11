@@ -630,75 +630,77 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
     end
 
-    context "manifest with various transformers" do
-      let(:query_string) { "bbaassee=#{base}" }
+    describe "#command_manifest" do
+      context "when various transformers" do
+        let(:query_string) { "bbaassee=#{base}" }
 
-      let(:inputs_transformers) { [inputs_transformer] }
-      let(:inputs_transformer) do
-        Class.new(Foobara::TypeDeclarations::TypedTransformer) do
-          class << self
-            def input_type_declaration
+        let(:inputs_transformers) { [inputs_transformer] }
+        let(:inputs_transformer) do
+          Class.new(Foobara::TypeDeclarations::TypedTransformer) do
+            class << self
+              def input_type_declaration
+                {
+                  bbaassee: :string,
+                  exponent: :string
+                }
+              end
+            end
+
+            def transform(inputs)
               {
-                bbaassee: :string,
-                exponent: :string
+                base: inputs["bbaassee"],
+                exponent: inputs["exponent"]
               }
             end
           end
-
-          def transform(inputs)
-            {
-              base: inputs["bbaassee"],
-              exponent: inputs["exponent"]
-            }
-          end
         end
-      end
 
-      let(:result_transformers) { [result_transformer] }
-      let(:result_transformer) do
-        Class.new(Foobara::TypeDeclarations::TypedTransformer) do
-          class << self
-            def output_type_declaration
-              { answer: :string }
+        let(:result_transformers) { [result_transformer] }
+        let(:result_transformer) do
+          Class.new(Foobara::TypeDeclarations::TypedTransformer) do
+            class << self
+              def output_type_declaration
+                { answer: :string }
+              end
+            end
+
+            def transform(result)
+              {
+                answer: result.to_s
+              }
             end
           end
-
-          def transform(result)
-            {
-              answer: result.to_s
-            }
-          end
         end
-      end
 
-      it "runs the command" do
-        expect(response.status).to be(200)
-        expect(response.headers).to eq({})
-        expect(JSON.parse(response.body)).to eq("answer" => "8")
-      end
+        it "runs the command" do
+          expect(response.status).to be(200)
+          expect(response.headers).to eq({})
+          expect(JSON.parse(response.body)).to eq("answer" => "8")
+        end
 
-      describe "#command_manifest" do
-        let(:command_manifest) { command_connector.command_manifest }
+        describe "#command_manifest" do
+          let(:command_manifest) { command_connector.command_manifest }
 
-        it "uses types from the transformers" do
-          h = command_manifest[:global_organization][:global_domain][:commands][:ComputeExponent]
+          it "uses types from the transformers" do
+            h = command_manifest[:global_organization][:global_domain][:commands][:ComputeExponent]
 
-          inputs_type = h[:inputs_type]
-          result_type = h[:result_type]
+            inputs_type = h[:inputs_type]
+            result_type = h[:result_type]
 
-          expect(inputs_type).to eq(
-            type: :attributes,
-            element_type_declarations: {
-              exponent: { type: :string },
-              bbaassee: { type: :string }
-            }
-          )
-          expect(result_type).to eq(
-            type: :attributes,
-            element_type_declarations: {
-              answer: { type: :string }
-            }
-          )
+            expect(inputs_type).to eq(
+              type: :attributes,
+              element_type_declarations: {
+                exponent: { type: :string },
+                bbaassee: { type: :string }
+              }
+            )
+            expect(result_type).to eq(
+              type: :attributes,
+              element_type_declarations: {
+                answer: { type: :string }
+              }
+            )
+          end
         end
       end
     end

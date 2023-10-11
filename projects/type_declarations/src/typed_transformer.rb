@@ -38,17 +38,11 @@ module Foobara
                   value
                 end
 
-        output = if applicable?(input)
-                   transformed = transform(input)
+        output = transform(input)
 
-                   if output_type
-                     output_type.process_value!(transformed)
-                   else
-                     transformed
-                   end
-                 else
-                   input
-                 end
+        if output_type
+          output = output_type.process_value!(output)
+        end
 
         Outcome.success(output)
       end
