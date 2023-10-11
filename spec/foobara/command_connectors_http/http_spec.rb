@@ -681,11 +681,12 @@ RSpec.describe Foobara::CommandConnectors::Http do
         describe "#command_manifest" do
           let(:command_manifest) { command_connector.command_manifest }
 
-          it "uses types from the transformers" do
+          it "uses types from the transformers", :focus do
             h = command_manifest[:global_organization][:global_domain][:commands][:ComputeExponent]
 
             inputs_type = h[:inputs_type]
             result_type = h[:result_type]
+            error_types = h[:error_types]
 
             expect(inputs_type).to eq(
               type: :attributes,
@@ -698,6 +699,63 @@ RSpec.describe Foobara::CommandConnectors::Http do
               type: :attributes,
               element_type_declarations: {
                 answer: { type: :string }
+              }
+            )
+            expect(error_types).to eq(
+              "data.cannot_cast" => {
+                category: :data,
+                symbol: :cannot_cast,
+                context_type_declaration: {
+                  type: :attributes, element_type_declarations: {
+                    cast_to: { type: :duck },
+                    value: { type: :duck },
+                    attribute_name: { type: :symbol }
+                  }
+                },
+                is_fatal: true,
+                path: [],
+                runtime_path: []
+              },
+              "data.unexpected_attributes" => {
+                category: :data,
+                symbol: :unexpected_attributes,
+                context_type_declaration: {
+                  type: :attributes,
+                  element_type_declarations: {
+                    unexpected_attributes: { type: :array, element_type_declaration: { type: :symbol } },
+                    allowed_attributes: { type: :array, element_type_declaration: { type: :symbol } }
+                  }
+                }, is_fatal: true, path: [], runtime_path: []
+              },
+              "data.exponent.cannot_cast" => {
+                category: :data,
+                symbol: :cannot_cast,
+                context_type_declaration: {
+                  type: :attributes,
+                  element_type_declarations: {
+                    cast_to: { type: :duck },
+                    value: { type: :duck },
+                    attribute_name: { type: :symbol }
+                  }
+                },
+                is_fatal: true,
+                path: [:exponent],
+                runtime_path: []
+              },
+              "data.base.cannot_cast" => {
+                category: :data,
+                symbol: :cannot_cast,
+                context_type_declaration: {
+                  type: :attributes,
+                  element_type_declarations: {
+                    cast_to: { type: :duck },
+                    value: { type: :duck },
+                    attribute_name: { type: :symbol }
+                  }
+                },
+                is_fatal: true,
+                path: [:base],
+                runtime_path: []
               }
             )
           end
