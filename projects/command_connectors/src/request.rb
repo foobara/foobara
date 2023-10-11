@@ -1,6 +1,6 @@
 module Foobara
   module CommandConnectors
-    class Context
+    class Request
       def full_command_name
         # :nocov:
         raise "subclass responsibility"

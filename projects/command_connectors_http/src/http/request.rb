@@ -1,8 +1,7 @@
 module Foobara
   module CommandConnectors
     class Http < CommandConnector
-      # TODO: rename to Request once Request is renamed to Runner
-      class Context < CommandConnectors::Context
+      class Request < CommandConnectors::Request
         attr_accessor :path, :method, :headers, :query_string, :body
 
         def initialize(path:, method: nil, headers: {}, query_string: "", body: "")

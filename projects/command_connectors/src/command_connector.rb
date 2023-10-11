@@ -62,7 +62,7 @@ module Foobara
     end
 
     def build_request(...)
-      self.class::Context.new(...)
+      self.class::Request.new(...)
     end
 
     def context_to_request(_context)
