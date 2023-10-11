@@ -13,10 +13,7 @@ RSpec.describe Foobara::CommandConnectors::Commands::Ping do
   let(:base) { 2 }
   let(:exponent) { 3 }
 
-  let(:request) { command_connector.run(path:, method:, headers:, query_string:, body:) }
-  let(:response) { request.response }
-  let(:outcome) { request.outcome }
-  let(:result) { request.result }
+  let(:response) { command_connector.run(path:, method:, headers:, query_string:, body:) }
 
   let(:path) { "/run/ComputeExponent" }
   let(:method) { "POST" }
@@ -37,7 +34,7 @@ RSpec.describe Foobara::CommandConnectors::Commands::Ping do
       let(:path) { "/ping" }
 
       it "describes the command" do
-        expect(outcome).to be_success
+        expect(response.status).to be(200)
         data = JSON.parse(response.body)
         expect(data["pong"]).to match(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} [+-]\d{4}$/)
       end

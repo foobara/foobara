@@ -43,7 +43,7 @@ module Foobara
                      :add_default_serializer,
                      :allowed_rule,
                      :allowed_rules,
-                     :build_registry_entry,
+                     :transform_command_class,
                      to: :command_registry
 
     attr_accessor :command_registry, :authenticator
@@ -61,7 +61,7 @@ module Foobara
       command_registry.register(...)
     end
 
-    def build_context(...)
+    def build_request(...)
       self.class::Context.new(...)
     end
 
@@ -72,10 +72,10 @@ module Foobara
     end
 
     def run(...)
-      context = build_context(...)
-      request = context_to_request!(context)
-      request.run
-      request
+      request = build_request(...)
+      command = request_to_command(request)
+      command.run
+      command_to_response(command)
     end
 
     def command_manifest

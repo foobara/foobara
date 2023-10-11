@@ -9,14 +9,13 @@ module Foobara
     end
 
     def register(...)
-      entry = build_registry_entry(...)
-      command_class = entry.command_class
-
-      registry[command_class.full_command_name] = entry
+      transformed_command_class = transform_command_class(...)
+      registry[transformed_command_class.full_command_name] = transformed_command_class
     end
 
-    def build_registry_entry(
+    def transform_command_class(
       command_class,
+      capture_unknown_error: true,
       inputs_transformers: nil,
       result_transformers: nil,
       errors_transformers: nil,
@@ -26,13 +25,16 @@ module Foobara
       requires_authentication: nil,
       authenticator: self.authenticator
     )
-      Entry.new(
+      Foobara::TransformedCommand.subclass(
         command_class,
+        capture_unknown_error:,
         inputs_transformers: [*inputs_transformers, *default_inputs_transformers],
         result_transformers: [*result_transformers, *default_result_transformers],
         errors_transformers: [*errors_transformers, *default_errors_transformers],
         pre_commit_transformers: [*pre_commit_transformers, *default_pre_commit_transformers],
+        # TODO: maybe treat serializer as a result transformer instead??
         serializers: [*serializers, *default_serializers],
+        # TODO: Maybe treat these three as a pre-execute validator??
         allowed_rule: allowed_rule && to_allowed_rule(allowed_rule),
         requires_authentication:,
         authenticator:
