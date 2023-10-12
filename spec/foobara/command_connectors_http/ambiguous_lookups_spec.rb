@@ -1,6 +1,10 @@
 Foobara::Monorepo.project :command_connectors_http
 
 RSpec.describe Foobara::CommandConnectors::Http do
+  after do
+    Foobara.reset_alls
+  end
+
   before do
     Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
 
@@ -110,16 +114,31 @@ RSpec.describe Foobara::CommandConnectors::Http do
     command_connector.connect(DomainB::SomeCommand)
   end
 
-  after do
-    Foobara.reset_alls
-  end
-
   let(:command_connector) { described_class.new }
 
   describe "#transformed_command_from_name" do
-    it "is true", :focus do
+    it "can find the correct command or type despite ambiguities" do
       expect(command_connector.transformed_command_from_name("SomeCommand").command_class).to eq(SomeCommand)
       expect(command_connector.transformed_command_from_name(:SomeCommand).command_class).to eq(SomeCommand)
+      expect(
+        command_connector.transformed_command_from_name("DomainA::SomeCommand").command_class
+      ).to eq(DomainA::SomeCommand)
+      expect(
+        command_connector.transformed_command_from_name(:"DomainA::SomeCommand").command_class
+      ).to eq(DomainA::SomeCommand)
+      expect(
+        command_connector.transformed_command_from_name("DomainB::SomeCommand").command_class
+      ).to eq(DomainB::SomeCommand)
+      expect(
+        command_connector.transformed_command_from_name(:"DomainB::SomeCommand").command_class
+      ).to eq(DomainB::SomeCommand)
+
+      expect(command_connector.type_from_name("User").target_class).to eq(User)
+      expect(command_connector.type_from_name(:User).target_class).to eq(User)
+      expect(command_connector.type_from_name("DomainA::User").target_class).to eq(DomainA::User)
+      expect(command_connector.type_from_name(:"DomainA::User").target_class).to eq(DomainA::User)
+      expect(command_connector.type_from_name("DomainB::User").target_class).to eq(DomainB::User)
+      expect(command_connector.type_from_name(:"DomainB::User").target_class).to eq(DomainB::User)
     end
   end
 end
