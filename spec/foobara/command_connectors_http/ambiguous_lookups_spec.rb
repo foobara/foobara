@@ -81,7 +81,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
       stub_class.call(self)
 
-      entities_depended_on(User)
+      depends_on_entities(User)
     end
 
     Class.new(Foobara::Command) do
@@ -94,7 +94,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
       stub_class.call(self)
       DomainA.const_set(:SomeCommand, self)
 
-      entities_depended_on(User, DomainA::User)
+      depends_on_entities(User, DomainA::User)
     end
 
     Class.new(Foobara::Command) do
@@ -107,7 +107,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
       stub_class.call(self)
       DomainB.const_set(:SomeCommand, self)
 
-      entities_depended_on(User, DomainB::User)
+      depends_on_entities(User, DomainB::User)
     end
 
     command_connector.connect(SomeCommand)
@@ -122,7 +122,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
   let(:command_connector) { described_class.new }
 
   describe "#transformed_command_from_name" do
-    it "is true", :skip do
+    it "is true", :focus do
       expect(true).to be(true)
     end
   end
