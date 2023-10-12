@@ -219,9 +219,9 @@ RSpec.describe ":model" do
           def name
             "SomeDomain"
           end
-
-          foobara_domain!
         end
+
+        foobara_domain!
       end
     }
     let(:type_declaration) do

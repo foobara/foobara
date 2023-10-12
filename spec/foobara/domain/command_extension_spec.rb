@@ -21,9 +21,9 @@ RSpec.describe Foobara::Domain::CommandExtension do
           def name
             "SomeDomain1"
           end
-
-          foobara_domain!
         end
+
+        foobara_domain!
       end
     }
 
@@ -33,9 +33,9 @@ RSpec.describe Foobara::Domain::CommandExtension do
           def name
             "SomeDomain2"
           end
-
-          foobara_domain!
         end
+
+        foobara_domain!
       end
     }
 
@@ -45,9 +45,9 @@ RSpec.describe Foobara::Domain::CommandExtension do
           def name
             "SomeDomain3"
           end
-
-          foobara_domain!
         end
+
+        foobara_domain!
       end
     }
 

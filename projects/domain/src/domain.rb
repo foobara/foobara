@@ -147,11 +147,17 @@ module Foobara
           Domain.all[object.to_sym]
         when Domain
           object
-        when DomainModuleExtension
-          object.foobara_domain
         when Types::Type
           namespace = TypeDeclarations::Namespace.namespace_for_type(object)
           domain_for_namespace(namespace)
+        when Module
+          if object < DomainModuleExtension
+            object.foobara_domain
+          else
+            # :nocov:
+            raise ArgumentError, "Couldn't determine domain for #{object}"
+            # :nocov:
+          end
         else
           # :nocov:
           raise ArgumentError, "Couldn't determine domain for #{object}"
