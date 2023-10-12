@@ -28,6 +28,12 @@ module Foobara
         # TODO: a smell?
       end
 
+      def register_entity_class(entity_class, table_name: entity_class.full_entity_name)
+        table = EntityBase::Table.new(table_name, self)
+
+        register_table(table)
+      end
+
       def register_table(table)
         tables[table.table_name] = table
       end
@@ -54,6 +60,7 @@ module Foobara
         unless VALID_MODES.include?(mode)
           # :nocov:
           raise ArgumentError, "Mode was #{mode} but expected one of #{VALID_MODES}"
+          # :nocov:
         end
 
         old_transaction = current_transaction

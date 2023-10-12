@@ -17,6 +17,27 @@ module Foobara
         remove_instance_variable("@all") if instance_variable_defined?("@all")
         remove_instance_variable("@global") if instance_variable_defined?("@global")
       end
+
+      def [](name)
+        name = name.to_s
+
+        @all.find do |org|
+          org.organization_name == name
+        end
+      end
+
+      def create(name)
+        class_name = name.to_s
+
+        mod = Module.new do
+          singleton_class.define_method :name do
+            class_name
+          end
+        end
+
+        mod.foobara_organization!
+        mod.foobara_organization
+      end
     end
 
     attr_accessor :domains, :organization_name, :is_global
