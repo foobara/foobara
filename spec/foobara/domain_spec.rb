@@ -12,9 +12,9 @@ RSpec.describe Foobara::Domain do
         def name
           "SomeDomain"
         end
-
-        foobara_domain!
       end
+
+      foobara_domain!
     end
   }
 
@@ -34,9 +34,9 @@ RSpec.describe Foobara::Domain do
         def name
           "SomeOrg"
         end
-
-        foobara_organization!
       end
+
+      foobara_organization!
     end
   end
 
@@ -67,9 +67,9 @@ RSpec.describe Foobara::Domain do
             def name
               "SomeOrg::SomeDomain"
             end
-
-            foobara_domain!
           end
+
+          foobara_domain!
         end
       }
 
