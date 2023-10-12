@@ -52,8 +52,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
       stub_class.call(self)
 
-      DomainA.const_set(:User, self)
-
       attributes id: :integer, name: :string
       primary_key :id
     end
@@ -66,7 +64,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
 
       stub_class.call(self)
-      DomainB.const_set(:User, self)
 
       attributes id: :integer, name: :string
       primary_key :id
@@ -92,7 +89,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
 
       stub_class.call(self)
-      DomainA.const_set(:SomeCommand, self)
 
       depends_on_entities(User, DomainA::User)
     end
@@ -105,7 +101,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
 
       stub_class.call(self)
-      DomainB.const_set(:SomeCommand, self)
 
       depends_on_entities(User, DomainB::User)
     end
