@@ -15,7 +15,7 @@ module Foobara
 
     def transform_command_class(
       command_class,
-      capture_unknown_error: true,
+      capture_unknown_error: nil,
       inputs_transformers: nil,
       result_transformers: nil,
       errors_transformers: nil,
