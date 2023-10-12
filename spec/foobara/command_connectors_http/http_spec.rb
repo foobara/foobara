@@ -810,13 +810,23 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
     end
 
-    describe "with describe path" do
+    context "with describe path" do
       let(:path) { "/describe/ComputeExponent" }
 
       it "describes the command" do
         expect(response.status).to be(200)
         json = JSON.parse(response.body)
         expect(json["inputs_type"]["element_type_declarations"]["base"]["type"]).to eq("integer")
+      end
+
+      context "with describe path" do
+        let(:path) { "/describe_command/ComputeExponent" }
+
+        it "describes the command" do
+          expect(response.status).to be(200)
+          json = JSON.parse(response.body)
+          expect(json["inputs_type"]["element_type_declarations"]["base"]["type"]).to eq("integer")
+        end
       end
     end
 
@@ -911,6 +921,17 @@ RSpec.describe Foobara::CommandConnectors::Http do
               expect(response.status).to be(200)
               json = JSON.parse(response.body)
               expect(json["global_organization"]["global_domain"]["types"].keys).to include("User")
+            end
+          end
+
+          context "with describe_type path" do
+            let(:query_string) { nil }
+            let(:path) { "/describe_type/User" }
+
+            it "includes types" do
+              expect(response.status).to be(200)
+              json = JSON.parse(response.body)
+              expect(json["declaration_data"]["name"]).to eq("User")
             end
           end
         end

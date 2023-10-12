@@ -39,7 +39,7 @@ module Foobara
         end
       end
 
-      foobara_delegate :full_command_name, to: :command_class
+      foobara_delegate :full_command_name, :command_name, :domain, to: :command_class
 
       def manifest
         command_class.manifest(verbose: true).merge(

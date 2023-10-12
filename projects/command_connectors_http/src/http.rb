@@ -6,10 +6,11 @@ module Foobara
         inputs = nil
 
         full_command_name = context.full_command_name
-        transformed_command_class = command_registry[full_command_name]
 
         case action
         when "run"
+          transformed_command_class = command_registry[full_command_name]
+
           unless transformed_command_class
             # :nocov:
             raise NoCommandFoundError, "Could not find command registered for #{full_command_name}"
@@ -18,11 +19,46 @@ module Foobara
 
           inputs = context.inputs
         when "describe"
-          # TODO: allow describing a model
+          manifestable = transformed_command_from_name(full_command_name) || type_from_name(full_command_name)
+
+          unless manifestable
+            # :nocov:
+            raise NoCommandOrTypeFoundError, "Could not find command or type registered for #{full_command_name}"
+            # :nocov:
+          end
+
+          command_class = Foobara::CommandConnectors::Commands::Describe
+          full_command_name = command_class.full_command_name
+
+          inputs = { manifestable: }
+          transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+        when "describe_command"
+          transformed_command_class = transformed_command_from_name(full_command_name)
+
+          unless transformed_command_class
+            # :nocov:
+            raise NoCommandFoundError, "Could not find command registered for #{full_command_name}"
+            # :nocov:
+          end
+
           command_class = Foobara::CommandConnectors::Commands::Describe
           full_command_name = command_class.full_command_name
 
           inputs = { manifestable: transformed_command_class }
+          transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+        when "describe_type"
+          type = type_from_name(full_command_name)
+
+          unless type
+            # :nocov:
+            raise NoTypeFoundError, "Could not find type registered for #{full_command_name}"
+            # :nocov:
+          end
+
+          command_class = Foobara::CommandConnectors::Commands::Describe
+          full_command_name = command_class.full_command_name
+
+          inputs = { manifestable: type }
           transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
         when "manifest"
           command_class = Foobara::CommandConnectors::Commands::Describe

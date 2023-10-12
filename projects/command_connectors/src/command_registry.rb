@@ -1,21 +1,23 @@
 module Foobara
   # TODO: move to foobara monorepo if this is generic...
   class CommandRegistry
-    attr_accessor :registry, :authenticator, :default_allowed_rule
+    attr_accessor :registry, :authenticator, :default_allowed_rule, :short_name_to_transformed_command
 
     def initialize(authenticator: nil)
       self.authenticator = authenticator
       self.registry = {}
+      self.short_name_to_transformed_command = {}
     end
 
     def register(...)
       transformed_command_class = transform_command_class(...)
       registry[transformed_command_class.full_command_name] = transformed_command_class
+      short_name_to_transformed_command[transformed_command_class.command_name] = transformed_command_class
     end
 
     def transform_command_class(
       command_class,
-      capture_unknown_error: true,
+      capture_unknown_error: nil,
       inputs_transformers: nil,
       result_transformers: nil,
       errors_transformers: nil,
@@ -173,6 +175,34 @@ module Foobara
           # :nocov:
         end
       end
+    end
+
+    def transformed_command_from_name(name)
+      transformed_command_name, domain, org = name.to_s.split("::").reverse
+      transformed_commands = short_name_to_transformed_command[transformed_command_name]
+
+      if transformed_commands
+        if transformed_commands.is_a?(::Array)
+          transformed_commands = transformed_commands.select do |transformed_command|
+            domain_org_match_transformed_command?(transformed_command, domain, org)
+          end
+
+          if transformed_commands.size > 1
+            transformed_commands.find  { |transformed_command| transformed_command.domain.nil? }
+          else
+            transformed_commands.first
+          end
+        elsif domain_org_match_transformed_command?(transformed_commands, domain, org)
+          transformed_commands
+        end
+      end
+    end
+
+    def domain_org_match_transformed_command?(transformed_command, domain_name, org_name)
+      dom = transformed_command.domain
+      org = dom&.organization_name
+
+      (org_name.nil? || org_name == org) && (domain_name.nil? || domain_name == dom&.domain_name)
     end
   end
 end
