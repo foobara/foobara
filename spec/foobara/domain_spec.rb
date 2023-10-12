@@ -107,8 +107,8 @@ RSpec.describe Foobara::Domain do
       # TODO: belongs elsewhere
       describe "#manifest" do
         it "gives a whole manifest of everything" do
-          command_manifest = Foobara.manifest[:SomeOrg][:SomeDomain][:commands][:SomeCommand]
-          expect(command_manifest[:result_type][:element_type_declarations][:bar][:type]).to eq(:integer)
+          manifest = Foobara.manifest[:SomeOrg][:SomeDomain][:commands][:SomeCommand]
+          expect(manifest[:result_type][:element_type_declarations][:bar][:type]).to eq(:integer)
 
           expect(Foobara.all_organizations).to include(organization)
           expect(Foobara.all_domains).to include(domain)

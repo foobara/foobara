@@ -19,16 +19,16 @@ module Foobara
           inputs = context.inputs
         when "describe"
           # TODO: allow describing a model
-          command_class = Foobara::CommandConnectors::Commands::DescribeCommand
+          command_class = Foobara::CommandConnectors::Commands::Describe
           full_command_name = command_class.full_command_name
 
-          inputs = { runnable: transformed_command_class }
+          inputs = { manifestable: transformed_command_class }
           transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
         when "manifest"
-          command_class = Foobara::CommandConnectors::Commands::QueryManifest
+          command_class = Foobara::CommandConnectors::Commands::Describe
           full_command_name = command_class.full_command_name
 
-          inputs = { command_connector: self }
+          inputs = { manifestable: self }
           transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
         when "ping"
           command_class = Foobara::CommandConnectors::Commands::Ping

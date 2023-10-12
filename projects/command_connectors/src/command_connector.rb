@@ -100,7 +100,7 @@ module Foobara
       command_to_response(command)
     end
 
-    def command_manifest
+    def manifest
       h = {}
 
       types_depended_on = Set.new

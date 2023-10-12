@@ -311,9 +311,9 @@ RSpec.describe Foobara::CommandConnectors::Http do
             expect(response.body).to eq("8")
           end
 
-          describe "#command_manifest" do
+          describe "#manifest" do
             it "contains the errors for not allowed" do
-              domain_manifest = command_connector.command_manifest[:global_organization][:global_domain]
+              domain_manifest = command_connector.manifest[:global_organization][:global_domain]
               error_manifest = domain_manifest[:commands][:ComputeExponent][:error_types]
 
               expect(error_manifest.keys).to include("runtime.not_allowed")
@@ -356,9 +356,9 @@ RSpec.describe Foobara::CommandConnectors::Http do
     context "when authentication required" do
       let(:requires_authentication) { true }
 
-      describe "#command_manifest" do
+      describe "#manifest" do
         it "contains the errors for not allowed" do
-          domain_manifest = command_connector.command_manifest[:global_organization][:global_domain]
+          domain_manifest = command_connector.manifest[:global_organization][:global_domain]
           error_manifest = domain_manifest[:commands][:ComputeExponent][:error_types]
 
           expect(error_manifest.keys).to include("runtime.unauthenticated")
@@ -668,7 +668,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
     end
 
-    describe "#command_manifest" do
+    describe "#manifest" do
       context "when various transformers" do
         let(:query_string) { "bbaassee=#{base}" }
 
@@ -714,11 +714,11 @@ RSpec.describe Foobara::CommandConnectors::Http do
           expect(JSON.parse(response.body)).to eq("answer" => "8")
         end
 
-        describe "#command_manifest" do
-          let(:command_manifest) { command_connector.command_manifest }
+        describe "#manifest" do
+          let(:manifest) { command_connector.manifest }
 
           it "uses types from the transformers" do
-            h = command_manifest[:global_organization][:global_domain][:commands][:ComputeExponent]
+            h = manifest[:global_organization][:global_domain][:commands][:ComputeExponent]
 
             inputs_type = h[:inputs_type]
             result_type = h[:result_type]
@@ -814,27 +814,19 @@ RSpec.describe Foobara::CommandConnectors::Http do
       let(:path) { "/describe/ComputeExponent" }
 
       it "describes the command" do
-        json = JSON.parse(response.body)
-        expect(json["inputs_type"]["element_type_declarations"]["base"]["type"]).to eq("integer")
-      end
-    end
-
-    describe "with manifest path" do
-      let(:path) { "/manifest/" }
-
-      it "describes the command" do
+        expect(response.status).to be(200)
         json = JSON.parse(response.body)
         expect(json["inputs_type"]["element_type_declarations"]["base"]["type"]).to eq("integer")
       end
     end
 
     describe "connector manifest" do
-      describe "#command_manifest" do
-        let(:command_manifest) { command_connector.command_manifest }
+      describe "#manifest" do
+        let(:manifest) { command_connector.manifest }
 
         it "returns metadata about the commands" do
           expect(
-            command_manifest[:global_organization][:global_domain][:commands][:ComputeExponent][:result_type]
+            manifest[:global_organization][:global_domain][:commands][:ComputeExponent][:result_type]
           ).to eq(type: :integer)
         end
 
@@ -893,7 +885,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
           it "returns metadata about the types" do
             expect(
-              command_manifest[:global_organization][:global_domain][:types].keys
+              manifest[:global_organization][:global_domain][:types].keys
             ).to match_array(
               %i[
                 User
@@ -909,6 +901,17 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 string
               ]
             )
+          end
+
+          context "with manifest path" do
+            let(:query_string) { nil }
+            let(:path) { "/manifest" }
+
+            it "includes types" do
+              expect(response.status).to be(200)
+              json = JSON.parse(response.body)
+              expect(json["global_organization"]["global_domain"]["types"].keys).to include("User")
+            end
           end
         end
       end
