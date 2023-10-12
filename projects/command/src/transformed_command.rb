@@ -104,7 +104,24 @@ module Foobara
       end
 
       def types_depended_on
-        command_class.types_depended_on
+        # TODO: memoize this
+        types = command_class.types_depended_on
+
+        type = inputs_type
+
+        if type != command_class.inputs_type
+          types << type
+          types |= type.types_depended_on
+        end
+
+        type = result_type
+
+        if type != command_class.result_type
+          types << type
+          types |= type.types_depended_on
+        end
+
+        types
       end
     end
 

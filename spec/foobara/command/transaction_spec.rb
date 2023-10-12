@@ -404,6 +404,7 @@ RSpec.describe Foobara::Command::Concerns::Entities do
         end
 
         it "can create an user" do
+          expect(create_command.types_depended_on).to include(User.entity_type)
           command = create_command.new(name: "Some Name")
           outcome = command.run
 

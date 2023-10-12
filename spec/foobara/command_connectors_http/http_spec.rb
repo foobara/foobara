@@ -819,6 +819,15 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
     end
 
+    describe "with manifest path" do
+      let(:path) { "/manifest/" }
+
+      it "describes the command" do
+        json = JSON.parse(response.body)
+        expect(json["inputs_type"]["element_type_declarations"]["base"]["type"]).to eq("integer")
+      end
+    end
+
     describe "connector manifest" do
       describe "#command_manifest" do
         let(:command_manifest) { command_connector.command_manifest }
