@@ -12,7 +12,17 @@ module Foobara
     def register(...)
       transformed_command_class = transform_command_class(...)
       registry[transformed_command_class.full_command_name] = transformed_command_class
-      short_name_to_transformed_command[transformed_command_class.command_name] = transformed_command_class
+
+      short_name = transformed_command_class.command_name
+      existing_entry = short_name_to_transformed_command[short_name]
+
+      short_name_to_transformed_command[short_name] = if existing_entry
+                                                        [*existing_entry, transformed_command_class]
+                                                      else
+                                                        transformed_command_class
+                                                      end
+
+      transformed_command_class
     end
 
     def transform_command_class(
@@ -188,7 +198,7 @@ module Foobara
           end
 
           if transformed_commands.size > 1
-            transformed_commands.find  { |transformed_command| transformed_command.domain.nil? }
+            transformed_commands.find  { |transformed_command| transformed_command.domain.global? }
           else
             transformed_commands.first
           end
