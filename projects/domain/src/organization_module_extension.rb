@@ -5,7 +5,10 @@ module Foobara
 
       module ClassMethods
         def foobara_organization
-          @foobara_organization ||= Organization.new(organization_name: Util.non_full_name(self))
+          @foobara_organization ||= Organization.new(
+            organization_name: Util.non_full_name(self),
+            mod: self
+          )
         end
 
         def foobara_organization?

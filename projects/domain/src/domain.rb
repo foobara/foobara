@@ -1,10 +1,12 @@
 module Foobara
   class Domain
     class AlreadyRegisteredDomainDependency < StandardError; end
+    class NoSuchDomain < StandardError; end
 
-    attr_accessor :organization, :domain_name, :model_classes, :is_global
+    attr_accessor :organization, :domain_name, :model_classes, :is_global, :mod
 
-    def initialize(domain_name: nil, organization: Organization.global, global: false)
+    def initialize(mod:, domain_name: nil, organization: Organization.global, global: false)
+      self.mod = mod
       self.is_global = global
 
       if global?
@@ -143,6 +145,8 @@ module Foobara
     class << self
       def to_domain(object)
         case object
+        when nil
+          global
         when ::String, ::Symbol
           Domain.all[object.to_sym]
         when Domain
@@ -155,12 +159,12 @@ module Foobara
             object.foobara_domain
           else
             # :nocov:
-            raise ArgumentError, "Couldn't determine domain for #{object}"
+            raise NoSuchDomain, "Couldn't determine domain for #{object}"
             # :nocov:
           end
         else
           # :nocov:
-          raise ArgumentError, "Couldn't determine domain for #{object}"
+          raise NoSuchDomain, "Couldn't determine domain for #{object}"
           # :nocov:
         end
       end
@@ -172,7 +176,7 @@ module Foobara
       def global
         return @global if defined?(@global)
 
-        @global = new(global: true, organization: Organization.global)
+        @global = new(global: true, organization: Organization.global, mod: nil)
       end
 
       def all
@@ -198,6 +202,25 @@ module Foobara
 
           domain&.register_command(command_class)
         end
+      end
+
+      def create(full_name)
+        domain_name, organization_name = full_name.to_s.split("::").reverse
+
+        if organization_name
+          org = Organization[organization_name] || Organization.create(organization_name)
+        end
+
+        class_name = [*org&.organization_name, domain_name].join("::")
+
+        mod = Module.new do
+          singleton_class.define_method :name do
+            class_name
+          end
+        end
+
+        mod.foobara_domain!
+        mod.foobara_domain
       end
     end
   end

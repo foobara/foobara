@@ -47,6 +47,14 @@ RSpec.describe Foobara::Domain do
     stub_const(command_class.name, command_class)
   end
 
+  describe ".to_domain" do
+    context "when nil" do
+      it "is the global domain" do
+        expect(described_class.to_domain(nil)).to be_global
+      end
+    end
+  end
+
   context "with simple command" do
     describe "#full_domain_name" do
       subject { domain.full_domain_name }
@@ -62,15 +70,8 @@ RSpec.describe Foobara::Domain do
 
     context "with organization" do
       let(:domain_module) {
-        Module.new do
-          class << self
-            def name
-              "SomeOrg::SomeDomain"
-            end
-          end
-
-          foobara_domain!
-        end
+        domain = described_class.create("SomeOrg::SomeDomain")
+        domain.mod
       }
 
       let(:command_class) {
@@ -84,6 +85,12 @@ RSpec.describe Foobara::Domain do
           result({ foo: :string, bar: :integer })
         end
       }
+
+      describe "finding organization by name" do
+        it "can find by name" do
+          expect(Foobara::Organization[:SomeOrg].organization_name).to eq("SomeOrg")
+        end
+      end
 
       describe "#full_domain_name" do
         subject { domain.full_domain_name }

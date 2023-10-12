@@ -28,6 +28,12 @@ module Foobara
         # TODO: a smell?
       end
 
+      def register_entity_class(entity_class, table_name: entity_class.full_entity_name)
+        table = EntityBase::Table.new(table_name, self)
+
+        register_table(table)
+      end
+
       def register_table(table)
         tables[table.table_name] = table
       end
@@ -54,6 +60,7 @@ module Foobara
         unless VALID_MODES.include?(mode)
           # :nocov:
           raise ArgumentError, "Mode was #{mode} but expected one of #{VALID_MODES}"
+          # :nocov:
         end
 
         old_transaction = current_transaction
@@ -70,9 +77,11 @@ module Foobara
               return old_transaction
             end
           elsif mode != :open_nested && mode != :open_new
+            # :nocov:
             raise "Transaction already open. " \
                   "Use mode :use_existing if you want to make use of the existing transaction. " \
                   "Use mode :open_nested if you are actually trying to nest transactions."
+            # :nocov:
           end
         end
 

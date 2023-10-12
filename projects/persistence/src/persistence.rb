@@ -136,11 +136,10 @@ module Foobara
         bases[base.name] = base
       end
 
-      def register_entity(base, entity_class)
+      def register_entity(base, entity_class, table_name: entity_class.full_entity_name)
         base = to_base(base)
 
-        table = EntityBase::Table.new(entity_class.full_entity_name, base)
-        base.register_table(table)
+        table = base.register_entity_class(entity_class, table_name:)
         tables_for_entity_class_name[entity_class.full_entity_name] = table
       end
 
