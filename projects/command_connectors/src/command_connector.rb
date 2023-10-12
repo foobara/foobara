@@ -68,6 +68,7 @@ module Foobara
                      :allowed_rule,
                      :allowed_rules,
                      :transform_command_class,
+                     :transformed_command_from_name,
                      to: :command_registry
 
     attr_accessor :command_registry, :authenticator
@@ -126,26 +127,27 @@ module Foobara
       end
     end
 
+    # TODO: relocate these methods into namespace or type registry or somewhere other than here
     def type_from_name(name)
       type_name, domain, org = name.to_s.split("::").reverse
       types = registered_types_depended_on_by_symbol[type_name.to_sym]
 
       if types
         if types.is_a?(::Array)
-          types = types.select { |type| domain_org_match?(type, domain, org) }
+          types = types.select { |type| domain_org_match_type?(type, domain, org) }
 
           if types.size > 1
             types.find  { |type| Domain.to_domain(type).nil? }
           else
             types.first
           end
-        elsif domain_org_match?(types, domain, org)
+        elsif domain_org_match_type?(types, domain, org)
           types
         end
       end
     end
 
-    def domain_org_match?(type, domain_name, org_name)
+    def domain_org_match_type?(type, domain_name, org_name)
       dom = Domain.to_domain(type)
 
       (org_name.nil? || org_name == dom&.organization_name) && (domain_name.nil? || domain_name == dom&.domain_name)

@@ -6,10 +6,11 @@ module Foobara
         inputs = nil
 
         full_command_name = context.full_command_name
-        transformed_command_class = command_registry[full_command_name]
 
         case action
         when "run"
+          transformed_command_class = command_registry[full_command_name]
+
           unless transformed_command_class
             # :nocov:
             raise NoCommandFoundError, "Could not find command registered for #{full_command_name}"
@@ -18,9 +19,9 @@ module Foobara
 
           inputs = context.inputs
         when "describe"
-          manifestable = transformed_command_class || type_from_name(full_command_name)
+          manifestable = transformed_command_from_name(full_command_name) || type_from_name(full_command_name)
 
-          unless transformed_command_class
+          unless manifestable
             # :nocov:
             raise NoCommandOrTypeFoundError, "Could not find command or type registered for #{full_command_name}"
             # :nocov:
@@ -32,9 +33,11 @@ module Foobara
           inputs = { manifestable: }
           transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
         when "describe_command"
+          transformed_command_class = transformed_command_from_name(full_command_name)
+
           unless transformed_command_class
             # :nocov:
-            raise NoCommandFoundError, "Could not find command or type registered for #{full_command_name}"
+            raise NoCommandFoundError, "Could not find command registered for #{full_command_name}"
             # :nocov:
           end
 
@@ -48,7 +51,7 @@ module Foobara
 
           unless type
             # :nocov:
-            raise NoTypeFoundError, "Could not find command or type registered for #{full_command_name}"
+            raise NoTypeFoundError, "Could not find type registered for #{full_command_name}"
             # :nocov:
           end
 
