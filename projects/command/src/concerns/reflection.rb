@@ -56,6 +56,12 @@ module Foobara
                       Set.new
                     end
 
+            unless depends_on_entities.empty?
+              entity_types = depends_on_entities.map(&:entity_type)
+              types |= entity_types
+              types |= entity_types.map(&:types_depended_on).flatten
+            end
+
             if result_type
               types | result_type.types_depended_on
             else

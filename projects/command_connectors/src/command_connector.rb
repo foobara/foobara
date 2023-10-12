@@ -106,8 +106,8 @@ module Foobara
       types_depended_on = Set.new
 
       # TODO: should group by org and domain...
-      command_registry.registry.each_value.each do |entry|
-        manifest = entry.manifest
+      command_registry.registry.each_value.each do |transformed_command_class|
+        manifest = transformed_command_class.manifest
 
         organization_name = manifest[:organization_name] || :global_organization
         domain_name = manifest[:domain_name] || :global_domain
@@ -118,7 +118,7 @@ module Foobara
 
         domain[:commands][command_name.to_sym] = manifest
 
-        types_depended_on += entry.types_depended_on
+        types_depended_on += transformed_command_class.types_depended_on
       end
 
       types_depended_on.select(&:registered?).each do |type|
