@@ -118,7 +118,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
   describe "#transformed_command_from_name" do
     it "is true", :focus do
-      expect(true).to be(true)
+      expect(command_connector.transformed_command_from_name("SomeCommand").command_class).to eq(SomeCommand)
+      # expect(command_connector.transformed_command_from_name(:SomeCommand).command_class).to eq(SomeCommand)
     end
   end
 end
