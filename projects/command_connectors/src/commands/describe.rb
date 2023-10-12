@@ -1,8 +1,8 @@
 module Foobara
   module CommandConnectors
     module Commands
-      class DescribeCommand < Foobara::Command
-        inputs runnable: :duck
+      class Describe < Foobara::Command
+        inputs manifestable: :duck
         result :associative_array
 
         def execute
@@ -10,7 +10,7 @@ module Foobara
         end
 
         def build_manifest
-          runnable.manifest
+          manifestable.manifest
         end
       end
     end
