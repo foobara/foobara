@@ -211,13 +211,9 @@ module Foobara
           org = Organization[organization_name] || Organization.create(organization_name)
         end
 
-        class_name = [*org&.organization_name, domain_name].join("::")
+        mod = Module.new
 
-        mod = Module.new do
-          singleton_class.define_method :name do
-            class_name
-          end
-        end
+        org&.mod&.const_set(domain_name, mod)
 
         mod.foobara_domain!
         mod.foobara_domain
