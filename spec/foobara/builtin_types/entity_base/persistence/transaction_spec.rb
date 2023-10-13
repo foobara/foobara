@@ -102,6 +102,10 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
 
         expect(entity.foo).to eq(10)
 
+        entity_class.transaction do
+          expect(entity_class.load(entity.primary_key).foo).to eq(10)
+        end
+
         expect {
           entity.foo = 20
         }.to raise_error(Foobara::Persistence::EntityBase::Transaction::NoCurrentTransactionError)
@@ -286,7 +290,29 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
 
           expect(entity_class.count).to eq(4)
 
+          entity_class.transaction(mode: :use_existing) do
+            expect(entity_class.count).to eq(4)
+          end
+
+          tx2 = entity_class.transaction(mode: :use_existing)
+
+          entity_class.entity_base.using_transaction(tx2) do
+            expect(entity_class.count).to eq(4)
+          end
+
+          entity_class.transaction(mode: :open_nested) do
+            expect(entity_class.count).to eq(0)
+          end
+
           tx.flush!
+
+          entity_class.transaction(mode: :use_existing) do
+            expect(entity_class.count).to eq(4)
+          end
+
+          entity_class.transaction(mode: :open_nested) do
+            expect(entity_class.count).to eq(4)
+          end
 
           entities = entity_class.all
 

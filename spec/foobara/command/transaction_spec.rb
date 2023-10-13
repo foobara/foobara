@@ -77,7 +77,7 @@ RSpec.describe Foobara::Command::Concerns::Entities do
         attributes name: { type: :string, required: true }
       end
 
-      Foobara::Persistence.register_entity(user_base, User)
+      Foobara::Persistence.register_entity(user_base, User, table_name: "users")
 
       Class.new(Base) do
         class << self

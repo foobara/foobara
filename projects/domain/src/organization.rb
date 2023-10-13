@@ -10,7 +10,7 @@ module Foobara
       def global
         return @global if defined?(@global)
 
-        @global = new(global: true)
+        @global = new(global: true, mod: nil)
       end
 
       def reset_all
@@ -21,7 +21,7 @@ module Foobara
       def [](name)
         name = name.to_s
 
-        @all.find do |org|
+        @all&.find do |org|
           org.organization_name == name
         end
       end
@@ -40,9 +40,10 @@ module Foobara
       end
     end
 
-    attr_accessor :domains, :organization_name, :is_global
+    attr_accessor :domains, :organization_name, :is_global, :mod
 
-    def initialize(organization_name: nil, global: false)
+    def initialize(mod:, organization_name: nil, global: false)
+      self.mod = mod
       self.is_global = global
       @domains = []
 

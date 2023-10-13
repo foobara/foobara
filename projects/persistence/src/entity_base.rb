@@ -77,9 +77,11 @@ module Foobara
               return old_transaction
             end
           elsif mode != :open_nested && mode != :open_new
+            # :nocov:
             raise "Transaction already open. " \
                   "Use mode :use_existing if you want to make use of the existing transaction. " \
                   "Use mode :open_nested if you are actually trying to nest transactions."
+            # :nocov:
           end
         end
 

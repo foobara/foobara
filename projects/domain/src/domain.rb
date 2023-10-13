@@ -3,9 +3,10 @@ module Foobara
     class AlreadyRegisteredDomainDependency < StandardError; end
     class NoSuchDomain < StandardError; end
 
-    attr_accessor :organization, :domain_name, :model_classes, :is_global
+    attr_accessor :organization, :domain_name, :model_classes, :is_global, :mod
 
-    def initialize(domain_name: nil, organization: Organization.global, global: false)
+    def initialize(mod:, domain_name: nil, organization: Organization.global, global: false)
+      self.mod = mod
       self.is_global = global
 
       if global?
@@ -175,7 +176,7 @@ module Foobara
       def global
         return @global if defined?(@global)
 
-        @global = new(global: true, organization: Organization.global)
+        @global = new(global: true, organization: Organization.global, mod: nil)
       end
 
       def all
