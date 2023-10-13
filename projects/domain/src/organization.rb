@@ -29,11 +29,7 @@ module Foobara
       def create(name)
         class_name = name.to_s
 
-        mod = Module.new do
-          singleton_class.define_method :name do
-            class_name
-          end
-        end
+        mod = Module.new
 
         Object.const_set(class_name, mod)
 
@@ -73,6 +69,7 @@ module Foobara
     end
 
     def owns_domain?(domain)
+      binding.pry
       domains.include?(domain)
     end
 

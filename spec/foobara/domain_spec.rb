@@ -56,13 +56,20 @@ RSpec.describe Foobara::Domain do
   end
 
   describe ".create" do
-    it "creates org, domain, and modules", :focus do
-      domain = described_class.create("SomeOrg::SomeDomain")
-      expect(domain.full_domain_name).to eq("SomeOrg::SomeDomain")
-      expect(domain.organization.mod.inspect).to eq("SomeOrg")
-      expect(domain.mod.inspect).to eq("SomeOrg::SomeDomain")
-      expect(domain.organization.mod.name).to eq("SomeOrg")
-      expect(domain.mod.name).to eq("SomeOrg::SomeDomain")
+    after do
+      Org.send(:remove_const, :Domain)
+      Object.send(:remove_const, :Org)
+    end
+
+    it "creates org, domain, and modules" do
+      domain = described_class.create("Org::Domain")
+      organization = domain.organization
+      expect(organization.domains).to include(domain)
+      expect(domain.full_domain_name).to eq("Org::Domain")
+      expect(domain.organization.mod.inspect).to eq("Org")
+      expect(domain.mod.inspect).to eq("Org::Domain")
+      expect(domain.organization.mod.name).to eq("Org")
+      expect(domain.mod.name).to eq("Org::Domain")
     end
   end
 
@@ -81,6 +88,7 @@ RSpec.describe Foobara::Domain do
 
     context "with organization" do
       let(:domain_module) {
+        organization
         domain = described_class.create("SomeOrg::SomeDomain")
         domain.mod
       }

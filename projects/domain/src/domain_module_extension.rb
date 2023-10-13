@@ -14,6 +14,7 @@ module Foobara
                              Organization.global
                            end
 
+            binding.pry
             Domain.new(domain_name: Util.non_full_name(self), organization:, mod: self)
           end
         end
