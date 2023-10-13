@@ -55,6 +55,17 @@ RSpec.describe Foobara::Domain do
     end
   end
 
+  describe ".create" do
+    it "creates org, domain, and modules", :focus do
+      domain = described_class.create("SomeOrg::SomeDomain")
+      expect(domain.full_domain_name).to eq("SomeOrg::SomeDomain")
+      expect(domain.organization.mod.inspect).to eq("SomeOrg")
+      expect(domain.mod.inspect).to eq("SomeOrg::SomeDomain")
+      expect(domain.organization.mod.name).to eq("SomeOrg")
+      expect(domain.mod.name).to eq("SomeOrg::SomeDomain")
+    end
+  end
+
   context "with simple command" do
     describe "#full_domain_name" do
       subject { domain.full_domain_name }

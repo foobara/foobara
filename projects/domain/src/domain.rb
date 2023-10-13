@@ -219,6 +219,8 @@ module Foobara
           end
         end
 
+        org&.mod&.const_set(domain_name, mod)
+
         mod.foobara_domain!
         mod.foobara_domain
       end

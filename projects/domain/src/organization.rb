@@ -35,6 +35,8 @@ module Foobara
           end
         end
 
+        Object.const_set(class_name, mod)
+
         mod.foobara_organization!
         mod.foobara_organization
       end
