@@ -236,6 +236,10 @@ module Foobara
       hash.reject { |_k, v| (v.is_a?(::Hash) || v.is_a?(::Array)) && v.empty? }
     end
 
+    def remove_blank(hash)
+      remove_empty(hash).reject { |_k, v| v.nil? }
+    end
+
     def args_and_opts_to_opts(args, opts)
       unless args.is_a?(::Array)
         # :nocov:

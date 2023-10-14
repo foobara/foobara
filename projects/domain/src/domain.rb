@@ -148,7 +148,15 @@ module Foobara
         when nil
           global
         when ::String, ::Symbol
-          Domain.all[object.to_sym]
+          domain = Domain.all[object.to_sym]
+
+          unless domain
+            # :nocov:
+            raise NoSuchDomain, "Couldn't determine domain for #{object}"
+            # :nocov:
+          end
+
+          domain
         when Domain
           object
         when Types::Type
