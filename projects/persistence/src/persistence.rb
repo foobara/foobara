@@ -1,5 +1,7 @@
 module Foobara
   module Persistence
+    class NoTransactionOpenError < StandardError; end
+
     class << self
       attr_reader :default_crud_driver
 
@@ -50,6 +52,21 @@ module Foobara
       def current_transaction(object)
         base = to_base(object)
         base.current_transaction
+      end
+
+      def current_transaction!(object)
+        base = to_base(object)
+        tx = base.current_transaction
+
+        unless tx
+          raise NoTransactionOpenError
+        end
+
+        tx
+      end
+
+      def current_transaction_table!(object)
+        current_transaction!(object).table_for(object)
       end
 
       def current_transaction_table(object)
