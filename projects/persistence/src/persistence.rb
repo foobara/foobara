@@ -59,7 +59,9 @@ module Foobara
         tx = base.current_transaction
 
         unless tx
+          # :nocov:
           raise NoTransactionOpenError
+          # :nocov:
         end
 
         tx

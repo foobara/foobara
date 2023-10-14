@@ -237,7 +237,7 @@ module Foobara
     end
 
     def remove_blank(hash)
-      remove_empty(hash).reject { |_k, v| v.nil? }
+      remove_empty(hash).compact
     end
 
     def args_and_opts_to_opts(args, opts)
