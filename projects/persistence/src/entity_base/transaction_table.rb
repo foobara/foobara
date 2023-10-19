@@ -136,9 +136,7 @@ module Foobara
           record_ids_or_entities.each do |entity_or_record_id|
             if entity_or_record_id.is_a?(Entity)
               if entity_or_record_id.loaded?
-                # :nocov:
-                raise "#{entity_or_record_id} is already loaded!"
-                # :nocov:
+                next
               end
 
               entity = tracked_records[entity_or_record_id]

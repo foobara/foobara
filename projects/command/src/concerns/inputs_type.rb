@@ -32,9 +32,11 @@ module Foobara
           private
 
           def register_possible_input_errors
-            # TODO: can destructure here or no?
-            inputs_type.possible_errors.each_pair do |key, error_class|
-              register_possible_error_class(key, error_class)
+            TypeDeclarations::Namespace.using namespace do
+              # TODO: can destructure here or no?
+              inputs_type.possible_errors.each_pair do |key, error_class|
+                register_possible_error_class(key, error_class)
+              end
             end
           end
         end

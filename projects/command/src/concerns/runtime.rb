@@ -24,20 +24,22 @@ module Foobara
         end
 
         def run
-          invoke_with_callbacks_and_transition(:open_transaction)
+          TypeDeclarations::Namespace.using self.class.namespace do
+            invoke_with_callbacks_and_transition(:open_transaction)
 
-          invoke_with_callbacks_and_transition_in_transaction(%i[
-                                                                cast_and_validate_inputs
-                                                                load_records
-                                                                validate_records
-                                                                validate
-                                                                run_execute
-                                                                commit_transaction
-                                                              ])
+            invoke_with_callbacks_and_transition_in_transaction(%i[
+                                                                  cast_and_validate_inputs
+                                                                  load_records
+                                                                  validate_records
+                                                                  validate
+                                                                  run_execute
+                                                                  commit_transaction
+                                                                ])
 
-          invoke_with_callbacks_and_transition(%i[
-                                                 succeed
-                                               ])
+            invoke_with_callbacks_and_transition(%i[
+                                                   succeed
+                                                 ])
+          end
 
           @outcome
         rescue Halt

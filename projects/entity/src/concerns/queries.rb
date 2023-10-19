@@ -37,8 +37,10 @@ module Foobara
             current_transaction_table.find_many_by(attributes)
           end
 
-          def load(record_id)
-            current_transaction_table.load(record_id)
+          def load(record)
+            if !record.is_a?(Foobara::Entity) || !record.loaded?
+              current_transaction_table.load(record)
+            end
           end
 
           def load_aggregate(record_or_record_id)

@@ -12,6 +12,7 @@ module Foobara
             :entity
           end
 
+          # TODO: just inherit this...
           def desugarize(sugary_type_declaration)
             handler = handler_for_class(ExtendAttributesTypeDeclaration)
             attributes_type_declaration = sugary_type_declaration[:attributes_declaration]
