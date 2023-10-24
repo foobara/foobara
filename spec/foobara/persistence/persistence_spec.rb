@@ -1,5 +1,9 @@
 RSpec.describe Foobara::Persistence do
   describe ".current_transaction_table" do
+    after do
+      Foobara.reset_alls
+    end
+
     before do
       described_class.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
 

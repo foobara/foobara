@@ -57,12 +57,17 @@ module Foobara
 
           thunks = DataPath.values_at(data_path, inputs)
 
+          thunks_to_load = thunks.reject(&:created?)
+
           begin
-            if thunks.size == 1
-              entity_class.load(thunks.first)
+            # here... filter out created entities...
+            if thunks_to_load.size == 1
+              entity_class.load(thunks_to_load.first)
             else
-              entity_class.load_many(thunks)
+              entity_class.load_many(thunks_to_load)
             end
+
+            thunks_to_load
           rescue Foobara::Persistence::EntityAttributesCrudDriver::Table::CannotFindError => e
             add_runtime_error(error_class.new(e.record_id))
           end
