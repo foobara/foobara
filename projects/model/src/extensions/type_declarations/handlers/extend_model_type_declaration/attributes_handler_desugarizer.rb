@@ -4,7 +4,11 @@ module Foobara
       class ExtendModelTypeDeclaration < ExtendRegisteredTypeDeclaration
         class AttributesHandlerDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(sugary_type_declaration)
-            sugary_type_declaration[:type] == :model
+            sugary_type_declaration[:type] == expected_type_symbol
+          end
+
+          def expected_type_symbol
+            :model
           end
 
           def desugarize(sugary_type_declaration)
