@@ -153,7 +153,6 @@ module Foobara
             return handler if handler.applicable?(type_declaration)
           end
 
-          binding.pry
           raise NoTypeDeclarationHandlerFoundError,
                 "No type declaration handler found for #{type_declaration}"
         end
