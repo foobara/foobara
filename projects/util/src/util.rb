@@ -211,6 +211,10 @@ module Foobara
         object.map { |element| deep_dup(element) }
       when ::Hash
         object.to_h { |k, v| [deep_dup(k), deep_dup(v)] }
+      when ::Class
+        # we get super wacky results in some areas where we use entity classes as short-cuts for their entity types
+        # if we dup those classes (they lose their name, for example)
+        object
       else
         object.dup
       end
