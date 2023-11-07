@@ -15,7 +15,7 @@ module Foobara
         # :nocov:
       end
 
-      files.sort_by(&:length).reverse.each do |f|
+      files.sort_by { |file| [file.count("/"), file.length] }.reverse.each do |f|
         require f
       end
     end
