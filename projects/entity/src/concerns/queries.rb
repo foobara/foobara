@@ -9,6 +9,13 @@ module Foobara
             current_transaction_table.all(&)
           end
 
+          def first
+            # TODO: don all queries need to do this???
+            TypeDeclarations::Namespace.using namespace do
+              current_transaction_table.first
+            end
+          end
+
           def find_by_attribute(attribute_name, value)
             current_transaction_table.find_by_attribute(attribute_name, value)
           end

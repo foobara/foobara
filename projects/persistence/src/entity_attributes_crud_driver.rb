@@ -51,6 +51,7 @@ module Foobara
         tables[key] ||= self.class::Table.new(entity_class, raw_connection)
       end
 
+      # TODO: relocate this to another file?
       class Table
         class CannotCrudError < StandardError
           attr_accessor :record_id
@@ -104,6 +105,10 @@ module Foobara
           # :nocov:
           raise "subclass responsibility"
           # :nocov:
+        end
+
+        def first
+          all.first
         end
 
         def find(_record_id)

@@ -52,6 +52,18 @@ module Foobara
           tracked_records.find_by_key(record_id)
         end
 
+        def first
+          found_attributes = entity_attributes_crud_driver_table.first
+
+          if found_attributes
+            record_id = primary_key_for_attributes(found_attributes)
+
+            record = tracked_records.find_by_key(record_id) || transaction.loaded(entity_class, found_attributes)
+
+            record || marked_created.first
+          end
+        end
+
         def load(entity_or_record_id)
           if entity_or_record_id.is_a?(Entity)
             if entity_or_record_id.loaded?

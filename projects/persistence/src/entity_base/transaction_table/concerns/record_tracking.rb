@@ -121,6 +121,7 @@ module Foobara
                 records[state]&.include?(record)
               end
 
+              # TODO: we should store created_at and updated_at and deleted_at with all of these records...
               define_method "marked_#{state}" do
                 records[state] ||= Set.new
               end

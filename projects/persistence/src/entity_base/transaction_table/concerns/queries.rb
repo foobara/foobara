@@ -5,6 +5,7 @@ module Foobara
         module Concerns
           # If something accesses the crud driver and manipulates records then it belongs in this concern.
           module Queries
+            # TODO: why is this query method here but the rest are not?
             def all(&)
               enumerator = Enumerator.new do |yielder|
                 tracked_records.each do |record|
