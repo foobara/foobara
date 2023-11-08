@@ -22,7 +22,11 @@ module Foobara
           true
         end
 
-        foobara_delegate :depends_on, :type_for_declaration, to: :foobara_domain
+        foobara_delegate :depends_on,
+                         :type_for_declaration,
+                         :register_entity,
+                         :register_entities,
+                         to: :foobara_domain
       end
     end
   end

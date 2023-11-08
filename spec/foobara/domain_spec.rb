@@ -1,4 +1,12 @@
 RSpec.describe Foobara::Domain do
+  before do
+    Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
+    stub_const(organization_module.name, organization_module)
+    stub_const(domain_module.name, domain_module)
+    expect(domain).to be_a(described_class)
+    stub_const(command_class.name, command_class)
+  end
+
   after do
     Foobara.reset_alls
   end
@@ -40,17 +48,32 @@ RSpec.describe Foobara::Domain do
     end
   end
 
-  before do
-    stub_const(organization_module.name, organization_module)
-    stub_const(domain_module.name, domain_module)
-    expect(domain).to be_a(described_class)
-    stub_const(command_class.name, command_class)
-  end
-
   describe ".to_domain" do
     context "when nil" do
       it "is the global domain" do
         expect(described_class.to_domain(nil)).to be_global
+      end
+    end
+  end
+
+  describe ".register_entity" do
+    let(:entity_name) { :SomeEntity }
+    let(:primary_key) { :id }
+    let(:attributes_declaration) do
+      {
+        first_name: :string
+      }
+    end
+    let(:entity_class) { domain_module::SomeEntity }
+
+    it "creates an entity class" do
+      domain_module.register_entities(entity_name => attributes_declaration)
+
+      expect(entity_class).to be < Foobara::Entity
+
+      entity_class.transaction do
+        record = entity_class.create(first_name: "fn")
+        expect(record).to be_a(domain_module::SomeEntity)
       end
     end
   end
@@ -101,7 +124,7 @@ RSpec.describe Foobara::Domain do
             end
           end
 
-          result({ foo: :string, bar: :integer })
+          result(foo: :string, bar: :integer)
         end
       }
 

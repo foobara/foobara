@@ -91,9 +91,43 @@ module Foobara
       @command_classes << command_class
     end
 
+    # TODO: this method and the one below it have inconsistent interfaces...
     def register_model(model_class)
       @model_classes << model_class
       type_namespace.register_type(model_class.model_symbol, model_class.model_type)
+    end
+
+    def register_entity(name, attributes_type_declaration, model_base_class = nil)
+      # TODO: introduce a Namespace#scope method to simplify this a bit
+      TypeDeclarations::Namespace.using type_namespace do
+        handler = type_namespace.handler_for_class(Foobara::TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration)
+
+        attributes_type = handler.type_for_declaration(attributes_type_declaration)
+
+        # TODO: reuse the model_base_class primary key if it has one...
+        primary_key = attributes_type.element_types.keys.first
+
+        type = type_for_declaration(
+          type: :entity,
+          name:,
+          model_base_class:,
+          attributes_declaration: attributes_type_declaration,
+          model_module: mod,
+          primary_key:
+        )
+
+        @model_classes << type.target_class
+
+        type
+      end
+    end
+
+    def register_entities(entity_names_to_attributes)
+      entity_names_to_attributes.each_pair do |entity_name, attributes_type_declaration|
+        register_entity(entity_name, attributes_type_declaration)
+      end
+
+      nil
     end
 
     def depends_on?(other_domain)
