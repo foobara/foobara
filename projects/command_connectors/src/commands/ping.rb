@@ -9,7 +9,15 @@ module Foobara
         end
 
         def pong
-          { pong: Time.now }
+          response = { pong: Time.now }
+
+          sha1 = ENV.fetch("GIT_SHA1", nil)
+
+          if sha1
+            response[:git_sha1] = sha1
+          end
+
+          response
         end
       end
     end
