@@ -15,6 +15,7 @@ module Foobara
 
         def load_sha1
           if File.exist?("git_sha1")
+            # TODO: should instead read this off an environment variable to make it a bit more "universal?"
             self.sha1 = File.read("git_sha1").strip
           end
         end

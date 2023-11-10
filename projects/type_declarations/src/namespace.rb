@@ -100,6 +100,10 @@ module Foobara
 
       foobara_delegate :all_types, to: :type_registry
 
+      def use(&)
+        self.class.using(self, &)
+      end
+
       # types
 
       def register_type(symbol, type)

@@ -158,28 +158,32 @@ module Foobara
 
       # TODO: should group by org and domain...
       command_registry.registry.each_value do |transformed_command_class|
-        manifest = transformed_command_class.manifest
+        transformed_command_class.command_class.namespace.use do
+          manifest = transformed_command_class.manifest
 
-        organization_name = manifest[:organization_name] || :global_organization
-        domain_name = manifest[:domain_name] || :global_domain
-        command_name = manifest[:command_name]
+          organization_name = manifest[:organization_name] || :global_organization
+          domain_name = manifest[:domain_name] || :global_domain
+          command_name = manifest[:command_name]
 
-        org = h[organization_name.to_sym] ||= {}
-        domain = org[domain_name.to_sym] ||= { commands: {}, types: {} }
+          org = h[organization_name.to_sym] ||= {}
+          domain = org[domain_name.to_sym] ||= { commands: {}, types: {} }
 
-        domain[:commands][command_name.to_sym] = manifest
+          domain[:commands][command_name.to_sym] = manifest
+        end
       end
 
       registered_types_depended_on.each do |type|
         domain = Domain.to_domain(type)
 
-        organization_name = domain.organization_name || :global_organization
-        domain_name = domain.domain_name || :global_domain
+        domain.type_namespace.use do
+          organization_name = domain.organization_name || :global_organization
+          domain_name = domain.domain_name || :global_domain
 
-        org = h[organization_name.to_sym] ||= {}
-        domain = org[domain_name.to_sym] ||= { commands: {}, types: {} }
+          org = h[organization_name.to_sym] ||= {}
+          domain = org[domain_name.to_sym] ||= { commands: {}, types: {} }
 
-        domain[:types][type.type_symbol] = type.manifest
+          domain[:types][type.type_symbol] = type.manifest
+        end
       end
 
       h
