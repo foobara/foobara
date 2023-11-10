@@ -80,6 +80,78 @@ RSpec.describe Foobara::CommandConnectors::Http do
   let(:requires_authentication) { nil }
   let(:capture_unknown_error) { false }
 
+  describe "#connect" do
+    context "when command is in an organization" do
+      let!(:org_module) do
+        stub_class = ->(klass) { stub_const(klass.name, klass) }
+
+        Module.new do
+          class << self
+            def name
+              "SomeOrg"
+            end
+          end
+
+          stub_class.call(self)
+
+          foobara_organization!
+        end
+      end
+
+      let!(:domain_module) do
+        stub_class = ->(klass) { stub_const(klass.name, klass) }
+
+        SomeOrg.module_eval do
+          Module.new do
+            class << self
+              def name
+                "SomeOrg::SomeDomain"
+              end
+            end
+
+            stub_class.call(self)
+
+            foobara_domain!
+          end
+        end
+      end
+
+      let!(:command_class) do
+        stub_class = ->(klass) { stub_const(klass.name, klass) }
+
+        SomeOrg::SomeDomain.module_eval do
+          Class.new(Foobara::Command) do
+            class << self
+              def name
+                "SomeOrg::SomeDomain::SomeCommand"
+              end
+            end
+
+            stub_class.call(self)
+          end
+        end
+      end
+
+      it "registers the command" do
+        command_connector.connect(org_module)
+
+        transformed_commands = command_connector.command_registry.registry.values
+        expect(transformed_commands.size).to eq(1)
+        expect(transformed_commands.first.command_class).to eq(command_class)
+      end
+
+      context "when registering via domain" do
+        it "registers the command" do
+          command_connector.connect(domain_module)
+
+          transformed_commands = command_connector.command_registry.registry.values
+          expect(transformed_commands.size).to eq(1)
+          expect(transformed_commands.first.command_class).to eq(command_class)
+        end
+      end
+    end
+  end
+
   describe "#run_command" do
     before do
       if allowed_rules

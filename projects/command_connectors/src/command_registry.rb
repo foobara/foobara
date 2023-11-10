@@ -9,20 +9,48 @@ module Foobara
       self.short_name_to_transformed_command = {}
     end
 
-    def register(...)
-      transformed_command_class = transform_command_class(...)
-      registry[transformed_command_class.full_command_name] = transformed_command_class
+    def register(registerable, *, **)
+      case registerable
+      when Class
+        unless registerable < Command
+          # :nocov:
+          raise "Don't know how to register #{registerable} (#{registerable.class})"
+          # :nocov:
+        end
 
-      short_name = transformed_command_class.command_name
-      existing_entry = short_name_to_transformed_command[short_name]
+        transformed_command_class = transform_command_class(registerable, *, **)
 
-      short_name_to_transformed_command[short_name] = if existing_entry
-                                                        [*existing_entry, transformed_command_class]
-                                                      else
-                                                        transformed_command_class
-                                                      end
+        registry[transformed_command_class.full_command_name] = transformed_command_class
 
-      transformed_command_class
+        short_name = transformed_command_class.command_name
+        existing_entry = short_name_to_transformed_command[short_name]
+
+        short_name_to_transformed_command[short_name] = if existing_entry
+                                                          [*existing_entry, transformed_command_class]
+                                                        else
+                                                          transformed_command_class
+                                                        end
+
+        transformed_command_class
+      when Domain
+        registerable.command_classes.map { |command_class| register(command_class, *, **) }
+      when Organization
+        registerable.domains.map { |domain| register(domain, *, **) }
+      when Module
+        if registerable.foobara_organization?
+          register(registerable.foobara_organization, *, **)
+        elsif registerable.foobara_domain?
+          register(registerable.foobara_domain, *, **)
+        else
+          # :nocov:
+          raise "Don't know how to register #{registerable} (#{registerable.class})"
+          # :nocov:
+        end
+      else
+        # :nocov:
+        raise "Don't know how to register #{registerable} (#{registerable.class})"
+        # :nocov:
+      end
     end
 
     def transform_command_class(
