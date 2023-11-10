@@ -21,7 +21,7 @@ module Foobara
         end
 
         def respond_to_missing_for_inputs?(method_name, _private = false)
-          inputs_type.element_types.key?(method_name)
+          inputs_type&.element_types&.key?(method_name)
         end
 
         foobara_delegate :inputs_type, to: :class

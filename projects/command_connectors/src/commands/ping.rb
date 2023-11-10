@@ -2,22 +2,29 @@ module Foobara
   module CommandConnectors
     module Commands
       class Ping < Foobara::Command
-        result pong: :datetime
+        result pong: { type: :datetime, required: true }, git_sha1: :string
 
         def execute
+          load_sha1
+          build_pong
+
           pong
         end
 
-        def pong
-          response = { pong: Time.now }
+        attr_accessor :sha1, :pong
 
-          sha1 = ENV.fetch("GIT_SHA1", nil)
-
-          if sha1
-            response[:git_sha1] = sha1
+        def load_sha1
+          if File.exist?("git_sha1")
+            self.sha1 = File.read("git_sha1").strip
           end
+        end
 
-          response
+        def build_pong
+          self.pong = { pong: Time.now }
+
+          pong[:git_sha1] = sha1 if sha1
+
+          pong
         end
       end
     end

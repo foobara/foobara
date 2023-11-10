@@ -38,6 +38,19 @@ RSpec.describe Foobara::CommandConnectors::Commands::Ping do
         data = JSON.parse(response.body)
         expect(data["pong"]).to match(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} [+-]\d{4}$/)
       end
+
+      context "with git_sha1 file" do
+        before do
+          allow(File).to receive(:exist?).with("git_sha1").and_return(true)
+          allow(File).to receive(:read).with("git_sha1").and_return("abc123")
+        end
+
+        it "contains the sha1" do
+          expect(response.status).to be(200)
+          data = JSON.parse(response.body)
+          expect(data["git_sha1"]).to eq("abc123")
+        end
+      end
     end
   end
 end
