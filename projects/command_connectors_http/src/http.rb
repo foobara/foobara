@@ -2,6 +2,10 @@ module Foobara
   module CommandConnectors
     class Http < CommandConnector
       def request_to_command(context)
+        if context.method == "OPTIONS"
+          return Foobara::CommandConnectors::Http::Commands::GetOptions.new
+        end
+
         action = context.action
         inputs = nil
 
@@ -86,7 +90,7 @@ module Foobara
 
         # TODO: feels awkward to call this here... Maybe use result/errors transformers instead??
         # Or call the serializer here??
-        body = command.serialize_result
+        body = command.respond_to?(:serialize_result) ? command.serialize_result : outcome.result
 
         status = if outcome.success?
                    200
@@ -110,7 +114,18 @@ module Foobara
                    end || 422
                  end
 
-        Response.new(status, {}, body)
+        headers = headers_for(command)
+
+        Response.new(status, headers, body)
+      end
+
+      def headers_for(_command)
+        {
+          "content-type" => "application/json",
+          "access-control-allow-origin" => "http://localhost:3000",
+          "access-control-allow-methods" => "GET, POST",
+          "access-control-allow-headers" => "Content-Type"
+        }
       end
     end
   end

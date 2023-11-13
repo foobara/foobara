@@ -532,6 +532,16 @@ RSpec.describe Foobara::CommandConnectors::Http do
           expect(response.headers).to eq({})
           expect(JSON.parse(response.body)).to eq("id" => user_id, "name" => "whatever")
         end
+
+        context "when making options call" do
+          let(:method) { "OPTIONS" }
+
+          it "finds the user" do
+            expect(response.status).to be(200)
+            expect(response.headers).to be_a(Hash)
+            expect(response.body).to eq("")
+          end
+        end
       end
 
       context "when not found error" do
