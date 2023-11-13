@@ -9,7 +9,7 @@ module Foobara
       end
 
       def serialize(errors)
-        ErrorCollection.to_h(errors)
+        errors.map(&:to_h)
       end
     end
   end

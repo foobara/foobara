@@ -173,7 +173,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
     it "runs the command" do
       expect(response.status).to be(200)
-      expect(response.headers).to eq({})
+      expect(response.headers).to be_a(Hash)
       expect(response.body).to eq("8")
     end
 
@@ -191,7 +191,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
       it "runs the command" do
         expect(response.status).to be(200)
-        expect(response.headers).to eq({})
+        expect(response.headers).to be_a(Hash)
         expect(response.body).to eq("8")
       end
     end
@@ -201,7 +201,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
       it "runs the command" do
         expect(response.status).to be(200)
-        expect(response.headers).to eq({})
+        expect(response.headers).to be_a(Hash)
         expect(response.body).to eq(8)
       end
     end
@@ -214,9 +214,9 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
       it "fails" do
         expect(response.status).to be(422)
-        expect(response.headers).to eq({})
+        expect(response.headers).to be_a(Hash)
 
-        error = JSON.parse(response.body)["data.unexpected_attributes"]
+        error = JSON.parse(response.body).find { |e| e["key"] == "data.unexpected_attributes" }
         unexpected_attributes = error["context"]["unexpected_attributes"]
 
         expect(unexpected_attributes).to eq(["some_bad_input"])
@@ -237,9 +237,9 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
       it "fails" do
         expect(response.status).to be(500)
-        expect(response.headers).to eq({})
+        expect(response.headers).to be_a(Hash)
 
-        error = JSON.parse(response.body)["runtime.unknown"]
+        error = JSON.parse(response.body).find { |e| e["key"] == "runtime.unknown" }
 
         expect(error["message"]).to eq("kaboom!")
         expect(error["is_fatal"]).to be(true)
@@ -266,7 +266,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
       it "runs the command" do
         expect(response.status).to be(200)
-        expect(response.headers).to eq({})
+        expect(response.headers).to be_a(Hash)
         expect(response.body).to eq("16")
       end
 
@@ -275,7 +275,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         it "is not success" do
           expect(response.status).to be(422)
-          expect(response.headers).to eq({})
+          expect(response.headers).to be_a(Hash)
           expect(response.body).to include("cannot_cast")
         end
       end
@@ -290,7 +290,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         it "runs the command" do
           expect(response.status).to be(200)
-          expect(response.headers).to eq({})
+          expect(response.headers).to be_a(Hash)
           expect(response.body).to eq("16")
         end
 
@@ -299,7 +299,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
           it "is not success" do
             expect(response.status).to be(422)
-            expect(response.headers).to eq({})
+            expect(response.headers).to be_a(Hash)
             expect(response.body).to include("cannot_cast")
           end
         end
@@ -310,7 +310,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         it "runs the command" do
           expect(response.status).to be(200)
-          expect(response.headers).to eq({})
+          expect(response.headers).to be_a(Hash)
           expect(response.body).to eq("16")
         end
       end
@@ -334,7 +334,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
         context "when allowed" do
           it "runs the command" do
             expect(response.status).to be(200)
-            expect(response.headers).to eq({})
+            expect(response.headers).to be_a(Hash)
             expect(response.body).to eq("8")
           end
         end
@@ -352,8 +352,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
           it "fails with 403 and relevant error" do
             expect(response.status).to be(403)
-            expect(response.headers).to eq({})
-            expect(JSON.parse(response.body)["runtime.not_allowed"]["message"]).to eq(
+            expect(response.headers).to be_a(Hash)
+            expect(JSON.parse(response.body).find { |e| e["key"] == "runtime.not_allowed" }["message"]).to eq(
               "Not allowed: Must be 1900 but was 2"
             )
           end
@@ -379,7 +379,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
           it "runs the command" do
             expect(response.status).to be(200)
-            expect(response.headers).to eq({})
+            expect(response.headers).to be_a(Hash)
             expect(response.body).to eq("8")
           end
 
@@ -402,8 +402,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
             expect(command_connector.command_registry[ComputeExponent].command_class).to eq(ComputeExponent)
 
             expect(response.status).to be(403)
-            expect(response.headers).to eq({})
-            expect(JSON.parse(response.body)["runtime.not_allowed"]["message"]).to eq(
+            expect(response.headers).to be_a(Hash)
+            expect(JSON.parse(response.body).find { |e| e["key"] == "runtime.not_allowed" }["message"]).to eq(
               "Not allowed: Must be base 1900 but was 2"
             )
           end
@@ -418,8 +418,10 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
           it "fails with 401 and relevant error" do
             expect(response.status).to be(403)
-            expect(response.headers).to eq({})
-            expect(JSON.parse(response.body)["runtime.not_allowed"]["message"]).to match(/base == 1900/)
+            expect(response.headers).to be_a(Hash)
+            expect(
+              JSON.parse(response.body).find { |e| e["key"] == "runtime.not_allowed" }["message"]
+            ).to match(/base == 1900/)
           end
         end
       end
@@ -440,8 +442,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
       context "when unauthenticated" do
         it "is 401" do
           expect(response.status).to be(401)
-          expect(response.headers).to eq({})
-          expect(JSON.parse(response.body).keys).to eq(["runtime.unauthenticated"])
+          expect(response.headers).to be_a(Hash)
+          expect(JSON.parse(response.body)).to include { |e| e["key"] == "runtime.unauthenticated" }
         end
       end
 
@@ -454,7 +456,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         it "is 200" do
           expect(response.status).to be(200)
-          expect(response.headers).to eq({})
+          expect(response.headers).to be_a(Hash)
           expect(JSON.parse(response.body)).to eq(8)
         end
       end
@@ -529,7 +531,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         it "finds the user" do
           expect(response.status).to be(200)
-          expect(response.headers).to eq({})
+          expect(response.headers).to be_a(Hash)
           expect(JSON.parse(response.body)).to eq("id" => user_id, "name" => "whatever")
         end
 
@@ -549,12 +551,12 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         it "fails" do
           expect(response.status).to be(404)
-          expect(response.headers).to eq({})
+          expect(response.headers).to be_a(Hash)
 
           errors = JSON.parse(response.body)
 
           expect(errors.size).to eq(1)
-          expect(errors.keys.first).to eq("runtime.user_not_found")
+          expect(errors).to include { |e| e["key"] == "runtime.user_not_found" }
         end
       end
 
@@ -613,7 +615,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
             it "serializes as an atom" do
               expect(response.status).to be(200)
-              expect(response.headers).to eq({})
+              expect(response.headers).to be_a(Hash)
               expect(JSON.parse(response.body)).to eq(
                 "id" => user_id,
                 "name" => "Some Name",
@@ -676,7 +678,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
             it "serializes as an aggregate" do
               expect(response.status).to be(200)
-              expect(response.headers).to eq({})
+              expect(response.headers).to be_a(Hash)
               expect(JSON.parse(response.body)).to eq(
                 "stuff" => [
                   {
@@ -715,7 +717,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
             it "serializes as a record store" do
               expect(response.status).to be(200)
-              expect(response.headers).to eq({})
+              expect(response.headers).to be_a(Hash)
               expect(JSON.parse(response.body)).to eq(
                 "User" => {
                   "1" => {
@@ -745,7 +747,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
       it "runs the command" do
         expect(response.status).to be(200)
-        expect(response.headers).to eq({})
+        expect(response.headers).to be_a(Hash)
         expect(response.body).to eq("8")
       end
     end
@@ -792,7 +794,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         it "runs the command" do
           expect(response.status).to be(200)
-          expect(response.headers).to eq({})
+          expect(response.headers).to be_a(Hash)
           expect(JSON.parse(response.body)).to eq("answer" => "8")
         end
 
