@@ -177,6 +177,18 @@ RSpec.describe Foobara::CommandConnectors::Http do
       expect(response.body).to eq("8")
     end
 
+    context "with a header set via env var..." do
+      stub_env_vars FOOBARA_HTTP_RESPONSE_HEADER_SOME_VAR: "some value",
+                    FOOBARA_HTTP_RESPONSE_HEADER_CONTENT_TYPE: "application/json"
+
+      it "runs the command" do
+        expect(response.status).to be(200)
+        expect(response.headers["content-type"]).to eq("application/json")
+        expect(response.headers["some-var"]).to eq("some value")
+        expect(response.body).to eq("8")
+      end
+    end
+
     context "with default transformers" do
       before do
         identity = proc { |x| x }

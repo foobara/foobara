@@ -3,6 +3,7 @@ module Foobara
     class Http < CommandConnector
       def request_to_command(context)
         if context.method == "OPTIONS"
+          # TODO: this feels a bit hacky and like overkill...
           return Foobara::CommandConnectors::Http::Commands::GetOptions.new
         end
 
@@ -120,12 +121,18 @@ module Foobara
       end
 
       def headers_for(_command)
-        {
-          "content-type" => "application/json",
-          "access-control-allow-origin" => "http://localhost:3000",
-          "access-control-allow-methods" => "GET, POST",
-          "access-control-allow-headers" => "Content-Type"
-        }
+        static_headers
+      end
+
+      def static_headers
+        @static_headers ||= ENV.each_with_object({}) do |(key, value), headers|
+          match = key.match(/\AFOOBARA_HTTP_RESPONSE_HEADER_(.*)\z/)
+
+          if match
+            header_name = match[1].downcase.tr("_", "-")
+            headers[header_name] = value
+          end
+        end
       end
     end
   end
