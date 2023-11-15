@@ -121,7 +121,7 @@ module Foobara
       end
 
       def headers_for(_command)
-        static_headers
+        static_headers.dup
       end
 
       def static_headers
@@ -132,7 +132,7 @@ module Foobara
             header_name = match[1].downcase.tr("_", "-")
             headers[header_name] = value
           end
-        end
+        end.freeze
       end
     end
   end
