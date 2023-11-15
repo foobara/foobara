@@ -122,6 +122,10 @@ module Foobara
           error = if args.size == 1 && opts.empty?
                     error = args.first
 
+                    if error.is_a?(::Class) && error < Foobara::RuntimeError
+                      error = error.new
+                    end
+
                     unless error.is_a?(Foobara::RuntimeError)
                       # :nocov:
                       raise ArgumentError,
