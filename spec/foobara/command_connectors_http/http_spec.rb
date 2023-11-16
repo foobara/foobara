@@ -79,6 +79,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
   let(:allowed_rules) { nil }
   let(:requires_authentication) { nil }
   let(:capture_unknown_error) { false }
+  let(:aggregate_entities) { nil }
 
   describe "#connect" do
     context "when command is in an organization" do
@@ -167,7 +168,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
         allowed_rule:,
         requires_authentication:,
         pre_commit_transformers:,
-        capture_unknown_error:
+        capture_unknown_error:,
+        aggregate_entities:
       )
     end
 
@@ -721,7 +723,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         context "with RecordStoreSerializer" do
           let(:serializers) { described_class::Serializers::RecordStoreSerializer }
-          let(:pre_commit_transformers) { Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer }
+          let(:aggregate_entities) { true }
 
           context "when user exists with a referral" do
             let(:user) do

@@ -63,15 +63,27 @@ module Foobara
       serializers: nil,
       allowed_rule: default_allowed_rule,
       requires_authentication: nil,
-      authenticator: self.authenticator
+      authenticator: self.authenticator,
+      aggregate_entities: nil
     )
+      pre_commit_transformers = [*pre_commit_transformers, *default_pre_commit_transformers]
+
+      if aggregate_entities
+        pre_commit_transformers << Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer
+      elsif aggregate_entities == false
+        # TODO: test this
+        # :nocov:
+        pre_commit_transformers.delete(Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer)
+        # :nocov:
+      end
+
       Foobara::TransformedCommand.subclass(
         command_class,
         capture_unknown_error:,
         inputs_transformers: [*inputs_transformers, *default_inputs_transformers],
         result_transformers: [*result_transformers, *default_result_transformers],
         errors_transformers: [*errors_transformers, *default_errors_transformers],
-        pre_commit_transformers: [*pre_commit_transformers, *default_pre_commit_transformers],
+        pre_commit_transformers:,
         # TODO: maybe treat serializer as a result transformer instead??
         serializers: [*serializers, *default_serializers],
         # TODO: Maybe treat these three as a pre-execute validator??
