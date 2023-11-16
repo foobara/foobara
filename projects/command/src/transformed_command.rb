@@ -45,7 +45,15 @@ module Foobara
         command_class.manifest(verbose: true).merge(
           inputs_type: inputs_type.declaration_data,
           result_type: result_type.declaration_data,
-          error_types: error_types_manifest
+          error_types: error_types_manifest,
+          capture_unknown_error:,
+          inputs_transformers: inputs_transformers.map(&:manifest),
+          result_transformers: result_transformers.map(&:manifest),
+          errors_transformers: errors_transformers.map(&:manifest),
+          pre_commit_transformers: pre_commit_transformers.map(&:manifest),
+          serializers: serializers.map { |s| s.respond_to?(:manifest) ? s.manifest : { proc: s.to_s } },
+          requires_authentication:,
+          authenticator: authenticator&.manifest
         )
       end
 
@@ -152,6 +160,7 @@ module Foobara
       apply_allowed_rule
       apply_pre_commit_transformers
       run_command
+      # TODO: do this within the transaction!!!
       transform_outcome
 
       outcome
@@ -337,6 +346,7 @@ module Foobara
 
     def transform_outcome
       if outcome.success?
+        # can we do this while still in the transaction of the command???
         transform_result
       else
         transform_errors
