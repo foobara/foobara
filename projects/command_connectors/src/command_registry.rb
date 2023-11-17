@@ -66,15 +66,16 @@ module Foobara
       authenticator: self.authenticator,
       aggregate_entities: nil
     )
+      serializers = [*serializers, *default_serializers]
       pre_commit_transformers = [*pre_commit_transformers, *default_pre_commit_transformers]
 
       if aggregate_entities
         pre_commit_transformers << Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer
+        # TODO: Http should not appear at all in this project...
+        serializers << Foobara::CommandConnectors::Http::Serializers::AggregateSerializer
       elsif aggregate_entities == false
-        # TODO: test this
-        # :nocov:
         pre_commit_transformers.delete(Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer)
-        # :nocov:
+        serializers.delete(Foobara::CommandConnectors::Http::Serializers::AggregateSerializer)
       end
 
       Foobara::TransformedCommand.subclass(
@@ -85,7 +86,7 @@ module Foobara
         errors_transformers: [*errors_transformers, *default_errors_transformers],
         pre_commit_transformers:,
         # TODO: maybe treat serializer as a result transformer instead??
-        serializers: [*serializers, *default_serializers],
+        serializers:,
         # TODO: Maybe treat these three as a pre-execute validator??
         allowed_rule: allowed_rule && to_allowed_rule(allowed_rule),
         requires_authentication:,
