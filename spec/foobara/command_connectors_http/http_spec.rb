@@ -52,13 +52,14 @@ RSpec.describe Foobara::CommandConnectors::Http do
   end
 
   let(:command_connector) do
-    described_class.new(authenticator:, default_serializers:)
+    described_class.new(authenticator:, default_serializers:, default_pre_commit_transformers:)
   end
 
   let(:authenticator) { nil }
   let(:default_serializers) do
     [Foobara::CommandConnectors::ErrorsSerializer, Foobara::CommandConnectors::JsonSerializer]
   end
+  let(:default_pre_commit_transformers) { nil }
 
   let(:base) { 2 }
   let(:exponent) { 3 }
@@ -717,6 +718,39 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 h[:name] == "Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer"
               }
               expect(manifest).to be_a(Hash)
+              manifest = command_manifest[:serializers].find { |h|
+                h[:name] == "Foobara::CommandConnectors::Http::Serializers::AggregateSerializer"
+              }
+              expect(manifest).to be_a(Hash)
+            end
+
+            context "with aggregate serializer as default serializer" do
+              let(:aggregate_entities) { nil }
+              let(:pre_commit_transformers) { nil }
+
+              let(:default_serializers) do
+                [
+                  described_class::Serializers::AggregateSerializer,
+                  Foobara::CommandConnectors::ErrorsSerializer,
+                  Foobara::CommandConnectors::JsonSerializer
+                ]
+              end
+              let(:default_pre_commit_transformers) {
+                Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer
+              }
+
+              it "contains pre_commit_transformers in its manifest" do
+                commands_manifest = command_connector.manifest[:global_organization][:global_domain][:commands]
+                command_manifest = commands_manifest[:QueryUser]
+                manifest = command_manifest[:pre_commit_transformers].find { |h|
+                  h[:name] == "Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer"
+                }
+                expect(manifest).to be_a(Hash)
+                manifest = command_manifest[:serializers].find { |h|
+                  h[:name] == "Foobara::CommandConnectors::Http::Serializers::AggregateSerializer"
+                }
+                expect(manifest).to be_a(Hash)
+              end
             end
           end
         end
