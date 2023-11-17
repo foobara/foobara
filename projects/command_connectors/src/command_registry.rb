@@ -66,8 +66,8 @@ module Foobara
       authenticator: self.authenticator,
       aggregate_entities: nil
     )
-      serializers = [*serializers, *default_serializers],
-                    pre_commit_transformers = [*pre_commit_transformers, *default_pre_commit_transformers]
+      serializers = [*serializers, *default_serializers]
+      pre_commit_transformers = [*pre_commit_transformers, *default_pre_commit_transformers]
 
       if aggregate_entities
         pre_commit_transformers << Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer
