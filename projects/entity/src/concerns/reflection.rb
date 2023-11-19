@@ -43,7 +43,10 @@ module Foobara
               depends_on: depends_on.map(&:full_entity_name),
               deep_depends_on: deep_depends_on.map(&:full_entity_name),
               associations:,
-              deep_associations:
+              deep_associations:,
+              organization_name:,
+              domain_name:,
+              entity_name:
             }
           end
         end
