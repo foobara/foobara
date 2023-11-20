@@ -204,9 +204,9 @@ RSpec.describe ":model" do
 
       describe "Foobara.manifest" do
         it "contains the type for the model" do
-          expect(
-            Foobara.manifest[:global_organization][:global_domain][:types][:SomeModel][:declaration_data][:name]
-          ).to eq("SomeModel")
+          types_manifest = Foobara.manifest[:organizations][:global_organization][:domains][:global_domain][:types]
+
+          expect(types_manifest[:SomeModel][:declaration_data][:name]).to eq("SomeModel")
         end
       end
     end

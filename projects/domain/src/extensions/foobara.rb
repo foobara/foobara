@@ -3,7 +3,9 @@ module Foobara
     # TODO: rename this to manifest...
     # TODO: come up with a way to change a type's manifest... Or maybe treat Model very differently?
     def manifest
-      all_organizations.map(&:manifest_hash).inject(:merge)
+      {
+        organizations: all_organizations.map(&:manifest_hash).inject(:merge)
+      }
     end
 
     def all_organizations

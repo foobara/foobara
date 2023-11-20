@@ -78,7 +78,10 @@ module Foobara
     end
 
     def manifest
-      domains.map(&:manifest_hash).inject(:merge) || {}
+      {
+        name: organization_name,
+        domains: domains.map(&:manifest_hash).inject(:merge) || {}
+      }
     end
 
     def manifest_hash

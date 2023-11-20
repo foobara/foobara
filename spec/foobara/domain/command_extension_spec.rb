@@ -136,9 +136,9 @@ RSpec.describe Foobara::Domain::CommandExtension do
       # TODO: this belongs elsewhere
       describe ".manifest" do
         it "contains the depends_on information for the commands" do
-          expect(Foobara.manifest[:global_organization][:SomeDomain1][:commands][:SomeCommand1][:depends_on]).to eq(
-            ["SomeDomain1::SomeCommand2"]
-          )
+          commands_manifest = Foobara.manifest[:organizations][:global_organization][:domains][:SomeDomain1][:commands]
+
+          expect(commands_manifest[:SomeCommand1][:depends_on]).to eq(["SomeDomain1::SomeCommand2"])
         end
       end
     end
@@ -195,9 +195,9 @@ RSpec.describe Foobara::Domain::CommandExtension do
       # TODO: this belongs elsewhere
       describe ".manifest" do
         it "contains the depends_on information for the commands" do
-          expect(Foobara.manifest[:global_organization][:SomeDomain1][:depends_on]).to eq(
-            %w[SomeDomain2 SomeDomain3]
-          )
+          depends_on = Foobara.manifest[:organizations][:global_organization][:domains][:SomeDomain1][:depends_on]
+
+          expect(depends_on).to eq(%w[SomeDomain2 SomeDomain3])
         end
       end
     end
