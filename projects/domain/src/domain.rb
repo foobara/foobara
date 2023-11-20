@@ -158,6 +158,8 @@ module Foobara
 
     def manifest
       Util.remove_empty(
+        organization_name:,
+        domain_name:,
         depends_on: depends_on.map(&:to_s),
         commands: command_classes.map(&:manifest_hash).inject(:merge) || {},
         types: type_namespace.manifest
