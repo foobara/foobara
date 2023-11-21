@@ -154,35 +154,46 @@ module Foobara
     end
 
     def manifest
-      h = {}
+      # TODO: why is this so much more complex than Foobara.manifest??
+      # I suppose because there's no transformed org/dom concept??
+      # TODO: implement that
+      organizations = {}
+      h = { organizations: }
 
-      # TODO: should group by org and domain...
-      command_registry.registry.each_value do |transformed_command_class|
-        transformed_command_class.command_class.namespace.use do
-          manifest = transformed_command_class.manifest
+      domains = command_registry.registry.values.map(&:domain) +
+                registered_types_depended_on.map { |type| Domain.to_domain(type) }.compact
 
-          organization_name = manifest[:organization_name] || :global_organization
-          domain_name = manifest[:domain_name] || :global_domain
-          command_name = manifest[:command_name]
+      domains.compact!
+      domains.uniq!
 
-          org = h[organization_name.to_sym] ||= {}
-          domain = org[domain_name.to_sym] ||= { commands: {}, types: {} }
+      domains.each do |domain|
+        organization_name = domain.organization_name || :global_organization
+        domain_name = domain.domain_name || :global_domain
 
-          domain[:commands][command_name.to_sym] = manifest
-        end
+        org = organizations[organization_name.to_sym] ||= { organization_name:, domains: {} }
+        domains_h = org[:domains]
+
+        domains_h[domain_name.to_sym] ||= domain.manifest(skip: %i[types commands]).merge(types: {}, commands: {})
+      end
+
+      command_manifests = command_registry.registry.values.map(&:manifest)
+
+      command_manifests.each do |command_manifest|
+        org = command_manifest[:organization_name]&.to_sym || :global_organization
+        dom = command_manifest[:domain_name]&.to_sym || :global_domain
+        command_name = command_manifest[:command_name].to_sym
+
+        organizations[org][:domains][dom][:commands][command_name] = command_manifest
       end
 
       registered_types_depended_on.each do |type|
         domain = Domain.to_domain(type)
 
         domain.type_namespace.use do
-          organization_name = domain.organization_name || :global_organization
-          domain_name = domain.domain_name || :global_domain
+          org = domain.organization_name&.to_sym || :global_organization
+          dom = domain.domain_name&.to_sym || :global_domain
 
-          org = h[organization_name.to_sym] ||= {}
-          domain = org[domain_name.to_sym] ||= { commands: {}, types: {} }
-
-          domain[:types][type.type_symbol] = type.manifest
+          organizations[org][:domains][dom][:types][type.type_symbol] = type.manifest
         end
       end
 
