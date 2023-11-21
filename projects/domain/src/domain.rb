@@ -156,13 +156,50 @@ module Foobara
       end
     end
 
-    def manifest
+    def manifest(skip: nil)
+      if skip
+        allowed_keys = [
+
+          organization_name:,
+          domain_name:,
+          depends_on:,
+          commands:,
+          types:
+        ]
+
+        invalid_keys = skip - allowed_keys
+
+        unless invalid_keys.empty?
+          raise ArgumentError, "Invalid keys: #{invalid_keys} expected: #{allowed_keys}"
+        end
+      end
+
+      organization_name = unless skip&.exclude?(:organization_name)
+                            self.organization_name
+                          end
+
+      domain_name = unless skip&.exclude?(:domain_name)
+                      self.domain_name
+                    end
+
+      depends_on = unless skip&.exclude?(:depends_on)
+                     self.depends_on.map(&:to_s)
+                   end
+
+      commands = unless skip&.exclude?(:commands)
+                   command_classes.map(&:manifest_hash).inject(:merge)
+                 end
+
+      types = unless skip&.exclude?(:types)
+                type_namespace.manifest
+              end
+
       Util.remove_empty(
         organization_name:,
         domain_name:,
-        depends_on: depends_on.map(&:to_s),
-        commands: command_classes.map(&:manifest_hash).inject(:merge) || {},
-        types: type_namespace.manifest
+        depends_on:,
+        commands:,
+        types:
       )
     end
 
