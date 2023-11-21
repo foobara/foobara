@@ -163,7 +163,8 @@ module Foobara
       domains = command_registry.registry.values.map(&:domain) +
                 registered_types_depended_on.map { |type| Domain.to_domain(type) }.compact
 
-      domains.compact!.uniq!
+      domains.compact!
+      domains.uniq!
 
       domains.each do |domain|
         organization_name = domain.organization_name || :global_organization
@@ -178,18 +179,19 @@ module Foobara
       command_manifests = command_registry.registry.values.map(&:manifest)
 
       command_manifests.each do |command_manifest|
-        org = command_manifest[:organization_name].to_sym || :global_organization
-        dom = command_manifest[:domain_name].to_sym || :global_domain
+        org = command_manifest[:organization_name]&.to_sym || :global_organization
+        dom = command_manifest[:domain_name]&.to_sym || :global_domain
+        command_name = command_manifest[:command_name].to_sym
 
-        organizations[org][:domains][dom][:commands][command_name.to_sym] = command_manifest
+        organizations[org][:domains][dom][:commands][command_name] = command_manifest
       end
 
       registered_types_depended_on.each do |type|
         domain = Domain.to_domain(type)
 
         domain.type_namespace.use do
-          org = domain.organization_name.to_sym || :global_organization
-          dom = domain.domain_name.to_sym || :global_domain
+          org = domain.organization_name&.to_sym || :global_organization
+          dom = domain.domain_name&.to_sym || :global_domain
 
           organizations[org][:domains][dom][:types][type.type_symbol] = type.manifest
         end

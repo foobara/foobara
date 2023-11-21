@@ -451,7 +451,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
       describe "#manifest" do
         it "contains the errors for not allowed" do
-          domain_manifest = command_connector.manifest[:global_organization][:global_domain]
+          domain_manifest = command_connector.manifest[:organizations][:global_organization][:domains][:global_domain]
           error_manifest = domain_manifest[:commands][:ComputeExponent][:error_types]
 
           expect(error_manifest.keys).to include("runtime.unauthenticated")

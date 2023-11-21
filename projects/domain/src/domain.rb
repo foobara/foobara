@@ -158,13 +158,12 @@ module Foobara
 
     def manifest(skip: nil)
       if skip
-        allowed_keys = [
-
-          organization_name:,
-          domain_name:,
-          depends_on:,
-          commands:,
-          types:
+        allowed_keys = %i[
+          organization_name
+          domain_name
+          depends_on
+          commands
+          types
         ]
 
         invalid_keys = skip - allowed_keys
@@ -174,23 +173,23 @@ module Foobara
         end
       end
 
-      organization_name = unless skip&.exclude?(:organization_name)
+      organization_name = if skip&.include?(:organization_name)
                             self.organization_name
                           end
 
-      domain_name = unless skip&.exclude?(:domain_name)
+      domain_name = if skip&.include?(:domain_name)
                       self.domain_name
                     end
 
-      depends_on = unless skip&.exclude?(:depends_on)
+      depends_on = if skip&.include?(:depends_on)
                      self.depends_on.map(&:to_s)
                    end
 
-      commands = unless skip&.exclude?(:commands)
+      commands = if skip&.include?(:commands)
                    command_classes.map(&:manifest_hash).inject(:merge)
                  end
 
-      types = unless skip&.exclude?(:types)
+      types = if skip&.include?(:types)
                 type_namespace.manifest
               end
 
