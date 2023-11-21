@@ -176,8 +176,9 @@ module Foobara
         if verbose
           h = h.merge(
             Util.remove_empty(
-              supported_processors: supported_processor_manifest,
-              processors: processor_manifest
+              supported_processor_manifest.merge(
+                processors: processor_manifest
+              )
             )
           )
         end
