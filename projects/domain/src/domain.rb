@@ -169,27 +169,29 @@ module Foobara
         invalid_keys = skip - allowed_keys
 
         unless invalid_keys.empty?
+          # :nocov:
           raise ArgumentError, "Invalid keys: #{invalid_keys} expected: #{allowed_keys}"
+          # :nocov:
         end
       end
 
-      organization_name = if skip&.include?(:organization_name)
+      organization_name = unless skip&.include?(:organization_name)
                             self.organization_name
                           end
 
-      domain_name = if skip&.include?(:domain_name)
+      domain_name = unless skip&.include?(:domain_name)
                       self.domain_name
                     end
 
-      depends_on = if skip&.include?(:depends_on)
+      depends_on = unless skip&.include?(:depends_on)
                      self.depends_on.map(&:to_s)
                    end
 
-      commands = if skip&.include?(:commands)
+      commands = unless skip&.include?(:commands)
                    command_classes.map(&:manifest_hash).inject(:merge)
                  end
 
-      types = if skip&.include?(:types)
+      types = unless skip&.include?(:types)
                 type_namespace.manifest
               end
 
