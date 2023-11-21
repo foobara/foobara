@@ -12,7 +12,7 @@ RSpec.describe Foobara::ErrorKey do
     context "when ErrorKey" do
       subject { described_class.prepend_path(key, new_parts) }
 
-      it { is_expected.to eq("some_runtime_path:some_category.path1.path2.some_path.some_symbol") }
+      it { is_expected.to eq("some_runtime_path>some_category.path1.path2.some_path.some_symbol") }
     end
   end
 
@@ -22,7 +22,7 @@ RSpec.describe Foobara::ErrorKey do
     context "when ErrorKey" do
       subject { described_class.prepend_runtime_path(key, new_parts) }
 
-      it { is_expected.to eq("path1:path2:some_runtime_path:some_category.some_path.some_symbol") }
+      it { is_expected.to eq("path1>path2>some_runtime_path>some_category.some_path.some_symbol") }
     end
   end
 end

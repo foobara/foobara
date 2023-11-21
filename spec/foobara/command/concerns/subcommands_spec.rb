@@ -87,11 +87,11 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
         "data.unexpected_attributes" =>
           Foobara::BuiltinTypes::Attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError,
         "data.should_fail.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
-        "run_some_subcommand:data.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
-        "run_some_subcommand:data.unexpected_attributes" =>
+        "run_some_subcommand>data.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
+        "run_some_subcommand>data.unexpected_attributes" =>
           Foobara::BuiltinTypes::Attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError,
-        "run_some_subcommand:data.should_fail.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
-        "run_some_subcommand:runtime.it_failed" => RunSomeSubcommand::ItFailedError
+        "run_some_subcommand>data.should_fail.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
+        "run_some_subcommand>runtime.it_failed" => RunSomeSubcommand::ItFailedError
       )
     end
   end
@@ -143,7 +143,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
             }
           }
         },
-        "run_some_subcommand:data.cannot_cast" => {
+        "run_some_subcommand>data.cannot_cast" => {
           path: [],
           runtime_path: [:run_some_subcommand],
           category: :data,
@@ -157,7 +157,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
             }
           }
         },
-        "run_some_subcommand:data.unexpected_attributes" => {
+        "run_some_subcommand>data.unexpected_attributes" => {
           path: [],
           runtime_path: [:run_some_subcommand],
           category: :data,
@@ -173,7 +173,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
             }
           }
         },
-        "run_some_subcommand:data.should_fail.cannot_cast" => {
+        "run_some_subcommand>data.should_fail.cannot_cast" => {
           path: [:should_fail],
           runtime_path: [:run_some_subcommand],
           category: :data,
@@ -187,7 +187,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
             }
           }
         },
-        "run_some_subcommand:runtime.it_failed" => {
+        "run_some_subcommand>runtime.it_failed" => {
           path: [],
           runtime_path: [:run_some_subcommand],
           category: :runtime,
@@ -229,7 +229,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
         error = errors.first
 
         expect(error.to_h).to eq(
-          key: "run_some_subcommand:runtime.it_failed",
+          key: "run_some_subcommand>runtime.it_failed",
           path: [],
           runtime_path: [:run_some_subcommand],
           category: :runtime,

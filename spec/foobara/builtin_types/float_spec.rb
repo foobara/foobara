@@ -5,7 +5,7 @@ RSpec.describe ":float" do
     it "gives the names of the casters including the dynamically generated class matcher" do
       expect(type.value_caster.processor_names).to eq(
         [
-          "no_cast_needed_if_is_a:Float",
+          "no_cast_needed_if_is_a;Float",
           "Foobara::BuiltinTypes::Float::Casters::Integer",
           "Foobara::BuiltinTypes::Float::Casters::String"
         ]

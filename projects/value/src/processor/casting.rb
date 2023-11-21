@@ -65,7 +65,7 @@ module Foobara
 
           @does_not_need_cast_processor = if target_classes && !target_classes.empty?
                                             Caster.subclass(
-                                              name: ["no_cast_needed_if_is_a", *target_classes.map(&:name)].join(":"),
+                                              name: ["no_cast_needed_if_is_a", *target_classes.map(&:name)].join(";"),
                                               applicable?: ->(value) {
                                                 target_classes.any? { |target_class| value.is_a?(target_class) }
                                               },

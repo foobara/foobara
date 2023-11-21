@@ -32,10 +32,10 @@ module Foobara
       end
 
       # key contains.......
-      # a:b:c:d.e.f.g.h
+      # a;b;c;d.e.f.g.h
       # Then a, b, c is the runtime path and d is the category and e,f,g is the data path and h is the symbol
       def parse(key_string)
-        *runtime_path, key_string = key_string.to_s.split(":")
+        *runtime_path, key_string = key_string.to_s.split(">")
         category, *path, symbol = key_string.split(".")
 
         new(category:, path:, symbol:, runtime_path:)
@@ -116,7 +116,7 @@ module Foobara
       [
         *runtime_path,
         [category, *path, symbol].join(".")
-      ].join(":")
+      ].join(">")
     end
 
     def to_sym(**)
