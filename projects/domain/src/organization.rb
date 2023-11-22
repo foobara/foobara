@@ -1,5 +1,7 @@
 module Foobara
   class Organization
+    GLOBAL_ORGANIZATION_NAME = "global_organization".freeze
+
     class AlreadyRegisteredOrganizationDependency < StandardError; end
 
     class << self
@@ -45,7 +47,9 @@ module Foobara
       self.is_global = global
       @domains = []
 
-      unless global
+      if global?
+        self.organization_name = GLOBAL_ORGANIZATION_NAME
+      else
         Organization.all << self
 
         if organization_name.nil? || organization_name.empty?
@@ -85,10 +89,8 @@ module Foobara
     end
 
     def manifest_hash
-      key = global? ? :global_organization : organization_name
-
       {
-        key.to_sym => manifest
+        organization_name.to_sym => manifest
       }
     end
   end

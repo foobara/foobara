@@ -5,16 +5,8 @@ module Foobara
         include Concern
 
         module ClassMethods
-          # TODO: what to do if we have two subcommands in different domains with the same name??
-          # Seems like we need to fully qualify these with their domain, right?
-          def runtime_path_symbol
-            symbol = Util.non_full_name_underscore(self)
-
-            [
-              # TODO: Broken project dependency here...
-              domain.full_domain_symbol,
-              symbol
-            ].compact.join(".").to_sym
+          def command_symbol
+            @command_symbol ||= Util.non_full_name_underscore(self).to_sym
           end
 
           def lookup_input_error_class(symbol, path)
@@ -113,7 +105,7 @@ module Foobara
         end
 
         def add_subcommand_error(subcommand, error)
-          error.runtime_path = [subcommand.class.runtime_path_symbol, *Util.array(error.runtime_path)]
+          error.runtime_path = [subcommand.class.full_command_symbol, *Util.array(error.runtime_path)]
           add_error(error)
           halt!
         end

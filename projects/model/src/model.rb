@@ -62,11 +62,13 @@ module Foobara
       end
 
       def full_model_name
-        [
-          organization_name,
-          domain_name,
+        if domain.global?
           model_name
-        ].compact.join("::")
+        elsif organization.global?
+          "#{domain_name}::#{model_name}"
+        else
+          "#{organization_name}::#{domain_name}::#{model_name}"
+        end
       end
 
       def possible_errors

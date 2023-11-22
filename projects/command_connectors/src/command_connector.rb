@@ -167,8 +167,8 @@ module Foobara
       domains.uniq!
 
       domains.each do |domain|
-        organization_name = domain.organization_name || :global_organization
-        domain_name = domain.domain_name || :global_domain
+        organization_name = domain.organization_name
+        domain_name = domain.domain_name
 
         org = organizations[organization_name.to_sym] ||= { organization_name:, domains: {} }
         domains_h = org[:domains]
@@ -179,8 +179,8 @@ module Foobara
       command_manifests = command_registry.registry.values.map(&:manifest)
 
       command_manifests.each do |command_manifest|
-        org = command_manifest[:organization_name]&.to_sym || :global_organization
-        dom = command_manifest[:domain_name]&.to_sym || :global_domain
+        org = command_manifest[:organization_name].to_sym
+        dom = command_manifest[:domain_name].to_sym
         command_name = command_manifest[:command_name].to_sym
 
         organizations[org][:domains][dom][:commands][command_name] = command_manifest
@@ -190,8 +190,8 @@ module Foobara
         domain = Domain.to_domain(type)
 
         domain.type_namespace.use do
-          org = domain.organization_name&.to_sym || :global_organization
-          dom = domain.domain_name&.to_sym || :global_domain
+          org = domain.organization_name.to_sym
+          dom = domain.domain_name.to_sym
 
           organizations[org][:domains][dom][:types][type.type_symbol] = type.manifest
         end

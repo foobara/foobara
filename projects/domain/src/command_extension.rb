@@ -37,13 +37,23 @@ module Foobara
         end
 
         def full_command_name
-          names = [
-            organization.organization_name,
-            domain.domain_name,
-            command_name
-          ].compact
+          @full_command_name ||= if domain.global?
+                                   command_name
+                                 elsif organization.global?
+                                   "#{domain_name}::#{command_name}"
+                                 else
+                                   "#{organization_name}::#{domain_name}::#{command_name}"
+                                 end
+        end
 
-          names.empty? ? nil : names.join("::")
+        def full_command_symbol
+          @full_command_symbol = if domain.global?
+                                   command_symbol
+                                 elsif organization.global?
+                                   "#{domain_symbol}::#{command_symbol}".to_sym
+                                 else
+                                   "#{organization_symbol}::#{domain_symbol}::#{command_symbol}".to_sym
+                                 end
         end
 
         def organization
@@ -63,7 +73,11 @@ module Foobara
           end
         end
 
-        foobara_delegate :domain_name, :organization_name, to: :domain, allow_nil: true
+        foobara_delegate :domain_name,
+                         :organization_name,
+                         :organization_symbol,
+                         :domain_symbol,
+                         to: :domain, allow_nil: true
       end
     end
   end

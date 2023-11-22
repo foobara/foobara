@@ -84,6 +84,48 @@ RSpec.describe ":model" do
     }.to raise_error(Foobara::Value::Processor::Casting::CannotCastError)
   end
 
+  context "when model has a domain but no organization (ie is in the global organization)" do
+    let(:domain) do
+      stub_class = ->(klass) { stub_const(klass.name, klass) }
+
+      org = Module.new do
+        def self.name
+          "SomeOrg"
+        end
+
+        stub_class.call(self)
+      end
+
+      org.foobara_organization!
+
+      dom = Module.new do
+        def self.name
+          "SomeOrg::SomeDomain"
+        end
+
+        stub_class.call(self)
+      end
+
+      dom.foobara_domain!
+      dom.foobara_domain
+    end
+
+    let(:type_declaration) do
+      {
+        type: :model,
+        name: model_name,
+        attributes_declaration:,
+        model_module: domain.full_domain_name
+      }
+    end
+
+    describe "#full_model_name" do
+      subject { type.target_class.full_model_name }
+
+      it { is_expected.to eq("SomeOrg::SomeDomain::#{model_name}") }
+    end
+  end
+
   it "sets model_class and model_base_class" do
     expect(type.declaration_data[:model_class]).to eq("Foobara::Model::SomeModel")
     expect(type.declaration_data[:model_base_class]).to eq("Foobara::Model")

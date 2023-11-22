@@ -139,7 +139,9 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         transformed_commands = command_connector.command_registry.registry.values
         expect(transformed_commands.size).to eq(1)
-        expect(transformed_commands.first.command_class).to eq(command_class)
+        transformed_command = transformed_commands.first
+        expect(transformed_command.full_command_symbol).to eq(:"some_org::some_domain::some_command")
+        expect(transformed_command.command_class).to eq(command_class)
       end
 
       context "when registering via domain" do

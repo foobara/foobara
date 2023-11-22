@@ -148,6 +148,7 @@ RSpec.describe Foobara::Domain::CommandExtension do
       let(:command_class2_name) { "SomeDomain2::SomeCommand2" }
 
       it "is not allowed to run the subcommand" do
+        expect(command_class1.full_command_symbol).to eq(:"some_domain1::some_command1")
         expect { outcome }.to raise_error(described_class::CannotAccessDomain)
       end
 

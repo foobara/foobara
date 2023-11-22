@@ -81,7 +81,7 @@ module Foobara
 
           def register_possible_subcommand_errors(subcommand_class)
             subcommand_class.error_context_type_map.each_pair do |key, error_class|
-              error_key = ErrorKey.prepend_runtime_path(key, subcommand_class.runtime_path_symbol)
+              error_key = ErrorKey.prepend_runtime_path(key, subcommand_class.full_command_symbol)
               register_possible_error_class(error_key, error_class)
             end
           end

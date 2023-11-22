@@ -11,6 +11,7 @@ module Foobara
 
       if global?
         @type_namespace = TypeDeclarations::Namespace.global
+        self.domain_name = "global_domain"
       else
         if domain_name.nil? || domain_name.empty?
           # :nocov:
@@ -53,33 +54,23 @@ module Foobara
     end
 
     def full_domain_name
-      names = [
-        organization_name,
-        domain_name
-      ].compact
-
-      if names.empty?
-        nil
-      else
-        names.join("::")
-      end
+      @full_domain_name ||= if organization.global? && !global?
+                              global? ? "#{organization_name}::#{domain_name}" : domain_name
+                            else
+                              "#{organization_name}::#{domain_name}"
+                            end
     end
 
     def domain_symbol
-      @domain_symbol ||= unless global?
-                           Util.underscore_sym(domain_name)
-                         end
+      @domain_symbol ||= Util.underscore_sym(domain_name)
     end
 
     def full_domain_symbol
-      return @full_domain_symbol if defined?(@full_domain_symbol)
-
-      names = [
-        organization_symbol,
-        domain_symbol
-      ].compact
-
-      @full_domain_symbol = names.empty? ? nil : names.join("::").to_sym
+      @full_domain_symbol ||= if organization.global? && !global?
+                                global? ? "#{organization_symbol}::#{domain_symbol}" : domain_symbol
+                              else
+                                "#{organization_symbol}::#{domain_symbol}"
+                              end.to_sym
     end
 
     def command_classes
@@ -205,10 +196,8 @@ module Foobara
     end
 
     def manifest_hash
-      key = domain_name || "global_domain"
-
       {
-        key.to_sym => manifest
+        domain_name.to_sym => manifest
       }
     end
 
