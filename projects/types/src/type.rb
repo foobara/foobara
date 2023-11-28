@@ -167,18 +167,16 @@ module Foobara
       def manifest(verbose: true)
         return type_symbol if !verbose && registered?
 
-        h = Util.remove_empty(
+        h = {
           target_classes: target_classes.map(&:name),
           base_type: base_type&.full_type_name,
           declaration_data:
-        )
+        }
 
         if verbose
-          h = h.merge(
-            Util.remove_empty(
-              supported_processor_manifest.merge(
-                processors: processor_manifest
-              )
+          h.merge!(
+            supported_processor_manifest.merge(
+              processors: processor_manifest
             )
           )
         end
@@ -225,11 +223,11 @@ module Foobara
           target[symbol] = processor_manifest
         end
 
-        Util.remove_empty(
+        {
           supported_transformers:,
           supported_validators:,
           supported_processors:
-        )
+        }
       end
 
       def processor_manifest
@@ -273,11 +271,11 @@ module Foobara
           validators_manifest[symbol] = validator.manifest
         end
 
-        Util.remove_empty(
+        {
           casters: casters_manifest,
           transformers: transformers_manifest,
           validators: validators_manifest
-        )
+        }
       end
 
       def registered?

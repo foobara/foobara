@@ -19,10 +19,10 @@ module Foobara
           end
 
           def manifest(verbose: false)
-            h = Util.remove_empty(
+            h = {
               error_types: errors_type_declaration,
               depends_on: depends_on.map(&:to_s)
-            )
+            }
 
             if inputs_type
               h[:inputs_type] = inputs_type&.declaration_data

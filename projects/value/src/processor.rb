@@ -267,7 +267,7 @@ module Foobara
           manifest[:parent_declaration_data] = parent_declaration_data
         end
 
-        Util.remove_empty(manifest)
+        manifest
       end
 
       def method_missing(method, *args, **opts)

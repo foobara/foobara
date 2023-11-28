@@ -186,13 +186,13 @@ module Foobara
                 type_namespace.manifest
               end
 
-      Util.remove_empty(
+      {
         organization_name:,
         domain_name:,
         depends_on:,
         commands:,
         types:
-      )
+      }
     end
 
     def manifest_hash
