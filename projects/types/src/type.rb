@@ -164,22 +164,18 @@ module Foobara
         end
       end
 
-      def manifest(verbose: true)
-        return type_symbol if !verbose && registered?
-
+      def manifest
         h = {
           target_classes: target_classes.map(&:name),
           base_type: base_type&.full_type_name,
           declaration_data:
         }
 
-        if verbose
-          h.merge!(
-            supported_processor_manifest.merge(
-              processors: processor_manifest
-            )
+        h.merge!(
+          supported_processor_manifest.merge(
+            processors: processor_manifest
           )
-        end
+        )
 
         target_classes.each do |target_class|
           if target_class.respond_to?(:foobara_manifest)
