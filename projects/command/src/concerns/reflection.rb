@@ -18,22 +18,21 @@ module Foobara
             remove_instance_variable("@all") if instance_variable_defined?("@all")
           end
 
-          def manifest(verbose: false)
+          def manifest
             h = {
               error_types: errors_type_declaration,
-              depends_on: depends_on.map(&:to_s)
+              depends_on: depends_on.map(&:to_s),
+              full_command_name:,
+              inputs_type: inputs_type&.declaration_data || {
+                type: :attributes,
+                element_type_declarations: {},
+                required: []
+              }
             }
 
-            if inputs_type
-              h[:inputs_type] = inputs_type&.declaration_data
-            end
-
             if result_type
+              # TODO: find a way to represent literal types like "nil"
               h[:result_type] = result_type.declaration_data
-            end
-
-            if verbose
-              h[:full_command_name] = full_command_name
             end
 
             h

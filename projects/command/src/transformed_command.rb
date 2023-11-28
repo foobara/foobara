@@ -46,7 +46,7 @@ module Foobara
                        to: :command_class
 
       def manifest
-        command_class.manifest(verbose: true).merge(
+        command_class.manifest.merge(
           inputs_type: inputs_type.declaration_data,
           result_type: result_type.declaration_data,
           error_types: error_types_manifest,
