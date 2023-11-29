@@ -22,6 +22,14 @@ module Foobara
         data_path.values_at(object)
       end
 
+      def value_at(data_path, object)
+        unless data_path.is_a?(DataPath)
+          data_path = new(data_path)
+        end
+
+        data_path.value_at(object)
+      end
+
       def prepend_path(key, *)
         if key.is_a?(DataPath)
           key.prepend(*)
@@ -154,6 +162,16 @@ module Foobara
                 end.compact
 
       values_at(objects, parts)
+    end
+
+    def value_at(object, parts = path)
+      values = values_at(object, parts)
+
+      if values.size > 1
+        raise "Expected only one value to be at #{parts} but there were #{values.size}"
+      end
+
+      values.first
     end
 
     def ==(other)
