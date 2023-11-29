@@ -26,8 +26,9 @@ module Foobara
         relevant_manifest.key?(method_name.to_sym) || relevant_manifest.key?(method_name.to_s) || super
       end
 
+      # TODO: move this to a mixin somehow?
       def inspect
-        root_manifest_data = relevant_manifest.to_h do |key, value|
+        manifest_data = relevant_manifest.to_h do |key, value|
           if value.is_a?(::Array)
             if value.size > 5 || value.any? { |v| _structure?(v) }
               value = "..."
@@ -47,7 +48,7 @@ module Foobara
           [key, value]
         end
 
-        "#{path.inspect}: #{root_manifest_data.inspect}"
+        "#{path.inspect}: #{manifest_data.inspect}"
       end
 
       def _structure?(object)
