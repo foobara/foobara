@@ -1,4 +1,4 @@
 module Foobara
-  class Manifest
+  module Manifest
   end
 end

@@ -1,5 +1,5 @@
 module Foobara
-  class Manifest
+  module Manifest
     class Organization < BaseManifest
       def organization_manifest
         relevant_manifest

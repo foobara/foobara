@@ -1,5 +1,5 @@
 module Foobara
-  class Manifest
+  module Manifest
     class Domain < BaseManifest
       def domain_manifest
         relevant_manifest

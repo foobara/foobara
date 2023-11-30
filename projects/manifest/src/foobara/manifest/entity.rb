@@ -1,6 +1,8 @@
+require_relative "type"
+
 module Foobara
-  class Manifest
-    class Entity < BaseManifest
+  module Manifest
+    class Entity < Type
       def entity_manifest
         relevant_manifest
       end
