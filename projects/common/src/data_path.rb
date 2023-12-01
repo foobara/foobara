@@ -170,7 +170,7 @@ module Foobara
                   objects.map { |value| value[path_part] }
                 else
                   # :nocov:
-                  raise "Bad path part #{path_part}"
+                  raise "Bad path part: #{path_part.inspect}"
                   # :nocov:
                 end.compact
 
