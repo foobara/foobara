@@ -4,8 +4,8 @@ module Foobara
   module Manifest
     class TypeDeclaration < BaseManifest
       class << self
-        def new(*args, **opts, &)
-          type_declaration = super(*args, **opts, &)
+        def new(root_manifest, path)
+          type_declaration = super(root_manifest, path)
 
           if self == TypeDeclaration && type_declaration.type.to_sym == :attributes
             Attributes.new(type_declaration.root_manifest, type_declaration.path)
@@ -33,7 +33,7 @@ module Foobara
 
         raise "not an entity" unless type.entity?
 
-        Entity.new(type.root_manifest, type.path)
+        type
       end
 
       def to_type

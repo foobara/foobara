@@ -14,7 +14,7 @@ module Foobara
       end
 
       def global_symbols
-        %w[
+        %i[
           cannot_cast
           missing_required_attribute
           unexpected_attributes

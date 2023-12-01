@@ -18,9 +18,7 @@ module Foobara
       end
 
       def entities
-        @entities ||= types.select(&:entity?).map do |type|
-          Entity.new(root_manifest, [*path, :types, type.entity_name])
-        end
+        @entities ||= types.select(&:entity?)
       end
     end
   end

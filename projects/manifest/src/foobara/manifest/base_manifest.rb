@@ -25,7 +25,11 @@ module Foobara
         self.root_manifest = root_manifest
         self.path = path
 
-        raise "invalid path" if relevant_manifest.nil?
+        if relevant_manifest.nil?
+          # :nocov:
+          raise "invalid path #{path}"
+          # :nocov:
+        end
       end
 
       def relevant_manifest
@@ -51,7 +55,9 @@ module Foobara
           type ||= find_type(type_declaration, global_domain)
 
           unless type
+            # :nocov:
             raise "Could not find a type for #{type_symbol}"
+            # :nocov:
           end
 
           type
@@ -72,8 +78,8 @@ module Foobara
       end
 
       def domain_name_to_domain(full_domain_name)
-        organization_name, domain_name = full_domain_name.split("::")
-        organization_name ||= "global_organization"
+        *organization_name, domain_name = full_domain_name.split("::")
+        organization_name = organization_name.first || "global_organization"
 
         Domain.new(root_manifest, [:organizations, organization_name, :domains, domain_name])
       end
@@ -90,7 +96,9 @@ module Foobara
         elsif optional_key?(method_name)
           nil
         else
+          # :nocov:
           super
+          # :nocov:
         end
       end
 

@@ -18,6 +18,10 @@ module Foobara
           [key, Error.new(root_manifest, [*path, :error_types, key])]
         end
       end
+
+      def domain
+        Domain.new(root_manifest, path[0..3])
+      end
     end
   end
 end
