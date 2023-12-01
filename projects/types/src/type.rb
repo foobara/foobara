@@ -175,6 +175,7 @@ module Foobara
 
       def manifest
         h = {
+          name:,
           target_classes: target_classes.map(&:name),
           base_type: base_type&.full_type_name,
           declaration_data:
