@@ -24,6 +24,8 @@ module Foobara
       def initialize(root_manifest, path)
         self.root_manifest = root_manifest
         self.path = path
+
+        raise "invalid path" if relevant_manifest.nil?
       end
 
       def relevant_manifest

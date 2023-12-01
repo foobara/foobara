@@ -12,6 +12,12 @@ module Foobara
       def result_type
         TypeDeclaration.new(root_manifest, [*path, :result_type])
       end
+
+      def error_types
+        super.to_h do |key, error|
+          [key, Error.new(root_manifest, [*path, :error_types, key])]
+        end
+      end
     end
   end
 end

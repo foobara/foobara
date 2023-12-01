@@ -111,7 +111,7 @@ module Foobara
         end
 
         possible_errors.to_h do |key, error_class|
-          [key, error_class.to_h.merge(ErrorKey.to_h(key))]
+          [key, error_class.to_h.merge(ErrorKey.to_h(key).merge(key:))]
         end
       end
 

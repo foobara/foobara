@@ -31,6 +31,8 @@ module Foobara
               }
             }
 
+            binding.pry
+
             if result_type
               # TODO: find a way to represent literal types like "nil"
               h[:result_type] = result_type.reference_or_declaration_data
