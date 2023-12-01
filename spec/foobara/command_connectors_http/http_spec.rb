@@ -1,6 +1,10 @@
 Foobara::Monorepo.project :command_connectors_http
 
 RSpec.describe Foobara::CommandConnectors::Http do
+  after do
+    Foobara.reset_alls
+  end
+
   let(:command_class) do
     stub_class = ->(klass) { stub_const(klass.name, klass) }
 
