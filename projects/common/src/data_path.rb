@@ -142,9 +142,7 @@ module Foobara
                 when Symbol
                   objects.map do |object|
                     if object.is_a?(::Hash)
-                      if object.key?(path_part)
-                        object[path_part]
-                      elsif object.key?(path_part.to_s)
+                      if object.key?(path_part.to_s)
                         object[path_part.to_s]
                       else
                         object[path_part]
