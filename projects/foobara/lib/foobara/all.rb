@@ -3,6 +3,7 @@ require "foobara/monorepo"
 module Foobara
   module All
     # just makes Rubocop happy
+    # TODO: delete this and make Rubocop exception in .rubocop.yml
   end
 
   module Monorepo
@@ -34,7 +35,8 @@ module Foobara
              "command",
              "persistence",
              "in_memory_crud_driver_minimal",
-             "in_memory_crud_driver"
+             "in_memory_crud_driver",
+             "manifest"
 
     install!
   end
