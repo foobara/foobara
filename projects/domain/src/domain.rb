@@ -143,6 +143,8 @@ module Foobara
           # :nocov:
         end
 
+        type_namespace.accesses << domain.type_namespace
+
         depends_on << domain_name
       end
     end
