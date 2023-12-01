@@ -5,6 +5,21 @@ module Foobara
     # TODO: use this wherever it makes sense
     EMPTY_PATH = [].freeze
 
+    class TooManyValuesAtPathError < StandardError
+      attr_accessor :path, :values
+
+      def initialize(path, values)
+        self.path = path
+        self.values = values
+
+        super(message)
+      end
+
+      def message
+        "Expected only one value to be at #{path} but there were #{values.size}: #{values}"
+      end
+    end
+
     class << self
       def to_s_type(key)
         unless key.is_a?(DataPath)
@@ -142,9 +157,7 @@ module Foobara
                 when Symbol
                   objects.map do |object|
                     if object.is_a?(::Hash)
-                      if object.key?(path_part)
-                        object[path_part]
-                      elsif object.key?(path_part.to_s)
+                      if object.key?(path_part.to_s)
                         object[path_part.to_s]
                       else
                         object[path_part]
@@ -157,7 +170,7 @@ module Foobara
                   objects.map { |value| value[path_part] }
                 else
                   # :nocov:
-                  raise "Bad path part #{path_part}"
+                  raise "Bad path part: #{path_part.inspect}"
                   # :nocov:
                 end.compact
 
@@ -168,7 +181,7 @@ module Foobara
       values = values_at(object, parts)
 
       if values.size > 1
-        raise "Expected only one value to be at #{parts} but there were #{values.size}"
+        raise TooManyValuesAtPathError.new(path, values)
       end
 
       values.first

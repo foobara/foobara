@@ -51,7 +51,11 @@ RSpec.describe Foobara::DataPath do
   end
 
   describe ".values_at" do
+    subject { described_class.values_at(path, object) }
+
     context "when nested with two indices" do
+      let(:path) { [:foo, :bar, :"#", :foo, :chars, 2] }
+
       let(:object) do
         Struct.new(:foo).new.tap do |o|
           o.foo = {
@@ -68,10 +72,70 @@ RSpec.describe Foobara::DataPath do
         end
       end
 
-      it "can still find the relevant values" do
-        path = [:foo, :bar, :"#", :foo, :chars, 2]
-        values = described_class.values_at(path, object)
-        expect(values).to eq(%w[r z])
+      it { is_expected.to eq(%w[r z]) }
+
+      context "when object has strings instead of symbols" do
+        before do
+          bar = object.foo.delete(:bar)
+          expect(bar).to be_an(Array)
+
+          object.foo["bar"] = bar
+        end
+
+        it { is_expected.to eq(%w[r z]) }
+      end
+    end
+  end
+
+  describe ".value_at" do
+    let(:object) do
+      Struct.new(:foo).new.tap do |o|
+        o.foo = {
+          bar: [
+            {
+              foo: "bar"
+            }
+          ]
+        }
+      end
+    end
+
+    let(:path) { [:foo, :bar, 0, :foo, :chars, 2] }
+    let(:value) { described_class.value_at(path, object) }
+
+    it "can find the relevant value" do
+      expect(value).to eq("r")
+    end
+
+    context "when using strings in the path instead of symbols" do
+      # Hmmmm... mildly surprising that this works with "2" instead of 2 but that's likely desirable.
+      let(:path) { super().map(&:to_s) }
+
+      it "can find the relevant value" do
+        expect(value).to eq("r")
+      end
+    end
+
+    context "when there's more than one value at the path" do
+      let(:object) do
+        Struct.new(:foo).new.tap do |o|
+          o.foo = {
+            bar: [
+              {
+                foo: "bar"
+              },
+              {
+                foo: "baz"
+              }
+            ]
+          }
+        end
+      end
+
+      let(:path) { [:foo, :bar, :"#", :foo, :chars, 2] }
+
+      it "raises TooManyValuesAtPathError" do
+        expect { described_class.value_at(path, object) }.to raise_error(described_class::TooManyValuesAtPathError)
       end
     end
   end
