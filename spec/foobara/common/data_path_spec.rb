@@ -116,7 +116,7 @@ RSpec.describe Foobara::DataPath do
       end
     end
 
-    context "More than one value at the path" do
+    context "when there's more than one value at the path" do
       let(:object) do
         Struct.new(:foo).new.tap do |o|
           o.foo = {
