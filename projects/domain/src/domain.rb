@@ -179,7 +179,7 @@ module Foobara
                    end
 
       commands = unless skip&.include?(:commands)
-                   command_classes.map(&:manifest_hash).inject(:merge)
+                   command_classes.map(&:manifest_hash).inject(:merge) || {}
                  end
 
       types = unless skip&.include?(:types)
