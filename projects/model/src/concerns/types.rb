@@ -13,7 +13,9 @@ module Foobara
           def attributes(additional_attributes_type_declaration)
             update_namespace
 
-            new_type = namespace.type_for_declaration(additional_attributes_type_declaration)
+            handler = namespace.handler_for_class(Foobara::TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration)
+
+            new_type = handler.type_for_declaration(additional_attributes_type_declaration)
 
             existing_type = attributes_type
 
