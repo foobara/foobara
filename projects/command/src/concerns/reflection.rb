@@ -23,7 +23,8 @@ module Foobara
               error_types: errors_type_declaration,
               depends_on: depends_on.map(&:to_s),
               full_command_name:,
-              inputs_type: inputs_type&.declaration_data || {
+              # TODO: allow inputs type to be nil or really any type?
+              inputs_type: inputs_type&.reference_or_declaration_data || {
                 type: :attributes,
                 element_type_declarations: {},
                 required: []
@@ -32,7 +33,7 @@ module Foobara
 
             if result_type
               # TODO: find a way to represent literal types like "nil"
-              h[:result_type] = result_type.declaration_data
+              h[:result_type] = result_type.reference_or_declaration_data
             end
 
             h

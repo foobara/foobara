@@ -164,6 +164,15 @@ module Foobara
         end
       end
 
+      def reference_or_declaration_data(declaration_data = self.declaration_data)
+        if registered?
+          # TODO: we should just use the symbol and nothing else in this context instead of a hash with 1 element.
+          { type: type_symbol }
+        else
+          declaration_data
+        end
+      end
+
       def manifest
         h = {
           target_classes: target_classes.map(&:name),

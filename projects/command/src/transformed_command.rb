@@ -47,8 +47,8 @@ module Foobara
 
       def manifest
         command_class.manifest.merge(
-          inputs_type: inputs_type.declaration_data,
-          result_type: result_type.declaration_data,
+          inputs_type: inputs_type.reference_or_declaration_data,
+          result_type: result_type.reference_or_declaration_data,
           error_types: error_types_manifest,
           capture_unknown_error:,
           inputs_transformers: inputs_transformers.map(&:manifest),
