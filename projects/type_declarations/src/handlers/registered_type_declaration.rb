@@ -3,6 +3,7 @@ Foobara.require_file("type_declarations", "type_declaration_handler")
 module Foobara
   module TypeDeclarations
     module Handlers
+      # TODO: we should just use the symbol instead of {type: symbol} to save space and simplify some stuff...
       class RegisteredTypeDeclaration < TypeDeclarationHandler
         def applicable?(sugary_type_declaration)
           strict_type_declaration = desugarize(sugary_type_declaration)
