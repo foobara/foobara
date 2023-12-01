@@ -174,6 +174,19 @@ module Foobara
       hash.transform_keys!(&:to_sym)
     end
 
+    def deep_stringify_keys(object)
+      case object
+      when ::Array
+        object.map { |element| deep_stringify_keys(element) }
+      when ::Hash
+        object.to_h do |k, v|
+          [k.is_a?(::Symbol) ? k.to_s : k, deep_stringify_keys(v)]
+        end
+      else
+        object
+      end
+    end
+
     def to_sentence(strings, connector = ", ", last_connector = ", and ")
       return "" if strings.empty?
 
