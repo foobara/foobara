@@ -249,7 +249,13 @@ module Foobara
       end
 
       def all
-        @all ||= {}
+        return @all if defined?(@all)
+
+        @all = {}
+
+        global
+
+        @all
       end
 
       def foobara_organization_modules
