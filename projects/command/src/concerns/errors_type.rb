@@ -7,7 +7,7 @@ module Foobara
         module ClassMethods
           def errors_type_declaration
             error_context_type_map.to_h do |key, error_class|
-              [key, error_class.to_h.merge(ErrorKey.to_h(key))]
+              [key, error_class.to_h.merge(ErrorKey.to_h(key)).merge(key:)]
             end
           end
 

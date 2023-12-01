@@ -907,6 +907,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
             )
             expect(error_types).to eq(
               "data.cannot_cast" => {
+                key: "data.cannot_cast",
                 category: :data,
                 symbol: :cannot_cast,
                 context_type_declaration: {
@@ -921,6 +922,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 runtime_path: []
               },
               "data.unexpected_attributes" => {
+                key: "data.unexpected_attributes",
                 category: :data,
                 symbol: :unexpected_attributes,
                 context_type_declaration: {
@@ -935,6 +937,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 runtime_path: []
               },
               "data.exponent.cannot_cast" => {
+                key: "data.exponent.cannot_cast",
                 category: :data,
                 symbol: :cannot_cast,
                 context_type_declaration: {
@@ -950,6 +953,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 runtime_path: []
               },
               "data.bbaassee.cannot_cast" => {
+                key: "data.bbaassee.cannot_cast",
                 category: :data,
                 symbol: :cannot_cast,
                 context_type_declaration: {
@@ -965,6 +969,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 runtime_path: []
               },
               "runtime.some_runtime" => {
+                key: "runtime.some_runtime",
                 category: :runtime,
                 context_type_declaration: { type: :duck },
                 is_fatal: true,
