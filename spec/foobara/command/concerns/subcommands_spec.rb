@@ -100,6 +100,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
     it "contains error metadata" do
       expect(command_class.errors_type_declaration).to eq(
         "data.cannot_cast" => {
+          key: "data.cannot_cast",
           path: [],
           runtime_path: [],
           category: :data,
@@ -114,6 +115,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
           }
         },
         "data.unexpected_attributes" => {
+          key: "data.unexpected_attributes",
           path: [],
           runtime_path: [],
           category: :data,
@@ -130,6 +132,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
           }
         },
         "data.should_fail.cannot_cast" => {
+          key: "data.should_fail.cannot_cast",
           path: [:should_fail],
           runtime_path: [],
           category: :data,
@@ -144,6 +147,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
           }
         },
         "run_some_subcommand>data.cannot_cast" => {
+          key: "run_some_subcommand>data.cannot_cast",
           path: [],
           runtime_path: [:run_some_subcommand],
           category: :data,
@@ -158,6 +162,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
           }
         },
         "run_some_subcommand>data.unexpected_attributes" => {
+          key: "run_some_subcommand>data.unexpected_attributes",
           path: [],
           runtime_path: [:run_some_subcommand],
           category: :data,
@@ -174,6 +179,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
           }
         },
         "run_some_subcommand>data.should_fail.cannot_cast" => {
+          key: "run_some_subcommand>data.should_fail.cannot_cast",
           path: [:should_fail],
           runtime_path: [:run_some_subcommand],
           category: :data,
@@ -188,6 +194,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
           }
         },
         "run_some_subcommand>runtime.it_failed" => {
+          key: "run_some_subcommand>runtime.it_failed",
           path: [],
           runtime_path: [:run_some_subcommand],
           category: :runtime,
