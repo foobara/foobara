@@ -26,6 +26,9 @@ module Foobara
         raise "#{scoped.scoped_name} is already registered in #{scoped.namespace}"
       end
 
+      # awkward??
+      scoped.namespace = self
+
       short_name_to_scoped[scoped.scoped_short_name] ||= []
       short_name_to_scoped[scoped.scoped_short_name] |= [scoped]
 
