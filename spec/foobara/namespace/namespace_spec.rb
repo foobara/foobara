@@ -1,8 +1,9 @@
 RSpec.describe Foobara::Namespace, :focus do
   let(:namespace_name) { "SomeNamespace" }
-  let(:namespace) { described_class.new(namespace_name) }
+  let(:namespace) { described_class.new(namespace_name, parent_namespace:) }
   let(:scoped_object) { Object.new }
   let(:scoped_name) { "scoped_name" }
+  let(:parent_namespace) { nil }
 
   before do
     scoped_object.extend(Foobara::Scoped)
@@ -33,17 +34,6 @@ RSpec.describe Foobara::Namespace, :focus do
         namespace.register(scoped_object)
 
         keys = [
-          scoped_object.scoped_name,
-          scoped_object.scoped_short_name,
-          scoped_object.scoped_full_name,
-          scoped_object.scoped_path,
-          scoped_object.scoped_short_path,
-          scoped_object.scoped_full_path
-        ].uniq
-
-        puts keys.inspect
-
-        keys = [
           "some::prefix::scoped_name",
           "scoped_name",
           %w[some prefix scoped_name],
@@ -53,6 +43,50 @@ RSpec.describe Foobara::Namespace, :focus do
         keys.each do |key|
           expect(namespace.lookup(key)).to be(scoped_object)
           expect(namespace.lookup!(key)).to be(scoped_object)
+        end
+      end
+
+      context "with parent namespaces" do
+        let(:grandparent_namespace) do
+          described_class.new("GrandparentPrefix1::GrandParentPrefix2::GrandparentNamespace")
+        end
+
+        let(:parent_namespace) do
+          described_class.new("ParentNamespace", parent_namespace: grandparent_namespace)
+        end
+
+        it "registers the object and it can be found again" do
+          namespace.register(scoped_object)
+
+          keys = [
+            scoped_object.scoped_name,
+            scoped_object.scoped_short_name,
+            scoped_object.scoped_full_name,
+            scoped_object.scoped_path,
+            scoped_object.scoped_short_path,
+            scoped_object.scoped_full_path
+          ].uniq
+
+          puts keys.inspect
+
+          keys = [
+            "some::prefix::scoped_name",
+            "scoped_name",
+            "GrandparentPrefix1::GrandParentPrefix2::GrandparentNamespace::ParentNamespace::SomeNamespace::some::" \
+            "prefix::scoped_name",
+            %w[some prefix scoped_name],
+            ["scoped_name"],
+            %w[GrandparentPrefix1 GrandParentPrefix2 GrandparentNamespace ParentNamespace SomeNamespace
+               some prefix scoped_name]
+          ]
+
+          keys.each do |key|
+            puts key.inspect
+            puts namespace.lookup(key).inspect
+
+            expect(namespace.lookup!(key)).to be(scoped_object)
+            expect(namespace.lookup(key)).to be(scoped_object)
+          end
         end
       end
     end

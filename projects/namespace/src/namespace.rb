@@ -6,8 +6,8 @@ module Foobara
 
     attr_accessor :accesses
 
-    def initialize(scoped_name_or_path, acceses: [], namespace: nil)
-      self.namespace = namespace
+    def initialize(scoped_name_or_path, acceses: [], parent_namespace: nil)
+      self.namespace = parent_namespace
       self.accesses = accesses
 
       self.scoped_path = if scoped_name_or_path.is_a?(String)
@@ -33,6 +33,7 @@ module Foobara
       short_name_to_scoped[scoped.scoped_short_name] |= [scoped]
 
       scoped_name_to_scoped[scoped.scoped_name] = scoped
+      scoped_full_name_to_scoped[scoped.scoped_full_name] = scoped
     end
 
     def lookup(name)
@@ -40,7 +41,7 @@ module Foobara
         name = name.join("::")
       end
 
-      object = scoped_name_to_scoped[name]
+      object = scoped_name_to_scoped[name] || scoped_full_name_to_scoped[name]
       return object if object
 
       object = short_name_to_scoped[name]
@@ -50,8 +51,19 @@ module Foobara
           raise "#{name} is ambiguous. Could be any of: #{object.map(&:scoped_name).join(", ")}"
         end
 
-        object.first
+        return object.first
       end
+
+      accesses.each do |dependent_namespace|
+        object = dependent_namespace.lookup(name)
+        return object if object
+      end
+
+      parent_namespace&.lookup(name)
+    end
+
+    def parent_namespace
+      namespace
     end
 
     def lookup!(name)
@@ -66,6 +78,10 @@ module Foobara
 
     def scoped_name_to_scoped
       @scoped_name_to_scoped ||= {}
+    end
+
+    def scoped_full_name_to_scoped
+      @scoped_full_name_to_scoped ||= {}
     end
 
     def short_name_to_scoped
