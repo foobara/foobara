@@ -19,7 +19,8 @@ module Foobara
              "weak_object_set",
              "enumerated",
              "callback",
-             "state_machine"
+             "state_machine",
+             "namespace"
 
     # various components of the foobara framework that have some level of coupling.
     # for example, Error in common knows about (or could be implemented to know about)
