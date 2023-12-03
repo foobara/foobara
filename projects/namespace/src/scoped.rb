@@ -30,5 +30,13 @@ module Foobara
     def scoped_full_name
       @scoped_full_name ||= scoped_full_path.join("::")
     end
+
+    def scoped_prefix
+      return @scoped_prefix if defined?(@scoped_prefix)
+
+      @scoped_prefix = unless scoped_path.size == 1
+                         scoped_path[0..-2]
+                       end
+    end
   end
 end

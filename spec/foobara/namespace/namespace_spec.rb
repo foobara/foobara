@@ -1,4 +1,4 @@
-RSpec.describe Foobara::Namespace, :focus do
+RSpec.describe Foobara::Namespace do
   let(:namespace_name) { "SomeNamespace" }
   let(:namespace) { described_class.new(namespace_name, parent_namespace:) }
   let(:scoped_object) { Object.new }
@@ -18,6 +18,7 @@ RSpec.describe Foobara::Namespace, :focus do
 
       keys = [
         "scoped_name",
+        "::SomeNamespace::scoped_name",
         ["scoped_name"]
       ]
 
@@ -36,6 +37,8 @@ RSpec.describe Foobara::Namespace, :focus do
         keys = [
           "some::prefix::scoped_name",
           "scoped_name",
+          "::SomeNamespace::some::prefix::scoped_name",
+          "::SomeNamespace::scoped_name",
           %w[some prefix scoped_name],
           ["scoped_name"]
         ]
@@ -73,6 +76,10 @@ RSpec.describe Foobara::Namespace, :focus do
             "some::prefix::scoped_name",
             "scoped_name",
             "GrandparentPrefix1::GrandParentPrefix2::GrandparentNamespace::ParentNamespace::SomeNamespace::some::" \
+            "prefix::scoped_name",
+            "::GrandparentPrefix1::GrandParentPrefix2::GrandparentNamespace::ParentNamespace::SomeNamespace::some::" \
+            "prefix::scoped_name",
+            "::GrandparentPrefix1::GrandParentPrefix2::GrandparentNamespace::ParentNamespace::SomeNamespace::some::" \
             "prefix::scoped_name",
             %w[some prefix scoped_name],
             ["scoped_name"],
