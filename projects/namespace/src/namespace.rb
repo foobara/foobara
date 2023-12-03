@@ -6,7 +6,7 @@ module Foobara
 
     class NotFoundError < StandardError; end
 
-    attr_accessor :accesses, :categories
+    attr_accessor :accesses
 
     def initialize(scoped_name_or_path, accesses: [], parent_namespace: nil)
       if parent_namespace
@@ -24,7 +24,7 @@ module Foobara
     end
 
     def add_category(symbol, proc)
-      self.categories = categories.merge(symbol.to_sym => proc)
+      @categories = categories.merge(symbol.to_sym => proc)
     end
 
     def add_category_for_instance_of(symbol, klass)

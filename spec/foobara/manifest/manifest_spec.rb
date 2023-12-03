@@ -69,7 +69,7 @@ RSpec.describe Foobara::Manifest do
     end
 
     Class.new(Foobara::Command) do
-      # rubocop:disable Lint/ConstantDefinitionInBlock, Lint/LeakyConstantDeclaration
+      # rubocop:disable Lint/ConstantDefinitionInBlock, RSpec/LeakyConstantDeclaration
       class SomethingWentWrongError < Foobara::RuntimeError
         class << self
           def context_type_declaration
@@ -77,7 +77,7 @@ RSpec.describe Foobara::Manifest do
           end
         end
       end
-      # rubocop:enable Lint/ConstantDefinitionInBlock, Lint/LeakyConstantDeclaration
+      # rubocop:enable Lint/ConstantDefinitionInBlock, RSpec/LeakyConstantDeclaration
 
       class << self
         def name

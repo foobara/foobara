@@ -13,3 +13,4 @@ Lint/UnusedBlockArgument:
 
 Lint/UnusedMethodArgument:
   AutoCorrect: false
+  AllowUnusedKeywordArguments: true
