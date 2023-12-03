@@ -1,4 +1,4 @@
-RSpec.describe Foobara::Namespace, :focus do
+RSpec.describe Foobara::Namespace do
   let(:namespace_name) { "SomeNamespace" }
   let(:namespace) { described_class.new(namespace_name, parent_namespace:) }
   let(:scoped_object) { Object.new }
@@ -57,15 +57,6 @@ RSpec.describe Foobara::Namespace, :focus do
 
         it "registers the object and it can be found again" do
           namespace.register(scoped_object)
-
-          keys = [
-            scoped_object.scoped_name,
-            scoped_object.scoped_short_name,
-            scoped_object.scoped_full_name,
-            scoped_object.scoped_path,
-            scoped_object.scoped_short_path,
-            scoped_object.scoped_full_path
-          ].uniq
 
           keys = [
             "some::prefix::scoped_name",

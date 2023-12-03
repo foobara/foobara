@@ -4,9 +4,9 @@ module Foobara
   class Namespace
     include Scoped
 
-    attr_accessor :accesses, :registry
+    attr_accessor :accesses
 
-    def initialize(scoped_name_or_path, acceses: [], parent_namespace: nil)
+    def initialize(scoped_name_or_path, accesses: [], parent_namespace: nil)
       if parent_namespace
         self.namespace = parent_namespace
         parent_namespace.children << self

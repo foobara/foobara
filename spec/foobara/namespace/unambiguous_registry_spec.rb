@@ -35,7 +35,7 @@ RSpec.describe Foobara::Namespace::UnambiguousRegistry do
     user_class.new("a::b::c::d::User")
   end
 
-  context "registering ambiguous entries" do
+  context "when registering ambiguous entries" do
     it "raises" do
       registry.register(user2)
 
