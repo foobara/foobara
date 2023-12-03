@@ -11,29 +11,8 @@ RSpec.describe Foobara::Namespace::UnambiguousRegistry do
     end
   end
 
-  let(:user1) do
-    user_class.new("User")
-  end
-
-  let(:user2) do
-    user_class.new("a::User")
-  end
-
-  let(:user3) do
-    user_class.new("a::b::User")
-  end
-
-  let(:user4) do
-    user_class.new("b::User")
-  end
-
-  let(:user5) do
-    user_class.new("b::UniqueUser")
-  end
-
-  let(:user6) do
-    user_class.new("a::b::c::d::User")
-  end
+  let(:user2) { user_class.new("a::User") }
+  let(:user4) { user_class.new("b::User") }
 
   context "when registering ambiguous entries" do
     it "raises" do

@@ -4,6 +4,8 @@ module Foobara
   class Namespace
     include Scoped
 
+    class NotFoundError < StandardError; end
+
     attr_accessor :accesses
 
     def initialize(scoped_name_or_path, accesses: [], parent_namespace: nil)
@@ -12,7 +14,7 @@ module Foobara
         parent_namespace.children << self
       end
 
-      self.accesses = accesses
+      self.accesses = Util.array(accesses)
 
       self.scoped_path = if scoped_name_or_path.is_a?(String)
                            scoped_name_or_path.split("::")
@@ -99,7 +101,9 @@ module Foobara
       object = lookup(name)
 
       unless object
-        raise "Could not find #{name}"
+        # :nocov:
+        raise NotFoundError, "Could not find #{name}"
+        # :nocov:
       end
 
       object
