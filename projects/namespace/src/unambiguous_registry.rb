@@ -3,8 +3,6 @@ require_relative "base_registry"
 module Foobara
   class Namespace
     class UnambiguousRegistry < BaseRegistry
-      class WouldMakeRegistryAmbiguousError < StandardError; end
-
       def registry
         @registry ||= {}
       end

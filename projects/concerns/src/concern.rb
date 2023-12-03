@@ -1,5 +1,7 @@
 module Foobara
   module Concern
+    # TODO: there seems to be a bug when extending classes. They do not get inheritance for free with
+    # this module as would be expected.
     module IsConcern
       def included(klass)
         if Concern.foobara_concern?(klass)

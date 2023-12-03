@@ -15,7 +15,13 @@ module Foobara
                 "Cannot register scoped with a prefix: #{scoped.scoped_name.inspect}"
         end
 
-        registry[scoped.scoped_short_name] = scoped
+        short_name = scoped.scoped_short_name
+
+        if registry.key?(short_name)
+          raise WouldMakeRegistryAmbiguousError, "#{short_name} is already registered"
+        end
+
+        registry[short_name] = scoped
       end
 
       def lookup(path, filter = nil)

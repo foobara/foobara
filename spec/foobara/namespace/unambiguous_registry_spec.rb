@@ -20,7 +20,7 @@ RSpec.describe Foobara::Namespace::UnambiguousRegistry do
 
       expect {
         registry.register(user4)
-      }.to raise_error(Foobara::Namespace::UnambiguousRegistry::WouldMakeRegistryAmbiguousError)
+      }.to raise_error(Foobara::Namespace::BaseRegistry::WouldMakeRegistryAmbiguousError)
     end
   end
 end

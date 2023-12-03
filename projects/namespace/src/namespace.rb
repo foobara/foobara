@@ -24,19 +24,19 @@ module Foobara
     end
 
     def add_category(symbol, proc)
-      categories[symbol.to_sym] = proc
+      self.categories = categories.merge(symbol.to_sym => proc)
     end
 
     def add_category_for_instance_of(symbol, klass)
-      add_category(symbol, -> { is_a?(klass) })
+      add_category(symbol, proc { is_a?(klass) })
     end
 
     def add_category_for_subclass_of(symbol, klass)
-      add_category(symbol, -> { self < klass })
+      add_category(symbol, proc { self < klass })
     end
 
     def categories
-      @categories ||= {}
+      @categories ||= parent_namespace&.categories || {}
     end
 
     def registry
@@ -62,8 +62,8 @@ module Foobara
     def register(scoped)
       begin
         registry.register(scoped)
-      rescue Foobara::Namespace::PrefixlessRegistry::RegisteringScopedWithPrefixError,
-             Foobara::Namespace::UnambiguousRegistry::WouldMakeRegistryAmbiguousError => e
+      rescue PrefixlessRegistry::RegisteringScopedWithPrefixError,
+             BaseRegistry::WouldMakeRegistryAmbiguousError => e
         upgrade_registry(e)
         return register(scoped)
       end
@@ -117,8 +117,8 @@ module Foobara
       namespace
     end
 
-    def lookup!(name)
-      object = lookup(name)
+    def lookup!(name, filter: nil)
+      object = lookup(name, filter:)
 
       unless object
         # :nocov:
@@ -139,7 +139,9 @@ module Foobara
           lookup(*, filter:)
         end
       else
+        # :nocov:
         super
+        # :nocov:
       end
     end
 
@@ -154,9 +156,11 @@ module Foobara
 
       if match
         filter = categories[match[1].to_sym]
-        bang = !!match[2]
+        if filter
+          bang = !!match[2]
 
-        [filter, bang]
+          [filter, bang]
+        end
       end
     end
 
@@ -164,7 +168,7 @@ module Foobara
       new_registry_class = case error
                            when Foobara::Namespace::PrefixlessRegistry::RegisteringScopedWithPrefixError
                              Foobara::Namespace::UnambiguousRegistry
-                           when Foobara::Namespace::UnambiguousRegistry::WouldMakeRegistryAmbiguousError
+                           when Foobara::Namespace::BaseRegistry::WouldMakeRegistryAmbiguousError
                              Foobara::Namespace::AmbiguousRegistry
                            end
 
