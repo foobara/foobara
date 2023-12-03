@@ -157,7 +157,7 @@ module Foobara
       if match
         filter = categories[match[1].to_sym]
         if filter
-          bang = !!match[2]
+          bang = !match[2].nil?
 
           [filter, bang]
         end
