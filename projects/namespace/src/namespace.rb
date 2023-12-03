@@ -7,7 +7,11 @@ module Foobara
     attr_accessor :accesses
 
     def initialize(scoped_name_or_path, acceses: [], parent_namespace: nil)
-      self.namespace = parent_namespace
+      if parent_namespace
+        self.namespace = parent_namespace
+        parent_namespace.children << self
+      end
+
       self.accesses = accesses
 
       self.scoped_path = if scoped_name_or_path.is_a?(String)
@@ -15,6 +19,18 @@ module Foobara
                          else
                            scoped_name_or_path
                          end
+    end
+
+    def children
+      @children ||= []
+    end
+
+    def root_namespace
+      ns = self
+
+      ns = ns.parent_namespace until ns.parent_namespace.nil?
+
+      ns
     end
 
     def register(scoped)
@@ -36,9 +52,13 @@ module Foobara
       scoped_full_name_to_scoped[scoped.scoped_full_name] = scoped
     end
 
-    def lookup(name)
+    def lookup(name, absolute: nil)
       if name.is_a?(Array)
         name = name.join("::")
+      end
+
+      if name.start_with?("::")
+        return root_namespace.lookup(name[2..-1], absolute: true)
       end
 
       object = scoped_name_to_scoped[name] || scoped_full_name_to_scoped[name]
@@ -54,7 +74,7 @@ module Foobara
         return object.first
       end
 
-      accesses.each do |dependent_namespace|
+      accesses&.each do |dependent_namespace|
         object = dependent_namespace.lookup(name)
         return object if object
       end

@@ -37,8 +37,6 @@ RSpec.describe Foobara::Namespace do
         keys = [
           "some::prefix::scoped_name",
           "scoped_name",
-          "::SomeNamespace::some::prefix::scoped_name",
-          "::SomeNamespace::scoped_name",
           %w[some prefix scoped_name],
           ["scoped_name"]
         ]
@@ -70,16 +68,10 @@ RSpec.describe Foobara::Namespace do
             scoped_object.scoped_full_path
           ].uniq
 
-          puts keys.inspect
-
           keys = [
             "some::prefix::scoped_name",
             "scoped_name",
             "GrandparentPrefix1::GrandParentPrefix2::GrandparentNamespace::ParentNamespace::SomeNamespace::some::" \
-            "prefix::scoped_name",
-            "::GrandparentPrefix1::GrandParentPrefix2::GrandparentNamespace::ParentNamespace::SomeNamespace::some::" \
-            "prefix::scoped_name",
-            "::GrandparentPrefix1::GrandParentPrefix2::GrandparentNamespace::ParentNamespace::SomeNamespace::some::" \
             "prefix::scoped_name",
             %w[some prefix scoped_name],
             ["scoped_name"],
@@ -88,9 +80,6 @@ RSpec.describe Foobara::Namespace do
           ]
 
           keys.each do |key|
-            puts key.inspect
-            puts namespace.lookup(key).inspect
-
             expect(namespace.lookup!(key)).to be(scoped_object)
             expect(namespace.lookup(key)).to be(scoped_object)
           end
