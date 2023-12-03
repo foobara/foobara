@@ -1,6 +1,6 @@
 module Foobara
   class Namespace
-    class AmbiguousRegistry
+    class AmbiguousRegistry < BaseRegistry
       class AmbiguousLookupError < StandardError; end
 
       def registry
@@ -13,9 +13,9 @@ module Foobara
         registry[short_name] |= [scoped]
       end
 
-      def lookup(path)
+      def lookup(path, filter = nil)
         *prefix, short_name = path
-        matches = registry[short_name]
+        matches = apply_filter(registry[short_name], filter)
 
         if matches && !matches.empty?
           best_match(prefix, matches, path)

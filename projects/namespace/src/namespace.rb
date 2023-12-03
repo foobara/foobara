@@ -6,7 +6,7 @@ module Foobara
 
     class NotFoundError < StandardError; end
 
-    attr_accessor :accesses
+    attr_accessor :accesses, :categories
 
     def initialize(scoped_name_or_path, accesses: [], parent_namespace: nil)
       if parent_namespace
@@ -23,6 +23,22 @@ module Foobara
                          end
     end
 
+    def add_category(symbol, proc)
+      categories[symbol.to_sym] = proc
+    end
+
+    def add_category_for_instance_of(symbol, klass)
+      add_category(symbol, -> { is_a?(klass) })
+    end
+
+    def add_category_for_subclass_of(symbol, klass)
+      add_category(symbol, -> { self < klass })
+    end
+
+    def categories
+      @categories ||= {}
+    end
+
     def registry
       @registry ||= Foobara::Namespace::PrefixlessRegistry.new
     end
@@ -34,9 +50,13 @@ module Foobara
     def root_namespace
       ns = self
 
-      ns = ns.parent_namespace until ns.parent_namespace.nil?
+      ns = ns.parent_namespace until ns.root?
 
       ns
+    end
+
+    def root?
+      parent_namespace.nil?
     end
 
     def register(scoped)
@@ -52,20 +72,20 @@ module Foobara
       scoped.namespace = self
     end
 
-    def lookup(path, absolute: false)
+    def lookup(path, absolute: false, filter: nil)
       if path.is_a?(::String)
         path = path.split("::")
       end
 
       if path[0] == ""
-        return root_namespace.lookup(path[(root_namespace.scoped_path.size + 1)..], absolute: true)
+        return root_namespace.lookup(path[(root_namespace.scoped_path.size + 1)..], absolute: true, filter:)
       end
 
-      scoped = registry.lookup(path)
+      scoped = registry.lookup(path, filter)
       return scoped if scoped
 
       accesses&.each do |dependent_namespace|
-        object = dependent_namespace.lookup(path)
+        object = dependent_namespace.lookup(path, filter:)
         return object if object
       end
 
@@ -84,12 +104,12 @@ module Foobara
       end
 
       if matching_child
-        scoped = matching_child.lookup(path[matching_child_score..], absolute: true)
+        scoped = matching_child.lookup(path[matching_child_score..], absolute: true, filter:)
         return scoped if scoped
       end
 
       unless absolute
-        parent_namespace&.lookup(path)
+        parent_namespace&.lookup(path, filter:)
       end
     end
 
@@ -109,7 +129,36 @@ module Foobara
       object
     end
 
+    def method_missing(method_name, *)
+      filter, bang = filter_from_method_name(method_name)
+
+      if filter
+        if bang
+          lookup!(*, filter:)
+        else
+          lookup(*, filter:)
+        end
+      else
+        super
+      end
+    end
+
+    def respond_to_missing?(method_name, include_private = false)
+      !!filter_from_method_name(method_name) || super
+    end
+
     private
+
+    def filter_from_method_name(method_name)
+      match = method_name.to_s.match(/^lookup_(\w+)(!)?$/)
+
+      if match
+        filter = categories[match[1].to_sym]
+        bang = !!match[2]
+
+        [filter, bang]
+      end
+    end
 
     def upgrade_registry(error)
       new_registry_class = case error

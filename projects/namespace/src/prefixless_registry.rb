@@ -1,6 +1,8 @@
+require_relative "base_registry"
+
 module Foobara
   class Namespace
-    class PrefixlessRegistry
+    class PrefixlessRegistry < BaseRegistry
       class RegisteringScopedWithPrefixError < StandardError; end
 
       def registry
@@ -16,8 +18,8 @@ module Foobara
         registry[scoped.scoped_short_name] = scoped
       end
 
-      def lookup(path)
-        registry[path.first]
+      def lookup(path, filter = nil)
+        apply_filter(registry[path.first], filter)
       end
 
       def each_scoped(&)

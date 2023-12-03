@@ -1,6 +1,8 @@
+require_relative "base_registry"
+
 module Foobara
   class Namespace
-    class UnambiguousRegistry
+    class UnambiguousRegistry < BaseRegistry
       class WouldMakeRegistryAmbiguousError < StandardError; end
 
       def registry
@@ -27,8 +29,8 @@ module Foobara
         registry.merge!(new_entries)
       end
 
-      def lookup(path)
-        registry[path]
+      def lookup(path, filter = nil)
+        apply_filter(registry[path], filter)
       end
 
       def each_scoped(&)
