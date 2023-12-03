@@ -3,13 +3,13 @@ module Foobara
     class BaseRegistry
       class WouldMakeRegistryAmbiguousError < StandardError; end
 
-      def register(scoped)
+      def register(_scoped)
         # :nocov:
         raise "Subclass responsibility"
         # :nocov:
       end
 
-      def lookup(path,  filter: nil)
+      def lookup(_path, filter: nil)
         # :nocov:
         raise "Subclass responsibility"
         # :nocov:
