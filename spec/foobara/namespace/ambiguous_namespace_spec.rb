@@ -1,4 +1,4 @@
-RSpec.describe Foobara::Namespace::AmbiguousRegistry, :focus do
+RSpec.describe Foobara::Namespace::AmbiguousRegistry do
   let(:registry) { described_class.new }
 
   let(:user_class) do
