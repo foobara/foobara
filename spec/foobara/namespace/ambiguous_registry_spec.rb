@@ -12,38 +12,21 @@ RSpec.describe Foobara::Namespace::AmbiguousRegistry do
   end
 
   context "when there's some conflicting entries" do
-    let(:user1) do
-      user_class.new("User")
-    end
+    let(:user1) { user_class.new("User") }
+    let(:user2) { user_class.new("a::User") }
+    let(:user3) { user_class.new("a::b::User") }
+    let(:user4) { user_class.new("b::User") }
+    let(:user5) { user_class.new("b::UniqueUser") }
+    let(:user6) { user_class.new("a::b::c::d::User") }
+    let(:user7) { user_class.new("z::a::User") }
+    let(:user8) { user_class.new("z::b::User") }
 
-    let(:user2) do
-      user_class.new("a::User")
-    end
-
-    let(:user3) do
-      user_class.new("a::b::User")
-    end
-
-    let(:user4) do
-      user_class.new("b::User")
-    end
-
-    let(:user4) do
-      user_class.new("b::UniqueUser")
-    end
-
-    let(:user5) do
-      user_class.new("a::b::c::d::User")
-    end
-
-    let(:users) { [user1, user2, user3, user4, user5] }
+    let(:users) { [user1, user2, user3, user4, user5, user6, user7, user8] }
 
     before do
-      registry.register(user1)
-      registry.register(user2)
-      registry.register(user3)
-      registry.register(user4)
-      registry.register(user5)
+      users.each do |user|
+        registry.register(user)
+      end
     end
 
     context "when looking up by full-paths" do
@@ -51,6 +34,26 @@ RSpec.describe Foobara::Namespace::AmbiguousRegistry do
         users.each do |user|
           expect(registry.lookup(user.scoped_path)).to eq(user)
         end
+      end
+    end
+
+    context "when looking up by unambiguous key" do
+      it "returns the expected users" do
+        expect(registry.lookup(%w[d User])).to eq(user6)
+      end
+    end
+
+    context "when looking up by very ambiguous key" do
+      it "raises" do
+        expect {
+          registry.lookup(%w[z User])
+        }.to raise_error(Foobara::Namespace::AmbiguousRegistry::AmbiguousLookupError)
+      end
+    end
+
+    context "when looking up by kind-of ambiguous key" do
+      it "returns the best guess" do
+        expect(registry.lookup(%w[a User])).to eq(user2)
       end
     end
   end
