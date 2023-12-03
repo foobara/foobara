@@ -4,7 +4,7 @@ module Foobara
   class Namespace
     include Scoped
 
-    attr_accessor :accesses
+    attr_accessor :accesses, :registry
 
     def initialize(scoped_name_or_path, acceses: [], parent_namespace: nil)
       if parent_namespace
@@ -21,6 +21,10 @@ module Foobara
                          end
     end
 
+    def registry
+      @registry ||= Foobara::Namespace::PrefixlessRegistry.new
+    end
+
     def children
       @children ||= []
     end
@@ -34,52 +38,57 @@ module Foobara
     end
 
     def register(scoped)
-      if scoped_name_to_scoped.key?(scoped.scoped_name)
-        raise "#{scoped.scoped_name} is already registered"
-      end
-
-      if scoped.namespace && namespace != self
-        raise "#{scoped.scoped_name} is already registered in #{scoped.namespace}"
+      begin
+        registry.register(scoped)
+      rescue Foobara::Namespace::PrefixlessRegistry::RegisteringScopedWithPrefixError,
+             Foobara::Namespace::UnambiguousRegistry::WouldMakeRegistryAmbiguousError => e
+        upgrade_registry(e)
+        return register(scoped)
       end
 
       # awkward??
       scoped.namespace = self
-
-      short_name_to_scoped[scoped.scoped_short_name] ||= []
-      short_name_to_scoped[scoped.scoped_short_name] |= [scoped]
-
-      scoped_name_to_scoped[scoped.scoped_name] = scoped
-      scoped_full_name_to_scoped[scoped.scoped_full_name] = scoped
     end
 
-    def lookup(name, absolute: nil)
-      if name.is_a?(Array)
-        name = name.join("::")
+    def lookup(path, absolute: false)
+      if path.is_a?(::String)
+        path = path.split("::")
       end
 
-      if name.start_with?("::")
-        return root_namespace.lookup(name[2..-1], absolute: true)
+      if path[0] == ""
+        return root_namespace.lookup(path[(root_namespace.scoped_path.size + 1)..], absolute: true)
       end
 
-      object = scoped_name_to_scoped[name] || scoped_full_name_to_scoped[name]
-      return object if object
-
-      object = short_name_to_scoped[name]
-
-      if object
-        if object.size > 1
-          raise "#{name} is ambiguous. Could be any of: #{object.map(&:scoped_name).join(", ")}"
-        end
-
-        return object.first
-      end
+      scoped = registry.lookup(path)
+      return scoped if scoped
 
       accesses&.each do |dependent_namespace|
-        object = dependent_namespace.lookup(name)
+        object = dependent_namespace.lookup(path)
         return object if object
       end
 
-      parent_namespace&.lookup(name)
+      matching_child = nil
+      matching_child_score = 0
+
+      to_consider = absolute ? children : [self, *children]
+
+      to_consider.each do |namespace|
+        match_count = namespace._path_start_match_count(path)
+
+        if match_count > matching_child_score
+          matching_child = namespace
+          matching_child_score = match_count
+        end
+      end
+
+      if matching_child
+        scoped = matching_child.lookup(path[matching_child_score..], absolute: true)
+        return scoped if scoped
+      end
+
+      unless absolute
+        parent_namespace&.lookup(path)
+      end
     end
 
     def parent_namespace
@@ -96,16 +105,37 @@ module Foobara
       object
     end
 
-    def scoped_name_to_scoped
-      @scoped_name_to_scoped ||= {}
+    private
+
+    def upgrade_registry(error)
+      new_registry_class = case error
+                           when Foobara::Namespace::PrefixlessRegistry::RegisteringScopedWithPrefixError
+                             Foobara::Namespace::UnambiguousRegistry
+                           when Foobara::Namespace::UnambiguousRegistry::WouldMakeRegistryAmbiguousError
+                             Foobara::Namespace::AmbiguousRegistry
+                           end
+
+      old_registry = registry
+
+      @registry = new_registry_class.new
+
+      old_registry.each_scoped { |s| registry.register(s) }
     end
 
-    def scoped_full_name_to_scoped
-      @scoped_full_name_to_scoped ||= {}
-    end
+    protected
 
-    def short_name_to_scoped
-      @short_name_to_scoped ||= {}
+    def _path_start_match_count(path)
+      count = 0
+
+      scoped_path.each.with_index do |part, i|
+        if part == path[i]
+          count += 1
+        else
+          break
+        end
+      end
+
+      count
     end
   end
 end

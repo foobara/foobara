@@ -19,6 +19,10 @@ module Foobara
       def lookup(path)
         registry[path.first]
       end
+
+      def each_scoped(&)
+        registry.each_value(&)
+      end
     end
   end
 end

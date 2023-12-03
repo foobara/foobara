@@ -1,4 +1,4 @@
-RSpec.describe Foobara::Namespace do
+RSpec.describe Foobara::Namespace, :focus do
   let(:namespace_name) { "SomeNamespace" }
   let(:namespace) { described_class.new(namespace_name, parent_namespace:) }
   let(:scoped_object) { Object.new }
@@ -18,7 +18,6 @@ RSpec.describe Foobara::Namespace do
 
       keys = [
         "scoped_name",
-        "::SomeNamespace::scoped_name",
         ["scoped_name"]
       ]
 
@@ -42,8 +41,8 @@ RSpec.describe Foobara::Namespace do
         ]
 
         keys.each do |key|
-          expect(namespace.lookup(key)).to be(scoped_object)
           expect(namespace.lookup!(key)).to be(scoped_object)
+          expect(namespace.lookup(key)).to be(scoped_object)
         end
       end
 

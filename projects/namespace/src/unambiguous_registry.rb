@@ -30,6 +30,10 @@ module Foobara
       def lookup(path)
         registry[path]
       end
+
+      def each_scoped(&)
+        registry.values.uniq.each(&)
+      end
     end
   end
 end
