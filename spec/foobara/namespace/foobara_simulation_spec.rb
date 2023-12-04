@@ -161,8 +161,12 @@ RSpec.describe Foobara::Namespace, :focus do
       expect(FoobaraSimulation::OrgA::DomainA.parent_namespace).to eq(FoobaraSimulation::OrgA)
       expect(FoobaraSimulation::OrgA::DomainA.scoped_path).to eq(%w[DomainA])
       expect(FoobaraSimulation::OrgA::DomainA.scoped_full_path).to eq(%w[FoobaraSimulation OrgA DomainA])
+      expect(FoobaraSimulation::OrgA::DomainA.scoped_full_name).to eq("::FoobaraSimulation::OrgA::DomainA")
       expect(FoobaraSimulation::Foobara.lookup_domain("FoobaraSimulation::OrgA::DomainA")).to eq(FoobaraSimulation::OrgA::DomainA)
       expect(FoobaraSimulation::Foobara.lookup_domain("::FoobaraSimulation::OrgA::DomainA")).to eq(FoobaraSimulation::OrgA::DomainA)
+
+      expect(FoobaraSimulation::OrgA::DomainA.lookup_domain("DomainA")).to eq(FoobaraSimulation::OrgA::DomainA)
+      expect(FoobaraSimulation::OrgA::DomainA.lookup_domain("::DomainA")).to be_nil
     end
   end
 end
