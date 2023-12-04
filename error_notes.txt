@@ -1,0 +1,76 @@
+errors....
+
+how to determine what an error class belongs to?? how is it meant to be scoped??
+
+can be part of a processor, a processor can belong to a type via its supported processors concept, hmmm...
+
+example:
+
+projects/builtin_types/src/array/supported_validators/size.rb
+
+can directly be part of a specific command 
+
+examples:
+
+projects/command_connectors/src/commands/query_git_commit_info.rb
+
+can be global
+
+examples:
+
+projects/value/src/processor/casting.rb
+
+
+can be in a concern...
+
+projects/command/src/concerns/entities/not_found_error.rb
+
+
+
+can be part of a domain...
+
+examples:
+
+projects/command_connectors/src/command_connector.rb (various examples in this file, should probably be in their own files?)
+
+can be part of a project that isn't a domain...
+
+examples:
+
+projects/type_declarations/src/type_declaration_error.rb
+
+
+we would like to be able to look up errors based on some of these scopings...
+
+and we need to also be able to go the other direction. go from an error class to its scoping.
+
+
+
+scoped to a type via its supported processors...
+scoped to a specific command
+scoped to a domain
+global (I guess this would go in the global domain??)
+
+hardest might be detecting when it belongs to a type...
+
+should we scope to a processor instead?? and add those to the manifests?
+
+
+introduce formal-ish concept of scope?
+
+could point out a processor, type, command, domain, organization?
+
+would need to be able to ask the class this question.
+
+
+this also could mean that a processor might need to know what other processors it participates in?
+
+Maybe just go ahead and enforce this via naming?
+
+climb module stack, if hitting a command, that's the scope, if hitting a domain, that's the scope, for now let's not support orgs, if hitting nothing, goes in global domain
+
+but how to detect it belongs to a type?? if hitting a processor then we might be able to go from processor to type??
+
+
+TODO: maybe use object space to find all of the legit errors in the system and figure out how they would be organized and see if a pattern emerges?
+
