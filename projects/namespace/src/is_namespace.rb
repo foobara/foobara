@@ -3,6 +3,13 @@ require_relative "scoped"
 module Foobara
   class Namespace
     module IsNamespace
+      module IsNamespaceClass
+        def inherited(mod)
+          IsNamespace.extended(mod)
+          super(mod)
+        end
+      end
+
       # include Concern
       include Scoped
 
@@ -34,22 +41,16 @@ module Foobara
 
           mod.initialize_foobara_namespace(scoped_name, parent_namespace:)
 
-          binding.pry if mod.name =~ /::OrgA$/
-
           # accomplish via module instead...
-          if mod.is_a?(Class)
-            k = self
-            mod.singleton_class.define_method :inherited do |mod|
-              binding.pry if mod.name =~ /::OrgA$/
-
-              k.extended(mod)
-              super(mod)
-            end
+          if mod.is_a?(Class) && !(mod < Foobara::Namespace::IsNamespaceClass)
+            mod.extend(IsNamespaceClass)
+            mod.parent_namespace&.register(mod)
           end
         end
 
         def included(othermod)
           puts "included into #{othermod}"
+          super
         end
       end
 
@@ -65,7 +66,6 @@ module Foobara
         if parent_namespace
           self.namespace = parent_namespace
           parent_namespace.children << self
-          binding.pry
           parent_namespace.register(self)
         end
       end

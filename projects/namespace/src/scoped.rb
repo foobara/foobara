@@ -5,9 +5,6 @@ module Foobara
 
     def scoped_path
       @scoped_path || raise("Subclass responsibility")
-    rescue => e
-      binding.pry
-      raise
     end
 
     def scoped_name=(name)

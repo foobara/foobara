@@ -1,5 +1,11 @@
 module FoobaraSimulation
   module Foobara
+    class << self
+      def scoped_path
+        []
+      end
+    end
+
     extend ::Foobara::Namespace::IsNamespace
   end
 
@@ -9,7 +15,6 @@ module FoobaraSimulation
 
     class << self
       def inherited(klass)
-        binding.pry if klass.name =~ /::OrgA$/
         klass.parent_namespace ||= Foobara
         super
       end
@@ -149,8 +154,10 @@ end
 RSpec.describe Foobara::Namespace, :focus do
   describe "#lookup_*" do
     it "finds the expected objects given certain paths" do
-      binding.pry
+      expect(FoobaraSimulation::OrgA.parent_namespace).to eq(FoobaraSimulation::Foobara)
+      expect(FoobaraSimulation::OrgA.scoped_path).to eq(%w[FoobaraSimulation OrgA])
       expect(FoobaraSimulation::Foobara.lookup_org("FoobaraSimulation::OrgA")).to eq(FoobaraSimulation::OrgA)
+      expect(FoobaraSimulation::Foobara.lookup_org("::FoobaraSimulation::OrgA")).to eq(FoobaraSimulation::OrgA)
     end
   end
 end
