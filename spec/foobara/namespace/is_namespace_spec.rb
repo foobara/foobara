@@ -25,7 +25,7 @@ RSpec.describe Foobara::Namespace::IsNamespace do
     it "registers the object and it can be found again" do
       expect(scoped_object.scoped_short_path).to eq([scoped_name])
       expect(scoped_object.scoped_full_path).to eq([scoped_name])
-      expect(scoped_object.scoped_full_name).to eq(scoped_name)
+      expect(scoped_object.scoped_full_name).to eq("::#{scoped_name}")
 
       namespace.register(scoped_object)
 

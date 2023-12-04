@@ -157,7 +157,7 @@ module FoobaraSimulation
   end
 end
 
-RSpec.describe Foobara::Namespace, :focus do
+RSpec.describe Foobara::Namespace do
   describe "#lookup_*" do
     it "finds the expected objects given certain paths" do
       expect(FoobaraSimulation::OrgA.parent_namespace).to eq(FoobaraSimulation::Foobara)

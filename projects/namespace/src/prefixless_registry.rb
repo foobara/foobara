@@ -25,7 +25,9 @@ module Foobara
       end
 
       def lookup(path, filter = nil)
-        apply_filter(registry[path.first], filter)
+        if path.size == 1
+          apply_filter(registry[path.first], filter)
+        end
       end
 
       def each_scoped(&)
