@@ -7,19 +7,52 @@ module Foobara
 
       attr_accessor :accesses
 
-      # def initialize(*, **, &)
-      #   self.parent_namespace = parent_namespace if parent_namespace
-      #
-      #   self.accesses = Util.array(accesses)
-      #
-      #   self.scoped_path = if scoped_name_or_path.is_a?(String)
-      #                        scoped_name_or_path.split("::")
-      #                      else
-      #                        scoped_name_or_path
-      #                      end
-      #
-      #   super
-      # end
+      class << self
+        def extended(mod)
+          # find parent namespace...
+          parent_namespace = nil
+
+          parent_mod = Util.module_for(mod)
+
+          while parent_mod
+            if parent
+              if parent < Foobara::Namespace::IsNamespace
+                parent_namespace = parent
+                break
+              else
+                parent_mod = Util.module_for(parent_mod)
+              end
+            end
+          end
+
+          scoped_name = mod.name
+
+          if parent_namespace
+            scoped_name = scoped_name.gsub(/^#{parent_namespace.name}::/, "")
+          end
+
+          mod.initialize_foobara_namespace(scoped_name, parent_namespace:)
+        end
+
+        def included(othermod)
+          puts "included into #{othermod}"
+        end
+      end
+
+      def initialize_foobara_namespace(scoped_name_or_path, accesses: [], parent_namespace: nil)
+        if parent_namespace
+          self.namespace = parent_namespace
+          parent_namespace.children << self
+        end
+
+        self.accesses = Util.array(accesses)
+
+        self.scoped_path = if scoped_name_or_path.is_a?(String)
+                             scoped_name_or_path.split("::")
+                           else
+                             scoped_name_or_path
+                           end
+      end
 
       def parent_namespace=(namespace)
         self.namespace = namespace
