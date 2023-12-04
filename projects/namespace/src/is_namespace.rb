@@ -3,6 +3,7 @@ require_relative "scoped"
 module Foobara
   class Namespace
     module IsNamespace
+      # include Concern
       include Scoped
 
       attr_accessor :accesses
@@ -15,9 +16,9 @@ module Foobara
           parent_mod = Util.module_for(mod)
 
           while parent_mod
-            if parent
-              if parent < Foobara::Namespace::IsNamespace
-                parent_namespace = parent
+            if parent_mod
+              if parent_mod < Foobara::Namespace::IsNamespace
+                parent_namespace = parent_mod
                 break
               else
                 parent_mod = Util.module_for(parent_mod)
@@ -32,6 +33,19 @@ module Foobara
           end
 
           mod.initialize_foobara_namespace(scoped_name, parent_namespace:)
+
+          binding.pry if mod.name =~ /::OrgA$/
+
+          # accomplish via module instead...
+          if mod.is_a?(Class)
+            k = self
+            mod.singleton_class.define_method :inherited do |mod|
+              binding.pry if mod.name =~ /::OrgA$/
+
+              k.extended(mod)
+              super(mod)
+            end
+          end
         end
 
         def included(othermod)
@@ -40,11 +54,6 @@ module Foobara
       end
 
       def initialize_foobara_namespace(scoped_name_or_path, accesses: [], parent_namespace: nil)
-        if parent_namespace
-          self.namespace = parent_namespace
-          parent_namespace.children << self
-        end
-
         self.accesses = Util.array(accesses)
 
         self.scoped_path = if scoped_name_or_path.is_a?(String)
@@ -52,6 +61,13 @@ module Foobara
                            else
                              scoped_name_or_path
                            end
+
+        if parent_namespace
+          self.namespace = parent_namespace
+          parent_namespace.children << self
+          binding.pry
+          parent_namespace.register(self)
+        end
       end
 
       def parent_namespace=(namespace)
@@ -109,6 +125,10 @@ module Foobara
       end
 
       def lookup(path, absolute: false, filter: nil)
+        if path.is_a?(::Symbol)
+          path = path.to_s
+        end
+
         if path.is_a?(::String)
           path = path.split("::")
         end
