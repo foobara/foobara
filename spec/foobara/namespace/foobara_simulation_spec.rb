@@ -34,8 +34,9 @@ module FoobaraSimulation
 
     attr_accessor :processors
 
-    def initialize(symbol)
+    def initialize(symbol, namespace = Foobara)
       self.scoped_name = symbol.to_s
+      namespace.register(self)
     end
   end
 
@@ -159,7 +160,7 @@ end
 
 RSpec.describe Foobara::Namespace do
   describe "#lookup_*" do
-    it "finds the expected objects given certain paths", :focus do
+    it "finds the expected objects given certain paths" do
       expect(FoobaraSimulation::OrgA.parent_namespace).to eq(FoobaraSimulation::Foobara)
       expect(FoobaraSimulation::OrgA.scoped_path).to eq(%w[FoobaraSimulation OrgA])
       expect(FoobaraSimulation::OrgA.scoped_full_path).to eq(%w[FoobaraSimulation OrgA])
@@ -191,6 +192,9 @@ RSpec.describe Foobara::Namespace do
       expect(FoobaraSimulation::Foobara.lookup_error("::FoobaraSimulation::GlobalError")).to eq(FoobaraSimulation::GlobalError)
 
       expect(FoobaraSimulation::OrgA::DomainB::CommandA::SomeError.namespace).to eq(FoobaraSimulation::OrgA::DomainB::CommandA)
+
+      expect(FoobaraSimulation::Integer.parent_namespace).to eq(FoobaraSimulation::Foobara)
+      expect(FoobaraSimulation::Foobara.lookup_type("integer")).to eq(FoobaraSimulation::Integer)
     end
   end
 end
