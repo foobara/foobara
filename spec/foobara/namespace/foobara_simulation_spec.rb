@@ -159,7 +159,7 @@ end
 
 RSpec.describe Foobara::Namespace do
   describe "#lookup_*" do
-    it "finds the expected objects given certain paths" do
+    it "finds the expected objects given certain paths", :focus do
       expect(FoobaraSimulation::OrgA.parent_namespace).to eq(FoobaraSimulation::Foobara)
       expect(FoobaraSimulation::OrgA.scoped_path).to eq(%w[FoobaraSimulation OrgA])
       expect(FoobaraSimulation::OrgA.scoped_full_path).to eq(%w[FoobaraSimulation OrgA])
@@ -175,6 +175,14 @@ RSpec.describe Foobara::Namespace do
 
       expect(FoobaraSimulation::OrgA::DomainA.lookup_domain("DomainA")).to eq(FoobaraSimulation::OrgA::DomainA)
       expect(FoobaraSimulation::OrgA::DomainA.lookup_domain("::DomainA")).to be_nil
+
+      expect(FoobaraSimulation::OrgA::DomainA::CommandA.parent_namespace).to eq(FoobaraSimulation::OrgA::DomainA)
+      expect(FoobaraSimulation::OrgA::DomainA::CommandA.scoped_path).to eq(%w[CommandA])
+      expect(FoobaraSimulation::OrgA::DomainA::CommandA.scoped_full_path).to eq(%w[FoobaraSimulation OrgA DomainA
+                                                                                   CommandA])
+      expect(FoobaraSimulation::OrgA::DomainA::CommandA.scoped_full_name).to eq("::FoobaraSimulation::OrgA::DomainA::CommandA")
+      expect(FoobaraSimulation::Foobara.lookup_command("FoobaraSimulation::OrgA::DomainA::CommandA")).to eq(FoobaraSimulation::OrgA::DomainA::CommandA)
+      expect(FoobaraSimulation::Foobara.lookup_command("::FoobaraSimulation::OrgA::DomainA::CommandA")).to eq(FoobaraSimulation::OrgA::DomainA::CommandA)
 
       expect(FoobaraSimulation::GlobalError.namespace).to eq(FoobaraSimulation::Foobara)
       expect(FoobaraSimulation::GlobalError.scoped_path).to eq(%w[FoobaraSimulation GlobalError])
