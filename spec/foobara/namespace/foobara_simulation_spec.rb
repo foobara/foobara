@@ -179,7 +179,7 @@ RSpec.describe Foobara::Namespace do
         FoobaraSimulation::Foobara.lookup_domain("::FoobaraSimulation::OrgA::DomainA")
       ).to eq(FoobaraSimulation::OrgA::DomainA)
 
-      expect(FoobaraSimulation::OrgA::DomainA.lookup_domain("DomainA")).to eq(FoobaraSimulation::OrgA::DomainA)
+      expect(FoobaraSimulation::OrgA::DomainA.lookup_domain(:DomainA)).to eq(FoobaraSimulation::OrgA::DomainA)
       expect(FoobaraSimulation::OrgA::DomainA.lookup_domain("::DomainA")).to be_nil
 
       expect(FoobaraSimulation::OrgA::DomainA::CommandA.parent_namespace).to eq(FoobaraSimulation::OrgA::DomainA)

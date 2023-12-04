@@ -46,11 +46,6 @@ module Foobara
             mod.parent_namespace&.register(mod)
           end
         end
-
-        def included(othermod)
-          puts "included into #{othermod}"
-          super
-        end
       end
 
       def initialize_foobara_namespace(scoped_name_or_path, accesses: [], parent_namespace: nil)

@@ -19,7 +19,9 @@ module Foobara
         parent_namespace ||= default_parent
 
         unless parent_namespace
+          # :nocov:
           raise "No parent namespace found for #{mod}"
+          # :nocov:
         end
 
         mod.scoped_name = mod.name.gsub(/^#{parent_namespace.name}::/, "")
