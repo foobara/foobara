@@ -158,11 +158,11 @@ RSpec.describe Foobara::Namespace, :focus do
       expect(FoobaraSimulation::Foobara.lookup_org("FoobaraSimulation::OrgA")).to eq(FoobaraSimulation::OrgA)
       expect(FoobaraSimulation::Foobara.lookup_org("::FoobaraSimulation::OrgA")).to eq(FoobaraSimulation::OrgA)
 
-      expect(FoobaraSimulation::OrgA.parent_namespace).to eq(FoobaraSimulation::Foobara)
-      expect(FoobaraSimulation::OrgA.scoped_path).to eq(%w[FoobaraSimulation OrgA])
-      expect(FoobaraSimulation::OrgA.scoped_full_path).to eq(%w[FoobaraSimulation OrgA])
-      expect(FoobaraSimulation::Foobara.lookup_org("FoobaraSimulation::OrgA")).to eq(FoobaraSimulation::OrgA)
-      expect(FoobaraSimulation::Foobara.lookup_org("::FoobaraSimulation::OrgA")).to eq(FoobaraSimulation::OrgA)
+      expect(FoobaraSimulation::OrgA::DomainA.parent_namespace).to eq(FoobaraSimulation::OrgA)
+      expect(FoobaraSimulation::OrgA::DomainA.scoped_path).to eq(%w[DomainA])
+      expect(FoobaraSimulation::OrgA::DomainA.scoped_full_path).to eq(%w[FoobaraSimulation OrgA DomainA])
+      expect(FoobaraSimulation::Foobara.lookup_domain("FoobaraSimulation::OrgA::DomainA")).to eq(FoobaraSimulation::OrgA::DomainA)
+      expect(FoobaraSimulation::Foobara.lookup_domain("::FoobaraSimulation::OrgA::DomainA")).to eq(FoobaraSimulation::OrgA::DomainA)
     end
   end
 end

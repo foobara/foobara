@@ -24,7 +24,7 @@ module Foobara
 
           while parent_mod
             if parent_mod
-              if parent_mod < Foobara::Namespace::IsNamespace
+              if parent_mod.is_a?(Foobara::Namespace::IsNamespace)
                 parent_namespace = parent_mod
                 break
               else
