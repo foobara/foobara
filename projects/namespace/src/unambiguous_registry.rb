@@ -9,7 +9,7 @@ module Foobara
 
       def register(scoped)
         short_name = scoped.scoped_short_name
-        prefixes = Util.power_set(scoped.scoped_prefix)
+        prefixes = scoped.scoped_prefix ? Util.power_set(scoped.scoped_prefix) : [[]]
 
         new_entries = {}
 

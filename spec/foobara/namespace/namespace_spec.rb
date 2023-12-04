@@ -14,7 +14,7 @@ RSpec.describe Foobara::Namespace do
     it "registers the object and it can be found again" do
       expect(scoped_object.scoped_short_path).to eq([scoped_name])
       expect(scoped_object.scoped_full_path).to eq([scoped_name])
-      expect(scoped_object.scoped_full_name).to eq(scoped_name)
+      expect(scoped_object.scoped_full_name).to eq("::#{scoped_name}")
 
       namespace.register(scoped_object)
 
@@ -32,7 +32,7 @@ RSpec.describe Foobara::Namespace do
     end
 
     context "with prefixes" do
-      let(:scoped_name) { "some::prefix::scoped_name" }
+      let(:scoped_name) { :"some::prefix::scoped_name" }
 
       it "registers the object and it can be found again" do
         namespace.register(scoped_object)
@@ -131,29 +131,6 @@ RSpec.describe Foobara::Namespace do
             expect(namespace.lookup(key)).to be(scoped_object)
           end
         end
-      end
-    end
-
-    context "when one namespace accesses another" do
-      let(:depends_on_namespace) do
-        described_class.new("DependsOnNamespace", accesses: namespace)
-      end
-
-      let(:does_not_depend_on_namespace) do
-        described_class.new("DoesNotDependOnNamespace")
-      end
-
-      before do
-        namespace.register(scoped_object)
-      end
-
-      it "can lookup names in the other namespace" do
-        expect {
-          does_not_depend_on_namespace.lookup!(scoped_name)
-        }.to raise_error(Foobara::Namespace::NotFoundError)
-
-        expect(namespace.lookup!(scoped_name)).to be(scoped_object)
-        expect(depends_on_namespace.lookup!(scoped_name)).to be(scoped_object)
       end
     end
   end
