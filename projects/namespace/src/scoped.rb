@@ -1,10 +1,12 @@
 module Foobara
   module Scoped
+    class NoScopedPathSetError < StandardError; end
+
     attr_writer :scoped_path
     attr_accessor :namespace
 
     def scoped_path
-      @scoped_path || raise("Subclass responsibility")
+      @scoped_path || raise(NoScopedPathSetError, "No scoped path set")
     end
 
     def scoped_name=(name)

@@ -46,6 +46,19 @@ module FoobaraSimulation
   # instances/subclasses
   class Error
     extend ::Foobara::Scoped
+
+    class << self
+      def inherited(klass)
+        begin
+          klass.scoped_name
+        rescue NoScopedPathSetError
+          klass.scoped_name = klass.name
+        end
+
+        (klass.namespace || Foobara).register(klass)
+        super
+      end
+    end
   end
 
   class GlobalError < Error
@@ -146,6 +159,7 @@ module FoobaraSimulation
     add_category_for_subclass_of(:command, Command)
     add_category_for_instance_of(:type, Type)
     add_category_for_subclass_of(:processor, Processor)
+    add_category_for_subclass_of(:error, Error)
   end
 end
 
@@ -167,6 +181,12 @@ RSpec.describe Foobara::Namespace, :focus do
 
       expect(FoobaraSimulation::OrgA::DomainA.lookup_domain("DomainA")).to eq(FoobaraSimulation::OrgA::DomainA)
       expect(FoobaraSimulation::OrgA::DomainA.lookup_domain("::DomainA")).to be_nil
+
+      expect(FoobaraSimulation::GlobalError.namespace).to eq(FoobaraSimulation::Foobara)
+      expect(FoobaraSimulation::GlobalError.scoped_path).to eq(%w[FoobaraSimulation GlobalError])
+      expect(FoobaraSimulation::GlobalError.scoped_full_path).to eq(%w[FoobaraSimulation GlobalError])
+      expect(FoobaraSimulation::Foobara.lookup_error("FoobaraSimulation::GlobalError")).to eq(FoobaraSimulation::GlobalError)
+      expect(FoobaraSimulation::Foobara.lookup_error("::FoobaraSimulation::GlobalError")).to eq(FoobaraSimulation::GlobalError)
     end
   end
 end
