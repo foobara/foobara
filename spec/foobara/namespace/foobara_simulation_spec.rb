@@ -48,15 +48,9 @@ module FoobaraSimulation
     extend ::Foobara::Scoped
 
     class << self
+      # TODO: get this junk into a module somehow...
       def inherited(klass)
-        begin
-          klass.scoped_name
-        rescue NoScopedPathSetError
-          klass.scoped_name = klass.name
-        end
-
-        (klass.namespace || Foobara).register(klass)
-        super
+        ::Foobara::Namespace.autoregister(klass, default_parent: Foobara)
       end
     end
   end
@@ -187,6 +181,8 @@ RSpec.describe Foobara::Namespace, :focus do
       expect(FoobaraSimulation::GlobalError.scoped_full_path).to eq(%w[FoobaraSimulation GlobalError])
       expect(FoobaraSimulation::Foobara.lookup_error("FoobaraSimulation::GlobalError")).to eq(FoobaraSimulation::GlobalError)
       expect(FoobaraSimulation::Foobara.lookup_error("::FoobaraSimulation::GlobalError")).to eq(FoobaraSimulation::GlobalError)
+
+      expect(FoobaraSimulation::OrgA::DomainB::CommandA::SomeError.namespace).to eq(FoobaraSimulation::OrgA::DomainB::CommandA)
     end
   end
 end

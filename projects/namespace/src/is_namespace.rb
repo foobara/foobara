@@ -17,7 +17,6 @@ module Foobara
 
       class << self
         def extended(mod)
-          # find parent namespace...
           parent_namespace = nil
 
           parent_mod = Util.module_for(mod)
