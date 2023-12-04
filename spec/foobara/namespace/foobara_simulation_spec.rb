@@ -52,6 +52,7 @@ module FoobaraSimulation
       # TODO: get this junk into a module somehow...
       def inherited(klass)
         ::Foobara::Namespace.autoregister(klass, default_parent: Foobara)
+        super
       end
     end
   end
