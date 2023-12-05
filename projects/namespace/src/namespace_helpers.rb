@@ -1,8 +1,45 @@
 # TODO: refactor initialize extended inherited into modules os that inheritance works
 
 module Foobara
-  module Namespace
+  class Namespace
     module NamespaceHelpers
+      module SubclassesAreNamespaces
+        def inherited(subclass)
+          subclass.extend ::Foobara::Scoped
+
+          foobara_autoset_namespace(subclass, default_parent:)
+          foobara_autoset_scoped_path(subclass)
+
+          subclass.extend ::Foobara::Namespace::IsNamespace
+
+          super
+        end
+      end
+
+      module AutoRegisterSubclasses
+        def inherited(subclass)
+          if subclass.namespace
+            if subclass.is_a?(Foobara::Namespace::IsNamespace)
+              subclass.parent_namespace = subclass.namespace
+            end
+
+            subclass.namespace&.register(subclass)
+          end
+
+          super
+        end
+      end
+
+      module InstancesAreNamespaces
+        def initialize(*, **, &)
+          parent_namespace = namespace || foobara_scoped_default_namespace
+          initialize_foobara_namespace(symbol, accesses: [], parent_namespace:)
+          super
+        end
+
+        attr_accessor :foobara_scoped_default_namespace
+      end
+
       class << self
         # *1. extend a module/root or global namespace (Foobara)
         # *2. all subclasses should be namespaces and autoregistered (Org/Domain/Command)
@@ -20,32 +57,13 @@ module Foobara
         end
 
         def foobara_subclasses_are_namespaces!(klass, default_parent: nil)
-          klass.singleton_class.define_method :inherited do |subclass|
-            subclass.extend ::Foobara::Scoped
-
-            foobara_autoset_namespace(subclass, default_parent:)
-            foobara_autoset_scoped_path(subclass)
-
-            subclass.extend ::Foobara::Namespace::IsNamespace
-
-            subclass.parent_namespace = mod.namespace if mod.namespace
-            mod.namespace&.register(mod)
-
-            super(subclass)
-          end
+          klass.extend SubclassesAreNamespaces
 
           foobara_autoregister_subclasses(klass)
         end
 
         def foobara_autoregister_subclasses(klass)
-          klass.singleton_class.define_method :inherited do |subclass|
-            if mod.namespace
-              subclass.parent_namespace = mod.namespace
-              mod.namespace&.register(mod)
-            end
-
-            super(subclass)
-          end
+          klass.extend AutoRegisterSubclasses
         end
 
         def foobara_autoset_namespace(mod, default: nil)
@@ -66,11 +84,7 @@ module Foobara
         end
 
         def foobara_autoset_scoped_path(mod)
-          begin
-            mod.scoped_path
-            return
-          rescue Scoped::NoScopedPathSetError
-          end
+          return if mod.scoped_path_set?
 
           scoped_path = mod.name.split("::")
 
@@ -109,10 +123,10 @@ module Foobara
 
         def foobara_instances_are_namespaces!(klass, default_parent: nil)
           klass.include ::Foobara::Namespace::IsNamespace
+          klass.include InstancesAreNamespaces
 
-          klass.define_method :initialize do |*args, **opts, &block|
-            initialize_foobara_namespace(symbol, accesses: [], parent_namespace: default_parent)
-            super(*args, **opts, &block)
+          if default_parent
+            klass.foobara_scoped_default_namespace = default_parent
           end
         end
       end

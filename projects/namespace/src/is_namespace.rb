@@ -133,9 +133,6 @@ module Foobara
           path = path.split("::")
         end
 
-        binding.pry if $stop && path == []
-        binding.pry if $stop && path.join =~ /TooBig/
-
         if path[0] == ""
           return root_namespace.lookup(path[(root_namespace.scoped_path.size + 1)..], absolute: true, filter:)
         end

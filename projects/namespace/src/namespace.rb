@@ -2,8 +2,6 @@ module Foobara
   class Namespace
     class << self
       def autoregister(mod, default_parent: nil)
-        binding.pry if mod.name == "FoobaraSimulation::Max"
-
         # TODO: eliminate parent_namespace or make it an alias of namespace!!
         unless mod.namespace
           parent_mod = Util.module_for(mod)
@@ -20,14 +18,7 @@ module Foobara
           mod.namespace ||= default_parent
         end
 
-        scoped_path_already_set = begin
-          mod.scoped_path
-          true
-        rescue Scoped::NoScopedPathSetError
-          false
-        end
-
-        unless scoped_path_already_set
+        unless mod.scoped_path_set?
           scoped_path = mod.name.split("::")
 
           adjusted_scoped_path = []

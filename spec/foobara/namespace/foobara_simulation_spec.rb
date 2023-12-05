@@ -234,7 +234,6 @@ RSpec.describe Foobara::Namespace do
       expect(FoobaraSimulation::Foobara.lookup_processor("integer::Max")).to eq(FoobaraSimulation::Max)
 
       expect(FoobaraSimulation::Max.lookup_error("TooBig")).to eq(FoobaraSimulation::Max::TooBig)
-      $stop = true
       expect(
         FoobaraSimulation::Foobara.lookup_error("integer::Max::TooBig")
       ).to eq(FoobaraSimulation::Max::TooBig)

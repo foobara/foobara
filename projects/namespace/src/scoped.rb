@@ -9,17 +9,11 @@ module Foobara
     end
 
     def scoped_name=(name)
-      binding.pry if name =~ /FoobaraSimulation/
       @scoped_path = name.split("::")
     end
 
     def scoped_path=(path)
-      binding.pry if path.join =~ /FoobaraSimulation/
-
       @scoped_path = path
-    rescue => e
-      binding.pry
-      raise
     end
 
     def scoped_short_name
@@ -48,6 +42,13 @@ module Foobara
       @scoped_prefix = unless scoped_path.size == 1
                          scoped_path[0..-2]
                        end
+    end
+
+    def scoped_path_set?
+      scoped_path
+      true
+    rescue Scoped::NoScopedPathSetError
+      false
     end
 
     def ignore_module?(mod)
