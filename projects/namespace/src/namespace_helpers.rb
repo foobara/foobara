@@ -25,9 +25,10 @@ module Foobara
         def inherited(subclass)
           super
 
-          if !subclass.namespace && default_namespace
-            subclass.namespace = default_namespace
-          end
+          subclass.extend ::Foobara::Scoped
+
+          NamespaceHelpers.foobara_autoset_namespace(subclass, default_namespace:)
+          NamespaceHelpers.foobara_autoset_scoped_path(subclass)
 
           if subclass.namespace
             if subclass.is_a?(Foobara::Namespace::IsNamespace)
@@ -156,7 +157,7 @@ module Foobara
         NamespaceHelpers.foobara_subclasses_are_namespaces!(self, default_parent:)
       end
 
-      def foobara_autoregister_subclasses(default_namespace)
+      def foobara_autoregister_subclasses(default_namespace:)
         NamespaceHelpers.foobara_autoregister_subclasses(self, default_namespace:)
       end
 

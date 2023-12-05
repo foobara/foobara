@@ -49,16 +49,6 @@ module FoobaraSimulation
   # instances/subclasses
   class Error
     foobara_autoregister_subclasses(default_namespace: Foobara)
-    extend ::Foobara::Scoped
-
-    class << self
-      # TODO: get this junk into a module somehow...
-      def inherited(klass)
-        # why isn't this automated??
-        ::Foobara::Namespace.autoregister(klass, default_parent: Foobara)
-        super
-      end
-    end
   end
 
   class GlobalError < Error
