@@ -40,20 +40,6 @@ module Foobara
         end
       end
 
-      module AutoRegisterInstances
-        # TODO: dry this up somehow?
-        attr_accessor :default_namespace
-
-        def initialize(*, **, &)
-          super
-
-          NamespaceHelpers.foobara_autoset_namespace(self, default_namespace:)
-          NamespaceHelpers.foobara_autoset_scoped_path(self)
-
-          namespace&.register(self)
-        end
-      end
-
       module InstancesAreNamespaces
         # TODO: dry this up somehow?
         class << self
@@ -119,11 +105,6 @@ module Foobara
 
         def foobara_autoregister_subclasses(klass, default_namespace: nil)
           klass.extend AutoRegisterSubclasses
-          klass.default_namespace = default_namespace if default_namespace
-        end
-
-        def foobara_autoregister_instances(klass, default_namespace: nil)
-          klass.include AutoRegisterInstances
           klass.default_namespace = default_namespace if default_namespace
         end
 
@@ -211,10 +192,6 @@ module Foobara
 
       def foobara_autoregister_subclasses(default_namespace: nil)
         NamespaceHelpers.foobara_autoregister_subclasses(self, default_namespace:)
-      end
-
-      def foobara_autoregister_instances(default_namespace: nil)
-        NamespaceHelpers.foobara_autoregister_instances(self, default_namespace:)
       end
 
       def foobara_instances_are_namespaces!(default_parent: nil)
