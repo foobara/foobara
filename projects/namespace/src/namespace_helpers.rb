@@ -81,10 +81,8 @@ module Foobara
         # *5. not a namespace but should be autoregistered (Error)
         #
         # TODO: should breakup or eliminate this...
-        def initialize_foobara_namespace(namespace, scoped_name_or_path = nil, accesses: [], parent_namespace: nil)
+        def initialize_foobara_namespace(namespace, scoped_name_or_path = nil, parent_namespace: nil)
           scoped_name_or_path ||= namespace.scoped_path if namespace.scoped_path_set?
-
-          namespace.accesses = Util.array(accesses)
 
           if scoped_name_or_path.is_a?(::Symbol)
             scoped_name_or_path = scoped_name_or_path.to_s

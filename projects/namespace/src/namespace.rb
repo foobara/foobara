@@ -66,8 +66,8 @@ module Foobara
 
     class NotFoundError < StandardError; end
 
-    def initialize(scoped_name_or_path, accesses: [], parent_namespace: nil)
-      NamespaceHelpers.initialize_foobara_namespace(self, scoped_name_or_path, accesses:, parent_namespace:)
+    def initialize(scoped_name_or_path,  parent_namespace: nil)
+      NamespaceHelpers.initialize_foobara_namespace(self, scoped_name_or_path, parent_namespace:)
     end
   end
 end

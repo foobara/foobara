@@ -13,8 +13,6 @@ module Foobara
       # include Concern
       include Scoped
 
-      attr_accessor :accesses
-
       class << self
         def extended(mod)
           Namespace.autoregister(mod)
@@ -96,11 +94,6 @@ module Foobara
 
         scoped = registry.lookup(path, filter)
         return scoped if scoped
-
-        accesses&.each do |dependent_namespace|
-          object = dependent_namespace.lookup(path, filter:)
-          return object if object
-        end
 
         matching_child = nil
         matching_child_score = 0
