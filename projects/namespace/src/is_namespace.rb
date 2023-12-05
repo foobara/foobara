@@ -3,24 +3,11 @@ require_relative "scoped"
 module Foobara
   class Namespace
     module IsNamespace
-      module IsNamespaceClass
-        def inherited(mod)
-          IsNamespace.extended(mod)
-          super(mod)
-        end
-      end
-
-      # include Concern
       include Scoped
 
       class << self
         def extended(mod)
           Namespace.autoregister(mod)
-
-          if mod.is_a?(Class) && !(mod < Foobara::Namespace::IsNamespaceClass)
-            mod.extend(IsNamespaceClass)
-          end
-
           mod.parent_namespace&.register(mod)
         end
       end

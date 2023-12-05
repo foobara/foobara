@@ -165,8 +165,7 @@ RSpec.describe Foobara::Namespace do
 
       expect(FoobaraSimulation::OrgA::DomainA::CommandA.parent_namespace).to eq(FoobaraSimulation::OrgA::DomainA)
       expect(FoobaraSimulation::OrgA::DomainA::CommandA.scoped_path).to eq(%w[CommandA])
-      expect(FoobaraSimulation::OrgA::DomainA::CommandA.scoped_full_path).to eq(%w[ OrgA DomainA
-                                                                                    CommandA])
+      expect(FoobaraSimulation::OrgA::DomainA::CommandA.scoped_full_path).to eq(%w[OrgA DomainA CommandA])
       expect(
         FoobaraSimulation::OrgA::DomainA::CommandA.scoped_full_name
       ).to eq("::OrgA::DomainA::CommandA")
