@@ -70,10 +70,6 @@ module Foobara
         def initialize_foobara_namespace(namespace, scoped_name_or_path = nil, parent_namespace: nil)
           scoped_name_or_path ||= namespace.scoped_path if namespace.scoped_path_set?
 
-          if scoped_name_or_path.is_a?(::Symbol)
-            scoped_name_or_path = scoped_name_or_path.to_s
-          end
-
           if scoped_name_or_path.is_a?(String)
             scoped_name_or_path = scoped_name_or_path.split("::")
           end
@@ -141,21 +137,12 @@ module Foobara
 
             next_mod = Util.constant_value(next_mod, path_part)
 
-            if next_mod
-              if next_mod.is_a?(IsNamespace) && next_mod != mod
-                adjusted_scoped_path = []
-                next
-              end
-            else
-              adjusted_scoped_path += [path_part, *scoped_path]
-              break
+            if next_mod.is_a?(IsNamespace) && next_mod != mod
+              adjusted_scoped_path = []
+              next
             end
 
-            if mod.is_a?(IsNamespace)
-              adjusted_scoped_path << path_part unless mod.ignore_module?(next_mod)
-            elsif mod.is_a?(Scoped)
-              adjusted_scoped_path << path_part unless mod.namespace&.ignore_module?(next_mod)
-            end
+            adjusted_scoped_path << path_part unless mod.namespace&.ignore_module?(next_mod)
           end
 
           mod.scoped_path = adjusted_scoped_path
@@ -165,9 +152,7 @@ module Foobara
           klass.include ::Foobara::Namespace::IsNamespace
           klass.include InstancesAreNamespaces
 
-          if default_parent
-            klass.default_namespace = default_parent
-          end
+          klass.default_namespace = default_parent if default_parent
         end
       end
 
