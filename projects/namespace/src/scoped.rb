@@ -15,6 +15,7 @@ module Foobara
     end
 
     def scoped_name=(name)
+      name = name.to_s if name.is_a?(::Symbol)
       @scoped_path = name.split("::")
     end
 

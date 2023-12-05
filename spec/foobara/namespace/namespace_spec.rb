@@ -32,7 +32,7 @@ RSpec.describe Foobara::Namespace do
     end
 
     context "with prefixes" do
-      let(:scoped_name) { "some::prefix::scoped_name" }
+      let(:scoped_name) { :"some::prefix::scoped_name" }
 
       it "registers the object and it can be found again" do
         namespace.register(scoped_object)
