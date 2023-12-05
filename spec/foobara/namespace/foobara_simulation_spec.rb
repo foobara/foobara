@@ -48,6 +48,7 @@ module FoobaraSimulation
 
   # instances/subclasses
   class Error
+    foobara_autoregister_subclasses(default_namespace: Foobara)
     extend ::Foobara::Scoped
 
     class << self

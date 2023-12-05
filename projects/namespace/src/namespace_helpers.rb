@@ -19,11 +19,14 @@ module Foobara
       end
 
       module AutoRegisterSubclasses
+        # TODO: dry this up somehow?
+        attr_accessor :default_namespace
+
         def inherited(subclass)
           super
 
-          if !subclass.namespace && subclass.default_namespace
-            subclass.namespace = subclass.default_namespace
+          if !subclass.namespace && default_namespace
+            subclass.namespace = default_namespace
           end
 
           if subclass.namespace
@@ -66,8 +69,9 @@ module Foobara
           foobara_autoregister_subclasses(klass)
         end
 
-        def foobara_autoregister_subclasses(klass)
+        def foobara_autoregister_subclasses(klass, default_namespace: nil)
           klass.extend AutoRegisterSubclasses
+          klass.default_namespace = default_namespace if default_namespace
         end
 
         def foobara_autoset_namespace(mod, default_namespace: nil)
@@ -152,12 +156,12 @@ module Foobara
         NamespaceHelpers.foobara_subclasses_are_namespaces!(self, default_parent:)
       end
 
-      def foobara_autoregister_subclasses(klass)
-        NamespaceHelpers.foobara_autoregister_subclasses(klass)
+      def foobara_autoregister_subclasses(default_namespace)
+        NamespaceHelpers.foobara_autoregister_subclasses(self, default_namespace:)
       end
 
-      def foobara_instances_are_namespaces!(klass, default_parent: nil)
-        NamespaceHelpers.foobara_instances_are_namespaces!(klass, default_parent:)
+      def foobara_instances_are_namespaces!(default_parent: nil)
+        NamespaceHelpers.foobara_instances_are_namespaces!(self, default_parent:)
       end
 
       def foobara_root_namespace!(scoped_path: [], ignore_modules: nil)
