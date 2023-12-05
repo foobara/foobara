@@ -5,13 +5,6 @@ module Foobara
     module IsNamespace
       include Scoped
 
-      class << self
-        def extended(mod)
-          Namespace.autoregister(mod)
-          mod.parent_namespace&.register(mod)
-        end
-      end
-
       def parent_namespace=(namespace)
         self.namespace = namespace
         namespace.children << self if namespace
