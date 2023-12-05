@@ -155,8 +155,6 @@ module Foobara
               adjusted_scoped_path << path_part unless mod.ignore_module?(next_mod)
             elsif mod.is_a?(Scoped)
               adjusted_scoped_path << path_part unless mod.namespace&.ignore_module?(next_mod)
-            else
-              adjusted_scoped_path << path_part
             end
           end
 
