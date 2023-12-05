@@ -1,15 +1,19 @@
 module FoobaraSimulation
   module Foobara
-    class << self
-      def scoped_path
-        []
-      end
-    end
+    extend ::Foobara::Scoped
+
+    self.scoped_path = []
+    self.ignore_modules = [::FoobaraSimulation]
 
     extend ::Foobara::Namespace::IsNamespace
   end
 
+  # TODO: support concept of abstract classes...
   class Org
+    extend ::Foobara::Scoped
+
+    self.namespace = Foobara
+
     # TODO: may as well have foobara_namespace! helper...
     extend ::Foobara::Namespace::IsNamespace
 
@@ -32,11 +36,13 @@ module FoobaraSimulation
   class Type
     include ::Foobara::Namespace::IsNamespace
 
-    attr_accessor :processors
+    def initialize(symbol, parent_namespace = Foobara)
+      initialize_foobara_namespace(symbol, accesses: [], parent_namespace:)
+    end
 
-    def initialize(symbol, namespace = Foobara)
-      self.scoped_name = symbol.to_s
-      namespace.register(self)
+    def add_processor(processor)
+      processor.parent_namespace = self
+      register(processor)
     end
   end
 
@@ -61,12 +67,14 @@ module FoobaraSimulation
   end
 
   class Max < Processor
+    extend ::Foobara::Namespace::IsNamespace
+
     class TooBig < Error
     end
   end
 
   Integer = Type.new(:integer)
-  Integer.processors = [Max]
+  Integer.add_processor(Max)
 
   class OrgA < Org
     class DomainA < Domain
@@ -125,25 +133,15 @@ module FoobaraSimulation
   end
 
   class GlobalDomain < Domain
-    class DomainA < Domain
-      class CommandA < Command
-      end
-
-      class CommandB < Command
-      end
+    class CommandA < Command
     end
 
-    class DomainB < Domain
-      class CommandA < Command
-      end
+    class CommandB < Command
+    end
 
-      class CommandB < Command
-      end
-
-      module Foo
-        module Bar
-          class CommandA < Command
-          end
+    module Foo
+      module Bar
+        class CommandA < Command
         end
       end
     end
@@ -161,22 +159,23 @@ end
 
 RSpec.describe Foobara::Namespace do
   describe "#lookup_*" do
-    it "finds the expected objects given certain paths" do
+    it "finds the expected objects given certain paths", :focus do
       expect(FoobaraSimulation::OrgA.parent_namespace).to eq(FoobaraSimulation::Foobara)
-      expect(FoobaraSimulation::OrgA.scoped_path).to eq(%w[FoobaraSimulation OrgA])
-      expect(FoobaraSimulation::OrgA.scoped_full_path).to eq(%w[FoobaraSimulation OrgA])
-      expect(FoobaraSimulation::Foobara.lookup_org("FoobaraSimulation::OrgA")).to eq(FoobaraSimulation::OrgA)
-      expect(FoobaraSimulation::Foobara.lookup_org("::FoobaraSimulation::OrgA")).to eq(FoobaraSimulation::OrgA)
+      expect(FoobaraSimulation::OrgA.scoped_path).to eq(%w[OrgA])
+      expect(FoobaraSimulation::OrgA.scoped_full_path).to eq(%w[OrgA])
+      $stop = true
+      expect(FoobaraSimulation::Foobara.lookup_org("OrgA")).to eq(FoobaraSimulation::OrgA)
+      expect(FoobaraSimulation::Foobara.lookup_org("::OrgA")).to eq(FoobaraSimulation::OrgA)
 
       expect(FoobaraSimulation::OrgA::DomainA.parent_namespace).to eq(FoobaraSimulation::OrgA)
       expect(FoobaraSimulation::OrgA::DomainA.scoped_path).to eq(%w[DomainA])
-      expect(FoobaraSimulation::OrgA::DomainA.scoped_full_path).to eq(%w[FoobaraSimulation OrgA DomainA])
-      expect(FoobaraSimulation::OrgA::DomainA.scoped_full_name).to eq("::FoobaraSimulation::OrgA::DomainA")
+      expect(FoobaraSimulation::OrgA::DomainA.scoped_full_path).to eq(%w[OrgA DomainA])
+      expect(FoobaraSimulation::OrgA::DomainA.scoped_full_name).to eq("::OrgA::DomainA")
       expect(
-        FoobaraSimulation::Foobara.lookup_domain("FoobaraSimulation::OrgA::DomainA")
+        FoobaraSimulation::Foobara.lookup_domain("OrgA::DomainA")
       ).to eq(FoobaraSimulation::OrgA::DomainA)
       expect(
-        FoobaraSimulation::Foobara.lookup_domain("::FoobaraSimulation::OrgA::DomainA")
+        FoobaraSimulation::Foobara.lookup_domain("::OrgA::DomainA")
       ).to eq(FoobaraSimulation::OrgA::DomainA)
 
       expect(FoobaraSimulation::OrgA::DomainA.lookup_domain(:DomainA)).to eq(FoobaraSimulation::OrgA::DomainA)
@@ -184,26 +183,27 @@ RSpec.describe Foobara::Namespace do
 
       expect(FoobaraSimulation::OrgA::DomainA::CommandA.parent_namespace).to eq(FoobaraSimulation::OrgA::DomainA)
       expect(FoobaraSimulation::OrgA::DomainA::CommandA.scoped_path).to eq(%w[CommandA])
-      expect(FoobaraSimulation::OrgA::DomainA::CommandA.scoped_full_path).to eq(%w[FoobaraSimulation OrgA DomainA
-                                                                                   CommandA])
+      expect(FoobaraSimulation::OrgA::DomainA::CommandA.scoped_full_path).to eq(%w[ OrgA DomainA
+                                                                                    CommandA])
       expect(
         FoobaraSimulation::OrgA::DomainA::CommandA.scoped_full_name
-      ).to eq("::FoobaraSimulation::OrgA::DomainA::CommandA")
+      ).to eq("::OrgA::DomainA::CommandA")
+      binding.pry
       expect(
-        FoobaraSimulation::Foobara.lookup_command("FoobaraSimulation::OrgA::DomainA::CommandA")
+        FoobaraSimulation::Foobara.lookup_command("OrgA::DomainA::CommandA")
       ).to eq(FoobaraSimulation::OrgA::DomainA::CommandA)
       expect(
-        FoobaraSimulation::Foobara.lookup_command("::FoobaraSimulation::OrgA::DomainA::CommandA")
+        FoobaraSimulation::Foobara.lookup_command("::OrgA::DomainA::CommandA")
       ).to eq(FoobaraSimulation::OrgA::DomainA::CommandA)
 
       expect(FoobaraSimulation::GlobalError.namespace).to eq(FoobaraSimulation::Foobara)
-      expect(FoobaraSimulation::GlobalError.scoped_path).to eq(%w[FoobaraSimulation GlobalError])
-      expect(FoobaraSimulation::GlobalError.scoped_full_path).to eq(%w[FoobaraSimulation GlobalError])
+      expect(FoobaraSimulation::GlobalError.scoped_path).to eq(%w[GlobalError])
+      expect(FoobaraSimulation::GlobalError.scoped_full_path).to eq(%w[GlobalError])
       expect(
-        FoobaraSimulation::Foobara.lookup_error("FoobaraSimulation::GlobalError")
+        FoobaraSimulation::Foobara.lookup_error("GlobalError")
       ).to eq(FoobaraSimulation::GlobalError)
       expect(
-        FoobaraSimulation::Foobara.lookup_error("::FoobaraSimulation::GlobalError")
+        FoobaraSimulation::Foobara.lookup_error("::GlobalError")
       ).to eq(FoobaraSimulation::GlobalError)
 
       expect(
@@ -212,6 +212,17 @@ RSpec.describe Foobara::Namespace do
 
       expect(FoobaraSimulation::Integer.parent_namespace).to eq(FoobaraSimulation::Foobara)
       expect(FoobaraSimulation::Foobara.lookup_type("integer")).to eq(FoobaraSimulation::Integer)
+
+      expect(FoobaraSimulation::Foobara.lookup_type("integer")).to eq(FoobaraSimulation::Integer)
+
+      expect(FoobaraSimulation::Integer.lookup_processor("Max")).to eq(FoobaraSimulation::Max)
+      expect(FoobaraSimulation::Integer.lookup_processor("Max")).to eq(FoobaraSimulation::Max)
+      expect(FoobaraSimulation::Foobara.lookup_processor("integer::Max")).to eq(FoobaraSimulation::Max)
+
+      expect(FoobaraSimulation::Max.lookup_error("TooBig")).to eq(FoobaraSimulation::Max::TooBig)
+      expect(
+        FoobaraSimulation::Foobara.lookup_error("integer::Max::TooBig")
+      ).to eq(FoobaraSimulation::Max::TooBig)
     end
   end
 end

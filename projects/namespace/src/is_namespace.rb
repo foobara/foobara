@@ -17,33 +17,34 @@ module Foobara
 
       class << self
         def extended(mod)
-          parent_namespace = nil
+          Namespace.autoregister(mod)
 
-          parent_mod = Util.module_for(mod)
+          # parent_namespace = nil
+          #
+          # parent_mod = Util.module_for(mod)
+          #
+          # while parent_mod
+          #   if parent_mod
+          #     if parent_mod.is_a?(Foobara::Namespace::IsNamespace)
+          #       parent_namespace = parent_mod
+          #       break
+          #     else
+          #       parent_mod = Util.module_for(parent_mod)
+          #     end
+          #   end
+          # end
+          #
+          # scoped_name = mod.name
+          #
+          # if parent_namespace
+          #   scoped_name = scoped_name.gsub(/^#{parent_namespace.name}::/, "")
+          # end
 
-          while parent_mod
-            if parent_mod
-              if parent_mod.is_a?(Foobara::Namespace::IsNamespace)
-                parent_namespace = parent_mod
-                break
-              else
-                parent_mod = Util.module_for(parent_mod)
-              end
-            end
-          end
+          # mod.initialize_foobara_namespace(scoped_name, parent_namespace:)
 
-          scoped_name = mod.name
-
-          if parent_namespace
-            scoped_name = scoped_name.gsub(/^#{parent_namespace.name}::/, "")
-          end
-
-          mod.initialize_foobara_namespace(scoped_name, parent_namespace:)
-
-          # accomplish via module instead...
           if mod.is_a?(Class) && !(mod < Foobara::Namespace::IsNamespaceClass)
             mod.extend(IsNamespaceClass)
-            mod.parent_namespace&.register(mod)
+            # mod.parent_namespace&.register(mod)
           end
         end
       end
@@ -51,11 +52,15 @@ module Foobara
       def initialize_foobara_namespace(scoped_name_or_path, accesses: [], parent_namespace: nil)
         self.accesses = Util.array(accesses)
 
-        self.scoped_path = if scoped_name_or_path.is_a?(String)
-                             scoped_name_or_path.split("::")
-                           else
-                             scoped_name_or_path
-                           end
+        if scoped_name_or_path.is_a?(::Symbol)
+          scoped_name_or_path = scoped_name_or_path.to_s
+        end
+
+        if scoped_name_or_path.is_a?(String)
+          scoped_name_or_path = scoped_name_or_path.split("::")
+        end
+
+        self.scoped_path = scoped_name_or_path
 
         if parent_namespace
           self.namespace = parent_namespace
@@ -66,7 +71,7 @@ module Foobara
 
       def parent_namespace=(namespace)
         self.namespace = namespace
-        namespace.children << self
+        namespace.children << self if namespace
       end
 
       def add_category(symbol, proc)
@@ -119,6 +124,7 @@ module Foobara
       end
 
       def lookup(path, absolute: false, filter: nil)
+        binding.pry if path == "OrgA::DomainA::CommandA"
         if path.is_a?(::Symbol)
           path = path.to_s
         end
@@ -152,6 +158,8 @@ module Foobara
             matching_child_score = match_count
           end
         end
+
+        binding.pry if $stop
 
         if matching_child
           scoped = matching_child.lookup(path[matching_child_score..], absolute: true, filter:)

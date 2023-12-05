@@ -2,7 +2,6 @@ module Foobara
   module Scoped
     class NoScopedPathSetError < StandardError; end
 
-    attr_writer :scoped_path
     attr_accessor :namespace
 
     def scoped_path
@@ -11,6 +10,10 @@ module Foobara
 
     def scoped_name=(name)
       @scoped_path = name.split("::")
+    end
+
+    def scoped_path=(path)
+      @scoped_path = path
     end
 
     def scoped_short_name
@@ -39,6 +42,15 @@ module Foobara
       @scoped_prefix = unless scoped_path.size == 1
                          scoped_path[0..-2]
                        end
+    end
+
+    def ignore_module?(mod)
+      @ignore_modules&.include?(mod) || parent_namespace&.ignore_module?(mod)
+    end
+
+    def ignore_modules=(modules)
+      mods = @ignore_modules || []
+      @ignore_modules = [*mods, *modules]
     end
   end
 end
