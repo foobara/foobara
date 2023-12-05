@@ -171,15 +171,6 @@ module Foobara
             klass.default_namespace = default_parent
           end
         end
-
-        def root_namespace!(mod, scoped_path: [], ignore_modules: nil)
-          mod.extend ::Foobara::Scoped
-
-          mod.scoped_path = scoped_path
-          mod.ignore_modules = Util.array(ignore_modules) if ignore_modules
-
-          mod.extend ::Foobara::Namespace::IsNamespace
-        end
       end
 
       def foobara_namespace!(scoped_path: nil, ignore_modules: nil)
@@ -198,8 +189,8 @@ module Foobara
         NamespaceHelpers.foobara_instances_are_namespaces!(self, default_parent:)
       end
 
-      def foobara_root_namespace!(scoped_path: [], ignore_modules: nil)
-        NamespaceHelpers.root_namespace!(self, scoped_path:, ignore_modules:)
+      def foobara_root_namespace!(ignore_modules: nil)
+        foobara_namespace!(scoped_path: [], ignore_modules:)
       end
     end
   end
