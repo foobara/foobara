@@ -1,141 +1,149 @@
-module FoobaraSimulation
-  module Foobara
-    foobara_root_namespace!(ignore_modules: FoobaraSimulation)
+RSpec.describe Foobara::Namespace do
+  after do
+    Object.send(:remove_const, :FoobaraSimulation)
   end
 
-  # TODO: support concept of abstract classes...
-  class Org
-    foobara_subclasses_are_namespaces!(default_parent: Foobara, autoregister: true)
-  end
-
-  class Domain
-    foobara_subclasses_are_namespaces!(default_parent: Foobara, autoregister: true)
-  end
-
-  class Command
-    foobara_subclasses_are_namespaces!(default_parent: Foobara, autoregister: true)
-  end
-
-  class Type
-    foobara_instances_are_namespaces!
-
-    def add_processor(processor)
-      processor.parent_namespace = self
-      register(processor)
-    end
-
-    def initialize(scoped_path)
-      self.scoped_path = ::Foobara::Util.array(scoped_path)
-      super
-    end
-  end
-
-  class Processor
-    !foobara_subclasses_are_namespaces!(default_parent: Foobara)
-  end
-
-  class Error
-    foobara_autoregister_subclasses(default_namespace: Foobara)
-  end
-
-  module Foobara
-    add_category_for_subclass_of(:org, Org)
-    add_category_for_subclass_of(:domain, Domain)
-    add_category_for_subclass_of(:command, Command)
-    add_category_for_instance_of(:type, Type)
-    add_category_for_subclass_of(:processor, Processor)
-    add_category_for_subclass_of(:error, Error)
-  end
-
-  class GlobalError < Error
-  end
-
-  Integer = Type.new(:integer)
-  Integer.parent_namespace = Foobara
-  Foobara.register(Integer)
-
-  class Max < Processor
-    class TooBig < Error
-    end
-  end
-
-  Integer.add_processor(Max)
-
-  class OrgA < Org
-    class DomainA < Domain
-      CustomType = Type.new(:custom_type)
-      register(CustomType)
-
-      class CommandA < Command
+  before do
+    # rubocop:disable Lint/ConstantDefinitionInBlock, RSpec/LeakyConstantDeclaration
+    module FoobaraSimulation
+      module Foobara
+        foobara_root_namespace!(ignore_modules: FoobaraSimulation)
       end
 
-      class CommandB < Command
+      # TODO: support concept of abstract classes...
+      class Org
+        foobara_subclasses_are_namespaces!(default_parent: Foobara, autoregister: true)
       end
-    end
 
-    class DomainB < Domain
-      CustomType = Type.new(:custom_type)
-      register(CustomType)
+      class Domain
+        foobara_subclasses_are_namespaces!(default_parent: Foobara, autoregister: true)
+      end
 
-      class CommandA < Command
-        class SomeError < Error
+      class Command
+        foobara_subclasses_are_namespaces!(default_parent: Foobara, autoregister: true)
+      end
+
+      class Type
+        foobara_instances_are_namespaces!
+
+        def add_processor(processor)
+          processor.parent_namespace = self
+          register(processor)
+        end
+
+        def initialize(scoped_path)
+          self.scoped_path = ::Foobara::Util.array(scoped_path)
+          super
         end
       end
 
-      class CommandB < Command
+      class Processor
+        !foobara_subclasses_are_namespaces!(default_parent: Foobara)
       end
 
-      module Foo
-        module Bar
+      class Error
+        foobara_autoregister_subclasses(default_namespace: Foobara)
+      end
+
+      module Foobara
+        add_category_for_subclass_of(:org, Org)
+        add_category_for_subclass_of(:domain, Domain)
+        add_category_for_subclass_of(:command, Command)
+        add_category_for_instance_of(:type, Type)
+        add_category_for_subclass_of(:processor, Processor)
+        add_category_for_subclass_of(:error, Error)
+      end
+
+      class GlobalError < Error
+      end
+
+      Integer = Type.new(:integer)
+      Integer.parent_namespace = Foobara
+      Foobara.register(Integer)
+
+      class Max < Processor
+        class TooBig < Error
+        end
+      end
+
+      Integer.add_processor(Max)
+
+      class OrgA < Org
+        class DomainA < Domain
+          CustomType = Type.new(:custom_type)
+          register(CustomType)
+
           class CommandA < Command
+          end
+
+          class CommandB < Command
+          end
+        end
+
+        class DomainB < Domain
+          CustomType = Type.new(:custom_type)
+          register(CustomType)
+
+          class CommandA < Command
+            class SomeError < Error
+            end
+          end
+
+          class CommandB < Command
+          end
+
+          module Foo
+            module Bar
+              class CommandA < Command
+              end
+            end
           end
         end
       end
-    end
-  end
 
-  class OrgB < Org
-    class DomainA < Domain
-      class CommandA < Command
-      end
-
-      class CommandB < Command
-      end
-    end
-
-    class DomainB < Domain
-      class CommandA < Command
-      end
-
-      class CommandB < Command
-      end
-
-      module Foo
-        module Bar
+      class OrgB < Org
+        class DomainA < Domain
           class CommandA < Command
+          end
+
+          class CommandB < Command
+          end
+        end
+
+        class DomainB < Domain
+          class CommandA < Command
+          end
+
+          class CommandB < Command
+          end
+
+          module Foo
+            module Bar
+              class CommandA < Command
+              end
+            end
           end
         end
       end
-    end
-  end
 
-  class GlobalDomain < Domain
-    class CommandA < Command
-    end
-
-    class CommandB < Command
-    end
-
-    module Foo
-      module Bar
+      class GlobalDomain < Domain
         class CommandA < Command
         end
+
+        class CommandB < Command
+        end
+
+        module Foo
+          module Bar
+            class CommandA < Command
+            end
+          end
+        end
       end
     end
+    # rubocop:enable Lint/ConstantDefinitionInBlock, RSpec/LeakyConstantDeclaration
   end
-end
 
-RSpec.describe Foobara::Namespace do
   describe "#lookup_*" do
     it "finds the expected objects given certain paths" do
       expect(FoobaraSimulation::OrgA.parent_namespace).to eq(FoobaraSimulation::Foobara)
