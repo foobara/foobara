@@ -27,7 +27,6 @@ module FoobaraSimulation
 
   class Type
     foobara_instances_are_namespaces!(default_parent: Foobara)
-    foobara_autoregister_instances
 
     def add_processor(processor)
       processor.parent_namespace = self
@@ -66,11 +65,13 @@ module FoobaraSimulation
   end
 
   Integer = Type.new(:integer)
+  Foobara.register(Integer)
   Integer.add_processor(Max)
 
   class OrgA < Org
     class DomainA < Domain
       CustomType = Type.new(:custom_type)
+      register(CustomType)
 
       class CommandA < Command
       end
@@ -81,6 +82,7 @@ module FoobaraSimulation
 
     class DomainB < Domain
       CustomType = Type.new(:custom_type)
+      register(CustomType)
 
       class CommandA < Command
         class SomeError < Error
@@ -142,7 +144,7 @@ end
 
 RSpec.describe Foobara::Namespace do
   describe "#lookup_*" do
-    it "finds the expected objects given certain paths" do
+    it "finds the expected objects given certain paths", :focus do
       expect(FoobaraSimulation::OrgA.parent_namespace).to eq(FoobaraSimulation::Foobara)
       expect(FoobaraSimulation::OrgA.scoped_path).to eq(%w[OrgA])
       expect(FoobaraSimulation::OrgA.scoped_full_path).to eq(%w[OrgA])
