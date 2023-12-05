@@ -5,14 +5,11 @@
 # 3. all instances are namespaces (Type)
 # 4. explicit registration (Max)
 
+Module.include Foobara::Namespace::NamespaceHelpers
+
 module FoobaraSimulation
   module Foobara
-    extend ::Foobara::Scoped
-
-    self.scoped_path = []
-    self.ignore_modules = [::FoobaraSimulation]
-
-    extend ::Foobara::Namespace::IsNamespace
+    foobara_root_namespace!(ignore_modules: FoobaraSimulation)
   end
 
   # TODO: support concept of abstract classes...
