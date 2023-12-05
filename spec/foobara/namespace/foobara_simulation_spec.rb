@@ -14,31 +14,15 @@ module FoobaraSimulation
 
   # TODO: support concept of abstract classes...
   class Org
-    extend ::Foobara::Scoped
-
-    self.namespace = Foobara
-
-    # TODO: may as well have foobara_namespace! helper...
-    extend ::Foobara::Namespace::IsNamespace
-
-    class << self
-      def inherited(klass)
-        klass.parent_namespace ||= Foobara
-        super
-      end
-    end
+    foobara_subclasses_are_namespaces!(default_parent: Foobara)
   end
 
   class Domain
-    extend ::Foobara::Scoped
-
-    self.namespace = Foobara
-
-    extend ::Foobara::Namespace::IsNamespace
+    foobara_subclasses_are_namespaces!(default_parent: Foobara)
   end
 
   class Command
-    extend ::Foobara::Namespace::IsNamespace
+    foobara_subclasses_are_namespaces!(default_parent: Foobara)
   end
 
   class Type
