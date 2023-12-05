@@ -1,11 +1,14 @@
+# TODO: refactor initialize extended inherited into modules os that inheritance works
+
 module Foobara
   module Namespace
     module NamespaceHelpers
       class << self
-        # 1. extend a module/root or global namespace (Foobara)
-        # 2. all subclasses should be namespaces and autoregistered (Org/Domain/Command)
-        # 3. all instances are namespaces (Type)
+        # *1. extend a module/root or global namespace (Foobara)
+        # *2. all subclasses should be namespaces and autoregistered (Org/Domain/Command)
+        # *3. all instances are namespaces (Type)
         # 4. explicit registration (Max)
+        # *5. not a namespace but should be autoregistered (Error)
 
         def foobara_namespace!(object, scoped_path: nil, ignore_modules: nil)
           object.extend ::Foobara::Scoped
@@ -16,11 +19,11 @@ module Foobara
           object.extend ::Foobara::Namespace::IsNamespace
         end
 
-        def foobara_subclases_are_namespaces!(klass, default_parent: nil)
+        def foobara_subclasses_are_namespaces!(klass, default_parent: nil)
           klass.singleton_class.define_method :inherited do |subclass|
             subclass.extend ::Foobara::Scoped
 
-            foobara_autoset_namespace(subclass)
+            foobara_autoset_namespace(subclass, default_parent:)
             foobara_autoset_scoped_path(subclass)
 
             subclass.extend ::Foobara::Namespace::IsNamespace
@@ -30,6 +33,8 @@ module Foobara
 
             super(subclass)
           end
+
+          foobara_autoregister_subclasses(klass)
         end
 
         def foobara_autoregister_subclasses(klass)
@@ -101,10 +106,31 @@ module Foobara
 
           mod.scoped_path = adjusted_scoped_path
         end
+
+        def foobara_instances_are_namespaces!(klass, default_parent: nil)
+          klass.include ::Foobara::Namespace::IsNamespace
+
+          klass.define_method :initialize do |*args, **opts, &block|
+            initialize_foobara_namespace(symbol, accesses: [], parent_namespace: default_parent)
+            super(*args, **opts, &block)
+          end
+        end
       end
 
       def foobara_namespace!(scoped_path: nil, ignore_modules: nil)
         NamespaceHelpers.foobara_namespace!(self, scoped_path:, ignore_modules:)
+      end
+
+      def foobara_subclasses_are_namespaces!(klass, default_parent: nil)
+        NamespaceHelpers.foobara_subclasses_are_namespaces!(klass, default_parent:)
+      end
+
+      def foobara_autoregister_subclasses(klass)
+        NamespaceHelpers.foobara_autoregister_subclasses(klass)
+      end
+
+      def foobara_instances_are_namespaces!(klass, default_parent: nil)
+        NamespaceHelpers.foobara_instances_are_namespaces!(klass, default_parent:)
       end
     end
   end
