@@ -1,12 +1,3 @@
-# types of scoped registration
-
-# 1. extend a module/root or global namespace (Foobara)
-# 2. all subclasses should be namespaces and autoregistered (Org/Domain/Command)
-# 3. all instances are namespaces (Type)
-# 4. explicit registration (Max)
-
-Module.include Foobara::Namespace::NamespaceHelpers
-
 module FoobaraSimulation
   module Foobara
     foobara_root_namespace!(ignore_modules: FoobaraSimulation)
