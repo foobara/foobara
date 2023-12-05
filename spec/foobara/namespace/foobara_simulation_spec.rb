@@ -40,11 +40,7 @@ module FoobaraSimulation
   end
 
   class Processor
-    extend ::Foobara::Scoped
-
-    self.namespace = Foobara
-
-    extend ::Foobara::Namespace::IsNamespace
+    !foobara_subclasses_are_namespaces!(default_parent: Foobara)
   end
 
   class Error
@@ -64,8 +60,6 @@ module FoobaraSimulation
   end
 
   class Max < Processor
-    extend ::Foobara::Namespace::IsNamespace
-
     class TooBig < Error
     end
   end
