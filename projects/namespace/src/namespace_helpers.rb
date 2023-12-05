@@ -41,10 +41,21 @@ module Foobara
       end
 
       module InstancesAreNamespaces
+        # TODO: dry this up somehow?
+        class << self
+          def included(mod)
+            class << mod
+              attr_accessor :default_namespace
+            end
+
+            super
+          end
+        end
+
         def initialize(*, **, &)
-          parent_namespace = namespace || default_namespace
-          initialize_foobara_namespace(symbol, accesses: [], parent_namespace:)
-          super
+          super unless self.class.superclass == Object
+          parent_namespace = namespace || self.class.default_namespace
+          initialize_foobara_namespace(parent_namespace:)
         end
       end
 
@@ -135,7 +146,7 @@ module Foobara
           klass.include InstancesAreNamespaces
 
           if default_parent
-            klass.foobara_scoped_default_namespace = default_parent
+            klass.default_namespace = default_parent
           end
         end
 

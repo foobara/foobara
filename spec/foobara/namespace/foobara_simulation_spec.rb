@@ -26,15 +26,16 @@ module FoobaraSimulation
   end
 
   class Type
-    include ::Foobara::Namespace::IsNamespace
-
-    def initialize(symbol, parent_namespace = Foobara)
-      initialize_foobara_namespace(symbol, accesses: [], parent_namespace:)
-    end
+    foobara_instances_are_namespaces!(default_parent: Foobara)
 
     def add_processor(processor)
       processor.parent_namespace = self
       register(processor)
+    end
+
+    def initialize(scoped_path)
+      self.scoped_path = ::Foobara::Util.array(scoped_path)
+      super
     end
   end
 

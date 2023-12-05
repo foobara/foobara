@@ -13,7 +13,7 @@ module Foobara
     end
 
     def scoped_path=(path)
-      @scoped_path = path
+      @scoped_path = path.map(&:to_s)
     end
 
     def scoped_short_name

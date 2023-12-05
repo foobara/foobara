@@ -50,7 +50,7 @@ module Foobara
         end
       end
 
-      def initialize_foobara_namespace(scoped_name_or_path, accesses: [], parent_namespace: nil)
+      def initialize_foobara_namespace(scoped_name_or_path = @scoped_path, accesses: [], parent_namespace: nil)
         self.accesses = Util.array(accesses)
 
         if scoped_name_or_path.is_a?(::Symbol)
