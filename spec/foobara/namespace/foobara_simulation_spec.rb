@@ -27,6 +27,7 @@ module FoobaraSimulation
 
   class Type
     foobara_instances_are_namespaces!(default_parent: Foobara)
+    foobara_autoregister_instances
 
     def add_processor(processor)
       processor.parent_namespace = self
@@ -141,7 +142,7 @@ end
 
 RSpec.describe Foobara::Namespace do
   describe "#lookup_*" do
-    it "finds the expected objects given certain paths", :focus do
+    it "finds the expected objects given certain paths" do
       expect(FoobaraSimulation::OrgA.parent_namespace).to eq(FoobaraSimulation::Foobara)
       expect(FoobaraSimulation::OrgA.scoped_path).to eq(%w[OrgA])
       expect(FoobaraSimulation::OrgA.scoped_full_path).to eq(%w[OrgA])
@@ -192,8 +193,7 @@ RSpec.describe Foobara::Namespace do
 
       expect(FoobaraSimulation::Integer.parent_namespace).to eq(FoobaraSimulation::Foobara)
       expect(FoobaraSimulation::Foobara.lookup_type("integer")).to eq(FoobaraSimulation::Integer)
-
-      expect(FoobaraSimulation::Foobara.lookup_type("integer")).to eq(FoobaraSimulation::Integer)
+      expect(FoobaraSimulation::Foobara.lookup_type("::integer")).to eq(FoobaraSimulation::Integer)
 
       expect(FoobaraSimulation::Integer.lookup_processor("Max")).to eq(FoobaraSimulation::Max)
       expect(FoobaraSimulation::Integer.lookup_processor("Max")).to eq(FoobaraSimulation::Max)

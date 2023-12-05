@@ -19,54 +19,11 @@ module Foobara
         def extended(mod)
           Namespace.autoregister(mod)
 
-          # parent_namespace = nil
-          #
-          # parent_mod = Util.module_for(mod)
-          #
-          # while parent_mod
-          #   if parent_mod
-          #     if parent_mod.is_a?(Foobara::Namespace::IsNamespace)
-          #       parent_namespace = parent_mod
-          #       break
-          #     else
-          #       parent_mod = Util.module_for(parent_mod)
-          #     end
-          #   end
-          # end
-          #
-          # scoped_name = mod.name
-          #
-          # if parent_namespace
-          #   scoped_name = scoped_name.gsub(/^#{parent_namespace.name}::/, "")
-          # end
-
-          # mod.initialize_foobara_namespace(scoped_name, parent_namespace:)
-
           if mod.is_a?(Class) && !(mod < Foobara::Namespace::IsNamespaceClass)
             mod.extend(IsNamespaceClass)
           end
 
           mod.parent_namespace&.register(mod)
-        end
-      end
-
-      def initialize_foobara_namespace(scoped_name_or_path = @scoped_path, accesses: [], parent_namespace: nil)
-        self.accesses = Util.array(accesses)
-
-        if scoped_name_or_path.is_a?(::Symbol)
-          scoped_name_or_path = scoped_name_or_path.to_s
-        end
-
-        if scoped_name_or_path.is_a?(String)
-          scoped_name_or_path = scoped_name_or_path.split("::")
-        end
-
-        self.scoped_path = scoped_name_or_path
-
-        if parent_namespace
-          self.namespace = parent_namespace
-          parent_namespace.children << self
-          parent_namespace.register(self)
         end
       end
 
