@@ -108,10 +108,13 @@ module Foobara
           object.extend ::Foobara::Namespace::IsNamespace
         end
 
-        def foobara_subclasses_are_namespaces!(klass, default_parent: nil)
+        def foobara_subclasses_are_namespaces!(klass, default_parent: nil, autoregister: nil)
           klass.extend SubclassesAreNamespaces
           klass.default_namespace = default_parent
-          foobara_autoregister_subclasses(klass)
+
+          if autoregister
+            foobara_autoregister_subclasses(klass)
+          end
         end
 
         def foobara_autoregister_subclasses(klass, default_namespace: nil)
@@ -202,8 +205,8 @@ module Foobara
         NamespaceHelpers.foobara_namespace!(self, scoped_path:, ignore_modules:)
       end
 
-      def foobara_subclasses_are_namespaces!(default_parent: nil)
-        NamespaceHelpers.foobara_subclasses_are_namespaces!(self, default_parent:)
+      def foobara_subclasses_are_namespaces!(default_parent: nil, autoregister: false)
+        NamespaceHelpers.foobara_subclasses_are_namespaces!(self, default_parent:, autoregister:)
       end
 
       def foobara_autoregister_subclasses(default_namespace: nil)

@@ -14,19 +14,19 @@ module FoobaraSimulation
 
   # TODO: support concept of abstract classes...
   class Org
-    foobara_subclasses_are_namespaces!(default_parent: Foobara)
+    foobara_subclasses_are_namespaces!(default_parent: Foobara, autoregister: true)
   end
 
   class Domain
-    foobara_subclasses_are_namespaces!(default_parent: Foobara)
+    foobara_subclasses_are_namespaces!(default_parent: Foobara, autoregister: true)
   end
 
   class Command
-    foobara_subclasses_are_namespaces!(default_parent: Foobara)
+    foobara_subclasses_are_namespaces!(default_parent: Foobara, autoregister: true)
   end
 
   class Type
-    foobara_instances_are_namespaces!(default_parent: Foobara)
+    foobara_instances_are_namespaces!
 
     def add_processor(processor)
       processor.parent_namespace = self
@@ -59,13 +59,15 @@ module FoobaraSimulation
   class GlobalError < Error
   end
 
+  Integer = Type.new(:integer)
+  Integer.parent_namespace = Foobara
+  Foobara.register(Integer)
+
   class Max < Processor
     class TooBig < Error
     end
   end
 
-  Integer = Type.new(:integer)
-  Foobara.register(Integer)
   Integer.add_processor(Max)
 
   class OrgA < Org
