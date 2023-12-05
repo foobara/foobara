@@ -44,8 +44,9 @@ module Foobara
 
           if mod.is_a?(Class) && !(mod < Foobara::Namespace::IsNamespaceClass)
             mod.extend(IsNamespaceClass)
-            # mod.parent_namespace&.register(mod)
           end
+
+          mod.parent_namespace&.register(mod)
         end
       end
 
@@ -124,6 +125,7 @@ module Foobara
       end
 
       def lookup(path, absolute: false, filter: nil)
+        binding.pry if path == []
         binding.pry if path == "OrgA::DomainA::CommandA"
         if path.is_a?(::Symbol)
           path = path.to_s
