@@ -9,11 +9,17 @@ module Foobara
     end
 
     def scoped_name=(name)
+      binding.pry if name =~ /FoobaraSimulation/
       @scoped_path = name.split("::")
     end
 
     def scoped_path=(path)
+      binding.pry if path.join =~ /FoobaraSimulation/
+
       @scoped_path = path
+    rescue => e
+      binding.pry
+      raise
     end
 
     def scoped_short_name

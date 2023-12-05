@@ -125,8 +125,6 @@ module Foobara
       end
 
       def lookup(path, absolute: false, filter: nil)
-        binding.pry if path == []
-        binding.pry if path == "OrgA::DomainA::CommandA"
         if path.is_a?(::Symbol)
           path = path.to_s
         end
@@ -134,6 +132,9 @@ module Foobara
         if path.is_a?(::String)
           path = path.split("::")
         end
+
+        binding.pry if $stop && path == []
+        binding.pry if $stop && path.join =~ /TooBig/
 
         if path[0] == ""
           return root_namespace.lookup(path[(root_namespace.scoped_path.size + 1)..], absolute: true, filter:)
@@ -160,8 +161,6 @@ module Foobara
             matching_child_score = match_count
           end
         end
-
-        binding.pry if $stop
 
         if matching_child
           scoped = matching_child.lookup(path[matching_child_score..], absolute: true, filter:)

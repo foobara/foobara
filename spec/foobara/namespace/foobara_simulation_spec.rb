@@ -1,3 +1,10 @@
+# types of scoped registration
+
+# 1. extend a module/root or global namespace (Foobara)
+# 2. all subclasses should be namespaces and autoregistered (Org/Domain/Command)
+# 3. all instances are namespaces (Type)
+# 4. explicit registration (Max)
+
 module FoobaraSimulation
   module Foobara
     extend ::Foobara::Scoped
@@ -26,6 +33,10 @@ module FoobaraSimulation
   end
 
   class Domain
+    extend ::Foobara::Scoped
+
+    self.namespace = Foobara
+
     extend ::Foobara::Namespace::IsNamespace
   end
 
@@ -47,6 +58,10 @@ module FoobaraSimulation
   end
 
   class Processor
+    extend ::Foobara::Scoped
+
+    self.namespace = Foobara
+
     extend ::Foobara::Namespace::IsNamespace
   end
 
@@ -57,6 +72,7 @@ module FoobaraSimulation
     class << self
       # TODO: get this junk into a module somehow...
       def inherited(klass)
+        # why isn't this automated??
         ::Foobara::Namespace.autoregister(klass, default_parent: Foobara)
         super
       end
@@ -163,7 +179,6 @@ RSpec.describe Foobara::Namespace do
       expect(FoobaraSimulation::OrgA.parent_namespace).to eq(FoobaraSimulation::Foobara)
       expect(FoobaraSimulation::OrgA.scoped_path).to eq(%w[OrgA])
       expect(FoobaraSimulation::OrgA.scoped_full_path).to eq(%w[OrgA])
-      $stop = true
       expect(FoobaraSimulation::Foobara.lookup_org("OrgA")).to eq(FoobaraSimulation::OrgA)
       expect(FoobaraSimulation::Foobara.lookup_org("::OrgA")).to eq(FoobaraSimulation::OrgA)
 
@@ -188,7 +203,6 @@ RSpec.describe Foobara::Namespace do
       expect(
         FoobaraSimulation::OrgA::DomainA::CommandA.scoped_full_name
       ).to eq("::OrgA::DomainA::CommandA")
-      binding.pry
       expect(
         FoobaraSimulation::Foobara.lookup_command("OrgA::DomainA::CommandA")
       ).to eq(FoobaraSimulation::OrgA::DomainA::CommandA)
@@ -220,6 +234,7 @@ RSpec.describe Foobara::Namespace do
       expect(FoobaraSimulation::Foobara.lookup_processor("integer::Max")).to eq(FoobaraSimulation::Max)
 
       expect(FoobaraSimulation::Max.lookup_error("TooBig")).to eq(FoobaraSimulation::Max::TooBig)
+      $stop = true
       expect(
         FoobaraSimulation::Foobara.lookup_error("integer::Max::TooBig")
       ).to eq(FoobaraSimulation::Max::TooBig)

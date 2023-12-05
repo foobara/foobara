@@ -2,6 +2,8 @@ module Foobara
   class Namespace
     class << self
       def autoregister(mod, default_parent: nil)
+        binding.pry if mod.name == "FoobaraSimulation::Max"
+
         # TODO: eliminate parent_namespace or make it an alias of namespace!!
         unless mod.namespace
           parent_mod = Util.module_for(mod)
@@ -60,8 +62,6 @@ module Foobara
 
           mod.scoped_path = adjusted_scoped_path
         end
-
-        binding.pry if mod.name =~ /OrgA::DomainA::CommandA$/
 
         if mod.is_a?(IsNamespace)
           mod.parent_namespace = mod.namespace
