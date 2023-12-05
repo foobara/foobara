@@ -46,9 +46,17 @@ module FoobaraSimulation
     extend ::Foobara::Namespace::IsNamespace
   end
 
-  # instances/subclasses
   class Error
     foobara_autoregister_subclasses(default_namespace: Foobara)
+  end
+
+  module Foobara
+    add_category_for_subclass_of(:org, Org)
+    add_category_for_subclass_of(:domain, Domain)
+    add_category_for_subclass_of(:command, Command)
+    add_category_for_instance_of(:type, Type)
+    add_category_for_subclass_of(:processor, Processor)
+    add_category_for_subclass_of(:error, Error)
   end
 
   class GlobalError < Error
@@ -133,15 +141,6 @@ module FoobaraSimulation
         end
       end
     end
-  end
-
-  module Foobara
-    add_category_for_subclass_of(:org, Org)
-    add_category_for_subclass_of(:domain, Domain)
-    add_category_for_subclass_of(:command, Command)
-    add_category_for_instance_of(:type, Type)
-    add_category_for_subclass_of(:processor, Processor)
-    add_category_for_subclass_of(:error, Error)
   end
 end
 
