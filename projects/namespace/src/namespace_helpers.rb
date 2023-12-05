@@ -60,21 +60,20 @@ module Foobara
       end
 
       class << self
-        # *1. extend a module/root or global namespace (Foobara)
-        # *2. all subclasses should be namespaces and autoregistered (Org/Domain/Command)
-        # *3. all instances are namespaces (Type)
-        # 4. explicit registration (Max)
-        # *5. not a namespace but should be autoregistered (Error)
-        #
-        # TODO: should breakup or eliminate this...
         def initialize_foobara_namespace(namespace, scoped_name_or_path = nil, parent_namespace: nil)
-          scoped_name_or_path ||= namespace.scoped_path if namespace.scoped_path_set?
+          unless namespace.scoped_path_set?
+            scoped_name_or_path = scoped_name_or_path.to_s if scoped_name_or_path.is_a?(::Symbol)
 
-          if scoped_name_or_path.is_a?(String)
-            scoped_name_or_path = scoped_name_or_path.split("::")
+            if scoped_name_or_path.is_a?(::String)
+              namespace.scoped_name = scoped_name_or_path
+            elsif scoped_name_or_path.is_a?(::Array)
+              namespace.scoped_path = scoped_name_or_path
+            else
+              # :nocov:
+              raise "Invalid scoped name or path and for #{namespace} "
+              # :nocov:
+            end
           end
-
-          namespace.scoped_path = scoped_name_or_path
 
           if parent_namespace
             namespace.parent_namespace = parent_namespace
