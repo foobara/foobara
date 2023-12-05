@@ -1,18 +1,17 @@
 RSpec.describe Foobara::Namespace::IsNamespace do
   let(:namespace) do
-    Class.new do
-      class << self
-        def name
-          "SomeNamespace"
+    Object.new.tap do |o|
+      class << o
+        def scoped_path
+          ["SomeNamespace"]
         end
       end
 
-      extend Foobara::Namespace::IsNamespace
+      o.extend described_class
     end
   end
 
   describe "#register" do
-    let(:namespace_name) { "SomeNamespace" }
     let(:scoped_object) { Object.new }
     let(:scoped_name) { "scoped_name" }
     let(:parent_namespace) { nil }
@@ -23,13 +22,16 @@ RSpec.describe Foobara::Namespace::IsNamespace do
     end
 
     it "registers the object and it can be found again" do
-      expect(scoped_object.scoped_short_path).to eq([scoped_name])
-      expect(scoped_object.scoped_full_path).to eq([scoped_name])
-      expect(scoped_object.scoped_full_name).to eq("::#{scoped_name}")
+      expect(namespace.scoped_path).to eq(["SomeNamespace"])
+      expect(namespace.scoped_name).to eq("SomeNamespace")
+      expect(namespace.scoped_full_name).to eq("::SomeNamespace")
 
       namespace.register(scoped_object)
-
       expect(scoped_object.namespace).to be(namespace)
+
+      expect(scoped_object.scoped_short_path).to eq([scoped_name])
+      expect(scoped_object.scoped_full_path).to eq(["SomeNamespace", scoped_name])
+      expect(scoped_object.scoped_full_name).to eq("::SomeNamespace::#{scoped_name}")
 
       keys = [
         "scoped_name",
