@@ -40,6 +40,15 @@ module Foobara
         end
       end
 
+      module AutoRegisterInstances
+        def initialize(*, **, &)
+          super unless self.class.superclass == Object
+          ns = namespace || self.class.default_namespace
+
+          ns&.register(self)
+        end
+      end
+
       module InstancesAreNamespaces
         # TODO: dry this up somehow?
         class << self
@@ -98,6 +107,17 @@ module Foobara
           end
         end
 
+        def foobara_instances_are_namespaces!(klass, default_parent: nil, autoregister: nil)
+          klass.include ::Foobara::Namespace::IsNamespace
+          klass.include InstancesAreNamespaces
+
+          klass.default_namespace = default_parent if default_parent
+
+          if autoregister
+            klass.include AutoRegisterInstances
+          end
+        end
+
         def foobara_autoregister_subclasses(klass, default_namespace: nil)
           klass.extend AutoRegisterSubclasses
           klass.default_namespace = default_namespace if default_namespace
@@ -146,13 +166,6 @@ module Foobara
 
           mod.scoped_path = adjusted_scoped_path
         end
-
-        def foobara_instances_are_namespaces!(klass, default_parent: nil)
-          klass.include ::Foobara::Namespace::IsNamespace
-          klass.include InstancesAreNamespaces
-
-          klass.default_namespace = default_parent if default_parent
-        end
       end
 
       def foobara_namespace!(scoped_path: nil, ignore_modules: nil)
@@ -163,12 +176,12 @@ module Foobara
         NamespaceHelpers.foobara_subclasses_are_namespaces!(self, default_parent:, autoregister:)
       end
 
-      def foobara_autoregister_subclasses(default_namespace: nil)
-        NamespaceHelpers.foobara_autoregister_subclasses(self, default_namespace:)
+      def foobara_instances_are_namespaces!(default_parent: nil, autoregister: false)
+        NamespaceHelpers.foobara_instances_are_namespaces!(self, default_parent:, autoregister:)
       end
 
-      def foobara_instances_are_namespaces!(default_parent: nil)
-        NamespaceHelpers.foobara_instances_are_namespaces!(self, default_parent:)
+      def foobara_autoregister_subclasses(default_namespace: nil)
+        NamespaceHelpers.foobara_autoregister_subclasses(self, default_namespace:)
       end
 
       def foobara_root_namespace!(ignore_modules: nil)
