@@ -35,7 +35,7 @@ module Foobara
               subclass.foobara_parent_namespace = subclass.scoped_namespace
             end
 
-            subclass.scoped_namespace.register(subclass)
+            subclass.scoped_namespace.foobara_register(subclass)
           end
         end
       end
@@ -52,7 +52,7 @@ module Foobara
 
           ns = scoped_namespace || self.class.scoped_default_namespace
 
-          ns&.register(self)
+          ns&.foobara_register(self)
         end
       end
 

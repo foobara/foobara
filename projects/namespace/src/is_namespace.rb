@@ -7,59 +7,59 @@ module Foobara
 
       def foobara_parent_namespace=(namespace)
         self.scoped_namespace = namespace
-        scoped_namespace.children << self if namespace
+        scoped_namespace.foobara_children << self if namespace
       end
 
-      def add_category(symbol, proc)
-        @categories = categories.merge(symbol.to_sym => proc)
+      def foobara_add_category(symbol, proc)
+        @foobara_categories = foobara_categories.merge(symbol.to_sym => proc)
       end
 
-      def add_category_for_instance_of(symbol, klass)
-        add_category(symbol, proc { is_a?(klass) })
+      def foobara_add_category_for_instance_of(symbol, klass)
+        foobara_add_category(symbol, proc { is_a?(klass) })
       end
 
-      def add_category_for_subclass_of(symbol, klass)
-        add_category(symbol, proc { self < klass })
+      def foobara_add_category_for_subclass_of(symbol, klass)
+        foobara_add_category(symbol, proc { self < klass })
       end
 
-      def categories
-        @categories ||= foobara_parent_namespace&.categories || {}
+      def foobara_categories
+        @foobara_categories ||= foobara_parent_namespace&.foobara_categories || {}
       end
 
-      def registry
-        @registry ||= Foobara::Namespace::PrefixlessRegistry.new
+      def foobara_registry
+        @foobara_registry ||= Foobara::Namespace::PrefixlessRegistry.new
       end
 
-      def children
-        @children ||= []
+      def foobara_children
+        @foobara_children ||= []
       end
 
-      def root_namespace
+      def foobara_root_namespace
         ns = self
 
-        ns = ns.foobara_parent_namespace until ns.root?
+        ns = ns.foobara_parent_namespace until ns.foobara_root?
 
         ns
       end
 
-      def root?
+      def foobara_root?
         foobara_parent_namespace.nil?
       end
 
-      def register(scoped)
+      def foobara_register(scoped)
         begin
-          registry.register(scoped)
+          foobara_registry.register(scoped)
         rescue PrefixlessRegistry::RegisteringScopedWithPrefixError,
                BaseRegistry::WouldMakeRegistryAmbiguousError => e
-          upgrade_registry(e)
-          return register(scoped)
+          _upgrade_registry(e)
+          return foobara_register(scoped)
         end
 
         # awkward??
         scoped.scoped_namespace = self
       end
 
-      def lookup(path, absolute: false, filter: nil)
+      def foobara_lookup(path, absolute: false, filter: nil)
         if path.is_a?(::Symbol)
           path = path.to_s
         end
@@ -69,16 +69,17 @@ module Foobara
         end
 
         if path[0] == ""
-          return root_namespace.lookup(path[(root_namespace.scoped_path.size + 1)..], absolute: true, filter:)
+          return foobara_root_namespace.foobara_lookup(path[(foobara_root_namespace.scoped_path.size + 1)..],
+                                                       absolute: true, filter:)
         end
 
-        scoped = registry.lookup(path, filter)
+        scoped = foobara_registry.lookup(path, filter)
         return scoped if scoped
 
         matching_child = nil
         matching_child_score = 0
 
-        to_consider = absolute ? children : [self, *children]
+        to_consider = absolute ? foobara_children : [self, *foobara_children]
 
         to_consider.each do |namespace|
           match_count = namespace._path_start_match_count(path)
@@ -90,12 +91,12 @@ module Foobara
         end
 
         if matching_child
-          scoped = matching_child.lookup(path[matching_child_score..], absolute: true, filter:)
+          scoped = matching_child.foobara_lookup(path[matching_child_score..], absolute: true, filter:)
           return scoped if scoped
         end
 
         unless absolute
-          foobara_parent_namespace&.lookup(path, filter:)
+          foobara_parent_namespace&.foobara_lookup(path, filter:)
         end
       end
 
@@ -103,8 +104,8 @@ module Foobara
         scoped_namespace
       end
 
-      def lookup!(name, filter: nil)
-        object = lookup(name, filter:)
+      def foobara_lookup!(name, filter: nil)
+        object = foobara_lookup(name, filter:)
 
         unless object
           # :nocov:
@@ -116,13 +117,13 @@ module Foobara
       end
 
       def method_missing(method_name, *)
-        filter, bang = filter_from_method_name(method_name)
+        filter, bang = _filter_from_method_name(method_name)
 
         if filter
           if bang
-            lookup!(*, filter:)
+            foobara_lookup!(*, filter:)
           else
-            lookup(*, filter:)
+            foobara_lookup(*, filter:)
           end
         else
           # :nocov:
@@ -132,16 +133,16 @@ module Foobara
       end
 
       def respond_to_missing?(method_name, include_private = false)
-        !!filter_from_method_name(method_name) || super
+        !!_filter_from_method_name(method_name) || super
       end
 
       private
 
-      def filter_from_method_name(method_name)
+      def _filter_from_method_name(method_name)
         match = method_name.to_s.match(/^lookup_(\w+)(!)?$/)
 
         if match
-          filter = categories[match[1].to_sym]
+          filter = foobara_categories[match[1].to_sym]
           if filter
             bang = !match[2].nil?
 
@@ -150,7 +151,7 @@ module Foobara
         end
       end
 
-      def upgrade_registry(error)
+      def _upgrade_registry(error)
         new_registry_class = case error
                              when Foobara::Namespace::PrefixlessRegistry::RegisteringScopedWithPrefixError
                                Foobara::Namespace::UnambiguousRegistry
@@ -158,11 +159,11 @@ module Foobara
                                Foobara::Namespace::AmbiguousRegistry
                              end
 
-        old_registry = registry
+        old_registry = foobara_registry
 
-        @registry = new_registry_class.new
+        @foobara_registry = new_registry_class.new
 
-        old_registry.each_scoped { |s| registry.register(s) }
+        old_registry.each_scoped { |s| foobara_registry.register(s) }
       end
 
       protected

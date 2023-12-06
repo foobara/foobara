@@ -26,7 +26,7 @@ RSpec.describe Foobara::Namespace::IsNamespace do
       expect(namespace.scoped_name).to eq("SomeNamespace")
       expect(namespace.scoped_full_name).to eq("::SomeNamespace")
 
-      namespace.register(scoped_object)
+      namespace.foobara_register(scoped_object)
       expect(scoped_object.scoped_namespace).to be(namespace)
 
       expect(scoped_object.scoped_short_path).to eq([scoped_name])
@@ -39,8 +39,8 @@ RSpec.describe Foobara::Namespace::IsNamespace do
       ]
 
       keys.each do |key|
-        expect(namespace.lookup(key)).to be(scoped_object)
-        expect(namespace.lookup!(key)).to be(scoped_object)
+        expect(namespace.foobara_lookup(key)).to be(scoped_object)
+        expect(namespace.foobara_lookup!(key)).to be(scoped_object)
       end
     end
   end
@@ -77,21 +77,21 @@ RSpec.describe Foobara::Namespace::IsNamespace do
 
       context "when there are two categories" do
         before do
-          namespace.add_category_for_instance_of(:class1, class1)
-          namespace.add_category_for_instance_of(:class2, class2)
+          namespace.foobara_add_category_for_instance_of(:class1, class1)
+          namespace.foobara_add_category_for_instance_of(:class2, class2)
         end
 
         context "when an object is registered" do
           before do
-            namespace.register(object1)
+            namespace.foobara_register(object1)
           end
 
           context "when looking up with matching lookup_class1 method and lookup method" do
             it "returns the object" do
               expect(namespace.lookup_class1(scoped_name)).to be(object1)
               expect(namespace.lookup_class1!(scoped_name)).to be(object1)
-              expect(namespace.lookup(scoped_name)).to be(object1)
-              expect(namespace.lookup!(scoped_name)).to be(object1)
+              expect(namespace.foobara_lookup(scoped_name)).to be(object1)
+              expect(namespace.foobara_lookup!(scoped_name)).to be(object1)
             end
           end
         end
