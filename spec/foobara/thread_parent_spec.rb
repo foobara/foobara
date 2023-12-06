@@ -1,6 +1,7 @@
 RSpec.describe Foobara::ThreadParent do
   describe "#foobara_var_set and #foobara_var_get" do
     it "inherits from parent threads and overrides locally" do
+      raise "wtf "
       outer = Thread.new do
         Thread.foobara_var_set("test", "outer")
         expect(Thread.foobara_var_get("test")).to eq("outer")

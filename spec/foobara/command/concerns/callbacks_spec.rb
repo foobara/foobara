@@ -1,7 +1,7 @@
 RSpec.describe Foobara::Command::Concerns::Callbacks do
   context "with simple command" do
     let(:command_class) {
-      Class.new(Foobara::Command) do
+      stub_class(:CommandClass, Foobara::Command) do
         inputs exponent: :integer,
                base: :integer
 
