@@ -374,5 +374,17 @@ module Foobara
 
       const_get_up_hierarchy(mod, name)
     end
+
+    def remove_constant(const_name)
+      path = const_name.split("::")
+
+      mod = Object
+
+      path[0..-2].each do |name|
+        mod = Util.constant_value(mod, name)
+      end
+
+      mod.send(:remove_const, path.last)
+    end
   end
 end

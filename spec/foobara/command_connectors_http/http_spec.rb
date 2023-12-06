@@ -1,37 +1,21 @@
 Foobara::Monorepo.project :command_connectors_http
 
-RSpec.describe Foobara::CommandConnectors::Http do
+RSpec.describe Foobara::CommandConnectors::Http, :focus do
   after do
     Foobara.reset_alls
   end
 
   let(:command_class) do
-    stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-    Class.new(Foobara::Command) do
-      error_klass = Class.new(Foobara::RuntimeError) do
+    stub_class(:ComputeExponent,Foobara::Command) do
+      error_klass = stub_class(:SomeRuntimeError, Foobara::RuntimeError) do
         class << self
-          def name
-            "SomeRuntimeError"
-          end
-
           def context_type_declaration
             :duck
           end
         end
-
-        stub_class.call(self)
       end
 
       possible_error error_klass
-
-      class << self
-        def name
-          "ComputeExponent"
-        end
-      end
-
-      stub_class.call(self)
 
       inputs exponent: :integer,
              base: :integer
@@ -89,15 +73,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
   describe "#connect" do
     context "when command is in an organization" do
       let!(:org_module) do
-        stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-        Module.new do
-          class << self
-            def name
-              "SomeOrg"
-            end
-          end
-
+        stub_module :SomeOrg do
           stub_class.call(self)
 
           foobara_organization!
@@ -105,36 +81,13 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
 
       let!(:domain_module) do
-        stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-        SomeOrg.module_eval do
-          Module.new do
-            class << self
-              def name
-                "SomeOrg::SomeDomain"
-              end
-            end
-
-            stub_class.call(self)
-
+        stub_module("SomeOrg::SomeDomain")
             foobara_domain!
-          end
         end
       end
 
       let!(:command_class) do
-        stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-        SomeOrg::SomeDomain.module_eval do
-          Class.new(Foobara::Command) do
-            class << self
-              def name
-                "SomeOrg::SomeDomain::SomeCommand"
-              end
-            end
-
-            stub_class.call(self)
-          end
+        stub_class "SomeOrg::SomeDomain::SomeCommand" , Foobara::Command do
         end
       end
 
@@ -276,7 +229,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
       let(:inputs_transformers) { [inputs_transformer] }
       let(:inputs_transformer) do
-        Class.new(Foobara::Value::Transformer) do
+        stub_class(:RandomTransformer, Foobara::Value::Transformer) do
           def transform(inputs)
             {
               base: inputs["bbaassee"],
@@ -500,17 +453,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
       let(:command_class) do
         user_class
 
-        stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-        Class.new(Foobara::Command) do
-          class << self
-            def name
-              "QueryUser"
-            end
-          end
-
-          stub_class.call(self)
-
+        stub_class(:QueryUser, Foobara::Command) do
           inputs user: User
           result :User
 
@@ -527,17 +470,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
       let(:body) { "" }
 
       let(:user_class) do
-        stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-        Class.new(Foobara::Entity) do
-          class << self
-            def name
-              "User"
-            end
-          end
-
-          stub_class.call(self)
-
+        stub_class(:User, Foobara::Entity) do
           attributes id: :integer,
                      name: :string,
                      ratings: [:integer],
@@ -588,33 +521,13 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
       context "with an association" do
         let(:point_class) do
-          stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-          Class.new(Foobara::Model) do
-            class << self
-              def name
-                "Point"
-              end
-            end
-
-            stub_class.call(self)
-
+          stub_class :Point, Foobara::Model do
             attributes x: :integer, y: :integer
           end
         end
 
         let(:referral_class) do
-          stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-          Class.new(Foobara::Entity) do
-            class << self
-              def name
-                "Referral"
-              end
-            end
-
-            stub_class.call(self)
-
+          stub_class(:Referral, Foobara::Entity) do
             attributes id: :integer, email: :email
             primary_key :id
           end
@@ -662,17 +575,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
               user_class
               referral_class
 
-              stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-              Class.new(Foobara::Command) do
-                class << self
-                  def name
-                    "QueryUser"
-                  end
-                end
-
-                stub_class.call(self)
-
+              stub_class :QueryUser, Foobara::Command do
                 inputs user: User
                 result stuff: [User, Referral]
 
@@ -867,7 +770,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         let(:result_transformers) { [result_transformer] }
         let(:result_transformer) do
-          Class.new(Foobara::TypeDeclarations::TypedTransformer) do
+          stub_class :SomeOtherTransformer, Foobara::TypeDeclarations::TypedTransformer do
             class << self
               def output_type_declaration
                 { answer: :string }
@@ -1031,17 +934,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
           let(:command_class) do
             user_class
 
-            stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-            Class.new(Foobara::Command) do
-              class << self
-                def name
-                  "QueryUser"
-                end
-              end
-
-              stub_class.call(self)
-
+            stub_class :QueryUser, Foobara::Command do
               inputs user: User
               result :User
             end
@@ -1056,17 +949,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
           }
 
           let(:user_class) do
-            stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-            Class.new(Foobara::Entity) do
-              class << self
-                def name
-                  "User"
-                end
-              end
-
-              stub_class.call(self)
-
+            stub_class :User, Foobara::Entity do
               attributes id: :integer, name: :string
               primary_key :id
             end

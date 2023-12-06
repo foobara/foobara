@@ -1,7 +1,7 @@
 RSpec.describe Foobara::Command::Concerns::Errors do
   context "with simple command" do
     let(:command_base_class) {
-      Class.new(Foobara::Command) do
+      stub_class(:CalculateExponentBase, Foobara::Command) do
         inputs(
           type: :attributes,
           element_type_declarations: {
@@ -40,7 +40,7 @@ RSpec.describe Foobara::Command::Concerns::Errors do
 
     context "with additional possible input error" do
       let(:command_class) do
-        Class.new(command_base_class) do
+        stub_class(:CalculateExponent, command_base_class) do
           possible_input_error(:exponent, :cannot_be_five, value: :integer, cannot_be: :integer)
 
           def validate
@@ -83,7 +83,7 @@ RSpec.describe Foobara::Command::Concerns::Errors do
 
     context "with possible runtime error" do
       let(:command_class) do
-        Class.new(command_base_class) do
+        stub_class(:CalculateExponentCannotBeFive, command_base_class) do
           possible_error(:exponent_cannot_be_five, value: :integer, cannot_be: :integer)
 
           def execute

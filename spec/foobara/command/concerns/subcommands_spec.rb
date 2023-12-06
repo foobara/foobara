@@ -1,24 +1,20 @@
 RSpec.describe Foobara::Command::Concerns::Subcommands do
   let(:command_class) {
-    Class.new(Foobara::Command) do
+    dep = subcommand_class
+
+    stub_class(:RunSomeCommand, Foobara::Command) do
       inputs should_fail: :integer
 
-      depends_on(RunSomeSubcommand)
+      depends_on(dep)
 
       def execute
         run_subcommand!(RunSomeSubcommand, should_fail:)
-      end
-
-      class << self
-        def name
-          "RunSomeCommand"
-        end
       end
     end
   }
 
   let(:subcommand_class) {
-    Class.new(Foobara::Command) do
+    stub_class(:RunSomeSubcommand, Foobara::Command) do
       # rubocop:disable RSpec/LeakyConstantDeclaration
       self::ItFailedError = Class.new(Foobara::RuntimeError) do
         # rubocop:enable RSpec/LeakyConstantDeclaration
@@ -45,18 +41,8 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
 
         100
       end
-
-      class << self
-        def name
-          "RunSomeSubcommand"
-        end
-      end
     end
   }
-
-  before do
-    stub_const("RunSomeSubcommand", subcommand_class)
-  end
 
   describe "depends_on?" do
     context "when command registered via #depends_on" do
