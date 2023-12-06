@@ -59,7 +59,7 @@ module Foobara
         scoped.scoped_namespace = self
       end
 
-      def lookup(path, absolute: false, filter: nil)
+      def foobara_lookup(path, absolute: false, filter: nil)
         if path.is_a?(::Symbol)
           path = path.to_s
         end
@@ -69,7 +69,7 @@ module Foobara
         end
 
         if path[0] == ""
-          return root_namespace.lookup(path[(root_namespace.scoped_path.size + 1)..], absolute: true, filter:)
+          return root_namespace.foobara_lookup(path[(root_namespace.scoped_path.size + 1)..], absolute: true, filter:)
         end
 
         scoped = foobara_registry.lookup(path, filter)
@@ -90,12 +90,12 @@ module Foobara
         end
 
         if matching_child
-          scoped = matching_child.lookup(path[matching_child_score..], absolute: true, filter:)
+          scoped = matching_child.foobara_lookup(path[matching_child_score..], absolute: true, filter:)
           return scoped if scoped
         end
 
         unless absolute
-          foobara_parent_namespace&.lookup(path, filter:)
+          foobara_parent_namespace&.foobara_lookup(path, filter:)
         end
       end
 
@@ -103,8 +103,8 @@ module Foobara
         scoped_namespace
       end
 
-      def lookup!(name, filter: nil)
-        object = lookup(name, filter:)
+      def foobara_lookup!(name, filter: nil)
+        object = foobara_lookup(name, filter:)
 
         unless object
           # :nocov:
@@ -120,9 +120,9 @@ module Foobara
 
         if filter
           if bang
-            lookup!(*, filter:)
+            foobara_lookup!(*, filter:)
           else
-            lookup(*, filter:)
+            foobara_lookup(*, filter:)
           end
         else
           # :nocov:

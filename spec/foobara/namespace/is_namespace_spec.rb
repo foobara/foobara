@@ -39,8 +39,8 @@ RSpec.describe Foobara::Namespace::IsNamespace do
       ]
 
       keys.each do |key|
-        expect(namespace.lookup(key)).to be(scoped_object)
-        expect(namespace.lookup!(key)).to be(scoped_object)
+        expect(namespace.foobara_lookup(key)).to be(scoped_object)
+        expect(namespace.foobara_lookup!(key)).to be(scoped_object)
       end
     end
   end
@@ -90,8 +90,8 @@ RSpec.describe Foobara::Namespace::IsNamespace do
             it "returns the object" do
               expect(namespace.lookup_class1(scoped_name)).to be(object1)
               expect(namespace.lookup_class1!(scoped_name)).to be(object1)
-              expect(namespace.lookup(scoped_name)).to be(object1)
-              expect(namespace.lookup!(scoped_name)).to be(object1)
+              expect(namespace.foobara_lookup(scoped_name)).to be(object1)
+              expect(namespace.foobara_lookup!(scoped_name)).to be(object1)
             end
           end
         end
