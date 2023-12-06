@@ -11,7 +11,7 @@ module Foobara
       end
 
       def foobara_add_category(symbol, proc)
-        @categories = categories.merge(symbol.to_sym => proc)
+        @foobara_categories = foobara_categories.merge(symbol.to_sym => proc)
       end
 
       def foobara_add_category_for_instance_of(symbol, klass)
@@ -22,8 +22,8 @@ module Foobara
         foobara_add_category(symbol, proc { self < klass })
       end
 
-      def categories
-        @categories ||= foobara_parent_namespace&.categories || {}
+      def foobara_categories
+        @foobara_categories ||= foobara_parent_namespace&.foobara_categories || {}
       end
 
       def registry
@@ -141,7 +141,7 @@ module Foobara
         match = method_name.to_s.match(/^lookup_(\w+)(!)?$/)
 
         if match
-          filter = categories[match[1].to_sym]
+          filter = foobara_categories[match[1].to_sym]
           if filter
             bang = !match[2].nil?
 
