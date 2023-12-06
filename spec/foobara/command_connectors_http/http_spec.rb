@@ -1,13 +1,15 @@
 Foobara::Monorepo.project :command_connectors_http
 
-RSpec.describe Foobara::CommandConnectors::Http, :focus do
+RSpec.describe Foobara::CommandConnectors::Http do
   after do
     Foobara.reset_alls
   end
 
   let(:command_class) do
-    stub_class(:ComputeExponent,Foobara::Command) do
-      error_klass = stub_class(:SomeRuntimeError, Foobara::RuntimeError) do
+    sc = ->(*args, &block) { stub_class(*args, &block) }
+
+    stub_class(:ComputeExponent, Foobara::Command) do
+      error_klass = sc.call(:SomeRuntimeError, Foobara::RuntimeError) do
         class << self
           def context_type_declaration
             :duck
@@ -74,20 +76,18 @@ RSpec.describe Foobara::CommandConnectors::Http, :focus do
     context "when command is in an organization" do
       let!(:org_module) do
         stub_module :SomeOrg do
-          stub_class.call(self)
-
           foobara_organization!
         end
       end
 
       let!(:domain_module) do
-        stub_module("SomeOrg::SomeDomain")
-            foobara_domain!
+        stub_module("SomeOrg::SomeDomain") do
+          foobara_domain!
         end
       end
 
       let!(:command_class) do
-        stub_class "SomeOrg::SomeDomain::SomeCommand" , Foobara::Command do
+        stub_class "SomeOrg::SomeDomain::SomeCommand", Foobara::Command do
         end
       end
 
