@@ -23,7 +23,7 @@ module Foobara
         attr_accessor :default_namespace
 
         def inherited(subclass)
-          super unless self.class.superclass == Object
+          super
 
           subclass.extend ::Foobara::Scoped
 
@@ -42,7 +42,14 @@ module Foobara
 
       module AutoRegisterInstances
         def initialize(*, **, &)
-          super unless self.class.superclass == Object
+          if self.class.superclass == Object
+            super()
+          else
+            # :nocov:
+            super
+            # :nocov:
+          end
+
           ns = namespace || self.class.default_namespace
 
           ns&.register(self)
@@ -62,7 +69,8 @@ module Foobara
         end
 
         def initialize(*, **, &)
-          super unless self.class.superclass == Object
+          self.class.superclass == Object ? super() : super
+
           parent_namespace = namespace || self.class.default_namespace
           NamespaceHelpers.initialize_foobara_namespace(self, parent_namespace:)
         end
