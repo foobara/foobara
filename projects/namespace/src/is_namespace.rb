@@ -26,8 +26,8 @@ module Foobara
         @foobara_categories ||= foobara_parent_namespace&.foobara_categories || {}
       end
 
-      def registry
-        @registry ||= Foobara::Namespace::PrefixlessRegistry.new
+      def foobara_registry
+        @foobara_registry ||= Foobara::Namespace::PrefixlessRegistry.new
       end
 
       def children
@@ -48,7 +48,7 @@ module Foobara
 
       def register(scoped)
         begin
-          registry.register(scoped)
+          foobara_registry.register(scoped)
         rescue PrefixlessRegistry::RegisteringScopedWithPrefixError,
                BaseRegistry::WouldMakeRegistryAmbiguousError => e
           _upgrade_registry(e)
@@ -72,7 +72,7 @@ module Foobara
           return root_namespace.lookup(path[(root_namespace.scoped_path.size + 1)..], absolute: true, filter:)
         end
 
-        scoped = registry.lookup(path, filter)
+        scoped = foobara_registry.lookup(path, filter)
         return scoped if scoped
 
         matching_child = nil
@@ -158,11 +158,11 @@ module Foobara
                                Foobara::Namespace::AmbiguousRegistry
                              end
 
-        old_registry = registry
+        old_registry = foobara_registry
 
-        @registry = new_registry_class.new
+        @foobara_registry = new_registry_class.new
 
-        old_registry.each_scoped { |s| registry.register(s) }
+        old_registry.each_scoped { |s| foobara_registry.register(s) }
       end
 
       protected
