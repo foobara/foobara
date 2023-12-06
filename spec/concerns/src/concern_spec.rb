@@ -41,7 +41,7 @@ RSpec.describe Foobara::Concern do
       end
     end
 
-    it "passes class methods and effects of on_include through", :focus do
+    it "passes class methods and effects of on_include through" do
       expect(klass.singleton_class.ancestors.map(&:name)).to include("SubConcern::ClassMethods")
       expect(klass.foo?).to be(true)
       expect(klass.name_under).to eq("some_class")

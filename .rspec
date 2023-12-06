@@ -1,4 +1,4 @@
---format progress
+--format documentation
 --color
 --require spec_helper
 --order defined

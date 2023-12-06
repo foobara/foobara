@@ -8,17 +8,7 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
   end
 
   let(:entity_class) do
-    stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-    Class.new(Foobara::Entity) do
-      class << self
-        def name
-          "SomeEntity"
-        end
-      end
-
-      stub_class.call(self)
-
+    stub_class("SomeEntity", Foobara::Entity) do
       attributes pk: :integer,
                  foo: :integer,
                  bar: :symbol
