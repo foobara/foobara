@@ -1,10 +1,6 @@
 RSpec.describe Foobara::Domain do
   before do
     Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
-    stub_const(organization_module.name, organization_module)
-    stub_const(domain_module.name, domain_module)
-    expect(domain).to be_a(described_class)
-    stub_const(command_class.name, command_class)
   end
 
   after do
@@ -15,35 +11,17 @@ RSpec.describe Foobara::Domain do
   let(:organization) { organization_module.foobara_organization }
 
   let(:domain_module) {
-    Module.new do
-      class << self
-        def name
-          "SomeDomain"
-        end
-      end
-
+    stub_module :SomeDomain do
       foobara_domain!
     end
   }
 
-  let(:command_class) {
-    Class.new(Foobara::Command) do
-      class << self
-        def name
-          "SomeDomain::SomeCommand"
-        end
-      end
-    end
+  let!(:command_class) {
+    stub_class "#{domain_module.name}::SomeCommand", Foobara::Command
   }
 
   let(:organization_module) do
-    Module.new do
-      class << self
-        def name
-          "SomeOrg"
-        end
-      end
-
+    stub_module :SomeOrg do
       foobara_organization!
     end
   end
@@ -117,13 +95,7 @@ RSpec.describe Foobara::Domain do
       }
 
       let(:command_class) {
-        Class.new(Foobara::Command) do
-          class << self
-            def name
-              "SomeOrg::SomeDomain::SomeCommand"
-            end
-          end
-
+        stub_class "#{domain_module.name}::SomeCommand", Foobara::Command do
           result(foo: :string, bar: :integer)
         end
       }
@@ -174,12 +146,14 @@ RSpec.describe Foobara::Domain do
   end
 
   context "when creating a model in the domain module" do
-    let(:model_class) { Class.new(Foobara::Model) }
+    let(:model_class) do
+      stub_class "#{domain_module.name}::SomeNewModel", Foobara::Model do
+        attributes a: :integer, b: :symbol
+      end
+    end
 
     before do
-      domain_module.const_set("SomeNewModel", model_class)
-
-      model_class.attributes(a: :integer, b: :symbol)
+      model_class
     end
 
     it "automatically registers it" do
@@ -203,16 +177,14 @@ RSpec.describe Foobara::Domain do
   end
 
   context "when creating a model from a module and an existing class but by name" do
-    let(:model_class) { Class.new(Foobara::Model) }
-
-    before do
-      domain_module.const_set("SomeNewModel", model_class)
+    let(:model_class) do
+      stub_class "#{domain_module.name}::SomeNewModel", Foobara::Model
     end
 
     it "automatically registers it" do
       type = domain_module.type_for_declaration(
         type: :model,
-        name: :SomeNewModel,
+        name: model_class.model_name,
         model_module: domain_module,
         attributes_declaration: { a: :integer, b: :symbol }
       )

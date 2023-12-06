@@ -14,17 +14,7 @@ RSpec.describe Foobara::Command::Concerns::Entities do
     end
 
     let(:read_command) do
-      stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-      Class.new(Foobara::Command) do
-        class << self
-          def name
-            "ReadEmployee"
-          end
-        end
-
-        stub_class.call(self)
-
+      stub_class(:ReadEmployee, Foobara::Command) do
         # TODO: does this work with Employee instead of :Employee ?
         inputs employee: { type: :Employee, required: true }
 
@@ -47,62 +37,28 @@ RSpec.describe Foobara::Command::Concerns::Entities do
     before do
       Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
 
-      stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-      Class.new(Foobara::Entity) do
+      stub_class :Base, Foobara::Entity do
         abstract
-
-        class << self
-          def name
-            "Base"
-          end
-        end
-
-        stub_class.call(self)
 
         attributes id: :integer
 
         primary_key :id
       end
 
-      Class.new(Base) do
-        class << self
-          def name
-            "User"
-          end
-        end
-
-        stub_class.call(self)
-
+      stub_class :User, Base do
         attributes name: { type: :string, required: true }
       end
 
       Foobara::Persistence.register_entity(user_base, User, table_name: "users")
 
-      Class.new(Base) do
-        class << self
-          def name
-            "Person"
-          end
-        end
-
+      stub_class(:Person, Base) do
         abstract
-
-        stub_class.call(self)
 
         attributes user: User
       end
 
       # TODO: how to support self-referential models??
-      Class.new(Person) do
-        class << self
-          def name
-            "Applicant"
-          end
-        end
-
-        stub_class.call(self)
-
+      stub_class(:Applicant, Person) do
         attributes is_active: { type: :boolean, default: true },
                    friends: [User],
                    attrs: {
@@ -113,40 +69,16 @@ RSpec.describe Foobara::Command::Concerns::Entities do
                    }
       end
 
-      Class.new(Base) do
-        class << self
-          def name
-            "Package"
-          end
-        end
-
-        stub_class.call(self)
-
+      stub_class(:Package, Base) do
         attributes applicants: [Applicant],
                    is_active: :boolean
       end
 
-      Class.new(Base) do
-        class << self
-          def name
-            "Assignment"
-          end
-        end
-
-        stub_class.call(self)
-
+      stub_class(:Assignment, Base) do
         attributes package: Package
       end
 
-      Class.new(Person) do
-        class << self
-          def name
-            "Employee"
-          end
-        end
-
-        stub_class.call(self)
-
+      stub_class(:Employee, Person) do
         attributes assignments: { type: :array, element_type_declaration: Assignment, default: [] },
                    past_assignments: [Assignment],
                    priority_assignment: Assignment
@@ -205,17 +137,7 @@ RSpec.describe Foobara::Command::Concerns::Entities do
 
     context "with multiple records" do
       let(:read_command) do
-        stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-        Class.new(Foobara::Command) do
-          class << self
-            def name
-              "ReadEmployee"
-            end
-          end
-
-          stub_class.call(self)
-
+        stub_class(:ReadEmployee, Foobara::Command) do
           # TODO: does this work with Employee instead of :Employee ?
           inputs employee: { type: :Employee, required: true },
                  employee_array: [Employee]
@@ -289,31 +211,15 @@ RSpec.describe Foobara::Command::Concerns::Entities do
 
     context "when input is good but a different runtime error occurs" do
       let(:read_command) do
-        stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-        error_class = Class.new(Foobara::RuntimeError) do
+        error_class = stub_class(:SomeRuntimeError, Foobara::RuntimeError) do
           class << self
-            def name
-              "SomeRuntimeError"
-            end
-
             def context_type_declaration
               {}
             end
           end
-
-          stub_class.call(self)
         end
 
-        Class.new(Foobara::Command) do
-          class << self
-            def name
-              "ReadEmployee"
-            end
-          end
-
-          stub_class.call(self)
-
+        stub_class(:ReadEmployee, Foobara::Command) do
           # TODO: does this work with Employee instead of :Employee ?
           inputs employee: { type: :Employee, required: true }
 
@@ -371,17 +277,7 @@ RSpec.describe Foobara::Command::Concerns::Entities do
     describe "create command" do
       context "with entity class as inputs" do
         let(:create_command) do
-          stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-          Class.new(Foobara::Command) do
-            class << self
-              def name
-                "CreateUser"
-              end
-            end
-
-            stub_class.call(self)
-
+          stub_class(:CreateUser, Foobara::Command) do
             # TODO: does this work with User instead of :User ?
             # We can't come up with a cleaner way to do this?
             inputs User.attributes_type.declaration_data
@@ -420,17 +316,7 @@ RSpec.describe Foobara::Command::Concerns::Entities do
 
       context "with normal attributes inputs" do
         let(:create_command) do
-          stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-          Class.new(Foobara::Command) do
-            class << self
-              def name
-                "CreateUser"
-              end
-            end
-
-            stub_class.call(self)
-
+          stub_class(:CreateUser, Foobara::Command) do
             # TODO: does this work with User instead of :User ?
             # We can't come up with a cleaner way to do this?
             inputs user: User
@@ -460,17 +346,7 @@ RSpec.describe Foobara::Command::Concerns::Entities do
     describe "update atom command" do
       context "with helper method result for inputs" do
         let(:update_command) do
-          stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-          Class.new(Foobara::Command) do
-            class << self
-              def name
-                "UpdateApplicant"
-              end
-            end
-
-            stub_class.call(self)
-
+          stub_class(:UpdateApplicant, Foobara::Command) do
             # TODO: does this work with User instead of :User ?
             # We can't come up with a cleaner way to do this?
             inputs Foobara::Command::EntityHelpers.type_declaration_for_record_atom_update(Applicant)
@@ -526,17 +402,7 @@ RSpec.describe Foobara::Command::Concerns::Entities do
     describe "update aggregate command" do
       context "with helper method result for inputs" do
         let(:update_command) do
-          stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-          Class.new(Foobara::Command) do
-            class << self
-              def name
-                "UpdateApplicantAggregate"
-              end
-            end
-
-            stub_class.call(self)
-
+          stub_class(:UpdateApplicantAggregate, Foobara::Command) do
             # TODO: does this work with User instead of :User ?
             # We can't come up with a cleaner way to do this?
             inputs Foobara::Command::EntityHelpers.type_declaration_for_record_aggregate_update(Applicant)
@@ -618,17 +484,7 @@ RSpec.describe Foobara::Command::Concerns::Entities do
 
     describe "delete command" do
       let(:delete_command) do
-        stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-        Class.new(Foobara::Command) do
-          class << self
-            def name
-              "DeleteApplicant"
-            end
-          end
-
-          stub_class.call(self)
-
+        stub_class(:DeleteApplicant, Foobara::Command) do
           # TODO: does this work with User instead of :User ?
           # We can't come up with a cleaner way to do this?
           inputs applicant: Applicant

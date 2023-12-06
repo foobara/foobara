@@ -5,61 +5,37 @@ RSpec.describe Foobara::Domain::CommandExtension do
 
   describe "#run_subcommand!" do
     before do
-      [domain_module1, domain_module2, domain_module3].each do |domain_module|
-        stub_const(domain_module.name, domain_module)
-        expect(domain_module.foobara_domain).to be_a(Foobara::Domain)
-      end
-
-      [command_class1, command_class2, top_level_command_class].each do |command_class|
-        stub_const(command_class.name, command_class)
-      end
+      # TODO: don't really need to eager-load via before like this, use let!
+      domain_module1
+      domain_module2
+      domain_module3
+      command_class1
+      command_class2
+      top_level_command_class
     end
 
     let(:domain_module1) {
-      Module.new do
-        class << self
-          def name
-            "SomeDomain1"
-          end
-        end
-
+      stub_module "SomeDomain1" do
         foobara_domain!
       end
     }
 
     let(:domain_module2) {
-      Module.new do
-        class << self
-          def name
-            "SomeDomain2"
-          end
-        end
-
+      stub_module "SomeDomain2" do
         foobara_domain!
       end
     }
 
     let(:domain_module3) {
-      Module.new do
-        class << self
-          def name
-            "SomeDomain3"
-          end
-        end
-
+      stub_module "SomeDomain3" do
         foobara_domain!
       end
     }
 
     let(:command_class1) {
-      name = command_class1_name
       subcommand_class = command_class2
 
-      Class.new(Foobara::Command) do
-        singleton_class.define_method :name do
-          name
-        end
-
+      stub_class command_class1_name, Foobara::Command do
         depends_on subcommand_class
         inputs foo: :integer
 
@@ -70,12 +46,7 @@ RSpec.describe Foobara::Domain::CommandExtension do
     }
 
     let(:command_class2) {
-      name = command_class2_name
-      Class.new(Foobara::Command) do
-        singleton_class.define_method :name do
-          name
-        end
-
+      stub_class command_class2_name, Foobara::Command do
         def execute
           100 if subcommand?
         end
@@ -83,11 +54,7 @@ RSpec.describe Foobara::Domain::CommandExtension do
     }
 
     let(:top_level_command_class) {
-      Class.new(Foobara::Command) do
-        singleton_class.define_method :name do
-          "TopLevelCommand"
-        end
-      end
+      stub_class "TopLevelCommand", Foobara::Command
     }
 
     let(:command) { command_class1.new }

@@ -1,7 +1,7 @@
 RSpec.describe Foobara::Command do
   context "with simple command" do
     let(:command_class) {
-      Class.new(described_class) do
+      stub_class(:CalculateExponent, described_class) do
         inputs(
           type: :attributes,
           element_type_declarations: {
@@ -24,12 +24,6 @@ RSpec.describe Foobara::Command do
 
           exponent.times do
             self.exponential *= base
-          end
-        end
-
-        class << self
-          def name
-            "CalculateExponent"
           end
         end
       end
@@ -99,7 +93,7 @@ RSpec.describe Foobara::Command do
 
       context "when unknown validator is applied" do
         let(:command_class2) {
-          Class.new(command_class) do
+          stub_class(:CommandClass2, command_class) do
             inputs(
               type: :attributes,
               element_type_declarations: {

@@ -1,6 +1,6 @@
 RSpec.describe Foobara::Command::Concerns::Runtime do
   let(:command_class) {
-    Class.new(Foobara::Command) do
+    stub_class(:CalculateExponent, Foobara::Command) do
       inputs exponent: :integer,
              base: :integer
 
