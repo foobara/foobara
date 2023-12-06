@@ -4,14 +4,14 @@ module Foobara
   class Namespace
     module NamespaceHelpers
       module SubclassesAreNamespaces
-        attr_accessor :default_namespace
+        attr_accessor :scoped_default_namespace
 
         def inherited(subclass)
           super
 
           subclass.extend ::Foobara::Scoped
 
-          NamespaceHelpers.foobara_autoset_namespace(subclass, default_namespace:)
+          NamespaceHelpers.foobara_autoset_namespace(subclass, default_namespace: scoped_default_namespace)
           NamespaceHelpers.foobara_autoset_scoped_path(subclass)
 
           subclass.extend ::Foobara::Namespace::IsNamespace
@@ -20,22 +20,22 @@ module Foobara
 
       module AutoRegisterSubclasses
         # TODO: dry this up somehow?
-        attr_accessor :default_namespace
+        attr_accessor :scoped_default_namespace
 
         def inherited(subclass)
           super
 
           subclass.extend ::Foobara::Scoped
 
-          NamespaceHelpers.foobara_autoset_namespace(subclass, default_namespace:)
+          NamespaceHelpers.foobara_autoset_namespace(subclass, default_namespace: scoped_default_namespace)
           NamespaceHelpers.foobara_autoset_scoped_path(subclass)
 
-          if subclass.namespace
+          if subclass.scoped_namespace
             if subclass.is_a?(Foobara::Namespace::IsNamespace)
-              subclass.parent_namespace = subclass.namespace
+              subclass.foobara_parent_namespace = subclass.scoped_namespace
             end
 
-            subclass.namespace.register(subclass)
+            subclass.scoped_namespace.register(subclass)
           end
         end
       end
@@ -50,7 +50,7 @@ module Foobara
             # :nocov:
           end
 
-          ns = namespace || self.class.default_namespace
+          ns = scoped_namespace || self.class.scoped_default_namespace
 
           ns&.register(self)
         end
@@ -61,7 +61,7 @@ module Foobara
         class << self
           def included(mod)
             class << mod
-              attr_accessor :default_namespace
+              attr_accessor :scoped_default_namespace
             end
 
             super
@@ -71,7 +71,7 @@ module Foobara
         def initialize(*, **, &)
           self.class.superclass == Object ? super() : super
 
-          parent_namespace = namespace || self.class.default_namespace
+          parent_namespace = scoped_namespace || self.class.scoped_default_namespace
           NamespaceHelpers.initialize_foobara_namespace(self, parent_namespace:)
         end
       end
@@ -93,14 +93,14 @@ module Foobara
           end
 
           if parent_namespace
-            namespace.parent_namespace = parent_namespace
+            namespace.foobara_parent_namespace = parent_namespace
           end
         end
 
         def foobara_namespace!(object, scoped_path: nil, ignore_modules: nil)
           object.extend ::Foobara::Scoped
 
-          object.ignore_modules = ignore_modules if ignore_modules
+          object.scoped_ignore_modules = ignore_modules if ignore_modules
           object.scoped_path = scoped_path if scoped_path
 
           object.extend ::Foobara::Namespace::IsNamespace
@@ -108,7 +108,7 @@ module Foobara
 
         def foobara_subclasses_are_namespaces!(klass, default_parent: nil, autoregister: nil)
           klass.extend SubclassesAreNamespaces
-          klass.default_namespace = default_parent
+          klass.scoped_default_namespace = default_parent
 
           if autoregister
             foobara_autoregister_subclasses(klass)
@@ -119,7 +119,7 @@ module Foobara
           klass.include ::Foobara::Namespace::IsNamespace
           klass.include InstancesAreNamespaces
 
-          klass.default_namespace = default_parent if default_parent
+          klass.scoped_default_namespace = default_parent if default_parent
 
           if autoregister
             klass.include AutoRegisterInstances
@@ -128,24 +128,24 @@ module Foobara
 
         def foobara_autoregister_subclasses(klass, default_namespace: nil)
           klass.extend AutoRegisterSubclasses
-          klass.default_namespace = default_namespace if default_namespace
+          klass.scoped_default_namespace = default_namespace if default_namespace
         end
 
         def foobara_autoset_namespace(mod, default_namespace: nil)
-          return if mod.namespace
+          return if mod.scoped_namespace
 
           parent_mod = Util.module_for(mod)
 
           while parent_mod
             if parent_mod.is_a?(Foobara::Namespace::IsNamespace)
-              mod.namespace = parent_mod
+              mod.scoped_namespace = parent_mod
               return
             else
               parent_mod = Util.module_for(parent_mod)
             end
           end
 
-          mod.namespace = default_namespace if default_namespace
+          mod.scoped_namespace = default_namespace if default_namespace
         end
 
         def foobara_autoset_scoped_path(mod)
@@ -169,7 +169,7 @@ module Foobara
               next
             end
 
-            adjusted_scoped_path << path_part unless mod.namespace&.ignore_module?(next_mod)
+            adjusted_scoped_path << path_part unless mod.scoped_namespace&.scoped_ignore_module?(next_mod)
           end
 
           mod.scoped_path = adjusted_scoped_path

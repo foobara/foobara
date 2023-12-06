@@ -5,9 +5,9 @@ module Foobara
     module IsNamespace
       include Scoped
 
-      def parent_namespace=(namespace)
-        self.namespace = namespace
-        namespace.children << self if namespace
+      def foobara_parent_namespace=(namespace)
+        self.scoped_namespace = namespace
+        scoped_namespace.children << self if namespace
       end
 
       def add_category(symbol, proc)
@@ -23,7 +23,7 @@ module Foobara
       end
 
       def categories
-        @categories ||= parent_namespace&.categories || {}
+        @categories ||= foobara_parent_namespace&.categories || {}
       end
 
       def registry
@@ -37,13 +37,13 @@ module Foobara
       def root_namespace
         ns = self
 
-        ns = ns.parent_namespace until ns.root?
+        ns = ns.foobara_parent_namespace until ns.root?
 
         ns
       end
 
       def root?
-        parent_namespace.nil?
+        foobara_parent_namespace.nil?
       end
 
       def register(scoped)
@@ -56,7 +56,7 @@ module Foobara
         end
 
         # awkward??
-        scoped.namespace = self
+        scoped.scoped_namespace = self
       end
 
       def lookup(path, absolute: false, filter: nil)
@@ -95,12 +95,12 @@ module Foobara
         end
 
         unless absolute
-          parent_namespace&.lookup(path, filter:)
+          foobara_parent_namespace&.lookup(path, filter:)
         end
       end
 
-      def parent_namespace
-        namespace
+      def foobara_parent_namespace
+        scoped_namespace
       end
 
       def lookup!(name, filter: nil)

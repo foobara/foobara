@@ -27,7 +27,7 @@ RSpec.describe Foobara::Namespace::IsNamespace do
       expect(namespace.scoped_full_name).to eq("::SomeNamespace")
 
       namespace.register(scoped_object)
-      expect(scoped_object.namespace).to be(namespace)
+      expect(scoped_object.scoped_namespace).to be(namespace)
 
       expect(scoped_object.scoped_short_path).to eq([scoped_name])
       expect(scoped_object.scoped_full_path).to eq(["SomeNamespace", scoped_name])

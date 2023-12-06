@@ -3,34 +3,34 @@ module Foobara
     class AmbiguousRegistry < BaseRegistry
       class AmbiguousLookupError < StandardError; end
 
-      def registry
-        @registry ||= {}
+      def foobara_registry
+        @foobara_registry ||= {}
       end
 
       def register(scoped)
         short_name = scoped.scoped_short_name
-        registry[short_name] ||= []
-        registry[short_name] |= [scoped]
+        foobara_registry[short_name] ||= []
+        foobara_registry[short_name] |= [scoped]
       end
 
       def lookup(path, filter = nil)
         *prefix, short_name = path
-        matches = apply_filter(registry[short_name], filter)
+        matches = apply_filter(foobara_registry[short_name], filter)
 
         if matches && !matches.empty?
-          best_match(prefix, matches, path)
+          _best_match(prefix, matches, path)
         end
       end
 
       private
 
-      def best_match(prefix, matches, path)
+      def _best_match(prefix, matches, path)
         candidates = nil
         candidate_hits = -1
         candidate_misses = 1
 
         matches.each do |match|
-          hits, misses = score(prefix, match)
+          hits, misses = _score(prefix, match)
 
           if hits
             if hits == candidate_hits
@@ -59,7 +59,7 @@ module Foobara
         end
       end
 
-      def score(prefix, match)
+      def _score(prefix, match)
         prefix_path = Util.array(match.scoped_prefix)
         matching_parts = prefix_path & prefix
 

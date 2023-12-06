@@ -18,7 +18,7 @@ RSpec.describe Foobara::Namespace do
 
       namespace.register(scoped_object)
 
-      expect(scoped_object.namespace).to be(namespace)
+      expect(scoped_object.scoped_namespace).to be(namespace)
 
       keys = [
         "scoped_name",

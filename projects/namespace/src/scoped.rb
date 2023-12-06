@@ -2,16 +2,16 @@ module Foobara
   module Scoped
     class NoScopedPathSetError < StandardError; end
 
-    attr_reader :namespace
-    attr_accessor :default_namespace
+    attr_reader :scoped_namespace
+    attr_accessor :scoped_default_namespace
 
     def scoped_path
       @scoped_path || raise(NoScopedPathSetError, "No scoped path set")
     end
 
-    def namespace=(namespace)
-      @namespace = namespace
-      @ignore_modules = @scoped_full_name = @scoped_full_path = nil
+    def scoped_namespace=(scoped_namespace)
+      @scoped_namespace = scoped_namespace
+      @scoped_ignore_modules = @scoped_full_name = @scoped_full_path = nil
     end
 
     def scoped_name=(name)
@@ -36,7 +36,7 @@ module Foobara
     end
 
     def scoped_full_path
-      @scoped_full_path ||= [*namespace&.scoped_full_path, *scoped_path]
+      @scoped_full_path ||= [*scoped_namespace&.scoped_full_path, *scoped_path]
     end
 
     def scoped_full_name
@@ -58,13 +58,13 @@ module Foobara
       false
     end
 
-    def ignore_module?(mod)
-      @ignore_modules&.include?(mod) || namespace&.ignore_module?(mod)
+    def scoped_ignore_module?(mod)
+      @scoped_ignore_modules&.include?(mod) || scoped_namespace&.scoped_ignore_module?(mod)
     end
 
-    def ignore_modules=(modules)
-      mods = @ignore_modules || []
-      @ignore_modules = [*mods, *modules]
+    def scoped_ignore_modules=(modules)
+      mods = @scoped_ignore_modules || []
+      @scoped_ignore_modules = [*mods, *modules]
     end
   end
 end
