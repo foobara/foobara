@@ -1,6 +1,5 @@
 module Foobara
   class << self
-    # TODO: rename this to manifest...
     # TODO: come up with a way to change a type's manifest... Or maybe treat Model very differently?
     def manifest
       {

@@ -1,5 +1,7 @@
 module Foobara
   class Organization
+    foobara_instances_are_namespaces!(default_parent: Foobara, autoregister: true)
+
     GLOBAL_ORGANIZATION_NAME = "global_organization".freeze
 
     class AlreadyRegisteredOrganizationDependency < StandardError; end
@@ -60,6 +62,12 @@ module Foobara
 
         self.organization_name = organization_name
       end
+
+      super
+    end
+
+    def scoped_path
+      @scoped_path ||= organization_name.split("::")
     end
 
     def global?
