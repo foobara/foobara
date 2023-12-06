@@ -34,15 +34,15 @@ module Foobara
         @foobara_children ||= []
       end
 
-      def root_namespace
+      def foobara_root_namespace
         ns = self
 
-        ns = ns.foobara_parent_namespace until ns.root?
+        ns = ns.foobara_parent_namespace until ns.foobara_root?
 
         ns
       end
 
-      def root?
+      def foobara_root?
         foobara_parent_namespace.nil?
       end
 
@@ -69,7 +69,8 @@ module Foobara
         end
 
         if path[0] == ""
-          return root_namespace.foobara_lookup(path[(root_namespace.scoped_path.size + 1)..], absolute: true, filter:)
+          return foobara_root_namespace.foobara_lookup(path[(foobara_root_namespace.scoped_path.size + 1)..],
+                                                       absolute: true, filter:)
         end
 
         scoped = foobara_registry.lookup(path, filter)

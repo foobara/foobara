@@ -111,7 +111,7 @@ RSpec.describe Foobara::Namespace do
         end
 
         it "registers the object and it can be found again" do
-          expect(namespace.root_namespace).to be(grandparent_namespace)
+          expect(namespace.foobara_root_namespace).to be(grandparent_namespace)
 
           namespace.foobara_register(scoped_object)
 
