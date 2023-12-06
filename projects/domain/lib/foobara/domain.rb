@@ -20,7 +20,18 @@ module Foobara
           registry
         ].each do |var_name|
           var_name = "@#{var_name}"
-          Foobara.remove_instance_variable(var_name) if Foobara.instance_variable_defined?(var_name)
+
+          [
+            Foobara,
+            Organization,
+            Domain,
+            Command,
+            Types::Type,
+            Value::Processor,
+            Error
+          ].each do |klass|
+            klass.remove_instance_variable(var_name) if klass.instance_variable_defined?(var_name)
+          end
         end
       end
 

@@ -1,5 +1,7 @@
 module Foobara
   class Domain
+    foobara_instances_are_namespaces!(default_parent: Foobara, autoregister: true)
+
     class AlreadyRegisteredDomainDependency < StandardError; end
     class NoSuchDomain < StandardError; end
 
@@ -28,6 +30,12 @@ module Foobara
       Domain.all[all_key] = self
       @command_classes = []
       @model_classes = []
+
+      super
+    end
+
+    def scoped_path
+      @scoped_path ||= domain_name&.split("::")
     end
 
     foobara_delegate :organization_name, :organization_symbol, to: :organization, allow_nil: true
