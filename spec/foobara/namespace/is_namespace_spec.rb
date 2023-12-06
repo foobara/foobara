@@ -77,8 +77,8 @@ RSpec.describe Foobara::Namespace::IsNamespace do
 
       context "when there are two categories" do
         before do
-          namespace.add_category_for_instance_of(:class1, class1)
-          namespace.add_category_for_instance_of(:class2, class2)
+          namespace.foobara_add_category_for_instance_of(:class1, class1)
+          namespace.foobara_add_category_for_instance_of(:class2, class2)
         end
 
         context "when an object is registered" do

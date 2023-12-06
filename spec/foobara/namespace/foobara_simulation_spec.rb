@@ -46,12 +46,12 @@ RSpec.describe Foobara::Namespace do
       end
 
       module Foobara
-        add_category_for_subclass_of(:org, Org)
-        add_category_for_subclass_of(:domain, Domain)
-        add_category_for_subclass_of(:command, Command)
-        add_category_for_instance_of(:type, Type)
-        add_category_for_subclass_of(:processor, Processor)
-        add_category_for_subclass_of(:error, Error)
+        foobara_add_category_for_subclass_of(:org, Org)
+        foobara_add_category_for_subclass_of(:domain, Domain)
+        foobara_add_category_for_subclass_of(:command, Command)
+        foobara_add_category_for_instance_of(:type, Type)
+        foobara_add_category_for_subclass_of(:processor, Processor)
+        foobara_add_category_for_subclass_of(:error, Error)
       end
 
       class GlobalError < Error

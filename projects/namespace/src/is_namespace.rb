@@ -10,16 +10,16 @@ module Foobara
         scoped_namespace.children << self if namespace
       end
 
-      def add_category(symbol, proc)
+      def foobara_add_category(symbol, proc)
         @categories = categories.merge(symbol.to_sym => proc)
       end
 
-      def add_category_for_instance_of(symbol, klass)
-        add_category(symbol, proc { is_a?(klass) })
+      def foobara_add_category_for_instance_of(symbol, klass)
+        foobara_add_category(symbol, proc { is_a?(klass) })
       end
 
-      def add_category_for_subclass_of(symbol, klass)
-        add_category(symbol, proc { self < klass })
+      def foobara_add_category_for_subclass_of(symbol, klass)
+        foobara_add_category(symbol, proc { self < klass })
       end
 
       def categories

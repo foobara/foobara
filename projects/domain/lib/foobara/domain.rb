@@ -51,13 +51,13 @@ module Foobara
 
         Foobara.foobara_root_namespace!
 
-        Foobara.add_category_for_instance_of(:organization, Organization)
-        Foobara.add_category_for_instance_of(:domain, Domain)
-        Foobara.add_category_for_subclass_of(:command, Command)
+        Foobara.foobara_add_category_for_instance_of(:organization, Organization)
+        Foobara.foobara_add_category_for_instance_of(:domain, Domain)
+        Foobara.foobara_add_category_for_subclass_of(:command, Command)
         # TODO: should be able to access this as Type
-        Foobara.add_category_for_instance_of(:type, Types::Type)
-        Foobara.add_category_for_subclass_of(:processor, Value::Processor)
-        Foobara.add_category_for_subclass_of(:error, Error)
+        Foobara.foobara_add_category_for_instance_of(:type, Types::Type)
+        Foobara.foobara_add_category_for_subclass_of(:processor, Value::Processor)
+        Foobara.foobara_add_category_for_subclass_of(:error, Error)
       end
     end
   end
