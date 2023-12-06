@@ -1,35 +1,34 @@
 module RspecHelpers
   module StubClass
-    class << self
-      def make_class(name, &)
+    module ClassMethods
+      def stub_class(name, which: :class, &)
         # rubocop:disable Security/Eval, Style/DocumentDynamicEvalDefinition
         eval(<<~RUBY, binding, __FILE__, __LINE__ + 1)
-          class ::#{name}
+          #{which} ::#{name}
           end
         RUBY
+        # rubocop:enable Security/Eval, Style/DocumentDynamicEvalDefinition
+
+        after do
+          Object.send(:remove_const, name)
+        end
 
         klass = Object.const_get(name)
         klass.class_eval(&)
         klass
       end
-    end
 
-    module ClassMethods
-      def stub_class(name, &)
-        StubClass.make_class(name, &).tap do
-          after do
-            Object.send(:remove_const, name)
-          end
-        end
+      def stub_module(name, &)
+        stub_class(name, which: :module, &)
       end
     end
 
     def stub_class(name, &)
-      StubClass.make_class(name, &).tap do
-        self.class.after do
-          Object.send(:remove_const, name)
-        end
-      end
+      self.class.stub_class(name, &)
+    end
+
+    def stub_module(name, &)
+      self.class.stub_module(name, &)
     end
   end
 end
