@@ -5,62 +5,27 @@ RSpec.describe Foobara::Manifest do
 
   before do
     Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
-    stub_class = ->(klass) { stub_const(klass.name, klass) }
 
-    org = Module.new do
-      def self.name
-        "SomeOrg"
-      end
-
-      stub_class.call(self)
+    stub_module :SomeOrg do
+      foobara_organization!
     end
 
-    org.foobara_organization!
-
-    dom = Module.new do
-      def self.name
-        "SomeOtherDomain"
-      end
-
-      stub_class.call(self)
+    stub_module :SomeOtherDomain do
+      foobara_domain!
     end
 
-    dom.foobara_domain!
-
-    Class.new(Foobara::Entity) do
-      class << self
-        def name
-          "SomeOtherDomain::SomeOtherUser"
-        end
-      end
-
-      stub_class.call(self)
-
+    stub_class "SomeOtherDomain::SomeOtherUser", Foobara::Entity do
       attributes id: :integer,
                  first_name: :string
       primary_key :id
     end
 
-    dom = Module.new do
-      def self.name
-        "SomeOrg::SomeDomain"
-      end
-
-      stub_class.call(self)
+    stub_module("SomeOrg::SomeDomain") do
+      foobara_domain!
+      depends_on "SomeOtherDomain"
     end
 
-    dom.foobara_domain!
-    dom.depends_on "SomeOtherDomain"
-
-    Class.new(Foobara::Entity) do
-      class << self
-        def name
-          "SomeOrg::SomeDomain::User"
-        end
-      end
-
-      stub_class.call(self)
-
+    stub_class "SomeOrg::SomeDomain::User", Foobara::Entity do
       attributes id: :integer,
                  name: { type: :string, required: true },
                  ratings: [:integer],
@@ -68,7 +33,7 @@ RSpec.describe Foobara::Manifest do
       primary_key :id
     end
 
-    Class.new(Foobara::Command) do
+    stub_class "SomeOrg::SomeDomain::QueryUser", Foobara::Command do
       # rubocop:disable Lint/ConstantDefinitionInBlock, RSpec/LeakyConstantDeclaration
       class SomethingWentWrongError < Foobara::RuntimeError
         class << self
@@ -78,14 +43,6 @@ RSpec.describe Foobara::Manifest do
         end
       end
       # rubocop:enable Lint/ConstantDefinitionInBlock, RSpec/LeakyConstantDeclaration
-
-      class << self
-        def name
-          "SomeOrg::SomeDomain::QueryUser"
-        end
-      end
-
-      stub_class.call(self)
 
       inputs user: SomeOrg::SomeDomain::User,
              some_other_user: SomeOtherDomain::SomeOtherUser

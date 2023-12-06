@@ -87,8 +87,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
 
       let!(:command_class) do
-        stub_class "SomeOrg::SomeDomain::SomeCommand", Foobara::Command do
-        end
+        stub_class "SomeOrg::SomeDomain::SomeCommand", Foobara::Command
       end
 
       it "registers the command" do
