@@ -7,7 +7,7 @@ module Foobara
 
       def foobara_parent_namespace=(namespace)
         self.scoped_namespace = namespace
-        scoped_namespace.children << self if namespace
+        scoped_namespace.foobara_children << self if namespace
       end
 
       def foobara_add_category(symbol, proc)
@@ -30,8 +30,8 @@ module Foobara
         @foobara_registry ||= Foobara::Namespace::PrefixlessRegistry.new
       end
 
-      def children
-        @children ||= []
+      def foobara_children
+        @foobara_children ||= []
       end
 
       def root_namespace
@@ -78,7 +78,7 @@ module Foobara
         matching_child = nil
         matching_child_score = 0
 
-        to_consider = absolute ? children : [self, *children]
+        to_consider = absolute ? foobara_children : [self, *foobara_children]
 
         to_consider.each do |namespace|
           match_count = namespace._path_start_match_count(path)
