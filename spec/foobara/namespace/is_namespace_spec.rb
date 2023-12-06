@@ -26,7 +26,7 @@ RSpec.describe Foobara::Namespace::IsNamespace do
       expect(namespace.scoped_name).to eq("SomeNamespace")
       expect(namespace.scoped_full_name).to eq("::SomeNamespace")
 
-      namespace.register(scoped_object)
+      namespace.foobara_register(scoped_object)
       expect(scoped_object.scoped_namespace).to be(namespace)
 
       expect(scoped_object.scoped_short_path).to eq([scoped_name])
@@ -83,7 +83,7 @@ RSpec.describe Foobara::Namespace::IsNamespace do
 
         context "when an object is registered" do
           before do
-            namespace.register(object1)
+            namespace.foobara_register(object1)
           end
 
           context "when looking up with matching lookup_class1 method and lookup method" do

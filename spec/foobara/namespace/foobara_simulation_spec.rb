@@ -28,7 +28,7 @@ RSpec.describe Foobara::Namespace do
 
         def add_processor(processor)
           processor.foobara_parent_namespace = self
-          register(processor)
+          foobara_register(processor)
         end
 
         def initialize(scoped_path)
@@ -59,7 +59,7 @@ RSpec.describe Foobara::Namespace do
 
       Integer = Type.new(:integer)
       Integer.foobara_parent_namespace = Foobara
-      Foobara.register(Integer)
+      Foobara.foobara_register(Integer)
 
       class Max < Processor
         class TooBig < Error
@@ -71,7 +71,7 @@ RSpec.describe Foobara::Namespace do
       class OrgA < Org
         class DomainA < Domain
           CustomType = Type.new(:custom_type)
-          register(CustomType)
+          foobara_register(CustomType)
 
           class CommandA < Command
           end
@@ -82,7 +82,7 @@ RSpec.describe Foobara::Namespace do
 
         class DomainB < Domain
           CustomType = Type.new(:custom_type)
-          register(CustomType)
+          foobara_register(CustomType)
 
           class CommandA < Command
             class SomeError < Error

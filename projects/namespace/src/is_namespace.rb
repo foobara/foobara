@@ -46,13 +46,13 @@ module Foobara
         foobara_parent_namespace.nil?
       end
 
-      def register(scoped)
+      def foobara_register(scoped)
         begin
           foobara_registry.register(scoped)
         rescue PrefixlessRegistry::RegisteringScopedWithPrefixError,
                BaseRegistry::WouldMakeRegistryAmbiguousError => e
           _upgrade_registry(e)
-          return register(scoped)
+          return foobara_register(scoped)
         end
 
         # awkward??

@@ -16,7 +16,7 @@ RSpec.describe Foobara::Namespace do
       expect(scoped_object.scoped_full_path).to eq([scoped_name])
       expect(scoped_object.scoped_full_name).to eq("::#{scoped_name}")
 
-      namespace.register(scoped_object)
+      namespace.foobara_register(scoped_object)
 
       expect(scoped_object.scoped_namespace).to be(namespace)
 
@@ -35,7 +35,7 @@ RSpec.describe Foobara::Namespace do
       let(:scoped_name) { :"some::prefix::scoped_name" }
 
       it "registers the object and it can be found again" do
-        namespace.register(scoped_object)
+        namespace.foobara_register(scoped_object)
 
         keys = [
           "some::prefix::scoped_name",
@@ -63,8 +63,8 @@ RSpec.describe Foobara::Namespace do
         end
 
         it "registers the objects and they can be found again" do
-          namespace.register(scoped_object)
-          namespace.register(scoped_object2)
+          namespace.foobara_register(scoped_object)
+          namespace.foobara_register(scoped_object2)
 
           keys = [
             "scoped_name",
@@ -113,7 +113,7 @@ RSpec.describe Foobara::Namespace do
         it "registers the object and it can be found again" do
           expect(namespace.root_namespace).to be(grandparent_namespace)
 
-          namespace.register(scoped_object)
+          namespace.foobara_register(scoped_object)
 
           keys = [
             "some::prefix::scoped_name",
@@ -184,7 +184,7 @@ RSpec.describe Foobara::Namespace do
 
         context "when an object is registered" do
           before do
-            namespace.register(object1)
+            namespace.foobara_register(object1)
           end
 
           context "when looking up with matching lookup_class1 method and lookup method" do
@@ -207,8 +207,8 @@ RSpec.describe Foobara::Namespace do
 
           context "when all objects registered" do
             before do
-              namespace.register(object2)
-              namespace.register(object3)
+              namespace.foobara_register(object2)
+              namespace.foobara_register(object3)
             end
 
             it "can fetch the proper items with different lookup_* methods" do
@@ -253,7 +253,7 @@ RSpec.describe Foobara::Namespace do
 
         context "when an object is registered" do
           before do
-            namespace.register(class_a)
+            namespace.foobara_register(class_a)
           end
 
           context "when looking up with matching lookup_class1 method and lookup method" do
@@ -276,8 +276,8 @@ RSpec.describe Foobara::Namespace do
 
           context "when all objects registered" do
             before do
-              namespace.register(class_b)
-              namespace.register(class_c)
+              namespace.foobara_register(class_b)
+              namespace.foobara_register(class_c)
             end
 
             it "can fetch the proper items with different lookup_* methods" do
