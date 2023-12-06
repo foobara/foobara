@@ -36,13 +36,7 @@ RSpec.describe Foobara::Concern do
     let(:klass) do
       c = sub_concern
 
-      Class.new do
-        class << self
-          def name
-            "SomeClass"
-          end
-        end
-
+      stub_class :SomeClass do
         include c
       end
     end
