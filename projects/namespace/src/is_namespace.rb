@@ -51,7 +51,7 @@ module Foobara
           registry.register(scoped)
         rescue PrefixlessRegistry::RegisteringScopedWithPrefixError,
                BaseRegistry::WouldMakeRegistryAmbiguousError => e
-          upgrade_registry(e)
+          _upgrade_registry(e)
           return register(scoped)
         end
 
@@ -116,7 +116,7 @@ module Foobara
       end
 
       def method_missing(method_name, *)
-        filter, bang = filter_from_method_name(method_name)
+        filter, bang = _filter_from_method_name(method_name)
 
         if filter
           if bang
@@ -132,12 +132,12 @@ module Foobara
       end
 
       def respond_to_missing?(method_name, include_private = false)
-        !!filter_from_method_name(method_name) || super
+        !!_filter_from_method_name(method_name) || super
       end
 
       private
 
-      def filter_from_method_name(method_name)
+      def _filter_from_method_name(method_name)
         match = method_name.to_s.match(/^lookup_(\w+)(!)?$/)
 
         if match
@@ -150,7 +150,7 @@ module Foobara
         end
       end
 
-      def upgrade_registry(error)
+      def _upgrade_registry(error)
         new_registry_class = case error
                              when Foobara::Namespace::PrefixlessRegistry::RegisteringScopedWithPrefixError
                                Foobara::Namespace::UnambiguousRegistry
