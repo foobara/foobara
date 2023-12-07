@@ -33,6 +33,9 @@ Style/IfUnlessModifier:
 Style/Lambda:
   EnforcedStyle: literal
 
+Style/MultilineBlockChain:
+  Enabled: false
+
 Style/Next:
   Enabled: false
 
