@@ -4,9 +4,9 @@ module Foobara
       class ValidatorBase < TypeDeclarations::Validator
         singleton_class.define_method :error_classes do
           @error_classes ||= begin
-            error_class_name = "Foobara::BuiltinTypes::Email::#{name}Error"
+            error_class_name = "#{name}Error"
 
-            error_class = Util.make_class(error_class_name, Foobara::Value::DataError) do
+            error_class = Util.make_class(error_class_name, Value::DataError) do
               class << self
                 def context_type_declaration
                   {
@@ -24,6 +24,9 @@ module Foobara
 
             [error_class]
           end
+        rescue => e
+          binding.pry
+          raise
         end
 
         def always_applicable?
@@ -72,7 +75,7 @@ module Foobara
           }
         }.each do |negate, rule_set|
           rule_set.each_pair do |symbol, regex|
-            class_name = "Foobara::BuiltinTypes::Email::#{Util.classify(symbol)}"
+            class_name = "#{name}::#{Util.classify(symbol)}"
 
             Util.make_class(class_name, ValidatorBase) do
               define_method :regex do
