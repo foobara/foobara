@@ -8,7 +8,7 @@ RSpec.describe Foobara::Value::Processor::Runner do
         self.calls = 0
       end
 
-            def transform(value)
+      def transform(value)
         self.calls += 1
         value * 2
       end
