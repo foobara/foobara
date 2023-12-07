@@ -5,7 +5,7 @@ RSpec.describe Foobara::Value::Transformer do
     let(:transformer) do
       described_class.create(
         transform: ->(_whatever) { 1000 },
-        name: "Always1000"
+        name: "::Always1000"
       )
     end
 

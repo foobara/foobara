@@ -18,12 +18,12 @@ module Foobara
         end
 
         def create(options)
-          subclass(options).instance
+          subclass(**options).instance
         end
 
         # TODO: make transform the first argument for convenience
-        def subclass(options)
-          arity_zero = %i[name always_applicable? priority]
+        def subclass(name: nil, **options)
+          arity_zero = %i[always_applicable? priority]
           arity_one = %i[applicable? transform]
           allowed = arity_zero + arity_one
 
@@ -35,7 +35,15 @@ module Foobara
             # :nocov:
           end
 
-          Class.new(self) do
+          name ||= "#{self.name}::Anon#{SecureRandom.hex}"
+
+          unless name.include?(":")
+            name = "#{self.name}::#{name}"
+          end
+
+          binding.pry if name.include?("::::")
+
+          Util.make_class(name, self) do
             arity_one.each do |method_name|
               if options.key?(method_name)
                 method = options[method_name]

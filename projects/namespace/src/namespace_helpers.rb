@@ -152,6 +152,7 @@ module Foobara
         def foobara_autoset_scoped_path(mod)
           return if mod.scoped_path_set?
 
+          binding.pry unless mod.name
           scoped_path = mod.name.split("::")
 
           adjusted_scoped_path = []

@@ -1,6 +1,8 @@
 module Foobara
   module Value
     class Processor
+      foobara_subclasses_are_namespaces!
+
       module Priority
         FIRST = 0
         HIGH = 10

@@ -393,6 +393,8 @@ module Foobara
 
       superclass ||= :Object
 
+      name = name[2..] if name.start_with?("::")
+
       # rubocop:disable Security/Eval, Style/DocumentDynamicEvalDefinition
       eval(<<~RUBY, binding, __FILE__, __LINE__ + 1)
         #{which} ::#{name}#{inherit}

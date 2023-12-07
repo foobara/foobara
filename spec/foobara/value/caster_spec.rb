@@ -5,7 +5,7 @@ RSpec.describe Foobara::Value::Caster do
     let(:caster) do
       described_class.create(
         cast: ->(_whatever) { 1000 },
-        name: "Always1000"
+        name: "::Always1000"
       )
     end
 
