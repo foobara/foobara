@@ -72,9 +72,9 @@ module Foobara
           }
         }.each do |negate, rule_set|
           rule_set.each_pair do |symbol, regex|
-            class_name = Util.classify(symbol)
+            class_name = "Foobara::BuiltinTypes::Email::#{Util.classify(symbol)}"
 
-            klass = Class.new(Email::ValidatorBase) do
+            Util.make_class(class_name, ValidatorBase) do
               define_method :regex do
                 regex
               end
@@ -85,8 +85,6 @@ module Foobara
                 end
               end
             end
-
-            const_set(class_name, klass)
           end
         end
       end

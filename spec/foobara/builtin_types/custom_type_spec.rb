@@ -5,7 +5,7 @@ RSpec.describe "custom types" do
     end
 
     let(:complex_class) do
-      Class.new do
+      stub_class :CustomComplex do
         attr_accessor :real, :imaginary
       end
     end
@@ -31,42 +31,8 @@ RSpec.describe "custom types" do
 
       pointless = pointless_validator
 
-      Class.new(Foobara::TypeDeclarations::TypeDeclarationHandler) do
-        desugarizer_class = Class.new(Foobara::TypeDeclarations::Desugarizer) do
-          def applicable?(value)
-            ComplexTypeDeclarationHandler.sugar_for_complex?(value)
-          end
-
-          def desugarize(_value)
-            { type: :custom_complex }
-          end
-        end
-
-        to_type_transformer_class = Class.new(Foobara::TypeDeclarations::ToTypeTransformer) do
-          define_method :transform do |strict_type_declaration|
-            be_pointless = strict_type_declaration[:be_pointless]
-
-            validators = be_pointless ? [pointless.new(be_pointless)] : []
-
-            Foobara::Types::Type.new(
-              strict_type_declaration,
-              name: :custom_complex,
-              casters: c,
-              transformers: [],
-              validators:,
-              element_processors: nil,
-              target_classes: klass
-            )
-          end
-        end
-
-        const_set(:ToTypeTransformer, to_type_transformer_class)
-
+      stub_class :ComplexTypeDeclarationHandler, Foobara::TypeDeclarations::TypeDeclarationHandler do
         class << self
-          def name
-            "ComplexTypeDeclarationHandler"
-          end
-
           def sugar_for_complex?(sugary_type_declaration)
             if sugary_type_declaration.is_a?(Symbol)
               sugary_type_declaration = sugary_type_declaration.to_s
@@ -88,18 +54,48 @@ RSpec.describe "custom types" do
         define_method :desugarizers do
           [
             Foobara::TypeDeclarations::Handlers::RegisteredTypeDeclaration::SymbolDesugarizer.instance,
-            desugarizer_class.instance
+            ComplexTypeDeclarationHandler::SomeDesugarizer.instance
           ]
         end
 
         foobara_delegate :sugar_for_complex?, to: :class
       end
+
+      stub_class "ComplexTypeDeclarationHandler::SomeDesugarizer", Foobara::TypeDeclarations::Desugarizer do
+        def applicable?(value)
+          ComplexTypeDeclarationHandler.sugar_for_complex?(value)
+        end
+
+        def desugarize(_value)
+          { type: :custom_complex }
+        end
+      end
+
+      stub_class "ComplexTypeDeclarationHandler::ToTypeTransformer", Foobara::TypeDeclarations::ToTypeTransformer do
+        define_method :transform do |strict_type_declaration|
+          be_pointless = strict_type_declaration[:be_pointless]
+
+          validators = be_pointless ? [pointless.new(be_pointless)] : []
+
+          Foobara::Types::Type.new(
+            strict_type_declaration,
+            name: :custom_complex,
+            casters: c,
+            transformers: [],
+            validators:,
+            element_processors: nil,
+            target_classes: klass
+          )
+        end
+      end
+
+      ComplexTypeDeclarationHandler
     end
 
     let(:array_to_complex_caster) do
       klass = complex_class
 
-      Class.new(Foobara::Value::Caster) do
+      stub_class :SomeCaster, Foobara::Value::Caster do
         def applicable?(value)
           value.is_a?(Array) && value.size == 2
         end
@@ -116,27 +112,7 @@ RSpec.describe "custom types" do
     end
 
     let(:pointless_validator) do
-      Class.new(Foobara::Value::Validator) do
-        self::Error = Class.new(Foobara::Value::DataError) do # rubocop:disable RSpec/LeakyConstantDeclaration
-          class << self
-            def symbol
-              :real_should_not_match_imaginary
-            end
-
-            def context
-              { foo: :bar }
-            end
-
-            def message
-              "cant be the same!"
-            end
-
-            def context_type_declaration
-              { foo: :symbol }
-            end
-          end
-        end
-
+      stub_class :PointlessValidator, Foobara::Value::Validator do
         class << self
           def symbol
             :be_pointless
@@ -158,6 +134,28 @@ RSpec.describe "custom types" do
           end
         end
       end
+
+      stub_class "PointlessValidator::Error", Foobara::Value::DataError do
+        class << self
+          def symbol
+            :real_should_not_match_imaginary
+          end
+
+          def context
+            { foo: :bar }
+          end
+
+          def message
+            "cant be the same!"
+          end
+
+          def context_type_declaration
+            { foo: :symbol }
+          end
+        end
+      end
+
+      PointlessValidator
     end
 
     let(:namespace) do
@@ -169,7 +167,6 @@ RSpec.describe "custom types" do
     end
 
     before do
-      stub_const("ComplexTypeDeclarationHandler", type_declaration_handler_class)
       namespace.register_type_declaration_handler(type_declaration_handler_class.new)
     end
 
@@ -180,19 +177,7 @@ RSpec.describe "custom types" do
 
       let(:type_declaration_handler) { type_declaration_handler_class.new }
       let(:type_declaration_validator_class) {
-        Class.new(Foobara::TypeDeclarations::TypeDeclarationValidator) do
-          self::WhateverError = Class.new(Foobara::Value::DataError) do # rubocop:disable RSpec/LeakyConstantDeclaration
-            class << self
-              def message
-                "whatevs!"
-              end
-
-              def context_type_declaration
-                { foo: :symbol }
-              end
-            end
-          end
-
+        stub_class :WhateverValidator, Foobara::TypeDeclarations::TypeDeclarationValidator do
           def validation_errors(_value)
             [build_error]
           end
@@ -201,6 +186,20 @@ RSpec.describe "custom types" do
             { foo: :bar }
           end
         end
+
+        stub_class "WhateverValidator::WhateverError", Foobara::Value::DataError do
+          class << self
+            def message
+              "whatevs!"
+            end
+
+            def context_type_declaration
+              { foo: :symbol }
+            end
+          end
+        end
+
+        WhateverValidator
       }
 
       before do
@@ -353,7 +352,7 @@ RSpec.describe "custom types" do
 
           context "with a transformer" do
             let(:transformer_class) do
-              Class.new(Foobara::TypeDeclarations::Transformer) do
+              stub_class :SomeTransformer, Foobara::TypeDeclarations::Transformer do
                 def always_applicable?
                   true
                 end

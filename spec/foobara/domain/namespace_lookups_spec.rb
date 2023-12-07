@@ -1,4 +1,4 @@
-RSpec.describe "Foobara namespace lookup", :focus do
+RSpec.describe "Foobara namespace lookup" do
   let(:integer) { Foobara::TypeDeclarations::Namespace.current.type_for_declaration(:integer) }
 
   before do
