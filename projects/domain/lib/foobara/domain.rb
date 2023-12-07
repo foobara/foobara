@@ -52,10 +52,10 @@ module Foobara
         Foobara.foobara_root_namespace!
 
         Foobara.foobara_add_category(:organization) do
-          instance_variable_get("@foobara_organization").is_a?(Foobara::Organization)
+          is_a?(Module) && foobara_organization?
         end
         Foobara.foobara_add_category(:domain) do
-          instance_variable_get("@foobara_domain").is_a?(Foobara::Domain)
+          is_a?(Module) && foobara_domain?
         end
         Foobara.foobara_add_category_for_subclass_of(:command, Command)
         # TODO: should be able to access this as Type
