@@ -29,6 +29,17 @@ module Foobara
         Domain.foobara_organization_modules << self
 
         include(OrganizationModuleExtension)
+
+        # TODO: remove this hack
+        return if self == Foobara
+
+        foobara_namespace!
+        foobara_autoset_namespace!(default_namespace: Foobara)
+        foobara_autoset_scoped_path!
+
+        # TODO: wow this is awkward. We should find a cleaner way to set childen on namespaces.
+        parent = foobara_parent_namespace
+        self.foobara_parent_namespace = parent
       end
 
       def foobara_domain?
