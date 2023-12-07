@@ -2,7 +2,6 @@ module Foobara
   module BuiltinTypes
     module Number
       module SupportedValidators
-        binding.pry
         class Max < TypeDeclarations::Validator
           class MaxExceededError < Foobara::Value::DataError
             class << self

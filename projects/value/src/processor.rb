@@ -9,11 +9,11 @@ module Foobara
       end
 
       # TODO: is it OK to do this here? need it to happen super early and this is as early as it gets
-      foobara_subclasses_are_namespaces!(default_parent: Foobara)
+      # TODO: uncomment once fixed
+      # foobara_subclasses_are_namespaces!(default_parent: Foobara)
 
       class << self
         def scoped_path
-          binding.pry
           [symbol.to_s]
         end
 

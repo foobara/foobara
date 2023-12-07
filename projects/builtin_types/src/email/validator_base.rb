@@ -4,13 +4,9 @@ module Foobara
       class ValidatorBase < TypeDeclarations::Validator
         singleton_class.define_method :error_classes do
           @error_classes ||= begin
-            error_class_name = "#{name}Error"
+            error_class_name = "Foobara::BuiltinTypes::Email::#{name}Error"
 
-            error_class = Class.new(Foobara::Value::DataError) do
-              singleton_class.define_method :name do
-                error_class_name
-              end
-
+            error_class = Util.make_class(error_class_name, Foobara::Value::DataError) do
               class << self
                 def context_type_declaration
                   {

@@ -68,8 +68,6 @@ module Foobara
           path = path.split("::")
         end
 
-        binding.pry if path.nil?
-
         if path[0] == ""
           return foobara_root_namespace.foobara_lookup(path[(foobara_root_namespace.scoped_path.size + 1)..],
                                                        absolute: true, filter:)

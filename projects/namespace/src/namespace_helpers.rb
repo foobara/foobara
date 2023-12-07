@@ -7,7 +7,6 @@ module Foobara
         attr_accessor :scoped_default_namespace
 
         def inherited(subclass)
-          binding.pry if subclass.name =~ /max/i
           super
 
           subclass.extend ::Foobara::Scoped
