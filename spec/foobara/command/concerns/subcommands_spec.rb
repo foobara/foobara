@@ -15,14 +15,8 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
 
   let(:subcommand_class) {
     stub_class(:RunSomeSubcommand, Foobara::Command) do
-      # rubocop:disable RSpec/LeakyConstantDeclaration
-      self::ItFailedError = Class.new(Foobara::RuntimeError) do
-        # rubocop:enable RSpec/LeakyConstantDeclaration
+      Foobara::Util.make_class "RunSomeSubcommand::ItFailedError", Foobara::RuntimeError do
         class << self
-          def name
-            "RunSomeSubcommand::ItFailedError"
-          end
-
           def context_type_declaration
             { foo: :integer }
           end
