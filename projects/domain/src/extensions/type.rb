@@ -2,7 +2,7 @@ module Foobara
   module Types
     class Type
       def scoped_path
-        [type_symbol]
+        @scoped_path ||= [type_symbol.to_s]
       end
     end
   end

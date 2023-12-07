@@ -126,11 +126,11 @@ RSpec.describe "Foobara namespace lookup", :focus do
         OrgA::DomainB::CommandA::SomeError.scoped_namespace
       ).to eq(OrgA::DomainB::CommandA)
 
-      binding.pry
       expect(integer.foobara_parent_namespace).to eq(Foobara)
       expect(Foobara.lookup_type("integer")).to eq(integer)
       expect(Foobara.lookup_type("::integer")).to eq(integer)
 
+      binding.pry
       expect(integer.lookup_processor("Max")).to eq(Max)
       expect(integer.lookup_processor("Max")).to eq(Max)
       expect(Foobara.lookup_processor("integer::Max")).to eq(Max)
