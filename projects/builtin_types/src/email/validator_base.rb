@@ -24,9 +24,6 @@ module Foobara
 
             [error_class]
           end
-        rescue => e
-          binding.pry
-          raise
         end
 
         def always_applicable?

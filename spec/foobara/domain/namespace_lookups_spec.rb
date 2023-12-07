@@ -133,7 +133,6 @@ RSpec.describe "Foobara namespace lookup" do
       expect(Foobara.lookup_type("integer")).to eq(integer)
       expect(Foobara.lookup_type("::integer")).to eq(integer)
 
-      binding.pry
       expect(integer.lookup_processor("Max")).to eq(Max)
       expect(integer.lookup_processor("Max")).to eq(Max)
       expect(Foobara.lookup_processor("integer::Max")).to eq(Max)
