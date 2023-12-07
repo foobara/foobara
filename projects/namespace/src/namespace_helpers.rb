@@ -195,6 +195,14 @@ module Foobara
       def foobara_root_namespace!(ignore_modules: nil)
         foobara_namespace!(scoped_path: [], ignore_modules:)
       end
+
+      def foobara_autoset_namespace!(default_namespace: nil)
+        NamespaceHelpers.foobara_autoset_namespace(self, default_namespace:)
+      end
+
+      def foobara_autoset_scoped_path!
+        NamespaceHelpers.foobara_autoset_scoped_path(self)
+      end
     end
   end
 end
