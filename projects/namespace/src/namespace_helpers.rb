@@ -7,6 +7,7 @@ module Foobara
         attr_accessor :scoped_default_namespace
 
         def inherited(subclass)
+          binding.pry if subclass.name =~ /max/i
           super
 
           subclass.extend ::Foobara::Scoped
@@ -15,6 +16,7 @@ module Foobara
           NamespaceHelpers.foobara_autoset_scoped_path(subclass)
 
           subclass.extend ::Foobara::Namespace::IsNamespace
+          # subclass.extend SubclassesAreNamespaces
         end
       end
 
@@ -151,6 +153,7 @@ module Foobara
         def foobara_autoset_scoped_path(mod)
           return if mod.scoped_path_set?
 
+          binding.pry if mod.name.nil?
           scoped_path = mod.name.split("::")
 
           adjusted_scoped_path = []
@@ -173,6 +176,9 @@ module Foobara
           end
 
           mod.scoped_path = adjusted_scoped_path
+        rescue => e
+          binding.pry
+          raise
         end
       end
 

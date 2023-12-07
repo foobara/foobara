@@ -381,5 +381,36 @@ module Foobara
 
       mod.send(:remove_const, name)
     end
+
+    def make_class(name, superclass = nil, which: :class, &block)
+      name = name.to_s if name.is_a?(::Symbol)
+
+      if superclass.is_a?(Class)
+        superclass = superclass.name
+      end
+
+      inherit = superclass ? " < ::#{superclass}" : ""
+
+      superclass ||= :Object
+
+      # rubocop:disable Security/Eval, Style/DocumentDynamicEvalDefinition
+      eval(<<~RUBY, binding, __FILE__, __LINE__ + 1)
+        #{which} ::#{name}#{inherit}
+        end
+      RUBY
+      # rubocop:enable Security/Eval, Style/DocumentDynamicEvalDefinition
+
+      klass = Object.const_get(name)
+
+      if block
+        if which == :module
+          klass.module_eval(&block)
+        else
+          klass.class_eval(&block)
+        end
+      end
+
+      klass
+    end
   end
 end

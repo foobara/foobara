@@ -8,6 +8,9 @@ RSpec.describe "Foobara namespace lookup", :focus do
 
     stub_class :GlobalError, Foobara::Error
 
+    stub_class :Max, Foobara::Value::Processor
+    stub_class "Max::TooBig", Foobara::Error
+
     stub_module :OrgA do
       foobara_organization!
     end

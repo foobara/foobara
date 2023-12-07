@@ -64,6 +64,11 @@ module Foobara
         super(*args, **opts.merge(processors:, prioritize: false))
       end
 
+      # TODO: at least move this to a concern
+      def scoped_path
+        @scoped_path ||= [type_symbol.to_s]
+      end
+
       def target_class
         if target_classes.empty?
           # :nocov:

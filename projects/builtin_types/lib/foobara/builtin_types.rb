@@ -11,6 +11,7 @@ module Foobara
         atomic_duck = build_and_register!(:atomic_duck, duck, ::Object)
         build_and_register!(:symbol, atomic_duck)
         # TODO: wtf why pass ::Object? It's to avoid casting? Do we need a way to flag abstract types?
+        binding.pry
         number = build_and_register!(:number, atomic_duck, ::Object)
         build_and_register!(:integer, number)
         build_and_register!(:float, number)

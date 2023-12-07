@@ -49,8 +49,6 @@ module Foobara
           unprocessed_command_classes << subclass
         end
 
-        Foobara.foobara_root_namespace!
-
         Foobara.foobara_add_category(:organization) do
           is_a?(Module) && foobara_organization?
         end

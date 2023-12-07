@@ -47,7 +47,13 @@ module Foobara
               # :nocov:
             end
 
+            processor_class.foobara_parent_namespace = self
+            foobara_register(processor_class)
+
             supported_processor_classes[symbol] = processor_class
+          rescue => e
+            binding.pry
+            raise
           end
         end
       end
