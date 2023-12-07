@@ -4,6 +4,7 @@ module Foobara
     class Type < Value::Processor::Pipeline
       include Concerns::SupportedProcessorRegistration
       include Concerns::Reflection
+      include Concerns::Namespace
 
       class << self
         attr_accessor :root_type

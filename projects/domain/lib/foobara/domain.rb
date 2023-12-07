@@ -51,8 +51,12 @@ module Foobara
 
         Foobara.foobara_root_namespace!
 
-        Foobara.foobara_add_category_for_instance_of(:organization, Organization)
-        Foobara.foobara_add_category_for_instance_of(:domain, Domain)
+        Foobara.foobara_add_category(:organization) do
+          instance_variable_get("@foobara_organization").is_a?(Foobara::Organization)
+        end
+        Foobara.foobara_add_category(:domain) do
+          instance_variable_get("@foobara_domain").is_a?(Foobara::Domain)
+        end
         Foobara.foobara_add_category_for_subclass_of(:command, Command)
         # TODO: should be able to access this as Type
         Foobara.foobara_add_category_for_instance_of(:type, Types::Type)
