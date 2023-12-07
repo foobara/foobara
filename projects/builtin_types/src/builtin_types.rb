@@ -23,8 +23,10 @@ module Foobara
         type.foobara_parent_namespace.foobara_register(type)
 
         type.supported_processor_classes.each_value do |processor_class|
-          processor_class.foobara_namespace!
-          processor_class.scoped_path = [processor_class.symbol] unless processor_class.scoped_path_set?
+          binding.pry if processor_class.name =~ /Max/
+          if !processor_class.scoped_path_set? || processor_class.scoped_path_autoset?
+            processor_class.scoped_path = [processor_class.symbol]
+          end
           processor_class.foobara_parent_namespace = type
           type.foobara_register(processor_class)
         end

@@ -15,7 +15,6 @@ module Foobara
           NamespaceHelpers.foobara_autoset_scoped_path(subclass)
 
           subclass.extend ::Foobara::Namespace::IsNamespace
-          # subclass.extend SubclassesAreNamespaces
         end
       end
 
@@ -174,6 +173,7 @@ module Foobara
             adjusted_scoped_path << path_part unless mod.scoped_namespace&.scoped_ignore_module?(next_mod)
           end
 
+          mod.scoped_path_autoset = true
           mod.scoped_path = adjusted_scoped_path
         end
       end

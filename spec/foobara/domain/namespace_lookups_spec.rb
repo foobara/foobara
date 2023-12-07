@@ -133,19 +133,19 @@ RSpec.describe "Foobara namespace lookup" do
       expect(Foobara.lookup_type("number")).to eq(number)
       expect(Foobara.lookup_type("::number")).to eq(number)
 
-      binding.pry
-
       expect(Max.foobara_lookup("TooBig")).to eq(Max::TooBig)
 
-      expect(number.lookup_processor("max")).to eq(Max)
-      expect(number.lookup_processor("max")).to eq(Max)
-      expect(Foobara.lookup_processor("number::max")).to eq(Max)
-      expect(Foobara.lookup_processor("::number::max")).to eq(Max)
+      expect(number.lookup_processor("Max")).to eq(Foobara::BuiltinTypes::Number::SupportedValidators::Max)
+      expect(number.lookup_processor("Max")).to eq(Foobara::BuiltinTypes::Number::SupportedValidators::Max)
+      expect(Foobara.lookup_processor("number::Max")).to eq(Foobara::BuiltinTypes::Number::SupportedValidators::Max)
+      expect(Foobara.lookup_processor("::number::Max")).to eq(Foobara::BuiltinTypes::Number::SupportedValidators::Max)
 
-      expect(Max.lookup_error("TooBig")).to eq(Max::TooBig)
-      expect(
-        Foobara.lookup_error("number::Max::TooBig")
-      ).to eq(Max::TooBig)
+      expect(Max.foobara_lookup("TooBig")).to eq(Max::TooBig)
+      binding.pry
+      e = Foobara.foobara_lookup("number::Max::MaxExceededError")
+      expect(Foobara.foobara_lookup("number::Max::MaxExceededError")).to eq(
+        Foobara::BuiltinTypes::Number::SupportedValidators::Max::MaxExceededError
+      )
     end
   end
 end
