@@ -4,6 +4,10 @@ module Foobara
       module Namespace
         include Concern
 
+        on_include do |klass|
+          foobara_subclasses_are_namespaces!(default_parent: Foobara, autoregister: true)
+        end
+
         module ClassMethods
           def type_for_declaration(...)
             namespace.type_for_declaration(...)
