@@ -1,10 +1,10 @@
 RSpec.describe "Foobara namespace lookup" do
-  let(:integer) { Foobara::TypeDeclarations::Namespace.current.type_for_declaration(:integer) }
+  let(:number) { Foobara::TypeDeclarations::Namespace.current.type_for_declaration(:number) }
 
   before do
     # TODO: make this less awkward
-    integer.foobara_parent_namespace = Foobara
-    Foobara.foobara_register(integer)
+    number.foobara_parent_namespace = Foobara
+    Foobara.foobara_register(number)
 
     stub_class :GlobalError, Foobara::Error
 
@@ -19,7 +19,7 @@ RSpec.describe "Foobara namespace lookup" do
       foobara_domain!
     end
     custom_type_a = Foobara::TypeDeclarations::Namespace.current.type_for_declaration(
-      a: :integer,
+      a: :number,
       b: :string
     )
     custom_type_a.type_symbol = :custom
@@ -33,7 +33,7 @@ RSpec.describe "Foobara namespace lookup" do
       foobara_domain!
     end
     custom_type_b = Foobara::TypeDeclarations::Namespace.current.type_for_declaration(
-      c: :integer,
+      c: :number,
       d: :string
     )
     custom_type_b.type_symbol = :custom
@@ -79,7 +79,7 @@ RSpec.describe "Foobara namespace lookup" do
   end
 
   describe "#lookup_*" do
-    it "finds the expected objects given certain paths" do
+    it "finds the expected objects given certain paths", :focus do
       expect(OrgA.foobara_parent_namespace).to eq(Foobara)
       expect(OrgA.scoped_path).to eq(%w[OrgA])
       expect(OrgA.scoped_full_path).to eq(%w[OrgA])
@@ -129,17 +129,21 @@ RSpec.describe "Foobara namespace lookup" do
         OrgA::DomainB::CommandA::SomeError.scoped_namespace
       ).to eq(OrgA::DomainB::CommandA)
 
-      expect(integer.foobara_parent_namespace).to eq(Foobara)
-      expect(Foobara.lookup_type("integer")).to eq(integer)
-      expect(Foobara.lookup_type("::integer")).to eq(integer)
+      expect(number.foobara_parent_namespace).to eq(Foobara)
+      expect(Foobara.lookup_type("number")).to eq(number)
+      expect(Foobara.lookup_type("::number")).to eq(number)
 
-      expect(integer.lookup_processor("Max")).to eq(Max)
-      expect(integer.lookup_processor("Max")).to eq(Max)
-      expect(Foobara.lookup_processor("integer::Max")).to eq(Max)
+      expect(Max.lookup("TooBig")).to eq(Max::TooBig)
+
+      binding.pry
+      expect(number.lookup_processor("max")).to eq(Max)
+      expect(number.lookup_processor("max")).to eq(Max)
+      expect(Foobara.lookup_processor("number::max")).to eq(Max)
+      expect(Foobara.lookup_processor("::number::max")).to eq(Max)
 
       expect(Max.lookup_error("TooBig")).to eq(Max::TooBig)
       expect(
-        Foobara.lookup_error("integer::Max::TooBig")
+        Foobara.lookup_error("number::Max::TooBig")
       ).to eq(Max::TooBig)
     end
   end

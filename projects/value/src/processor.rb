@@ -13,10 +13,6 @@ module Foobara
       # foobara_subclasses_are_namespaces!(default_parent: Foobara)
 
       class << self
-        def scoped_path
-          [symbol.to_s]
-        end
-
         def processor_name
           name || "Anonymous"
         end

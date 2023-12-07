@@ -6,7 +6,23 @@ module Foobara
     attr_accessor :scoped_default_namespace
 
     def scoped_path
-      @scoped_path || raise(NoScopedPathSetError, "No scoped path set")
+      @scoped_path || begin
+        path = super
+        unless path
+          raise NoScopedPathSetError, "No scoped path set"
+        end
+
+        path
+      rescue NoMethodError => e
+        # TODO: this feels very hacky...
+        if e.message =~ /no superclass method `scoped_path\b/
+          raise NoScopedPathSetError, "No scoped path set"
+        else
+          raise
+        end
+      end
+    rescue => e
+      raise
     end
 
     def scoped_namespace=(scoped_namespace)
