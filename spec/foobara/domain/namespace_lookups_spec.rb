@@ -2,6 +2,10 @@ RSpec.describe "Foobara namespace lookup", :focus do
   let(:integer) { Foobara::TypeDeclarations::Namespace.current.type_for_declaration(:integer) }
 
   before do
+    # TODO: make this less awkward
+    integer.foobara_parent_namespace = Foobara
+    Foobara.foobara_register(integer)
+
     stub_class :GlobalError, Foobara::Error
 
     stub_module :OrgA do
@@ -15,6 +19,9 @@ RSpec.describe "Foobara namespace lookup", :focus do
       a: :integer,
       b: :string
     )
+    custom_type_a.type_symbol = :custom
+    custom_type_a.foobara_parent_namespace = OrgA::DomainA
+    OrgA::DomainA.foobara_register(custom_type_a)
 
     stub_class "OrgA::DomainA::CommandA", Foobara::Command
     stub_class "OrgA::DomainA::CommandB", Foobara::Command
@@ -26,6 +33,9 @@ RSpec.describe "Foobara namespace lookup", :focus do
       c: :integer,
       d: :string
     )
+    custom_type_b.type_symbol = :custom
+    custom_type_b.foobara_parent_namespace = OrgA::DomainB
+    OrgA::DomainB.foobara_register(custom_type_b)
 
     stub_class "OrgA::DomainB::CommandA", Foobara::Command
     stub_class "OrgA::DomainB::CommandA::SomeError", Foobara::Error

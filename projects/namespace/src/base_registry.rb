@@ -31,9 +31,6 @@ module Foobara
         else
           object
         end
-      rescue => e
-        binding.pry
-        raise
       end
     end
   end
