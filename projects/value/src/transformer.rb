@@ -1,3 +1,5 @@
+require "securerandom"
+
 Foobara.require_file("value", "processor")
 Foobara.require_file("value", "processor/runner")
 
@@ -40,8 +42,6 @@ module Foobara
           unless name.include?(":")
             name = "#{self.name}::#{name}"
           end
-
-          binding.pry if name.include?("::::")
 
           Util.make_class(name, self) do
             arity_one.each do |method_name|

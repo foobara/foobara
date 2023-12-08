@@ -34,8 +34,6 @@ module Foobara
             name = "#{self.name}::#{name}"
           end
 
-          binding.pry if name.include?("::::")
-
           Util.make_class name, self do
             arity_one.each do |method_name|
               if options.key?(method_name)

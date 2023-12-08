@@ -3,12 +3,7 @@ RSpec.describe Foobara::Value::Processor::Selection do
     subject { selection.processor_for!(value) }
 
     let(:processor_a) do
-      Class.new(Foobara::Value::Processor) do
-        class << self
-          def name
-            "ProcessorA"
-          end
-        end
+      stub_class "ProcessorA", Foobara::Value::Processor do
         def applicable?(value)
           value == :a
         end
@@ -16,7 +11,7 @@ RSpec.describe Foobara::Value::Processor::Selection do
     end
 
     let(:processor_b) do
-      Class.new(Foobara::Value::Processor) do
+      stub_class "ProcessorB", Foobara::Value::Processor do
         class << self
           def name
             "ProcessorB"

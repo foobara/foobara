@@ -79,7 +79,7 @@ RSpec.describe "Foobara namespace lookup" do
   end
 
   describe "#lookup_*" do
-    it "finds the expected objects given certain paths", :focus do
+    it "finds the expected objects given certain paths" do
       expect(OrgA.foobara_parent_namespace).to eq(Foobara)
       expect(OrgA.scoped_path).to eq(%w[OrgA])
       expect(OrgA.scoped_full_path).to eq(%w[OrgA])
@@ -141,8 +141,6 @@ RSpec.describe "Foobara namespace lookup" do
       expect(Foobara.lookup_processor("::number::Max")).to eq(Foobara::BuiltinTypes::Number::SupportedValidators::Max)
 
       expect(Max.foobara_lookup("TooBig")).to eq(Max::TooBig)
-      binding.pry
-      e = Foobara.foobara_lookup("number::Max::MaxExceededError")
       expect(Foobara.foobara_lookup("number::Max::MaxExceededError")).to eq(
         Foobara::BuiltinTypes::Number::SupportedValidators::Max::MaxExceededError
       )

@@ -7,8 +7,6 @@ module Foobara
 
       def foobara_parent_namespace=(namespace)
         self.scoped_namespace = namespace
-        binding.pry if scoped_path.empty?
-
         scoped_namespace.foobara_children << self if namespace
       end
 
