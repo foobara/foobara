@@ -33,24 +33,23 @@ RSpec.describe Foobara::Manifest do
       primary_key :id
     end
 
-    stub_class "SomeOrg::SomeDomain::QueryUser", Foobara::Command do
-      # rubocop:disable Lint/ConstantDefinitionInBlock, RSpec/LeakyConstantDeclaration
-      class SomethingWentWrongError < Foobara::RuntimeError
-        class << self
-          def context_type_declaration
-            {}
-          end
+    stub_class "SomeOrg::SomeDomain::QueryUser", Foobara::Command
+    stub_class "SomeOrg::SomeDomain::QueryUser::SomethingWentWrongError", Foobara::RuntimeError do
+      class << self
+        def context_type_declaration
+          {}
         end
       end
-      # rubocop:enable Lint/ConstantDefinitionInBlock, RSpec/LeakyConstantDeclaration
+    end
 
+    SomeOrg::SomeDomain::QueryUser.class_eval do
       inputs user: SomeOrg::SomeDomain::User,
              some_other_user: SomeOtherDomain::SomeOtherUser
       result :User
 
       load_all
 
-      possible_error SomethingWentWrongError
+      possible_error SomeOrg::SomeDomain::QueryUser::SomethingWentWrongError
     end
   end
 

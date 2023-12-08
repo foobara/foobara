@@ -21,13 +21,7 @@ RSpec.describe Foobara::Concern do
     let(:sub_concern) do
       r = root_concern
 
-      Module.new do
-        class << self
-          def name
-            "SubConcern"
-          end
-        end
-
+      stub_module "SubConcern" do
         include Foobara::Concern
         include r
       end
