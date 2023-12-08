@@ -56,7 +56,9 @@ module Foobara
           if Foobara::Util.super_method_takes_parameters?(self, AutoRegisterInstances, __method__)
             super
           else
+            # :nocov:
             super()
+            # :nocov:
           end
 
           ns = scoped_namespace || self.class.scoped_default_namespace

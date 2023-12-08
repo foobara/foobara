@@ -63,7 +63,9 @@ module Foobara
         @inherited_overridable_class_attr_accessors += names
 
         class_methods_module = if const_defined?(:ClassMethods, false)
+                                 # :nocov:
                                  const_get(:ClassMethods, false)
+                                 # :nocov:
                                else
                                  Util.make_module("#{name}::ClassMethods")
                                end
