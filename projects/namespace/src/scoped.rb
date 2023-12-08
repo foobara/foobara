@@ -3,7 +3,8 @@ module Foobara
     class NoScopedPathSetError < StandardError; end
 
     attr_reader :scoped_namespace
-    attr_accessor :scoped_default_namespace
+
+    #     attr_accessor :scoped_default_namespace
 
     def scoped_path
       unless defined?(@scoped_path)
