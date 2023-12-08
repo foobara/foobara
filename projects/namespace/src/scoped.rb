@@ -21,8 +21,6 @@ module Foobara
           raise
         end
       end
-    rescue => e
-      raise
     end
 
     def scoped_namespace=(scoped_namespace)
