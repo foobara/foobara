@@ -8,6 +8,7 @@ RSpec.describe Foobara::Namespace do
 
     before do
       scoped_object.extend(Foobara::Scoped)
+      expect(scoped_object).to_not be_scoped_path_set
       scoped_object.scoped_name = scoped_name
     end
 

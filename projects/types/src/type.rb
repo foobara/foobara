@@ -68,6 +68,8 @@ module Foobara
       def scoped_path
         @scoped_path ||= if type_symbol
                            [type_symbol.to_s]
+                         else
+                           super
                          end
       end
 

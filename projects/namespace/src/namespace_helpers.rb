@@ -85,14 +85,10 @@ module Foobara
               namespace.scoped_name = scoped_name_or_path
             elsif scoped_name_or_path.is_a?(::Array)
               namespace.scoped_path = scoped_name_or_path
-            else
-              # :nocov:
-              raise "Invalid scoped name or path and for #{namespace} "
-              # :nocov:
             end
           end
 
-          if parent_namespace
+          if namespace.scoped_path_set? && parent_namespace
             namespace.foobara_parent_namespace = parent_namespace
           end
         end

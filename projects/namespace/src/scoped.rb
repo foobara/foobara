@@ -16,8 +16,10 @@ module Foobara
       rescue NoMethodError => e
         # TODO: this feels very hacky...
         if e.message =~ /no superclass method `scoped_path\b/
+          puts "raising"
           raise NoScopedPathSetError, "No scoped path set"
         else
+          puts "reraising"
           raise
         end
       end
