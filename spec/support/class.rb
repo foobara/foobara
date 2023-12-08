@@ -4,21 +4,6 @@ module RspecHelpers
       def stub_class(name, superclass = nil, which: :class, &block)
         name = name.to_s if name.is_a?(::Symbol)
 
-        if superclass.is_a?(Class)
-          superclass = superclass.name
-        end
-
-        inherit = superclass ? " < ::#{superclass}" : ""
-
-        superclass ||= :Object
-
-        # rubocop:disable Security/Eval, Style/DocumentDynamicEvalDefinition
-        eval(<<~RUBY, binding, __FILE__, __LINE__ + 1)
-          #{which} ::#{name}#{inherit}
-          end
-        RUBY
-        # rubocop:enable Security/Eval, Style/DocumentDynamicEvalDefinition
-
         unless metadata.key?(:foobara_stubbed_modules)
           set = metadata[:foobara_stubbed_modules] = Set.new
 
@@ -35,17 +20,7 @@ module RspecHelpers
 
         metadata[:foobara_stubbed_modules] << name
 
-        klass = Object.const_get(name)
-
-        if block
-          if which == :module
-            klass.module_eval(&block)
-          else
-            klass.class_eval(&block)
-          end
-        end
-
-        klass
+        Foobara::Util.make_class(name, superclass, which:, &block)
       end
 
       def stub_module(name, &)
