@@ -1,4 +1,4 @@
-RSpec.describe Foobara::Concern do
+RSpec.describe "Foobara::Concern" do
   context "when inheriting through another concern" do
     let(:root_concern) do
       stub_module "SomeModule" do
@@ -117,58 +117,5 @@ RSpec.describe Foobara::Concern do
         expect(class_b1.some_delegated_value).to eq("bar")
       end
     end
-  end
-end
-
-module M
-  # attr_accessor :b
-  def b
-    @@b
-  end
-
-  def b=(val)
-    @@b = val
-  end
-end
-
-class A
-  extend M
-
-  class << self
-    # attr_accessor :a
-    #
-    def a
-      @@a
-    end
-
-    def a=(val)
-      @@a = val
-    end
-  end
-end
-
-class B < A
-end
-
-class C < B
-end
-
-class Z
-  extend M
-end
-
-class A1
-  class << self
-    attr_accessor :a
-  end
-end
-
-class B1 < A1
-  class << self
-    def a
-      defined?(@a) ? @a : superclass.a
-    end
-
-    attr_writer :a
   end
 end
