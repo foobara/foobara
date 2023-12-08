@@ -9,7 +9,7 @@ RSpec.describe Foobara::Types do
       )
     end
 
-    it "has no scoped path set", :skip do
+    it "has no scoped path set" do
       expect(type).to_not be_scoped_path_set
     end
   end

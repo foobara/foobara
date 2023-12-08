@@ -19,6 +19,7 @@ module Foobara
         end
 
         Foobara::Namespace::NamespaceHelpers.foobara_namespace!(type)
+        type.scoped_path = [type_symbol.to_s]
         type.foobara_parent_namespace ||= Foobara
         type.foobara_parent_namespace.foobara_register(type)
 
