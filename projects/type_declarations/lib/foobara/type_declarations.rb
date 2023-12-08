@@ -7,7 +7,6 @@ module Foobara
         # TODO: this feels like the wrong place to do this but doing it here for now to make sure it's done when
         # most important
         @original_scoped ||= Foobara.foobara_registry.each_scoped.to_a
-        binding.pry
         Foobara.instance_variable_set("@foobara_registry", nil)
         Foobara.instance_variable_set("@foobara_children", nil)
 
@@ -24,7 +23,6 @@ module Foobara
       end
 
       def install!
-        binding.pry
         reset_all
 
         Foobara::Error.include(ErrorExtension)

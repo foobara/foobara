@@ -1,6 +1,5 @@
 RSpec.describe ":entity" do
   after do
-    binding.pry
     Foobara.reset_alls
   end
 

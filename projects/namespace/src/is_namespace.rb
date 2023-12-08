@@ -180,9 +180,6 @@ module Foobara
         end
 
         count
-      rescue => e
-        binding.pry
-        raise
       end
     end
   end
