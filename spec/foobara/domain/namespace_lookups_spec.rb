@@ -1,11 +1,5 @@
 RSpec.describe "Foobara namespace lookup" do
-  let(:number) { Foobara::TypeDeclarations::Namespace.current.type_for_declaration(:number) }
-
   before do
-    # TODO: make this less awkward
-    number.foobara_parent_namespace = Foobara
-    Foobara.foobara_register(number)
-
     stub_class :GlobalError, Foobara::Error
 
     stub_class :Max, Foobara::Value::Processor
@@ -77,6 +71,8 @@ RSpec.describe "Foobara namespace lookup" do
     stub_module "GlobalDomain::Foo::Bar"
     stub_class "GlobalDomain::Foo::Bar::CommandA", Foobara::Command
   end
+
+  let(:number) { Foobara::TypeDeclarations::Namespace.current.type_for_declaration(:number) }
 
   describe "#lookup_*" do
     it "finds the expected objects given certain paths" do

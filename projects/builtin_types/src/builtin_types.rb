@@ -24,6 +24,7 @@ module Foobara
 
         type.supported_processor_classes.each_value do |processor_class|
           if !processor_class.scoped_path_set? || processor_class.scoped_path_autoset?
+            # TODO: Do we actually need this?
             processor_class.scoped_path = [processor_class.symbol]
           end
           processor_class.foobara_parent_namespace = type

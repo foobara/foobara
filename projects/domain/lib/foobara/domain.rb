@@ -61,7 +61,7 @@ module Foobara
         Foobara.foobara_add_category_for_subclass_of(:processor, Value::Processor)
         Foobara.foobara_add_category_for_subclass_of(:error, Error)
 
-        Types::Type.foobara_instances_are_namespaces!(default_parent: Foobara)
+        Types::Type.foobara_instances_are_namespaces!
       end
     end
   end

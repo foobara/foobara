@@ -66,7 +66,9 @@ module Foobara
 
       # TODO: at least move this to a concern
       def scoped_path
-        @scoped_path ||= [type_symbol.to_s]
+        @scoped_path ||= if type_symbol
+                           [type_symbol.to_s]
+                         end
       end
 
       def target_class

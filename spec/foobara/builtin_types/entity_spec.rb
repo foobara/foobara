@@ -1,5 +1,6 @@
 RSpec.describe ":entity" do
   after do
+    binding.pry
     Foobara.reset_alls
   end
 
@@ -375,13 +376,7 @@ RSpec.describe ":entity" do
 
     describe "using model_module to specify domain" do
       let(:domain_module) {
-        Module.new do
-          class << self
-            def name
-              "SomeDomain"
-            end
-          end
-
+        stub_module "SomeDomain" do
           foobara_domain!
         end
       }
@@ -401,10 +396,6 @@ RSpec.describe ":entity" do
 
       let(:constructed_model) do
         type.target_class
-      end
-
-      before do
-        stub_const(domain_module.name, domain_module)
       end
 
       it "can be used by symbol" do
