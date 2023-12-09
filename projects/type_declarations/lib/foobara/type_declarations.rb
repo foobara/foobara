@@ -4,6 +4,16 @@ module Foobara
       def reset_all
         Foobara::TypeDeclarations::Namespace.reset_all
 
+        # TODO: this feels like the wrong place to do this but doing it here for now to make sure it's done when
+        # most important
+        @original_scoped ||= Foobara.foobara_registry.each_scoped.to_a
+        Foobara.instance_variable_set("@foobara_registry", nil)
+        Foobara.instance_variable_set("@foobara_children", nil)
+
+        @original_scoped.each do |scoped|
+          Foobara.foobara_register(scoped)
+        end
+
         register_type_declaration(Handlers::RegisteredTypeDeclaration.new)
         register_type_declaration(Handlers::ExtendRegisteredTypeDeclaration.new)
         register_type_declaration(Handlers::ExtendArrayTypeDeclaration.new)

@@ -18,6 +18,20 @@ module Foobara
           global_registry.root_type = type
         end
 
+        Foobara::Namespace::NamespaceHelpers.foobara_namespace!(type)
+        type.scoped_path = [type_symbol.to_s]
+        type.foobara_parent_namespace ||= Foobara
+        type.foobara_parent_namespace.foobara_register(type)
+
+        type.supported_processor_classes.each_value do |processor_class|
+          if !processor_class.scoped_path_set? || processor_class.scoped_path_autoset?
+            # TODO: Do we actually need this?
+            processor_class.scoped_path = [processor_class.symbol]
+          end
+          processor_class.foobara_parent_namespace = type
+          type.foobara_register(processor_class)
+        end
+
         type
       end
 
