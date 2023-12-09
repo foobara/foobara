@@ -1,75 +1,82 @@
-# TODO: refactor initialize extended inherited into modules os that inheritance works
+require_relative "is_namespace"
 
 module Foobara
   class Namespace
     module NamespaceHelpers
+      module ScopedDefaultNamespace
+        include Concern
+
+        inherited_overridable_class_attr_accessor :scoped_default_namespace
+      end
+
       module SubclassesAreNamespaces
-        attr_accessor :scoped_default_namespace
+        include Concern
 
-        def inherited(subclass)
-          super
+        module ClassMethods
+          def inherited(subclass)
+            super
 
-          subclass.extend ::Foobara::Scoped
+            subclass.extend ::Foobara::Scoped
 
-          NamespaceHelpers.foobara_autoset_namespace(subclass, default_namespace: scoped_default_namespace)
-          NamespaceHelpers.foobara_autoset_scoped_path(subclass)
+            NamespaceHelpers.foobara_autoset_namespace(subclass, default_namespace: scoped_default_namespace)
+            NamespaceHelpers.foobara_autoset_scoped_path(subclass)
 
-          subclass.extend ::Foobara::Namespace::IsNamespace
+            subclass.extend ::Foobara::Namespace::IsNamespace
+          end
         end
       end
 
       module AutoRegisterSubclasses
-        # TODO: dry this up somehow?
-        attr_accessor :scoped_default_namespace
+        include Concern
 
-        def inherited(subclass)
-          super
+        module ClassMethods
+          def inherited(subclass)
+            super
 
-          subclass.extend ::Foobara::Scoped
+            subclass.extend ::Foobara::Scoped
 
-          NamespaceHelpers.foobara_autoset_namespace(subclass, default_namespace: scoped_default_namespace)
-          NamespaceHelpers.foobara_autoset_scoped_path(subclass)
+            NamespaceHelpers.foobara_autoset_namespace(subclass, default_namespace: scoped_default_namespace)
+            NamespaceHelpers.foobara_autoset_scoped_path(subclass)
 
-          if subclass.scoped_namespace
-            if subclass.is_a?(Foobara::Namespace::IsNamespace)
-              subclass.foobara_parent_namespace = subclass.scoped_namespace
+            if subclass.scoped_namespace
+              if subclass.is_a?(Foobara::Namespace::IsNamespace)
+                subclass.foobara_parent_namespace = subclass.scoped_namespace
+              end
+
+              subclass.scoped_namespace.foobara_register(subclass)
             end
-
-            subclass.scoped_namespace.foobara_register(subclass)
           end
         end
       end
 
       module AutoRegisterInstances
+        include Concern
+
         def initialize(*, **, &)
-          if self.class.superclass == Object
-            super()
+          if Foobara::Util.super_method_takes_parameters?(self, AutoRegisterInstances, __method__)
+            super
           else
             # :nocov:
-            super
+            super()
             # :nocov:
           end
 
           ns = scoped_namespace || self.class.scoped_default_namespace
-
           ns&.foobara_register(self)
         end
       end
 
       module InstancesAreNamespaces
-        # TODO: dry this up somehow?
-        class << self
-          def included(mod)
-            class << mod
-              attr_accessor :scoped_default_namespace
-            end
+        include Concern
 
-            super
-          end
-        end
+        include ::Foobara::Namespace::IsNamespace
 
         def initialize(*, **, &)
-          self.class.superclass == Object ? super() : super
+          if Foobara::Util.super_method_takes_parameters?(self, InstancesAreNamespaces, __method__)
+            super
+          else
+            super()
+          end
 
           parent_namespace = scoped_namespace || self.class.scoped_default_namespace
           NamespaceHelpers.initialize_foobara_namespace(self, parent_namespace:)
@@ -85,14 +92,10 @@ module Foobara
               namespace.scoped_name = scoped_name_or_path
             elsif scoped_name_or_path.is_a?(::Array)
               namespace.scoped_path = scoped_name_or_path
-            else
-              # :nocov:
-              raise "Invalid scoped name or path and for #{namespace} "
-              # :nocov:
             end
           end
 
-          if parent_namespace
+          if namespace.scoped_path_set? && parent_namespace
             namespace.foobara_parent_namespace = parent_namespace
           end
         end
@@ -107,8 +110,10 @@ module Foobara
         end
 
         def foobara_subclasses_are_namespaces!(klass, default_parent: nil, autoregister: nil)
-          klass.extend SubclassesAreNamespaces
-          klass.scoped_default_namespace = default_parent
+          klass.include ScopedDefaultNamespace unless klass < ScopedDefaultNamespace
+          klass.scoped_default_namespace = default_parent if default_parent
+
+          klass.include SubclassesAreNamespaces unless klass < SubclassesAreNamespaces
 
           if autoregister
             foobara_autoregister_subclasses(klass)
@@ -116,10 +121,9 @@ module Foobara
         end
 
         def foobara_instances_are_namespaces!(klass, default_parent: nil, autoregister: nil)
-          klass.include ::Foobara::Namespace::IsNamespace
-          klass.include InstancesAreNamespaces
-
+          klass.include ScopedDefaultNamespace unless klass < ScopedDefaultNamespace
           klass.scoped_default_namespace = default_parent if default_parent
+          klass.include InstancesAreNamespaces unless klass < InstancesAreNamespaces
 
           if autoregister
             klass.include AutoRegisterInstances
@@ -127,8 +131,9 @@ module Foobara
         end
 
         def foobara_autoregister_subclasses(klass, default_namespace: nil)
-          klass.extend AutoRegisterSubclasses
+          klass.include ScopedDefaultNamespace unless klass < ScopedDefaultNamespace
           klass.scoped_default_namespace = default_namespace if default_namespace
+          klass.include AutoRegisterSubclasses unless klass < AutoRegisterSubclasses
         end
 
         def foobara_autoset_namespace(mod, default_namespace: nil)
@@ -172,6 +177,7 @@ module Foobara
             adjusted_scoped_path << path_part unless mod.scoped_namespace&.scoped_ignore_module?(next_mod)
           end
 
+          mod.scoped_path_autoset = true
           mod.scoped_path = adjusted_scoped_path
         end
       end
