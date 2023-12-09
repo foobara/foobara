@@ -23,6 +23,14 @@ module Foobara
       @scoped_path = path.map(&:to_s)
     end
 
+    def scoped_path_autoset=(bool)
+      @scoped_path_autoset = bool
+    end
+
+    def scoped_path_autoset?
+      @scoped_path_autoset
+    end
+
     def scoped_short_name
       @scoped_short_name ||= scoped_path.last
     end
