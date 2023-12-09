@@ -4,6 +4,10 @@ module Foobara
     # this module as would be expected.
     module IsConcern
       def included(klass)
+        # If behavior is defined in Concern A and then included into Concern B, we need to make sure
+        # that when B is included it's also as if A were included.
+        # ClassMethods on A should exist on any object's class that included B.
+        # Any code-snippets to be ran when A is included should also be ran if B is included.
         if Concern.foobara_concern?(klass)
           if const_defined?(:ClassMethods, false)
             unless klass.const_defined?(:ClassMethods, false)
@@ -22,16 +26,21 @@ module Foobara
 
             klass.const_get(:ClassMethods, false).include(const_get(:ClassMethods, false))
           end
-        elsif const_defined?(:ClassMethods, false)
-          klass.extend(const_get(:ClassMethods, false))
-        end
+        else
+          if const_defined?(:ClassMethods, false)
+            klass.extend(const_get(:ClassMethods, false))
+          end
 
-        has_include_to_apply = klass.ancestors.select do |mod|
-          Concern.foobara_concern?(mod) && mod.has_foobara_on_include_block?
-        end
+          ancestors.select { |mod| Concern.foobara_concern?(mod) }.reverse.each do |concern|
+            concern.instance_variable_get("@inherited_overridable_class_attr_accessors")&.each do |name|
+              var_name = "@#{name}"
+              klass.instance_variable_set(var_name, klass.instance_variable_get(var_name))
+            end
 
-        has_include_to_apply.reverse.each do |concern|
-          klass.class_eval(&concern.foobara_on_include_block)
+            if concern.has_foobara_on_include_block?
+              klass.class_eval(&concern.foobara_on_include_block)
+            end
+          end
         end
 
         super
@@ -47,6 +56,35 @@ module Foobara
 
       def on_include(&block)
         @foobara_on_include = block
+      end
+
+      def inherited_overridable_class_attr_accessor(*names)
+        @inherited_overridable_class_attr_accessors ||= []
+        @inherited_overridable_class_attr_accessors += names
+
+        class_methods_module = if const_defined?(:ClassMethods, false)
+                                 # :nocov:
+                                 const_get(:ClassMethods, false)
+                                 # :nocov:
+                               else
+                                 Util.make_module("#{name}::ClassMethods")
+                               end
+
+        class_methods_module.module_eval do
+          names.each do |name|
+            var_name = "@#{name}"
+
+            define_method name do
+              if instance_variable_defined?(var_name)
+                instance_variable_get(var_name)
+              else
+                superclass.send(name)
+              end
+            end
+
+            attr_writer name
+          end
+        end
       end
     end
 
