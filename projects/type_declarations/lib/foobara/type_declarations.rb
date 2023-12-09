@@ -51,10 +51,11 @@ module Foobara
           }
         end
 
+        # TODO: this doesn't feel like the right place for this...
         Foobara::Error.singleton_class.define_method(
           :subclass
         ) do |superclass = self, symbol:, context_type_declaration:, message: nil|
-          Class.new(superclass) do
+          Util.make_class "#{superclass.name}::#{Util.classify(symbol)}", superclass do
             singleton_class.define_method :symbol do
               symbol
             end

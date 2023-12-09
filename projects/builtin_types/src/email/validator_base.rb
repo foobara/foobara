@@ -6,11 +6,7 @@ module Foobara
           @error_classes ||= begin
             error_class_name = "#{name}Error"
 
-            error_class = Class.new(Foobara::Value::DataError) do
-              singleton_class.define_method :name do
-                error_class_name
-              end
-
+            error_class = Util.make_class(error_class_name, Value::DataError) do
               class << self
                 def context_type_declaration
                   {
@@ -76,9 +72,9 @@ module Foobara
           }
         }.each do |negate, rule_set|
           rule_set.each_pair do |symbol, regex|
-            class_name = Util.classify(symbol)
+            class_name = "#{name}::#{Util.classify(symbol)}"
 
-            klass = Class.new(Email::ValidatorBase) do
+            Util.make_class(class_name, ValidatorBase) do
               define_method :regex do
                 regex
               end
@@ -89,8 +85,6 @@ module Foobara
                 end
               end
             end
-
-            const_set(class_name, klass)
           end
         end
       end

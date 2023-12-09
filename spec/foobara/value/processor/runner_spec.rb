@@ -1,9 +1,6 @@
 RSpec.describe Foobara::Value::Processor::Runner do
   let(:processor_class) {
-    Class.new(Foobara::Value::Transformer) do
-      self::Error = Class.new(Foobara::Value::DataError) do # rubocop:disable RSpec/LeakyConstantDeclaration
-      end
-
+    stub_class :Doubler, Foobara::Value::Transformer do
       attr_accessor :calls
 
       def initialize(...)
@@ -15,6 +12,8 @@ RSpec.describe Foobara::Value::Processor::Runner do
         self.calls += 1
         value * 2
       end
+    end.tap do
+      stub_class("Doubler::Error", Foobara::Value::DataError)
     end
   }
 

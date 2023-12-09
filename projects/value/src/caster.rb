@@ -12,10 +12,10 @@ module Foobara
         end
 
         def create(options)
-          subclass(options).instance
+          subclass(**options).instance
         end
 
-        def subclass(options)
+        def subclass(name: nil, **options)
           arity_zero = %i[name applies_message]
           arity_one = %i[applicable? cast]
           allowed = arity_zero + arity_one
@@ -28,7 +28,13 @@ module Foobara
             # :nocov:
           end
 
-          Class.new(self) do
+          name ||= "#{self.name}::Anon#{SecureRandom.hex}"
+
+          unless name.include?(":")
+            name = "#{self.name}::#{name}"
+          end
+
+          Util.make_class name, self do
             arity_one.each do |method_name|
               if options.key?(method_name)
                 method = options[method_name]

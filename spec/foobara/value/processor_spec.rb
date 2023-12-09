@@ -1,9 +1,6 @@
 RSpec.describe Foobara::Value::Processor do
   let(:processor_class) {
-    Class.new(described_class) do
-      self::Error = Class.new(Foobara::Value::DataError) do # rubocop:disable RSpec/LeakyConstantDeclaration
-      end
-
+    stub_class "SomeProcessor", described_class do
       def process_value(value)
         if value == 123
           Foobara::Outcome.error(build_error(symbol: :foo, message: "some error", context: {}))
@@ -11,6 +8,8 @@ RSpec.describe Foobara::Value::Processor do
           Foobara::Outcome.success(value)
         end
       end
+    end.tap do
+      stub_class "SomeProcessor::Error", Foobara::Value::DataError
     end
   }
 

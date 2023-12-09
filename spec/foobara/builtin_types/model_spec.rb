@@ -86,28 +86,13 @@ RSpec.describe ":model" do
 
   context "when model has a domain but no organization (ie is in the global organization)" do
     let(:domain) do
-      stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-      org = Module.new do
-        def self.name
-          "SomeOrg"
-        end
-
-        stub_class.call(self)
+      stub_module "SomeOrg" do
+        foobara_organization!
       end
 
-      org.foobara_organization!
-
-      dom = Module.new do
-        def self.name
-          "SomeOrg::SomeDomain"
-        end
-
-        stub_class.call(self)
-      end
-
-      dom.foobara_domain!
-      dom.foobara_domain
+      stub_module "SomeOrg::SomeDomain" do
+        foobara_domain!
+      end.foobara_domain
     end
 
     let(:type_declaration) do
@@ -256,13 +241,7 @@ RSpec.describe ":model" do
 
   describe "using model_module to specify domain" do
     let(:domain_module) {
-      Module.new do
-        class << self
-          def name
-            "SomeDomain"
-          end
-        end
-
+      stub_module "SomeDomain" do
         foobara_domain!
       end
     }
@@ -281,10 +260,6 @@ RSpec.describe ":model" do
 
     let(:constructed_model) do
       type.target_class
-    end
-
-    before do
-      stub_const(domain_module.name, domain_module)
     end
 
     it "can be used by symbol" do

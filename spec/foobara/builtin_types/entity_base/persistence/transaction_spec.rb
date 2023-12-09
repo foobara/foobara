@@ -449,18 +449,7 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
 
     context "when persisting entity with an association" do
       let(:aggregate_class) do
-        # TODO: refactor into a rspec helper for creating a properly stubbed class with a name
-        stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-        Class.new(Foobara::Entity) do
-          class << self
-            def name
-              "SomeAggregate"
-            end
-          end
-
-          stub_class.call(self)
-
+        stub_class "SomeAggregate", Foobara::Entity do
           attributes pk: :integer,
                      foo: :integer,
                      some_entities: [SomeEntity]

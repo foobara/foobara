@@ -12,7 +12,7 @@ module Foobara
             def subclass(mod, entity_class, data_path)
               error_class_name = not_found_error_class_name(data_path)
 
-              klass = Class.new(self) do
+              Util.make_class("#{mod.name}::#{error_class_name}", self) do
                 # TODO: use Concern to change these into attr_accessor instead
                 singleton_class.define_method :data_path do
                   data_path
@@ -22,8 +22,6 @@ module Foobara
                   entity_class
                 end
               end
-
-              mod.const_set(error_class_name, klass)
             end
 
             def context_type_declaration

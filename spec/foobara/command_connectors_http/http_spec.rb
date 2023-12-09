@@ -748,7 +748,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         let(:inputs_transformers) { [inputs_transformer] }
         let(:inputs_transformer) do
-          Class.new(Foobara::TypeDeclarations::TypedTransformer) do
+          stub_class "SomeTransformer", Foobara::TypeDeclarations::TypedTransformer do
             class << self
               def input_type_declaration
                 {
