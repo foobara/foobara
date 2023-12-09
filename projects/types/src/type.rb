@@ -30,8 +30,8 @@ module Foobara
                     :raw_declaration_data,
                     :name,
                     :type_registry,
-                    :target_classes,
-                    :type_symbol
+                    :target_classes
+      attr_reader :type_symbol
 
       def initialize(
         *args,
@@ -84,6 +84,11 @@ module Foobara
 
       def extends_symbol?(symbol)
         type_symbol == symbol || base_type&.extends_symbol?(symbol)
+      end
+
+      def type_symbol=(type_symbol)
+        @scoped_path ||= [type_symbol.to_s]
+        @type_symbol = type_symbol
       end
 
       def processors

@@ -1,6 +1,19 @@
 RSpec.describe Foobara::Types do
   let(:type) { Foobara::TypeDeclarations::Namespace.type_for_declaration(type_declaration) }
 
+  context "when created from scratch" do
+    let(:type) do
+      Foobara::Types::Type.new(
+        "whatever",
+        target_classes: [Object]
+      )
+    end
+
+    it "has no scoped path set" do
+      expect(type).to_not be_scoped_path_set
+    end
+  end
+
   context "when :attributes" do
     let(:type_declaration) { { foo: :duck } }
 
