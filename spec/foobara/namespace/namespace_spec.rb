@@ -175,12 +175,12 @@ RSpec.describe Foobara::Namespace do
         end
 
         it "has expected respond_to? results" do
-          expect(namespace).to respond_to(:lookup_class1)
-          expect(namespace).to respond_to(:lookup_class1!)
-          expect(namespace).to respond_to(:lookup_class2)
-          expect(namespace).to respond_to(:lookup_class2!)
-          expect(namespace).to_not respond_to(:lookup_class3)
-          expect(namespace).to_not respond_to(:lookup_class3!)
+          expect(namespace).to respond_to(:foobara_lookup_class1)
+          expect(namespace).to respond_to(:foobara_lookup_class1!)
+          expect(namespace).to respond_to(:foobara_lookup_class2)
+          expect(namespace).to respond_to(:foobara_lookup_class2!)
+          expect(namespace).to_not respond_to(:foobara_lookup_class3)
+          expect(namespace).to_not respond_to(:foobara_lookup_class3!)
         end
 
         context "when an object is registered" do
@@ -190,8 +190,8 @@ RSpec.describe Foobara::Namespace do
 
           context "when looking up with matching lookup_class1 method and lookup method" do
             it "returns the object" do
-              expect(namespace.lookup_class1(scoped_name)).to be(object1)
-              expect(namespace.lookup_class1!(scoped_name)).to be(object1)
+              expect(namespace.foobara_lookup_class1(scoped_name)).to be(object1)
+              expect(namespace.foobara_lookup_class1!(scoped_name)).to be(object1)
               expect(namespace.foobara_lookup(scoped_name)).to be(object1)
               expect(namespace.foobara_lookup!(scoped_name)).to be(object1)
             end
@@ -199,9 +199,9 @@ RSpec.describe Foobara::Namespace do
 
           context "when looking up with non-matching lookup_class2 method" do
             it "does not return the object" do
-              expect(namespace.lookup_class2(scoped_name)).to be_nil
+              expect(namespace.foobara_lookup_class2(scoped_name)).to be_nil
               expect {
-                namespace.lookup_class2!(scoped_name)
+                namespace.foobara_lookup_class2!(scoped_name)
               }.to raise_error(Foobara::Namespace::NotFoundError)
             end
           end
@@ -213,8 +213,8 @@ RSpec.describe Foobara::Namespace do
             end
 
             it "can fetch the proper items with different lookup_* methods" do
-              expect(namespace.lookup_class1(scoped_name)).to be(object1)
-              expect(namespace.lookup_class2(scoped_name)).to be(object2)
+              expect(namespace.foobara_lookup_class1(scoped_name)).to be(object1)
+              expect(namespace.foobara_lookup_class2(scoped_name)).to be(object2)
             end
           end
         end
@@ -259,8 +259,8 @@ RSpec.describe Foobara::Namespace do
 
           context "when looking up with matching lookup_class1 method and lookup method" do
             it "returns the object" do
-              expect(namespace.lookup_class1(scoped_name)).to be(class_a)
-              expect(namespace.lookup_class1!(scoped_name)).to be(class_a)
+              expect(namespace.foobara_lookup_class1(scoped_name)).to be(class_a)
+              expect(namespace.foobara_lookup_class1!(scoped_name)).to be(class_a)
               expect(namespace.foobara_lookup(scoped_name)).to be(class_a)
               expect(namespace.foobara_lookup!(scoped_name)).to be(class_a)
             end
@@ -268,9 +268,9 @@ RSpec.describe Foobara::Namespace do
 
           context "when looking up with non-matching lookup_class2 method" do
             it "does not return the object" do
-              expect(namespace.lookup_class2(scoped_name)).to be_nil
+              expect(namespace.foobara_lookup_class2(scoped_name)).to be_nil
               expect {
-                namespace.lookup_class2!(scoped_name)
+                namespace.foobara_lookup_class2!(scoped_name)
               }.to raise_error(Foobara::Namespace::NotFoundError)
             end
           end
@@ -282,8 +282,8 @@ RSpec.describe Foobara::Namespace do
             end
 
             it "can fetch the proper items with different lookup_* methods" do
-              expect(namespace.lookup_class1(scoped_name)).to be(class_a)
-              expect(namespace.lookup_class2(scoped_name)).to be(class_b)
+              expect(namespace.foobara_lookup_class1(scoped_name)).to be(class_a)
+              expect(namespace.foobara_lookup_class2(scoped_name)).to be(class_b)
             end
           end
         end

@@ -139,7 +139,7 @@ module Foobara
       private
 
       def _filter_from_method_name(method_name)
-        match = method_name.to_s.match(/^lookup_(\w+)(!)?$/)
+        match = method_name.to_s.match(/^foobara_lookup_(\w+)(!)?$/)
 
         if match
           filter = foobara_categories[match[1].to_sym]

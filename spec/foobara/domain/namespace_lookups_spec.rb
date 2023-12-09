@@ -79,22 +79,22 @@ RSpec.describe "Foobara namespace lookup" do
       expect(OrgA.foobara_parent_namespace).to eq(Foobara)
       expect(OrgA.scoped_path).to eq(%w[OrgA])
       expect(OrgA.scoped_full_path).to eq(%w[OrgA])
-      expect(Foobara.lookup_organization("OrgA")).to eq(OrgA)
-      expect(Foobara.lookup_organization("::OrgA")).to eq(OrgA)
+      expect(Foobara.foobara_lookup_organization("OrgA")).to eq(OrgA)
+      expect(Foobara.foobara_lookup_organization("::OrgA")).to eq(OrgA)
 
       expect(OrgA::DomainA.foobara_parent_namespace).to eq(OrgA)
       expect(OrgA::DomainA.scoped_path).to eq(%w[DomainA])
       expect(OrgA::DomainA.scoped_full_path).to eq(%w[OrgA DomainA])
       expect(OrgA::DomainA.scoped_full_name).to eq("::OrgA::DomainA")
       expect(
-        Foobara.lookup_domain("OrgA::DomainA")
+        Foobara.foobara_lookup_domain("OrgA::DomainA")
       ).to eq(OrgA::DomainA)
       expect(
-        Foobara.lookup_domain("::OrgA::DomainA")
+        Foobara.foobara_lookup_domain("::OrgA::DomainA")
       ).to eq(OrgA::DomainA)
 
-      expect(OrgA::DomainA.lookup_domain(:DomainA)).to eq(OrgA::DomainA)
-      expect(OrgA::DomainA.lookup_domain("::DomainA")).to be_nil
+      expect(OrgA::DomainA.foobara_lookup_domain(:DomainA)).to eq(OrgA::DomainA)
+      expect(OrgA::DomainA.foobara_lookup_domain("::DomainA")).to be_nil
 
       expect(
         OrgA::DomainA::CommandA.foobara_parent_namespace
@@ -105,20 +105,20 @@ RSpec.describe "Foobara namespace lookup" do
         OrgA::DomainA::CommandA.scoped_full_name
       ).to eq("::OrgA::DomainA::CommandA")
       expect(
-        Foobara.lookup_command("OrgA::DomainA::CommandA")
+        Foobara.foobara_lookup_command("OrgA::DomainA::CommandA")
       ).to eq(OrgA::DomainA::CommandA)
       expect(
-        Foobara.lookup_command("::OrgA::DomainA::CommandA")
+        Foobara.foobara_lookup_command("::OrgA::DomainA::CommandA")
       ).to eq(OrgA::DomainA::CommandA)
 
       expect(GlobalError.scoped_namespace).to eq(Foobara)
       expect(GlobalError.scoped_path).to eq(%w[GlobalError])
       expect(GlobalError.scoped_full_path).to eq(%w[GlobalError])
       expect(
-        Foobara.lookup_error("GlobalError")
+        Foobara.foobara_lookup_error("GlobalError")
       ).to eq(GlobalError)
       expect(
-        Foobara.lookup_error("::GlobalError")
+        Foobara.foobara_lookup_error("::GlobalError")
       ).to eq(GlobalError)
 
       expect(
@@ -126,15 +126,19 @@ RSpec.describe "Foobara namespace lookup" do
       ).to eq(OrgA::DomainB::CommandA)
 
       expect(number.foobara_parent_namespace).to eq(Foobara)
-      expect(Foobara.lookup_type("number")).to eq(number)
-      expect(Foobara.lookup_type("::number")).to eq(number)
+      expect(Foobara.foobara_lookup_type("number")).to eq(number)
+      expect(Foobara.foobara_lookup_type("::number")).to eq(number)
 
       expect(Max.foobara_lookup("TooBig")).to eq(Max::TooBig)
 
-      expect(number.lookup_processor("max")).to eq(Foobara::BuiltinTypes::Number::SupportedValidators::Max)
-      expect(number.lookup_processor("max")).to eq(Foobara::BuiltinTypes::Number::SupportedValidators::Max)
-      expect(Foobara.lookup_processor("number::max")).to eq(Foobara::BuiltinTypes::Number::SupportedValidators::Max)
-      expect(Foobara.lookup_processor("::number::max")).to eq(Foobara::BuiltinTypes::Number::SupportedValidators::Max)
+      expect(number.foobara_lookup_processor("max")).to eq(Foobara::BuiltinTypes::Number::SupportedValidators::Max)
+      expect(number.foobara_lookup_processor("max")).to eq(Foobara::BuiltinTypes::Number::SupportedValidators::Max)
+      expect(
+        Foobara.foobara_lookup_processor("number::max")
+      ).to eq(Foobara::BuiltinTypes::Number::SupportedValidators::Max)
+      expect(
+        Foobara.foobara_lookup_processor("::number::max")
+      ).to eq(Foobara::BuiltinTypes::Number::SupportedValidators::Max)
 
       expect(Max.foobara_lookup("TooBig")).to eq(Max::TooBig)
       expect(Foobara.foobara_lookup("number::max::MaxExceededError")).to eq(

@@ -88,8 +88,8 @@ RSpec.describe Foobara::Namespace::IsNamespace do
 
           context "when looking up with matching lookup_class1 method and lookup method" do
             it "returns the object" do
-              expect(namespace.lookup_class1(scoped_name)).to be(object1)
-              expect(namespace.lookup_class1!(scoped_name)).to be(object1)
+              expect(namespace.foobara_lookup_class1(scoped_name)).to be(object1)
+              expect(namespace.foobara_lookup_class1!(scoped_name)).to be(object1)
               expect(namespace.foobara_lookup(scoped_name)).to be(object1)
               expect(namespace.foobara_lookup!(scoped_name)).to be(object1)
             end
