@@ -49,10 +49,12 @@ module Foobara
           unprocessed_command_classes << subclass
         end
 
-        Foobara.foobara_root_namespace!
-
-        Foobara.foobara_add_category_for_instance_of(:organization, Organization)
-        Foobara.foobara_add_category_for_instance_of(:domain, Domain)
+        Foobara.foobara_add_category(:organization) do
+          is_a?(Module) && foobara_organization?
+        end
+        Foobara.foobara_add_category(:domain) do
+          is_a?(Module) && foobara_domain?
+        end
         Foobara.foobara_add_category_for_subclass_of(:command, Command)
         # TODO: should be able to access this as Type
         Foobara.foobara_add_category_for_instance_of(:type, Types::Type)
