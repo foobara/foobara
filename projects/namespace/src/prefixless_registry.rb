@@ -30,7 +30,7 @@ module Foobara
         end
       end
 
-      def each_scoped(&)
+      def each_scoped_without_filter(&)
         registry.each_value(&)
       end
     end

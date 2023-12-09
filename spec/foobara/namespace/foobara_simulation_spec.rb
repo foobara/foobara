@@ -207,6 +207,36 @@ RSpec.describe Foobara::Namespace do
       expect(
         FoobaraSimulation::Foobara.foobara_lookup_error("integer::Max::TooBig")
       ).to eq(FoobaraSimulation::Max::TooBig)
+
+      expect(FoobaraSimulation::Foobara.foobara_all).to contain_exactly(
+        FoobaraSimulation::OrgA,
+        FoobaraSimulation::OrgA::DomainA,
+        FoobaraSimulation::OrgA::DomainA::CommandA,
+        FoobaraSimulation::OrgA::DomainA::CommandB,
+        FoobaraSimulation::OrgA::DomainA::CustomType,
+        FoobaraSimulation::OrgA::DomainB,
+        FoobaraSimulation::OrgA::DomainB::CommandA,
+        FoobaraSimulation::OrgA::DomainB::CommandA::SomeError,
+        FoobaraSimulation::OrgA::DomainB::CommandB,
+        FoobaraSimulation::OrgA::DomainB::Foo::Bar::CommandA,
+        FoobaraSimulation::OrgA::DomainB::CustomType,
+        FoobaraSimulation::OrgB,
+        FoobaraSimulation::OrgB::DomainA,
+        FoobaraSimulation::OrgB::DomainA::CommandA,
+        FoobaraSimulation::OrgB::DomainA::CommandB,
+        FoobaraSimulation::OrgB::DomainB,
+        FoobaraSimulation::OrgB::DomainB::CommandA,
+        FoobaraSimulation::OrgB::DomainB::CommandB,
+        FoobaraSimulation::OrgB::DomainB::Foo::Bar::CommandA,
+        FoobaraSimulation::GlobalDomain,
+        FoobaraSimulation::GlobalDomain::CommandA,
+        FoobaraSimulation::GlobalDomain::CommandB,
+        FoobaraSimulation::GlobalDomain::Foo::Bar::CommandA,
+        FoobaraSimulation::GlobalError,
+        FoobaraSimulation::Integer,
+        FoobaraSimulation::Max,
+        FoobaraSimulation::Max::TooBig
+      )
     end
   end
 end

@@ -116,15 +116,30 @@ module Foobara
         object
       end
 
-      def method_missing(method_name, *)
-        filter, bang = _filter_from_method_name(method_name)
+      def foobara_each(filter: nil, &)
+        foobara_registry.each_scoped(filter:, &)
+
+        foobara_children.each do |child|
+          child.foobara_each(filter:, &)
+        end
+      end
+
+      def foobara_all(filter: nil)
+        all = []
+
+        foobara_each(filter:) do |scoped|
+          all << scoped
+        end
+
+        all
+      end
+
+      def method_missing(method_name, *, &)
+        filter, method, bang = _filter_from_method_name(method_name)
 
         if filter
-          if bang
-            foobara_lookup!(*, filter:)
-          else
-            foobara_lookup(*, filter:)
-          end
+          method = "foobara_#{method}#{bang ? "!" : ""}"
+          send(method, *, filter:, &)
         else
           # :nocov:
           super
@@ -139,14 +154,19 @@ module Foobara
       private
 
       def _filter_from_method_name(method_name)
-        match = method_name.to_s.match(/^foobara_lookup_(\w+)(!)?$/)
+        match = method_name.to_s.match(/^foobara_(lookup|each|all)_(\w+)(!)?$/)
 
         if match
-          filter = foobara_categories[match[1].to_sym]
-          if filter
-            bang = !match[2].nil?
+          filter = foobara_categories[match[2].to_sym]
 
-            [filter, bang]
+          if filter
+            bang = !match[3].nil?
+            method = match[1]
+
+            # only lookup has a bang version
+            if !bang || method == "lookup"
+              [filter, method, bang]
+            end
           end
         end
       end

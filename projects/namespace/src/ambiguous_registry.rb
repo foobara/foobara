@@ -22,6 +22,12 @@ module Foobara
         end
       end
 
+      def each_scoped_without_filter(&)
+        registry.each_value do |scoped_objects|
+          scoped_objects.each(&)
+        end
+      end
+
       private
 
       def _best_match(prefix, matches, path)

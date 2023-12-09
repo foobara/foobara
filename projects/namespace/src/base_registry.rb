@@ -15,7 +15,22 @@ module Foobara
         # :nocov:
       end
 
-      def each_scoped(&)
+      def each_scoped(filter: nil, &block)
+        each_scoped_without_filter do |scoped|
+          scoped = apply_filter(scoped, filter) if filter
+          block.call(scoped) if scoped
+        end
+      end
+
+      def all_scoped(filter: nil)
+        all = []
+        each_scoped(filter:) do |scoped|
+          all << scoped
+        end
+        all
+      end
+
+      def each_scoped_without_filter(&)
         # :nocov:
         raise "Subclass responsibility"
         # :nocov:

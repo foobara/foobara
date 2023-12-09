@@ -216,6 +216,18 @@ RSpec.describe Foobara::Namespace do
               expect(namespace.foobara_lookup_class1(scoped_name)).to be(object1)
               expect(namespace.foobara_lookup_class2(scoped_name)).to be(object2)
             end
+
+            describe "#foobara_all" do
+              it "returns the proper items" do
+                expect(namespace.foobara_all).to eq(objects)
+              end
+
+              context "with a filter" do
+                it "returns the proper items" do
+                  expect(namespace.foobara_all_class1).to eq([object1])
+                end
+              end
+            end
           end
         end
       end

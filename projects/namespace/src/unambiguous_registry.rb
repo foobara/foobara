@@ -31,8 +31,8 @@ module Foobara
         apply_filter(registry[path], filter)
       end
 
-      def each_scoped(&)
-        registry.values.uniq.each(&)
+      def each_scoped_without_filter(&)
+        registry.each_value(&)
       end
     end
   end
