@@ -13,26 +13,8 @@ module Foobara
           remove_instance_variable(var_name) if instance_variable_defined?(var_name)
         end
 
-        Organization.reset_all
-
-        %w[
-          children
-          registry
-        ].each do |var_name|
-          var_name = "@#{var_name}"
-
-          [
-            Foobara,
-            Organization,
-            Domain,
-            Command,
-            Types::Type,
-            Value::Processor,
-            Error
-          ].each do |klass|
-            klass.remove_instance_variable(var_name) if klass.instance_variable_defined?(var_name)
-          end
-        end
+        # TODO: kill this idea of global organizations ...
+        Foobara.foobara_register(GlobalOrganization)
       end
 
       def install!
@@ -43,7 +25,14 @@ module Foobara
         end
 
         @installed = true
-        Foobara.foobara_organization!
+
+        # TODO: kill this concept!
+        Util.make_module "Foobara::GlobalOrganization" do
+          foobara_organization!
+
+          self.is_global = true
+        end
+
         Foobara::Command.include(Foobara::Domain::CommandExtension)
         Foobara::Command.after_subclass_defined do |subclass|
           unprocessed_command_classes << subclass

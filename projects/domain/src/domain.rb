@@ -1,11 +1,13 @@
 module Foobara
   class Domain
+    include TruncatedInspect
+
     class AlreadyRegisteredDomainDependency < StandardError; end
     class NoSuchDomain < StandardError; end
 
-    attr_accessor :organization, :domain_name, :model_classes, :is_global, :mod
+    attr_accessor :domain_name, :model_classes, :is_global, :mod
 
-    def initialize(mod:, domain_name: nil, organization: Organization.global, global: false)
+    def initialize(mod:, domain_name: nil, global: false)
       self.mod = mod
       self.is_global = global
 
@@ -22,8 +24,6 @@ module Foobara
         self.domain_name = domain_name
       end
 
-      self.organization = organization
-      organization.register_domain(self)
       # TODO: explode if same name used twice
       Domain.all[all_key] = self
       @command_classes = []
@@ -32,8 +32,25 @@ module Foobara
       super()
     end
 
-    foobara_delegate :organization_name, :organization_symbol, to: :organization, allow_nil: true
+    def organization_name
+      organization.foobara_organization_name
+    end
+
+    def organization_symbol
+      organization.foobara_organization_symbol
+    end
+
     foobara_delegate :type_for_declaration, to: :type_namespace
+
+    def organization
+      parent = mod&.foobara_parent_namespace
+
+      if parent&.foobara_organization?
+        parent
+      else
+        Foobara::GlobalOrganization
+      end
+    end
 
     def global?
       is_global
@@ -56,11 +73,7 @@ module Foobara
     end
 
     def full_domain_name
-      @full_domain_name ||= if organization.global? && !global?
-                              global? ? "#{organization_name}::#{domain_name}" : domain_name
-                            else
-                              "#{organization_name}::#{domain_name}"
-                            end
+      @full_domain_name ||= mod.scoped_full_name
     end
 
     def domain_symbol
@@ -68,11 +81,7 @@ module Foobara
     end
 
     def full_domain_symbol
-      @full_domain_symbol ||= if organization.global? && !global?
-                                global? ? "#{organization_symbol}::#{domain_symbol}" : domain_symbol
-                              else
-                                "#{organization_symbol}::#{domain_symbol}"
-                              end.to_sym
+      @full_domain_symbol ||= Util.underscore_sym(full_domain_name)
     end
 
     def command_classes
@@ -244,10 +253,11 @@ module Foobara
         all.values.find { |domain| domain.type_namespace == namespace }
       end
 
+      # TODO: eliminate his concept
       def global
         return @global if defined?(@global)
 
-        @global = new(global: true, organization: Organization.global, mod: nil)
+        @global = new(global: true, mod: nil)
       end
 
       def all
@@ -282,18 +292,9 @@ module Foobara
       end
 
       def create(full_name)
-        domain_name, organization_name = full_name.to_s.split("::").reverse
-
-        if organization_name
-          org = Organization[organization_name] || Organization.create(organization_name)
-        end
-
-        mod = Module.new
-
-        org&.mod&.const_set(domain_name, mod)
-
-        mod.foobara_domain!
-        mod.foobara_domain
+        Util.make_module full_name do
+          foobara_domain!
+        end.foobara_domain
       end
     end
   end

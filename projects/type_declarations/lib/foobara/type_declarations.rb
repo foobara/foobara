@@ -7,8 +7,25 @@ module Foobara
         # TODO: this feels like the wrong place to do this but doing it here for now to make sure it's done when
         # most important
         @original_scoped ||= Foobara.foobara_registry.all_scoped
-        Foobara.instance_variable_set("@foobara_registry", nil)
-        Foobara.instance_variable_set("@foobara_children", nil)
+
+        %w[
+          foobara_children
+          foobara_registry
+        ].each do |var_name|
+          var_name = "@#{var_name}"
+
+          # Don't we only have to do this for Foobara and not all of these??
+          [
+            Foobara,
+            Domain,
+            Command,
+            Types::Type,
+            Value::Processor,
+            Error
+          ].each do |klass|
+            klass.remove_instance_variable(var_name) if klass.instance_variable_defined?(var_name)
+          end
+        end
 
         @original_scoped.each do |scoped|
           Foobara.foobara_register(scoped)

@@ -8,8 +8,7 @@ RSpec.describe Foobara::Domain do
   end
 
   let(:domain) { domain_module.foobara_domain }
-  let(:organization) { organization_module.foobara_organization }
-
+  let(:organization) { stub_module(:SomeOrg) { foobara_organization! } }
   let(:domain_module) {
     stub_module :SomeDomain do
       foobara_domain!
@@ -19,12 +18,6 @@ RSpec.describe Foobara::Domain do
   let!(:command_class) {
     stub_class "#{domain_module.name}::SomeCommand", Foobara::Command
   }
-
-  let(:organization_module) do
-    stub_module :SomeOrg do
-      foobara_organization!
-    end
-  end
 
   describe ".to_domain" do
     context "when nil" do
@@ -56,24 +49,6 @@ RSpec.describe Foobara::Domain do
     end
   end
 
-  describe ".create" do
-    after do
-      Org.send(:remove_const, :Domain)
-      Object.send(:remove_const, :Org)
-    end
-
-    it "creates org, domain, and modules" do
-      domain = described_class.create("Org::Domain")
-      organization = domain.organization
-      expect(organization.domains).to include(domain)
-      expect(domain.full_domain_name).to eq("Org::Domain")
-      expect(domain.organization.mod.inspect).to eq("Org")
-      expect(domain.mod.inspect).to eq("Org::Domain")
-      expect(domain.organization.mod.name).to eq("Org")
-      expect(domain.mod.name).to eq("Org::Domain")
-    end
-  end
-
   context "with simple command" do
     describe "#full_domain_name" do
       subject { domain.full_domain_name }
@@ -102,7 +77,7 @@ RSpec.describe Foobara::Domain do
 
       describe "finding organization by name" do
         it "can find by name" do
-          expect(Foobara::Organization[:SomeOrg].organization_name).to eq("SomeOrg")
+          expect(Foobara.foobara_lookup_organization(:SomeOrg).scoped_name).to eq("SomeOrg")
         end
       end
 
@@ -119,10 +94,16 @@ RSpec.describe Foobara::Domain do
       end
 
       # TODO: belongs elsewhere
-      describe "#owns_domain?" do
-        subject { organization.owns_domain?(domain) }
+      describe "#foobara_owns_domain?" do
+        subject { organization.foobara_owns_domain?(domain) }
 
         it { is_expected.to be(true) }
+
+        context "when does not own domain" do
+          subject { Foobara::GlobalOrganization.foobara_owns_domain?(domain) }
+
+          it { is_expected.to be(false) }
+        end
       end
 
       # TODO: belongs elsewhere
@@ -131,7 +112,7 @@ RSpec.describe Foobara::Domain do
           manifest = Foobara.manifest[:organizations][:SomeOrg][:domains][:SomeDomain][:commands][:SomeCommand]
           expect(manifest[:result_type][:element_type_declarations][:bar][:type]).to eq(:integer)
 
-          expect(Foobara.all_organizations).to include(organization)
+          expect(Foobara.foobara_all_organization).to include(organization)
           expect(Foobara.all_domains).to include(domain)
           expect(Foobara.all_commands).to include(command_class)
         end

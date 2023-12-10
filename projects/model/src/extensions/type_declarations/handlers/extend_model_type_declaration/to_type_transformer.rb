@@ -32,9 +32,9 @@ module Foobara
                 model_class = type.target_class
                 existing_model_type = model_class.model_type
 
-                if existing_model_type
-                  domain = model_class.domain
+                domain = model_class.domain
 
+                if existing_model_type
                   if existing_model_type.declaration_data != type.declaration_data
                     if domain.type_registered?(existing_model_type)
                       model_symbol = model_class.model_symbol
@@ -43,12 +43,18 @@ module Foobara
                     end
 
                     model_class.model_type = type
+                    # TODO: kill off Domain
                     domain.register_model(model_class)
                   end
                 else
                   model_class.model_type = type
-                  model_class.domain.register_model(model_class)
+                  domain = model_class.domain
+                  domain.register_model(model_class)
                 end
+
+                type.type_symbol ||= type.name
+                # TODO: kill this .mod concept
+                (domain.mod || Foobara).foobara_register(type)
               end
             end
           end

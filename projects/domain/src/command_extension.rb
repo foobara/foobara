@@ -27,9 +27,15 @@ module Foobara
         def domain
           mod = Util.module_for(self)
 
-          if mod&.foobara_domain?
-            mod.foobara_domain
-          end || Domain.global
+          while mod
+            if mod.foobara_domain?
+              return mod.foobara_domain
+            end
+
+            mod = Util.module_for(mod)
+          end
+
+          Domain.global
         end
 
         def namespace
@@ -71,6 +77,7 @@ module Foobara
         def domain_name
           domain_name = foobara_parent_namespace.scoped_name || "global_domain"
 
+          # TODO: remove this old method of doing things!!!
           old_domain_name = domain.domain_name
 
           unless old_domain_name == domain_name
@@ -82,8 +89,26 @@ module Foobara
           domain_name
         end
 
-        foobara_delegate :organization_name,
-                         :organization_symbol,
+        def organization_name
+          parent = foobara_parent_namespace
+
+          name = if parent.foobara_domain?
+                   parent.foobara_parent_namespace.scoped_name
+                 end || "global_organization"
+
+          # TODO: remove this old method of doing things!!
+          old_name = domain.organization_name
+
+          unless old_name == name
+            # :nocov:
+            raise "Organization name in new system doesn't match old system: #{old_name} != #{name}"
+            # :nocov:
+          end
+
+          name
+        end
+
+        foobara_delegate :organization_symbol,
                          :domain_symbol,
                          to: :domain, allow_nil: true
       end

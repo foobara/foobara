@@ -64,10 +64,8 @@ module Foobara
       def full_model_name
         if domain.global?
           model_name
-        elsif organization.global?
-          "#{domain_name}::#{model_name}"
         else
-          "#{organization_name}::#{domain_name}::#{model_name}"
+          "#{domain.full_domain_name}::#{model_name}"
         end
       end
 
