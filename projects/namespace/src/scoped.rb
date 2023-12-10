@@ -45,7 +45,11 @@ module Foobara
     end
 
     def scoped_name
-      @scoped_name ||= scoped_path.join("::")
+      return @scoped_name if defined?(@scoped_name)
+
+      @scoped_name = unless scoped_path.empty?
+                       scoped_path.join("::")
+                     end
     end
 
     def scoped_full_path
