@@ -1,7 +1,7 @@
 module Foobara
   module Value
     class Processor
-      foobara_subclasses_are_namespaces!
+      foobara_subclasses_are_namespaces!(default_parent: Foobara)
 
       module Priority
         FIRST = 0
@@ -54,11 +54,23 @@ module Foobara
           @error_classes ||= begin
             error_klasses = Util.constant_values(self, extends: Foobara::Error)
 
-            if superclass < Processor
-              error_klasses += superclass.error_classes
+            # TODO: we shouldn´t have wo ways to do this. But keeping this check for now until the old
+            # namespace implementation is removed.
+            error_klasses2 = if is_a?(Foobara::Namespace::IsNamespace)
+                               foobara_all_error
+                             end
+
+            if error_klasses.sort_by(&:name) != error_klasses2.sort_by(&:name)
+              # :nocov:
+              raise "Expected #{error_klasses} to equal #{error_klasses2} for #{name}"
+              # :nocov:
             end
 
-            error_klasses
+            if superclass < Processor
+              error_klasses2 += superclass.error_classes
+            end
+
+            error_klasses2
           end
         end
 
