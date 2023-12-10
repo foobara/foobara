@@ -68,8 +68,21 @@ module Foobara
           )
         end
 
-        foobara_delegate :domain_name,
-                         :organization_name,
+        def domain_name
+          domain_name = foobara_parent_namespace.scoped_name || "global_domain"
+
+          old_domain_name = domain.domain_name
+
+          unless old_domain_name == domain_name
+            # :nocov:
+            raise "Domain name in new system doesn't match old system: #{old_domain_name} != #{domain_name}"
+            # :nocov:
+          end
+
+          domain_name
+        end
+
+        foobara_delegate :organization_name,
                          :organization_symbol,
                          :domain_symbol,
                          to: :domain, allow_nil: true
