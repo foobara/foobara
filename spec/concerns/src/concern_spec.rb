@@ -5,6 +5,7 @@ RSpec.describe "Foobara::Concern" do
         include Foobara::Concern
 
         inherited_overridable_class_attr_accessor :some_delegated_value
+        inherited_overridable_class_attr_accessor :some_delegated_value2
 
         on_include do
           singleton_class.define_method :name_under do

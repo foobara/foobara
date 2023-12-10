@@ -10,21 +10,7 @@ module Foobara
         # Any code-snippets to be ran when A is included should also be ran if B is included.
         if Concern.foobara_concern?(klass)
           if const_defined?(:ClassMethods, false)
-            unless klass.const_defined?(:ClassMethods, false)
-              class_methods_module_name = if klass.name
-                                            "#{klass.name}::ClassMethods"
-                                          end
-
-              klass.const_set(:ClassMethods, Module.new do
-                                               if class_methods_module_name
-                                                 singleton_class.define_method :name do
-                                                   class_methods_module_name
-                                                 end
-                                               end
-                                             end)
-            end
-
-            klass.const_get(:ClassMethods, false).include(const_get(:ClassMethods, false))
+            Concern.foobara_class_methods_module_for(klass).include(const_get(:ClassMethods, false))
           end
         else
           if const_defined?(:ClassMethods, false)
@@ -62,15 +48,7 @@ module Foobara
         @inherited_overridable_class_attr_accessors ||= []
         @inherited_overridable_class_attr_accessors += names
 
-        class_methods_module = if const_defined?(:ClassMethods, false)
-                                 # :nocov:
-                                 const_get(:ClassMethods, false)
-                                 # :nocov:
-                               else
-                                 Util.make_module("#{name}::ClassMethods")
-                               end
-
-        class_methods_module.module_eval do
+        Concern.foobara_class_methods_module_for(self).module_eval do
           names.each do |name|
             var_name = "@#{name}"
 
@@ -95,6 +73,20 @@ module Foobara
 
       def foobara_concern?(mod)
         mod.singleton_class < IsConcern
+      end
+
+      def foobara_class_methods_module_for(klass)
+        unless klass.name
+          # :nocov:
+          raise "This does not work with anonymous classes"
+          # :nocov:
+        end
+
+        if klass.const_defined?(:ClassMethods, false)
+          klass.const_get(:ClassMethods, false)
+        else
+          Util.make_module "#{klass.name}::ClassMethods"
+        end
       end
     end
   end
