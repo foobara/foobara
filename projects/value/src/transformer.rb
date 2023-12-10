@@ -1,6 +1,5 @@
 require "securerandom"
 
-Foobara.require_file("value", "processor")
 Foobara.require_file("value", "processor/runner")
 
 module Foobara
