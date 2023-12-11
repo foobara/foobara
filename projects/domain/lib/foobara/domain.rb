@@ -43,6 +43,12 @@ module Foobara
         end
 
         @installed = true
+
+        # TODO: kill this concept!
+        Util.make_module "Foobara::GlobalOrganization" do
+          foobara_organization!
+        end
+
         Foobara.foobara_organization!
         Foobara::Command.include(Foobara::Domain::CommandExtension)
         Foobara::Command.after_subclass_defined do |subclass|
