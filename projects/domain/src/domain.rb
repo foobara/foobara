@@ -1,5 +1,7 @@
 module Foobara
   class Domain
+    include TruncatedInspect
+
     class AlreadyRegisteredDomainDependency < StandardError; end
     class NoSuchDomain < StandardError; end
 
@@ -41,9 +43,9 @@ module Foobara
     foobara_delegate :type_for_declaration, to: :type_namespace
 
     def organization
-      parent = mod.foobara_parent_namespace
+      parent = mod&.foobara_parent_namespace
 
-      if parent.foobara_organization?
+      if parent&.foobara_organization?
         parent
       else
         Foobara::GlobalOrganization

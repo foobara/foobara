@@ -27,7 +27,7 @@ module Foobara
         end
 
         def foobara_owns_domain?(domain)
-          foobara_each_domain do |d|
+          foobara_each_domain(lookup_in_children: false) do |d|
             if d == domain || (d == domain.mod if domain.respond_to?(:mod))
               return true
             end
@@ -39,8 +39,11 @@ module Foobara
         def foobara_manifest
           {
             organization_name: foobara_organization_name,
-            domains: foobara_domains.map(&:foobara_domain).map(&:manifest_hash).inject(:merge) || {}
+            domains: foobara_domains.map(&:manifest_hash).inject(:merge) || {}
           }
+        rescue => e
+          binding.pry
+          raise
         end
       end
     end

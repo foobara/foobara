@@ -50,8 +50,11 @@ module Foobara
           class << self
             def foobara_domains
               # TODO: kill global? concept
-              ns = global? ? Foobara : self
-              ns.foobara_all_domain(lookup_in_children: false)
+              if global?
+                [*Foobara.foobara_all_domain(lookup_in_children: false).map(&:foobara_domain), Domain.global]
+              else
+                foobara_all_domain(lookup_in_children: false).map(&:foobara_domain)
+              end
             end
           end
         end

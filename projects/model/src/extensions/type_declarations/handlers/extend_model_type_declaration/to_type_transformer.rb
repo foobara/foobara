@@ -52,8 +52,13 @@ module Foobara
                   domain.register_model(model_class)
                 end
 
-                domain.mod.foobara_register(type)
+                type.type_symbol ||= type.name
+                # TODO: kill this .mod concept
+                (domain.mod || Foobara).foobara_register(type)
               end
+            rescue => e
+              binding.pry
+              raise
             end
           end
         end
