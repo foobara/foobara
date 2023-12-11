@@ -14,7 +14,8 @@ module Foobara
         end
 
         def foobara_organization_name
-          scoped_name
+          # TODO: eliminate this global concept concept
+          global? ? "global_organization" : scoped_name
         end
 
         def foobara_organization_symbol
@@ -36,12 +37,9 @@ module Foobara
         end
 
         def foobara_manifest
-          domains = foobara_all_domain
-
-          binding.pry
           {
             organization_name: foobara_organization_name,
-            domains: domains.map(&:foobara_domain).map(&:manifest_hash).inject(:merge) || {}
+            domains: foobara_domains.map(&:foobara_domain).map(&:manifest_hash).inject(:merge) || {}
           }
         end
       end

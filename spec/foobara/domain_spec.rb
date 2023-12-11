@@ -142,9 +142,8 @@ RSpec.describe Foobara::Domain do
     describe ".manifest" do
       let(:manifest) { Foobara.manifest }
 
-      it "gives a whole manifest of everything", :focus do
+      it "gives a whole manifest of everything" do
         expect(manifest).to be_a(Hash)
-        binding.pry
         model_manifest = manifest[:organizations][:global_organization][:domains][:SomeDomain][:types][:SomeNewModel]
         expect(model_manifest[:base_type]).to eq(:model)
         expect(model_manifest[:target_classes]).to eq(["SomeDomain::SomeNewModel"])

@@ -45,12 +45,18 @@ module Foobara
         Util.make_module "Foobara::GlobalOrganization" do
           foobara_organization!
 
-          def foobara_domains
-            foobara_all_domain(lookup_in_children: false)
+          self.is_global = true
+
+          class << self
+            def foobara_domains
+              # TODO: kill global? concept
+              ns = global? ? Foobara : self
+              ns.foobara_all_domain(lookup_in_children: false)
+            end
           end
         end
 
-        Foobara.foobara_organization!
+        # Foobara.foobara_organization!
         Foobara::Command.include(Foobara::Domain::CommandExtension)
         Foobara::Command.after_subclass_defined do |subclass|
           unprocessed_command_classes << subclass

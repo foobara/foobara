@@ -293,9 +293,6 @@ module Foobara
         Util.make_module full_name do
           foobara_domain!
         end.foobara_domain
-      rescue => e
-        binding.pry
-        raise
       end
     end
   end
