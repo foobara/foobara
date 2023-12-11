@@ -13,14 +13,6 @@ module Foobara
           is_global
         end
 
-        # TODO: eliminate Organization
-        def foobara_organization
-          @foobara_organization ||= Organization.new(
-            organization_name: Util.non_full_name(self),
-            mod: self
-          )
-        end
-
         def foobara_organization_name
           scoped_name
         end
@@ -43,17 +35,13 @@ module Foobara
           false
         end
 
-        def foobara_manifest(references = Set.new)
-          domain_full_names = []
+        def foobara_manifest
+          domains = foobara_all_domain
 
-          foobara_domains.each do |domain|
-            references << domain
-            domain_full_names << domain.scoped_full_name
-          end
-
+          binding.pry
           {
             organization_name: foobara_organization_name,
-            domains: domain_full_names
+            domains: domains.map(&:foobara_domain).map(&:manifest_hash).inject(:merge) || {}
           }
         end
       end

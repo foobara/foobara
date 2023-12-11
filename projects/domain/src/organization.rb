@@ -1,3 +1,4 @@
+=begin
 module Foobara
   class Organization
     GLOBAL_ORGANIZATION_NAME = "global_organization".freeze
@@ -97,3 +98,4 @@ module Foobara
     end
   end
 end
+=end

@@ -3,12 +3,10 @@ module Foobara
     # TODO: come up with a way to change a type's manifest... Or maybe treat Model very differently?
     def manifest
       {
-        organizations: all_organizations.map(&:manifest_hash).inject(:merge)
+        organizations: foobara_all_organization.to_h do |organization|
+          [organization.foobara_organization_symbol, organization.foobara_manifest]
+        end
       }
-    end
-
-    def all_organizations
-      Organization.all
     end
 
     def all_domains

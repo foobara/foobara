@@ -53,7 +53,8 @@ module Foobara
       retval
     end
 
-    CAPS = ("A".."Z")
+    IS_CAP = /[A-Z]/
+    IS_IDENTIFIER_CHARACTER = /\w/
 
     def constantify(string)
       return nil if string.nil?
@@ -62,7 +63,7 @@ module Foobara
         string = string.to_s
       end
 
-      if string.chars.all? { |char| CAPS.include?(char) }
+      if string.chars.all? { |char| IS_CAP =~ char }
         string.dup
       else
         underscore(string).upcase
@@ -82,19 +83,22 @@ module Foobara
 
       return "" if string.empty?
 
-      retval = nil
+      retval = ""
+      is_start = true
 
       string.each_char do |char|
-        if retval
-          if CAPS.include?(char)
-            retval << "_"
-            retval << char.downcase
-          else
-            retval << char
+        if IS_IDENTIFIER_CHARACTER =~ char
+          if IS_CAP =~ char
+            char = char.downcase
+            char = "_#{char}" unless is_start
           end
+
+          is_start = false
         else
-          retval = char.downcase
+          is_start = true
         end
+
+        retval << char
       end
 
       retval

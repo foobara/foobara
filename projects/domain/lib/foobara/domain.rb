@@ -13,8 +13,6 @@ module Foobara
           remove_instance_variable(var_name) if instance_variable_defined?(var_name)
         end
 
-        Organization.reset_all
-
         %w[
           children
           registry
@@ -23,7 +21,6 @@ module Foobara
 
           [
             Foobara,
-            Organization,
             Domain,
             Command,
             Types::Type,
@@ -47,6 +44,10 @@ module Foobara
         # TODO: kill this concept!
         Util.make_module "Foobara::GlobalOrganization" do
           foobara_organization!
+
+          def foobara_domains
+            foobara_all_domain(lookup_in_children: false)
+          end
         end
 
         Foobara.foobara_organization!

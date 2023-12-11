@@ -59,7 +59,7 @@ module Foobara
         scoped.scoped_namespace = self
       end
 
-      def foobara_lookup(path, absolute: false, filter: nil)
+      def foobara_lookup(path, absolute: false, filter: nil, lookup_in_children: false)
         if path.is_a?(::Symbol)
           path = path.to_s
         end
@@ -69,8 +69,12 @@ module Foobara
         end
 
         if path[0] == ""
-          return foobara_root_namespace.foobara_lookup(path[(foobara_root_namespace.scoped_path.size + 1)..],
-                                                       absolute: true, filter:)
+          if absolute
+            return nil
+          else
+            return foobara_root_namespace.foobara_lookup(path[(foobara_root_namespace.scoped_path.size + 1)..],
+                                                         absolute: true, filter:)
+          end
         end
 
         scoped = foobara_registry.lookup(path, filter)

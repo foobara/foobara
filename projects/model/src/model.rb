@@ -10,7 +10,7 @@ module Foobara
     class << self
       attr_accessor :domain, :is_abstract
 
-      foobara_delegate :organization, :organization_name, :domain_name, to: :domain, allow_nil: true
+      foobara_delegate :organization, :domain_name, to: :domain, allow_nil: true
 
       def abstract
         @is_abstract = true
@@ -64,10 +64,8 @@ module Foobara
       def full_model_name
         if domain.global?
           model_name
-        elsif organization.global?
-          "#{domain_name}::#{model_name}"
         else
-          "#{organization_name}::#{domain_name}::#{model_name}"
+          "#{domain.full_domain_name}::#{model_name}"
         end
       end
 
