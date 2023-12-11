@@ -8,17 +8,7 @@ RSpec.describe Foobara::Persistence::EntityBase::TransactionTable do
   end
 
   let(:user_class) do
-    stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-    Class.new(Foobara::Entity) do
-      class << self
-        def name
-          "User"
-        end
-      end
-
-      stub_class.call(self)
-
+    stub_class "User", Foobara::Entity do
       attributes id: :integer,
                  first_name: :string
       primary_key :id
