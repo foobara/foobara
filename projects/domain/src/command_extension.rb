@@ -25,14 +25,14 @@ module Foobara
 
       module ClassMethods
         def domain
-          mod = Util.module_for(self)
+          namespace = foobara_parent_namespace
 
-          while mod
-            if mod.foobara_domain?
-              return mod.foobara_domain
+          while namespace
+            if namespace.is_a?(Module) && namespace.foobara_domain?
+              return namespace
             end
 
-            mod = Util.module_for(mod)
+            namespace = foobara_parent_namespace
           end
 
           Domain.global
@@ -46,9 +46,7 @@ module Foobara
           @full_command_name ||= if domain.global?
                                    command_name
                                  elsif organization
-                                   "#{organization_name}::#{domain_name}::#{command_name}"
-                                 else
-                                   "#{domain_name}::#{command_name}"
+                                   "#{full_domain_name}::#{command_name}"
                                  end
         end
 

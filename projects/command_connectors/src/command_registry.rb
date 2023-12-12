@@ -32,13 +32,13 @@ module Foobara
                                                         end
 
         transformed_command_class
-      when Domain
-        registerable.command_classes.map { |command_class| register(command_class, *, **) }
       when Module
         if registerable.foobara_organization?
           registerable.foobara_domains.map { |domain| register(domain, *, **) }
         elsif registerable.foobara_domain?
-          register(registerable.foobara_domain, *, **)
+          registerable.foobara_each_command(lookup_in_children: false) do |command_class|
+            register(command_class, *, **)
+          end
         else
           # :nocov:
           raise "Don't know how to register #{registerable} (#{registerable.class})"
