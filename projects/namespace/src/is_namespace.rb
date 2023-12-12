@@ -19,7 +19,7 @@ module Foobara
       end
 
       def foobara_add_category_for_subclass_of(symbol, klass)
-        foobara_add_category(symbol) { self < klass }
+        foobara_add_category(symbol) { is_a?(::Class) && self < klass }
       end
 
       def foobara_categories
