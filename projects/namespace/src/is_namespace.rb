@@ -59,7 +59,7 @@ module Foobara
         scoped.scoped_namespace = self
       end
 
-      def foobara_lookup(path, absolute: false, filter: nil)
+      def foobara_lookup(path, absolute: false, filter: nil, lookup_in_children: true)
         if path.is_a?(::Symbol)
           path = path.to_s
         end
@@ -76,23 +76,25 @@ module Foobara
         scoped = foobara_registry.lookup(path, filter)
         return scoped if scoped
 
-        matching_child = nil
-        matching_child_score = 0
+        if lookup_in_children
+          matching_child = nil
+          matching_child_score = 0
 
-        to_consider = absolute ? foobara_children : [self, *foobara_children]
+          to_consider = absolute ? foobara_children : [self, *foobara_children]
 
-        to_consider.each do |namespace|
-          match_count = namespace._path_start_match_count(path)
+          to_consider.each do |namespace|
+            match_count = namespace._path_start_match_count(path)
 
-          if match_count > matching_child_score
-            matching_child = namespace
-            matching_child_score = match_count
+            if match_count > matching_child_score
+              matching_child = namespace
+              matching_child_score = match_count
+            end
           end
-        end
 
-        if matching_child
-          scoped = matching_child.foobara_lookup(path[matching_child_score..], absolute: true, filter:)
-          return scoped if scoped
+          if matching_child
+            scoped = matching_child.foobara_lookup(path[matching_child_score..], absolute: true, filter:)
+            return scoped if scoped
+          end
         end
 
         unless absolute
@@ -116,30 +118,32 @@ module Foobara
         object
       end
 
-      def foobara_each(filter: nil, &)
+      def foobara_each(filter: nil, lookup_in_children: true, &)
         foobara_registry.each_scoped(filter:, &)
 
-        foobara_children.each do |child|
-          child.foobara_each(filter:, &)
+        if lookup_in_children
+          foobara_children.each do |child|
+            child.foobara_each(filter:, &)
+          end
         end
       end
 
-      def foobara_all(filter: nil)
+      def foobara_all(filter: nil, lookup_in_children: true)
         all = []
 
-        foobara_each(filter:) do |scoped|
+        foobara_each(filter:, lookup_in_children:) do |scoped|
           all << scoped
         end
 
         all
       end
 
-      def method_missing(method_name, *, &)
+      def method_missing(method_name, *, **, &)
         filter, method, bang = _filter_from_method_name(method_name)
 
         if filter
           method = "foobara_#{method}#{bang ? "!" : ""}"
-          send(method, *, filter:, &)
+          send(method, *, **, filter:, &)
         else
           # :nocov:
           super
