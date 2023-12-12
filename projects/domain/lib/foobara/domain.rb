@@ -2,13 +2,6 @@ module Foobara
   module Domain
     class << self
       def reset_all
-        %w[
-          unprocessed_command_classes
-        ].each do |var_name|
-          var_name = "@#{var_name}"
-          remove_instance_variable(var_name) if instance_variable_defined?(var_name)
-        end
-
         Foobara.foobara_register(GlobalDomain)
       end
 
@@ -22,9 +15,6 @@ module Foobara
         @installed = true
 
         Foobara::Command.include(Foobara::Domain::CommandExtension)
-        Foobara::Command.after_subclass_defined do |subclass|
-          unprocessed_command_classes << subclass
-        end
 
         Foobara.foobara_add_category(:organization) do
           is_a?(Module) && foobara_organization?

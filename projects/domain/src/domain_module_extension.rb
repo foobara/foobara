@@ -40,19 +40,6 @@ module Foobara
       def global
         GlobalDomain
       end
-
-      def unprocessed_command_classes
-        @unprocessed_command_classes ||= []
-      end
-
-      def process_command_classes
-        until unprocessed_command_classes.empty?
-          command_class = unprocessed_command_classes.pop
-          domain = command_class.domain
-
-          domain&.register_command(command_class)
-        end
-      end
     end
 
     module DomainModuleExtension
@@ -74,10 +61,6 @@ module Foobara
 
         def foobara_full_domain_name
           global? ? "global_organization::global_domain" : scoped_full_name
-        end
-
-        def foobara_domain_symbol
-          Util.underscore_sym(foobara_domain_name)
         end
 
         def foobara_full_domain_symbol
