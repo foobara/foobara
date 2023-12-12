@@ -12,9 +12,6 @@ module Foobara
           # :nocov:
         end
 
-        # TODO: is this a smell?
-        Domain.foobara_domain_modules << self
-
         include(DomainModuleExtension)
 
         foobara_namespace!

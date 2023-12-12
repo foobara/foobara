@@ -49,7 +49,7 @@ module Foobara
                   domain = model_class.domain
                 end
 
-                type.type_symbol ||= type.name
+                # type.type_symbol ||= type.name
                 domain.foobara_register_model(model_class)
               end
             end

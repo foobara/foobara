@@ -189,7 +189,7 @@ module Foobara
       registered_types_depended_on.each do |type|
         domain = Domain.to_domain(type)
 
-        domain.type_namespace.use do
+        domain.foobara_type_namespace.use do
           org = domain.organization_name.to_sym
           dom = domain.domain_name.to_sym
 

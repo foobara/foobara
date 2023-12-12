@@ -3,10 +3,6 @@ module Foobara
     class << self
       def reset_all
         %w[
-          all
-          global
-          foobara_organization_modules
-          foobara_domain_modules
           unprocessed_command_classes
         ].each do |var_name|
           var_name = "@#{var_name}"
@@ -24,11 +20,6 @@ module Foobara
         end
 
         @installed = true
-
-        Util.make_module "Foobara::GlobalDomain" do
-          foobara_domain!
-          self.is_global = true
-        end
 
         Foobara::Command.include(Foobara::Domain::CommandExtension)
         Foobara::Command.after_subclass_defined do |subclass|

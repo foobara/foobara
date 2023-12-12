@@ -36,13 +36,43 @@ module Foobara
 
         @namespace_updated = true
 
-        namespace = foobara_parent_namespace
+        # TODO: Feels like we should use the autoset_namespace helpers here
+        namespace = nil
+
+        if self < Foobara::Scoped
+          scoped = self
+
+          while scoped
+            scoped = scoped.foobara_parent_namespace
+
+            if scoped.foobara_domain?
+              namespace = scoped
+              break
+            end
+          end
+        end
+
+        unless namespace
+          mod = Util.module_for(self)
+
+          while mod
+            if mod.foobara_domain?
+              namespace = mod
+              break
+            end
+
+            mod = Util.module_for(mod)
+          end
+        end
 
         self.domain = if namespace&.foobara_domain?
                         namespace
                       else
                         Domain.global
                       end
+      rescue => e
+        binding.pry
+        raise
       end
 
       def namespace

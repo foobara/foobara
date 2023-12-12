@@ -96,11 +96,15 @@ module Foobara
 
         # TODO: kill this off
         def foobara_type_namespace
-          @foobara_type_namespace ||= TypeDeclarations::Namespace.new(foobar_full_domain_name)
+          @foobara_type_namespace ||= if global?
+                                        TypeDeclarations::Namespace.global
+                                      else
+                                        TypeDeclarations::Namespace.new(foobara_full_domain_name)
+                                      end
         end
 
         # TODO: kill this
-        def type_registered?(type_or_symbol)
+        def foobara_type_registered?(type_or_symbol)
           foobara_type_namespace.type_registered?(type_or_symbol)
         end
 
@@ -108,10 +112,14 @@ module Foobara
           foobara_all_command(lookup_in_children: false)
         end
 
-        def register_model(model_class)
-          register(model_class) # TODO: will this register it twice?
-          model_class.foobara_parent_namespace = self
-          type_namespace.register_type(model_class.model_symbol, model_class.model_type)
+        def foobara_register_model(model_class)
+          type = model_class.model_type
+          foobara_type_namespace.register_type(model_class.model_symbol, type)
+          foobara_register(type) # TODO: will this register it twice?
+          type.foobara_parent_namespace = self
+        rescue => e
+          binding.pry
+          raise
         end
 
         # TODO: kill this off

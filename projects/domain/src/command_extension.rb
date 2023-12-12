@@ -39,7 +39,10 @@ module Foobara
         end
 
         def namespace
-          domain.type_namespace
+          domain.foobara_type_namespace
+        rescue => e
+          binding.pry
+          raise
         end
 
         def full_command_name
@@ -104,6 +107,9 @@ module Foobara
           end
 
           name
+        rescue => e
+          binding.pry
+          raise
         end
 
         foobara_delegate :organization_symbol,
