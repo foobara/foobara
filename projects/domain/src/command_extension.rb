@@ -15,7 +15,7 @@ module Foobara
 
         return super if sub_domain.global?
 
-        unless domain.depends_on?(sub_domain)
+        unless domain.foobara_depends_on?(sub_domain)
           raise CannotAccessDomain,
                 "Cannot access #{sub_domain} or its commands because #{domain} does not depend on it"
         end

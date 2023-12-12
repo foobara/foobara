@@ -6,7 +6,7 @@ module Foobara
         when nil
           global
         when ::String, ::Symbol
-          domain = foobara_lookup_domain(object)
+          domain = Foobara.foobara_lookup_domain(object)
 
           unless domain
             # :nocov:
@@ -183,13 +183,13 @@ module Foobara
             domain = Domain.to_domain(domain)
             domain_name = domain.foobara_full_domain_name
 
-            if foobar_depends_on.include?(domain_name)
+            if foobara_depends_on.include?(domain_name)
               # :nocov:
               raise AlreadyRegisteredDomainDependency, "Already registered #{domain_name} as a dependency of #{self}"
               # :nocov:
             end
 
-            type_namespace.accesses << domain.foobara_type_namespace
+            foobara_type_namespace.accesses << domain.foobara_type_namespace
 
             foobara_depends_on << domain_name
           end

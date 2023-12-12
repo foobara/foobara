@@ -121,7 +121,7 @@ RSpec.describe Foobara::Domain::CommandExtension do
 
       describe "#command_clases" do
         it "has the expected classes" do
-          expect(domain_module1.foobara_domain.command_classes).to eq([command_class1])
+          expect(domain_module1.foobara_command_classes).to eq([command_class1])
         end
       end
     end
@@ -131,7 +131,7 @@ RSpec.describe Foobara::Domain::CommandExtension do
       let(:command_class2_name) { "SomeDomain2::SomeCommand2" }
 
       before do
-        domain_module2.depends_on(domain_module1)
+        domain_module2.foobara_depends_on(domain_module1)
       end
 
       it "is not allowed to run the subcommand" do
@@ -144,7 +144,7 @@ RSpec.describe Foobara::Domain::CommandExtension do
       let(:command_class2_name) { "SomeDomain2::SomeCommand2" }
 
       before do
-        domain_module1.depends_on(SomeDomain2, SomeDomain3)
+        domain_module1.foobara_depends_on(SomeDomain2, SomeDomain3)
       end
 
       it "is allowed to run the subcommand" do
@@ -154,7 +154,7 @@ RSpec.describe Foobara::Domain::CommandExtension do
 
       describe "#depends_on?" do
         context "when checking by string" do
-          subject { domain_module1.foobara_domain.depends_on?("SomeDomain2") }
+          subject { domain_module1.foobara_depends_on?("SomeDomain2") }
 
           it { is_expected.to be(true) }
         end

@@ -270,7 +270,7 @@ RSpec.describe ":model" do
     it "is registered where expected" do
       expect(type.full_type_name).to eq("SomeDomain::SomeModel")
       expect(constructed_model.domain.foobara_domain_name).to eq("SomeDomain")
-      expect(constructed_model.domain).to be(domain_module.foobara_domain)
+      expect(constructed_model.domain).to be(domain_module)
     end
 
     context "when using domain name instead" do
