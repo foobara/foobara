@@ -125,9 +125,6 @@ module Foobara
           foobara_type_namespace.register_type(model_class.model_symbol, type)
           foobara_register(type) # TODO: will this register it twice?
           type.foobara_parent_namespace = self
-        rescue => e
-          binding.pry
-          raise
         end
 
         # TODO: kill this off

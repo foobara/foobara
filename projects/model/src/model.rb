@@ -70,9 +70,6 @@ module Foobara
                       else
                         Domain.global
                       end
-      rescue => e
-        binding.pry
-        raise
       end
 
       def namespace

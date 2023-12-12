@@ -40,9 +40,6 @@ module Foobara
 
         def namespace
           domain.foobara_type_namespace
-        rescue => e
-          binding.pry
-          raise
         end
 
         def full_command_name
@@ -86,7 +83,6 @@ module Foobara
           old_domain_name = domain.foobara_domain_name
 
           unless old_domain_name == domain_name
-            binding.pry
             # :nocov:
             raise "Domain name in new system doesn't match old system: #{old_domain_name} != #{domain_name}"
             # :nocov:
@@ -112,9 +108,6 @@ module Foobara
           end
 
           name
-        rescue => e
-          binding.pry
-          raise
         end
 
         foobara_delegate :organization_symbol,
