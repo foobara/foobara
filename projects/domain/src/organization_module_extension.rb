@@ -9,10 +9,6 @@ module Foobara
           scoped_name
         end
 
-        def foobara_organization_symbol
-          Util.underscore_sym(foobara_organization_name)
-        end
-
         def foobara_organization?
           true
         end

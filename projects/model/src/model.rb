@@ -10,10 +10,6 @@ module Foobara
     class << self
       attr_accessor :domain, :is_abstract
 
-      def organization
-        domain.foobara_organization
-      end
-
       def organization_name
         domain.foobara_organization_name
       end
@@ -37,32 +33,15 @@ module Foobara
         @namespace_updated = true
 
         # TODO: Feels like we should use the autoset_namespace helpers here
-        namespace = nil
+        mod = Util.module_for(self)
 
-        if self < Foobara::Scoped
-          scoped = self
-
-          while scoped
-            scoped = scoped.foobara_parent_namespace
-
-            if scoped.foobara_domain?
-              namespace = scoped
-              break
-            end
+        while mod
+          if mod.foobara_domain?
+            namespace = mod
+            break
           end
-        end
 
-        unless namespace
-          mod = Util.module_for(self)
-
-          while mod
-            if mod.foobara_domain?
-              namespace = mod
-              break
-            end
-
-            mod = Util.module_for(mod)
-          end
+          mod = Util.module_for(mod)
         end
 
         self.domain = if namespace&.foobara_domain?

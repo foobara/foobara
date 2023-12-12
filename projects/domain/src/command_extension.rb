@@ -58,10 +58,6 @@ module Foobara
                                  end
         end
 
-        def organization
-          domain.foobara_organization || Domain.global
-        end
-
         def manifest
           super.merge(
             command_name:,

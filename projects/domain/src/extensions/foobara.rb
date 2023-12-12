@@ -23,10 +23,6 @@ module Foobara
       foobara_all_domain
     end
 
-    def all_commands
-      Command.all
-    end
-
     def all_types
       all_namespaces.map(&:all_types).flatten
     end
