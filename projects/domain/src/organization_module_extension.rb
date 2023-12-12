@@ -34,7 +34,7 @@ module Foobara
         def foobara_manifest
           {
             organization_name: foobara_organization_name,
-            domains: foobara_domains.map(&:manifest_hash).inject(:merge) || {}
+            domains: foobara_domains.map(&:foobara_manifest_hash).inject(:merge) || {}
           }
         end
       end

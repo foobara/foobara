@@ -143,7 +143,7 @@ module Foobara
             # TODO: reuse the model_base_class primary key if it has one...
             primary_key = attributes_type.element_types.keys.first
 
-            type_for_declaration(
+            foobara_type_namespace.type_for_declaration(
               type: :entity,
               name:,
               model_base_class:,
