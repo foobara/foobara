@@ -1,5 +1,5 @@
 module Foobara
-  class Domain
+  module Domain
     class << self
       def reset_all
         %w[
@@ -12,6 +12,8 @@ module Foobara
           var_name = "@#{var_name}"
           remove_instance_variable(var_name) if instance_variable_defined?(var_name)
         end
+
+        Foobara.foobara_register(GlobalDomain)
       end
 
       def install!
@@ -22,6 +24,11 @@ module Foobara
         end
 
         @installed = true
+
+        Util.make_module "Foobara::GlobalDomain" do
+          foobara_domain!
+          self.is_global = true
+        end
 
         Foobara::Command.include(Foobara::Domain::CommandExtension)
         Foobara::Command.after_subclass_defined do |subclass|

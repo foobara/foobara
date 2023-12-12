@@ -1,8 +1,4 @@
 module Foobara
-  module GlobalDomain
-    foobara_domain!
-  end
-
   module Domain
     class << self
       def to_domain(object)

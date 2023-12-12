@@ -1,5 +1,5 @@
 module Foobara
-  class Domain
+  module Domain
     # TODO: should we just couple domain project and commands project to simplify this connection?
     # TODO: move this stuff to extensions/ directory
     module ModuleExtension

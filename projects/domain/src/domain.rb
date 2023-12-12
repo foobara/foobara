@@ -1,3 +1,4 @@
+=begin
 module Foobara
   class Domain
     include TruncatedInspect
@@ -297,3 +298,4 @@ module Foobara
     end
   end
 end
+=end

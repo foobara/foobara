@@ -1,5 +1,5 @@
 module Foobara
-  class Domain
+  module Domain
     module OrganizationModuleExtension
       # Does this really need to be a Concern?
       include Concern
