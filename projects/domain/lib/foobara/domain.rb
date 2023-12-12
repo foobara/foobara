@@ -1,10 +1,6 @@
 module Foobara
   module Domain
     class << self
-      def reset_all
-        Foobara.foobara_register(GlobalDomain)
-      end
-
       def install!
         if @installed
           # :nocov:

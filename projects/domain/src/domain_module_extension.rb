@@ -4,7 +4,7 @@ module Foobara
       def to_domain(object)
         case object
         when nil
-          global
+          nil
         when ::String, ::Symbol
           domain = Foobara.foobara_lookup_domain(object)
 
@@ -36,31 +36,19 @@ module Foobara
       def domain_for_namespace(namespace)
         Foobara.foobara_all_domain.find { |domain| domain.foobara_type_namespace == namespace }
       end
-
-      def global
-        GlobalDomain
-      end
     end
 
     module DomainModuleExtension
       include Concern
 
       module ClassMethods
-        # TODO: eliminate this concept
-        attr_accessor :is_global
-
-        # TODO: eliminate this concept
-        def global?
-          is_global
-        end
-
         def foobara_domain_name
           # TODO: eliminate this global concept concept
-          global? ? "global_domain" : scoped_name
+          scoped_name
         end
 
         def foobara_full_domain_name
-          global? ? "global_organization::global_domain" : scoped_full_name
+          scoped_full_name
         end
 
         def foobara_full_domain_symbol
@@ -68,7 +56,7 @@ module Foobara
         end
 
         def foobara_organization_name
-          global? ? "global_organization" : foobara_organization&.foobara_organization_name
+          foobara_organization&.foobara_organization_name
         end
 
         def foobara_organization
@@ -76,8 +64,6 @@ module Foobara
 
           if parent&.foobara_organization?
             parent
-          else
-            GlobalDomain
           end
         end
 
@@ -87,11 +73,7 @@ module Foobara
 
         # TODO: kill this off
         def foobara_type_namespace
-          @foobara_type_namespace ||= if global?
-                                        TypeDeclarations::Namespace.global
-                                      else
-                                        TypeDeclarations::Namespace.new(foobara_full_domain_name)
-                                      end
+          @foobara_type_namespace ||= TypeDeclarations::Namespace.new(foobara_full_domain_name)
         end
 
         # TODO: kill this
@@ -101,13 +83,6 @@ module Foobara
 
         def foobara_command_classes
           foobara_all_command(lookup_in_children: false)
-        end
-
-        def foobara_register_model(model_class)
-          type = model_class.model_type
-          foobara_type_namespace.register_type(model_class.model_symbol, type)
-          foobara_register(type) # TODO: will this register it twice?
-          type.foobara_parent_namespace = self
         end
 
         # TODO: kill this off
@@ -143,12 +118,9 @@ module Foobara
         end
 
         def foobara_depends_on?(other_domain)
-          return true if global? # This doesn't make sense shouldn't this be false??
-
           other_domain = Domain.to_domain(other_domain)
 
-          other_domain.global? || other_domain == self ||
-            foobara_depends_on.include?(other_domain.foobara_full_domain_name)
+          other_domain == self || foobara_depends_on.include?(other_domain.foobara_full_domain_name)
         end
 
         def foobara_depends_on(*domains)

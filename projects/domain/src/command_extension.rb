@@ -9,11 +9,11 @@ module Foobara
       def run_subcommand!(subcommand_class, inputs = {})
         domain = self.class.domain
 
-        return super if domain.global?
+        return super unless domain
 
         sub_domain = subcommand_class.domain
 
-        return super if sub_domain.global?
+        return super unless sub_domain
 
         unless domain.foobara_depends_on?(sub_domain)
           raise CannotAccessDomain,
@@ -35,18 +35,18 @@ module Foobara
             namespace = namespace.foobara_parent_namespace
           end
 
-          Domain.global
+          nil
         end
 
         def namespace
-          domain.foobara_type_namespace
+          domain&.foobara_type_namespace || TypeDeclarations::Namespace.global
         end
 
         def full_command_name
-          @full_command_name ||= if domain.global?
-                                   command_name
-                                 else
+          @full_command_name ||= if domain
                                    "#{domain.foobara_full_domain_name}::#{command_name}"
+                                 else
+                                   command_name
                                  end
         end
 
@@ -69,41 +69,19 @@ module Foobara
         def domain_name
           parent = foobara_parent_namespace
 
-          domain_name = if parent.foobara_domain?
-                          parent.scoped_name
-                        else
-                          "global_domain"
-                        end
-
-          # TODO: remove this old method of doing things!!!
-          old_domain_name = domain.foobara_domain_name
-
-          unless old_domain_name == domain_name
-            # :nocov:
-            raise "Domain name in new system doesn't match old system: #{old_domain_name} != #{domain_name}"
-            # :nocov:
+          if parent.foobara_domain?
+            parent.scoped_name
+          else
+            "global_domain"
           end
-
-          domain_name
         end
 
         def organization_name
           parent = foobara_parent_namespace
 
-          name = if parent.foobara_domain?
-                   parent.foobara_parent_namespace.scoped_name
-                 end || "global_organization"
-
-          # TODO: remove this old method of doing things!!
-          old_name = domain.foobara_organization_name
-
-          unless old_name == name
-            # :nocov:
-            raise "Organization name in new system doesn't match old system: #{old_name} != #{name}"
-            # :nocov:
-          end
-
-          name
+          if parent.foobara_domain?
+            parent.foobara_parent_namespace.scoped_name
+          end || "global_organization"
         end
 
         foobara_delegate :organization_symbol,

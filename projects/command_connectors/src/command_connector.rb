@@ -137,7 +137,7 @@ module Foobara
           types = types.select { |type| domain_org_match_type?(type, domain, org) }
 
           if types.size > 1
-            types.find  { |type| Domain.to_domain(type).global? }
+            types.find  { |type| Domain.to_domain(type).nil? }
           else
             types.first
           end
@@ -186,6 +186,9 @@ module Foobara
         command_name = command_manifest[:command_name].to_sym
 
         organizations[org][:domains][dom][:commands][command_name] = command_manifest
+      rescue => e
+        binding.pry
+        raise
       end
 
       registered_types_depended_on.each do |type|

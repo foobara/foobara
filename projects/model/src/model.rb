@@ -46,13 +46,11 @@ module Foobara
 
         self.domain = if namespace&.foobara_domain?
                         namespace
-                      else
-                        Domain.global
                       end
       end
 
       def namespace
-        domain.foobara_type_namespace
+        domain&.foobara_type_namespace || TypeDeclarations::Namespace.global
       end
 
       def attribute_names
@@ -79,10 +77,10 @@ module Foobara
       end
 
       def full_model_name
-        if domain.global?
-          model_name
-        else
+        if domain
           "#{domain.foobara_full_domain_name}::#{model_name}"
+        else
+          model_name
         end
       end
 

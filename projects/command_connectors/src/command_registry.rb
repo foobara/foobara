@@ -237,7 +237,7 @@ module Foobara
           end
 
           if transformed_commands.size > 1
-            transformed_commands.find  { |transformed_command| transformed_command.domain.global? }
+            transformed_commands.find  { |transformed_command| transformed_command.domain.nil? }
           else
             transformed_commands.first
           end

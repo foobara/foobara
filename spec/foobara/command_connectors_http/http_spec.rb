@@ -361,7 +361,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
           end
 
           describe "#manifest" do
-            it "contains the errors for not allowed" do
+            it "contains the errors for not allowed", :focus do
+              binding.pry
               org_manifest = command_connector.manifest[:organizations][:global_organization]
               domain_manifest = org_manifest[:domains][:global_domain]
               error_manifest = domain_manifest[:commands][:ComputeExponent][:error_types]
