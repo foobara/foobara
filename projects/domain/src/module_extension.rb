@@ -15,13 +15,16 @@ module Foobara
         include(DomainModuleExtension)
 
         foobara_namespace!
-        foobara_autoset_namespace!(default_namespace: Foobara)
+        foobara_autoset_namespace!(default_namespace: Foobara::GlobalOrganization)
         foobara_autoset_scoped_path!
 
         # TODO: wow this is awkward. We should find a cleaner way to set children on namespaces.
         parent = foobara_parent_namespace
         parent.foobara_register(self)
         self.foobara_parent_namespace = parent
+      rescue => e
+        binding.pry
+        raise
       end
 
       def foobara_organization!

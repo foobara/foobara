@@ -7,6 +7,7 @@ module Foobara
         # TODO: this feels like the wrong place to do this but doing it here for now to make sure it's done when
         # most important
         @original_scoped ||= Foobara.foobara_registry.all_scoped
+        @original_children ||= Foobara.foobara_children
 
         %w[
           foobara_children
@@ -18,7 +19,8 @@ module Foobara
           # Don't we only have to do this for Foobara and not all of these??
           [
             Foobara,
-            Foobara::GlobalDomain,
+            Foobara::GlobalOrganization,
+            Foobara::GlobalOrganization::GlobalDomain,
             Domain,
             Command,
             Types::Type,
@@ -33,6 +35,10 @@ module Foobara
           Foobara.foobara_register(scoped)
         end
 
+        @original_children.each do |child|
+          Foobara.foobara_children << child
+        end
+
         register_type_declaration(Handlers::RegisteredTypeDeclaration.new)
         register_type_declaration(Handlers::ExtendRegisteredTypeDeclaration.new)
         register_type_declaration(Handlers::ExtendArrayTypeDeclaration.new)
@@ -42,7 +48,12 @@ module Foobara
       end
 
       def install!
-        Util.make_module "Foobara::GlobalDomain" do
+        Util.make_module "Foobara::GlobalOrganization" do
+          foobara_organization!
+          self.is_global = true
+        end
+
+        Util.make_module "Foobara::GlobalOrganization::GlobalDomain" do
           foobara_domain!
           self.is_global = true
         end

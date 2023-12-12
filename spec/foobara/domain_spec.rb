@@ -131,7 +131,8 @@ RSpec.describe Foobara::Domain do
 
   context "when creating a model in the domain module" do
     let(:model_class) do
-      stub_class "#{domain.name}::SomeNewModel", Foobara::Model do
+      binding.pry
+      stub_class "#{domain.foobara_full_domain_name}::SomeNewModel", Foobara::Model do
         attributes a: :integer, b: :symbol
       end
     end
@@ -151,7 +152,8 @@ RSpec.describe Foobara::Domain do
     describe ".manifest" do
       let(:manifest) { Foobara.manifest }
 
-      it "gives a whole manifest of everything" do
+      it "gives a whole manifest of everything", :focus do
+        binding.pry
         expect(manifest).to be_a(Hash)
         model_manifest = manifest[:organizations][:global_organization][:domains][:SomeDomain][:types][:SomeNewModel]
         expect(model_manifest[:base_type]).to eq(:model)

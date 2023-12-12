@@ -1,11 +1,6 @@
 module Foobara
   module Domain
     class << self
-      def reset_all
-        Foobara.foobara_register(GlobalDomain)
-        Foobara.foobara_register(GlobalOrganization)
-      end
-
       def install!
         if @installed
           # :nocov:
@@ -14,13 +9,6 @@ module Foobara
         end
 
         @installed = true
-
-        # TODO: kill this concept!
-        Util.make_module "Foobara::GlobalOrganization" do
-          foobara_organization!
-
-          self.is_global = true
-        end
 
         Foobara::Command.include(Foobara::Domain::CommandExtension)
 
