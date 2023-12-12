@@ -36,6 +36,15 @@ module Foobara
           false
         end
 
+        def foobara_domains
+          # TODO: kill global? concept
+          if global?
+            [*Foobara.foobara_all_domain(lookup_in_children: false).map(&:foobara_domain), Domain.global]
+          else
+            foobara_all_domain(lookup_in_children: false).map(&:foobara_domain)
+          end
+        end
+
         def foobara_manifest
           {
             organization_name: foobara_organization_name,

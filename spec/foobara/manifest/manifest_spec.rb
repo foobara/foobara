@@ -57,7 +57,7 @@ RSpec.describe Foobara::Manifest do
   let(:raw_manifest) { Foobara.manifest }
   let(:raw_stringified_manifest) { Foobara::Util.deep_stringify_keys(Foobara.manifest) }
 
-  it "is a Manifest" do
+  it "is a Manifest", :focus do
     expect(manifest).to be_a(Foobara::Manifest::RootManifest)
     expect(manifest.global_domain).to be_global_domain
 

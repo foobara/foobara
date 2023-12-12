@@ -147,6 +147,9 @@ RSpec.describe Foobara::Domain do
         model_manifest = manifest[:organizations][:global_organization][:domains][:SomeDomain][:types][:SomeNewModel]
         expect(model_manifest[:base_type]).to eq(:model)
         expect(model_manifest[:target_classes]).to eq(["SomeDomain::SomeNewModel"])
+      rescue => e
+        binding.pry
+        raise
       end
     end
   end

@@ -4,7 +4,7 @@ module Foobara
     def manifest
       {
         organizations: foobara_all_organization.to_h do |organization|
-          [organization.foobara_organization_symbol, organization.foobara_manifest]
+          [organization.foobara_organization_name.to_sym, organization.foobara_manifest]
         end
       }
     end

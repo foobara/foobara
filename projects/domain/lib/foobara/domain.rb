@@ -14,8 +14,8 @@ module Foobara
         end
 
         %w[
-          children
-          registry
+          foobara_children
+          foobara_registry
         ].each do |var_name|
           var_name = "@#{var_name}"
 
@@ -30,6 +30,9 @@ module Foobara
             klass.remove_instance_variable(var_name) if klass.instance_variable_defined?(var_name)
           end
         end
+
+        # TODO: kill this idea of global organizations ...
+        Foobara.foobara_register(GlobalOrganization)
       end
 
       def install!
@@ -46,17 +49,6 @@ module Foobara
           foobara_organization!
 
           self.is_global = true
-
-          class << self
-            def foobara_domains
-              # TODO: kill global? concept
-              if global?
-                [*Foobara.foobara_all_domain(lookup_in_children: false).map(&:foobara_domain), Domain.global]
-              else
-                foobara_all_domain(lookup_in_children: false).map(&:foobara_domain)
-              end
-            end
-          end
         end
 
         # Foobara.foobara_organization!

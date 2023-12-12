@@ -53,6 +53,9 @@ module Foobara
               primary_key_attribute:,
               primary_key_type: attributes_type.declaration_data[:element_type_declarations][primary_key_attribute]
             }
+          rescue => e
+            binding.pry
+            raise
           end
         end
       end

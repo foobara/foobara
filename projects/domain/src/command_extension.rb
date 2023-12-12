@@ -27,9 +27,15 @@ module Foobara
         def domain
           mod = Util.module_for(self)
 
-          if mod&.foobara_domain?
-            mod.foobara_domain
-          end || Domain.global
+          while mod
+            if mod.foobara_domain?
+              return mod.foobara_domain
+            end
+
+            mod = Util.module_for(mod)
+          end
+
+          Domain.global
         end
 
         def namespace
@@ -75,6 +81,7 @@ module Foobara
           old_domain_name = domain.domain_name
 
           unless old_domain_name == domain_name
+            binding.pry
             # :nocov:
             raise "Domain name in new system doesn't match old system: #{old_domain_name} != #{domain_name}"
             # :nocov:
