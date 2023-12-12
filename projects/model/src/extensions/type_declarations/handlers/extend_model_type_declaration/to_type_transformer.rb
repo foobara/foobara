@@ -40,6 +40,7 @@ module Foobara
                       model_symbol = model_class.model_symbol
                       registry = domain.foobara_type_namespace.registry_for_symbol(model_symbol)
                       registry.unregister(model_symbol)
+                      domain.foobara_register_model(model_class)
                     end
 
                     model_class.model_type = type
@@ -47,10 +48,9 @@ module Foobara
                 else
                   model_class.model_type = type
                   domain = model_class.domain
+                  domain.foobara_register_model(model_class)
                 end
 
-                # type.type_symbol ||= type.name
-                domain.foobara_register_model(model_class)
               end
             end
           end

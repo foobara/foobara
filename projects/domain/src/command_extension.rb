@@ -32,7 +32,7 @@ module Foobara
               return namespace
             end
 
-            namespace = foobara_parent_namespace
+            namespace = namespace.foobara_parent_namespace
           end
 
           Domain.global

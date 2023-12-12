@@ -77,7 +77,7 @@ module Foobara
         end
 
         def foobara_organization_name
-          foobara_organization&.foobara_organization_name
+          global? ? "global_organization" : foobara_organization&.foobara_organization_name
         end
 
         def foobara_organization
@@ -162,84 +162,84 @@ module Foobara
           other_domain.global? || other_domain == self ||
             foobara_depends_on.include?(other_domain.foobara_full_domain_name)
         end
-      end
 
-      def foobara_depends_on(*domains)
-        return @foobara_depends_on ||= Set.new if domains.empty?
+        def foobara_depends_on(*domains)
+          return @foobara_depends_on ||= Set.new if domains.empty?
 
-        if domains.length == 1
-          domains = Util.array(domains.first)
-        end
-
-        domains.each do |domain|
-          # It very likely could be a module extended with domain methods...
-          domain = Domain.to_domain(domain)
-          domain_name = domain.foobara_full_domain_name
-
-          if foobar_depends_on.include?(domain_name)
-            # :nocov:
-            raise AlreadyRegisteredDomainDependency, "Already registered #{domain_name} as a dependency of #{self}"
-            # :nocov:
+          if domains.length == 1
+            domains = Util.array(domains.first)
           end
 
-          type_namespace.accesses << domain.foobara_type_namespace
+          domains.each do |domain|
+            # It very likely could be a module extended with domain methods...
+            domain = Domain.to_domain(domain)
+            domain_name = domain.foobara_full_domain_name
 
-          foobara_depends_on << domain_name
-        end
-      end
+            if foobar_depends_on.include?(domain_name)
+              # :nocov:
+              raise AlreadyRegisteredDomainDependency, "Already registered #{domain_name} as a dependency of #{self}"
+              # :nocov:
+            end
 
-      def foobara_manifest(skip: nil)
-        if skip
-          allowed_keys = %i[
-            organization_name
-            domain_name
-            depends_on
-            commands
-            types
-          ]
+            type_namespace.accesses << domain.foobara_type_namespace
 
-          invalid_keys = skip - allowed_keys
-
-          unless invalid_keys.empty?
-            # :nocov:
-            raise ArgumentError, "Invalid keys: #{invalid_keys} expected: #{allowed_keys}"
-            # :nocov:
+            foobara_depends_on << domain_name
           end
         end
 
-        organization_name = unless skip&.include?(:organization_name)
-                              foobara_organization_name
-                            end
+        def foobara_manifest(skip: nil)
+          if skip
+            allowed_keys = %i[
+              organization_name
+              domain_name
+              depends_on
+              commands
+              types
+            ]
 
-        domain_name = unless skip&.include?(:domain_name)
-                        foobara_domain_name
-                      end
+            invalid_keys = skip - allowed_keys
 
-        depends_on = unless skip&.include?(:depends_on)
-                       foobara_depends_on.map(&:to_s)
+            unless invalid_keys.empty?
+              # :nocov:
+              raise ArgumentError, "Invalid keys: #{invalid_keys} expected: #{allowed_keys}"
+              # :nocov:
+            end
+          end
+
+          organization_name = unless skip&.include?(:organization_name)
+                                foobara_organization_name
+                              end
+
+          domain_name = unless skip&.include?(:domain_name)
+                          foobara_domain_name
+                        end
+
+          depends_on = unless skip&.include?(:depends_on)
+                         foobara_depends_on.map(&:to_s)
+                       end
+
+          commands = unless skip&.include?(:commands)
+                       foobara_command_classes.map(&:manifest_hash).inject(:merge) || {}
                      end
 
-        commands = unless skip&.include?(:commands)
-                     foobara_command_classes.map(&:manifest_hash).inject(:merge) || {}
-                   end
+          types = unless skip&.include?(:types)
+                    foobara_type_namespace.manifest
+                  end
 
-        types = unless skip&.include?(:types)
-                  type_namespace.manifest
-                end
+          {
+            organization_name:,
+            domain_name:,
+            depends_on:,
+            commands:,
+            types:
+          }
+        end
 
-        {
-          organization_name:,
-          domain_name:,
-          depends_on:,
-          commands:,
-          types:
-        }
-      end
-
-      def manifest_hash
-        {
-          foobara_domain_name.to_sym => foobara_manifest
-        }
+        def foobara_manifest_hash
+          {
+            foobara_domain_name.to_sym => foobara_manifest
+          }
+        end
       end
     end
   end
