@@ -85,7 +85,8 @@ RSpec.describe "Foobara namespace lookup" do
       expect(OrgA::DomainA.foobara_parent_namespace).to eq(OrgA)
       expect(OrgA::DomainA.scoped_path).to eq(%w[DomainA])
       expect(OrgA::DomainA.scoped_full_path).to eq(%w[OrgA DomainA])
-      expect(OrgA::DomainA.scoped_full_name).to eq("::OrgA::DomainA")
+      expect(OrgA::DomainA.scoped_full_name).to eq("OrgA::DomainA")
+      expect(OrgA::DomainA.scoped_absolute_name).to eq("::OrgA::DomainA")
       expect(
         Foobara.foobara_lookup_domain("OrgA::DomainA")
       ).to eq(OrgA::DomainA)
@@ -101,29 +102,18 @@ RSpec.describe "Foobara namespace lookup" do
       ).to eq(OrgA::DomainA)
       expect(OrgA::DomainA::CommandA.scoped_path).to eq(%w[CommandA])
       expect(OrgA::DomainA::CommandA.scoped_full_path).to eq(%w[OrgA DomainA CommandA])
-      expect(
-        OrgA::DomainA::CommandA.scoped_full_name
-      ).to eq("::OrgA::DomainA::CommandA")
-      expect(
-        Foobara.foobara_lookup_command("OrgA::DomainA::CommandA")
-      ).to eq(OrgA::DomainA::CommandA)
-      expect(
-        Foobara.foobara_lookup_command("::OrgA::DomainA::CommandA")
-      ).to eq(OrgA::DomainA::CommandA)
+      expect(OrgA::DomainA::CommandA.scoped_absolute_name).to eq("::OrgA::DomainA::CommandA")
+      expect(OrgA::DomainA::CommandA.scoped_full_name).to eq("OrgA::DomainA::CommandA")
+      expect(Foobara.foobara_lookup_command("OrgA::DomainA::CommandA")).to eq(OrgA::DomainA::CommandA)
+      expect(Foobara.foobara_lookup_command("::OrgA::DomainA::CommandA")).to eq(OrgA::DomainA::CommandA)
 
       expect(GlobalError.scoped_namespace).to eq(Foobara)
       expect(GlobalError.scoped_path).to eq(%w[GlobalError])
       expect(GlobalError.scoped_full_path).to eq(%w[GlobalError])
-      expect(
-        Foobara.foobara_lookup_error("GlobalError")
-      ).to eq(GlobalError)
-      expect(
-        Foobara.foobara_lookup_error("::GlobalError")
-      ).to eq(GlobalError)
+      expect(Foobara.foobara_lookup_error("GlobalError")).to eq(GlobalError)
+      expect(Foobara.foobara_lookup_error("::GlobalError")).to eq(GlobalError)
 
-      expect(
-        OrgA::DomainB::CommandA::SomeError.scoped_namespace
-      ).to eq(OrgA::DomainB::CommandA)
+      expect(OrgA::DomainB::CommandA::SomeError.scoped_namespace).to eq(OrgA::DomainB::CommandA)
 
       expect(number.foobara_parent_namespace).to eq(Foobara)
       expect(Foobara.foobara_lookup_type("number")).to eq(number)

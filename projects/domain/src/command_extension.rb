@@ -81,7 +81,6 @@ module Foobara
           old_domain_name = domain.domain_name
 
           unless old_domain_name == domain_name
-            binding.pry
             # :nocov:
             raise "Domain name in new system doesn't match old system: #{old_domain_name} != #{domain_name}"
             # :nocov:

@@ -13,24 +13,6 @@ module Foobara
           remove_instance_variable(var_name) if instance_variable_defined?(var_name)
         end
 
-        %w[
-          foobara_children
-          foobara_registry
-        ].each do |var_name|
-          var_name = "@#{var_name}"
-
-          [
-            Foobara,
-            Domain,
-            Command,
-            Types::Type,
-            Value::Processor,
-            Error
-          ].each do |klass|
-            klass.remove_instance_variable(var_name) if klass.instance_variable_defined?(var_name)
-          end
-        end
-
         # TODO: kill this idea of global organizations ...
         Foobara.foobara_register(GlobalOrganization)
       end

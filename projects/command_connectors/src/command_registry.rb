@@ -34,11 +34,9 @@ module Foobara
         transformed_command_class
       when Domain
         registerable.command_classes.map { |command_class| register(command_class, *, **) }
-      when Organization
-        registerable.domains.map { |domain| register(domain, *, **) }
       when Module
         if registerable.foobara_organization?
-          register(registerable.foobara_organization, *, **)
+          registerable.foobara_domains.map { |domain| register(domain, *, **) }
         elsif registerable.foobara_domain?
           register(registerable.foobara_domain, *, **)
         else

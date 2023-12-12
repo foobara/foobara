@@ -50,9 +50,6 @@ module Foobara
             organization_name: foobara_organization_name,
             domains: foobara_domains.map(&:manifest_hash).inject(:merge) || {}
           }
-        rescue => e
-          binding.pry
-          raise
         end
       end
     end

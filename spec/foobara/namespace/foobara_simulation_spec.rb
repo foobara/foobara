@@ -155,7 +155,8 @@ RSpec.describe Foobara::Namespace do
       expect(FoobaraSimulation::OrgA::DomainA.foobara_parent_namespace).to eq(FoobaraSimulation::OrgA)
       expect(FoobaraSimulation::OrgA::DomainA.scoped_path).to eq(%w[DomainA])
       expect(FoobaraSimulation::OrgA::DomainA.scoped_full_path).to eq(%w[OrgA DomainA])
-      expect(FoobaraSimulation::OrgA::DomainA.scoped_full_name).to eq("::OrgA::DomainA")
+      expect(FoobaraSimulation::OrgA::DomainA.scoped_full_name).to eq("OrgA::DomainA")
+      expect(FoobaraSimulation::OrgA::DomainA.scoped_absolute_name).to eq("::OrgA::DomainA")
       expect(
         FoobaraSimulation::Foobara.foobara_lookup_domain("OrgA::DomainA")
       ).to eq(FoobaraSimulation::OrgA::DomainA)
@@ -171,9 +172,8 @@ RSpec.describe Foobara::Namespace do
       ).to eq(FoobaraSimulation::OrgA::DomainA)
       expect(FoobaraSimulation::OrgA::DomainA::CommandA.scoped_path).to eq(%w[CommandA])
       expect(FoobaraSimulation::OrgA::DomainA::CommandA.scoped_full_path).to eq(%w[OrgA DomainA CommandA])
-      expect(
-        FoobaraSimulation::OrgA::DomainA::CommandA.scoped_full_name
-      ).to eq("::OrgA::DomainA::CommandA")
+      expect(FoobaraSimulation::OrgA::DomainA::CommandA.scoped_full_name).to eq("OrgA::DomainA::CommandA")
+      expect(FoobaraSimulation::OrgA::DomainA::CommandA.scoped_absolute_name).to eq("::OrgA::DomainA::CommandA")
       expect(
         FoobaraSimulation::Foobara.foobara_lookup_command("OrgA::DomainA::CommandA")
       ).to eq(FoobaraSimulation::OrgA::DomainA::CommandA)

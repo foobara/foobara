@@ -11,7 +11,6 @@ module Foobara
 
       def build_and_register!(type_symbol, base_type, target_classes = const_get("::#{Util.classify(type_symbol)}"))
         type = build_from_modules_and_install_type_declaration_extensions!(type_symbol, target_classes, base_type)
-
         global_registry.register(type_symbol, type)
 
         unless global_registry.root_type

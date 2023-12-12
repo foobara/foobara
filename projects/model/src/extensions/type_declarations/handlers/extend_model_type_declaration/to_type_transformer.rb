@@ -56,9 +56,6 @@ module Foobara
                 # TODO: kill this .mod concept
                 (domain.mod || Foobara).foobara_register(type)
               end
-            rescue => e
-              binding.pry
-              raise
             end
           end
         end
