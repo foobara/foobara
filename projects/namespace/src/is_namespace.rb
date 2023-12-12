@@ -79,21 +79,31 @@ module Foobara
         if lookup_in_children
           matching_child = nil
           matching_child_score = 0
+          last_resort = []
 
           to_consider = absolute ? foobara_children : [self, *foobara_children]
 
           to_consider.each do |namespace|
-            match_count = namespace._path_start_match_count(path)
+            if namespace.scoped_path.empty?
+              last_resort << namespace
+            else
+              match_count = namespace._path_start_match_count(path)
 
-            if match_count > matching_child_score
-              matching_child = namespace
-              matching_child_score = match_count
+              if match_count > matching_child_score
+                matching_child = namespace
+                matching_child_score = match_count
+              end
             end
           end
 
           if matching_child
             scoped = matching_child.foobara_lookup(path[matching_child_score..], absolute: true, filter:)
             return scoped if scoped
+          else
+            last_resort.each do |namespace|
+              scoped = namespace.foobara_lookup(path, absolute: true, filter:)
+              return scoped if scoped
+            end
           end
         end
 
