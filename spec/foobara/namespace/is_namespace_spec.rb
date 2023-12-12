@@ -24,14 +24,16 @@ RSpec.describe Foobara::Namespace::IsNamespace do
     it "registers the object and it can be found again" do
       expect(namespace.scoped_path).to eq(["SomeNamespace"])
       expect(namespace.scoped_name).to eq("SomeNamespace")
-      expect(namespace.scoped_full_name).to eq("::SomeNamespace")
+      expect(namespace.scoped_full_name).to eq("SomeNamespace")
+      expect(namespace.scoped_absolute_name).to eq("::SomeNamespace")
 
       namespace.foobara_register(scoped_object)
       expect(scoped_object.scoped_namespace).to be(namespace)
 
       expect(scoped_object.scoped_short_path).to eq([scoped_name])
       expect(scoped_object.scoped_full_path).to eq(["SomeNamespace", scoped_name])
-      expect(scoped_object.scoped_full_name).to eq("::SomeNamespace::#{scoped_name}")
+      expect(scoped_object.scoped_full_name).to eq("SomeNamespace::#{scoped_name}")
+      expect(scoped_object.scoped_absolute_name).to eq("::SomeNamespace::#{scoped_name}")
 
       keys = [
         "scoped_name",
