@@ -23,7 +23,7 @@ module Foobara
     end
 
     def all_domains
-      Domain.all.values
+      foobara_all_domain
     end
 
     def all_commands
@@ -35,7 +35,7 @@ module Foobara
     end
 
     def all_namespaces
-      [*all_domains.map(&:type_namespace), TypeDeclarations::Namespace.global]
+      [*all_domains.map(&:foobara_type_namespace), TypeDeclarations::Namespace.global]
     end
   end
 end

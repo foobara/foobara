@@ -142,7 +142,7 @@ RSpec.describe Foobara::Domain do
 
     it "automatically registers it" do
       expect(domain.const_get(:SomeNewModel).domain).to eq(domain)
-      type = domain.type_for_declaration(:SomeNewModel)
+      type = domain.foobara_type_namespace.type_for_declaration(:SomeNewModel)
       expect(type.full_type_name).to eq("SomeDomain::SomeNewModel")
       expect(Foobara.all_types).to include(type)
     end
@@ -166,7 +166,7 @@ RSpec.describe Foobara::Domain do
     end
 
     it "automatically registers it" do
-      type = domain.type_for_declaration(
+      type = domain.foobara_type_namespace.type_for_declaration(
         type: :model,
         name: model_class.model_name,
         model_module: domain,
