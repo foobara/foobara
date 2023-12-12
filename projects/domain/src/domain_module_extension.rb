@@ -34,7 +34,7 @@ module Foobara
       end
 
       def domain_for_namespace(namespace)
-        foobara_all_domain.find { |domain| domain.foobara_type_namespace == namespace }
+        Foobara.foobara_all_domain.find { |domain| domain.foobara_type_namespace == namespace }
       end
 
       def global
@@ -74,6 +74,14 @@ module Foobara
 
         def foobara_full_domain_name
           global? ? "global_organization::global_domain" : scoped_full_name
+        end
+
+        def foobara_domain_symbol
+          Util.underscore_sym(foobara_domain_name)
+        end
+
+        def foobara_full_domain_symbol
+          Util.underscore_sym(foobara_full_domain_name)
         end
 
         def foobara_organization_name

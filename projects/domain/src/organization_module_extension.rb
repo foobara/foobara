@@ -28,7 +28,7 @@ module Foobara
         end
 
         def foobara_domains
-          foobara_all_domain(lookup_in_children: false).map(&:foobara_domain)
+          foobara_all_domain(lookup_in_children: false)
         end
 
         def foobara_manifest

@@ -31,9 +31,6 @@ module Foobara
           # :nocov:
         end
 
-        # TODO: is this a smell?
-        Domain.foobara_organization_modules << self
-
         include(OrganizationModuleExtension)
 
         # TODO: remove this hack

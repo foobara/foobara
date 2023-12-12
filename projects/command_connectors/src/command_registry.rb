@@ -249,9 +249,9 @@ module Foobara
 
     def domain_org_match_transformed_command?(transformed_command, domain_name, org_name)
       dom = transformed_command.domain
-      org = dom&.organization_name
+      org = dom&.foobara_organization_name
 
-      (org_name.nil? || org_name == org) && (domain_name.nil? || domain_name == dom&.domain_name)
+      (org_name.nil? || org_name == org) && (domain_name.nil? || domain_name == dom&.foobara_domain_name)
     end
   end
 end

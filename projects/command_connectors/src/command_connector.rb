@@ -150,7 +150,8 @@ module Foobara
     def domain_org_match_type?(type, domain_name, org_name)
       dom = Domain.to_domain(type)
 
-      (org_name.nil? || org_name == dom&.organization_name) && (domain_name.nil? || domain_name == dom&.domain_name)
+      (org_name.nil? || org_name == dom&.foobara_organization_name) &&
+        (domain_name.nil? || domain_name == dom&.foobara_domain_name)
     end
 
     def manifest

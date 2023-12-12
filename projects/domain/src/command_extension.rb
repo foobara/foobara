@@ -48,7 +48,7 @@ module Foobara
         def full_command_name
           @full_command_name ||= if domain.global?
                                    command_name
-                                 elsif organization
+                                 else
                                    "#{domain.foobara_full_domain_name}::#{command_name}"
                                  end
         end
@@ -56,10 +56,8 @@ module Foobara
         def full_command_symbol
           @full_command_symbol = if domain.global?
                                    command_symbol
-                                 elsif organization
-                                   "#{organization_symbol}::#{domain_symbol}::#{command_symbol}".to_sym
                                  else
-                                   "#{domain_symbol}::#{command_symbol}".to_sym
+                                   "#{domain.foobara_full_domain_symbol}::#{command_symbol}".to_sym
                                  end
         end
 
