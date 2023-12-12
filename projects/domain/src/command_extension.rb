@@ -49,7 +49,7 @@ module Foobara
           @full_command_name ||= if domain.global?
                                    command_name
                                  elsif organization
-                                   "#{full_domain_name}::#{command_name}"
+                                   "#{domain.foobara_full_domain_name}::#{command_name}"
                                  end
         end
 
@@ -64,7 +64,7 @@ module Foobara
         end
 
         def organization
-          domain.organization
+          domain.foobara_organization || Domain.global
         end
 
         def manifest

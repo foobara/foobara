@@ -81,7 +81,7 @@ module Foobara
         end
 
         def foobara_organization
-          parent = mod&.foobara_parent_namespace
+          parent = foobara_parent_namespace
 
           if parent&.foobara_organization?
             parent
