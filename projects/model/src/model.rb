@@ -10,8 +10,15 @@ module Foobara
     class << self
       attr_accessor :domain, :is_abstract
 
-      foobara_delegate :organization, :organization_name, :domain_name, to: :domain, allow_nil: true
+      def organization_name
+        domain.foobara_organization_name
+      end
 
+      def domain_name
+        domain.foobara_domain_name
+      end
+
+      # TODO: would be nice to make this a universal concept via a concern
       def abstract
         @is_abstract = true
       end
@@ -25,17 +32,27 @@ module Foobara
 
         @namespace_updated = true
 
+        # TODO: Feels like we should use the autoset_namespace helpers here
         mod = Util.module_for(self)
 
-        self.domain = if mod&.foobara_domain?
-                        mod.foobara_domain
+        while mod
+          if mod.foobara_domain?
+            namespace = mod
+            break
+          end
+
+          mod = Util.module_for(mod)
+        end
+
+        self.domain = if namespace&.foobara_domain?
+                        namespace
                       else
                         Domain.global
                       end
       end
 
       def namespace
-        domain.type_namespace
+        domain.foobara_type_namespace
       end
 
       def attribute_names
@@ -65,7 +82,7 @@ module Foobara
         if domain.global?
           model_name
         else
-          "#{domain.full_domain_name}::#{model_name}"
+          "#{domain.foobara_full_domain_name}::#{model_name}"
         end
       end
 

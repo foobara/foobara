@@ -1,5 +1,5 @@
 module Foobara
-  class Domain
+  module Domain
     module OrganizationModuleExtension
       # Does this really need to be a Concern?
       include Concern
@@ -7,10 +7,6 @@ module Foobara
       module ClassMethods
         def foobara_organization_name
           scoped_name
-        end
-
-        def foobara_organization_symbol
-          Util.underscore_sym(foobara_organization_name)
         end
 
         def foobara_organization?
@@ -28,13 +24,13 @@ module Foobara
         end
 
         def foobara_domains
-          foobara_all_domain(lookup_in_children: false).map(&:foobara_domain)
+          foobara_all_domain(lookup_in_children: false)
         end
 
         def foobara_manifest
           {
             organization_name: foobara_organization_name,
-            domains: foobara_domains.map(&:manifest_hash).inject(:merge) || {}
+            domains: foobara_domains.map(&:foobara_manifest_hash).inject(:merge) || {}
           }
         end
       end

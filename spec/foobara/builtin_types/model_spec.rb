@@ -92,7 +92,7 @@ RSpec.describe ":model" do
 
       stub_module "SomeOrg::SomeDomain" do
         foobara_domain!
-      end.foobara_domain
+      end
     end
 
     let(:type_declaration) do
@@ -100,7 +100,7 @@ RSpec.describe ":model" do
         type: :model,
         name: model_name,
         attributes_declaration:,
-        model_module: domain.full_domain_name
+        model_module: domain.foobara_full_domain_name
       }
     end
 
@@ -255,7 +255,7 @@ RSpec.describe ":model" do
     end
     let(:model_module) { domain_module }
     let(:type) do
-      domain_module.type_for_declaration(type_declaration)
+      domain_module.foobara_type_namespace.type_for_declaration(type_declaration)
     end
 
     let(:constructed_model) do
@@ -264,13 +264,13 @@ RSpec.describe ":model" do
 
     it "can be used by symbol" do
       expect(type.name).to eq("SomeModel")
-      expect(domain_module.type_for_declaration(:SomeModel)).to be(type)
+      expect(domain_module.foobara_type_namespace.type_for_declaration(:SomeModel)).to be(type)
     end
 
     it "is registered where expected" do
       expect(type.full_type_name).to eq("SomeDomain::SomeModel")
-      expect(constructed_model.domain.domain_name).to eq("SomeDomain")
-      expect(constructed_model.domain).to be(domain_module.foobara_domain)
+      expect(constructed_model.domain.foobara_domain_name).to eq("SomeDomain")
+      expect(constructed_model.domain).to be(domain_module)
     end
 
     context "when using domain name instead" do
@@ -278,7 +278,7 @@ RSpec.describe ":model" do
 
       it "still works" do
         expect(type.full_type_name).to eq("SomeDomain::SomeModel")
-        expect(constructed_model.domain.domain_name).to eq("SomeDomain")
+        expect(constructed_model.domain.foobara_domain_name).to eq("SomeDomain")
       end
     end
   end

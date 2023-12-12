@@ -150,7 +150,8 @@ module Foobara
     def domain_org_match_type?(type, domain_name, org_name)
       dom = Domain.to_domain(type)
 
-      (org_name.nil? || org_name == dom&.organization_name) && (domain_name.nil? || domain_name == dom&.domain_name)
+      (org_name.nil? || org_name == dom&.foobara_organization_name) &&
+        (domain_name.nil? || domain_name == dom&.foobara_domain_name)
     end
 
     def manifest
@@ -167,13 +168,14 @@ module Foobara
       domains.uniq!
 
       domains.each do |domain|
-        organization_name = domain.organization_name
-        domain_name = domain.domain_name
+        organization_name = domain.foobara_organization_name
+        domain_name = domain.foobara_domain_name
 
         org = organizations[organization_name.to_sym] ||= { organization_name:, domains: {} }
         domains_h = org[:domains]
 
-        domains_h[domain_name.to_sym] ||= domain.manifest(skip: %i[types commands]).merge(types: {}, commands: {})
+        domains_h[domain_name.to_sym] ||= domain.foobara_manifest(skip: %i[types commands]).merge(types: {},
+                                                                                                  commands: {})
       end
 
       command_manifests = command_registry.registry.values.map(&:manifest)
@@ -189,9 +191,9 @@ module Foobara
       registered_types_depended_on.each do |type|
         domain = Domain.to_domain(type)
 
-        domain.type_namespace.use do
-          org = domain.organization_name.to_sym
-          dom = domain.domain_name.to_sym
+        domain.foobara_type_namespace.use do
+          org = domain.foobara_organization_name.to_sym
+          dom = domain.foobara_domain_name.to_sym
 
           organizations[org][:domains][dom][:types][type.type_symbol] = type.manifest
         end

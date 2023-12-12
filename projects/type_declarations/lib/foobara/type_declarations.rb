@@ -11,12 +11,14 @@ module Foobara
         %w[
           foobara_children
           foobara_registry
+          foobara_type_namespace
         ].each do |var_name|
           var_name = "@#{var_name}"
 
           # Don't we only have to do this for Foobara and not all of these??
           [
             Foobara,
+            Foobara::GlobalDomain,
             Domain,
             Command,
             Types::Type,
@@ -40,6 +42,11 @@ module Foobara
       end
 
       def install!
+        Util.make_module "Foobara::GlobalDomain" do
+          foobara_domain!
+          self.is_global = true
+        end
+
         reset_all
 
         Foobara::Error.include(ErrorExtension)

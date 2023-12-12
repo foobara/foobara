@@ -1,5 +1,5 @@
 module Foobara
-  class Domain
+  module Domain
     # TODO: should we just couple domain project and commands project to simplify this connection?
     # TODO: move this stuff to extensions/ directory
     module ModuleExtension
@@ -11,9 +11,6 @@ module Foobara
           raise CannotBeOrganizationAndDomainAtSameTime
           # :nocov:
         end
-
-        # TODO: is this a smell?
-        Domain.foobara_domain_modules << self
 
         include(DomainModuleExtension)
 
@@ -33,9 +30,6 @@ module Foobara
           raise CannotBeOrganizationAndDomainAtSameTime
           # :nocov:
         end
-
-        # TODO: is this a smell?
-        Domain.foobara_organization_modules << self
 
         include(OrganizationModuleExtension)
 

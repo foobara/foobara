@@ -22,7 +22,7 @@ RSpec.describe Foobara::Manifest do
 
     stub_module("SomeOrg::SomeDomain") do
       foobara_domain!
-      depends_on "SomeOtherDomain"
+      foobara_depends_on "SomeOtherDomain"
     end
 
     stub_class "SomeOrg::SomeDomain::User", Foobara::Entity do

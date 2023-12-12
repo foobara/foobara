@@ -4,7 +4,8 @@ module Foobara
 
     # Need to simplify this manifest into a reference/store structure
     def manifest
-      global_domains = [*foobara_all_domain(lookup_in_children: false).map(&:foobara_domain), Domain.global]
+      # global_domains = [*foobara_all_domain(lookup_in_children: false), Domain.global]
+      global_domains = foobara_all_domain(lookup_in_children: false)
 
       {
         organizations: foobara_all_organization.to_h do |organization|
@@ -12,18 +13,14 @@ module Foobara
         end.merge(
           global_organization: {
             organization_name: "global_organization",
-            domains: global_domains.map(&:manifest_hash).inject(:merge) || {}
+            domains: global_domains.map(&:foobara_manifest_hash).inject(:merge) || {}
           }
         )
       }
     end
 
     def all_domains
-      Domain.all.values
-    end
-
-    def all_commands
-      Command.all
+      foobara_all_domain
     end
 
     def all_types
@@ -31,7 +28,7 @@ module Foobara
     end
 
     def all_namespaces
-      [*all_domains.map(&:type_namespace), TypeDeclarations::Namespace.global]
+      [*all_domains.map(&:foobara_type_namespace), TypeDeclarations::Namespace.global]
     end
   end
 end

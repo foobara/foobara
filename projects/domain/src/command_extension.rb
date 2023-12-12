@@ -1,5 +1,5 @@
 module Foobara
-  class Domain
+  module Domain
     # TODO: should we just couple domain project and commands project to simplify this connection?
     module CommandExtension
       include Concern
@@ -15,7 +15,7 @@ module Foobara
 
         return super if sub_domain.global?
 
-        unless domain.depends_on?(sub_domain)
+        unless domain.foobara_depends_on?(sub_domain)
           raise CannotAccessDomain,
                 "Cannot access #{sub_domain} or its commands because #{domain} does not depend on it"
         end
@@ -25,45 +25,37 @@ module Foobara
 
       module ClassMethods
         def domain
-          mod = Util.module_for(self)
+          namespace = foobara_parent_namespace
 
-          while mod
-            if mod.foobara_domain?
-              return mod.foobara_domain
+          while namespace
+            if namespace.is_a?(Module) && namespace.foobara_domain?
+              return namespace
             end
 
-            mod = Util.module_for(mod)
+            namespace = namespace.foobara_parent_namespace
           end
 
           Domain.global
         end
 
         def namespace
-          domain.type_namespace
+          domain.foobara_type_namespace
         end
 
         def full_command_name
           @full_command_name ||= if domain.global?
                                    command_name
-                                 elsif organization
-                                   "#{organization_name}::#{domain_name}::#{command_name}"
                                  else
-                                   "#{domain_name}::#{command_name}"
+                                   "#{domain.foobara_full_domain_name}::#{command_name}"
                                  end
         end
 
         def full_command_symbol
           @full_command_symbol = if domain.global?
                                    command_symbol
-                                 elsif organization
-                                   "#{organization_symbol}::#{domain_symbol}::#{command_symbol}".to_sym
                                  else
-                                   "#{domain_symbol}::#{command_symbol}".to_sym
+                                   "#{domain.foobara_full_domain_symbol}::#{command_symbol}".to_sym
                                  end
-        end
-
-        def organization
-          domain.organization
         end
 
         def manifest
@@ -75,10 +67,16 @@ module Foobara
         end
 
         def domain_name
-          domain_name = foobara_parent_namespace.scoped_name || "global_domain"
+          parent = foobara_parent_namespace
+
+          domain_name = if parent.foobara_domain?
+                          parent.scoped_name
+                        else
+                          "global_domain"
+                        end
 
           # TODO: remove this old method of doing things!!!
-          old_domain_name = domain.domain_name
+          old_domain_name = domain.foobara_domain_name
 
           unless old_domain_name == domain_name
             # :nocov:
@@ -97,7 +95,7 @@ module Foobara
                  end || "global_organization"
 
           # TODO: remove this old method of doing things!!
-          old_name = domain.organization_name
+          old_name = domain.foobara_organization_name
 
           unless old_name == name
             # :nocov:
