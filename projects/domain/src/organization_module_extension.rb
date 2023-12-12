@@ -5,17 +5,8 @@ module Foobara
       include Concern
 
       module ClassMethods
-        # TODO: eliminate this concept
-        attr_accessor :is_global
-
-        # TODO: eliminate this concept
-        def global?
-          is_global
-        end
-
         def foobara_organization_name
-          # TODO: eliminate this global concept concept
-          global? ? "global_organization" : scoped_name
+          scoped_name
         end
 
         def foobara_organization_symbol
@@ -37,12 +28,7 @@ module Foobara
         end
 
         def foobara_domains
-          # TODO: kill global? concept
-          if global?
-            [*Foobara.foobara_all_domain(lookup_in_children: false).map(&:foobara_domain), Domain.global]
-          else
-            foobara_all_domain(lookup_in_children: false).map(&:foobara_domain)
-          end
+          foobara_all_domain(lookup_in_children: false).map(&:foobara_domain)
         end
 
         def foobara_manifest

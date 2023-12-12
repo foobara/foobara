@@ -100,7 +100,11 @@ RSpec.describe Foobara::Domain do
         it { is_expected.to be(true) }
 
         context "when does not own domain" do
-          subject { Foobara::GlobalOrganization.foobara_owns_domain?(domain) }
+          subject { other_org.foobara_owns_domain?(domain) }
+
+          let(:other_org) do
+            stub_module("SomeOtherOrg") { foobara_organization! }
+          end
 
           it { is_expected.to be(false) }
         end

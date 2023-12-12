@@ -33,7 +33,7 @@ module Foobara
     end
 
     def organization_name
-      organization.foobara_organization_name
+      organization&.foobara_organization_name || "global_organization"
     end
 
     def organization_symbol
@@ -47,8 +47,6 @@ module Foobara
 
       if parent&.foobara_organization?
         parent
-      else
-        Foobara::GlobalOrganization
       end
     end
 
