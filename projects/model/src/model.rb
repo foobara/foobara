@@ -10,7 +10,7 @@ module Foobara
     class << self
       attr_accessor :domain, :is_abstract
 
-      foobara_delegate :organization, :domain_name, to: :domain, allow_nil: true
+      foobara_delegate :organization, :organization_name, :domain_name, to: :domain, allow_nil: true
 
       def abstract
         @is_abstract = true
