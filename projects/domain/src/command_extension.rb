@@ -67,24 +67,8 @@ module Foobara
         end
 
         def domain_name
-          parent = foobara_parent_namespace
-
-          domain_name = if parent.foobara_domain?
-                          parent.scoped_name
-                        else
-                          "global_domain"
-                        end
-
           # TODO: remove this old method of doing things!!!
-          old_domain_name = domain.foobara_domain_name
-
-          unless old_domain_name == domain_name
-            # :nocov:
-            raise "Domain name in new system doesn't match old system: #{old_domain_name} != #{domain_name}"
-            # :nocov:
-          end
-
-          domain_name
+          domain.foobara_domain_name
         end
 
         def organization_name

@@ -20,7 +20,7 @@ module Foobara
           [
             Foobara,
             Foobara::GlobalOrganization,
-            Foobara::GlobalOrganization::GlobalDomain,
+            Foobara::GlobalDomain,
             Domain,
             Command,
             Types::Type,
@@ -39,6 +39,9 @@ module Foobara
           Foobara.foobara_children << child
         end
 
+        GlobalDomain.foobara_parent_namespace = GlobalOrganization
+        GlobalOrganization.foobara_register(GlobalDomain)
+
         register_type_declaration(Handlers::RegisteredTypeDeclaration.new)
         register_type_declaration(Handlers::ExtendRegisteredTypeDeclaration.new)
         register_type_declaration(Handlers::ExtendArrayTypeDeclaration.new)
@@ -48,16 +51,6 @@ module Foobara
       end
 
       def install!
-        Util.make_module "Foobara::GlobalOrganization" do
-          foobara_organization!
-          self.is_global = true
-        end
-
-        Util.make_module "Foobara::GlobalOrganization::GlobalDomain" do
-          foobara_domain!
-          self.is_global = true
-        end
-
         reset_all
 
         Foobara::Error.include(ErrorExtension)

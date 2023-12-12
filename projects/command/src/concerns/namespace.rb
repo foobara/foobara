@@ -5,7 +5,7 @@ module Foobara
         include Concern
 
         on_include do
-          foobara_subclasses_are_namespaces!(default_parent: Foobara, autoregister: true)
+          foobara_subclasses_are_namespaces!(default_parent: Foobara::GlobalDomain, autoregister: true)
         end
 
         module ClassMethods

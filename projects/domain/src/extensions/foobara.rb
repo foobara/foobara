@@ -2,7 +2,6 @@ module Foobara
   class << self
     # TODO: come up with a way to change a type's manifest... Or maybe treat Model very differently?
     def manifest
-      binding.pry
       {
         organizations: foobara_all_organization.to_h do |organization|
           [organization.foobara_organization_name.to_sym, organization.foobara_manifest]

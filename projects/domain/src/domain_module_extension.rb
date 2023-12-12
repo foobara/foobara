@@ -1,5 +1,7 @@
 module Foobara
   module Domain
+    class NoSuchDomain < StandardError; end
+
     class << self
       def to_domain(object)
         case object
@@ -54,13 +56,15 @@ module Foobara
           is_global
         end
 
+        attr_writer :foobara_domain_name, :foobara_full_domain_name
+
         def foobara_domain_name
           # TODO: eliminate this global concept concept
-          global? ? "global_domain" : scoped_name
+          @foobara_domain_name || scoped_name
         end
 
         def foobara_full_domain_name
-          global? ? "global_organization::global_domain" : scoped_full_name
+          @foobara_full_domain_name || scoped_full_name
         end
 
         def foobara_full_domain_symbol
@@ -74,10 +78,13 @@ module Foobara
         def foobara_organization
           parent = foobara_parent_namespace
 
-          if parent&.foobara_organization?
-            parent
-          else
-            GlobalDomain
+          while parent
+            return parent if parent&.foobara_organization?
+
+            # TODO: we really should test this path
+            # :nocov:
+            parent = parent.foobara_parent_namespace
+            # :nocov:
           end
         end
 
