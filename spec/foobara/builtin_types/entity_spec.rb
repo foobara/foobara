@@ -390,7 +390,7 @@ RSpec.describe ":entity" do
       end
       let(:model_module) { domain_module }
       let(:type) do
-        domain_module.type_for_declaration(type_declaration)
+        domain_module.foobara_type_namespace.type_for_declaration(type_declaration)
       end
 
       let(:constructed_model) do
@@ -399,14 +399,14 @@ RSpec.describe ":entity" do
 
       it "can be used by symbol" do
         expect(type.name).to eq("SomeEntity")
-        expect(domain_module.type_for_declaration(:SomeEntity)).to be(type)
-        expect(constructed_model.domain.type_registered?("SomeEntity")).to be(true)
+        expect(domain_module.foobara_type_namespace.type_for_declaration(:SomeEntity)).to be(type)
+        expect(constructed_model.domain.foobara_type_registered?("SomeEntity")).to be(true)
       end
 
       it "is registered where expected" do
         expect(type.full_type_name).to eq("SomeDomain::SomeEntity")
-        expect(constructed_model.domain.domain_name).to eq("SomeDomain")
-        expect(constructed_model.domain).to be(domain_module.foobara_domain)
+        expect(constructed_model.domain.foobara_domain_name).to eq("SomeDomain")
+        expect(constructed_model.domain).to be(domain_module)
       end
 
       context "when using domain name instead" do
@@ -414,7 +414,7 @@ RSpec.describe ":entity" do
 
         it "still works" do
           expect(type.full_type_name).to eq("SomeDomain::SomeEntity")
-          expect(constructed_model.domain.domain_name).to eq("SomeDomain")
+          expect(constructed_model.domain.foobara_domain_name).to eq("SomeDomain")
         end
       end
     end
