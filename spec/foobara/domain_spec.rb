@@ -94,10 +94,16 @@ RSpec.describe Foobara::Domain do
       end
 
       # TODO: belongs elsewhere
-      describe "#owns_domain?" do
+      describe "#foobara_owns_domain?" do
         subject { organization.foobara_owns_domain?(domain) }
 
         it { is_expected.to be(true) }
+
+        context "when does not own domain" do
+          subject { Foobara::GlobalOrganization.foobara_owns_domain?(domain) }
+
+          it { is_expected.to be(false) }
+        end
       end
 
       # TODO: belongs elsewhere

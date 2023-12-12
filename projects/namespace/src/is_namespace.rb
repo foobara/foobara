@@ -69,12 +69,8 @@ module Foobara
         end
 
         if path[0] == ""
-          if absolute
-            return nil
-          else
-            return foobara_root_namespace.foobara_lookup(path[(foobara_root_namespace.scoped_path.size + 1)..],
-                                                         absolute: true, filter:)
-          end
+          return foobara_root_namespace.foobara_lookup(path[(foobara_root_namespace.scoped_path.size + 1)..],
+                                                       absolute: true, filter:)
         end
 
         scoped = foobara_registry.lookup(path, filter)

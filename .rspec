@@ -1,4 +1,4 @@
---format documentation
+--format p
 --color
 --require spec_helper
 --order defined
