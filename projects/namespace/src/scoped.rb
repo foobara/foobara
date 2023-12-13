@@ -25,7 +25,6 @@ module Foobara
     end
 
     def scoped_path=(path)
-      binding.pry if path.nil?
       @scoped_path = path.map(&:to_s)
     end
 

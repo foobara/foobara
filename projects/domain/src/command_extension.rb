@@ -24,13 +24,12 @@ module Foobara
 
           while namespace
             if namespace.is_a?(Module) && namespace.foobara_domain?
-              return namespace
+              d = namespace
+              break
             end
-
-            namespace = namespace.foobara_parent_namespace
           end
 
-          Domain.global
+          d
         end
 
         def namespace
