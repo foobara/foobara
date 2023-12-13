@@ -5,17 +5,10 @@ module Foobara
       include Concern
 
       module ClassMethods
-        # TODO: eliminate this concept
-        attr_accessor :is_global
-
-        # TODO: eliminate this concept
-        def global?
-          is_global
-        end
+        attr_writer :foobara_organization_name
 
         def foobara_organization_name
-          # TODO: eliminate this global concept concept
-          global? ? "global_organization" : scoped_name
+          @foobara_organization_name || scoped_name
         end
 
         def foobara_organization?

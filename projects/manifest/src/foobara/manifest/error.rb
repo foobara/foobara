@@ -9,6 +9,7 @@ module Foobara
         super.to_sym
       end
 
+      # TODO: this has to die
       def global?
         global_symbols.include?(symbol.to_sym)
       end

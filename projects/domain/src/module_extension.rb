@@ -14,14 +14,16 @@ module Foobara
 
         include(DomainModuleExtension)
 
-        foobara_namespace!
-        foobara_autoset_namespace!(default_namespace: Foobara)
-        foobara_autoset_scoped_path!
+        unless is_a?(Namespace::IsNamespace)
+          foobara_namespace!
+          foobara_autoset_namespace!(default_namespace: Foobara::GlobalOrganization)
+          foobara_autoset_scoped_path!
 
-        # TODO: wow this is awkward. We should find a cleaner way to set children on namespaces.
-        parent = foobara_parent_namespace
-        parent.foobara_register(self)
-        self.foobara_parent_namespace = parent
+          # TODO: wow this is awkward. We should find a cleaner way to set children on namespaces.
+          parent = foobara_parent_namespace
+          parent.foobara_register(self)
+          self.foobara_parent_namespace = parent
+        end
       end
 
       def foobara_organization!
@@ -36,14 +38,16 @@ module Foobara
         # TODO: remove this hack
         return if self == Foobara
 
-        foobara_namespace!
-        foobara_autoset_namespace!(default_namespace: Foobara)
-        foobara_autoset_scoped_path!
+        unless is_a?(Namespace::IsNamespace)
+          foobara_namespace!
+          foobara_autoset_namespace!(default_namespace: Foobara)
+          foobara_autoset_scoped_path!
 
-        # TODO: wow this is awkward. We should find a cleaner way to set children on namespaces.
-        parent = foobara_parent_namespace
-        parent.foobara_register(self)
-        self.foobara_parent_namespace = parent
+          # TODO: wow this is awkward. We should find a cleaner way to set children on namespaces.
+          parent = foobara_parent_namespace
+          parent.foobara_register(self)
+          self.foobara_parent_namespace = parent
+        end
       end
 
       def foobara_domain?
@@ -58,3 +62,24 @@ module Foobara
 end
 
 Module.include(Foobara::Domain::ModuleExtension)
+
+module Foobara
+  module GlobalOrganization
+    foobara_namespace!(scoped_path: [])
+    self.foobara_parent_namespace = Foobara
+    Foobara.foobara_register(self)
+
+    foobara_organization!
+    self.foobara_organization_name = "global_organization"
+  end
+
+  module GlobalDomain
+    foobara_namespace!(scoped_path: [])
+    self.foobara_parent_namespace = GlobalOrganization
+    GlobalOrganization.foobara_register(self)
+
+    foobara_domain!
+    self.foobara_domain_name = "global_domain"
+    self.foobara_full_domain_name = "global_organization::global_domain"
+  end
+end

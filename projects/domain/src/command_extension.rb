@@ -8,12 +8,7 @@ module Foobara
 
       def run_subcommand!(subcommand_class, inputs = {})
         domain = self.class.domain
-
-        return super if domain.global?
-
         sub_domain = subcommand_class.domain
-
-        return super if sub_domain.global?
 
         unless domain.foobara_depends_on?(sub_domain)
           raise CannotAccessDomain,
@@ -29,13 +24,12 @@ module Foobara
 
           while namespace
             if namespace.is_a?(Module) && namespace.foobara_domain?
-              return namespace
+              d = namespace
+              break
             end
-
-            namespace = namespace.foobara_parent_namespace
           end
 
-          Domain.global
+          d
         end
 
         def namespace
@@ -43,19 +37,11 @@ module Foobara
         end
 
         def full_command_name
-          @full_command_name ||= if domain.global?
-                                   command_name
-                                 else
-                                   "#{domain.foobara_full_domain_name}::#{command_name}"
-                                 end
+          scoped_full_name
         end
 
         def full_command_symbol
-          @full_command_symbol = if domain.global?
-                                   command_symbol
-                                 else
-                                   "#{domain.foobara_full_domain_symbol}::#{command_symbol}".to_sym
-                                 end
+          @full_command_symbol ||= Util.underscore_sym(full_command_name)
         end
 
         def manifest
@@ -67,24 +53,8 @@ module Foobara
         end
 
         def domain_name
-          parent = foobara_parent_namespace
-
-          domain_name = if parent.foobara_domain?
-                          parent.scoped_name
-                        else
-                          "global_domain"
-                        end
-
           # TODO: remove this old method of doing things!!!
-          old_domain_name = domain.foobara_domain_name
-
-          unless old_domain_name == domain_name
-            # :nocov:
-            raise "Domain name in new system doesn't match old system: #{old_domain_name} != #{domain_name}"
-            # :nocov:
-          end
-
-          domain_name
+          domain.foobara_domain_name
         end
 
         def organization_name

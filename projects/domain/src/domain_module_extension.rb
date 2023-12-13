@@ -1,5 +1,7 @@
 module Foobara
   module Domain
+    class NoSuchDomain < StandardError; end
+
     class << self
       def to_domain(object)
         case object
@@ -46,21 +48,15 @@ module Foobara
       include Concern
 
       module ClassMethods
-        # TODO: eliminate this concept
-        attr_accessor :is_global
-
-        # TODO: eliminate this concept
-        def global?
-          is_global
-        end
+        attr_writer :foobara_domain_name, :foobara_full_domain_name
 
         def foobara_domain_name
           # TODO: eliminate this global concept concept
-          global? ? "global_domain" : scoped_name
+          @foobara_domain_name || scoped_name
         end
 
         def foobara_full_domain_name
-          global? ? "global_organization::global_domain" : scoped_full_name
+          @foobara_full_domain_name || scoped_full_name
         end
 
         def foobara_full_domain_symbol
@@ -68,16 +64,19 @@ module Foobara
         end
 
         def foobara_organization_name
-          global? ? "global_organization" : foobara_organization&.foobara_organization_name
+          foobara_organization&.foobara_organization_name
         end
 
         def foobara_organization
           parent = foobara_parent_namespace
 
-          if parent&.foobara_organization?
-            parent
-          else
-            GlobalDomain
+          while parent
+            return parent if parent&.foobara_organization?
+
+            # TODO: we really should test this path
+            # :nocov:
+            parent = parent.foobara_parent_namespace
+            # :nocov:
           end
         end
 
@@ -87,7 +86,7 @@ module Foobara
 
         # TODO: kill this off
         def foobara_type_namespace
-          @foobara_type_namespace ||= if global?
+          @foobara_type_namespace ||= if self == GlobalDomain
                                         TypeDeclarations::Namespace.global
                                       else
                                         TypeDeclarations::Namespace.new(foobara_full_domain_name)
@@ -143,16 +142,21 @@ module Foobara
         end
 
         def foobara_depends_on?(other_domain)
-          return true if global? # This doesn't make sense shouldn't this be false??
-
           other_domain = Domain.to_domain(other_domain)
 
-          other_domain.global? || other_domain == self ||
+          # TODO: Feels awkward to have to check if we're the global domain or not here.
+          # Also awkward to check if the other domain is global.
+          # Unclear what the solution is. To fix other domain check could just automatically call
+          # depends_on with the global domain in .foobara_domain! but not as clear how to fix the check
+          # against self.
+          self == GlobalDomain || other_domain == self || other_domain == GlobalDomain ||
             foobara_depends_on.include?(other_domain.foobara_full_domain_name)
         end
 
         def foobara_depends_on(*domains)
-          return @foobara_depends_on ||= Set.new if domains.empty?
+          if domains.empty?
+            return @foobara_depends_on ||= Set.new
+          end
 
           if domains.length == 1
             domains = Util.array(domains.first)

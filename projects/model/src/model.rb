@@ -47,7 +47,7 @@ module Foobara
         self.domain = if namespace&.foobara_domain?
                         namespace
                       else
-                        Domain.global
+                        GlobalDomain
                       end
       end
 
@@ -70,7 +70,8 @@ module Foobara
       end
 
       def model_name
-        # TODO: should get this from the declaration_data instead, right??
+        model_type&.scoped_name || Util.non_full_name(self)
+      rescue Foobara::Scoped::NoScopedPathSetError
         Util.non_full_name(self)
       end
 
@@ -79,11 +80,7 @@ module Foobara
       end
 
       def full_model_name
-        if domain.global?
-          model_name
-        else
-          "#{domain.foobara_full_domain_name}::#{model_name}"
-        end
+        model_type&.scoped_full_name
       end
 
       def possible_errors
