@@ -60,6 +60,12 @@ module Foobara
       @scoped_full_name ||= scoped_full_path.join("::")
     end
 
+    attr_writer :foobara_manifest_reference
+
+    def foobara_manifest_reference
+      @foobara_manifest_reference ||= scoped_full_name
+    end
+
     def scoped_absolute_name
       @scoped_absolute_name ||= "::#{scoped_full_name}"
     end

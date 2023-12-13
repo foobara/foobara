@@ -15,7 +15,7 @@ module Foobara
           name || "Anonymous"
         end
 
-        def manifest
+        def foobara_manifest(to_include = nil)
           {
             name: processor_name,
             processor_type: :processor
@@ -270,8 +270,15 @@ module Foobara
         s
       end
 
-      def manifest
-        manifest = self.class.manifest.merge(possible_errors: possible_errors.transform_values(&:to_h))
+      def foobara_manifest(to_include = nil)
+        errors = possible_errors.transform_values do |error_class|
+          to_include << error_class
+          error_class.foobara_manifest_reference
+        end
+
+        manifest = self.class.foobara_manifest(to_include).merge(
+          possible_errors: errors
+        )
 
         if requires_declaration_data?
           manifest[:declaration_data] = declaration_data
@@ -282,6 +289,10 @@ module Foobara
         end
 
         manifest
+      end
+
+      def foobara_manifest_reference
+        self.class.foobara_manifest_reference
       end
 
       def method_missing(method, *args, **opts)

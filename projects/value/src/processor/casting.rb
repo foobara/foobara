@@ -22,9 +22,9 @@ module Foobara
         end
 
         class << self
-          def manifest
+          def foobara_manifest(to_include = nil)
             # :nocov:
-            super.merge(processor_type: :casting)
+            super(to_include).merge(processor_type: :casting)
             # :nocov:
           end
 

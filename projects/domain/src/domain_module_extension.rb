@@ -179,7 +179,8 @@ module Foobara
           end
         end
 
-        def foobara_manifest(skip: nil)
+        # TODO: can we kill this skip concept?
+        def foobara_manifest(to_include = Set.new, skip: nil)
           if skip
             allowed_keys = %i[
               organization_name
@@ -207,15 +208,28 @@ module Foobara
                         end
 
           depends_on = unless skip&.include?(:depends_on)
-                         foobara_depends_on.map(&:to_s)
+                         foobara_depends_on.each do |domain_name|
+                           to_include << domain
+                           domain.foobara_manifest_reference
+                         end
                        end
 
           commands = unless skip&.include?(:commands)
-                       foobara_command_classes.map(&:manifest_hash).inject(:merge) || {}
+                       c = []
+                       foobara_each_command(lookup_in_children: false) do |command_class|
+                         to_include << command_class
+                         c << command_class.foobara_manifest_reference
+                       end
+                       c
                      end
 
           types = unless skip&.include?(:types)
-                    foobara_type_namespace.manifest
+                    t = []
+                    foobara_each_type(lookup_in_children: false) do |type|
+                      to_include << type
+                      t << type.foobara_manifest_reference
+                    end
+                    t
                   end
 
           {

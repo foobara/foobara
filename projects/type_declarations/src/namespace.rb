@@ -1,6 +1,8 @@
 module Foobara
   module TypeDeclarations
     class Namespace
+      include TruncatedInspect
+
       class NoTypeDeclarationHandlerFoundError < StandardError; end
 
       class << self
