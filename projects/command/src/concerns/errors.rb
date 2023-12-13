@@ -5,10 +5,6 @@ module Foobara
         include Concern
 
         module ClassMethods
-          def command_symbol
-            @command_symbol ||= Util.non_full_name_underscore(self).to_sym
-          end
-
           def lookup_input_error_class(symbol, path)
             key = ErrorKey.new(symbol:, path:, category: :data)
             key = key.to_s_type

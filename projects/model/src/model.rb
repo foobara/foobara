@@ -70,8 +70,12 @@ module Foobara
       end
 
       def model_name
-        # TODO: should get this from the declaration_data instead, right??
-        Util.non_full_name(self)
+        model_type&.scoped_name || name
+      rescue Foobara::Scoped::NoScopedPathSetError
+        name
+      rescue => e
+        binding.pry
+        raise
       end
 
       def model_symbol
@@ -79,11 +83,7 @@ module Foobara
       end
 
       def full_model_name
-        if domain.global?
-          model_name
-        else
-          "#{domain.foobara_full_domain_name}::#{model_name}"
-        end
+        model_type&.scoped_full_name
       end
 
       def possible_errors

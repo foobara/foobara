@@ -48,14 +48,6 @@ module Foobara
       include Concern
 
       module ClassMethods
-        # TODO: eliminate this concept
-        attr_accessor :is_global
-
-        # TODO: eliminate this concept
-        def global?
-          is_global
-        end
-
         attr_writer :foobara_domain_name, :foobara_full_domain_name
 
         def foobara_domain_name
@@ -72,7 +64,7 @@ module Foobara
         end
 
         def foobara_organization_name
-          global? ? "global_organization" : foobara_organization&.foobara_organization_name
+          foobara_organization&.foobara_organization_name
         end
 
         def foobara_organization
@@ -94,7 +86,7 @@ module Foobara
 
         # TODO: kill this off
         def foobara_type_namespace
-          @foobara_type_namespace ||= if global?
+          @foobara_type_namespace ||= if self == GlobalDomain
                                         TypeDeclarations::Namespace.global
                                       else
                                         TypeDeclarations::Namespace.new(foobara_full_domain_name)

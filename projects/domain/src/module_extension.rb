@@ -71,7 +71,6 @@ module Foobara
 
     foobara_organization!
     self.foobara_organization_name = "global_organization"
-    self.is_global = true
   end
 
   module GlobalDomain
@@ -82,6 +81,5 @@ module Foobara
     foobara_domain!
     self.foobara_domain_name = "global_domain"
     self.foobara_full_domain_name = "global_organization::global_domain"
-    self.is_global = true
   end
 end
