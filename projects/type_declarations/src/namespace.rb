@@ -1,6 +1,8 @@
 module Foobara
   module TypeDeclarations
     class Namespace
+      include TruncatedInspect
+
       class NoTypeDeclarationHandlerFoundError < StandardError; end
 
       class << self
@@ -100,12 +102,6 @@ module Foobara
 
       foobara_delegate :all_types, to: :type_registry
 
-      def use(&)
-        self.class.using(self, &)
-      end
-
-      # types
-
       def register_type(symbol, type)
         type_registry[symbol.to_sym] = type
       end
@@ -117,7 +113,8 @@ module Foobara
           symbol = symbol.type_symbol
         end
 
-        type_registries.any? { |registry| registry.registered?(symbol) }
+        type_registries.any? { |registry| registry.registered?(symbol) } ||
+          Foobara.foobara_type_registered?(symbol)
       end
 
       def registry_for_symbol(symbol)
@@ -135,6 +132,8 @@ module Foobara
             return registry[symbol]
           end
         end
+
+        Foobara.foobara_lookup_type(symbol)
       end
 
       def accesses_up_hierarchy

@@ -14,7 +14,7 @@ module Foobara
 
           def desugarize(model_class)
             {
-              type: model_class.model_symbol
+              type: model_class.model_type.foobara_manifest_reference.to_sym
             }
           end
 

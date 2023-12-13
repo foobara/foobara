@@ -148,6 +148,10 @@ module Foobara
         all
       end
 
+      def foobara_registered?(name, filter: nil, lookup_in_children: true)
+        !foobara_lookup(name, filter:, lookup_in_children:).nil?
+      end
+
       def method_missing(method_name, *, **, &)
         filter, method, bang = _filter_from_method_name(method_name)
 
@@ -180,6 +184,16 @@ module Foobara
             # only lookup has a bang version
             if !bang || method == "lookup"
               [filter, method, bang]
+            end
+          end
+        else
+          match = method_name.to_s.match(/^foobara_(\w+)_registered\?$/)
+
+          if match
+            filter = foobara_categories[match[1].to_sym]
+
+            if filter
+              [filter, "registered?"]
             end
           end
         end

@@ -32,8 +32,7 @@ module Foobara
       end
 
       def build_from_modules_and_install_type_declaration_extensions!(type_symbol, target_classes, base_type)
-        desugarizer = TypeDeclarations::Handlers::RegisteredTypeDeclaration::SymbolDesugarizer
-        declaration_data = desugarizer.instance.transform(type_symbol)
+        declaration_data = { type: type_symbol.to_sym }
 
         module_symbol = Util.classify(type_symbol).to_sym
 
