@@ -19,11 +19,15 @@ module Foobara
           end
 
           def foobara_manifest(to_include = Set.new)
-            binding.pry unless depends_on.empty?
+            depends = depends_on.map do |command_name|
+              other_command = Foobara.foobara_lookup!(command_name, absolute: true)
+              to_include << other_command
+              other_command.foobara_manifest_reference
+            end
 
             h = {
               error_types: errors_type_declaration,
-              depends_on: depends_on.map(&:to_s),
+              depends_on: depends,
               full_command_name:,
               # TODO: allow inputs type to be nil or really any type?
               inputs_type: inputs_type&.reference_or_declaration_data || {

@@ -124,8 +124,8 @@ module Foobara
         scoped_namespace
       end
 
-      def foobara_lookup!(name, filter: nil)
-        object = foobara_lookup(name, filter:)
+      def foobara_lookup!(name, **)
+        object = foobara_lookup(name, **)
 
         unless object
           # :nocov:
