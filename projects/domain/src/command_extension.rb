@@ -8,12 +8,7 @@ module Foobara
 
       def run_subcommand!(subcommand_class, inputs = {})
         domain = self.class.domain
-
-        return super if domain.global?
-
         sub_domain = subcommand_class.domain
-
-        return super if sub_domain.global?
 
         unless domain.foobara_depends_on?(sub_domain)
           raise CannotAccessDomain,
@@ -43,19 +38,11 @@ module Foobara
         end
 
         def full_command_name
-          @full_command_name ||= if domain.global?
-                                   command_name
-                                 else
-                                   "#{domain.foobara_full_domain_name}::#{command_name}"
-                                 end
+          scoped_full_name
         end
 
         def full_command_symbol
-          @full_command_symbol = if domain.global?
-                                   command_symbol
-                                 else
-                                   "#{domain.foobara_full_domain_symbol}::#{command_symbol}".to_sym
-                                 end
+          @full_command_symbol ||= Util.underscore_sym(full_command_name)
         end
 
         def manifest

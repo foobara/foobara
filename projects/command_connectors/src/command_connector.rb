@@ -137,7 +137,8 @@ module Foobara
           types = types.select { |type| domain_org_match_type?(type, domain, org) }
 
           if types.size > 1
-            types.find  { |type| Domain.to_domain(type).global? }
+            # What are we doing here?
+            types.find  { |type| Domain.to_domain(type) == GlobalDomain }
           else
             types.first
           end

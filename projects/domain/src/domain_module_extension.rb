@@ -150,16 +150,20 @@ module Foobara
         end
 
         def foobara_depends_on?(other_domain)
-          return true if global? # This doesn't make sense shouldn't this be false??
-
           other_domain = Domain.to_domain(other_domain)
 
-          other_domain.global? || other_domain == self ||
+          # Feels awkward to have to check if we're the global domain or not here.
+          # Unclear what the solution is.
+          self == GlobalDomain || other_domain == self ||
             foobara_depends_on.include?(other_domain.foobara_full_domain_name)
         end
 
         def foobara_depends_on(*domains)
-          return @foobara_depends_on ||= Set.new if domains.empty?
+          if domains.empty?
+            return @foobara_depends_on ||= Set.new.tap do |set|
+              set << GlobalDomain.foobara_full_domain_name unless self == GlobalDomain
+            end
+          end
 
           if domains.length == 1
             domains = Util.array(domains.first)

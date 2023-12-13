@@ -237,7 +237,8 @@ module Foobara
           end
 
           if transformed_commands.size > 1
-            transformed_commands.find  { |transformed_command| transformed_command.domain.global? }
+            # What are we doing here? Is this necessary?
+            transformed_commands.find  { |transformed_command| transformed_command.domain == GlobalDomain }
           else
             transformed_commands.first
           end
