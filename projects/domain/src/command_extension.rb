@@ -44,7 +44,7 @@ module Foobara
           @full_command_symbol ||= Util.underscore_sym(full_command_name)
         end
 
-        def manifest
+        def foobara_manifest(_to_include = nil)
           super.merge(
             command_name:,
             domain_name:,

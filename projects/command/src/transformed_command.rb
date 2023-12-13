@@ -45,7 +45,7 @@ module Foobara
                        :domain,
                        to: :command_class
 
-      def manifest
+      def foobara_manifest(to_include = Set.new)
         command_class.manifest.merge(
           inputs_type: inputs_type.reference_or_declaration_data,
           result_type: result_type.reference_or_declaration_data,

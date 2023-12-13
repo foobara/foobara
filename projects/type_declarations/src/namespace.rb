@@ -209,7 +209,7 @@ module Foobara
         end
       end
 
-      def manifest
+      def foobara_manifest(to_include = Set.new)
         all_types.map(&:manifest_hash).inject(:merge) || {}
       end
     end

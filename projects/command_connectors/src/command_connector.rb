@@ -155,7 +155,7 @@ module Foobara
         (domain_name.nil? || domain_name == dom&.foobara_domain_name)
     end
 
-    def manifest
+    def foobara_manifest(to_include = Set.new)
       # TODO: why is this so much more complex than Foobara.manifest??
       # I suppose because there's no transformed org/dom concept??
       # TODO: implement that

@@ -18,7 +18,9 @@ module Foobara
             remove_instance_variable("@all") if instance_variable_defined?("@all")
           end
 
-          def manifest
+          def foobara_manifest(to_include = Set.new)
+            binding.pry unless depends_on.empty?
+
             h = {
               error_types: errors_type_declaration,
               depends_on: depends_on.map(&:to_s),
