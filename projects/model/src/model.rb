@@ -70,9 +70,9 @@ module Foobara
       end
 
       def model_name
-        model_type&.scoped_name || name
+        model_type&.scoped_name || Util.non_full_name(self)
       rescue Foobara::Scoped::NoScopedPathSetError
-        name
+        Util.non_full_name(self)
       rescue => e
         binding.pry
         raise
