@@ -541,6 +541,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
           context "when user exists with a referral" do
             let(:user) do
+              binding.pry
               User.transaction do
                 referral = referral_class.create(email: "Some@email.com")
                 User.create(name: "Some Name", referral:, ratings: [1, 2, 3], point: { x: 1, y: 2 })

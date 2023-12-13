@@ -103,6 +103,7 @@ module Foobara
         end
 
         def foobara_register_model(model_class)
+          binding.pry if model_class.name =~ /User/
           type = model_class.model_type
           foobara_type_namespace.register_type(model_class.model_symbol, type)
           foobara_register(type) # TODO: will this register it twice?

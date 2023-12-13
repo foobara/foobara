@@ -21,10 +21,11 @@ module Foobara
 
     def scoped_name=(name)
       name = name.to_s if name.is_a?(::Symbol)
-      @scoped_path = name.split("::")
+      self.scoped_path = name.split("::")
     end
 
     def scoped_path=(path)
+      binding.pry if path.nil?
       @scoped_path = path.map(&:to_s)
     end
 

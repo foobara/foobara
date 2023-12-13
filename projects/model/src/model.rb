@@ -47,7 +47,7 @@ module Foobara
         self.domain = if namespace&.foobara_domain?
                         namespace
                       else
-                        Domain.global
+                        GlobalDomain
                       end
       end
 
@@ -80,10 +80,16 @@ module Foobara
 
       def model_symbol
         model_name.to_sym
+      rescue => e
+        binding.pry
+        raise
       end
 
       def full_model_name
         model_type&.scoped_full_name
+      rescue => e
+        binding.pry
+        raise
       end
 
       def possible_errors
