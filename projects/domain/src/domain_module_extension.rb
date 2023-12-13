@@ -209,6 +209,7 @@ module Foobara
 
           depends_on = unless skip&.include?(:depends_on)
                          foobara_depends_on.each do |domain_name|
+                           domain = Domain.to_domain(domain_name)
                            to_include << domain
                            domain.foobara_manifest_reference
                          end

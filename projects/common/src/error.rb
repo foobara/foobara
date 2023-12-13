@@ -45,7 +45,7 @@ module Foobara
         }
       end
 
-      def foobara_manifest(to_include = nil)
+      def foobara_manifest(_to_include = nil)
         to_h
       end
     end

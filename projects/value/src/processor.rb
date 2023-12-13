@@ -15,7 +15,7 @@ module Foobara
           name || "Anonymous"
         end
 
-        def foobara_manifest(to_include = nil)
+        def foobara_manifest(_to_include = nil)
           {
             name: processor_name,
             processor_type: :processor
