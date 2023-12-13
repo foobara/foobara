@@ -6,11 +6,20 @@ module Foobara
         result :associative_array
 
         def execute
+          binding.pry
           build_manifest
         end
 
+        def to_include
+          @to_include ||= if manifestable.is_a?(CommandConnector)
+                            nil
+                          else
+                            Set.new
+                          end
+        end
+
         def build_manifest
-          manifestable.manifest
+          manifestable.foobara_manifest(to_include:)
         end
       end
     end

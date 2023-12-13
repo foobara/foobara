@@ -10,7 +10,7 @@ module Foobara
       end
 
       class << self
-        def foobara_manifest(to_include = nil)
+        def foobara_manifest(to_include:)
           super.merge(processor_type: :transformer)
         end
 

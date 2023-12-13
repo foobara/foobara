@@ -15,7 +15,7 @@ module Foobara
           name || "Anonymous"
         end
 
-        def foobara_manifest(_to_include = nil)
+        def foobara_manifest(to_include:)
           {
             name: processor_name,
             processor_type: :processor
@@ -270,13 +270,13 @@ module Foobara
         s
       end
 
-      def foobara_manifest(to_include = nil)
+      def foobara_manifest(to_include:)
         errors = possible_errors.transform_values do |error_class|
           to_include << error_class
           error_class.foobara_manifest_reference
         end
 
-        manifest = self.class.foobara_manifest(to_include).merge(
+        manifest = self.class.foobara_manifest(to_include:).merge(
           possible_errors: errors
         )
 

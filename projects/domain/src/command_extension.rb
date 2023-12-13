@@ -32,6 +32,11 @@ module Foobara
           d
         end
 
+        # TODO: prefix these...
+        def organization
+          domain.foobara_organization
+        end
+
         def namespace
           domain.foobara_type_namespace
         end
@@ -44,8 +49,8 @@ module Foobara
           @full_command_symbol ||= Util.underscore_sym(full_command_name)
         end
 
-        def foobara_manifest(_to_include = nil)
-          super.merge(
+        def foobara_manifest(to_include:)
+          super(to_include:).merge(
             command_name:,
             domain_name:,
             organization_name:

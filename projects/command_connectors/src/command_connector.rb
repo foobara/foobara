@@ -155,52 +155,83 @@ module Foobara
         (domain_name.nil? || domain_name == dom&.foobara_domain_name)
     end
 
-    def foobara_manifest(to_include = Set.new)
-      # TODO: why is this so much more complex than Foobara.manifest??
-      # I suppose because there's no transformed org/dom concept??
-      # TODO: implement that
-      organizations = {}
-      h = { organizations: }
+    # TODO: how can we dry this up??? this is pretty bad in that regard.
+    def foobara_manifest(to_include: nil)
+      # Drive all of this off of the list of exposed commands...
+      if to_include
+        to_include = to_include.dup.to_set
+      else
+        to_include = Set.new
 
-      domains = command_registry.registry.values.map(&:domain) +
-                registered_types_depended_on.map { |type| Domain.to_domain(type) }.compact
-
-      domains.compact!
-      domains.uniq!
-
-      domains.each do |domain|
-        organization_name = domain.foobara_organization_name
-        domain_name = domain.foobara_domain_name
-
-        org = organizations[organization_name.to_sym] ||= { organization_name:, domains: {} }
-        domains_h = org[:domains]
-
-        domains_h[domain_name.to_sym] ||= domain.foobara_manifest(skip: %i[types commands]).merge(types: {},
-                                                                                                  commands: {})
-      end
-
-      command_manifests = command_registry.registry.values.map(&:manifest)
-
-      command_manifests.each do |command_manifest|
-        org = command_manifest[:organization_name].to_sym
-        dom = command_manifest[:domain_name].to_sym
-        command_name = command_manifest[:command_name].to_sym
-
-        organizations[org][:domains][dom][:commands][command_name] = command_manifest
-      end
-
-      registered_types_depended_on.each do |type|
-        domain = Domain.to_domain(type)
-
-        domain.foobara_type_namespace.use do
-          org = domain.foobara_organization_name.to_sym
-          dom = domain.foobara_domain_name.to_sym
-
-          organizations[org][:domains][dom][:types][type.type_symbol] = type.manifest
+        command_registry.registry.each_value do |transformed_command_class|
+          to_include << transformed_command_class
+          to_include << transformed_command_class.domain
+          to_include << transformed_command_class.organization
+        rescue => e
+          binding.pry
+          raise
         end
       end
 
+      included = Set.new
+      additional_to_include = Set.new
+
+      h = {}
+
+      until to_include.empty? && additional_to_include.empty?
+        object = nil
+
+        if to_include.empty?
+          until additional_to_include.empty?
+            o = additional_to_include.first
+            additional_to_include.delete(o)
+
+            if o.is_a?(::Module)
+              if o.foobara_domain? || o.foobara_organization?
+                next
+              end
+
+              if o.is_a?(::Class) && o < Foobara::Command
+                next
+              end
+            end
+
+            object = o
+            break
+          end
+        else
+          object = to_include.first
+          to_include.delete(object)
+        end
+
+        break unless object
+
+        if object.is_a?(::String) || object.is_a?(::Symbol)
+          object = Foobara.foobara_lookup!(object, absolute: true)
+        end
+
+        manifest_reference = object.foobara_manifest_reference.to_sym
+
+        next if included.include?(manifest_reference)
+
+        category_symbol = if object.is_a?(::Class) && object < Foobara::TransformedCommand
+                            :command
+                          else
+                            Foobara.foobara_category_symbol_for(object)
+                          end
+
+        raise "no category symbol for #{object}" unless category_symbol
+
+        cat = h[category_symbol] ||= {}
+        cat[manifest_reference] = object.foobara_manifest(to_include: additional_to_include)
+
+        included << manifest_reference
+      end
+
       h
+    rescue => e
+      binding.pry
+      raise
     end
   end
 end

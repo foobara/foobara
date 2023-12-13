@@ -6,7 +6,7 @@ module Foobara
     #
     # The manifest itself will only contain full scoped names. This is kind of analogous to a store serializer
     # in the http connector.
-    def manifest(to_include = nil)
+    def manifest(to_include: nil)
       to_include = if to_include
                      to_include.dup.to_set
                    else
@@ -34,7 +34,7 @@ module Foobara
         raise "no category symbol for #{object}" unless category_symbol
 
         cat = h[category_symbol] ||= {}
-        cat[manifest_reference] = object.foobara_manifest(to_include)
+        cat[manifest_reference] = object.foobara_manifest(to_include:)
 
         included << manifest_reference
       end

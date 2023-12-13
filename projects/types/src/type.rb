@@ -176,7 +176,7 @@ module Foobara
         end
       end
 
-      def foobara_manifest(to_include = Set.new)
+      def foobara_manifest(to_include:)
         h = {
           name:,
           target_classes: target_classes.map(&:name),
@@ -184,8 +184,10 @@ module Foobara
           declaration_data:
         }
 
-        if base_type
-          to_include << base_type
+        types_depended_on.each do |dependent_type|
+          if dependent_type.registered?
+            to_include << dependent_type
+          end
         end
 
         h.merge!(
@@ -196,7 +198,7 @@ module Foobara
 
         target_classes.each do |target_class|
           if target_class.respond_to?(:foobara_manifest)
-            h.merge!(target_class.foobara_manifest)
+            h.merge!(target_class.foobara_manifest(to_include:))
           end
         end
 

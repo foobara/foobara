@@ -29,7 +29,7 @@ module Foobara
           foobara_all_domain(lookup_in_children: false)
         end
 
-        def foobara_manifest(to_include)
+        def foobara_manifest(to_include:)
           domain_names = []
 
           foobara_each_domain(lookup_in_children: false) do |domain|

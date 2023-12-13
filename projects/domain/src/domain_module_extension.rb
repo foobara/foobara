@@ -180,7 +180,7 @@ module Foobara
         end
 
         # TODO: can we kill this skip concept?
-        def foobara_manifest(to_include = Set.new, skip: nil)
+        def foobara_manifest(to_include:, skip: nil)
           if skip
             allowed_keys = %i[
               organization_name

@@ -18,7 +18,7 @@ module Foobara
             remove_instance_variable("@all") if instance_variable_defined?("@all")
           end
 
-          def foobara_manifest(to_include = Set.new)
+          def foobara_manifest(to_include:)
             depends = depends_on.map do |command_name|
               other_command = Foobara.foobara_lookup!(command_name, absolute: true)
               to_include << other_command
