@@ -165,7 +165,7 @@ RSpec.describe Foobara::Domain::CommandExtension do
         it "contains the depends_on information for the commands" do
           depends_on = Foobara.manifest[:organizations][:global_organization][:domains][:SomeDomain1][:depends_on]
 
-          expect(depends_on).to eq(%w[global_organization::global_domain SomeDomain2 SomeDomain3])
+          expect(depends_on).to eq(%w[SomeDomain2 SomeDomain3])
         end
       end
     end
