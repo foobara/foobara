@@ -40,9 +40,6 @@ module Foobara
       end
 
       h
-    rescue => e
-      binding.pry
-      raise
     end
 
     def all_domains

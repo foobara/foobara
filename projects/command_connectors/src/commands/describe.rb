@@ -6,7 +6,6 @@ module Foobara
         result :associative_array
 
         def execute
-          binding.pry
           build_manifest
         end
 

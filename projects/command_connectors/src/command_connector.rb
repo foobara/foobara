@@ -167,9 +167,6 @@ module Foobara
           to_include << transformed_command_class
           to_include << transformed_command_class.domain
           to_include << transformed_command_class.organization
-        rescue => e
-          binding.pry
-          raise
         end
       end
 
@@ -229,9 +226,6 @@ module Foobara
       end
 
       h
-    rescue => e
-      binding.pry
-      raise
     end
   end
 end
