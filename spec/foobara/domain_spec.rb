@@ -21,7 +21,7 @@ RSpec.describe Foobara::Domain do
   describe ".to_domain" do
     context "when nil" do
       it "is the global domain" do
-        expect(described_class.to_domain(nil)).to be_global
+        expect(described_class.to_domain(nil)).to be(Foobara::GlobalDomain)
       end
     end
   end
