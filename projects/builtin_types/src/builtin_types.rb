@@ -6,17 +6,13 @@ module Foobara
   module BuiltinTypes
     class << self
       foobara_delegate :global_registry, to: Types
-      foobara_delegate :[], :[]=, :registered?, :root_type, :root_type=, to: :global_registry
+      foobara_delegate :[], :[]=, :registered?, to: :global_registry
       foobara_delegate :global_type_declaration_handler_registry, to: TypeDeclarations
 
       def build_and_register!(type_symbol, base_type, target_classes = const_get("::#{Util.classify(type_symbol)}"))
         type = build_from_modules_and_install_type_declaration_extensions!(type_symbol, target_classes, base_type)
 
         global_registry.register(type_symbol, type)
-
-        unless global_registry.root_type
-          global_registry.root_type = type
-        end
 
         Foobara::Namespace::NamespaceHelpers.foobara_namespace!(type)
         type.scoped_path = [type_symbol.to_s]

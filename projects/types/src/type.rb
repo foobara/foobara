@@ -6,8 +6,6 @@ module Foobara
       include Concerns::Reflection
 
       class << self
-        attr_accessor :root_type
-
         def requires_declaration_data?
           true
         end
@@ -36,8 +34,8 @@ module Foobara
       def initialize(
         *args,
         target_classes:,
+        base_type:,
         type_registry: Types.global_registry,
-        base_type: self.class.root_type,
         name: "anonymous",
         casters: [],
         transformers: [],

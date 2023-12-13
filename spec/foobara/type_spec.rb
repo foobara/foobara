@@ -5,6 +5,7 @@ RSpec.describe Foobara::Types do
     let(:type) do
       Foobara::Types::Type.new(
         "whatever",
+        base_type: nil,
         target_classes: [Object]
       )
     end

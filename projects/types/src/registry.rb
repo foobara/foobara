@@ -1,22 +1,11 @@
 module Foobara
   module Types
     class Registry
-      attr_reader :root_type
       attr_accessor :name
 
       def initialize(name)
         self.name = name
         self.registry = {}
-      end
-
-      def root_type=(type)
-        if root_type
-          # :nocov:
-          raise "Already registered root type of #{root_type}"
-          # :nocov:
-        end
-
-        @root_type = type
       end
 
       def [](symbol)

@@ -79,6 +79,7 @@ RSpec.describe "custom types" do
 
           Foobara::Types::Type.new(
             strict_type_declaration,
+            base_type: :number,
             name: :custom_complex,
             casters: c,
             transformers: [],
