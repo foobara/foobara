@@ -155,19 +155,14 @@ module Foobara
         (domain_name.nil? || domain_name == dom&.foobara_domain_name)
     end
 
-    # TODO: how can we dry this up??? this is pretty bad in that regard.
-    def foobara_manifest(to_include: nil)
+    def foobara_manifest
       # Drive all of this off of the list of exposed commands...
-      if to_include
-        to_include = to_include.dup.to_set
-      else
-        to_include = Set.new
+      to_include = Set.new
 
-        command_registry.registry.each_value do |transformed_command_class|
-          to_include << transformed_command_class
-          to_include << transformed_command_class.domain
-          to_include << transformed_command_class.organization
-        end
+      command_registry.registry.each_value do |transformed_command_class|
+        to_include << transformed_command_class
+        to_include << transformed_command_class.domain
+        to_include << transformed_command_class.organization
       end
 
       included = Set.new

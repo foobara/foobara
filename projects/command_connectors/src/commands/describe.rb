@@ -9,16 +9,14 @@ module Foobara
           build_manifest
         end
 
-        def to_include
-          @to_include ||= if manifestable.is_a?(CommandConnector)
-                            nil
-                          else
-                            Set.new
-                          end
-        end
+        attr_accessor :manifest
 
         def build_manifest
-          manifestable.foobara_manifest(to_include:)
+          self.manifest = if manifestable.is_a?(CommandConnector)
+                            manifestable.foobara_manifest
+                          else
+                            manifestable.foobara_manifest(to_include: Set.new)
+                          end
         end
       end
     end
