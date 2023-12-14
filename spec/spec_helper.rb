@@ -1,3 +1,11 @@
+Signal.trap("SIGQUIT") do
+  puts caller.join("\n")
+end
+
+Signal.trap("USR1") do
+  puts caller.join("\n")
+end
+
 require "bundler/setup"
 
 require "pry"

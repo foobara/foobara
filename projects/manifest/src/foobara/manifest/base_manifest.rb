@@ -41,18 +41,23 @@ module Foobara
       end
 
       def domain
-        manifest = relevant_manifest
+        manifest = self
 
         domain_reference = nil
 
         until domain_reference || manifest.nil?
-          domain_reference =  DataPath.value_at(:domain, manifest)
+          $i ||= 0
+          $i += 1
+
+          binding.pry if $i > 1000
+
+          domain_reference = manifest[:domain]
 
           unless domain_reference
-            parent = manifest["parent"]
+            parent = manifest.parent
 
             manifest = if parent
-                         manifest = BaseManifest.new(root_manifest, parent).relevant_manifest
+                         BaseManifest.new(root_manifest, parent)
                        end
           end
         end
@@ -123,10 +128,8 @@ module Foobara
       end
 
       def method_missing(method_name, *, &)
-        if relevant_manifest.key?(method_name.to_sym)
-          relevant_manifest[method_name.to_sym]
-        elsif relevant_manifest.key?(method_name.to_s)
-          relevant_manifest[method_name.to_s]
+        if key?(method_name)
+          self[method_name]
         elsif optional_key?(method_name)
           nil
         else
@@ -134,6 +137,18 @@ module Foobara
           super
           # :nocov:
         end
+      end
+
+      def [](method_name)
+        if relevant_manifest.key?(method_name.to_sym)
+          relevant_manifest[method_name.to_sym]
+        elsif relevant_manifest.key?(method_name.to_s)
+          relevant_manifest[method_name.to_s]
+        end
+      end
+
+      def key?(method_name)
+        relevant_manifest.key?(method_name.to_sym) || relevant_manifest.key?(method_name.to_s)
       end
 
       def optional_key?(key)
