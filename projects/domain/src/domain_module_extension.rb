@@ -46,6 +46,7 @@ module Foobara
 
     module DomainModuleExtension
       include Concern
+      include Manifestable
 
       module ClassMethods
         attr_writer :foobara_domain_name, :foobara_full_domain_name
@@ -233,7 +234,7 @@ module Foobara
                     t
                   end
 
-          super.merge(
+          super(to_include:).merge(
             organization_name:,
             domain_name:,
             depends_on:,

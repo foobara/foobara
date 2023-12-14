@@ -1,8 +1,11 @@
+require_relative "manifestable"
+
 module Foobara
   module Domain
     module OrganizationModuleExtension
       # Does this really need to be a Concern?
       include Concern
+      include Manifestable
 
       module ClassMethods
         attr_writer :foobara_organization_name
@@ -41,6 +44,9 @@ module Foobara
             organization_name: foobara_organization_name,
             domains: domain_names
           )
+        rescue => e
+          binding.pry
+          raise
         end
       end
     end

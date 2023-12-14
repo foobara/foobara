@@ -288,7 +288,7 @@ module Foobara
           manifest[:parent_declaration_data] = parent_declaration_data
         end
 
-        super.merge(manifest)
+        self.class.foobara_manifest(to_include:).merge(manifest)
       end
 
       def foobara_manifest_reference

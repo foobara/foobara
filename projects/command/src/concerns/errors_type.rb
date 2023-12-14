@@ -5,9 +5,10 @@ module Foobara
         include Concern
 
         module ClassMethods
-          def errors_type_declaration
+          def errors_type_declaration(to_include:)
             error_context_type_map.to_h do |key, error_class|
-              [key, error_class.to_h.merge(ErrorKey.to_h(key)).merge(key:)]
+              to_include << error_class
+              [key, ErrorKey.to_h(key).merge(key:, error: error_class.foobara_manifest_reference)]
             end
           end
 

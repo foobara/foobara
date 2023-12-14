@@ -3,6 +3,7 @@ module Foobara
     module Concerns
       module Reflection
         include Concern
+        include Manifestable
 
         def initialize(...)
           self.class.all << self
@@ -26,7 +27,7 @@ module Foobara
             end
 
             h = {
-              error_types: errors_type_declaration,
+              error_types: errors_type_declaration(to_include:),
               depends_on: depends,
               full_command_name:,
               # TODO: allow inputs type to be nil or really any type?
