@@ -10,14 +10,14 @@ module Foobara
       end
 
       def organizations
-        @organizations ||= DataPath.value_at(:organization, root_manifest).keys.map do |key|
-          Organization.new(root_manifest, [:organization, key])
+        @organizations ||= DataPath.value_at(:organization, root_manifest).keys.map do |reference|
+          Organization.new(root_manifest, [:organization, reference])
         end
       end
 
       def domains
-        organizations.map(&:domains).flatten.map do |domain_name|
-          Domain.new(root_manifest, [:domain, domain_name])
+        @domains ||= DataPath.value_at(:domain, root_manifest).keys.map do |reference|
+          Domain.new(root_manifest, [:domain, reference])
         end
       end
 
@@ -31,6 +31,9 @@ module Foobara
 
       def entities
         organizations.map(&:entities).flatten
+      rescue => e
+        binding.pry
+        raise
       end
 
       def entity_by_name(name)

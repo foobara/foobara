@@ -1,12 +1,12 @@
 module Foobara
   module Manifest
-    class Error < BaseManifest
-      def error_manifest
+    class PossibleError < BaseManifest
+      def possible_error_manifest
         relevant_manifest
       end
 
-      def symbol
-        super.to_sym
+      def error
+        Error.new(root_manifest, [:error, relevant_manifest["error"]])
       end
 
       # TODO: this has to die

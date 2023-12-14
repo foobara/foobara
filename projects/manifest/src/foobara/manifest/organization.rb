@@ -11,6 +11,18 @@ module Foobara
         end
       end
 
+      def organization
+        self
+      end
+
+      def organization_name
+        relevant_manifest["organization_name"] || relevant_manifest[:organization_name]
+      end
+
+      def domain_name
+        raise "organizations don't have domain names"
+      end
+
       def commands
         domains.map(&:commands).flatten
       end
@@ -21,6 +33,10 @@ module Foobara
 
       def entities
         domains.map(&:entities).flatten
+      end
+
+      def global?
+        reference == "global_organization"
       end
     end
   end

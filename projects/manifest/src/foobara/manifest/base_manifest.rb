@@ -33,20 +33,82 @@ module Foobara
         end
       end
 
+      def domain_name
+        domain.domain_name
+      end
+
+      def organization_name
+        organization.organization_name
+      end
+
       def domain
-        raise "subclass responsibility"
+        manifest = relevant_manifest
+
+        domain_reference = nil
+
+        until domain_reference || manifest.nil?
+          domain_reference = org_reference = DataPath.value_at(:domain, manifest)
+
+          unless domain_reference
+            parent = manifest["parent"]
+
+            manifest = if parent
+                         manifest = BaseManifest.new(root_manifest, parent).relevant_manifest
+                       end
+          end
+        end
+
+        if domain_reference
+          Domain.new(root_manifest, [:domain, domain_reference])
+        else
+          global_domain
+        end
+      end
+
+      def organization
+        manifest = relevant_manifest
+
+        org_reference = nil
+
+        until org_reference || manifest.nil?
+          org_reference = DataPath.value_at(:organization, manifest)
+
+          unless org_reference
+            parent = manifest["parent"]
+
+            manifest = if parent
+                         manifest = BaseManifest.new(root_manifest, parent).relevant_manifest
+                       end
+          end
+        end
+
+        if org_reference
+          Organization.new(root_manifest, [:organization, org_reference])
+        else
+          global_organization
+        end
+      rescue => e
+        binding.pry
+        raise
+      end
+
+      def parent
+        relevant_manifest[:parent]
+      end
+
+      def parent_category
+        parent&.first
+      end
+
+      def parent_name
+        parent&.last
       end
 
       def relevant_manifest
         @relevant_manifest ||= Foobara::DataPath.values_at(path, root_manifest).first
-      end
-
-      def global_organization?
-        organization_name == "global_organization"
-      end
-
-      def global_domain?
-        domain_name == "global_domain"
+      rescue => e
+        binding.pry
+        raise
       end
 
       def find_type(type_declaration)
@@ -61,6 +123,10 @@ module Foobara
 
       def global_domain
         Domain.new(root_manifest, %i[domain global_organization::global_domain])
+      end
+
+      def global_organization
+        Organization.new(root_manifest, %i[organization global_organization])
       end
 
       def method_missing(method_name, *, &)

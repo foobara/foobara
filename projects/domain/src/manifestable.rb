@@ -7,7 +7,8 @@ module Foobara
         h = {
           scoped_path:,
           scoped_full_path:,
-          scoped_full_name:
+          scoped_full_name:,
+          reference: foobara_manifest_reference
         }
 
         scoped = self
@@ -27,7 +28,12 @@ module Foobara
         end
 
         if parent
-          h[:parent] = [Foobara.foobara_category_symbol_for(parent), parent.foobara_manifest_reference]
+          parent_category = Foobara.foobara_category_symbol_for(parent)
+
+          if parent_category
+            to_include << parent
+            h[:parent] = [parent_category, parent.foobara_manifest_reference]
+          end
         end
 
         h

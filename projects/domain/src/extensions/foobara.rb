@@ -31,7 +31,12 @@ module Foobara
 
         category_symbol = Foobara.foobara_category_symbol_for(object)
 
-        raise "no category symbol for #{object}" unless category_symbol
+        #         binding.pry if category_symbol == :error
+
+        unless category_symbol
+          binding.pry
+          raise "no category symbol for #{object}"
+        end
 
         cat = h[category_symbol] ||= {}
         cat[manifest_reference] = object.foobara_manifest(to_include:)

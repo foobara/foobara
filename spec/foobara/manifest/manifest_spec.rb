@@ -59,7 +59,7 @@ RSpec.describe Foobara::Manifest do
 
   it "is a Manifest", :focus do
     expect(manifest).to be_a(Foobara::Manifest::RootManifest)
-    expect(manifest.global_domain).to be_global_domain
+    expect(manifest.global_domain).to be_global
 
     entity = manifest.entity_by_name("SomeOrg::SomeDomain::User")
 
@@ -95,29 +95,32 @@ RSpec.describe Foobara::Manifest do
     some_other_user_declaration = command.inputs_type.attribute_declarations[:some_other_user]
     expect(command.domain.find_type(some_other_user_declaration)).to be_a(Foobara::Manifest::Entity)
 
-    global_error = command.error_types["data.cannot_cast"]
+    global_possible_error = command.error_types["data.cannot_cast"]
+    expect(global_possible_error._path).to be_a(Array)
+    global_error = global_possible_error.error
     expect(global_error).to be_a(Foobara::Manifest::Error)
     expect(global_error.error_manifest).to be_a(Hash)
     expect(global_error.symbol).to be_a(Symbol)
-    expect(global_error).to be_global
+    expect(global_error.organization.organization_name).to eq(manifest.global_organization.organization_name)
     expect(global_error.organization_name).to eq("global_organization")
     expect(global_error.domain_name).to eq("global_domain")
-    expect(global_error._path).to be_a(Array)
 
-    local_error = command.error_types["runtime.something_went_wrong"]
+    local_possible_error = command.error_types["runtime.something_went_wrong"]
+    local_error = local_possible_error.error
     expect(local_error).to be_a(Foobara::Manifest::Error)
-    expect(local_error).to_not be_global
     expect(local_error.organization_name).to eq("SomeOrg")
     expect(local_error.domain_name).to eq("SomeDomain")
 
     expect(type_declaration.type_declaration_manifest).to be_a(Hash)
     expect(type_declaration.to_entity).to be_a(Foobara::Manifest::Entity)
 
-    domain = manifest.domain_by_name("SomeDomain")
+    domain = manifest.domain_by_name("SomeOrg::SomeDomain")
     expect(domain).to be_a(Foobara::Manifest::Domain)
     expect(manifest.domains).to include(domain)
-    expect(domain).to_not be_global_organization
-    expect(domain).to_not be_global_domain
+
+    binding.pry
+    expect(domain.organization).to_not be_global
+    expect(domain).to_not be_global
     expect(domain.domain_name_to_domain("SomeOrg::SomeDomain")).to eq(domain)
 
     org = manifest.organization_by_name("SomeOrg")

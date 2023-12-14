@@ -15,7 +15,7 @@ module Foobara
 
       def error_types
         super.keys.to_h do |key|
-          [key, Error.new(root_manifest, [*path, :error_types, key])]
+          [key, PossibleError.new(root_manifest, [*path, :error_types, key])]
         end
       end
 

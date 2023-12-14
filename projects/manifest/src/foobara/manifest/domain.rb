@@ -27,6 +27,14 @@ module Foobara
       def domain
         self
       end
+
+      def domain_name
+        relevant_manifest["domain_name"] || relevant_manifest[:domain_name]
+      end
+
+      def global?
+        reference == "global_organization::global_domain"
+      end
     end
   end
 end
