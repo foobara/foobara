@@ -46,11 +46,6 @@ module Foobara
         domain_reference = nil
 
         until domain_reference || manifest.nil?
-          $i ||= 0
-          $i += 1
-
-          binding.pry if $i > 1000
-
           domain_reference = manifest[:domain]
 
           unless domain_reference
