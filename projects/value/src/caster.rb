@@ -4,7 +4,7 @@ module Foobara
     class Caster < Transformer
       class << self
         def foobara_manifest(to_include:)
-          super(to_include:).merge(processor_type: :caster)
+          super.merge(processor_type: :caster)
         end
 
         def requires_declaration_data?

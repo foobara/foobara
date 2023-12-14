@@ -233,13 +233,13 @@ module Foobara
                     t
                   end
 
-          {
+          super.merge(
             organization_name:,
             domain_name:,
             depends_on:,
             commands:,
             types:
-          }
+          )
         end
 
         def foobara_manifest_hash

@@ -16,10 +16,10 @@ module Foobara
         end
 
         def foobara_manifest(to_include:)
-          {
+          super.merge(
             name: processor_name,
             processor_type: :processor
-          }
+          )
         end
 
         def new_with_agnostic_args(declaration_data, parent_declaration_data)
@@ -288,7 +288,7 @@ module Foobara
           manifest[:parent_declaration_data] = parent_declaration_data
         end
 
-        manifest
+        super.merge(manifest)
       end
 
       def foobara_manifest_reference

@@ -46,7 +46,7 @@ module Foobara
       end
 
       def foobara_manifest(to_include:)
-        to_h
+        super.merge(to_h)
       end
     end
 

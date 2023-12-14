@@ -6,7 +6,7 @@ module Foobara
       class << self
         def foobara_manifest(to_include:)
           # :nocov:
-          super(to_include:).merge(processor_type: :type_declaration_handler)
+          super.merge(processor_type: :type_declaration_handler)
           # :nocov:
         end
 

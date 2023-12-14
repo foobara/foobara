@@ -42,7 +42,7 @@ module Foobara
               h[:result_type] = result_type.reference_or_declaration_data
             end
 
-            h
+            super.merge(h)
           end
 
           def manifest_hash

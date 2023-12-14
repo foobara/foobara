@@ -50,7 +50,7 @@ module Foobara
         end
 
         def foobara_manifest(to_include:)
-          super(to_include:).merge(
+          super.merge(
             command: foobara_manifest_reference,
             domain_name: domain.foobara_manifest_reference,
             organization_name: organization.foobara_manifest_reference

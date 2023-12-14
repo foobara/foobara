@@ -37,10 +37,10 @@ module Foobara
             domain_names << domain.foobara_manifest_reference
           end
 
-          {
+          super.merge(
             organization_name: foobara_organization_name,
             domains: domain_names
-          }
+          )
         end
       end
     end

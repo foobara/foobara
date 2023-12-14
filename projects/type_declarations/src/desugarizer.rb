@@ -12,7 +12,7 @@ module Foobara
 
         def foobara_manifest(to_include:)
           # :nocov:
-          super(to_include:).merge(processor_type: :desugarizer)
+          super.merge(processor_type: :desugarizer)
           # :nocov:
         end
       end

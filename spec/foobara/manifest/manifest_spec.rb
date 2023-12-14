@@ -107,6 +107,7 @@ RSpec.describe Foobara::Manifest do
     local_error = command.error_types["runtime.something_went_wrong"]
     expect(local_error).to be_a(Foobara::Manifest::Error)
     expect(local_error).to_not be_global
+    binding.pry
     expect(local_error.organization_name).to eq("SomeOrg")
     expect(local_error.domain_name).to eq("SomeDomain")
 

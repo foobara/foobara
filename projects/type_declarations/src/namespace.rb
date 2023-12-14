@@ -119,10 +119,10 @@ module Foobara
           symbol = symbol.type_symbol
         end
 
-        binding.pry if symbol == :"SomeOrg::SomeDomain::User"
+        # binding.pry if symbol == :"SomeOrg::SomeDomain::User"
 
-        # type_registries.any? { |registry| registry.registered?(symbol) }
-        Foobara.foobara_type_registered?(symbol)
+        type_registries.any? { |registry| registry.registered?(symbol) } ||
+          Foobara.foobara_type_registered?(symbol)
       end
 
       def registry_for_symbol(symbol)
@@ -217,7 +217,7 @@ module Foobara
       end
 
       def foobara_manifest(to_include:)
-        all_types.map(&:manifest_hash).inject(:merge) || {}
+        super.merge(all_types.map(&:manifest_hash).inject(:merge) || {})
       end
     end
   end

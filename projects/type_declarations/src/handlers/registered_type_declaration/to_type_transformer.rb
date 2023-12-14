@@ -15,7 +15,7 @@ module Foobara
           end
 
           def registered_type(strict_type_declaration)
-            binding.pry if strict_type_declaration == { type: :"SomeOrg::SomeDomain::User" }
+            # binding.pry if strict_type_declaration == { type: :"SomeOrg::SomeDomain::User" }
             type_for_symbol(type_symbol(strict_type_declaration))
           end
 

@@ -24,7 +24,7 @@ module Foobara
         class << self
           def foobara_manifest(to_include:)
             # :nocov:
-            super(to_include:).merge(processor_type: :casting)
+            super.merge(processor_type: :casting)
             # :nocov:
           end
 

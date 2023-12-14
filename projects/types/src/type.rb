@@ -202,7 +202,7 @@ module Foobara
           end
         end
 
-        h
+        super.merge(h)
       end
 
       def supported_processor_manifest(to_include)
