@@ -86,6 +86,8 @@ RSpec.describe Foobara::Manifest do
     command = manifest.command_by_name("SomeOrg::SomeDomain::QueryUser")
 
     expect(command).to be_a(Foobara::Manifest::Command)
+    expect(command.parent_category).to eq(:domain)
+    expect(command.parent_name).to eq("SomeOrg::SomeDomain")
     expect(manifest.commands).to include(command)
     expect(command.command_manifest).to be_a(Hash)
     type_declaration = command.result_type
