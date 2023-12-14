@@ -26,7 +26,9 @@ module Foobara
       end
 
       def types
-        organizations.map(&:types).flatten
+        @types ||= DataPath.value_at(:type, root_manifest).keys.map do |reference|
+          Type.new(root_manifest, [:type, reference])
+        end
       end
 
       def entities
