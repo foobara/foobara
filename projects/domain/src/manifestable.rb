@@ -37,9 +37,6 @@ module Foobara
         end
 
         h
-      rescue => e
-        binding.pry
-        raise
       end
     end
   end

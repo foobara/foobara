@@ -31,10 +31,7 @@ module Foobara
 
         category_symbol = Foobara.foobara_category_symbol_for(object)
 
-        #         binding.pry if category_symbol == :error
-
         unless category_symbol
-          binding.pry
           raise "no category symbol for #{object}"
         end
 

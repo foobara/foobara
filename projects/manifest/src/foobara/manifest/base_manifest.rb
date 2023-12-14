@@ -26,7 +26,6 @@ module Foobara
         self.path = path
 
         if relevant_manifest.nil?
-          binding.pry
           # :nocov:
           raise "invalid path #{path}"
           # :nocov:
@@ -47,7 +46,7 @@ module Foobara
         domain_reference = nil
 
         until domain_reference || manifest.nil?
-          domain_reference = org_reference = DataPath.value_at(:domain, manifest)
+          domain_reference =  DataPath.value_at(:domain, manifest)
 
           unless domain_reference
             parent = manifest["parent"]
@@ -87,9 +86,6 @@ module Foobara
         else
           global_organization
         end
-      rescue => e
-        binding.pry
-        raise
       end
 
       def parent
@@ -106,9 +102,6 @@ module Foobara
 
       def relevant_manifest
         @relevant_manifest ||= Foobara::DataPath.values_at(path, root_manifest).first
-      rescue => e
-        binding.pry
-        raise
       end
 
       def find_type(type_declaration)

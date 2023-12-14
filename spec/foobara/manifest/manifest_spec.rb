@@ -118,7 +118,6 @@ RSpec.describe Foobara::Manifest do
     expect(domain).to be_a(Foobara::Manifest::Domain)
     expect(manifest.domains).to include(domain)
 
-    binding.pry
     expect(domain.organization).to_not be_global
     expect(domain).to_not be_global
     expect(domain.domain_name_to_domain("SomeOrg::SomeDomain")).to eq(domain)

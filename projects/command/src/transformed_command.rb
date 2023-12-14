@@ -47,7 +47,6 @@ module Foobara
                        to: :command_class
 
       def foobara_manifest(to_include:)
-        binding.pry
         command_class.foobara_manifest(to_include:).merge(
           inputs_type: inputs_type.reference_or_declaration_data,
           result_type: result_type.reference_or_declaration_data,
@@ -95,7 +94,6 @@ module Foobara
 
       # TODO: fix this, should really match non-transformed structure.
       def error_types_manifest(to_include:)
-        binding.pry
         type = inputs_type
 
         if type == command_class.inputs_type

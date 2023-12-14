@@ -31,9 +31,6 @@ module Foobara
 
       def entities
         organizations.map(&:entities).flatten
-      rescue => e
-        binding.pry
-        raise
       end
 
       def entity_by_name(name)

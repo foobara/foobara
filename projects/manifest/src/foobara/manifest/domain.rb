@@ -15,9 +15,6 @@ module Foobara
         @types ||= DataPath.value_at(:types, domain_manifest).map do |key|
           Type.new(root_manifest, [:type, key])
         end
-      rescue => e
-        binding.pry
-        raise
       end
 
       def entities

@@ -44,9 +44,6 @@ module Foobara
             organization_name: foobara_organization_name,
             domains: domain_names
           )
-        rescue => e
-          binding.pry
-          raise
         end
       end
     end

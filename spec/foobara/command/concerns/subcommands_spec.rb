@@ -78,7 +78,6 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
 
   describe ".errors_type_declaration" do
     it "contains error metadata" do
-      binding.pry
       expect(command_class.errors_type_declaration(to_include: Set.new)).to eq(
         "data.cannot_cast" => {
           path: [],

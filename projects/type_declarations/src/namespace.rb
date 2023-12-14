@@ -119,8 +119,6 @@ module Foobara
           symbol = symbol.type_symbol
         end
 
-        # binding.pry if symbol == :"SomeOrg::SomeDomain::User"
-
         type_registries.any? { |registry| registry.registered?(symbol) } ||
           Foobara.foobara_type_registered?(symbol)
       end
@@ -163,8 +161,6 @@ module Foobara
           handlers.each do |handler|
             return handler if handler.applicable?(type_declaration)
           end
-
-          binding.pry
 
           raise NoTypeDeclarationHandlerFoundError,
                 "No type declaration handler found for #{type_declaration}"

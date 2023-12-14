@@ -206,9 +206,6 @@ module Foobara
         end
 
         super.merge(h)
-      rescue => e
-        binding.pry
-        raise
       end
 
       def supported_processor_manifest(to_include)
