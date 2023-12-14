@@ -26,7 +26,13 @@ module Foobara
               other_command.foobara_manifest_reference
             end
 
+            types = types_depended_on.select(&:registered?).map do |t|
+              to_include << t
+              t.foobara_manifest_reference
+            end
+
             h = {
+              types_depended_on: types,
               error_types: errors_type_declaration(to_include:),
               depends_on: depends,
               full_command_name:,

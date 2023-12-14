@@ -47,19 +47,30 @@ module Foobara
                        to: :command_class
 
       def foobara_manifest(to_include:)
-        binding.pry
+        types = types_depended_on.select(&:registered?).map do |t|
+          to_include << t
+          t.foobara_manifest_reference
+        end
+
+        inputs_transformers = self.inputs_transformers.map { |t| t.foobara_manifest(to_include:) }
+        result_transformers =  self.result_transformers.map { |t| t.foobara_manifest(to_include:) }
+        errors_transformers =  self.errors_transformers.map { |t| t.foobara_manifest(to_include:) }
+        pre_commit_transformers = self.pre_commit_transformers.map { |t| t.foobara_manifest(to_include:) }
+        serializers = self.serializers.map do |s|
+          s.respond_to?(:foobara_manifest) ? s.foobara_manifest(to_include:) : { proc: s.to_s }
+        end
+
         command_class.foobara_manifest(to_include:).merge(
+          types_depended_on: types,
           inputs_type: inputs_type.reference_or_declaration_data,
           result_type: result_type.reference_or_declaration_data,
           error_types: error_types_manifest(to_include:),
           capture_unknown_error:,
-          inputs_transformers: inputs_transformers.map { |t| t.foobara_manifest(to_include:) },
-          result_transformers: result_transformers.map { |t| t.foobara_manifest(to_include:) },
-          errors_transformers: errors_transformers.map { |t| t.foobara_manifest(to_include:) },
-          pre_commit_transformers: pre_commit_transformers.map { |t| t.foobara_manifest(to_include:) },
-          serializers: serializers.map do |s|
-            s.respond_to?(:foobara_manifest) ? s.foobara_manifest(to_include:) : { proc: s.to_s }
-          end,
+          inputs_transformers:,
+          result_transformers:,
+          errors_transformers:,
+          pre_commit_transformers:,
+          serializers:,
           requires_authentication:,
           authenticator: authenticator&.manifest
         )
@@ -70,7 +81,6 @@ module Foobara
       end
 
       def inputs_type
-        binding.pry
         input_transformer = inputs_transformers.find do |transformer|
           transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer && transformer.input_type
         end
