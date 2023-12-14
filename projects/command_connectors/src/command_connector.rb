@@ -198,10 +198,6 @@ module Foobara
 
         break unless object
 
-        if object.is_a?(::String) || object.is_a?(::Symbol)
-          object = Foobara.foobara_lookup!(object, absolute: true)
-        end
-
         manifest_reference = object.foobara_manifest_reference.to_sym
 
         next if included.include?(manifest_reference)

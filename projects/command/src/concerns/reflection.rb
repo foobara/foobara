@@ -46,12 +46,6 @@ module Foobara
             super.merge(h)
           end
 
-          def manifest_hash
-            {
-              command_name.to_sym => manifest
-            }
-          end
-
           def command_name
             Util.non_full_name(self)
           end

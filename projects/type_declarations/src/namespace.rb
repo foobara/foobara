@@ -102,12 +102,6 @@ module Foobara
 
       foobara_delegate :all_types, to: :type_registry
 
-      def use(&)
-        self.class.using(self, &)
-      end
-
-      # types
-
       def register_type(symbol, type)
         type_registry[symbol.to_sym] = type
       end
@@ -210,10 +204,6 @@ module Foobara
             { processor_data.to_sym => true }
           end.merge(type:)
         end
-      end
-
-      def foobara_manifest(to_include:)
-        super.merge(all_types.map(&:manifest_hash).inject(:merge) || {})
       end
     end
   end
