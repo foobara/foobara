@@ -782,8 +782,10 @@ RSpec.describe Foobara::CommandConnectors::Http do
         describe "#manifest" do
           let(:manifest) { command_connector.foobara_manifest }
 
-          it "uses types from the transformers" do
+          it "uses types from the transformers", :focus do
             h = manifest[:command][:ComputeExponent]
+
+            binding.pry
 
             inputs_type = h[:inputs_type]
             result_type = h[:result_type]

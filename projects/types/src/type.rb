@@ -177,15 +177,19 @@ module Foobara
       end
 
       def foobara_manifest(to_include:)
+        types_depended_on = []
+
         h = {
           name:,
           target_classes: target_classes.map(&:name),
           base_type: base_type&.full_type_name,
-          declaration_data:
+          declaration_data:,
+          types_depended_on:
         }
 
         types_depended_on.each do |dependent_type|
           if dependent_type.registered?
+            types_depended_on << dependent_type.foobara_manifest_reference
             to_include << dependent_type
           end
         end

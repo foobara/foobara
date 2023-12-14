@@ -47,6 +47,7 @@ module Foobara
                        to: :command_class
 
       def foobara_manifest(to_include:)
+        binding.pry
         command_class.foobara_manifest(to_include:).merge(
           inputs_type: inputs_type.reference_or_declaration_data,
           result_type: result_type.reference_or_declaration_data,
@@ -69,6 +70,7 @@ module Foobara
       end
 
       def inputs_type
+        binding.pry
         input_transformer = inputs_transformers.find do |transformer|
           transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer && transformer.input_type
         end

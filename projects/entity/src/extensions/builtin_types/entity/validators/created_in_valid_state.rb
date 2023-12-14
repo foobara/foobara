@@ -23,7 +23,9 @@ module Foobara
             if model_class_name
               Object.const_get(model_class_name).possible_errors
             else
-              super
+              # :nocov:
+              raise "Missing :model_class in parent_declaration_data for #{parent_declaration_data}"
+              # :nocov:
             end
           end
         end

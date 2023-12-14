@@ -6,7 +6,7 @@ module Foobara
       end
 
       def error
-        Error.new(root_manifest, [:error, relevant_manifest["error"]])
+        Error.new(root_manifest, [:error, possible_error_manifest["error"]])
       end
 
       # TODO: this has to die
