@@ -4,7 +4,7 @@ module Foobara
       include WithRegistries
 
       class << self
-        def manifest
+        def foobara_manifest(to_include:)
           # :nocov:
           super.merge(processor_type: :type_declaration_validator)
           # :nocov:

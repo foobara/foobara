@@ -9,8 +9,14 @@ module Foobara
           build_manifest
         end
 
+        attr_accessor :manifest
+
         def build_manifest
-          manifestable.manifest
+          self.manifest = if manifestable.is_a?(CommandConnector)
+                            manifestable.foobara_manifest
+                          else
+                            manifestable.foobara_manifest(to_include: Set.new)
+                          end
         end
       end
     end

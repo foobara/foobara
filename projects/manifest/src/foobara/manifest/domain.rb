@@ -6,19 +6,27 @@ module Foobara
       end
 
       def commands
-        @commands ||= DataPath.value_at(:commands, domain_manifest).keys.map do |key|
-          Command.new(root_manifest, [*path, :commands, key])
+        @commands ||= DataPath.value_at(:commands, domain_manifest).map do |key|
+          Command.new(root_manifest, [:command, key])
         end
       end
 
       def types
-        @types ||= DataPath.value_at(:types, domain_manifest).keys.map do |key|
-          Type.new(root_manifest, [*path, :types, key])
+        @types ||= DataPath.value_at(:types, domain_manifest).map do |key|
+          Type.new(root_manifest, [:type, key])
         end
       end
 
       def entities
         @entities ||= types.select(&:entity?)
+      end
+
+      def domain_name
+        relevant_manifest["domain_name"] || relevant_manifest[:domain_name]
+      end
+
+      def global?
+        reference == "global_organization::global_domain"
       end
     end
   end

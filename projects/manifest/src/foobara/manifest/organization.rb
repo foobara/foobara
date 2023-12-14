@@ -6,9 +6,13 @@ module Foobara
       end
 
       def domains
-        @domains ||= DataPath.value_at(:domains, organization_manifest).keys.map do |key|
-          Domain.new(root_manifest, [*path, :domains, key])
+        @domains ||= DataPath.value_at(:domains, organization_manifest).map do |key|
+          Domain.new(root_manifest, [:domain, key])
         end
+      end
+
+      def organization_name
+        relevant_manifest["organization_name"] || relevant_manifest[:organization_name]
       end
 
       def commands
@@ -21,6 +25,10 @@ module Foobara
 
       def entities
         domains.map(&:entities).flatten
+      end
+
+      def global?
+        reference == "global_organization"
       end
     end
   end

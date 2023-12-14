@@ -44,6 +44,10 @@ module Foobara
           is_fatal: fatal?
         }
       end
+
+      def foobara_manifest(to_include:)
+        super.merge(to_h)
+      end
     end
 
     foobara_delegate :runtime_path,

@@ -1,8 +1,11 @@
+require_relative "manifestable"
+
 module Foobara
   module Domain
     module OrganizationModuleExtension
       # Does this really need to be a Concern?
       include Concern
+      include Manifestable
 
       module ClassMethods
         attr_writer :foobara_organization_name
@@ -29,11 +32,18 @@ module Foobara
           foobara_all_domain(lookup_in_children: false)
         end
 
-        def foobara_manifest
-          {
+        def foobara_manifest(to_include:)
+          domain_names = []
+
+          foobara_each_domain(lookup_in_children: false) do |domain|
+            to_include << domain
+            domain_names << domain.foobara_manifest_reference
+          end
+
+          super.merge(
             organization_name: foobara_organization_name,
-            domains: foobara_domains.map(&:foobara_manifest_hash).inject(:merge) || {}
-          }
+            domains: domain_names
+          )
         end
       end
     end

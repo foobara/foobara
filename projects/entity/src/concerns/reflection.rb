@@ -17,7 +17,7 @@ module Foobara
             types.map(&:target_class).uniq
           end
 
-          def foobara_manifest
+          def foobara_manifest(to_include:)
             associations = {}
             deep_associations = {}
 

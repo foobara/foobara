@@ -205,10 +205,6 @@ module Foobara
           end.merge(type:)
         end
       end
-
-      def manifest
-        all_types.map(&:manifest_hash).inject(:merge) || {}
-      end
     end
   end
 end

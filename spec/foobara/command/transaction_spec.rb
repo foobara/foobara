@@ -262,8 +262,7 @@ RSpec.describe Foobara::Command::Concerns::Entities do
 
     describe "manifest" do
       it "includes entity dependencies" do
-        types_manifest = Foobara.manifest[:organizations][:global_organization][:domains][:global_domain][:types]
-        expect(types_manifest[:Employee][:deep_depends_on]).to eq(
+        expect(Foobara.manifest[:type][:Employee][:deep_depends_on]).to eq(
           %w[
             Assignment
             User

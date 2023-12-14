@@ -112,7 +112,7 @@ RSpec.describe Foobara::Domain do
       # TODO: belongs elsewhere
       describe "#manifest" do
         it "gives a whole manifest of everything" do
-          manifest = Foobara.manifest[:organizations][:SomeOrg][:domains][:SomeDomain][:commands][:SomeCommand]
+          manifest = Foobara.manifest[:command][:"SomeOrg::SomeDomain::SomeCommand"]
           expect(manifest[:result_type][:element_type_declarations][:bar][:type]).to eq(:integer)
 
           expect(Foobara.foobara_all_organization).to include(organization)
@@ -153,9 +153,13 @@ RSpec.describe Foobara::Domain do
 
       it "gives a whole manifest of everything" do
         expect(manifest).to be_a(Hash)
-        model_manifest = manifest[:organizations][:global_organization][:domains][:SomeDomain][:types][:SomeNewModel]
+
+        model_manifest = manifest[:type][:"SomeDomain::SomeNewModel"]
         expect(model_manifest[:base_type]).to eq(:model)
         expect(model_manifest[:target_classes]).to eq(["SomeDomain::SomeNewModel"])
+
+        domain_manifest = manifest[:domain][:SomeDomain]
+        expect(domain_manifest[:types]).to include("SomeDomain::SomeNewModel")
       end
     end
   end

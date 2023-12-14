@@ -10,13 +10,15 @@ module Foobara
       end
 
       def organizations
-        @organizations ||= DataPath.value_at(:organizations, root_manifest).keys.map do |key|
-          Organization.new(root_manifest, [:organizations, key])
+        @organizations ||= DataPath.value_at(:organization, root_manifest).keys.map do |reference|
+          Organization.new(root_manifest, [:organization, reference])
         end
       end
 
       def domains
-        organizations.map(&:domains).flatten
+        @domains ||= DataPath.value_at(:domain, root_manifest).keys.map do |reference|
+          Domain.new(root_manifest, [:domain, reference])
+        end
       end
 
       def commands
@@ -24,7 +26,9 @@ module Foobara
       end
 
       def types
-        organizations.map(&:types).flatten
+        @types ||= DataPath.value_at(:type, root_manifest).keys.map do |reference|
+          Type.new(root_manifest, [:type, reference])
+        end
       end
 
       def entities
@@ -34,71 +38,25 @@ module Foobara
       def entity_by_name(name)
         type = type_by_name(name)
 
-        type if type.entity?
+        raise "#{name} is not an entity" unless type.entity?
+
+        type
       end
 
       def type_by_name(name)
-        type = types.select { |t| t.name.to_s == name.to_s }
-
-        if type.empty?
-          # :nocov:
-          raise "No type found named #{name}"
-          # :nocov:
-        elsif type.size > 1
-          # :nocov:
-          raise "Name collision on type with #{name}: #{type.size} types found but expected 1"
-          # :nocov:
-        end
-
-        type.first
+        Type.new(root_manifest, [:type, name])
       end
 
       def command_by_name(name)
-        command = commands.select { |c| c.command_name.to_s == name.to_s }
-
-        if command.empty?
-          # :nocov:
-          raise "No command found named #{name}"
-          # :nocov:
-        elsif command.size > 1
-          # :nocov:
-          raise "Name collision on command with #{name}: #{command.size} commands found but expected 1"
-          # :nocov:
-        end
-
-        command.first
+        Command.new(root_manifest, [:command, name])
       end
 
       def domain_by_name(name)
-        domain = domains.select { |d| d.domain_name.to_s == name.to_s }
-
-        if domain.empty?
-          # :nocov:
-          raise "No domain found named #{name}"
-          # :nocov:
-        elsif domain.size > 1
-          # :nocov:
-          raise "Name collision on domain with #{name}: #{domain.size} domains found but expected 1"
-          # :nocov:
-        end
-
-        domain.first
+        Domain.new(root_manifest, [:domain, name])
       end
 
       def organization_by_name(name)
-        organization = organizations.select { |o| o.organization_name.to_s == name.to_s }
-
-        if organization.empty?
-          # :nocov:
-          raise "No organization found named #{name}"
-          # :nocov:
-        elsif organization.size > 1
-          # :nocov:
-          raise "Name collision on organization with #{name}: #{organization.size} organizations found but expected 1"
-          # :nocov:
-        end
-
-        organization.first
+        Organization.new(root_manifest, [:organization, name])
       end
     end
   end

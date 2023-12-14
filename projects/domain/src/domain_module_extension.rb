@@ -46,6 +46,7 @@ module Foobara
 
     module DomainModuleExtension
       include Concern
+      include Manifestable
 
       module ClassMethods
         attr_writer :foobara_domain_name, :foobara_full_domain_name
@@ -179,58 +180,35 @@ module Foobara
           end
         end
 
-        def foobara_manifest(skip: nil)
-          if skip
-            allowed_keys = %i[
-              organization_name
-              domain_name
-              depends_on
-              commands
-              types
-            ]
+        # TODO: can we kill this skip concept?
+        def foobara_manifest(to_include:)
+          organization_name = foobara_organization_name
 
-            invalid_keys = skip - allowed_keys
+          domain_name = foobara_domain_name
 
-            unless invalid_keys.empty?
-              # :nocov:
-              raise ArgumentError, "Invalid keys: #{invalid_keys} expected: #{allowed_keys}"
-              # :nocov:
-            end
+          depends_on = foobara_depends_on.map do |name|
+            domain = Domain.to_domain(name)
+            to_include << domain
+            domain.foobara_manifest_reference
           end
 
-          organization_name = unless skip&.include?(:organization_name)
-                                foobara_organization_name
-                              end
+          commands = foobara_all_command(lookup_in_children: false).map do |command_class|
+            to_include << command_class
+            command_class.foobara_manifest_reference
+          end
 
-          domain_name = unless skip&.include?(:domain_name)
-                          foobara_domain_name
-                        end
+          types = foobara_all_type(lookup_in_children: false).map do |type|
+            to_include << type
+            type.foobara_manifest_reference
+          end
 
-          depends_on = unless skip&.include?(:depends_on)
-                         foobara_depends_on.map(&:to_s)
-                       end
-
-          commands = unless skip&.include?(:commands)
-                       foobara_command_classes.map(&:manifest_hash).inject(:merge) || {}
-                     end
-
-          types = unless skip&.include?(:types)
-                    foobara_type_namespace.manifest
-                  end
-
-          {
+          super(to_include:).merge(
             organization_name:,
             domain_name:,
             depends_on:,
             commands:,
             types:
-          }
-        end
-
-        def foobara_manifest_hash
-          {
-            foobara_domain_name.to_sym => foobara_manifest
-          }
+          )
         end
       end
     end

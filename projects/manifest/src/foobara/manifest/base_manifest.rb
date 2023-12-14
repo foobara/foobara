@@ -32,67 +32,71 @@ module Foobara
         end
       end
 
+      def domain_name
+        domain.domain_name
+      end
+
+      def organization_name
+        organization.organization_name
+      end
+
+      def domain
+        domain_reference = self[:domain]
+
+        if domain_reference
+          Domain.new(root_manifest, [:domain, domain_reference])
+        else
+          global_domain
+        end
+      end
+
+      def organization
+        organization_reference = self[:organization]
+
+        if organization_reference
+          Organization.new(root_manifest, [:organization, organization_reference])
+        else
+          global_organization
+        end
+      end
+
+      def parent
+        relevant_manifest[:parent]
+      end
+
+      def parent_category
+        parent&.first
+      end
+
+      def parent_name
+        parent&.last
+      end
+
       def relevant_manifest
         @relevant_manifest ||= Foobara::DataPath.values_at(path, root_manifest).first
       end
 
-      def global_organization?
-        organization_name == "global_organization"
-      end
-
-      def global_domain?
-        domain_name == "global_domain"
-      end
-
-      def find_type(type_declaration, domain = nil)
+      def find_type(type_declaration)
         type_symbol = type_declaration.type
 
-        if domain.nil?
-          path = type_declaration.path[0..3]
-          domain = Domain.new(root_manifest, path)
-
-          type = find_type(type_declaration, domain)
-          type ||= find_type(type_declaration, global_domain)
-
-          unless type
-            # :nocov:
-            raise "Could not find a type for #{type_symbol}"
-            # :nocov:
-          end
-
-          type
-        else
-          type = domain.types.find { |t| t.name.to_sym == type_symbol.to_sym }
-
-          return type if type
-
-          domain.depends_on.each do |domain_name|
-            dependent_domain = domain_name_to_domain(domain_name)
-            type = find_type(type_declaration, dependent_domain)
-
-            return type if type
-          end
-
-          nil
-        end
+        Type.new(root_manifest, [:type, type_symbol])
       end
 
       def domain_name_to_domain(full_domain_name)
-        *organization_name, domain_name = full_domain_name.split("::")
-        organization_name = organization_name.first || "global_organization"
-
-        Domain.new(root_manifest, [:organizations, organization_name, :domains, domain_name])
+        Domain.new(root_manifest, [:domain, full_domain_name])
       end
 
       def global_domain
-        Domain.new(root_manifest, [:organizations, "global_organization", :domains, "global_domain"])
+        Domain.new(root_manifest, %i[domain global_organization::global_domain])
+      end
+
+      def global_organization
+        Organization.new(root_manifest, %i[organization global_organization])
       end
 
       def method_missing(method_name, *, &)
-        if relevant_manifest.key?(method_name.to_sym)
-          relevant_manifest[method_name.to_sym]
-        elsif relevant_manifest.key?(method_name.to_s)
-          relevant_manifest[method_name.to_s]
+        if key?(method_name)
+          self[method_name]
         elsif optional_key?(method_name)
           nil
         else
@@ -100,6 +104,18 @@ module Foobara
           super
           # :nocov:
         end
+      end
+
+      def [](method_name)
+        if relevant_manifest.key?(method_name.to_sym)
+          relevant_manifest[method_name.to_sym]
+        elsif relevant_manifest.key?(method_name.to_s)
+          relevant_manifest[method_name.to_s]
+        end
+      end
+
+      def key?(method_name)
+        relevant_manifest.key?(method_name.to_sym) || relevant_manifest.key?(method_name.to_s)
       end
 
       def optional_key?(key)

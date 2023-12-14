@@ -15,11 +15,11 @@ module Foobara
           name || "Anonymous"
         end
 
-        def manifest
-          {
+        def foobara_manifest(to_include:)
+          super.merge(
             name: processor_name,
             processor_type: :processor
-          }
+          )
         end
 
         def new_with_agnostic_args(declaration_data, parent_declaration_data)
@@ -270,8 +270,15 @@ module Foobara
         s
       end
 
-      def manifest
-        manifest = self.class.manifest.merge(possible_errors: possible_errors.transform_values(&:to_h))
+      def foobara_manifest(to_include:)
+        errors = possible_errors.transform_values do |error_class|
+          to_include << error_class
+          error_class.foobara_manifest_reference
+        end
+
+        manifest = self.class.foobara_manifest(to_include:).merge(
+          possible_errors: errors
+        )
 
         if requires_declaration_data?
           manifest[:declaration_data] = declaration_data
@@ -281,7 +288,11 @@ module Foobara
           manifest[:parent_declaration_data] = parent_declaration_data
         end
 
-        manifest
+        self.class.foobara_manifest(to_include:).merge(manifest)
+      end
+
+      def foobara_manifest_reference
+        self.class.foobara_manifest_reference
       end
 
       def method_missing(method, *args, **opts)

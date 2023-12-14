@@ -51,6 +51,8 @@ RSpec.describe Foobara::Manifest do
 
       possible_error SomeOrg::SomeDomain::QueryUser::SomethingWentWrongError
     end
+
+    stub_class "GlobalCommand", Foobara::Command
   end
 
   let(:manifest) { Foobara::Manifest::RootManifest.new(raw_manifest) }
@@ -59,9 +61,9 @@ RSpec.describe Foobara::Manifest do
 
   it "is a Manifest" do
     expect(manifest).to be_a(Foobara::Manifest::RootManifest)
-    expect(manifest.global_domain).to be_global_domain
+    expect(manifest.global_domain).to be_global
 
-    entity = manifest.entity_by_name("User")
+    entity = manifest.entity_by_name("SomeOrg::SomeDomain::User")
 
     expect(entity).to be_a(Foobara::Manifest::Entity)
     expect(manifest.entities).to include(entity)
@@ -69,6 +71,9 @@ RSpec.describe Foobara::Manifest do
     expect(entity.target_class).to eq("SomeOrg::SomeDomain::User")
     expect(entity.entity_manifest).to be_a(Hash)
     expect(entity.type_manifest).to be_a(Hash)
+
+    expect(manifest.types).to include(entity)
+    expect(entity.organization.types).to include(entity)
 
     attributes = entity.attributes_type
     expect(attributes).to be_a(Foobara::Manifest::Attributes)
@@ -81,13 +86,15 @@ RSpec.describe Foobara::Manifest do
     expect(new_attributes).to eql(attributes)
     expect(new_attributes.hash).to eql(attributes.hash)
 
-    command = manifest.command_by_name("QueryUser")
+    command = manifest.command_by_name("SomeOrg::SomeDomain::QueryUser")
 
     expect(command).to be_a(Foobara::Manifest::Command)
+    expect(command.parent_category).to eq(:domain)
+    expect(command.parent_name).to eq("SomeOrg::SomeDomain")
     expect(manifest.commands).to include(command)
     expect(command.command_manifest).to be_a(Hash)
     type_declaration = command.result_type
-    expect(type_declaration.type).to eq(:User)
+    expect(type_declaration.type).to eq(:"SomeOrg::SomeDomain::User")
     expect(command.inputs_type).to be_a(Foobara::Manifest::Attributes)
     expect(command.inputs_type.required).to be_nil
     command = Foobara::Manifest::Command.new(raw_stringified_manifest, command.path)
@@ -95,29 +102,36 @@ RSpec.describe Foobara::Manifest do
     some_other_user_declaration = command.inputs_type.attribute_declarations[:some_other_user]
     expect(command.domain.find_type(some_other_user_declaration)).to be_a(Foobara::Manifest::Entity)
 
-    global_error = command.error_types["data.cannot_cast"]
+    global_command = manifest.command_by_name("GlobalCommand")
+    expect(global_command).to be_a(Foobara::Manifest::Command)
+    expect(global_command.domain_name).to eq("global_organization::global_domain")
+    expect(global_command.organization_name).to eq("global_organization")
+
+    global_possible_error = command.error_types["data.cannot_cast"]
+    expect(global_possible_error._path).to be_a(Array)
+    global_error = global_possible_error.error
     expect(global_error).to be_a(Foobara::Manifest::Error)
     expect(global_error.error_manifest).to be_a(Hash)
     expect(global_error.symbol).to be_a(Symbol)
-    expect(global_error).to be_global
+    expect(global_error.organization.organization_name).to eq(manifest.global_organization.organization_name)
     expect(global_error.organization_name).to eq("global_organization")
     expect(global_error.domain_name).to eq("global_domain")
-    expect(global_error._path).to be_a(Array)
 
-    local_error = command.error_types["runtime.something_went_wrong"]
+    local_possible_error = command.error_types["runtime.something_went_wrong"]
+    local_error = local_possible_error.error
     expect(local_error).to be_a(Foobara::Manifest::Error)
-    expect(local_error).to_not be_global
     expect(local_error.organization_name).to eq("SomeOrg")
     expect(local_error.domain_name).to eq("SomeDomain")
 
     expect(type_declaration.type_declaration_manifest).to be_a(Hash)
     expect(type_declaration.to_entity).to be_a(Foobara::Manifest::Entity)
 
-    domain = manifest.domain_by_name("SomeDomain")
+    domain = manifest.domain_by_name("SomeOrg::SomeDomain")
     expect(domain).to be_a(Foobara::Manifest::Domain)
     expect(manifest.domains).to include(domain)
-    expect(domain).to_not be_global_organization
-    expect(domain).to_not be_global_domain
+
+    expect(domain.organization).to_not be_global
+    expect(domain).to_not be_global
     expect(domain.domain_name_to_domain("SomeOrg::SomeDomain")).to eq(domain)
 
     org = manifest.organization_by_name("SomeOrg")

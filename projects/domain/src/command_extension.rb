@@ -32,6 +32,11 @@ module Foobara
           d
         end
 
+        # TODO: prefix these...
+        def organization
+          domain.foobara_organization
+        end
+
         def namespace
           domain.foobara_type_namespace
         end
@@ -44,36 +49,12 @@ module Foobara
           @full_command_symbol ||= Util.underscore_sym(full_command_name)
         end
 
-        def manifest
+        def foobara_manifest(to_include:)
           super.merge(
-            command_name:,
-            domain_name:,
-            organization_name:
+            command: foobara_manifest_reference,
+            domain_name: domain.foobara_manifest_reference,
+            organization_name: organization.foobara_manifest_reference
           )
-        end
-
-        def domain_name
-          # TODO: remove this old method of doing things!!!
-          domain.foobara_domain_name
-        end
-
-        def organization_name
-          parent = foobara_parent_namespace
-
-          name = if parent.foobara_domain?
-                   parent.foobara_parent_namespace.scoped_name
-                 end || "global_organization"
-
-          # TODO: remove this old method of doing things!!
-          old_name = domain.foobara_organization_name
-
-          unless old_name == name
-            # :nocov:
-            raise "Organization name in new system doesn't match old system: #{old_name} != #{name}"
-            # :nocov:
-          end
-
-          name
         end
 
         foobara_delegate :organization_symbol,

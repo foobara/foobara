@@ -26,6 +26,14 @@ module Foobara
         @foobara_categories ||= foobara_parent_namespace&.foobara_categories || {}
       end
 
+      def foobara_category_symbol_for(object)
+        foobara_categories.each_pair do |symbol, block|
+          return symbol if object.instance_eval(&block)
+        end
+
+        nil
+      end
+
       def foobara_registry
         @foobara_registry ||= Foobara::Namespace::PrefixlessRegistry.new
       end
@@ -116,8 +124,8 @@ module Foobara
         scoped_namespace
       end
 
-      def foobara_lookup!(name, filter: nil)
-        object = foobara_lookup(name, filter:)
+      def foobara_lookup!(name, **)
+        object = foobara_lookup(name, **)
 
         unless object
           # :nocov:

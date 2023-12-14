@@ -170,48 +170,52 @@ module Foobara
       def reference_or_declaration_data(declaration_data = self.declaration_data)
         if registered?
           # TODO: we should just use the symbol and nothing else in this context instead of a hash with 1 element.
-          { type: type_symbol }
+          { type: foobara_manifest_reference.to_sym }
         else
           declaration_data
         end
       end
 
-      def manifest
+      def foobara_manifest(to_include:)
+        types = []
+
         h = {
           name:,
           target_classes: target_classes.map(&:name),
           base_type: base_type&.full_type_name,
-          declaration_data:
+          declaration_data:,
+          types_depended_on: types
         }
 
+        types_depended_on.each do |dependent_type|
+          if dependent_type.registered?
+            types << dependent_type.foobara_manifest_reference
+            to_include << dependent_type
+          end
+        end
+
         h.merge!(
-          supported_processor_manifest.merge(
-            processors: processor_manifest
+          supported_processor_manifest(to_include).merge(
+            processors: processor_manifest(to_include)
           )
         )
 
         target_classes.each do |target_class|
           if target_class.respond_to?(:foobara_manifest)
-            h.merge!(target_class.foobara_manifest)
+            h.merge!(target_class.foobara_manifest(to_include:))
           end
         end
 
-        h
+        super.merge(h)
       end
 
-      def manifest_hash
-        {
-          name.to_sym => manifest
-        }
-      end
-
-      def supported_processor_manifest
-        supported_transformers = {}
-        supported_validators = {}
-        supported_processors = {}
+      def supported_processor_manifest(to_include)
+        supported_transformers = []
+        supported_validators = []
+        supported_processors = []
 
         all_supported_processor_classes.each do |processor_class|
-          processor_manifest = processor_class.manifest
+          to_include << processor_class
 
           target = if processor_class < Value::Transformer
                      supported_transformers
@@ -221,15 +225,7 @@ module Foobara
                      supported_processors
                    end
 
-          symbol = processor_class.symbol
-
-          if target.key?(symbol)
-            # :nocov:
-            raise "Already registered #{symbol}"
-            # :nocov:
-          end
-
-          target[symbol] = processor_manifest
+          target << processor_class.foobara_manifest_reference
         end
 
         {
@@ -239,45 +235,24 @@ module Foobara
         }
       end
 
-      def processor_manifest
-        casters_manifest = {}
-        transformers_manifest = {}
-        validators_manifest = {}
+      def processor_manifest(to_include)
+        casters_manifest = []
+        transformers_manifest = []
+        validators_manifest = []
 
         casters.each do |caster|
-          symbol = caster.symbol
-
-          if casters_manifest.key?(symbol)
-            # :nocov:
-            raise "Already registered casters_manifest with #{symbol.inspect}"
-            # :nocov:
-          end
-
-          casters_manifest[symbol] = caster.manifest
+          to_include << caster
+          casters_manifest << caster.foobara_manifest_reference
         end
 
         transformers.each do |transformer|
-          symbol = transformer.symbol
-
-          if transformers_manifest.key?(symbol)
-            # :nocov:
-            raise "Already registered transformers_manifest with #{symbol.inspect}"
-            # :nocov:
-          end
-
-          transformers_manifest[symbol] = transformer.manifest
+          to_include << transformer
+          transformers_manifest << transformer.foobara_manifest_reference
         end
 
         validators.each do |validator|
-          symbol = validator.symbol
-
-          if validators_manifest.key?(symbol)
-            # :nocov:
-            raise "Already registered validators_manifest with #{symbol.inspect}"
-            # :nocov:
-          end
-
-          validators_manifest[symbol] = validator.manifest
+          to_include << validator
+          validators_manifest << validator.foobara_manifest_reference
         end
 
         {

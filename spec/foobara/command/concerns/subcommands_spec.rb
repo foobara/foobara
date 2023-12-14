@@ -78,115 +78,62 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
 
   describe ".errors_type_declaration" do
     it "contains error metadata" do
-      expect(command_class.errors_type_declaration).to eq(
+      expect(command_class.errors_type_declaration(to_include: Set.new)).to eq(
         "data.cannot_cast" => {
-          key: "data.cannot_cast",
           path: [],
           runtime_path: [],
           category: :data,
           symbol: :cannot_cast,
-          is_fatal: true,
-          context_type_declaration: {
-            type: :attributes,
-            element_type_declarations: {
-              cast_to: { type: :duck }, value: { type: :duck },
-              attribute_name: { type: :symbol }
-            }
-          }
+          key: "data.cannot_cast",
+          error: "Value::Processor::Casting::CannotCastError"
         },
         "data.unexpected_attributes" => {
-          key: "data.unexpected_attributes",
           path: [],
           runtime_path: [],
           category: :data,
           symbol: :unexpected_attributes,
-          is_fatal: true,
-          context_type_declaration: {
-            type: :attributes,
-            element_type_declarations: {
-              unexpected_attributes: { type: :array,
-                                       element_type_declaration: { type: :symbol } },
-              allowed_attributes: { type: :array,
-                                    element_type_declaration: { type: :symbol } }
-            }
-          }
+          key: "data.unexpected_attributes",
+          error: "attributes::element_type_declarations::UnexpectedAttributesError"
         },
         "data.should_fail.cannot_cast" => {
-          key: "data.should_fail.cannot_cast",
           path: [:should_fail],
           runtime_path: [],
           category: :data,
           symbol: :cannot_cast,
-          is_fatal: true,
-          context_type_declaration: {
-            type: :attributes,
-            element_type_declarations: {
-              cast_to: { type: :duck }, value: { type: :duck },
-              attribute_name: { type: :symbol }
-            }
-          }
+          key: "data.should_fail.cannot_cast",
+          error: "Value::Processor::Casting::CannotCastError"
         },
         "run_some_subcommand>data.cannot_cast" => {
-          key: "run_some_subcommand>data.cannot_cast",
           path: [],
           runtime_path: [:run_some_subcommand],
           category: :data,
           symbol: :cannot_cast,
-          is_fatal: true,
-          context_type_declaration: {
-            type: :attributes,
-            element_type_declarations: {
-              cast_to: { type: :duck }, value: { type: :duck },
-              attribute_name: { type: :symbol }
-            }
-          }
+          key: "run_some_subcommand>data.cannot_cast",
+          error: "Value::Processor::Casting::CannotCastError"
         },
         "run_some_subcommand>data.unexpected_attributes" => {
-          key: "run_some_subcommand>data.unexpected_attributes",
           path: [],
           runtime_path: [:run_some_subcommand],
           category: :data,
           symbol: :unexpected_attributes,
-          is_fatal: true,
-          context_type_declaration: {
-            type: :attributes,
-            element_type_declarations: {
-              unexpected_attributes: { type: :array,
-                                       element_type_declaration: { type: :symbol } },
-              allowed_attributes: { type: :array,
-                                    element_type_declaration: { type: :symbol } }
-            }
-          }
+          key: "run_some_subcommand>data.unexpected_attributes",
+          error: "attributes::element_type_declarations::UnexpectedAttributesError"
         },
         "run_some_subcommand>data.should_fail.cannot_cast" => {
-          key: "run_some_subcommand>data.should_fail.cannot_cast",
           path: [:should_fail],
           runtime_path: [:run_some_subcommand],
           category: :data,
           symbol: :cannot_cast,
-          is_fatal: true,
-          context_type_declaration: {
-            type: :attributes,
-            element_type_declarations: {
-              cast_to: { type: :duck }, value: { type: :duck },
-              attribute_name: { type: :symbol }
-            }
-          }
+          key: "run_some_subcommand>data.should_fail.cannot_cast",
+          error: "Value::Processor::Casting::CannotCastError"
         },
         "run_some_subcommand>runtime.it_failed" => {
-          key: "run_some_subcommand>runtime.it_failed",
           path: [],
           runtime_path: [:run_some_subcommand],
           category: :runtime,
           symbol: :it_failed,
-          is_fatal: true,
-          context_type_declaration: {
-            type: :attributes,
-            element_type_declarations: {
-              foo: { type: :integer }
-            }
-
-          }
+          key: "run_some_subcommand>runtime.it_failed",
+          error: "RunSomeSubcommand::ItFailedError"
         }
       )
     end

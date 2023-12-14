@@ -3,6 +3,7 @@ module Foobara
     module Concerns
       module Reflection
         include Concern
+        include Manifestable
 
         def initialize(...)
           self.class.all << self
@@ -18,10 +19,22 @@ module Foobara
             remove_instance_variable("@all") if instance_variable_defined?("@all")
           end
 
-          def manifest
+          def foobara_manifest(to_include:)
+            depends = depends_on.map do |command_name|
+              other_command = Foobara.foobara_lookup!(command_name, absolute: true)
+              to_include << other_command
+              other_command.foobara_manifest_reference
+            end
+
+            types = types_depended_on.select(&:registered?).map do |t|
+              to_include << t
+              t.foobara_manifest_reference
+            end
+
             h = {
-              error_types: errors_type_declaration,
-              depends_on: depends_on.map(&:to_s),
+              types_depended_on: types,
+              error_types: errors_type_declaration(to_include:),
+              depends_on: depends,
               full_command_name:,
               # TODO: allow inputs type to be nil or really any type?
               inputs_type: inputs_type&.reference_or_declaration_data || {
@@ -36,13 +49,7 @@ module Foobara
               h[:result_type] = result_type.reference_or_declaration_data
             end
 
-            h
-          end
-
-          def manifest_hash
-            {
-              command_name.to_sym => manifest
-            }
+            super.merge(h)
           end
 
           def command_name

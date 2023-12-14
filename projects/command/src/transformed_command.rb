@@ -43,22 +43,41 @@ module Foobara
                        :full_command_symbol,
                        :command_name,
                        :domain,
+                       :organization,
                        to: :command_class
 
-      def manifest
-        command_class.manifest.merge(
+      def foobara_manifest(to_include:)
+        types = types_depended_on.select(&:registered?).map do |t|
+          to_include << t
+          t.foobara_manifest_reference
+        end
+
+        inputs_transformers = self.inputs_transformers.map { |t| t.foobara_manifest(to_include:) }
+        result_transformers =  self.result_transformers.map { |t| t.foobara_manifest(to_include:) }
+        errors_transformers =  self.errors_transformers.map { |t| t.foobara_manifest(to_include:) }
+        pre_commit_transformers = self.pre_commit_transformers.map { |t| t.foobara_manifest(to_include:) }
+        serializers = self.serializers.map do |s|
+          s.respond_to?(:foobara_manifest) ? s.foobara_manifest(to_include:) : { proc: s.to_s }
+        end
+
+        command_class.foobara_manifest(to_include:).merge(
+          types_depended_on: types,
           inputs_type: inputs_type.reference_or_declaration_data,
           result_type: result_type.reference_or_declaration_data,
-          error_types: error_types_manifest,
+          error_types: error_types_manifest(to_include:),
           capture_unknown_error:,
-          inputs_transformers: inputs_transformers.map(&:manifest),
-          result_transformers: result_transformers.map(&:manifest),
-          errors_transformers: errors_transformers.map(&:manifest),
-          pre_commit_transformers: pre_commit_transformers.map(&:manifest),
-          serializers: serializers.map { |s| s.respond_to?(:manifest) ? s.manifest : { proc: s.to_s } },
+          inputs_transformers:,
+          result_transformers:,
+          errors_transformers:,
+          pre_commit_transformers:,
+          serializers:,
           requires_authentication:,
           authenticator: authenticator&.manifest
         )
+      end
+
+      def foobara_manifest_reference
+        command_class.foobara_manifest_reference
       end
 
       def inputs_type
@@ -85,7 +104,8 @@ module Foobara
         end
       end
 
-      def error_types_manifest
+      # TODO: fix this, should really match non-transformed structure.
+      def error_types_manifest(to_include:)
         type = inputs_type
 
         if type == command_class.inputs_type

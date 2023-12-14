@@ -5,7 +5,7 @@ module Foobara
     class Processor
       class Pipeline < Multi
         class << self
-          def manifest
+          def foobara_manifest(to_include:)
             # :nocov:
             super.merge(processor_type: :pipeline)
             # :nocov:

@@ -362,9 +362,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
           describe "#manifest" do
             it "contains the errors for not allowed" do
-              org_manifest = command_connector.manifest[:organizations][:global_organization]
-              domain_manifest = org_manifest[:domains][:global_domain]
-              error_manifest = domain_manifest[:commands][:ComputeExponent][:error_types]
+              error_manifest = command_connector.foobara_manifest[:command][:ComputeExponent][:error_types]
 
               expect(error_manifest.keys).to include("runtime.not_allowed")
             end
@@ -410,8 +408,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
       describe "#manifest" do
         it "contains the errors for not allowed" do
-          domain_manifest = command_connector.manifest[:organizations][:global_organization][:domains][:global_domain]
-          error_manifest = domain_manifest[:commands][:ComputeExponent][:error_types]
+          error_manifest = command_connector.foobara_manifest[:command][:ComputeExponent][:error_types]
 
           expect(error_manifest.keys).to include("runtime.unauthenticated")
         end
@@ -626,9 +623,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
             end
 
             it "contains pre_commit_transformers in its manifest" do
-              org_manifest = command_connector.manifest[:organizations][:global_organization]
-              domain_manifest = org_manifest[:domains][:global_domain]
-              command_manifest = domain_manifest[:commands][:QueryUser]
+              command_manifest = command_connector.foobara_manifest[:command][:QueryUser]
               manifest = command_manifest[:pre_commit_transformers].find { |h|
                 h[:name] == "Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer"
               }
@@ -657,9 +652,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
               end
 
               it "contains pre_commit_transformers in its manifest" do
-                org_manifest = command_connector.manifest[:organizations][:global_organization]
-                commands_manifest = org_manifest[:domains][:global_domain][:commands]
-                command_manifest = commands_manifest[:QueryUser]
+                command_manifest = command_connector.foobara_manifest[:command][:QueryUser]
                 manifest = command_manifest[:pre_commit_transformers].find { |h|
                   h[:name] == "Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer"
                 }
@@ -674,9 +667,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 let(:aggregate_entities) { false }
 
                 it "does not contain pre_commit_transformers in its manifest" do
-                  org_manifest = command_connector.manifest[:organizations][:global_organization]
-                  commands_manifest = org_manifest[:domains][:global_domain][:commands]
-                  command_manifest = commands_manifest[:QueryUser]
+                  command_manifest = command_connector.foobara_manifest[:command][:QueryUser]
                   expect(command_manifest[:pre_commit_transformers]).to be_empty
 
                   manifest = command_manifest[:serializers].find { |h|
@@ -789,10 +780,10 @@ RSpec.describe Foobara::CommandConnectors::Http do
         end
 
         describe "#manifest" do
-          let(:manifest) { command_connector.manifest }
+          let(:manifest) { command_connector.foobara_manifest }
 
           it "uses types from the transformers" do
-            h = manifest[:organizations][:global_organization][:domains][:global_domain][:commands][:ComputeExponent]
+            h = manifest[:command][:ComputeExponent]
 
             inputs_type = h[:inputs_type]
             result_type = h[:result_type]
@@ -911,13 +902,11 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
     describe "connector manifest" do
       describe "#manifest" do
-        let(:manifest) { command_connector.manifest }
+        let(:manifest) { command_connector.foobara_manifest }
 
         it "returns metadata about the commands" do
           expect(
-            manifest[:organizations][:global_organization][:domains][
-              :global_domain
-            ][:commands][:ComputeExponent][:result_type]
+            manifest[:command][:ComputeExponent][:result_type]
           ).to eq(type: :integer)
         end
 
@@ -954,9 +943,9 @@ RSpec.describe Foobara::CommandConnectors::Http do
             end
           end
 
-          it "returns metadata about the types" do
+          it "returns metadata about the types referenced in the commands" do
             expect(
-              manifest[:organizations][:global_organization][:domains][:global_domain][:types].keys
+              manifest[:type].keys
             ).to match_array(
               %i[
                 User
@@ -981,9 +970,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
             it "includes types" do
               expect(response.status).to be(200)
               json = JSON.parse(response.body)
-              expect(
-                json["organizations"]["global_organization"]["domains"]["global_domain"]["types"].keys
-              ).to include("User")
+              expect(json["type"].keys).to include("User")
             end
           end
 
