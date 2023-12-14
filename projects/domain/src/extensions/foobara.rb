@@ -6,13 +6,8 @@ module Foobara
     #
     # The manifest itself will only contain full scoped names. This is kind of analogous to a store serializer
     # in the http connector.
-    def manifest(to_include: nil)
-      to_include = if to_include
-                     to_include.dup.to_set
-                   else
-                     foobara_all_organization.to_set
-                   end
-
+    def manifest
+      to_include = foobara_all_organization.to_set
       included = Set.new
 
       h = {}
@@ -21,10 +16,6 @@ module Foobara
         object = to_include.first
         to_include.delete(object)
 
-        if object.is_a?(::String) || object.is_a?(::Symbol)
-          object = Foobara.foobara_lookup!(object, absolute: true)
-        end
-
         manifest_reference = object.foobara_manifest_reference.to_sym
 
         next if included.include?(manifest_reference)
@@ -32,7 +23,9 @@ module Foobara
         category_symbol = Foobara.foobara_category_symbol_for(object)
 
         unless category_symbol
+          # :nocov:
           raise "no category symbol for #{object}"
+          # :nocov:
         end
 
         cat = h[category_symbol] ||= {}

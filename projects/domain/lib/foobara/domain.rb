@@ -14,6 +14,7 @@ module Foobara
         # Feels so odd to have this here but the manifest definition elsewhere
         Foobara::Value::Processor.include Manifestable
         Foobara::Error.include Manifestable
+        Foobara::Types::Type.include IsManifestable
 
         Foobara.foobara_add_category(:organization) do
           is_a?(Module) && foobara_organization?

@@ -20,6 +20,9 @@ module Foobara
 
       def entity?
         base_type&.to_sym == :entity
+      rescue => e
+        binding.pry
+        raise
       end
 
       def target_class

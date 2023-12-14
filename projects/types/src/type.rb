@@ -59,9 +59,6 @@ module Foobara
         self.target_classes = Util.array(target_classes)
         self.type_registry = type_registry
 
-        # TODO: refactor this to be able to be included in this class
-        extend(Manifestable)
-
         super(*args, **opts.merge(processors:, prioritize: false))
       end
 

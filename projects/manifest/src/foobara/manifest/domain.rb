@@ -21,10 +21,6 @@ module Foobara
         @entities ||= types.select(&:entity?)
       end
 
-      def domain
-        self
-      end
-
       def domain_name
         relevant_manifest["domain_name"] || relevant_manifest[:domain_name]
       end

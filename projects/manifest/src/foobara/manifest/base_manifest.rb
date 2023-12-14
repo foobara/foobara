@@ -41,20 +41,7 @@ module Foobara
       end
 
       def domain
-        manifest = self
-        domain_reference = nil
-
-        until domain_reference || manifest.nil?
-          domain_reference = manifest[:domain]
-
-          unless domain_reference
-            parent = manifest.parent
-
-            manifest = if parent
-                         BaseManifest.new(root_manifest, parent)
-                       end
-          end
-        end
+        domain_reference = self[:domain]
 
         if domain_reference
           Domain.new(root_manifest, [:domain, domain_reference])
@@ -64,20 +51,7 @@ module Foobara
       end
 
       def organization
-        manifest = self
-        organization_reference = nil
-
-        until organization_reference || manifest.nil?
-          organization_reference = manifest[:organization]
-
-          unless organization_reference
-            parent = manifest.parent
-
-            manifest = if parent
-                         BaseManifest.new(root_manifest, parent)
-                       end
-          end
-        end
+        organization_reference = self[:organization]
 
         if organization_reference
           Organization.new(root_manifest, [:organization, organization_reference])
