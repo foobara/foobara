@@ -51,6 +51,8 @@ RSpec.describe Foobara::Manifest do
 
       possible_error SomeOrg::SomeDomain::QueryUser::SomethingWentWrongError
     end
+
+    stub_class "GlobalCommand", Foobara::Command
   end
 
   let(:manifest) { Foobara::Manifest::RootManifest.new(raw_manifest) }
@@ -98,6 +100,11 @@ RSpec.describe Foobara::Manifest do
     expect(command.inputs_type.required).to be_nil
     some_other_user_declaration = command.inputs_type.attribute_declarations[:some_other_user]
     expect(command.domain.find_type(some_other_user_declaration)).to be_a(Foobara::Manifest::Entity)
+
+    global_command = manifest.command_by_name("GlobalCommand")
+    expect(global_command).to be_a(Foobara::Manifest::Command)
+    expect(global_command.domain_name).to eq("global_organization::global_domain")
+    expect(global_command.organization_name).to eq("global_organization")
 
     global_possible_error = command.error_types["data.cannot_cast"]
     expect(global_possible_error._path).to be_a(Array)

@@ -42,7 +42,6 @@ module Foobara
 
       def domain
         manifest = self
-
         domain_reference = nil
 
         until domain_reference || manifest.nil?
@@ -65,24 +64,23 @@ module Foobara
       end
 
       def organization
-        manifest = relevant_manifest
+        manifest = self
+        organization_reference = nil
 
-        org_reference = nil
+        until organization_reference || manifest.nil?
+          organization_reference = manifest[:organization]
 
-        until org_reference || manifest.nil?
-          org_reference = DataPath.value_at(:organization, manifest)
-
-          unless org_reference
-            parent = manifest["parent"]
+          unless organization_reference
+            parent = manifest.parent
 
             manifest = if parent
-                         manifest = BaseManifest.new(root_manifest, parent).relevant_manifest
+                         BaseManifest.new(root_manifest, parent)
                        end
           end
         end
 
-        if org_reference
-          Organization.new(root_manifest, [:organization, org_reference])
+        if organization_reference
+          Organization.new(root_manifest, [:organization, organization_reference])
         else
           global_organization
         end
