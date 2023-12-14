@@ -73,7 +73,6 @@ RSpec.describe Foobara::Manifest do
     expect(entity.type_manifest).to be_a(Hash)
 
     expect(manifest.types).to include(entity)
-    binding.pry
     expect(entity.organization.types).to include(entity)
 
     attributes = entity.attributes_type
