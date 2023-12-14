@@ -49,7 +49,7 @@ module Foobara
         domain_name == "global_domain"
       end
 
-      def find_type(type_declaration, domain = nil)
+      def find_type(type_declaration)
         type_symbol = type_declaration.type
 
         Type.new(root_manifest, [:type, type_symbol])
