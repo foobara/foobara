@@ -34,7 +34,7 @@ module Foobara
 
           foobara_each_domain(lookup_in_children: false) do |domain|
             to_include << domain
-            domain_names << domain.foobara_domain_name
+            domain_names << domain.foobara_manifest_reference
           end
 
           {

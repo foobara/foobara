@@ -96,6 +96,7 @@ module Foobara
         # TODO: deep_dup this again??
         super(raw_type_declaration).tap do |type_outcome|
           if type_outcome.success?
+            binding.pry if type_outcome.result.nil?
             type_outcome.result.raw_declaration_data = raw_type_declaration
           end
         end

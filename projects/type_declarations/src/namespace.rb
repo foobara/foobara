@@ -119,7 +119,10 @@ module Foobara
           symbol = symbol.type_symbol
         end
 
-        type_registries.any? { |registry| registry.registered?(symbol) }
+        binding.pry if symbol == :"SomeOrg::SomeDomain::User"
+
+        # type_registries.any? { |registry| registry.registered?(symbol) }
+        Foobara.foobara_type_registered?(symbol)
       end
 
       def registry_for_symbol(symbol)
@@ -137,6 +140,8 @@ module Foobara
             return registry[symbol]
           end
         end
+
+        Foobara.foobara_lookup_type(symbol)
       end
 
       def accesses_up_hierarchy
@@ -158,6 +163,8 @@ module Foobara
           handlers.each do |handler|
             return handler if handler.applicable?(type_declaration)
           end
+
+          binding.pry
 
           raise NoTypeDeclarationHandlerFoundError,
                 "No type declaration handler found for #{type_declaration}"

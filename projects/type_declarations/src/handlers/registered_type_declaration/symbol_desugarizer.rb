@@ -11,7 +11,12 @@ module Foobara
           end
 
           def desugarize(symbol)
-            { type: symbol }
+            type = type_for_symbol(symbol)
+
+            binding.pry unless type
+            # TODO: just use the symbol and nothing else??
+            # maybe confusing in languages with no distinction between symbol and string?
+            { type: type.foobara_manifest_reference.to_sym }
           end
 
           def priority

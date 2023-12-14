@@ -6,8 +6,8 @@ module Foobara
       end
 
       def domains
-        @domains ||= DataPath.value_at(:domains, organization_manifest).keys.map do |key|
-          Domain.new(root_manifest, [*path, :domains, key])
+        @domains ||= DataPath.value_at(:domains, organization_manifest).map do |key|
+          Domain.new(root_manifest, [:domain, key])
         end
       end
 

@@ -170,7 +170,7 @@ module Foobara
       def reference_or_declaration_data(declaration_data = self.declaration_data)
         if registered?
           # TODO: we should just use the symbol and nothing else in this context instead of a hash with 1 element.
-          { type: type_symbol }
+          { type: foobara_manifest_reference.to_sym }
         else
           declaration_data
         end

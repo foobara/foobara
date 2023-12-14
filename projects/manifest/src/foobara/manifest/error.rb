@@ -23,6 +23,7 @@ module Foobara
       end
 
       def organization_name
+        binding.pry
         if global?
           "global_organization"
         else
@@ -31,6 +32,7 @@ module Foobara
       end
 
       def domain_name
+        binding.pry
         if global?
           "global_domain"
         else

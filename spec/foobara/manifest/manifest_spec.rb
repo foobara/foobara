@@ -57,11 +57,11 @@ RSpec.describe Foobara::Manifest do
   let(:raw_manifest) { Foobara.manifest }
   let(:raw_stringified_manifest) { Foobara::Util.deep_stringify_keys(Foobara.manifest) }
 
-  it "is a Manifest" do
+  it "is a Manifest", :focus do
     expect(manifest).to be_a(Foobara::Manifest::RootManifest)
     expect(manifest.global_domain).to be_global_domain
 
-    entity = manifest.entity_by_name("User")
+    entity = manifest.entity_by_name("SomeOrg::SomeDomain::User")
 
     expect(entity).to be_a(Foobara::Manifest::Entity)
     expect(manifest.entities).to include(entity)
@@ -81,13 +81,13 @@ RSpec.describe Foobara::Manifest do
     expect(new_attributes).to eql(attributes)
     expect(new_attributes.hash).to eql(attributes.hash)
 
-    command = manifest.command_by_name("QueryUser")
+    command = manifest.command_by_name("SomeOrg::SomeDomain::QueryUser")
 
     expect(command).to be_a(Foobara::Manifest::Command)
     expect(manifest.commands).to include(command)
     expect(command.command_manifest).to be_a(Hash)
     type_declaration = command.result_type
-    expect(type_declaration.type).to eq(:User)
+    expect(type_declaration.type).to eq(:"SomeOrg::SomeDomain::User")
     expect(command.inputs_type).to be_a(Foobara::Manifest::Attributes)
     expect(command.inputs_type.required).to be_nil
     command = Foobara::Manifest::Command.new(raw_stringified_manifest, command.path)
