@@ -26,6 +26,32 @@ RSpec.describe Foobara::Domain do
     end
   end
 
+  describe ".create" do
+    after do
+      Object.send(:remove_const, "SomeOrg")
+    end
+
+    it "creates a domain and its org" do
+      expect(Object.const_defined?("SomeOrg::SomeDomain")).to be(false)
+      described_class.create("SomeOrg::SomeDomain")
+
+      expect(Object.const_defined?("SomeOrg::SomeDomain")).to be(true)
+
+      expect(SomeOrg).to be_foobara_organization
+      expect(SomeOrg::SomeDomain).to be_foobara_domain
+    end
+
+    context "when domain already exists" do
+      it "raises an error" do
+        described_class.create("SomeOrg::SomeDomain")
+
+        expect {
+          described_class.create("SomeOrg::SomeDomain")
+        }.to raise_error(described_class::DomainAlreadyExistsError)
+      end
+    end
+  end
+
   describe ".foobara_register_entity" do
     let(:entity_name) { :SomeEntity }
     let(:primary_key) { :id }
