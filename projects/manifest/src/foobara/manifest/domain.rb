@@ -1,6 +1,8 @@
 module Foobara
   module Manifest
     class Domain < BaseManifest
+      self.category_symbol = :domain
+
       def domain_manifest
         relevant_manifest
       end

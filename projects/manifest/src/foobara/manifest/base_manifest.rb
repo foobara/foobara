@@ -6,6 +6,8 @@ module Foobara
       attr_accessor :root_manifest, :path
 
       class << self
+        attr_accessor :category_symbol
+
         def optional_keys(*values)
           if values.empty?
             @optional_keys ||= Set.new
@@ -18,6 +20,14 @@ module Foobara
 
         def optional_key(value)
           optional_keys(value)
+        end
+
+        def category_to_manifest_class(category_symbol)
+          category_symbol = category_symbol.to_sym
+
+          Util.descendants(BaseManifest).find do |manifest_class|
+            manifest_class.category_symbol == category_symbol
+          end
         end
       end
 
@@ -61,15 +71,19 @@ module Foobara
       end
 
       def parent
-        relevant_manifest[:parent]
+        if parent_category
+          parent_class = self.class.category_to_manifest_class(parent_category)
+
+          parent_class&.new(root_manifest, self[:parent])
+        end
       end
 
       def parent_category
-        parent&.first
+        self[:parent]&.first
       end
 
       def parent_name
-        parent&.last
+        self[:parent]&.last
       end
 
       def scoped_category
@@ -133,8 +147,7 @@ module Foobara
       end
 
       def ==(other)
-        other.class == self.class && other.root_manifest == root_manifest &&
-          other.path.map(&:to_sym) == path.map(&:to_sym)
+        other.class == self.class && other.path.map(&:to_sym) == path.map(&:to_sym)
       end
 
       def eql?(other)

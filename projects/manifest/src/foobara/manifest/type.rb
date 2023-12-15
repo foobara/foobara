@@ -2,6 +2,8 @@ module Foobara
   module Manifest
     # TODO: override new to return Entity when it's an entity
     class Type < BaseManifest
+      self.category_symbol = :type
+
       class << self
         def new(root_manifest, path)
           type = super(root_manifest, path)

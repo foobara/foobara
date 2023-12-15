@@ -1,6 +1,8 @@
 module Foobara
   module Manifest
     class Command < BaseManifest
+      self.category_symbol = :command
+
       def command_manifest
         relevant_manifest
       end

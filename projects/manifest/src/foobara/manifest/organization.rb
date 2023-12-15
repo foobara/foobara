@@ -1,6 +1,8 @@
 module Foobara
   module Manifest
     class Organization < BaseManifest
+      self.category_symbol = :organization
+
       def organization_manifest
         relevant_manifest
       end
