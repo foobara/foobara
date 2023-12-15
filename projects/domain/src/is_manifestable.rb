@@ -3,6 +3,9 @@ module Foobara
     def foobara_manifest(to_include: Set.new)
       h = {
         scoped_path:,
+        scoped_name:,
+        scoped_short_name:,
+        scoped_prefix:,
         scoped_full_path:,
         scoped_full_name:,
         reference: foobara_manifest_reference
