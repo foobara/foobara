@@ -804,75 +804,44 @@ RSpec.describe Foobara::CommandConnectors::Http do
             )
             expect(error_types).to eq(
               "data.cannot_cast" => {
-                key: "data.cannot_cast",
-                category: :data,
-                symbol: :cannot_cast,
-                context_type_declaration: {
-                  type: :attributes, element_type_declarations: {
-                    cast_to: { type: :duck },
-                    value: { type: :duck },
-                    attribute_name: { type: :symbol }
-                  }
-                },
-                is_fatal: true,
-                path: [],
-                runtime_path: []
-              },
-              "data.unexpected_attributes" => {
-                key: "data.unexpected_attributes",
-                category: :data,
-                symbol: :unexpected_attributes,
-                context_type_declaration: {
-                  type: :attributes,
-                  element_type_declarations: {
-                    unexpected_attributes: { type: :array, element_type_declaration: { type: :symbol } },
-                    allowed_attributes: { type: :array, element_type_declaration: { type: :symbol } }
-                  }
-                },
-                is_fatal: true,
-                path: [],
-                runtime_path: []
-              },
-              "data.exponent.cannot_cast" => {
-                key: "data.exponent.cannot_cast",
-                category: :data,
-                symbol: :cannot_cast,
-                context_type_declaration: {
-                  type: :attributes,
-                  element_type_declarations: {
-                    cast_to: { type: :duck },
-                    value: { type: :duck },
-                    attribute_name: { type: :symbol }
-                  }
-                },
-                is_fatal: true,
-                path: [:exponent],
-                runtime_path: []
-              },
-              "data.bbaassee.cannot_cast" => {
-                key: "data.bbaassee.cannot_cast",
-                category: :data,
-                symbol: :cannot_cast,
-                context_type_declaration: {
-                  type: :attributes,
-                  element_type_declarations: {
-                    cast_to: { type: :duck },
-                    value: { type: :duck },
-                    attribute_name: { type: :symbol }
-                  }
-                },
-                is_fatal: true,
-                path: [:bbaassee],
-                runtime_path: []
-              },
-              "runtime.some_runtime" => {
-                key: "runtime.some_runtime",
-                category: :runtime,
-                context_type_declaration: { type: :duck },
-                is_fatal: true,
                 path: [],
                 runtime_path: [],
-                symbol: :some_runtime
+                category: :data,
+                symbol: :cannot_cast,
+                key: "data.cannot_cast",
+                error: "Value::Processor::Casting::CannotCastError"
+              },
+              "data.unexpected_attributes" => {
+                path: [],
+                runtime_path: [],
+                category: :data,
+                symbol: :unexpected_attributes,
+                key: "data.unexpected_attributes",
+                error: "attributes::element_type_declarations::UnexpectedAttributesError"
+              },
+              "data.bbaassee.cannot_cast" => {
+                path: [:bbaassee],
+                runtime_path: [],
+                category: :data,
+                symbol: :cannot_cast,
+                key: "data.bbaassee.cannot_cast",
+                error: "Value::Processor::Casting::CannotCastError"
+              },
+              "data.exponent.cannot_cast" => {
+                path: [:exponent],
+                runtime_path: [],
+                category: :data,
+                symbol: :cannot_cast,
+                key: "data.exponent.cannot_cast",
+                error: "Value::Processor::Casting::CannotCastError"
+              },
+              "runtime.some_runtime" => {
+                path: [],
+                runtime_path: [],
+                category: :runtime,
+                symbol: :some_runtime,
+                key: "runtime.some_runtime",
+                error: "SomeRuntimeError"
               }
             )
           end

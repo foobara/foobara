@@ -131,7 +131,8 @@ module Foobara
         end
 
         possible_errors.to_h do |key, error_class|
-          [key, error_class.to_h.merge(ErrorKey.to_h(key).merge(key:))]
+          to_include << error_class
+          [key, ErrorKey.to_h(key).merge(key:, error: error_class.foobara_manifest_reference)]
         end
       end
 
