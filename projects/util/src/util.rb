@@ -2,6 +2,17 @@ module Foobara
   module Util
     module_function
 
+    def descendants(klass)
+      all = Set.new
+
+      klass.subclasses.each do |subclass|
+        all << subclass
+        all |= descendants(subclass)
+      end
+
+      all
+    end
+
     # Kind of surprising that Ruby doesn't have a built in way to do this.
     def super_method_of(current_instance, from_class, method_name)
       method = current_instance.method(method_name)
