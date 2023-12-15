@@ -90,5 +90,9 @@ module Foobara
       mods = @scoped_ignore_modules || []
       @scoped_ignore_modules = [*mods, *modules]
     end
+
+    def scoped_category
+      @scoped_category ||= Foobara.foobara_category_symbol_for(self)
+    end
   end
 end

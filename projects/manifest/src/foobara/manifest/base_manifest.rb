@@ -72,6 +72,10 @@ module Foobara
         parent&.last
       end
 
+      def scoped_category
+        self[:scoped_category]
+      end
+
       def relevant_manifest
         @relevant_manifest ||= Foobara::DataPath.values_at(path, root_manifest).first
       end

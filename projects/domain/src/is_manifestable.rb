@@ -8,6 +8,7 @@ module Foobara
         scoped_prefix:,
         scoped_full_path:,
         scoped_full_name:,
+        scoped_category:,
         reference: foobara_manifest_reference
       }
 
