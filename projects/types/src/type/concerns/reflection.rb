@@ -8,40 +8,63 @@ module Foobara
           # as soon as we hit a registered type, don't go further down that path
           def types_depended_on(result = nil)
             start = result.nil?
+            result ||= Set.new
+            return if result.include?(self)
 
-            if start
-              result = Set.new
-            elsif result.include?(self)
-              return
-            else
-              result << self
-            end
+            result << self
 
-            base_type&.types_depended_on(result)
-            element_type&.types_depended_on(result)
+            to_process = []
+
+            return if !start && registered?
+
+            to_process = [*base_type, *element_type, *possible_errors.values]
 
             if element_types
-              case element_types
-              when Type
-                element_types.types_depended_on(result)
-              when ::Hash
-                element_types.each_value do |value|
-                  if value.is_a?(Type)
-                    value.types_depended_on(result)
-                  end
-                end
-              when ::Array
-                element_types.each do |type|
-                  type.types_depended_on(result)
-                end
-              end
+              to_process += case element_types
+                            when Type
+                              [element_types]
+                            when ::Hash
+                              element_types.values.select { |value| value.is_a?(Type) }
+                            when ::Array
+                              element_types
+                            else
+                              # :nocov:
+                              raise "Not sure how to find dependent types for #{element_types}"
+                              # :nocov:
+                            end
             end
 
-            possible_errors.values.uniq.each do |error_class|
-              error_class.types_depended_on(result)
+            to_process.each do |type|
+              type.types_depended_on(result)
             end
 
-            start ? result.select(&:registered?) : result
+            if start
+              result.select { |type| type.registered? && type != self }
+            end
+          end
+
+          def deep_types_depended_on
+            result = Set.new
+            to_process = types_depended_on
+
+            until to_process.empty?
+              type = to_process.first
+              to_process.delete(type)
+
+              next if result.include?(type)
+
+              result << type
+
+              to_process |= type.types_depended_on
+            end
+
+            result.select(&:registered?)
+          end
+
+          def inspect
+            # :nocov:
+            "#<Type:#{scoped_full_name}:0x#{object_id.to_s(16)} #{declaration_data}>"
+            # :nocov:
           end
         end
       end

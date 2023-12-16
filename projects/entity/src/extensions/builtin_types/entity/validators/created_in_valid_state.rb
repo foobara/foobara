@@ -23,10 +23,8 @@ module Foobara
             model_class_name = parent_declaration_data[:model_class]
 
             if model_class_name
-              binding.pry
               Object.const_get(model_class_name).possible_errors
             else
-              binding.pry
               # :nocov:
               raise "Missing :model_class in parent_declaration_data for #{parent_declaration_data}"
               # :nocov:

@@ -1,4 +1,4 @@
---format progress
+--format p
 --color
 --require spec_helper
 --order defined
