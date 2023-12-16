@@ -27,7 +27,7 @@ module Foobara
 
       module ClassMethods
         def context_type
-          type_for_declaration(context_type_declaration)
+          @context_type ||= type_for_declaration(context_type_declaration)
         end
 
         def context_type_declaration
