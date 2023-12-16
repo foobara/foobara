@@ -218,6 +218,7 @@ module Foobara
           key_parts.to_sym
         end
       else
+        binding.pry
         # :nocov:
         raise ArgumentError, "expected nil, a symbol, or a string, an integer, or an array of such values "
         # :nocov:

@@ -118,6 +118,9 @@ RSpec.describe Foobara::Manifest do
     some_other_user_declaration = command.inputs_type.attribute_declarations[:some_other_user]
     expect(command.domain.find_type(some_other_user_declaration)).to be_a(Foobara::Manifest::Entity)
     expect(command.types_depended_on).to include(entity)
+    expect(command.inputs_types_depended_on).to include(entity)
+    expect(command.result_types_depended_on).to include(entity)
+    expect(command.errors_types_depended_on).to include(entity)
 
     type_declaration = command.result_type
     expect(type_declaration.type).to eq(:"SomeOrg::SomeDomain::User")
