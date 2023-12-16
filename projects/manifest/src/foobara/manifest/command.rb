@@ -25,8 +25,10 @@ module Foobara
         end
       end
 
-      def domain
-        Domain.new(root_manifest, path[0..3])
+      def types_depended_on
+        @types_depended_on ||= self[:types_depended_on].map do |type_reference|
+          Type.new(root_manifest, [:type, type_reference])
+        end
       end
     end
   end

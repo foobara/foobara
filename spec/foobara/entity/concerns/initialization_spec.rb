@@ -92,7 +92,7 @@ RSpec.describe Foobara::Entity::Concerns::Initialization do
         type_for_declaration([Applicant])
       end
 
-      it "can create the record and nested associations, too" do
+      it "can create the record and nested associations, too", :focus do
         applicant_class.transaction do
           expect(type.registered_types_depended_on.map(&:type_symbol)).to match_array(
             %i[

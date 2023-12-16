@@ -30,6 +30,10 @@ module Foobara
               end
             end
 
+            possible_errors.values.uniq.each do |error_class|
+              error_class.types_depended_on(result)
+            end
+
             result
           end
 
