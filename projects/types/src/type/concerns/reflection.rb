@@ -5,10 +5,17 @@ module Foobara
         module Reflection
           include Concern
 
-          def types_depended_on(result = Set.new)
-            return if result.include?(self)
+          # as soon as we hit a registered type, don't go further down that path
+          def types_depended_on(result = nil)
+            start = result.nil?
 
-            result << self
+            if start
+              result = Set.new
+            elsif result.include?(self)
+              return
+            else
+              result << self
+            end
 
             base_type&.types_depended_on(result)
             element_type&.types_depended_on(result)
@@ -34,11 +41,7 @@ module Foobara
               error_class.types_depended_on(result)
             end
 
-            result
-          end
-
-          def registered_types_depended_on
-            types_depended_on.select(&:registered?)
+            start ? result.select(&:registered?) : result
           end
         end
       end
