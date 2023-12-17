@@ -95,7 +95,11 @@ module Foobara
 
           def inputs_types_depended_on
             @inputs_types_depended_on ||= if inputs_type
-                                            inputs_type.types_depended_on
+                                            if inputs_type.registered?
+                                              Set[inputs_type]
+                                            else
+                                              inputs_type.types_depended_on
+                                            end
                                           else
                                             Set.new
                                           end
@@ -103,7 +107,11 @@ module Foobara
 
           def result_types_depended_on
             @result_types_depended_on ||= if result_type
-                                            result_type.types_depended_on
+                                            if result_type.registered?
+                                              Set[result_type]
+                                            else
+                                              result_type.types_depended_on
+                                            end
                                           else
                                             Set.new
                                           end

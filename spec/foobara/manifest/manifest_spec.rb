@@ -59,7 +59,7 @@ RSpec.describe Foobara::Manifest do
   let(:raw_manifest) { Foobara.manifest }
   let(:raw_stringified_manifest) { Foobara::Util.deep_stringify_keys(Foobara.manifest) }
 
-  it "is a Manifest", :focus do
+  it "is a Manifest" do
     expect(manifest).to be_a(Foobara::Manifest::RootManifest)
     expect(manifest.global_domain).to be_global
     expect(manifest.scoped_category).to be_nil
@@ -120,7 +120,9 @@ RSpec.describe Foobara::Manifest do
     expect(command.types_depended_on).to include(entity)
     expect(command.inputs_types_depended_on).to include(entity)
     expect(command.result_types_depended_on).to include(entity)
-    expect(command.errors_types_depended_on).to include(entity)
+    expect(command.errors_types_depended_on).to include(
+      Foobara::Manifest::Type.new(raw_manifest, %i[type attributes])
+    )
 
     type_declaration = command.result_type
     expect(type_declaration.type).to eq(:"SomeOrg::SomeDomain::User")
