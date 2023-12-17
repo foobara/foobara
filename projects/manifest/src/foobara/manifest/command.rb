@@ -38,15 +38,15 @@ module Foobara
       end
 
       def result_types_depended_on
-        @result_types_depended_on ||= self[:result_types_depended_on].map do |type_reference|
+        @result_types_depended_on ||= self[:result_types_depended_on].to_set do |type_reference|
           Type.new(root_manifest, [:type, type_reference])
-        end.to_set
+        end
       end
 
       def errors_types_depended_on
-        @errors_types_depended_on ||= self[:errors_types_depended_on].map do |type_reference|
+        @errors_types_depended_on ||= self[:errors_types_depended_on].to_set do |type_reference|
           Type.new(root_manifest, [:type, type_reference])
-        end.to_set
+        end
       end
     end
   end

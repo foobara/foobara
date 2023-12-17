@@ -3,10 +3,6 @@ module Foobara
     class Domain < BaseManifest
       self.category_symbol = :domain
 
-      def initialize(root_manifest, path)
-        super
-      end
-
       def domain_manifest
         relevant_manifest
       end

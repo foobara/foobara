@@ -13,8 +13,6 @@ module Foobara
 
             result << self
 
-            to_process = []
-
             return if !start && registered?
 
             to_process = [*base_type, *element_type, *possible_errors.values]
