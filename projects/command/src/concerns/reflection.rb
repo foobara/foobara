@@ -44,9 +44,6 @@ module Foobara
             errors_types_depended_on = self.errors_types_depended_on.map do |t|
               to_include << t
               t.foobara_manifest_reference
-            rescue => e
-              binding.pry
-              raise
             end
 
             h = {
@@ -79,12 +76,7 @@ module Foobara
 
           def types_depended_on
             @types_depended_on ||= begin
-              types = begin
-                inputs_types_depended_on | result_types_depended_on | errors_types_depended_on
-              rescue => e
-                binding.pry
-                raise
-              end
+              types = inputs_types_depended_on | result_types_depended_on | errors_types_depended_on
 
               unless depends_on_entities.empty?
                 entity_types = depends_on_entities.map(&:entity_type)
