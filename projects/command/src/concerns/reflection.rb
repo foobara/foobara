@@ -44,6 +44,9 @@ module Foobara
             errors_types_depended_on = self.errors_types_depended_on.map do |t|
               to_include << t
               t.foobara_manifest_reference
+            rescue => e
+              binding.pry
+              raise
             end
 
             h = {

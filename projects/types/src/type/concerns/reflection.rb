@@ -39,7 +39,7 @@ module Foobara
             end
 
             if start
-              result.select { |type| type.registered? && type != self }
+              result.select { |type| type.registered? && type != self }.to_set
             end
           end
 

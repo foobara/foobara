@@ -2,21 +2,13 @@ module Foobara
   class Error
     class << self
       def types_depended_on(*args)
-        set = if args.size == 1
-                args.first
-              elsif args.empty?
-                Set.new
-              else
-                raise ArgumentError, "Too many arguments #{args}"
-              end
-
-        if context_type.registered?
-          set << context_type
+        if args.size == 1
+          context_type.types_depended_on(args.first)
+        elsif args.empty?
+          context_type.types_depended_on
         else
-          context_type.types_depended_on(set)
+          raise ArgumentError, "Too many arguments #{args}"
         end
-
-        set
       end
     end
   end
