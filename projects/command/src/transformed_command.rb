@@ -122,23 +122,7 @@ module Foobara
 
       # TODO: fix this, should really match non-transformed structure.
       def error_types_manifest(to_include:)
-        type = inputs_type
-
-        if type == command_class.inputs_type
-          possible_errors = error_context_type_map.dup
-        else
-          possible_errors = type.possible_errors.transform_keys(&:to_s)
-
-          error_context_type_map.each_pair do |key, error_class|
-            manifest = ErrorKey.to_h(key)
-
-            if manifest[:category] != :data
-              possible_errors[key] = error_class
-            end
-          end
-        end
-
-        possible_errors.to_h do |key, error_class|
+        error_context_type_map.to_h do |key, error_class|
           to_include << error_class
           [key, ErrorKey.to_h(key).merge(key:, error: error_class.foobara_manifest_reference)]
         end
