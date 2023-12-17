@@ -110,23 +110,10 @@ module Foobara
           error_class < Foobara::RuntimeError
         end
 
-        # TODO: refactor these into a proper error transformer
-        if requires_authentication
-          runtime_errors["runtime.unauthenticated"] = CommandConnector::UnauthenticatedError
-        end
-
-        if allowed_rule
-          runtime_errors["runtime.not_allowed"] = CommandConnector::NotAllowedError
-        end
-
         map = inputs_type.possible_errors.transform_keys(&:to_s).merge(runtime_errors)
 
-        transformers = errors_transformers.select do |transformer|
-          transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer && transformer.output_type
-        end
-
-        transformers.each do |transformer|
-          map = transformer.transform_error_context_type_map(map)
+        errors_transformers.each do |transformer|
+          map = transformer.transform_error_context_type_map(self, map)
         end
 
         map

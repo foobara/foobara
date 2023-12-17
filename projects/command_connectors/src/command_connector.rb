@@ -74,8 +74,10 @@ module Foobara
     attr_accessor :command_registry, :authenticator
 
     def initialize(authenticator: nil, default_serializers: nil)
-      self.authenticator = authenticator
       self.command_registry = CommandRegistry.new(authenticator:)
+      self.authenticator = authenticator
+
+      add_default_errors_transformer(Foobara::CommandConnectors::Transformers::AuthErrorsTransformer)
 
       Util.array(default_serializers).each do |serializer|
         add_default_serializer(serializer)
