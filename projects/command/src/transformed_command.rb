@@ -104,30 +104,38 @@ module Foobara
         end
       end
 
+      def error_context_type_map
+        runtime_errors = command_class.error_context_type_map.select do |_key, error_class|
+          error_class < Foobara::RuntimeError
+        end
+
+        if requires_authentication
+          runtime_errors["runtime.unauthenticated"] = CommandConnector::UnauthenticatedError
+        end
+
+        if allowed_rule
+          runtime_errors["runtime.not_allowed"] = CommandConnector::NotAllowedError
+        end
+
+        inputs_type.possible_errors.transform_keys(&:to_s).merge(runtime_errors)
+      end
+
       # TODO: fix this, should really match non-transformed structure.
       def error_types_manifest(to_include:)
         type = inputs_type
 
         if type == command_class.inputs_type
-          possible_errors = command_class.error_context_type_map.dup
+          possible_errors = error_context_type_map.dup
         else
           possible_errors = type.possible_errors.transform_keys(&:to_s)
 
-          command_class.error_context_type_map.each_pair do |key, error_class|
+          error_context_type_map.each_pair do |key, error_class|
             manifest = ErrorKey.to_h(key)
 
             if manifest[:category] != :data
               possible_errors[key] = error_class
             end
           end
-        end
-
-        if requires_authentication
-          possible_errors["runtime.unauthenticated"] = CommandConnector::UnauthenticatedError
-        end
-
-        if allowed_rule
-          possible_errors["runtime.not_allowed"] = CommandConnector::NotAllowedError
         end
 
         possible_errors.to_h do |key, error_class|
