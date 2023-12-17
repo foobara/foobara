@@ -2,7 +2,7 @@ module Foobara
   module CommandConnectors
     class Http < CommandConnector
       module Serializers
-        class RecordStoreSerializer < SuccessSerializer
+        class RecordStoreSerializer < CommandConnectors::Serializers::SuccessSerializer
           def atomic_serializer
             @atomic_serializer ||= AtomicSerializer.new(declaration_data)
           end

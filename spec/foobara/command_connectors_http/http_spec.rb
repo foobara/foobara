@@ -47,7 +47,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
   let(:authenticator) { nil }
   let(:default_serializers) do
-    [Foobara::CommandConnectors::ErrorsSerializer, Foobara::CommandConnectors::JsonSerializer]
+    [Foobara::CommandConnectors::Serializers::ErrorsSerializer, Foobara::CommandConnectors::Serializers::JsonSerializer]
   end
   let(:default_pre_commit_transformer) { nil }
 
@@ -164,7 +164,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
         command_connector.add_default_pre_commit_transformer(identity)
       end
 
-      let(:default_serializers) { Foobara::CommandConnectors::JsonSerializer }
+      let(:default_serializers) { Foobara::CommandConnectors::Serializers::JsonSerializer }
 
       it "runs the command" do
         expect(response.status).to be(200)
@@ -186,8 +186,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
     context "when inputs are bad" do
       let(:query_string) { "some_bad_input=10" }
 
-      let(:default_serializers) { Foobara::CommandConnectors::JsonSerializer }
-      let(:serializers) { Foobara::CommandConnectors::ErrorsSerializer }
+      let(:default_serializers) { Foobara::CommandConnectors::Serializers::JsonSerializer }
+      let(:serializers) { Foobara::CommandConnectors::Serializers::ErrorsSerializer }
 
       it "fails" do
         expect(response.status).to be(422)
@@ -203,7 +203,10 @@ RSpec.describe Foobara::CommandConnectors::Http do
     context "when unknown error" do
       let(:capture_unknown_error) { true }
       let(:default_serializers) do
-        [Foobara::CommandConnectors::ErrorsSerializer, Foobara::CommandConnectors::JsonSerializer]
+        [
+          Foobara::CommandConnectors::Serializers::ErrorsSerializer,
+          Foobara::CommandConnectors::Serializers::JsonSerializer
+        ]
       end
 
       before do
@@ -642,8 +645,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
               let(:default_serializers) do
                 [
                   described_class::Serializers::AggregateSerializer,
-                  Foobara::CommandConnectors::ErrorsSerializer,
-                  Foobara::CommandConnectors::JsonSerializer
+                  Foobara::CommandConnectors::Serializers::ErrorsSerializer,
+                  Foobara::CommandConnectors::Serializers::JsonSerializer
                 ]
               end
 

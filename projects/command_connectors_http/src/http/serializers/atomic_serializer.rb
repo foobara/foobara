@@ -2,7 +2,7 @@ module Foobara
   module CommandConnectors
     class Http < CommandConnector
       module Serializers
-        class AtomicSerializer < SuccessSerializer
+        class AtomicSerializer < CommandConnectors::Serializers::SuccessSerializer
           def serialize(object)
             if object.is_a?(Model)
               if object.is_a?(Entity) && !object.loaded?

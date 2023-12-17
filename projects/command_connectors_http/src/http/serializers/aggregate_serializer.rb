@@ -2,7 +2,7 @@ module Foobara
   module CommandConnectors
     class Http < CommandConnector
       module Serializers
-        class AggregateSerializer < SuccessSerializer
+        class AggregateSerializer < CommandConnectors::Serializers::SuccessSerializer
           def serialize(object)
             case object
             when Entity
