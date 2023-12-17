@@ -119,7 +119,17 @@ module Foobara
           runtime_errors["runtime.not_allowed"] = CommandConnector::NotAllowedError
         end
 
-        inputs_type.possible_errors.transform_keys(&:to_s).merge(runtime_errors)
+        map = inputs_type.possible_errors.transform_keys(&:to_s).merge(runtime_errors)
+
+        transformers = errors_transformers.select do |transformer|
+          transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer && transformer.output_type
+        end
+
+        transformers.each do |transformer|
+          map = transformer.transform_error_context_type_map(map)
+        end
+
+        map
       end
 
       # TODO: fix this, should really match non-transformed structure.

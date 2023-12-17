@@ -6,7 +6,7 @@ RSpec.describe Foobara::CommandConnectors::Commands::Ping do
   end
 
   let(:default_serializers) do
-    [Foobara::CommandConnectors::ErrorsSerializer, Foobara::CommandConnectors::JsonSerializer]
+    [Foobara::CommandConnectors::Serializers::ErrorsSerializer, Foobara::CommandConnectors::Serializers::JsonSerializer]
   end
 
   let(:response) { command_connector.run(path:) }

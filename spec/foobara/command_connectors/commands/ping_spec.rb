@@ -7,7 +7,7 @@ RSpec.describe Foobara::CommandConnectors::Commands::Ping do
 
   let(:authenticator) { nil }
   let(:default_serializers) do
-    [Foobara::CommandConnectors::ErrorsSerializer, Foobara::CommandConnectors::JsonSerializer]
+    [Foobara::CommandConnectors::Serializers::ErrorsSerializer, Foobara::CommandConnectors::Serializers::JsonSerializer]
   end
 
   let(:response) { command_connector.run(path:) }
