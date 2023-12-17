@@ -138,20 +138,35 @@ module Foobara
 
       def types_depended_on
         # TODO: memoize this
+        # TODO: this should not delegate to command since transformers are in play
         types = command_class.types_depended_on
 
         type = inputs_type
 
         if type != command_class.inputs_type
-          types << type
-          types |= type.types_depended_on
+          types |= if type.registered?
+                     # TODO: if we ever change from attributes-only inputs type
+                     # then this will be handy
+                     # :nocov:
+                     [type]
+                     # :nocov:
+                   else
+                     type.types_depended_on
+                   end
         end
 
         type = result_type
 
         if type != command_class.result_type
-          types << type
-          types |= type.types_depended_on
+          types |= if type.registered?
+                     # TODO: if we ever change from attributes-only inputs type
+                     # then this will be handy
+                     # :nocov:
+                     [type]
+                     # :nocov:
+                   else
+                     type.types_depended_on
+                   end
         end
 
         types

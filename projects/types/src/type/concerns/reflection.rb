@@ -37,8 +37,10 @@ module Foobara
             end
 
             if start
-              result.select { |type| type.registered? && type != self }.to_set
+              result = result.select { |type| type.registered? && type != self }.to_set
             end
+
+            result
           end
 
           def deep_types_depended_on
