@@ -918,6 +918,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
             ).to match_array(
               %i[
                 User
+                array
                 associative_array
                 atomic_duck
                 attributes
@@ -928,6 +929,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 model
                 number
                 string
+                symbol
               ]
             )
           end

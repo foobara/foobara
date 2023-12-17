@@ -94,7 +94,17 @@ RSpec.describe Foobara::Entity::Concerns::Initialization do
 
       it "can create the record and nested associations, too" do
         applicant_class.transaction do
-          expect(type.registered_types_depended_on.map(&:type_symbol)).to match_array(
+          expect(type.types_depended_on.map(&:type_symbol)).to match_array(
+            %i[
+              Applicant
+              array
+              attributes
+              duck
+              symbol
+            ]
+          )
+
+          expect(type.deep_types_depended_on.map(&:type_symbol)).to match_array(
             %i[
               Applicant
               User
@@ -110,6 +120,7 @@ RSpec.describe Foobara::Entity::Concerns::Initialization do
               model
               number
               string
+              symbol
             ]
           )
 

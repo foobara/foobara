@@ -117,6 +117,12 @@ RSpec.describe Foobara::Manifest do
     expect(command.inputs_type.required).to be_nil
     some_other_user_declaration = command.inputs_type.attribute_declarations[:some_other_user]
     expect(command.domain.find_type(some_other_user_declaration)).to be_a(Foobara::Manifest::Entity)
+    expect(command.types_depended_on).to include(entity)
+    expect(command.inputs_types_depended_on).to include(entity)
+    expect(command.result_types_depended_on).to include(entity)
+    expect(command.errors_types_depended_on).to include(
+      Foobara::Manifest::Type.new(raw_manifest, %i[type attributes])
+    )
 
     type_declaration = command.result_type
     expect(type_declaration.type).to eq(:"SomeOrg::SomeDomain::User")
@@ -131,7 +137,9 @@ RSpec.describe Foobara::Manifest do
     expect(global_command).to be_a(Foobara::Manifest::Command)
     expect(global_command.scoped_category).to eq(:command)
     expect(global_command.parent).to eq(global_domain)
-    expect(global_command.domain_name).to eq("global_organization::global_domain")
+    expect(global_command.domain_name).to eq("global_domain")
+    expect(global_command.scoped_full_name).to eq("GlobalCommand")
+    expect(global_command.domain.reference).to eq("global_organization::global_domain")
     expect(global_command.organization_name).to eq("global_organization")
 
     global_possible_error = command.error_types["data.cannot_cast"]
@@ -149,6 +157,7 @@ RSpec.describe Foobara::Manifest do
     expect(global_error.organization.organization_name).to eq(manifest.global_organization.organization_name)
     expect(global_error.organization_name).to eq("global_organization")
     expect(global_error.domain_name).to eq("global_domain")
+    expect(global_error.error_name).to eq("CannotCastError")
 
     local_possible_error = command.error_types["runtime.something_went_wrong"]
     expect(local_possible_error.scoped_category).to be_nil
@@ -159,6 +168,7 @@ RSpec.describe Foobara::Manifest do
     expect(local_error.parent).to eq(command)
     expect(local_error.organization_name).to eq("SomeOrg")
     expect(local_error.domain_name).to eq("SomeDomain")
+    expect(local_error.error_name).to eq("SomethingWentWrongError")
 
     org = manifest.organization_by_name("SomeOrg")
     expect(org).to be_a(Foobara::Manifest::Organization)

@@ -18,6 +18,8 @@ module Foobara
           end
 
           def possible_errors
+            return {} if parent_declaration_data == { type: :entity }
+
             model_class_name = parent_declaration_data[:model_class]
 
             if model_class_name

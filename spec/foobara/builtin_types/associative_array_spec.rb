@@ -37,7 +37,7 @@ RSpec.describe ":associative_array" do
 
       describe "#types_depended_on" do
         it "includes the key type" do
-          expect(type.registered_types_depended_on.map(&:type_symbol)).to include(:boolean)
+          expect(type.types_depended_on.map(&:type_symbol)).to include(:boolean)
         end
       end
 

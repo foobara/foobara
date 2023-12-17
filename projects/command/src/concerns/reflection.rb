@@ -31,8 +31,26 @@ module Foobara
               t.foobara_manifest_reference
             end
 
+            inputs_types_depended_on = self.inputs_types_depended_on.map do |t|
+              to_include << t
+              t.foobara_manifest_reference
+            end
+
+            result_types_depended_on = self.result_types_depended_on.map do |t|
+              to_include << t
+              t.foobara_manifest_reference
+            end
+
+            errors_types_depended_on = self.errors_types_depended_on.map do |t|
+              to_include << t
+              t.foobara_manifest_reference
+            end
+
             h = {
               types_depended_on: types,
+              inputs_types_depended_on:,
+              result_types_depended_on:,
+              errors_types_depended_on:,
               error_types: errors_type_declaration(to_include:),
               depends_on: depends,
               full_command_name:,
@@ -57,23 +75,49 @@ module Foobara
           end
 
           def types_depended_on
-            types = if inputs_type
-                      inputs_type.types_depended_on
-                    else
-                      Set.new
-                    end
+            @types_depended_on ||= begin
+              types = inputs_types_depended_on | result_types_depended_on | errors_types_depended_on
 
-            unless depends_on_entities.empty?
-              entity_types = depends_on_entities.map(&:entity_type)
-              types |= entity_types
-              types |= entity_types.map(&:types_depended_on).inject(:|)
-            end
+              unless depends_on_entities.empty?
+                entity_types = depends_on_entities.map(&:entity_type)
+                types |= entity_types
+                types |= entity_types.map(&:types_depended_on).inject(:|)
+              end
 
-            if result_type
-              types | result_type.types_depended_on
-            else
               types
             end
+          end
+
+          def inputs_types_depended_on
+            @inputs_types_depended_on ||= if inputs_type
+                                            if inputs_type.registered?
+                                              # TODO: if we ever change from attributes-only inputs type
+                                              # then this will be handy
+                                              # :nocov:
+                                              Set[inputs_type]
+                                              # :nocov:
+                                            else
+                                              inputs_type.types_depended_on
+                                            end
+                                          else
+                                            Set.new
+                                          end
+          end
+
+          def result_types_depended_on
+            @result_types_depended_on ||= if result_type
+                                            if result_type.registered?
+                                              Set[result_type]
+                                            else
+                                              result_type.types_depended_on
+                                            end
+                                          else
+                                            Set.new
+                                          end
+          end
+
+          def errors_types_depended_on
+            @errors_types_depended_on ||= error_context_type_map.values.map(&:types_depended_on).inject(:|) || Set.new
           end
         end
 

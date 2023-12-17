@@ -10,6 +10,10 @@ module Foobara
       def symbol
         super.to_sym
       end
+
+      def error_name
+        scoped_name
+      end
     end
   end
 end
