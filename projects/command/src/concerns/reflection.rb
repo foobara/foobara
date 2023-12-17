@@ -91,7 +91,11 @@ module Foobara
           def inputs_types_depended_on
             @inputs_types_depended_on ||= if inputs_type
                                             if inputs_type.registered?
+                                              # TODO: if we ever change from attributes-only inputs type
+                                              # then this will be handy
+                                              # :nocov:
                                               Set[inputs_type]
+                                              # :nocov:
                                             else
                                               inputs_type.types_depended_on
                                             end

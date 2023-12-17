@@ -7,7 +7,9 @@ module Foobara
         elsif args.empty?
           context_type.types_depended_on
         else
+          # :nocov:
           raise ArgumentError, "Too many arguments #{args}"
+          # :nocov:
         end
       end
     end
