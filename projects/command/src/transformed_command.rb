@@ -104,11 +104,13 @@ module Foobara
         end
       end
 
+      # TODO: how do we handle the error_transformer's affects??
       def error_context_type_map
         runtime_errors = command_class.error_context_type_map.select do |_key, error_class|
           error_class < Foobara::RuntimeError
         end
 
+        # TODO: refactor these into a proper error transformer
         if requires_authentication
           runtime_errors["runtime.unauthenticated"] = CommandConnector::UnauthenticatedError
         end
