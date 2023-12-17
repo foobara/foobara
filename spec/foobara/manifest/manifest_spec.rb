@@ -95,6 +95,7 @@ RSpec.describe Foobara::Manifest do
     expect(attributes.required?("name")).to be(true)
     expect(attributes.required?("ratings")).to be(false)
     expect(attributes.required).to eq([:name])
+    expect(attributes.attribute_declarations[:ratings].element_type.type).to eq(:integer)
 
     new_attributes = Foobara::Manifest::TypeDeclaration.new(attributes.root_manifest, attributes.path)
     expect(new_attributes).to be_a(Foobara::Manifest::Attributes)

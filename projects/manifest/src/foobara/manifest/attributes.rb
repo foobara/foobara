@@ -5,10 +5,10 @@ module Foobara
     class Attributes < TypeDeclaration
       optional_key :required
 
-      alias attribute_manifest relevant_manifest
+      alias attributes_manifest relevant_manifest
 
       def required?(attribute_name)
-        required = DataPath.value_at(:required, attribute_manifest)
+        required = DataPath.value_at(:required, attributes_manifest)
 
         if required
           required.include?(attribute_name.to_sym) || required.include?(attribute_name.to_s)

@@ -7,8 +7,15 @@ module Foobara
         def new(root_manifest, path)
           type_declaration = super(root_manifest, path)
 
-          if self == TypeDeclaration && type_declaration.type.to_sym == :attributes
-            Attributes.new(type_declaration.root_manifest, type_declaration.path)
+          if self == TypeDeclaration
+            case  type_declaration.type.to_sym
+            when :attributes
+              Attributes.new(type_declaration.root_manifest, type_declaration.path)
+            when :array
+              Array.new(type_declaration.root_manifest, type_declaration.path)
+            else
+              type_declaration
+            end
           else
             type_declaration
           end
