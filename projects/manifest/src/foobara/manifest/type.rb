@@ -33,6 +33,16 @@ module Foobara
 
         target_classes.first
       end
+
+      def types_depended_on
+        @types_depended_on ||= self[:types_depended_on].map do |type_reference|
+          Type.new(root_manifest, [:type, type_reference])
+        end
+      end
+
+      def primary_key_type
+        @primary_key_type ||= TypeDeclaration.new(root_manifest, [*path, :primary_key_type])
+      end
     end
   end
 end

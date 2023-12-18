@@ -23,6 +23,10 @@ module Foobara
           ]
         end
       end
+
+      def attribute_names
+        attribute_declarations.keys.map(&:to_s)
+      end
     end
   end
 end

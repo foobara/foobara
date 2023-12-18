@@ -60,6 +60,8 @@ RSpec.describe Foobara::Manifest do
   let(:raw_stringified_manifest) { Foobara::Util.deep_stringify_keys(Foobara.manifest) }
 
   it "is a Manifest" do
+    integer = Foobara::Manifest::Type.new(raw_manifest, %i[type integer])
+
     expect(manifest).to be_a(Foobara::Manifest::RootManifest)
     expect(manifest.global_domain).to be_global
     expect(manifest.scoped_category).to be_nil
@@ -77,6 +79,11 @@ RSpec.describe Foobara::Manifest do
     entity = manifest.entity_by_name("SomeOrg::SomeDomain::User")
 
     expect(entity).to be_a(Foobara::Manifest::Entity)
+    expect(entity.primary_key_name).to eq("id")
+    expect(entity.has_associations?).to be(false)
+
+    expect(entity.primary_key_type.to_type).to eq(integer)
+    expect(entity.types_depended_on).to include(integer)
     expect(entity.scoped_category).to eq(:type)
     expect(entity.parent).to eq(domain)
     expect(manifest.entities).to include(entity)
@@ -84,6 +91,7 @@ RSpec.describe Foobara::Manifest do
     expect(entity.target_class).to eq("SomeOrg::SomeDomain::User")
     expect(entity.entity_manifest).to be_a(Hash)
     expect(entity.type_manifest).to be_a(Hash)
+    expect(entity.attribute_names).to match_array(%w[name ratings junk])
 
     expect(manifest.types).to include(entity)
     expect(entity.organization.types).to include(entity)
