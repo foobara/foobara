@@ -38,25 +38,29 @@ module Foobara
 
         builtin_type_module = const_get(module_symbol, false)
 
-        load_processor_classes = ->(module_name) {
-          mod = Util.constant_value(builtin_type_module, module_name)
+        casters_module = Util.constant_value(builtin_type_module, :Casters)
+        caster_classes = if casters_module
+                           Util.constant_values(casters_module, extends: Value::Processor)
+                         end
+        casters = caster_classes&.map do |caster_class|
+          caster_class.new_with_agnostic_args(true, declaration_data)
+        end
 
-          if mod
-            Util.constant_values(mod, extends: Value::Processor)
-          else
-            []
-          end
-        }
+        transformers_module = Util.constant_value(builtin_type_module, :Transformers)
+        transformer_classes = if transformers_module
+                                Util.constant_values(transformers_module, extends: Value::Processor)
+                              end
+        transformers = transformer_classes&.map do |transformer_class|
+          transformer_class.new_with_agnostic_args(true, declaration_data)
+        end || []
 
-        load_processors = ->(module_name) {
-          load_processor_classes.call(module_name).map do |processor_class|
-            processor_class.new_with_agnostic_args(true, declaration_data)
-          end
-        }
-
-        casters = load_processors.call(:Casters)
-        transformers = load_processors.call(:Transformers)
-        validators = load_processors.call(:Validators)
+        validators_module = Util.constant_value(builtin_type_module, :Validators)
+        validator_classes = if validators_module
+                              Util.constant_values(validators_module, extends: Value::Processor)
+                            end
+        validators = validator_classes&.map do |validator_class|
+          validator_class.new_with_agnostic_args(true, declaration_data)
+        end || []
 
         type = Foobara::Types::Type.new(
           declaration_data,
@@ -73,11 +77,26 @@ module Foobara
 
         processor_classes = [*transformers, *validators].map(&:class)
 
-        %i[SupportedTransformers SupportedValidators SupportedProcessors].each do |module_name|
-          load_processor_classes.call(module_name).each do |processor_class|
-            type.register_supported_processor_class(processor_class)
-            processor_classes << processor_class
-          end
+        supported_transformers_module = Util.constant_value(builtin_type_module, :SupportedTransformers)
+        supported_transformer_classes = if supported_transformers_module
+                                          Util.constant_values(supported_transformers_module, extends: Value::Processor)
+                                        end
+        supported_validators_module = Util.constant_value(builtin_type_module, :SupportedValidators)
+        supported_validator_classes = if supported_validators_module
+                                        Util.constant_values(supported_validators_module, extends: Value::Processor)
+                                      end
+        supported_processors_module = Util.constant_value(builtin_type_module, :SupportedProcessors)
+        supported_processor_classes = if supported_processors_module
+                                        Util.constant_values(supported_processors_module, extends: Value::Processor)
+                                      end
+
+        [
+          *supported_transformer_classes,
+          *supported_validator_classes,
+          *supported_processor_classes
+        ].each do |processor_class|
+          type.register_supported_processor_class(processor_class)
+          processor_classes << processor_class
         end
 
         processor_classes.each do |processor_class|
