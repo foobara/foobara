@@ -199,10 +199,9 @@ module Foobara
         end
 
         break unless object
+        next if included.include?(object)
 
         manifest_reference = object.foobara_manifest_reference.to_sym
-
-        next if included.include?(manifest_reference)
 
         category_symbol = if object.is_a?(::Class) && object < Foobara::TransformedCommand
                             :command
@@ -215,7 +214,7 @@ module Foobara
         cat = h[category_symbol] ||= {}
         cat[manifest_reference] = object.foobara_manifest(to_include: additional_to_include)
 
-        included << manifest_reference
+        included << object
       end
 
       h
