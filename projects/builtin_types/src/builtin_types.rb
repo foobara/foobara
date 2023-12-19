@@ -61,28 +61,6 @@ module Foobara
         type.foobara_parent_namespace ||= Foobara
         type.foobara_parent_namespace.foobara_register(type)
 
-        [*casters_module, *transformers_module, *validators_module].each do |processors_module|
-          unless processors_module.is_a?(Namespace::IsNamespace)
-            name = Util.non_full_name(processors_module)
-            processors_module.foobara_namespace!(scoped_path: [name])
-          end
-          processors_module.foobara_parent_namespace = type
-        end
-
-        [*caster_classes, *transformer_classes, *validator_classes].each do |processor_class|
-          if !processor_class.scoped_path_set? || processor_class.scoped_path_autoset?
-            # TODO: Do we actually need this?
-            processor_class.scoped_path = [processor_class.symbol]
-          end
-
-          parent = processor_class.scoped_namespace
-
-          if parent.nil? || parent == Foobara
-            processor_class.foobara_parent_namespace = type
-            type.foobara_register(processor_class)
-          end
-        end
-
         supported_transformers_module = Util.constant_value(builtin_type_module, :SupportedTransformers)
         supported_transformer_classes = if supported_transformers_module
                                           Util.constant_values(supported_transformers_module, extends: Value::Processor)
@@ -95,18 +73,6 @@ module Foobara
         supported_processor_classes = if supported_processors_module
                                         Util.constant_values(supported_processors_module, extends: Value::Processor)
                                       end
-
-        [
-          *supported_processors_module,
-          *supported_transformers_module,
-          *supported_validators_module
-        ].each do |processors_module|
-          unless processors_module.is_a?(Namespace::IsNamespace)
-            name = Util.non_full_name(processors_module)
-            processors_module.foobara_namespace!(scoped_path: [name])
-          end
-          processors_module.foobara_parent_namespace = type
-        end
 
         processor_classes = [*transformers, *validators].map(&:class)
 
@@ -121,13 +87,54 @@ module Foobara
 
         processor_classes.each do |processor_class|
           install_type_declaration_extensions_for(processor_class)
+        end
 
-          if !processor_class.scoped_path_set? || processor_class.scoped_path_autoset?
-            # TODO: Do we actually need this?
-            processor_class.scoped_path = [processor_class.symbol]
+        [
+          [casters_module, caster_classes, casters],
+          [transformers_module, transformer_classes, transformers],
+          [validators_module, validator_classes, validators],
+          [supported_processors_module, supported_processor_classes],
+          [supported_transformers_module, supported_transformer_classes],
+          [supported_validators_module, supported_validator_classes]
+        ].each do |(mod, klasses, instances)|
+          next unless mod
+
+          prefix = Util.underscore_sym(Util.non_full_name(mod))
+
+          klasses.each do |processor_class|
+            if !processor_class.scoped_path_set? || processor_class.scoped_path_autoset?
+              # TODO: Do we actually need this?
+              processor_class.scoped_path = [prefix, processor_class.symbol]
+            end
+
+            parent = processor_class.scoped_namespace
+
+            # This can ony happen in the test suite...
+            type_recreated = parent.is_a?(Types::Type) && parent.registered? && parent.type_symbol == type.type_symbol
+
+            binding.pry if type_recreated
+
+            if parent.nil? || parent == Foobara
+              processor_class.foobara_parent_namespace = type
+              type.foobara_register(processor_class)
+            else
+              binding.pry
+            end
           end
-          processor_class.foobara_parent_namespace = type
-          type.foobara_register(processor_class)
+
+          instances&.each do |processor|
+            if !processor.scoped_path_set? || processor.scoped_path_autoset?
+              # TODO: Do we actually need this?
+              processor.scoped_path = [prefix, processor.symbol]
+            end
+
+            parent = processor.scoped_namespace
+
+            if parent.nil? || parent == Foobara
+              processor.foobara_parent_namespace = type
+              type.foobara_register(processor)
+            end
+          end
         end
 
         type

@@ -176,6 +176,11 @@ module Foobara
         end
       end
 
+      # TODO: put this somewhere else
+      def foobara_manifest_reference
+        scoped_full_name
+      end
+
       def foobara_manifest(to_include:)
         types = []
 
