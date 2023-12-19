@@ -820,7 +820,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 category: :data,
                 symbol: :unexpected_attributes,
                 key: "data.unexpected_attributes",
-                error: "attributes::element_type_declarations::UnexpectedAttributesError"
+                error: "attributes::supported_processors::element_type_declarations::UnexpectedAttributesError"
               },
               "data.bbaassee.cannot_cast" => {
                 path: [:bbaassee],

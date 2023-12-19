@@ -109,16 +109,9 @@ module Foobara
 
             parent = processor_class.scoped_namespace
 
-            # This can ony happen in the test suite...
-            type_recreated = parent.is_a?(Types::Type) && parent.registered? && parent.type_symbol == type.type_symbol
-
-            binding.pry if type_recreated
-
             if parent.nil? || parent == Foobara
               processor_class.foobara_parent_namespace = type
               type.foobara_register(processor_class)
-            else
-              binding.pry
             end
           end
 

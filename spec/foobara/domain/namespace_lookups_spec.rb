@@ -121,7 +121,6 @@ RSpec.describe "Foobara namespace lookup" do
 
       expect(Max.foobara_lookup("TooBig")).to eq(Max::TooBig)
 
-      binding.pry
       expect(
         number.foobara_lookup_processor_class("supported_validators::max")
       ).to eq(Foobara::BuiltinTypes::Number::SupportedValidators::Max)
