@@ -122,7 +122,7 @@ RSpec.describe "Foobara namespace lookup" do
       expect(Max.foobara_lookup("TooBig")).to eq(Max::TooBig)
 
       expect(
-        number.foobara_lookup_processor_class("max")
+        number.foobara_lookup_processor_class("supported_validators::max")
       ).to eq(Foobara::BuiltinTypes::Number::SupportedValidators::Max)
       expect(
         Foobara.foobara_lookup_processor_class("number::max")
@@ -132,7 +132,7 @@ RSpec.describe "Foobara namespace lookup" do
       ).to eq(Foobara::BuiltinTypes::Number::SupportedValidators::Max)
 
       expect(Max.foobara_lookup("TooBig")).to eq(Max::TooBig)
-      expect(Foobara.foobara_lookup("number::max::MaxExceededError")).to eq(
+      expect(Foobara.foobara_lookup("number::supported_validators::max::MaxExceededError")).to eq(
         Foobara::BuiltinTypes::Number::SupportedValidators::Max::MaxExceededError
       )
     end

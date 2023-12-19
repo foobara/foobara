@@ -93,7 +93,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
           category: :data,
           symbol: :unexpected_attributes,
           key: "data.unexpected_attributes",
-          error: "attributes::element_type_declarations::UnexpectedAttributesError"
+          error: "attributes::supported_processors::element_type_declarations::UnexpectedAttributesError"
         },
         "data.should_fail.cannot_cast" => {
           path: [:should_fail],
@@ -117,7 +117,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
           category: :data,
           symbol: :unexpected_attributes,
           key: "run_some_subcommand>data.unexpected_attributes",
-          error: "attributes::element_type_declarations::UnexpectedAttributesError"
+          error: "attributes::supported_processors::element_type_declarations::UnexpectedAttributesError"
         },
         "run_some_subcommand>data.should_fail.cannot_cast" => {
           path: [:should_fail],
