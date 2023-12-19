@@ -185,6 +185,11 @@ RSpec.describe Foobara::Entity do
       employee_id = nil
       assignment_id = nil
 
+      applicant_id, user_id = User.transaction do
+        a = Applicant.all.first
+        [a.id, a.user.id]
+      end
+
       User.transaction do
         expect(Employee.all[1].past_users).to eq([])
         # TODO: create .first query
@@ -198,14 +203,19 @@ RSpec.describe Foobara::Entity do
           Employee.find_by_attribute_containing(:past_assignments, employee.past_assignments.first)
         ).to be(employee)
 
-        applicant = Applicant.all.first
-        user = applicant.user
-
+        user = User.thunk(user_id)
+        applicant = Applicant.thunk(applicant_id)
         expect(Applicant.that_owns(user)).to be(applicant)
         expect(Applicant.find_all_by_attribute_any_of(:user, user).to_a).to eq([applicant])
         expect(Employee.that_owns(User.thunk(1), "past_")).to eq(Employee.all.first)
 
         expect(employee.priority_package).to be_a(Package)
+      end
+
+      User.transaction do
+        # This tests the situation where the records have to be fetch from the database to answer the question
+        # which covers a few lines of code that might not be hit by the above transaction
+        expect(Applicant.that_owns(User.thunk(user_id))).to eq(Applicant.thunk(applicant_id))
       end
 
       User.transaction do
