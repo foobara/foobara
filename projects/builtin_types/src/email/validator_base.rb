@@ -4,7 +4,8 @@ module Foobara
       class ValidatorBase < TypeDeclarations::Validator
         singleton_class.define_method :error_classes do
           @error_classes ||= begin
-            error_class_name = "#{name}Error"
+            error_short_name = "#{Util.non_full_name(self)}Error"
+            error_class_name = "#{name}::#{error_short_name}"
 
             error_class = Util.make_class(error_class_name, Value::DataError) do
               class << self
