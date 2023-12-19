@@ -56,6 +56,11 @@ module Foobara
 
       def foobara_register(scoped)
         begin
+          binding.pry if scoped.is_a?(Foobara::Value::Processor) && !scoped.is_a?(Types::Type)
+        rescue
+          nil
+        end
+        begin
           foobara_registry.register(scoped)
         rescue PrefixlessRegistry::RegisteringScopedWithPrefixError,
                BaseRegistry::WouldMakeRegistryAmbiguousError => e

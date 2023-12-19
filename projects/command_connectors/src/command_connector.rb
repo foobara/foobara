@@ -198,11 +198,12 @@ module Foobara
           to_include.delete(object)
         end
 
+        binding.pry if object.is_a?(Types::Type) && object.type_symbol == :string
+
         break unless object
+        next if included.include?(object)
 
         manifest_reference = object.foobara_manifest_reference.to_sym
-
-        next if included.include?(manifest_reference)
 
         category_symbol = if object.is_a?(::Class) && object < Foobara::TransformedCommand
                             :command
@@ -215,7 +216,8 @@ module Foobara
         cat = h[category_symbol] ||= {}
         cat[manifest_reference] = object.foobara_manifest(to_include: additional_to_include)
 
-        included << manifest_reference
+        binding.pry if manifest_reference == :string
+        included << object
       end
 
       h

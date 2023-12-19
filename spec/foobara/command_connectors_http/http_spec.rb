@@ -915,7 +915,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
             end
           end
 
-          it "returns metadata about the types referenced in the commands" do
+          it "returns metadata about the types referenced in the commands", :focus do
+            binding.pry
             expect(
               manifest[:type].keys
             ).to match_array(

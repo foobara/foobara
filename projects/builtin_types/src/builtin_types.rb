@@ -12,13 +12,6 @@ module Foobara
       def build_and_register!(type_symbol, base_type, target_classes = const_get("::#{Util.classify(type_symbol)}"))
         type = build_from_modules_and_install_type_declaration_extensions!(type_symbol, target_classes, base_type)
 
-        global_registry.register(type_symbol, type)
-
-        Foobara::Namespace::NamespaceHelpers.foobara_namespace!(type)
-        type.scoped_path = [type_symbol.to_s]
-        type.foobara_parent_namespace ||= Foobara
-        type.foobara_parent_namespace.foobara_register(type)
-
         type.supported_processor_classes.each_value do |processor_class|
           if !processor_class.scoped_path_set? || processor_class.scoped_path_autoset?
             # TODO: Do we actually need this?
@@ -75,7 +68,32 @@ module Foobara
           type_registry: Types.global_registry
         )
 
-        processor_classes = [*transformers, *validators].map(&:class)
+        global_registry.register(type_symbol, type)
+
+        Foobara::Namespace::NamespaceHelpers.foobara_namespace!(type)
+        type.scoped_path = [type_symbol.to_s]
+        type.foobara_parent_namespace ||= Foobara
+        type.foobara_parent_namespace.foobara_register(type)
+
+        [*casters_module, *transformers_module, *validators_module].each do |processors_module|
+          unless processors_module.is_a?(Namespace::IsNamespace)
+            name = Util.non_full_name(processors_module)
+            processors_module.foobara_namespace!(scoped_path: [name])
+          end
+          processors_module.foobara_parent_namespace = type
+        end
+
+        [*caster_classes, *transformer_classes, *validator_classes].each do |processor_class|
+          if !processor_class.scoped_path_set? || processor_class.scoped_path_autoset?
+            # TODO: Do we actually need this?
+            processor_class.scoped_path = [processor_class.symbol]
+          end
+
+          unless processor_class.scoped_namespace
+            processor_class.foobara_parent_namespace = type
+            type.foobara_register(processor_class)
+          end
+        end
 
         supported_transformers_module = Util.constant_value(builtin_type_module, :SupportedTransformers)
         supported_transformer_classes = if supported_transformers_module
@@ -89,6 +107,8 @@ module Foobara
         supported_processor_classes = if supported_processors_module
                                         Util.constant_values(supported_processors_module, extends: Value::Processor)
                                       end
+
+        processor_classes = [*transformers, *validators].map(&:class)
 
         [
           *supported_transformer_classes,

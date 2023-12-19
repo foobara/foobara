@@ -187,6 +187,8 @@ module Foobara
           types_depended_on: types
         }
 
+        binding.pry if name == "User"
+
         types_depended_on.each do |dependent_type|
           if dependent_type.registered?
             types << dependent_type.foobara_manifest_reference
