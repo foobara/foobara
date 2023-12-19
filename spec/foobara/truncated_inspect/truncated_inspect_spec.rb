@@ -63,5 +63,22 @@ RSpec.describe Foobara::TruncatedInspect do
         expect(object.inspect.length).to eq(described_class::MAX_LENGTH)
       end
     end
+
+    context "when circular reference" do
+      let(:object) do
+        dc = described_class
+
+        Object.new.tap do |o|
+          o.instance_eval do
+            @me = self
+            @other = Object.new.tap { |other| other.extend(dc) }
+          end
+        end
+      end
+
+      it "can still truncate" do
+        expect(object.inspect).to match(/@me=.../)
+      end
+    end
   end
 end
