@@ -73,7 +73,9 @@ module Foobara
 
         def initialize(*, **, &)
           if Foobara::Util.super_method_takes_parameters?(self, InstancesAreNamespaces, __method__)
+            # :nocov:
             super
+            # :nocov:
           else
             super()
           end
