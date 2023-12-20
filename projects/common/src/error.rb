@@ -81,7 +81,7 @@ module Foobara
       self.runtime_path = runtime_path
       self.is_fatal = is_fatal
 
-      if !self.message.is_a?(String) || message.empty?
+      if !self.message.is_a?(String) || self.message.empty?
         # :nocov:
         raise "Bad error message, expected a string"
         # :nocov:
