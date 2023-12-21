@@ -19,6 +19,10 @@ module Foobara
         primary_key_attribute.to_s
       end
 
+      def primary_key_type
+        @primary_key_type ||= TypeDeclaration.new(root_manifest, [*path, :primary_key_type])
+      end
+
       def attribute_names
         attributes_type.attribute_names - [primary_key_name]
       end
