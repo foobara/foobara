@@ -46,7 +46,12 @@ module Foobara
       end
 
       def foobara_manifest(to_include:)
-        super.merge(to_h)
+        types = types_depended_on.map do |t|
+          to_include << t
+          t.foobara_manifest_reference
+        end
+
+        super.merge(types_depended_on: types).merge(to_h)
       end
     end
 

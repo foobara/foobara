@@ -178,6 +178,7 @@ RSpec.describe Foobara::Manifest do
     expect(local_error.organization_name).to eq("SomeOrg")
     expect(local_error.domain_name).to eq("SomeDomain")
     expect(local_error.error_name).to eq("SomethingWentWrongError")
+    expect(local_error.types_depended_on.map(&:name)).to include(:attributes)
 
     org = manifest.organization_by_name("SomeOrg")
     expect(org).to be_a(Foobara::Manifest::Organization)
