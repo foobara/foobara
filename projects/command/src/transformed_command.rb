@@ -106,7 +106,7 @@ module Foobara
 
       # TODO: how do we handle the error_transformer's affects??
       def error_context_type_map
-        TypeDeclarations::Namespace.using command_class.namespace do
+        TypeDeclarations::Namespace.using command_class.domain.foobara_type_namespace do
           runtime_errors = command_class.error_context_type_map.select do |_key, error_class|
             error_class < Foobara::RuntimeError
           end

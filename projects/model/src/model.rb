@@ -84,7 +84,9 @@ module Foobara
       end
 
       def possible_errors
-        attributes_type.possible_errors
+        TypeDeclarations::Namespace.using namespace do
+          attributes_type.possible_errors
+        end
       end
 
       def allowed_subclass_opts
