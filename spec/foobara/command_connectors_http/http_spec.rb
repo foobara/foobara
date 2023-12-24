@@ -445,10 +445,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
         Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
       end
 
-      after do
-        Foobara.reset_alls
-      end
-
       let(:command_class) do
         user_class
 
