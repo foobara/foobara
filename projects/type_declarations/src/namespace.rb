@@ -46,7 +46,12 @@ module Foobara
         end
 
         def namespace_for_type_registry(type_registry)
-          namespaces.find { |namespace| namespace.type_registry == type_registry }
+          if type_registry == Types.global_registry
+            global
+          else
+            binding.pry if type_registry.name == ""
+            namespaces.find { |namespace| namespace.type_registry == type_registry }
+          end
         end
 
         def current
@@ -59,6 +64,7 @@ module Foobara
                       elsif namespace_or_symbol.is_a?(Symbol)
                         namespace_for_symbol(namespace_or_symbol)
                       else
+                        binding.pry
                         # :nocov:
                         raise ArgumentError, "Expected #{namespace_or_symbol} to be a symbol or namespace"
                         # :nocov:

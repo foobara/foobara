@@ -168,7 +168,16 @@ module Foobara
       end
 
       included = Set.new
-      additional_to_include = Set.new
+      additional_to_include = Set.new.tap do |s|
+        s.singleton_class.define_method :<< do |object|
+          if object.is_a?(Types::Type) && object.type_symbol == :entity && !include?(object) &&
+             (object.type_registry.object_id != Types.global_registry.object_id)
+            binding.pry
+          end
+
+          super(object)
+        end
+      end
 
       h = {}
 
@@ -211,8 +220,16 @@ module Foobara
 
         raise "no category symbol for #{object}" unless category_symbol
 
+        namespace = if object.is_a?(Types::Type)
+                      TypeDeclarations::Namespace.namespace_for_type_registry(object.type_registry)
+                    else
+                      TypeDeclarations::Namespace.current
+                    end
+
         cat = h[category_symbol] ||= {}
-        cat[manifest_reference] = object.foobara_manifest(to_include: additional_to_include)
+        cat[manifest_reference] = TypeDeclarations::Namespace.using namespace do
+          object.foobara_manifest(to_include: additional_to_include)
+        end
 
         included << object
       end

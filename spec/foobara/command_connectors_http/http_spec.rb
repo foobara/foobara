@@ -445,10 +445,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
         Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
       end
 
-      after do
-        Foobara.reset_alls
-      end
-
       let(:command_class) do
         user_class
 
@@ -655,6 +651,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
               end
 
               it "contains pre_commit_transformers in its manifest" do
+                $stop = true
                 command_manifest = command_connector.foobara_manifest[:command][:QueryUser]
                 manifest = command_manifest[:pre_commit_transformers].find { |h|
                   h[:name] == "Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer"

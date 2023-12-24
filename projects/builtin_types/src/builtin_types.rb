@@ -54,6 +54,8 @@ module Foobara
           type_registry: Types.global_registry
         )
 
+        builtin_types << type
+
         global_registry.register(type_symbol, type)
 
         Foobara::Namespace::NamespaceHelpers.foobara_namespace!(type)
