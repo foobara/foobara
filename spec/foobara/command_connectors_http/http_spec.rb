@@ -651,7 +651,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
               end
 
               it "contains pre_commit_transformers in its manifest" do
-                $stop = true
                 command_manifest = command_connector.foobara_manifest[:command][:QueryUser]
                 manifest = command_manifest[:pre_commit_transformers].find { |h|
                   h[:name] == "Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer"

@@ -168,16 +168,7 @@ module Foobara
       end
 
       included = Set.new
-      additional_to_include = Set.new.tap do |s|
-        s.singleton_class.define_method :<< do |object|
-          if object.is_a?(Types::Type) && object.type_symbol == :entity && !include?(object) &&
-             (object.type_registry.object_id != Types.global_registry.object_id)
-            binding.pry
-          end
-
-          super(object)
-        end
-      end
+      additional_to_include = Set.new
 
       h = {}
 

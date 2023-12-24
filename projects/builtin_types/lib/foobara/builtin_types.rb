@@ -41,7 +41,6 @@ module Foobara
 
       def reset_all
         builtin_types.each do |builtin_type|
-          binding.pry if builtin_type.type_symbol == :entity
           builtin_type.foobara_each do |scoped|
             if scoped.scoped_namespace == builtin_type
               scoped.scoped_namespace = nil
