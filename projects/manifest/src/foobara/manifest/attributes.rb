@@ -24,6 +24,10 @@ module Foobara
         end
       end
 
+      def empty?
+        attribute_declarations.empty?
+      end
+
       def attribute_names
         attribute_declarations.keys.map(&:to_s)
       end

@@ -150,6 +150,7 @@ RSpec.describe Foobara::Manifest do
     expect(global_command.scoped_full_name).to eq("GlobalCommand")
     expect(global_command.domain.reference).to eq("global_organization::global_domain")
     expect(global_command.organization_name).to eq("global_organization")
+    expect(global_command.inputs_type).to be_empty
 
     global_possible_error = command.error_types["data.cannot_cast"]
     expect(global_possible_error.scoped_category).to be_nil
