@@ -31,6 +31,16 @@ module Foobara
 
         Types::Type.foobara_instances_are_namespaces!
       end
+
+      def reset_all
+        Foobara::Domain::DomainModuleExtension.all.each do |domain|
+          var = "@foobara_type_namespace"
+
+          if domain.instance_variable_defined?(var)
+            domain.remove_instance_variable(var)
+          end
+        end
+      end
     end
   end
 end

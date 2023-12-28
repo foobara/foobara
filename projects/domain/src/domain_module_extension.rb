@@ -45,8 +45,17 @@ module Foobara
     end
 
     module DomainModuleExtension
+      class << self
+        def all
+          @all ||= []
+        end
+      end
       include Concern
       include Manifestable
+
+      on_include do
+        DomainModuleExtension.all << self
+      end
 
       module ClassMethods
         attr_writer :foobara_domain_name, :foobara_full_domain_name
