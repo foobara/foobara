@@ -11,11 +11,10 @@ module Foobara
 
     class << self
       def install!
-        model = TypeDeclarations::Namespace.type_for_symbol(:model)
-
-        BuiltinTypes.build_and_register!(:entity, model, nil)
-
         TypeDeclarations.register_type_declaration(TypeDeclarations::Handlers::ExtendEntityTypeDeclaration.new)
+
+        model = TypeDeclarations::Namespace.type_for_symbol(:model)
+        BuiltinTypes.build_and_register!(:entity, model, nil)
       end
 
       def reset_all

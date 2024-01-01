@@ -19,7 +19,7 @@ module Foobara
 
             if type_symbol == :attributes
               Util.all_symbolizable_keys?(sugary_type_declaration[:element_type_declarations])
-            else
+            elsif type_symbol.is_a?(::Symbol)
               !type_registered?(type_symbol)
             end
           end

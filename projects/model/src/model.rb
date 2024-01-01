@@ -4,6 +4,7 @@ module Foobara
   # TODO: also, why is this at the root level instead of in a project??
   class Model
     class NoSuchAttributeError < StandardError; end
+    class AttributeIsImmutableError < StandardError; end
 
     include Concerns::Types
 
@@ -83,9 +84,30 @@ module Foobara
         model_type&.scoped_full_name
       end
 
-      def possible_errors
+      def possible_errors(mutable: true)
         TypeDeclarations::Namespace.using namespace do
-          attributes_type.possible_errors
+          if mutable == true
+            attributes_type.possible_errors
+          elsif mutable
+            element_types = attributes_type.element_types
+
+            h = {}
+
+            Util.array(mutable).each do |attribute_name|
+              attribute_name = attribute_name.to_sym
+
+              element_types[attribute_name].possible_errors.each_pair do |key, value|
+                error_key = ErrorKey.parse(key)
+                error_key.prepend_path!(attribute_name)
+
+                h[error_key.to_sym] = value
+              end
+            end
+
+            h
+          else
+            {}
+          end
         end
       end
 
@@ -120,8 +142,10 @@ module Foobara
       end
     end
 
+    attr_accessor :mutable
+
     def initialize(attributes = nil, options = {})
-      allowed_options = [:validate]
+      allowed_options = %i[validate mutable]
       invalid_options = options.keys - allowed_options
 
       unless invalid_options.empty?
@@ -139,10 +163,19 @@ module Foobara
           # :nocov:
         end
       else
+        self.mutable = true
         attributes.each_pair do |attribute_name, value|
           write_attribute(attribute_name, value)
         end
       end
+
+      mutable = options.key?(:mutable) ? options[:mutable] : true
+
+      self.mutable = if mutable.is_a?(::Array)
+                       mutable.map(&:to_sym)
+                     else
+                       mutable
+                     end
 
       validate! if validate
     end
@@ -155,8 +188,15 @@ module Foobara
 
     def write_attribute(attribute_name, value)
       attribute_name = attribute_name.to_sym
-      outcome = cast_attribute(attribute_name, value)
-      attributes[attribute_name] = outcome.success? ? outcome.result : value
+
+      if mutable == true || mutable.include?(attribute_name)
+        outcome = cast_attribute(attribute_name, value)
+        attributes[attribute_name] = outcome.success? ? outcome.result : value
+      else
+        # :nocov:
+        raise AttributeIsImmutableError, "Cannot write attribute #{attribute_name} because it is not mutable"
+        # :nocov:
+      end
     end
 
     def write_attribute!(attribute_name, value)

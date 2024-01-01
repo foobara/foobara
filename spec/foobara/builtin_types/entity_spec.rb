@@ -12,9 +12,11 @@ RSpec.describe ":entity" do
       type: :entity,
       name: model_name,
       attributes_declaration:,
-      primary_key:
+      primary_key:,
+      mutable:
     }
   end
+  let(:mutable) { false }
   let(:primary_key) { :pk }
   let(:model_name) { "SomeEntity" }
   let(:attributes_declaration) do
@@ -255,7 +257,8 @@ RSpec.describe ":entity" do
         {
           type: :entity,
           name: model_name,
-          attributes_declaration:
+          attributes_declaration:,
+          mutable: true
         }
       end
 
@@ -300,6 +303,8 @@ RSpec.describe ":entity" do
     end
 
     describe "#possible_errors" do
+      let(:mutable) { true }
+
       it "gives expected possible errors" do
         expect(type.possible_errors).to eq(
           "data.bar.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
