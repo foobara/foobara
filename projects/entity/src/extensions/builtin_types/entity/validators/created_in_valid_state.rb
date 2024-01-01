@@ -21,6 +21,7 @@ module Foobara
             return {} if parent_declaration_data == { type: :entity }
 
             model_class_name = parent_declaration_data[:model_class]
+            binding.pry if $stop
 
             if model_class_name
               Object.const_get(model_class_name).possible_errors

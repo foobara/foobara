@@ -18,6 +18,7 @@ module Foobara
           end
 
           def possible_errors
+            binding.pry if $stop
             model_class_name = parent_declaration_data[:model_class]
 
             if model_class_name

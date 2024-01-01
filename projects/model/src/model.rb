@@ -84,6 +84,7 @@ module Foobara
       end
 
       def possible_errors
+        binding.pry if $stop
         TypeDeclarations::Namespace.using namespace do
           attributes_type.possible_errors
         end
