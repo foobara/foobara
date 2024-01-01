@@ -16,7 +16,7 @@ RSpec.describe Foobara::Command do
     stub_class(:Fan, Foobara::Entity) do
       attributes id: :integer,
                  is_active: { type: :boolean, default: true },
-                 fan_of: [User],
+                 fan_of: { type: :array, element_type_declaration: User, default: [] },
                  attrs: {
                    foo: { type: :symbol, required: true },
                    bar: [:integer],
@@ -28,12 +28,12 @@ RSpec.describe Foobara::Command do
 
     stub_class :CreateUser, Foobara::Command do
       inputs User.attributes_type.declaration_data
-      result :integer
+      result User
 
       def execute
         create_user
 
-        user.id
+        user
       end
 
       attr_accessor :user
@@ -45,14 +45,13 @@ RSpec.describe Foobara::Command do
 
     stub_class :CreateFan, Foobara::Command do
       inputs Fan.attributes_type.declaration_data
-
-      result :integer
+      result Fan
 
       def execute
         create_fan
         increment_fan_count
 
-        fan.id
+        fan
       end
 
       attr_accessor :fan
@@ -62,6 +61,7 @@ RSpec.describe Foobara::Command do
       end
 
       def increment_fan_count
+        binding.pry
         fan.fan_of.each do |user|
           user.fan_count += 1
         end
@@ -71,18 +71,18 @@ RSpec.describe Foobara::Command do
 
   describe ".possible_errors" do
     it "does not include creation errors for nested entities", :focus do
-      $stop = true
-      CreateFan.inputs_type.possible_errors
-      CreateFan.inputs_type.possible_errors
-      binding.pry
+      # $stop = true
+      # CreateFan.inputs_type.possible_errors
+      # CreateFan.inputs_type.possible_errors
+      # binding.pry
       # expect(CreateFan.possible_errors).to eq({})
 
       User.transaction do
         user1 = CreateUser.run!(name: "Some User1")
         user2 = CreateUser.run!(name: "Some User2")
 
-        fan1 = CreateFan.run!(attrs: { foo: :bar }, fan_of: [user1] })
-        fan2 = CreateFan.run!(attrs: { foo: :baz }, fan_of: [user1, user2] })
+        fan1 = CreateFan.run!(attrs: { foo: :bar }, fan_of: [user1])
+        fan2 = CreateFan.run!(attrs: { foo: :baz }, fan_of: [user1, user2])
         fan3 = CreateFan.run!(attrs: { foo: :foo })
 
         expect(user1.fan_count).to eq(2)
