@@ -61,7 +61,6 @@ RSpec.describe Foobara::Command do
       end
 
       def increment_fan_count
-        binding.pry
         fan.fan_of.each do |user|
           user.fan_count += 1
         end
@@ -71,12 +70,6 @@ RSpec.describe Foobara::Command do
 
   describe ".possible_errors" do
     it "does not include creation errors for nested entities", :focus do
-      # $stop = true
-      # CreateFan.inputs_type.possible_errors
-      # CreateFan.inputs_type.possible_errors
-      # binding.pry
-      # expect(CreateFan.possible_errors).to eq({})
-
       User.transaction do
         user1 = CreateUser.run!(name: "Some User1")
         user2 = CreateUser.run!(name: "Some User2")
@@ -88,6 +81,10 @@ RSpec.describe Foobara::Command do
         expect(user1.fan_count).to eq(2)
         expect(user2.fan_count).to eq(1)
       end
+
+      binding.pry
+
+      expect(CreateUser.possible_errors).to eq([])
     end
   end
 end
