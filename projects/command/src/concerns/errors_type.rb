@@ -5,6 +5,10 @@ module Foobara
         include Concern
 
         module ClassMethods
+          def possible_errors
+            error_context_type_map.transform_keys(&:to_sym)
+          end
+
           def errors_type_declaration(to_include:)
             error_context_type_map.to_h do |key, error_class|
               to_include << error_class
