@@ -82,9 +82,52 @@ RSpec.describe Foobara::Command do
         expect(user2.fan_count).to eq(1)
       end
 
-      binding.pry
+      expect(CreateUser.possible_errors).to eq(
+        "data.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+        "data.missing_required_attribute":
+          Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::MissingRequiredAttributeError,
+        "data.unexpected_attributes":
+          Foobara::BuiltinTypes::Attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError,
+        "data.name.missing_required_attribute":
+          Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::MissingRequiredAttributeError,
+        "data.id.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+        "data.name.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+        "data.fan_count.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError
+      )
 
-      expect(CreateUser.possible_errors).to eq([])
+      pp CreateFan.possible_errors
+
+      expect(CreateFan.possible_errors).to eq(
+        "data.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+        "data.unexpected_attributes":
+          Foobara::BuiltinTypes::Attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError,
+        "data.id.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+        "data.is_active.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+        "data.fan_of.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+        "data.fan_of.#.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+        "data.fan_of.#.missing_required_attribute":
+          Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::MissingRequiredAttributeError,
+        "data.fan_of.#.unexpected_attributes":
+          Foobara::BuiltinTypes::Attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError,
+        "data.fan_of.#.name.missing_required_attribute":
+          Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::MissingRequiredAttributeError,
+        "data.fan_of.#.id.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+        "data.fan_of.#.name.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+        "data.fan_of.#.fan_count.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+        "data.attrs.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+        "data.attrs.missing_required_attribute":
+          Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::MissingRequiredAttributeError,
+        "data.attrs.unexpected_attributes":
+          Foobara::BuiltinTypes::Attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError,
+        "data.attrs.foo.missing_required_attribute":
+          Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::MissingRequiredAttributeError,
+        "data.attrs.foo.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+        "data.attrs.bar.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+        "data.attrs.bar.#.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+        "data.attrs.duckfoo.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+        "data.attrs.duckbar.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+        "data.attrs.duckbar.#.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError
+      )
     end
   end
 end
