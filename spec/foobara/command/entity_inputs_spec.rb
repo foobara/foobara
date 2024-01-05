@@ -9,7 +9,7 @@ RSpec.describe Foobara::Command do
     stub_class :User, Foobara::Entity do
       attributes id: :integer,
                  name: { type: :string, required: true },
-                 fan_count: { type: :integer, default: 0 }
+                 fan_count: { type: :integer, default: 0, max: 10 }
       primary_key :id
     end
 
@@ -97,10 +97,9 @@ RSpec.describe Foobara::Command do
           Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::MissingRequiredAttributeError,
         "data.id.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
         "data.name.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
-        "data.fan_count.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError
+        "data.fan_count.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+        "data.fan_count.max_exceeded": Foobara::BuiltinTypes::Number::SupportedValidators::Max::MaxExceededError
       )
-
-      pp CreateFan.possible_errors
 
       expect(CreateFan.possible_errors).to eq(
         "data.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
@@ -110,15 +109,9 @@ RSpec.describe Foobara::Command do
         "data.is_active.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
         "data.fan_of.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
         "data.fan_of.#.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
-        "data.fan_of.#.missing_required_attribute":
-          Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::MissingRequiredAttributeError,
-        "data.fan_of.#.unexpected_attributes":
-          Foobara::BuiltinTypes::Attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError,
-        "data.fan_of.#.name.missing_required_attribute":
-          Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::MissingRequiredAttributeError,
-        "data.fan_of.#.id.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
-        "data.fan_of.#.name.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
         "data.fan_of.#.fan_count.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+        "data.fan_of.#.fan_count.max_exceeded":
+          Foobara::BuiltinTypes::Number::SupportedValidators::Max::MaxExceededError,
         "data.attrs.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
         "data.attrs.missing_required_attribute":
           Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::MissingRequiredAttributeError,
