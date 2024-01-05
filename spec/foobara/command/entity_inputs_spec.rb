@@ -44,7 +44,12 @@ RSpec.describe Foobara::Command do
     end
 
     stub_class :CreateFan, Foobara::Command do
-      inputs Fan.attributes_type.declaration_data
+      inputs_type_declaration = Foobara::Util.deep_dup(Fan.attributes_type.declaration_data)
+      binding.pry
+      inputs_type_declaration[:element_type_declarations][:fan_of][:element_type_declaration] =
+        { type: :User, mutable: :fan_count }
+
+      inputs inputs_type_declaration
       result Fan
 
       def execute

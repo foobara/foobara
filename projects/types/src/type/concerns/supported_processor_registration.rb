@@ -30,6 +30,7 @@ module Foobara
               base_type.find_supported_processor_class(processor_symbol)
             else
               # TODO: can we catch this via a type declaration validator before hitting it here?
+              binding.pry
               raise MissingProcessorError, "No such processor for #{processor_symbol}"
             end
           end

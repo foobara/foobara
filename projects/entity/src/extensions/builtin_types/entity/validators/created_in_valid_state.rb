@@ -17,14 +17,21 @@ module Foobara
             Outcome.new(result: record, errors: record.validation_errors)
           end
 
+          # Why is this here in entity/ instead of in model/?
           def possible_errors
             return {} if parent_declaration_data == { type: :entity }
 
-            model_class_name = parent_declaration_data[:model_class]
-            binding.pry if $stop
+            binding.pry
+            if parent_declaration_data.key?(:model_class)
+              Object.const_get(parent_declaration_data[:model_class]).possible_errors(mutable: true)
+            elsif parent_declaration_data[:type] != :entity
+              mutable = parent_declaration_data[:mutable]
 
-            if model_class_name
-              Object.const_get(model_class_name).possible_errors
+              return {} unless mutable
+
+              model_type = type_for_declaration(parent_declaration_data[:type])
+              model_class = model_type.target_class
+              model_class.possible_errors(mutable:)
             else
               # :nocov:
               raise "Missing :model_class in parent_declaration_data for #{parent_declaration_data}"

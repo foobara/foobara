@@ -32,6 +32,7 @@ module Foobara
           private
 
           def register_possible_input_errors
+            # TODO: let's derive these at runtime and memoize...
             TypeDeclarations::Namespace.using namespace do
               # TODO: can destructure here or no?
               inputs_type.possible_errors.each_pair do |key, error_class|
