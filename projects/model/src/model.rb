@@ -141,8 +141,10 @@ module Foobara
       end
     end
 
+    attr_accessor :mutable
+
     def initialize(attributes = nil, options = {})
-      allowed_options = [:validate]
+      allowed_options = %i[validate mutable]
       invalid_options = options.keys - allowed_options
 
       unless invalid_options.empty?
@@ -165,6 +167,14 @@ module Foobara
         end
       end
 
+      mutable = options.key?(:mutable) ? options[:mutable] : true
+
+      self.mutable = if mutable.is_a?(::Array)
+                       mutable.map(&:to_sym)
+                     else
+                       mutable
+                     end
+
       validate! if validate
     end
 
@@ -176,8 +186,13 @@ module Foobara
 
     def write_attribute(attribute_name, value)
       attribute_name = attribute_name.to_sym
-      outcome = cast_attribute(attribute_name, value)
-      attributes[attribute_name] = outcome.success? ? outcome.result : value
+
+      if mutable == true || mutable.include?(attribute_name)
+        outcome = cast_attribute(attribute_name, value)
+        attributes[attribute_name] = outcome.success? ? outcome.result : value
+      else
+        raise "Cannot write attribute #{attribute_name} because it is not mutable"
+      end
     end
 
     def write_attribute!(attribute_name, value)
