@@ -8,9 +8,10 @@ module Foobara
           end
 
           def transform(model)
-            return model unless mutable_fields
+            if mutable_fields
+              model.mutable = mutable_fields
+            end
 
-            binding.pry
             model
           end
 

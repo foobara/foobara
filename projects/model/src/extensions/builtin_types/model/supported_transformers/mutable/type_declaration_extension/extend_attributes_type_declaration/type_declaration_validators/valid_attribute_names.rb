@@ -19,13 +19,21 @@ module Foobara
                     end
                   end
 
-                  def applicable?(strict_type_declaration)
-                    mutable = strict_type_declaration[:mutable]
+                  def applicable?(value)
+                    binding.pry
+                    if value.is_a?(::Hash) && value.key?(:mutable) && value.key?(:type)
+                      mutable = value[:mutable]
 
-                    mutable.is_a?(::Array)
+                      if mutable.is_a?(::Array)
+                        type = type_for_declaration(value[:type])
+
+                        type.extends_symbol?(:model)
+                      end
+                    end
                   end
 
                   def validation_errors(strict_type_declaration)
+                    binding.pry
                     mutable = strict_type_declaration[:mutable]
 
                     binding.pry
