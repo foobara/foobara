@@ -1,14 +1,10 @@
-Foobara.require_file(
-  "model",
-  "extensions/type_declarations/handlers/extend_model_type_declaration/attributes_handler_desugarizer"
-)
-
 module Foobara
   module TypeDeclarations
     module Handlers
-      class RegisteredTypeDeclaration < TypeDeclarationHandler
+      class ExtendRegisteredModelTypeDeclaration < ExtendRegisteredTypeDeclaration
         class ModelClassDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(sugary_type_declaration)
+            # binding.pry
             sugary_type_declaration.is_a?(Class) && sugary_type_declaration < Model
           end
 

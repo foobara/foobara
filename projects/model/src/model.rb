@@ -84,6 +84,7 @@ module Foobara
       end
 
       def possible_errors(mutable: true)
+        binding.pry
         TypeDeclarations::Namespace.using namespace do
           if mutable == true
             attributes_type.possible_errors

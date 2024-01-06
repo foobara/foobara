@@ -1,7 +1,7 @@
 module Foobara
   module TypeDeclarations
     module Handlers
-      class ExtendModelTypeDeclaration < ExtendRegisteredTypeDeclaration
+      class ExtendRegisteredModelTypeDeclaration < ExtendRegisteredTypeDeclaration
         class MutableValidator < TypeDeclarations::TypeDeclarationValidator
           class InvalidMutableValueGivenError < Value::DataError
             class << self

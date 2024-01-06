@@ -3,8 +3,11 @@ module Foobara
     module Handlers
       class ExtendRegisteredModelTypeDeclaration < ExtendRegisteredTypeDeclaration
         def applicable?(sugary_type_declaration)
-          if sugary_type_declaration.is_a?(::Hash)
-            type_symbol = desugarize(sugary_type_declaration)[:type]
+          binding.pry if sugary_type_declaration == { type: :User }
+          strict_type_declaration = desugarize(sugary_type_declaration)
+
+          if strict_type_declaration.is_a?(::Hash)
+            type_symbol = strict_type_declaration[:type]
 
             return false if type_symbol == expected_type_symbol
 
@@ -20,7 +23,7 @@ module Foobara
         end
 
         def priority
-          Priority::MEDIUM
+          super - 1
         end
       end
     end

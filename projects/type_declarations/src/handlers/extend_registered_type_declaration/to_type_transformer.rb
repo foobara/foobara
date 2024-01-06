@@ -57,6 +57,9 @@ module Foobara
               name: type_name(strict_type_declaration),
               type_registry: TypeDeclarations::Namespace.current.type_registry
             )
+          rescue => e
+            binding.pry
+            raise
           end
 
           # TODO: test that registering a custom type sets its name

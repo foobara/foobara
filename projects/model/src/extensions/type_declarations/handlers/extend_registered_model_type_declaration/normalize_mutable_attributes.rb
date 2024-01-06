@@ -1,7 +1,7 @@
 module Foobara
   module TypeDeclarations
     module Handlers
-      class ExtendModelTypeDeclaration < ExtendRegisteredTypeDeclaration
+      class ExtendRegisteredModelTypeDeclaration < ExtendRegisteredTypeDeclaration
         class NormalizeMutableAttributesDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(value)
             if value.is_a?(::Hash) && value.key?(:mutable) && value.key?(:type)

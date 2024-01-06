@@ -7,6 +7,7 @@ module Foobara
     class << self
       def install!
         TypeDeclarations.register_type_declaration(TypeDeclarations::Handlers::ExtendModelTypeDeclaration.new)
+        TypeDeclarations.register_type_declaration(TypeDeclarations::Handlers::ExtendRegisteredModelTypeDeclaration.new)
 
         atomic_duck = TypeDeclarations::Namespace.type_for_symbol(:atomic_duck)
         BuiltinTypes.build_and_register!(:model, atomic_duck, nil)

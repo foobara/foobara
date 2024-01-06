@@ -5,16 +5,18 @@ module Foobara
         class ToTypeTransformer < ExtendRegisteredTypeDeclaration::ToTypeTransformer
           # TODO: make declaration validator for model_class and model_base_class
           def target_classes(strict_type_declaration)
-            Object.const_get(strict_type_declaration[:model_class])
+            declaration_to_type(strict_type_declaration).target_classes
           end
 
           # TODO: must explode if name missing...
           def type_name(strict_type_declaration)
-            strict_type_declaration[:name]
+            declaration_to_type(strict_type_declaration).name
           end
 
-          # TODO: create declaration validator for name and the others
-          # TODO: seems like a smell that we don't have processors for these?
+          def declaration_to_type(strict_type_declaration)
+            type_for_declaration(strict_type_declaration[:type])
+          end
+
           def non_processor_keys
             [:mutable, *super]
           end
