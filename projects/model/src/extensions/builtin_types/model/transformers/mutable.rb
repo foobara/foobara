@@ -11,7 +11,6 @@ module Foobara
           end
 
           def transform(record)
-            binding.pry
             record.mutable = if parent_declaration_data.key?(:mutable)
                                parent_declaration_data[:mutable]
                              else

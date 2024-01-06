@@ -4,7 +4,6 @@ module Foobara
       class ExtendRegisteredModelTypeDeclaration < ExtendRegisteredTypeDeclaration
         class ModelClassDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(sugary_type_declaration)
-            # binding.pry
             sugary_type_declaration.is_a?(Class) && sugary_type_declaration < Model
           end
 

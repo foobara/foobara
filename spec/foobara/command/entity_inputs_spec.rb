@@ -16,7 +16,6 @@ RSpec.describe "Entity inputs for commands" do
     stub_class(:Fan, Foobara::Entity) do
       attributes id: :integer,
                  owner: User,
-                 # owner: { type: :User, mutable: false },
                  is_active: { type: :boolean, default: true },
                  fan_of: { type: :array, element_type_declaration: User, default: [] },
                  attrs: {
@@ -48,7 +47,7 @@ RSpec.describe "Entity inputs for commands" do
     stub_class :CreateFan, Foobara::Command do
       inputs_type_declaration = Foobara::Util.deep_dup(Fan.attributes_type.declaration_data)
       inputs_type_declaration[:element_type_declarations][:fan_of][:element_type_declaration] =
-        { type: :User, mutable: :fan_count }
+        { type: :User, mutable: ["fan_count"] }
 
       inputs inputs_type_declaration
       result Fan
@@ -71,6 +70,21 @@ RSpec.describe "Entity inputs for commands" do
           user.fan_count += 1
         end
       end
+    end
+  end
+
+  # TODO: move this to a test for the ExtendRegisteredModelTypeDeclaration handler
+  context "when creating with bad mutable value" do
+    it "raises an error" do
+      expect {
+        CreateFan.namespace.type_for_declaration(
+          type: User,
+          mutable: :bad_attribute_name
+        )
+      }.to raise_error(
+        Foobara::TypeDeclarations::Handlers::ExtendRegisteredModelTypeDeclaration::MutableValidator::
+            InvalidMutableValueGivenError
+      )
     end
   end
 

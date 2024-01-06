@@ -3,7 +3,6 @@ module Foobara
     module Handlers
       class ExtendRegisteredModelTypeDeclaration < ExtendRegisteredTypeDeclaration
         def applicable?(sugary_type_declaration)
-          binding.pry if sugary_type_declaration == { type: :User }
           strict_type_declaration = desugarize(sugary_type_declaration)
 
           if strict_type_declaration.is_a?(::Hash)

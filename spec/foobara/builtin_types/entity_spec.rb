@@ -4,7 +4,6 @@ RSpec.describe ":entity" do
   end
 
   let(:type) do
-    binding.pry
     Foobara::TypeDeclarations::Namespace.type_for_declaration(type_declaration)
   end
 

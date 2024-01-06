@@ -7,7 +7,9 @@ module Foobara
         class ShortTypeNameDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(sugary_type_declaration)
             if sugary_type_declaration.is_a?(Hash) && sugary_type_declaration.key?(:type)
-              type_registered?(sugary_type_declaration[:type])
+              type_symbol = sugary_type_declaration[:type]
+
+              type_symbol.is_a?(::Symbol) && type_registered?(sugary_type_declaration[:type])
             end
           end
 

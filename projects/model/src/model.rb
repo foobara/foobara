@@ -4,6 +4,7 @@ module Foobara
   # TODO: also, why is this at the root level instead of in a project??
   class Model
     class NoSuchAttributeError < StandardError; end
+    class AttributeIsImmutableError < StandardError; end
 
     include Concerns::Types
 
@@ -84,7 +85,6 @@ module Foobara
       end
 
       def possible_errors(mutable: true)
-        binding.pry
         TypeDeclarations::Namespace.using namespace do
           if mutable == true
             attributes_type.possible_errors
@@ -193,7 +193,9 @@ module Foobara
         outcome = cast_attribute(attribute_name, value)
         attributes[attribute_name] = outcome.success? ? outcome.result : value
       else
-        raise "Cannot write attribute #{attribute_name} because it is not mutable"
+        # :nocov:
+        raise AttributeIsImmutableError, "Cannot write attribute #{attribute_name} because it is not mutable"
+        # :nocov:
       end
     end
 
