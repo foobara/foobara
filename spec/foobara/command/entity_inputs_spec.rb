@@ -15,6 +15,8 @@ RSpec.describe "Entity inputs for commands" do
 
     stub_class(:Fan, Foobara::Entity) do
       attributes id: :integer,
+                 owner: User,
+                 # owner: { type: :User, mutable: false },
                  is_active: { type: :boolean, default: true },
                  fan_of: { type: :array, element_type_declaration: User, default: [] },
                  attrs: {
@@ -73,7 +75,7 @@ RSpec.describe "Entity inputs for commands" do
   end
 
   describe ".possible_errors" do
-    it "does not include creation errors for nested entities" do
+    it "does not include creation errors for nested entities", :focus do
       User.transaction do
         user1 = CreateUser.run!(name: "Some User1")
         user2 = CreateUser.run!(name: "Some User2")
@@ -106,6 +108,7 @@ RSpec.describe "Entity inputs for commands" do
           Foobara::BuiltinTypes::Attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError,
         "data.id.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
         "data.is_active.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+        "data.owner.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
         "data.fan_of.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
         "data.fan_of.#.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
         "data.fan_of.#.fan_count.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,

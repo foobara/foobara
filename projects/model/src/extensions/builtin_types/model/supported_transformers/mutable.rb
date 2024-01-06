@@ -1,6 +1,7 @@
 module Foobara
   module BuiltinTypes
     module Model
+      # TODO: Create SupportedMutations concept
       module SupportedTransformers
         class Mutable < TypeDeclarations::Transformer
           def mutable_fields
@@ -8,10 +9,7 @@ module Foobara
           end
 
           def transform(model)
-            if mutable_fields
-              model.mutable = mutable_fields
-            end
-
+            model.mutable = mutable_fields
             model
           end
 
