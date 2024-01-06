@@ -306,7 +306,7 @@ RSpec.describe ":entity" do
     describe "#possible_errors" do
       let(:mutable) { true }
 
-      it "gives expected possible errors", :focus do
+      it "gives expected possible errors" do
         expect(type.possible_errors).to eq(
           "data.bar.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
           "data.bar.missing_required_attribute":
