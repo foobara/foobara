@@ -141,7 +141,6 @@ module Foobara
           )
 
           unless handler_to_extend
-            binding.pry
             # :nocov:
             raise "Could not find a handler for #{handler_class_to_extend}"
             # :nocov:

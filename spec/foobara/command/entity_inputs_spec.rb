@@ -1,4 +1,4 @@
-RSpec.describe Foobara::Command do
+RSpec.describe "Entity inputs for commands" do
   after do
     Foobara.reset_alls
   end
@@ -73,14 +73,14 @@ RSpec.describe Foobara::Command do
   end
 
   describe ".possible_errors" do
-    it "does not include creation errors for nested entities", :focus do
+    it "does not include creation errors for nested entities" do
       User.transaction do
         user1 = CreateUser.run!(name: "Some User1")
         user2 = CreateUser.run!(name: "Some User2")
 
-        fan1 = CreateFan.run!(attrs: { foo: :bar }, fan_of: [user1])
-        fan2 = CreateFan.run!(attrs: { foo: :baz }, fan_of: [user1, user2])
-        fan3 = CreateFan.run!(attrs: { foo: :foo })
+        CreateFan.run!(attrs: { foo: :bar }, fan_of: [user1])
+        CreateFan.run!(attrs: { foo: :baz }, fan_of: [user1, user2])
+        CreateFan.run!(attrs: { foo: :foo })
 
         expect(user1.fan_count).to eq(2)
         expect(user2.fan_count).to eq(1)

@@ -174,9 +174,6 @@ module Foobara
 
         Namespace.using self do
           handler = type_declaration_handler_for(type_declaration)
-
-          binding.pry if type_declaration.is_a?(::Hash) && type_declaration.key?(:mutable)
-
           handler.process_value!(type_declaration)
         end
       end

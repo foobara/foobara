@@ -21,7 +21,6 @@ module Foobara
           def possible_errors
             return {} if parent_declaration_data == { type: :entity }
 
-            binding.pry
             if parent_declaration_data.key?(:model_class)
               Object.const_get(parent_declaration_data[:model_class]).possible_errors(mutable: true)
             elsif parent_declaration_data[:type] != :entity

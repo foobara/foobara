@@ -34,7 +34,6 @@ module Foobara
                   def validation_errors(strict_type_declaration)
                     mutable = strict_type_declaration[:mutable]
                     model_type = type_for_declaration(strict_type_declaration[:type])
-                    binding.pry
                     valid_attribute_names = model_type.element_types.element_types.keys
 
                     mutable.map do |key|

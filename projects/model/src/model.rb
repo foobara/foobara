@@ -162,6 +162,7 @@ module Foobara
           # :nocov:
         end
       else
+        self.mutable = true
         attributes.each_pair do |attribute_name, value|
           write_attribute(attribute_name, value)
         end

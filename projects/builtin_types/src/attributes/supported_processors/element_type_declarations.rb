@@ -66,7 +66,6 @@ module Foobara
           def possible_errors
             possibilities = super
 
-            binding.pry if $stop
             element_type_declarations.each_pair do |attribute_name, attribute_declaration|
               attribute_type = type_for_declaration(attribute_declaration)
 
