@@ -4,7 +4,7 @@ module Foobara
       module SupportedTransformers
         class Mutable < TypeDeclarations::Transformer
           module TypeDeclarationExtension
-            module ExtendModelTypeDeclaration
+            module ExtendRegisteredTypeDeclaration
               module TypeDeclarationValidators
                 class ValidAttributeNames < TypeDeclarations::TypeDeclarationValidator
                   class InvalidMutableValueGivenError < Value::DataError
@@ -20,7 +20,6 @@ module Foobara
                   end
 
                   def applicable?(value)
-                    binding.pry
                     if value.is_a?(::Hash) && value.key?(:mutable) && value.key?(:type)
                       mutable = value[:mutable]
 
@@ -33,14 +32,10 @@ module Foobara
                   end
 
                   def validation_errors(strict_type_declaration)
-                    binding.pry
                     mutable = strict_type_declaration[:mutable]
-
-                    binding.pry
-
                     model_type = type_for_declaration(strict_type_declaration[:type])
-
-                    valid_attribute_names = model_type.element_types.keys
+                    binding.pry
+                    valid_attribute_names = model_type.element_types.element_types.keys
 
                     mutable.map do |key|
                       unless valid_attribute_names.include?(key)

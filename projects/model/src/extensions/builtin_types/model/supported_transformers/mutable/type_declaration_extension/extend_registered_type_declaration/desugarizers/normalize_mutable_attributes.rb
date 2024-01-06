@@ -4,7 +4,7 @@ module Foobara
       module SupportedTransformers
         class Mutable < TypeDeclarations::Transformer
           module TypeDeclarationExtension
-            module ExtendModelTypeDeclaration
+            module ExtendRegisteredTypeDeclaration
               module Desugarizers
                 class NormalizeMutableAttributes < TypeDeclarations::Desugarizer
                   def applicable?(value)
@@ -21,7 +21,6 @@ module Foobara
                   end
 
                   def desugarize(rawish_type_declaration)
-                    binding.pry
                     rawish_type_declaration[:mutable] = Util.array(rawish_type_declaration[:mutable]).map!(&:to_sym)
                     rawish_type_declaration
                   end
