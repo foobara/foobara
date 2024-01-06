@@ -75,7 +75,7 @@ RSpec.describe "Entity inputs for commands" do
   end
 
   describe ".possible_errors" do
-    it "does not include creation errors for nested entities", :focus do
+    it "does not include creation errors for nested entities" do
       User.transaction do
         user1 = CreateUser.run!(name: "Some User1")
         user2 = CreateUser.run!(name: "Some User2")

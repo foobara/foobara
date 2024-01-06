@@ -16,10 +16,6 @@ module Foobara
           def declaration_to_type(strict_type_declaration)
             type_for_declaration(strict_type_declaration[:type])
           end
-
-          def non_processor_keys
-            [:mutable, *super]
-          end
         end
       end
     end

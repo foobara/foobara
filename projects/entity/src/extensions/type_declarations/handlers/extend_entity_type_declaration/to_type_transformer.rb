@@ -33,6 +33,7 @@ module Foobara
           end
 
           def non_processor_keys
+            binding.pry
             [:primary_key, *super]
           end
 
