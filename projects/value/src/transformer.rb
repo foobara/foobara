@@ -67,6 +67,7 @@ module Foobara
       end
 
       def transform(_value)
+        binding.pry
         # :nocov:
         raise "subclass responsibility"
         # :nocov:
