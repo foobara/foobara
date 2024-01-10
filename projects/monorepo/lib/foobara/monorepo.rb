@@ -11,6 +11,8 @@ module Foobara
     end
   end
 
+  # TODO: We should rename this to Projects or something else because we need to manage this stuff for projects
+  # inside and outside of the monorepo.
   module Monorepo
     class << self
       def all_projects
@@ -19,12 +21,12 @@ module Foobara
 
       def projects(*symbols)
         symbols.each do |symbol|
-          all_projects << Project.new(symbol).tap(&:load)
+          project(symbol)
         end
       end
 
       def project(symbol)
-        projects(symbol)
+        all_projects << Project.new(symbol).tap(&:load)
       end
 
       def install!

@@ -1,5 +1,7 @@
 module Foobara
   module Monorepo
+    # TODO: make this MonorepoProject and have a more generic Project so that other projects outside of the
+    # repo can have things like reset_all called on th.
     class Project
       attr_accessor :symbol
 
