@@ -36,6 +36,9 @@ module RspecHelpers
       env_stubbed = {}
 
       self.class.metadata[:env_stubbed] = env_stubbed
+      self.class.after do
+        self.class.metadata.delete(:env_stubbed)
+      end
 
       allow(ENV).to receive(:fetch).and_wrap_original do |original_method, key, default|
         if env_stubbed.key?(key)
