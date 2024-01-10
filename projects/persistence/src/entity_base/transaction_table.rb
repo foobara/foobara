@@ -53,7 +53,7 @@ module Foobara
         end
 
         def first
-          found_attributes = entity_attributes_crud_driver_table.first
+          found_attributes = normalize_attributes(entity_attributes_crud_driver_table.first)
 
           if found_attributes
             record_id = primary_key_for_attributes(found_attributes)
@@ -118,7 +118,7 @@ module Foobara
 
           if entity
             loading(entity) do
-              attributes = entity_attributes_crud_driver_table.find!(record_id)
+              attributes = normalize_attributes(entity_attributes_crud_driver_table.find!(record_id))
 
               unless attributes
                 # :nocov:
@@ -129,7 +129,7 @@ module Foobara
               entity.successfully_loaded(attributes)
             end
           else
-            attributes = entity_attributes_crud_driver_table.find!(record_id)
+            attributes = normalize_attributes(entity_attributes_crud_driver_table.find!(record_id))
 
             unless attributes
               # :nocov:
@@ -205,6 +205,7 @@ module Foobara
           end
 
           entity_attributes_crud_driver_table.find_many!(to_load_record_ids).each do |attributes|
+            attributes = normalize_attributes(attributes)
             record_id = primary_key_for_attributes(attributes)
             entity = entities[record_id]
             entity.successfully_loaded(attributes)
@@ -246,7 +247,7 @@ module Foobara
           )
 
           if found_attributes
-            entity_class.loaded(found_attributes)
+            entity_class.loaded(normalize_attributes(found_attributes))
           end
         end
 
@@ -265,6 +266,7 @@ module Foobara
           found_attributes = entity_attributes_crud_driver_table.find_by(attributes_filter)
 
           if found_attributes
+            found_attributes = normalize_attributes(found_attributes)
             record_id = primary_key_for_attributes(found_attributes)
 
             record = find_tracked(record_id)
@@ -290,6 +292,7 @@ module Foobara
             end
 
             entity_attributes_crud_driver_table.find_many_by(attributes_filter).each do |found_attributes|
+              found_attributes = normalize_attributes(found_attributes)
               record_id = primary_key_for_attributes(found_attributes)
 
               next if yielded_ids.include?(record_id)
@@ -337,6 +340,7 @@ module Foobara
             entity_attributes_crud_driver_table.find_all_by_attribute_containing_any_of(
               attribute_name, values
             ).each do |found_attributes|
+              found_attributes = normalize_attributes(found_attributes)
               record_id = primary_key_for_attributes(found_attributes)
 
               next if yielded_ids.include?(record_id)
@@ -380,6 +384,7 @@ module Foobara
             entity_attributes_crud_driver_table.find_all_by_attribute_any_of(
               attribute_name, values
             ).each do |found_attributes|
+              found_attributes = normalize_attributes(found_attributes)
               record_id = primary_key_for_attributes(found_attributes)
 
               next if yielded_ids.include?(record_id)
@@ -584,6 +589,23 @@ module Foobara
 
         def tracking?(record)
           tracked_records.include?(record)
+        end
+
+        private
+
+        def normalize_attributes(attributes)
+          if attributes
+            begin
+              attributes = attributes.transform_keys(&:to_sym)
+
+              primary_key_name = entity_class.primary_key_attribute
+              primary_key_value = attributes[primary_key_name]
+
+              attributes[primary_key_name] = entity_class.primary_key_type.cast!(primary_key_value)
+
+              attributes
+            end
+          end
         end
       end
     end

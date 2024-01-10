@@ -20,6 +20,7 @@ module Foobara
                 end
 
                 entity_attributes_crud_driver_table.all.each do |attributes|
+                  attributes = normalize_attributes(attributes)
                   primary_key = primary_key_for_attributes(attributes)
                   next if tracked_records.include_key?(primary_key)
 
