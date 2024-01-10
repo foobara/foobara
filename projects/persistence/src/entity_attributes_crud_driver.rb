@@ -8,7 +8,7 @@ module Foobara
         self.tables = {}
       end
 
-      # TDOO: audit that this interface is correct
+      # TODO: audit that this interface is correct
       def open_connection(_connection_or_credentials)
         # :nocov:
         raise "subclass responsibility"
@@ -48,7 +48,7 @@ module Foobara
       def table_for(entity_class)
         key = entity_class.full_entity_name
 
-        tables[key] ||= self.class::Table.new(entity_class, raw_connection)
+        tables[key] ||= self.class::Table.new(entity_class, self)
       end
 
       # TODO: relocate this to another file?
@@ -85,12 +85,13 @@ module Foobara
         class CannotUpdateError < CannotCrudError; end
         class CannotDeleteError < CannotCrudError; end
 
-        attr_accessor :table_name, :entity_class, :raw_connection
+        attr_accessor :table_name, :entity_class, :raw_connection, :crud_driver
 
-        def initialize(entity_class, raw_connection, table_name = Util.underscore(entity_class.entity_name))
+        def initialize(entity_class, crud_driver, table_name = Util.underscore(entity_class.entity_name))
+          self.crud_driver = crud_driver
           self.entity_class = entity_class
           # what is this used for?
-          self.raw_connection = raw_connection
+          self.raw_connection = crud_driver.raw_connection
           self.table_name = table_name
         end
 
