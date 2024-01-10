@@ -37,9 +37,20 @@ module RspecHelpers
 
       self.class.metadata[:env_stubbed] = env_stubbed
 
-      allow(ENV).to receive(:fetch).and_call_original
-      allow(ENV).to receive(:[]).and_call_original
-
+      allow(ENV).to receive(:fetch).and_wrap_original do |original_method, key, default|
+        if env_stubbed.key?(key)
+          env_stubbed[key]
+        else
+          original_method.call(key, default)
+        end
+      end
+      allow(ENV).to receive(:[]).and_wrap_original do |original_method, key|
+        if env_stubbed.key?(key)
+          env_stubbed[key]
+        else
+          original_method.call(key)
+        end
+      end
       allow(ENV).to receive(:each).and_wrap_original do |original_method, &block|
         original_method.call(&block)
         env_stubbed.each(&block)
@@ -59,10 +70,10 @@ module RspecHelpers
         ENV
       end
       allow(ENV).to receive(:keys).and_wrap_original do |original_method, &block|
-        original_method.call(&block) + env_stubbed.keys
+        original_method.call(&block) | env_stubbed.keys
       end
       allow(ENV).to receive(:values).and_wrap_original do |original_method, &block|
-        original_method.call(&block) + env_stubbed.values
+        original_method.call(&block) | env_stubbed.values
       end
     end
   end
