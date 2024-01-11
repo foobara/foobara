@@ -1,3 +1,0 @@
-# Seems like a good rule but for now going to use this repository as a bit of a monorepo so disabling for now.
-RSpec/FilePath:
-  Enabled: false
