@@ -2,5 +2,20 @@ AllCops:
   TargetRubyVersion: 3.2
   NewCops: enable
 
-inherit_from:
-  - ./lint/rubocop/*
+inherit_gem:
+  foobara-rubocop-rules:
+    - rules/*
+
+Naming/FileName:
+  ExpectMatchingDefinition: true
+  CheckDefinitionPathHierarchy: true
+  Exclude:
+    - spec/lib/**/*
+    - spec/**/*
+    - bin/*
+    - ./require_all_projects.rb
+  CheckDefinitionPathHierarchyRoots:
+    - src
+    - extensions
+    - spec
+  IgnoreExecutableScripts: true

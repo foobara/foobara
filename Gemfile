@@ -4,6 +4,8 @@ source "https://rubygems.org"
 gemspec
 
 # Development dependencies go here
+# TODO: move to .gemspec
+gem "foobara-rubocop-rules", github: "foobara/rubocop-rules"
 gem "guard-rspec"
 gem "pry"
 gem "pry-byebug"
