@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/foobara/rubocop-rules.git
-  revision: abae100971bf74a234763c72e682001fb42ea374
+  revision: 313016e3dc3faa9cc3eab91fa7cbbae387077a55
   specs:
     foobara-rubocop-rules (0.0.1)
       rubocop
