@@ -4,3 +4,8 @@ AllCops:
 
 inherit_from:
   - ./lint/rubocop/*
+
+inherit_gem:
+  foobara-rubocop-rules:
+    - rules/*
+

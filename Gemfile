@@ -3,6 +3,9 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in commands.gemspec
 gemspec
 
+# TODO: move to .gemspec
+gem "foobara-rubocop-rules", github: "foobara/rubocop-rules"
+
 # Development dependencies go here
 gem "guard-rspec"
 gem "pry"
