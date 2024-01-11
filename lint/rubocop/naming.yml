@@ -1,6 +1,3 @@
-Naming/AccessorMethodName:
-  Enabled: false
-
 Naming/FileName:
   ExpectMatchingDefinition: true
   CheckDefinitionPathHierarchy: true
@@ -14,9 +11,3 @@ Naming/FileName:
     - extensions
     - spec
   IgnoreExecutableScripts: true
-
-Naming/PredicateName:
-  Enabled: false
-
-Naming/VariableNumber:
-  Enabled: false
