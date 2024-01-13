@@ -34,4 +34,4 @@ RSpec.configure do |config|
   # config.raise_errors_for_deprecations!
 end
 
-Foobara::Util.require_directory("#{__dir__}/support")
+require "foobara/spec_helpers/all"

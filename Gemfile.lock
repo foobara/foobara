@@ -6,6 +6,12 @@ GIT
       rubocop
       rubocop-rspec
 
+GIT
+  remote: https://github.com/foobara/spec-helpers.git
+  revision: f59ca59324280455353ef3ba85f95ce7da24bfdc
+  specs:
+    foobara-spec-helpers (0.1.0)
+
 PATH
   remote: .
   specs:
@@ -120,6 +126,7 @@ PLATFORMS
 DEPENDENCIES
   foobara!
   foobara-rubocop-rules!
+  foobara-spec-helpers!
   guard-rspec
   pry
   pry-byebug
