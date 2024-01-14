@@ -156,3 +156,9 @@ filter_repo_command="git-filter-repo $git_repo_paths --force --prune-degenerate 
 
 echo "$filter_repo_command"
 =end
+
+# ./extract_repo.rb git@github.com:foobara/foobara.git git-filter-repo spec/foobara/truncated_inspect/ spec/foobara/common/util_spec.rb projects/util/
+
+# spec/foobara/truncated_inspect/
+# spec/foobara/common/util_spec.rb
+# projects/util/
