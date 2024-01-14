@@ -97,6 +97,9 @@ class ExtractRepo
         end
       end
     end
+
+    file_paths.sort!
+    file_paths.uniq!
   end
 
   def determine_historic_paths
@@ -109,6 +112,9 @@ class ExtractRepo
         end
       end
     end
+
+    file_paths.sort!
+    file_paths.uniq!
   end
 
   def filter_repo
