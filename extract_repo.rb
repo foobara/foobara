@@ -120,7 +120,7 @@ class ExtractRepo
   def filter_repo
     chdir repo_dir do
       path_args = file_paths.map { |path| "--path #{path}" }.join(" ")
-      sh "git-filter-repo #{path_args} --force --prune-degenerate always", dry_run: true
+      sh "git-filter-repo #{path_args} --force --prune-degenerate always"
     end
   end
 
