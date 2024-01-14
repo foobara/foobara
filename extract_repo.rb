@@ -8,7 +8,8 @@ class ExtractRepo
       new(repo_url, paths).execute
     end
   end
-  attr_reader :repo_url, :paths, :file_paths
+
+  attr_accessor :repo_url, :paths, :file_paths
 
   def initialize(repo_url, paths)
     self.repo_url = repo_url
@@ -26,6 +27,10 @@ class ExtractRepo
     determine_historic_paths
     filter_repo
     remove_replaces
+  end
+
+  def chdir(dir, &)
+    Dir.chdir(File.expand_path(dir), &)
   end
 
   def extract_dir
@@ -49,34 +54,34 @@ class ExtractRepo
   end
 
   def clone_repo
-    Dir.chdir extract_dir do
+    chdir extract_dir do
       sh "git clone #{repo_url}"
     end
   end
 
   def remove_origin
-    Dir.chdir repo_dir do
+    chdir repo_dir do
       sh "git remote rm origin"
     end
   end
 
   def remove_tags
-    Dir.chdir repo_dir do
+    chdir repo_dir do
       sh "for i in `git tag`; do git tag -d $i; done"
     end
   end
 
   def remove_replaces
-    Dir.chdir repo_dir do
+    chdir repo_dir do
       sh "git replace -l | xargs -n 1 git replace -d"
     end
   end
 
   def determine_paths
-    Dir.chdir repo_dir do
+    chdir repo_dir do
       self.file_paths = []
 
-      Dir.chdir repo_dir do
+      chdir repo_dir do
         paths.each do |path|
           unless File.exist?(path)
             raise "Path #{path} does not exist in repo #{repo_dir}"
@@ -95,7 +100,7 @@ class ExtractRepo
   end
 
   def determine_historic_paths
-    Dir.chdir repo_dir do
+    chdir repo_dir do
       file_paths.dup.each do |file_path|
         historic_paths = sh "git log --follow --name-only --pretty=format: -- \"#{file_path}\""
 
@@ -107,7 +112,7 @@ class ExtractRepo
   end
 
   def filter_repo
-    Dir.chdir repo_dir do
+    chdir repo_dir do
       path_args = file_paths.map { |path| "--path #{path}" }.join(" ")
       sh "git-filter-repo #{path_args} --force --prune-degenerate always", dry_run: true
     end
@@ -123,6 +128,8 @@ class ExtractRepo
     unless $CHILD_STATUS.success?
       raise "Command #{cmd} failed with status #{$CHILD_STATUS.exitstatus}: #{result}"
     end
+
+    result
   end
 end
 
