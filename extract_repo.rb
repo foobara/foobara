@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require "pry"
 require "English"
 
 class ExtractRepo
@@ -98,8 +99,7 @@ class ExtractRepo
       end
     end
 
-    file_paths.sort!
-    file_paths.uniq!
+    normalize_file_paths
   end
 
   def determine_historic_paths
@@ -113,8 +113,13 @@ class ExtractRepo
       end
     end
 
+    normalize_file_paths
+  end
+
+  def normalize_file_paths
     file_paths.sort!
     file_paths.uniq!
+    file_paths.reject!(&:empty?)
   end
 
   def filter_repo
