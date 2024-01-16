@@ -2,8 +2,8 @@ require_relative "monorepo/project"
 
 module Foobara
   class << self
-    def require_file(project, path)
-      Util.require_project_file(project, path)
+    def require_project_file(project, path)
+      require_relative("../../../#{project}/src/#{path}")
     end
 
     def reset_alls
