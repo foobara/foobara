@@ -12,6 +12,12 @@ GIT
   specs:
     foobara-spec-helpers (0.1.0)
 
+GIT
+  remote: https://github.com/foobara/util.git
+  revision: 57d4e606ad1cb88144b3837ca9c2dae69bf20d22
+  specs:
+    foobara-util (0.1.0)
+
 PATH
   remote: .
   specs:
@@ -127,6 +133,7 @@ DEPENDENCIES
   foobara!
   foobara-rubocop-rules!
   foobara-spec-helpers!
+  foobara-util!
   guard-rspec
   pry
   pry-byebug

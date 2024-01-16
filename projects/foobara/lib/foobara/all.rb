@@ -1,3 +1,4 @@
+require "foobara/util"
 require "foobara/monorepo"
 
 module Foobara
@@ -8,8 +9,6 @@ module Foobara
 
   module Monorepo
     # universal
-    project "util"
-
     project "version"
 
     # could be independent projects
