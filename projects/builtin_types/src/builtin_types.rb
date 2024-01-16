@@ -1,7 +1,7 @@
 module Foobara
-  Util.require_project_file("builtin_types", "duck")
-  Util.require_project_file("builtin_types", "atomic_duck")
-  Util.require_project_file("builtin_types", "duckture")
+  Foobara.require_project_file("builtin_types", "duck")
+  Foobara.require_project_file("builtin_types", "atomic_duck")
+  Foobara.require_project_file("builtin_types", "duckture")
 
   module BuiltinTypes
     class << self

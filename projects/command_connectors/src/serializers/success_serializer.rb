@@ -1,5 +1,5 @@
 module Foobara
-  require_file("command_connectors", "serializer")
+  require_project_file("command_connectors", "serializer")
 
   module CommandConnectors
     module Serializers

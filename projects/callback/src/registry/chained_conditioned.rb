@@ -1,4 +1,4 @@
-Foobara.require_file("callback", "registry/conditioned")
+Foobara.require_project_file("callback", "registry/conditioned")
 
 module Foobara
   module Callback

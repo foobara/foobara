@@ -1,4 +1,4 @@
-Foobara.require_file(
+Foobara.require_project_file(
   "type_declarations",
   "handlers/extend_registered_type_declaration/to_type_transformer"
 )

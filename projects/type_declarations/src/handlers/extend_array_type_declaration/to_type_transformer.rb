@@ -1,5 +1,5 @@
-Foobara.require_file("type_declarations", "handlers/registered_type_declaration/to_type_transformer")
-Foobara.require_file("type_declarations", "handlers/extend_associative_array_type_declaration")
+Foobara.require_project_file("type_declarations", "handlers/registered_type_declaration/to_type_transformer")
+Foobara.require_project_file("type_declarations", "handlers/extend_associative_array_type_declaration")
 
 module Foobara
   module TypeDeclarations

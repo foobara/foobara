@@ -1,6 +1,6 @@
 module Foobara
-  require_file("type_declarations", "namespace")
-  require_file("type_declarations", "error_extension")
+  require_project_file("type_declarations", "namespace")
+  require_project_file("type_declarations", "error_extension")
 
   module TypeDeclarations
     class << self

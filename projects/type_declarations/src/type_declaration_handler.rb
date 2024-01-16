@@ -1,4 +1,4 @@
-Foobara.require_file("type_declarations", "with_registries")
+Foobara.require_project_file("type_declarations", "with_registries")
 
 module Foobara
   module TypeDeclarations
