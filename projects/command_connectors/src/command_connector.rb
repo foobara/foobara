@@ -212,7 +212,7 @@ module Foobara
         raise "no category symbol for #{object}" unless category_symbol
 
         namespace, deprecated_namespace = if object.is_a?(Types::Type)
-                                            [object.foobara_parent_namespace, object.created_in_deprecated_namespace]
+                                            [object.created_in_namespace, object.created_in_deprecated_namespace]
                                           else
                                             [Foobara::Namespace.current, TypeDeclarations::Namespace.current]
                                           end

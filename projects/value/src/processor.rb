@@ -102,11 +102,12 @@ module Foobara
       end
 
       attr_accessor :declaration_data, :parent_declaration_data
-      attr_writer :created_in_deprecated_namespace
+      attr_writer :created_in_namespace, :created_in_deprecated_namespace
 
       def initialize(*args)
         unless TypeDeclarations::Namespace.current_global?
           self.created_in_deprecated_namespace = TypeDeclarations::Namespace.current
+          self.created_in_namespace = Foobara::Namespace.current
         end
 
         expected_arg_count = requires_declaration_data? ? 1 : 0
@@ -129,6 +130,11 @@ module Foobara
 
       def created_in_deprecated_namespace
         @created_in_deprecated_namespace ||= GlobalDomain.foobara_type_namespace
+      end
+
+      def created_in_namespace
+        # TODO: can we find a way to not depend on domains in this project?
+        @created_in_namespace ||= GlobalDomain
       end
 
       def name
@@ -161,7 +167,7 @@ module Foobara
       end
 
       def possible_errors
-        Foobara::Namespace.use self, created_in_deprecated_namespace do
+        Foobara::Namespace.use created_in_namespace, created_in_deprecated_namespace do
           error_classes.to_h do |error_class|
             # TODO: strange that this is set this way?
             key = ErrorKey.new(symbol: error_class.symbol, category: error_class.category)
