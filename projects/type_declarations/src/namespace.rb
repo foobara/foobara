@@ -53,6 +53,11 @@ module Foobara
           Thread.current[:foobara_namespace] || global
         end
 
+        def current_global?
+          current = Thread.current[:foobara_namespace]
+          current.nil? || current.name.to_sym == :global
+        end
+
         def using(namespace_or_symbol)
           namespace = if namespace_or_symbol.is_a?(Namespace)
                         namespace_or_symbol
@@ -113,6 +118,7 @@ module Foobara
           symbol = symbol.type_symbol
         end
 
+        # TODO: get down to one namespace system
         type_registries.any? { |registry| registry.registered?(symbol) } ||
           Foobara.foobara_type_registered?(symbol)
       end
@@ -151,6 +157,7 @@ module Foobara
       end
 
       def type_declaration_handler_for(type_declaration)
+        # TODO: is it actually necessary to enter the namespace for this?
         Namespace.using self do
           handlers.each do |handler|
             return handler if handler.applicable?(type_declaration)
@@ -172,6 +179,7 @@ module Foobara
       def type_for_declaration(*type_declaration_bits)
         type_declaration = type_declaration_bits_to_type_declaration(type_declaration_bits)
 
+        # TODO: is it actually necessary to enter the namespace for this?
         Namespace.using self do
           handler = type_declaration_handler_for(type_declaration)
           handler.process_value!(type_declaration)
