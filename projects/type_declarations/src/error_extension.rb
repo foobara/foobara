@@ -23,11 +23,12 @@ module Foobara
 
     module ErrorExtension
       include Concern
+      # TODO: replace this with some kind of Foobara::Namespace version
       include WithRegistries
 
       module ClassMethods
         def context_type
-          @context_type ||= type_for_declaration(context_type_declaration)
+          @context_type ||= Foobara::Domain.foobara_type_from_declaration(self, context_type_declaration)
         end
 
         def context_type_declaration

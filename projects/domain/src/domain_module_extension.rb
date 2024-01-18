@@ -108,6 +108,12 @@ module Foobara
                                       end
         end
 
+        def foobara_type_from_declaration(type_declaration)
+          Foobara::Namespace.use self, foobara_type_namespace do
+            foobara_type_namespace.type_for_declaration(type_declaration)
+          end
+        end
+
         # TODO: kill this
         def foobara_type_registered?(type_or_symbol)
           foobara_type_namespace.type_registered?(type_or_symbol)
