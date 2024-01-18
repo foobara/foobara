@@ -24,6 +24,19 @@ RSpec.describe Foobara::Domain do
         expect(described_class.to_domain(nil)).to be(Foobara::GlobalDomain)
       end
     end
+
+    context "when non-domain scoped to a domain" do
+      before do
+        stub_module "SomeDomain" do
+          foobara_domain!
+        end
+        stub_class "SomeDomain::SomeError", Foobara::RuntimeError
+      end
+
+      it "returns that domain" do
+        expect(described_class.to_domain(SomeDomain::SomeError)).to be(SomeDomain)
+      end
+    end
   end
 
   describe ".create" do
