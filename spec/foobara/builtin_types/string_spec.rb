@@ -29,7 +29,7 @@ RSpec.describe ":string" do
 
     context "with transformers" do
       let(:type) do
-        Foobara::TypeDeclarations::Namespace.type_for_declaration(:string, :downcase)
+        Foobara::TypeDeclarations::TypeBuilder.type_for_declaration(:string, :downcase)
       end
 
       context "when uppercase" do
@@ -41,7 +41,7 @@ RSpec.describe ":string" do
 
     context "with transformers and empty processor data" do
       let(:type) do
-        Foobara::TypeDeclarations::Namespace.type_for_declaration(:string, :downcase, {})
+        Foobara::TypeDeclarations::TypeBuilder.type_for_declaration(:string, :downcase, {})
       end
 
       context "when uppercase" do
@@ -53,7 +53,7 @@ RSpec.describe ":string" do
 
     context "with validators" do
       let(:type) do
-        Foobara::TypeDeclarations::Namespace.type_for_declaration(:string, max_length: 10)
+        Foobara::TypeDeclarations::TypeBuilder.type_for_declaration(:string, max_length: 10)
       end
 
       context "when too long" do
@@ -70,7 +70,7 @@ RSpec.describe ":string" do
 
     context "with :matches validator" do
       let(:type) do
-        Foobara::TypeDeclarations::Namespace.type_for_declaration(:string, matches: /bar/i)
+        Foobara::TypeDeclarations::TypeBuilder.type_for_declaration(:string, matches: /bar/i)
       end
 
       context "when matches" do
@@ -93,7 +93,7 @@ RSpec.describe ":string" do
 
     context "with validators and transformers" do
       let(:type) do
-        Foobara::TypeDeclarations::Namespace.type_for_declaration(:string, :downcase, max_length: 10)
+        Foobara::TypeDeclarations::TypeBuilder.type_for_declaration(:string, :downcase, max_length: 10)
       end
 
       context "when uppercase" do

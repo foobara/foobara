@@ -1,6 +1,6 @@
 module Foobara
   module TypeDeclarations
-    class Namespace
+    class TypeBuilder
       include TruncatedInspect
 
       class NoTypeDeclarationHandlerFoundError < StandardError; end
@@ -37,7 +37,7 @@ module Foobara
         end
 
         def using(namespace_or_symbol)
-          namespace = if namespace_or_symbol.is_a?(Namespace)
+          namespace = if namespace_or_symbol.is_a?(TypeBuilder)
                         namespace_or_symbol
                       elsif namespace_or_symbol.is_a?(Symbol)
                         namespace_for_symbol(namespace_or_symbol)
@@ -136,7 +136,7 @@ module Foobara
 
       def type_declaration_handler_for(type_declaration)
         # TODO: is it actually necessary to enter the namespace for this?
-        Namespace.using self do
+        TypeBuilder.using self do
           handlers.each do |handler|
             return handler if handler.applicable?(type_declaration)
           end
@@ -158,7 +158,7 @@ module Foobara
         type_declaration = type_declaration_bits_to_type_declaration(type_declaration_bits)
 
         # TODO: is it actually necessary to enter the namespace for this?
-        Namespace.using self do
+        TypeBuilder.using self do
           handler = type_declaration_handler_for(type_declaration)
           handler.process_value!(type_declaration)
         end

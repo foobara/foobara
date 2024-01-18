@@ -13,7 +13,7 @@ module Foobara
       def install!
         TypeDeclarations.register_type_declaration(TypeDeclarations::Handlers::ExtendEntityTypeDeclaration.new)
 
-        model = TypeDeclarations::Namespace.type_for_symbol(:model)
+        model = TypeDeclarations::TypeBuilder.type_for_symbol(:model)
         BuiltinTypes.build_and_register!(:entity, model, nil)
       end
 

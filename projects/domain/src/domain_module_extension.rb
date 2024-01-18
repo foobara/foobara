@@ -95,7 +95,7 @@ module Foobara
         # TODO: kill this off
         def foobara_type_namespace
           accesses = self == GlobalDomain ? [] : GlobalDomain.foobara_type_namespace
-          @foobara_type_namespace ||= TypeDeclarations::Namespace.new(foobara_full_domain_name, accesses:)
+          @foobara_type_namespace ||= TypeDeclarations::TypeBuilder.new(foobara_full_domain_name, accesses:)
         end
 
         def foobara_type_from_declaration(type_declaration)

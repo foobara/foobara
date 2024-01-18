@@ -5,23 +5,23 @@ module Foobara
 
       module ClassMethods
         def type_for_declaration(...)
-          Namespace.current.type_for_declaration(...)
+          TypeBuilder.current.type_for_declaration(...)
         end
 
         def type_declaration_handler_for(...)
-          Namespace.current.type_declaration_handler_for(...)
+          TypeBuilder.current.type_declaration_handler_for(...)
         end
 
         def type_for_symbol(...)
-          Namespace.current.type_for_symbol(...)
+          TypeBuilder.current.type_for_symbol(...)
         end
 
         def type_registered?(...)
-          Namespace.current.type_registered?(...)
+          TypeBuilder.current.type_registered?(...)
         end
 
         def handler_for_class(...)
-          Namespace.current.handler_for_class(...)
+          TypeBuilder.current.handler_for_class(...)
         end
       end
 

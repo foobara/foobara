@@ -129,11 +129,11 @@ string = build_and_register!(:string, atomic_duck)
 You could test this in a console with:
 
 ```ruby
-$ bin/console
-irb(main):001:0> type = Foobara::TypeDeclarations::Namespace.type_for_declaration(:string, :downcase, max_length: 10)
+$ bin / console
+irb(main) : 001 : 0 > type = Foobara::TypeDeclarations::TypeBuilder.type_for_declaration(:string, :downcase, max_length: 10)
 => #<Foobara::Types::Type:0x00007fb12f5ca160 ...>
-irb(main):002:0> type.process_value!("Foo Bar")
+  irb(main) : 002 : 0 > type.process_value!("Foo Bar")
 => "foo bar"
-irb(main):003:0> type.process_value("Foo Bar Baz").errors.first.message
+irb(main) : 003 : 0 > type.process_value("Foo Bar Baz").errors.first.message
 => "Max length exceeded. Cannot be longer than 10"
 ```

@@ -15,7 +15,7 @@ module Foobara
           return @input_type if defined?(@input_type)
 
           @input_type = if input_type_declaration
-                          Namespace.current.type_for_declaration(input_type_declaration)
+                          TypeBuilder.current.type_for_declaration(input_type_declaration)
                         end
         end
 
@@ -23,7 +23,7 @@ module Foobara
           return @output_type if defined?(@output_type)
 
           @output_type = if output_type_declaration
-                           Namespace.current.type_for_declaration(output_type_declaration)
+                           TypeBuilder.current.type_for_declaration(output_type_declaration)
                          end
         end
       end

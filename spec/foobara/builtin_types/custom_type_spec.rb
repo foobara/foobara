@@ -1,7 +1,7 @@
 RSpec.describe "custom types" do
   context "when defining a custom complex type" do
     after do
-      Foobara::TypeDeclarations::Namespace.namespaces.delete(namespace)
+      Foobara::TypeDeclarations::TypeBuilder.namespaces.delete(namespace)
     end
 
     let(:complex_class) do
@@ -160,11 +160,11 @@ RSpec.describe "custom types" do
     end
 
     let(:namespace) do
-      Foobara::TypeDeclarations::Namespace.new(:custom_type_spec)
+      Foobara::TypeDeclarations::TypeBuilder.new(:custom_type_spec)
     end
 
     def in_namespace(&)
-      Foobara::TypeDeclarations::Namespace.using(namespace.name, &)
+      Foobara::TypeDeclarations::TypeBuilder.using(namespace.name, &)
     end
 
     before do
@@ -308,7 +308,7 @@ RSpec.describe "custom types" do
           it "raises" do
             expect {
               namespace.type_for_declaration(:custom_complex)
-            }.to raise_error(Foobara::TypeDeclarations::Namespace::NoTypeDeclarationHandlerFoundError)
+            }.to raise_error(Foobara::TypeDeclarations::TypeBuilder::NoTypeDeclarationHandlerFoundError)
           end
         end
 

@@ -4,7 +4,7 @@ RSpec.describe ":entity" do
   end
 
   let(:type) do
-    Foobara::TypeDeclarations::Namespace.type_for_declaration(type_declaration)
+    Foobara::TypeDeclarations::TypeBuilder.type_for_declaration(type_declaration)
   end
 
   let(:type_declaration) do
@@ -324,11 +324,11 @@ RSpec.describe ":entity" do
 
     describe "registering model on a namespace" do
       let(:namespace) do
-        Foobara::TypeDeclarations::Namespace.new("model registration test")
+        Foobara::TypeDeclarations::TypeBuilder.new("model registration test")
       end
 
       around do |example|
-        Foobara::TypeDeclarations::Namespace.using namespace do
+        Foobara::TypeDeclarations::TypeBuilder.using namespace do
           example.run
         end
       end

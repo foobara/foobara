@@ -20,11 +20,11 @@ module Foobara
         old_namespace = current
 
         if old_namespace == namespace
-          TypeDeclarations::Namespace.using(deprecated_namespace, &)
+          TypeDeclarations::TypeBuilder.using(deprecated_namespace, &)
         else
           begin
             Thread.current[:foobara_current_namespace] = namespace
-            TypeDeclarations::Namespace.using(deprecated_namespace, &)
+            TypeDeclarations::TypeBuilder.using(deprecated_namespace, &)
           ensure
             Thread.current[:foobara_current_namespace] = old_namespace
           end

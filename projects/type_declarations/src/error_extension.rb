@@ -23,7 +23,7 @@ module Foobara
 
     module ErrorExtension
       include Concern
-      # TODO: replace this with some kind of Foobara::Namespace version
+      # TODO: replace this with some kind of Foobara::TypeBuilder version
       include WithRegistries
 
       module ClassMethods

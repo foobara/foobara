@@ -1,6 +1,6 @@
 RSpec.describe Foobara::BuiltinTypes::Attributes::SupportedTransformers::Defaults do
   let(:type) {
-    Foobara::TypeDeclarations::Namespace.type_for_declaration(type_declaration)
+    Foobara::TypeDeclarations::TypeBuilder.type_for_declaration(type_declaration)
   }
 
   describe "defaults" do

@@ -1,5 +1,5 @@
 module Foobara
-  require_project_file("type_declarations", "namespace")
+  require_project_file("type_declarations", "type_builder")
   require_project_file("type_declarations", "error_extension")
 
   module TypeDeclarations

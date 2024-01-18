@@ -29,7 +29,7 @@ RSpec.describe ":associative_array" do
 
     context "when there's a key_type_declaration" do
       let(:type) do
-        Foobara::TypeDeclarations::Namespace.type_for_declaration(
+        Foobara::TypeDeclarations::TypeBuilder.type_for_declaration(
           :associative_array,
           key_type_declaration: :boolean
         )
@@ -76,7 +76,7 @@ RSpec.describe ":associative_array" do
 
     context "when there's a value_type_declaration" do
       let(:type) do
-        Foobara::TypeDeclarations::Namespace.type_for_declaration(
+        Foobara::TypeDeclarations::TypeBuilder.type_for_declaration(
           :associative_array,
           value_type_declaration: :boolean
         )

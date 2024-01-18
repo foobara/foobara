@@ -16,7 +16,7 @@ module Foobara
           def namespace
             # TODO: lets just couple this stuff. Currently this is overwritten by the extension.
             # :nocov:
-            TypeDeclarations::Namespace.current
+            TypeDeclarations::TypeBuilder.current
             # :nocov:
           end
         end

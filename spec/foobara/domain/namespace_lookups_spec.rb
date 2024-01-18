@@ -12,7 +12,7 @@ RSpec.describe "Foobara namespace lookup" do
     stub_class "OrgA::DomainA" do
       foobara_domain!
     end
-    custom_type_a = Foobara::TypeDeclarations::Namespace.current.type_for_declaration(
+    custom_type_a = Foobara::TypeDeclarations::TypeBuilder.current.type_for_declaration(
       a: :number,
       b: :string
     )
@@ -26,7 +26,7 @@ RSpec.describe "Foobara namespace lookup" do
     stub_module "OrgA::DomainB" do
       foobara_domain!
     end
-    custom_type_b = Foobara::TypeDeclarations::Namespace.current.type_for_declaration(
+    custom_type_b = Foobara::TypeDeclarations::TypeBuilder.current.type_for_declaration(
       c: :number,
       d: :string
     )
@@ -72,7 +72,7 @@ RSpec.describe "Foobara namespace lookup" do
     stub_class "GlobalDomain::Foo::Bar::CommandA", Foobara::Command
   end
 
-  let(:number) { Foobara::TypeDeclarations::Namespace.current.type_for_declaration(:number) }
+  let(:number) { Foobara::TypeDeclarations::TypeBuilder.current.type_for_declaration(:number) }
 
   describe "#lookup_*" do
     it "finds the expected objects given certain paths" do

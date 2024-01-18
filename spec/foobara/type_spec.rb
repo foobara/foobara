@@ -1,5 +1,5 @@
 RSpec.describe Foobara::Types do
-  let(:type) { Foobara::TypeDeclarations::Namespace.type_for_declaration(type_declaration) }
+  let(:type) { Foobara::TypeDeclarations::TypeBuilder.type_for_declaration(type_declaration) }
 
   context "when created from scratch" do
     let(:type) do

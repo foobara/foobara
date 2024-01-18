@@ -214,7 +214,7 @@ module Foobara
         namespace, deprecated_namespace = if object.is_a?(Types::Type)
                                             [object.created_in_namespace, object.created_in_deprecated_namespace]
                                           else
-                                            [Foobara::Namespace.current, TypeDeclarations::Namespace.current]
+                                            [Foobara::Namespace.current, TypeDeclarations::TypeBuilder.current]
                                           end
 
         cat = h[category_symbol] ||= {}
