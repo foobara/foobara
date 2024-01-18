@@ -10,8 +10,8 @@ module Foobara
           end
 
           def first
-            # TODO: don all queries need to do this???
-            TypeDeclarations::Namespace.using namespace do
+            # TODO: don't all queries need to do this???
+            Foobara::Namespace.use entity_type, namespace do
               current_transaction_table.first
             end
           end

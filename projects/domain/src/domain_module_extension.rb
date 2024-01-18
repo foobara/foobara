@@ -133,7 +133,7 @@ module Foobara
         # TODO: kill this off
         def foobara_register_entity(name, attributes_type_declaration, model_base_class = nil)
           # TODO: introduce a Namespace#scope method to simplify this a bit
-          TypeDeclarations::Namespace.using foobara_type_namespace do
+          Foobara::Namespace.use self, foobara_type_namespace do
             handler = foobara_type_namespace.handler_for_class(
               Foobara::TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
             )

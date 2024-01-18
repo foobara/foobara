@@ -211,14 +211,15 @@ module Foobara
 
         raise "no category symbol for #{object}" unless category_symbol
 
-        namespace = if object.is_a?(Types::Type)
-                      TypeDeclarations::Namespace.namespace_for_type_registry(object.type_registry)
-                    else
-                      TypeDeclarations::Namespace.current
-                    end
+        namespace, deprecated_namespace = if object.is_a?(Types::Type)
+                                            [object.foobara_parent_namespace, object.created_in_deprecated_namespace]
+                                          else
+                                            [Foobara::Namespace.current, TypeDeclarations::Namespace.current]
+                                          end
 
         cat = h[category_symbol] ||= {}
-        cat[manifest_reference] = TypeDeclarations::Namespace.using namespace do
+        # TODO: do we really need to enter the namespace here for this?
+        cat[manifest_reference] = Foobara::Namespace.use namespace, deprecated_namespace do
           object.foobara_manifest(to_include: additional_to_include)
         end
 

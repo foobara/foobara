@@ -106,19 +106,17 @@ module Foobara
 
       # TODO: how do we handle the error_transformer's affects??
       def error_context_type_map
-        TypeDeclarations::Namespace.using command_class.domain.foobara_type_namespace do
-          runtime_errors = command_class.error_context_type_map.select do |_key, error_class|
-            error_class < Foobara::RuntimeError
-          end
-
-          map = inputs_type.possible_errors.transform_keys(&:to_s).merge(runtime_errors)
-
-          errors_transformers.each do |transformer|
-            map = transformer.transform_error_context_type_map(self, map)
-          end
-
-          map
+        runtime_errors = command_class.error_context_type_map.select do |_key, error_class|
+          error_class < Foobara::RuntimeError
         end
+
+        map = inputs_type.possible_errors.transform_keys(&:to_s).merge(runtime_errors)
+
+        errors_transformers.each do |transformer|
+          map = transformer.transform_error_context_type_map(self, map)
+        end
+
+        map
       end
 
       # TODO: fix this, should really match non-transformed structure.
