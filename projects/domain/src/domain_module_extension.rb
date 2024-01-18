@@ -3,6 +3,7 @@ module Foobara
     class NoSuchDomain < StandardError; end
 
     class << self
+      # TODO: move this to domain.rb
       def to_domain(object)
         case object
         when nil
@@ -20,13 +21,17 @@ module Foobara
         when Types::Type
           namespace = TypeDeclarations::Namespace.namespace_for_type(object)
           domain_for_namespace(namespace)
-        when Module
+        when Foobara::Scoped
           if object.foobara_domain?
             object
           else
-            # :nocov:
-            raise NoSuchDomain, "Couldn't determine domain for #{object}"
-            # :nocov:
+            parent = object.scoped_namespace
+
+            if parent
+              to_domain(parent)
+            else
+              GlobalDomain
+            end
           end
         else
           # :nocov:
