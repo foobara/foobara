@@ -105,7 +105,8 @@ module Foobara
       attr_writer :created_in_namespace, :created_in_deprecated_namespace
 
       def initialize(*args)
-        unless TypeDeclarations::Namespace.current_global?
+        # TODO: get this out of here somehow?
+        unless Foobara::Namespace.current == Foobara
           self.created_in_deprecated_namespace = TypeDeclarations::Namespace.current
           self.created_in_namespace = Foobara::Namespace.current
         end

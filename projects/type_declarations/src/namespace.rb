@@ -36,11 +36,6 @@ module Foobara
           Thread.current[:foobara_namespace] || GlobalDomain.foobara_type_namespace
         end
 
-        def current_global?
-          current = Thread.current[:foobara_namespace]
-          current.nil? || current == Foobara::GlobalDomain
-        end
-
         def using(namespace_or_symbol)
           namespace = if namespace_or_symbol.is_a?(Namespace)
                         namespace_or_symbol
