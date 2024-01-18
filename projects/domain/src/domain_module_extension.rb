@@ -37,10 +37,6 @@ module Foobara
         end
       end
 
-      def domain_for_namespace(namespace)
-        Foobara.foobara_all_domain.find { |domain| domain.foobara_type_namespace == namespace }
-      end
-
       def global
         GlobalDomain
       end
@@ -98,7 +94,7 @@ module Foobara
 
         # TODO: kill this off
         def foobara_type_namespace
-          accesses = self == GlobalDomain ? [] : [GlobalDomain.foobara_type_namespace]
+          accesses = self == GlobalDomain ? [] : GlobalDomain.foobara_type_namespace
           @foobara_type_namespace ||= TypeDeclarations::Namespace.new(foobara_full_domain_name, accesses:)
         end
 

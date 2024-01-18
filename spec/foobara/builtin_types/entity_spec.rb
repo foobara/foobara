@@ -337,7 +337,7 @@ RSpec.describe ":entity" do
         namespace.register_type(type.name, type)
       end
 
-      it "can be used by symbol", :focus do
+      it "can be used by symbol" do
         expect(namespace.type_for_declaration(:SomeEntity)).to be(type)
       end
 
