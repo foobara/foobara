@@ -128,7 +128,7 @@ module Foobara
       end
 
       def created_in_deprecated_namespace
-        @created_in_deprecated_namespace ||= TypeDeclarations::Namespace.global
+        @created_in_deprecated_namespace ||= GlobalDomain.foobara_type_namespace
       end
 
       def name

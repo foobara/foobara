@@ -46,7 +46,7 @@ module Foobara
     end
 
     def all_namespaces
-      [*all_domains.map(&:foobara_type_namespace), TypeDeclarations::Namespace.global]
+      [*all_domains.map(&:foobara_type_namespace), GlobalDomain.foobara_type_namespace]
     end
   end
 end

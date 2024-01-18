@@ -5,7 +5,7 @@ module Foobara
   module TypeDeclarations
     class << self
       def global_type_declaration_handler_registry
-        Namespace.global.type_declaration_handler_registry
+        GlobalDomain.foobara_type_namespace.type_declaration_handler_registry
       end
 
       def register_type_declaration(type_declaration_handler)

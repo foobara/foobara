@@ -18,11 +18,8 @@ module Foobara
           end
 
           domain
-        when Types::Type
-          namespace = TypeDeclarations::Namespace.namespace_for_type(object)
-          domain_for_namespace(namespace)
         when Foobara::Scoped
-          if object.foobara_domain?
+          if object.is_a?(Module) && object.foobara_domain?
             object
           else
             parent = object.scoped_namespace
@@ -38,10 +35,6 @@ module Foobara
           raise NoSuchDomain, "Couldn't determine domain for #{object}"
           # :nocov:
         end
-      end
-
-      def domain_for_namespace(namespace)
-        Foobara.foobara_all_domain.find { |domain| domain.foobara_type_namespace == namespace }
       end
 
       def global
@@ -101,11 +94,8 @@ module Foobara
 
         # TODO: kill this off
         def foobara_type_namespace
-          @foobara_type_namespace ||= if self == GlobalDomain
-                                        TypeDeclarations::Namespace.global
-                                      else
-                                        TypeDeclarations::Namespace.new(foobara_full_domain_name)
-                                      end
+          accesses = self == GlobalDomain ? [] : GlobalDomain.foobara_type_namespace
+          @foobara_type_namespace ||= TypeDeclarations::Namespace.new(foobara_full_domain_name, accesses:)
         end
 
         def foobara_type_from_declaration(type_declaration)

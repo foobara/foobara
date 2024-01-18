@@ -3,6 +3,14 @@ module Foobara
     class << self
       def reset_all
         Foobara::TypeDeclarations::Namespace.reset_all
+        # TODO: this doesn't really belong here. I think we need to maybe call reset in reverse order?
+        Foobara::Domain::DomainModuleExtension.all.each do |domain|
+          var = "@foobara_type_namespace"
+
+          if domain.instance_variable_defined?(var)
+            domain.remove_instance_variable(var)
+          end
+        end
 
         # TODO: this feels like the wrong place to do this but doing it here for now to make sure it's done when
         # most important
