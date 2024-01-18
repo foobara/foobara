@@ -50,6 +50,9 @@ module Foobara
             self.attributes_type = new_type
 
             set_model_type
+          rescue => e
+            binding.pry
+            raise
           end
 
           def set_model_type

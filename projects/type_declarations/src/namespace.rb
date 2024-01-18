@@ -13,15 +13,10 @@ module Foobara
         end
 
         def global
-          @global ||= new(
-            :global,
-            type_registry: Types.global_registry,
-            accesses: []
-          )
+          GlobalDomain.foobara_type_namespace
         end
 
         def reset_all
-          remove_instance_variable("@global") if instance_variable_defined?("@global")
           remove_instance_variable("@namespaces") if instance_variable_defined?("@namespaces")
         end
 
@@ -55,7 +50,7 @@ module Foobara
 
         def current_global?
           current = Thread.current[:foobara_namespace]
-          current.nil? || current.name.to_sym == :global
+          current.nil? || current == Foobara::GlobalDomain
         end
 
         def using(namespace_or_symbol)
@@ -94,9 +89,9 @@ module Foobara
 
       def initialize(
         name,
+        accesses: [],
         type_declaration_handler_registry: TypeDeclarations::TypeDeclarationHandlerRegistry.new(enforce_unique: false),
-        type_registry: Types::Registry.new(name),
-        accesses: self.class.global
+        type_registry: Types::Registry.new(name)
       )
         self.name = name
         self.type_declaration_handler_registry = type_declaration_handler_registry
