@@ -77,7 +77,7 @@ module Foobara
           def types_depended_on
             # TODO: is there a simpler way to wrap these methods in this namespace?
             # something aspect-oriented-ish?
-            @types_depended_on ||= TypeDeclarations::Namespace.using namespace do
+            @types_depended_on ||= begin
               types = inputs_types_depended_on | result_types_depended_on | errors_types_depended_on
 
               unless depends_on_entities.empty?
@@ -91,41 +91,35 @@ module Foobara
           end
 
           def inputs_types_depended_on
-            @inputs_types_depended_on ||= TypeDeclarations::Namespace.using namespace do
-              if inputs_type
-                if inputs_type.registered?
-                  # TODO: if we ever change from attributes-only inputs type
-                  # then this will be handy
-                  # :nocov:
-                  Set[inputs_type]
-                  # :nocov:
-                else
-                  inputs_type.types_depended_on
-                end
-              else
-                Set.new
-              end
-            end
+            @inputs_types_depended_on ||= if inputs_type
+                                            if inputs_type.registered?
+                                              # TODO: if we ever change from attributes-only inputs type
+                                              # then this will be handy
+                                              # :nocov:
+                                              Set[inputs_type]
+                                              # :nocov:
+                                            else
+                                              inputs_type.types_depended_on
+                                            end
+                                          else
+                                            Set.new
+                                          end
           end
 
           def result_types_depended_on
-            @result_types_depended_on ||= TypeDeclarations::Namespace.using namespace do
-              if result_type
-                if result_type.registered?
-                  Set[result_type]
-                else
-                  result_type.types_depended_on
-                end
-              else
-                Set.new
-              end
-            end
+            @result_types_depended_on ||= if result_type
+                                            if result_type.registered?
+                                              Set[result_type]
+                                            else
+                                              result_type.types_depended_on
+                                            end
+                                          else
+                                            Set.new
+                                          end
           end
 
           def errors_types_depended_on
-            @errors_types_depended_on ||= TypeDeclarations::Namespace.using namespace do
-              error_context_type_map.values.map(&:types_depended_on).inject(:|) || Set.new
-            end
+            @errors_types_depended_on ||= error_context_type_map.values.map(&:types_depended_on).inject(:|) || Set.new
           end
         end
 

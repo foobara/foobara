@@ -85,29 +85,27 @@ module Foobara
       end
 
       def possible_errors(mutable: true)
-        TypeDeclarations::Namespace.using namespace do
-          if mutable == true
-            attributes_type.possible_errors
-          elsif mutable
-            element_types = attributes_type.element_types
+        if mutable == true
+          attributes_type.possible_errors
+        elsif mutable
+          element_types = attributes_type.element_types
 
-            h = {}
+          h = {}
 
-            Util.array(mutable).each do |attribute_name|
-              attribute_name = attribute_name.to_sym
+          Util.array(mutable).each do |attribute_name|
+            attribute_name = attribute_name.to_sym
 
-              element_types[attribute_name].possible_errors.each_pair do |key, value|
-                error_key = ErrorKey.parse(key)
-                error_key.prepend_path!(attribute_name)
+            element_types[attribute_name].possible_errors.each_pair do |key, value|
+              error_key = ErrorKey.parse(key)
+              error_key.prepend_path!(attribute_name)
 
-                h[error_key.to_sym] = value
-              end
+              h[error_key.to_sym] = value
             end
-
-            h
-          else
-            {}
           end
+
+          h
+        else
+          {}
         end
       end
 
