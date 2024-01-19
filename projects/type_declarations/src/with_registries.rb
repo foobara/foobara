@@ -12,8 +12,8 @@ module Foobara
           TypeBuilder.current.type_declaration_handler_for(...)
         end
 
-        def type_for_symbol(...)
-          TypeBuilder.current.type_for_symbol(...)
+        def type_for_symbol(symbol)
+          Foobara::Namespace.current.foobara_lookup_type!(symbol)
         end
 
         def type_registered?(...)

@@ -1,6 +1,7 @@
 RSpec.describe "custom types" do
   context "when defining a custom complex type" do
     after do
+      Foobara.reset_alls
       Foobara::TypeDeclarations::TypeBuilder.namespaces.delete(namespace)
     end
 
@@ -320,6 +321,10 @@ RSpec.describe "custom types" do
           before do
             # TODO: stop registering these on type builders
             namespace.register_type(:custom_complex, type)
+
+            # TODO: make this less awkward...
+            Foobara::GlobalDomain.foobara_register(type)
+            type.foobara_parent_namespace = Foobara::GlobalDomain
           end
 
           it "gives the complex type for the complex symbol" do

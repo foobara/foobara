@@ -323,8 +323,11 @@ RSpec.describe ":entity" do
     end
 
     describe "registering model on a namespace" do
+      let(:domain) do
+        Foobara::GlobalDomain
+      end
       let(:namespace) do
-        Foobara::TypeDeclarations::TypeBuilder.new("model registration test")
+        domain.foobara_type_namespace
       end
 
       around do |example|
@@ -333,17 +336,15 @@ RSpec.describe ":entity" do
         end
       end
 
-      before do
-        namespace.register_type(type.name, type)
-      end
-
       it "can be used by symbol" do
-        expect(namespace.type_for_declaration(:SomeEntity)).to be(type)
+        expect(type.target_class).to eq(Foobara::Entity::SomeEntity)
+        expect(domain.foobara_lookup_type!(:SomeEntity).target_class).to eq(Foobara::Entity::SomeEntity)
       end
 
       context "when used as attribute type" do
         let(:new_type) do
-          namespace.type_for_declaration(
+          type
+          domain.foobara_type_from_declaration(
             first_name: :string,
             some_model: :SomeEntity
           )
@@ -371,6 +372,7 @@ RSpec.describe ":entity" do
 
         describe "Foobara.manifest" do
           it "contains the type for the model" do
+            type
             expect(Foobara.manifest[:type][:SomeEntity][:declaration_data][:name]).to eq("SomeEntity")
           end
         end
@@ -394,7 +396,7 @@ RSpec.describe ":entity" do
       end
       let(:model_module) { domain_module }
       let(:type) do
-        domain_module.foobara_type_namespace.type_for_declaration(type_declaration)
+        domain_module.foobara_type_from_declaration(type_declaration)
       end
 
       let(:constructed_model) do
@@ -403,7 +405,7 @@ RSpec.describe ":entity" do
 
       it "can be used by symbol" do
         expect(type.name).to eq("SomeEntity")
-        expect(domain_module.foobara_type_namespace.type_for_declaration(:SomeEntity)).to be(type)
+        expect(domain_module.foobara_type_from_declaration(:SomeEntity)).to be(type)
         expect(constructed_model.domain.foobara_type_registered?("SomeEntity")).to be(true)
       end
 

@@ -10,7 +10,7 @@ module Foobara
 
         module ClassMethods
           def type_for_declaration(...)
-            namespace.type_for_declaration(...)
+            domain.foobara_type_from_declaration(...)
           end
 
           def namespace

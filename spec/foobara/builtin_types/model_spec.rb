@@ -273,7 +273,7 @@ RSpec.describe ":model" do
 
     it "can be used by symbol" do
       expect(type.name).to eq("SomeModel")
-      expect(domain_module.foobara_type_namespace.type_for_declaration(:SomeModel)).to be(type)
+      expect(domain_module.foobara_lookup_type!(:SomeModel)).to be(type)
     end
 
     it "is registered where expected" do
