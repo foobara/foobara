@@ -42,12 +42,11 @@ module Foobara
       def initialize(
         name,
         accesses: GlobalDomain.foobara_type_builder,
-        type_declaration_handler_registry: TypeDeclarations::TypeDeclarationHandlerRegistry.new(enforce_unique: false)
+        type_declaration_handler_registry: TypeDeclarations::TypeDeclarationHandlerRegistry.new
       )
         self.name = name
         self.type_declaration_handler_registry = type_declaration_handler_registry
-
-        self.accesses = Util.array(accesses)
+        self.accesses = Util.array(accesses).to_set
       end
 
       def accesses_up_hierarchy
@@ -93,6 +92,8 @@ module Foobara
           handler.process_value!(type_declaration)
         end
       end
+
+      private
 
       def type_declaration_bits_to_type_declaration(type_declaration_bits)
         case type_declaration_bits.length
