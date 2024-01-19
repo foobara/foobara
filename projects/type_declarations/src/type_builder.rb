@@ -6,20 +6,6 @@ module Foobara
       class NoTypeDeclarationHandlerFoundError < StandardError; end
 
       class << self
-        def new(...)
-          super.tap do |instance|
-            namespaces << instance
-          end
-        end
-
-        def reset_all
-          remove_instance_variable("@namespaces") if instance_variable_defined?("@namespaces")
-        end
-
-        def namespaces
-          @namespaces ||= []
-        end
-
         def current
           Thread.current[:foobara_type_builder] || GlobalDomain.foobara_type_builder
         end

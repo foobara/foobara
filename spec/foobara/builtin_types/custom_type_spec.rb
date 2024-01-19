@@ -2,7 +2,6 @@ RSpec.describe "custom types" do
   context "when defining a custom complex type" do
     after do
       Foobara.reset_alls
-      Foobara::TypeDeclarations::TypeBuilder.namespaces.delete(namespace)
     end
 
     let(:complex_class) do
