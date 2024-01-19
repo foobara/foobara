@@ -159,12 +159,13 @@ RSpec.describe "custom types" do
       PointlessValidator
     end
 
+    # TODO: rename this...
     let(:namespace) do
       Foobara::TypeDeclarations::TypeBuilder.new(:custom_type_spec)
     end
 
     def in_namespace(&)
-      Foobara::TypeDeclarations::TypeBuilder.using(namespace.name, &)
+      Foobara::TypeDeclarations::TypeBuilder.using(namespace, &)
     end
 
     before do
@@ -317,6 +318,7 @@ RSpec.describe "custom types" do
           let(:type) { type_declaration_handler.process_value!(type: :custom_complex, be_pointless: :true_symbol) }
 
           before do
+            # TODO: stop registering these on type builders
             namespace.register_type(:custom_complex, type)
           end
 

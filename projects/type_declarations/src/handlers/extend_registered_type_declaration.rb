@@ -15,7 +15,7 @@ module Foobara
         end
 
         def priority
-          Priority::LOW
+          Priority::LOWEST
         end
       end
     end

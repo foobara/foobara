@@ -13,7 +13,7 @@ module Foobara
         end
 
         def priority
-          Priority::MEDIUM
+          Priority::LOW
         end
       end
     end

@@ -10,6 +10,7 @@ module Foobara
         HIGH = 10
         MEDIUM = 20
         LOW = 30
+        LOWEST = 40
       end
 
       class << self

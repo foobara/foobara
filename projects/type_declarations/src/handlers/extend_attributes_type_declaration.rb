@@ -11,6 +11,10 @@ module Foobara
         def starting_desugarizers
           starting_desugarizers_without_inherited
         end
+
+        def priority
+          Priority::LOW
+        end
       end
     end
   end

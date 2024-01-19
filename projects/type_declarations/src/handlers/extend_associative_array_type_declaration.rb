@@ -12,7 +12,7 @@ module Foobara
 
         # TODO: do we really need this? Isn't this the default?
         def priority
-          Priority::MEDIUM
+          Priority::LOW
         end
       end
     end
