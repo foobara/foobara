@@ -23,7 +23,9 @@ module Foobara
         key = to_key(scoped)
 
         unless registry.key?(key)
+          # :nocov:
           raise NotRegisteredError, "#{key} is not registered"
+          # :nocov:
         end
 
         registry.delete(key)

@@ -10,6 +10,10 @@ module Foobara
         # :nocov:
       end
 
+      def registered?(path)
+        !lookup(path).nil?
+      end
+
       def unregister(_scoped)
         # :nocov:
         raise "Subclass responsibility"

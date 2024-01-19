@@ -18,17 +18,23 @@ module Foobara
         entry = registry[short_name]
 
         unless entry
+          # :nocov:
           raise NotRegisteredError, "Not registered: #{short_name.inspect}"
+          # :nocov:
         end
 
         registered = lookup([short_name])
 
         unless registered
+          # :nocov:
           raise NotRegisteredError, "Not registered: #{short_name.inspect}"
+          # :nocov:
         end
 
         unless entry.delete(registered)
+          # :nocov:
           raise NotRegisteredError, "Not registered: #{short_name.inspect}"
+          # :nocov:
         end
       end
 

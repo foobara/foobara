@@ -1,6 +1,7 @@
 module Foobara
   module Domain
     class NoSuchDomain < StandardError; end
+    class AlreadyRegisteredError < StandardError; end
 
     class << self
       # TODO: move this to domain.rb
@@ -115,11 +116,26 @@ module Foobara
           foobara_all_command(lookup_in_children: false)
         end
 
-        def foobara_register_model(model_class)
+        def foobara_register_model(model_class, reregister: false)
           type = model_class.model_type
           foobara_type_namespace.register_type(model_class.model_symbol, type)
-          foobara_register(type) # TODO: will this register it twice?
+
+          if foobara_registered?(type.scoped_full_name, absolute: true, lookup_in_children: false)
+            if reregister
+              foobara_unregister(type)
+            else
+              # :nocov:
+              raise AlreadyRegisteredError, "Already registered: #{type}"
+              # :nocov:
+            end
+          end
+
+          foobara_register(type)
           type.foobara_parent_namespace = self
+        end
+
+        def foobara_reregister_model(model_class)
+          foobara_register_model(model_class, reregister: true)
         end
 
         # TODO: kill this off
