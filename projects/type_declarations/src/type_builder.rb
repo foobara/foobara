@@ -43,8 +43,7 @@ module Foobara
           end
         end
 
-        foobara_delegate :type_registered,
-                         :type_registries,
+        foobara_delegate :type_registries,
                          :type_declaration_handler_registries,
                          :type_declaration_handler_for,
                          :type_declaration_handler_for_handler_class,
@@ -72,18 +71,6 @@ module Foobara
 
       def register_type(symbol, type)
         type_registry[symbol.to_sym] = type
-      end
-
-      def type_registered?(symbol)
-        if symbol.is_a?(::String)
-          symbol = symbol.to_sym
-        elsif symbol.is_a?(Types::Type)
-          symbol = symbol.type_symbol
-        end
-
-        # TODO: get down to one namespace system
-        type_registries.any? { |registry| registry.registered?(symbol) } ||
-          Foobara.foobara_type_registered?(symbol)
       end
 
       def registry_for_symbol(symbol)

@@ -17,7 +17,7 @@ module Foobara
         end
 
         def type_registered?(...)
-          TypeBuilder.current.type_registered?(...)
+          Foobara::Namespace.current.foobara_type_registered?(...)
         end
 
         def handler_for_class(...)
