@@ -20,18 +20,6 @@ module Foobara
           @namespaces ||= []
         end
 
-        def namespace_for_symbol(symbol)
-          namespace = namespaces.find { |n| n.name == symbol }
-
-          unless namespace
-            # :nocov:
-            raise "Could not find namespace for #{symbol}"
-            # :nocov:
-          end
-
-          namespace
-        end
-
         def current
           Thread.current[:foobara_namespace] || GlobalDomain.foobara_type_namespace
         end
@@ -39,8 +27,6 @@ module Foobara
         def using(namespace_or_symbol)
           namespace = if namespace_or_symbol.is_a?(TypeBuilder)
                         namespace_or_symbol
-                      elsif namespace_or_symbol.is_a?(Symbol)
-                        namespace_for_symbol(namespace_or_symbol)
                       else
                         # :nocov:
                         raise ArgumentError, "Expected #{namespace_or_symbol} to be a symbol or namespace"
