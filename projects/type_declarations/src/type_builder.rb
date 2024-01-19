@@ -51,22 +51,18 @@ module Foobara
                          to: :current
       end
 
-      attr_accessor :name, :type_declaration_handler_registry, :type_registry, :accesses
+      attr_accessor :name, :type_declaration_handler_registry, :accesses
 
       def initialize(
         name,
         accesses: GlobalDomain.foobara_type_namespace,
-        type_declaration_handler_registry: TypeDeclarations::TypeDeclarationHandlerRegistry.new(enforce_unique: false),
-        type_registry: Types::Registry.new(name)
+        type_declaration_handler_registry: TypeDeclarations::TypeDeclarationHandlerRegistry.new(enforce_unique: false)
       )
         self.name = name
         self.type_declaration_handler_registry = type_declaration_handler_registry
-        self.type_registry = type_registry
 
         self.accesses = Util.array(accesses)
       end
-
-      foobara_delegate :all_types, to: :type_registry
 
       def accesses_up_hierarchy
         [self, *accesses, *accesses.map(&:accesses_up_hierarchy).flatten].uniq

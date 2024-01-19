@@ -54,8 +54,7 @@ module Foobara
               element_processors:,
               # TODO: can't we just set this to [] here??
               target_classes: target_classes(strict_type_declaration),
-              name: type_name(strict_type_declaration),
-              type_registry: TypeDeclarations::TypeBuilder.current.type_registry
+              name: type_name(strict_type_declaration)
             )
           end
 

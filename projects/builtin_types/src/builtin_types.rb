@@ -48,8 +48,7 @@ module Foobara
           validators:,
           # TODO: this is for controlling casting or not casting but could give the wrong information from a
           # reflection point of view...
-          target_classes:,
-          type_registry: Types.global_registry
+          target_classes:
         )
 
         builtin_types << type

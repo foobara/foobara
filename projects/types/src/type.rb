@@ -27,7 +27,6 @@ module Foobara
                     :element_type,
                     :raw_declaration_data,
                     :name,
-                    :type_registry,
                     :target_classes
       attr_reader :type_symbol
 
@@ -35,7 +34,6 @@ module Foobara
         *args,
         target_classes:,
         base_type:,
-        type_registry: Types.global_registry,
         name: "anonymous",
         casters: [],
         transformers: [],
@@ -57,7 +55,6 @@ module Foobara
         self.element_type = element_type
         self.name = name
         self.target_classes = Util.array(target_classes)
-        self.type_registry = type_registry
 
         super(*args, **opts.merge(processors:, prioritize: false))
       end
@@ -158,13 +155,7 @@ module Foobara
       end
 
       def full_type_name
-        type_registry_name = type_registry&.name
-
-        if type_registry_name && !type_registry_name.empty?
-          "#{type_registry_name}::#{name}"
-        else
-          name
-        end
+        scoped_full_name
       end
 
       def reference_or_declaration_data(declaration_data = self.declaration_data)
@@ -187,7 +178,7 @@ module Foobara
         h = {
           name:,
           target_classes: target_classes.map(&:name),
-          base_type: base_type&.full_type_name,
+          base_type: base_type&.full_type_name&.to_sym,
           declaration_data:,
           types_depended_on: types
         }
