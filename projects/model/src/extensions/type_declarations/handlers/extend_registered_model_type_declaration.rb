@@ -5,7 +5,7 @@ module Foobara
         def applicable?(sugary_type_declaration)
           strict_type_declaration = desugarize(sugary_type_declaration)
 
-          if strict_type_declaration.is_a?(::Hash)
+          if strict_type_declaration.is_a?(::Hash) && strict_type_declaration.key?(:type)
             type_symbol = strict_type_declaration[:type]
 
             return false if type_symbol == expected_type_symbol
