@@ -70,13 +70,7 @@ module Foobara
       end
 
       def foobara_lookup(path, absolute: false, filter: nil, lookup_in_children: true)
-        if path.is_a?(::Symbol)
-          path = path.to_s
-        end
-
-        if path.is_a?(::String)
-          path = path.split("::")
-        end
+        path = Namespace.to_registry_path(path)
 
         if path[0] == ""
           return foobara_root_namespace.foobara_lookup(path[(foobara_root_namespace.scoped_path.size + 1)..],

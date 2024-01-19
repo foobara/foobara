@@ -30,6 +30,23 @@ module Foobara
           end
         end
       end
+
+      def to_registry_path(object)
+        return object if object.is_a?(::Array)
+
+        object = object.to_s if object.is_a?(::Symbol)
+
+        case object
+        when ::String
+          object.split("::")
+        when Foobara::Scoped
+          object.scoped_path
+        else
+          # :nocov:
+          raise ArgumentError, "Expected #{object} to be a string, symbol, array, or Foobara::IsScoped"
+          # :nocov:
+        end
+      end
     end
 
     self.global = Foobara
