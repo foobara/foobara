@@ -209,7 +209,7 @@ RSpec.describe Foobara::Domain do
     end
 
     it "automatically registers it" do
-      type = domain.foobara_type_namespace.type_for_declaration(
+      type = domain.foobara_type_from_declaration(
         type: :model,
         name: model_class.model_name,
         model_module: domain,

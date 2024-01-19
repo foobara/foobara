@@ -271,7 +271,7 @@ RSpec.describe ":model" do
     end
     let(:model_module) { domain_module }
     let(:type) do
-      domain_module.foobara_type_namespace.type_for_declaration(type_declaration)
+      domain_module.foobara_type_from_declaration(type_declaration)
     end
 
     let(:constructed_model) do

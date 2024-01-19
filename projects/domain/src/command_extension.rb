@@ -37,10 +37,6 @@ module Foobara
           domain.foobara_organization
         end
 
-        def namespace
-          domain.foobara_type_namespace
-        end
-
         def full_command_name
           scoped_full_name
         end

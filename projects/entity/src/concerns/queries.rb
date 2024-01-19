@@ -11,7 +11,7 @@ module Foobara
 
           def first
             # TODO: don't all queries need to do this???
-            Foobara::Namespace.use entity_type, namespace do
+            Foobara::Namespace.use entity_type, domain.foobara_type_namespace do
               current_transaction_table.first
             end
           end

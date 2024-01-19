@@ -4,7 +4,7 @@ module Foobara
     class AllowedRule
       class << self
         def allowed_rule_attributes_type
-          @allowed_rule_attributes_type ||= GlobalDomain.foobara_type_namespace.type_for_declaration(
+          @allowed_rule_attributes_type ||= GlobalDomain.foobara_type_from_declaration(
             symbol: :symbol,
             # TODO: add a function type and a way to union two types so that we can string or function type checking
             explanation: :duck,

@@ -52,10 +52,6 @@ module Foobara
                       end
       end
 
-      def namespace
-        domain.foobara_type_namespace
-      end
-
       def attribute_names
         attributes_type.element_types.keys
       end

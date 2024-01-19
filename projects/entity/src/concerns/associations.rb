@@ -113,7 +113,7 @@ module Foobara
             type = attributes_type,
             path = DataPath.new,
             result = {},
-            type_namespace: namespace
+            type_namespace: domain.foobara_type_namespace
           )
             if type.extends_symbol?(:entity)
               result[path.to_s] = type
@@ -148,7 +148,7 @@ module Foobara
             result
           end
 
-          def contains_associations?(type = entity_type, initial = true, type_namespace: namespace)
+          def contains_associations?(type = entity_type, initial = true, type_namespace: domain.foobara_type_namespace)
             if type.extends_symbol?(:entity)
               if initial
                 contains_associations?(type.element_types, false, type_namespace:)

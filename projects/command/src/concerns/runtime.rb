@@ -24,7 +24,7 @@ module Foobara
         end
 
         def run
-          Foobara::Namespace.use self.class, self.class.namespace do
+          Foobara::Namespace.use self.class, self.class.domain.foobara_type_namespace do
             invoke_with_callbacks_and_transition(:open_transaction)
 
             invoke_with_callbacks_and_transition_in_transaction(%i[

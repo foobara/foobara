@@ -13,7 +13,9 @@ module Foobara
           def attributes(additional_attributes_type_declaration)
             update_namespace
 
-            handler = namespace.handler_for_class(Foobara::TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration)
+            handler = domain.foobara_type_namespace.handler_for_class(
+              Foobara::TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
+            )
 
             new_type = handler.type_for_declaration(additional_attributes_type_declaration)
 
@@ -39,7 +41,7 @@ module Foobara
                 end
               end
 
-              new_type = namespace.type_for_declaration(
+              new_type = domain.foobara_type_from_declaration(
                 type: :attributes,
                 element_type_declarations:,
                 required:,
@@ -60,7 +62,7 @@ module Foobara
             if attributes_type
               declaration = type_declaration(attributes_type.declaration_data)
 
-              namespace.type_for_declaration(declaration)
+              domain.foobara_type_from_declaration(declaration)
 
               unless @model_type
                 # :nocov:
