@@ -193,7 +193,7 @@ RSpec.describe ":model" do
 
   describe "registering model on a namespace" do
     let(:namespace) do
-      domain.foobara_type_namespace
+      domain.foobara_type_builder
     end
 
     let(:domain) do

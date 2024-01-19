@@ -94,16 +94,16 @@ module Foobara
         end
 
         # TODO: kill this off
-        def foobara_type_namespace
-          @foobara_type_namespace ||= begin
-            accesses = self == GlobalDomain ? [] : GlobalDomain.foobara_type_namespace
+        def foobara_type_builder
+          @foobara_type_builder ||= begin
+            accesses = self == GlobalDomain ? [] : GlobalDomain.foobara_type_builder
             TypeDeclarations::TypeBuilder.new(foobara_full_domain_name, accesses:)
           end
         end
 
         def foobara_type_from_declaration(type_declaration)
-          Foobara::Namespace.use self, foobara_type_namespace do
-            foobara_type_namespace.type_for_declaration(type_declaration)
+          Foobara::Namespace.use self, foobara_type_builder do
+            foobara_type_builder.type_for_declaration(type_declaration)
           end
         end
 
@@ -136,8 +136,8 @@ module Foobara
         # TODO: kill this off
         def foobara_register_entity(name, attributes_type_declaration, model_base_class = nil)
           # TODO: introduce a Namespace#scope method to simplify this a bit
-          Foobara::Namespace.use self, foobara_type_namespace do
-            handler = foobara_type_namespace.handler_for_class(
+          Foobara::Namespace.use self, foobara_type_builder do
+            handler = foobara_type_builder.handler_for_class(
               Foobara::TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
             )
 
@@ -146,7 +146,7 @@ module Foobara
             # TODO: reuse the model_base_class primary key if it has one...
             primary_key = attributes_type.element_types.keys.first
 
-            foobara_type_namespace.type_for_declaration(
+            foobara_type_builder.type_for_declaration(
               type: :entity,
               name:,
               model_base_class:,
@@ -197,7 +197,8 @@ module Foobara
               # :nocov:
             end
 
-            foobara_type_namespace.accesses << domain.foobara_type_namespace
+            # TODO: need to address this?
+            foobara_type_builder.accesses << domain.foobara_type_builder
 
             foobara_depends_on << domain_name
           end

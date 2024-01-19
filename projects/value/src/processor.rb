@@ -131,7 +131,7 @@ module Foobara
       end
 
       def created_in_deprecated_namespace
-        @created_in_deprecated_namespace ||= GlobalDomain.foobara_type_namespace
+        @created_in_deprecated_namespace ||= GlobalDomain.foobara_type_builder
       end
 
       def created_in_namespace

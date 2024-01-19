@@ -327,7 +327,7 @@ RSpec.describe ":entity" do
         Foobara::GlobalDomain
       end
       let(:namespace) do
-        domain.foobara_type_namespace
+        domain.foobara_type_builder
       end
 
       around do |example|

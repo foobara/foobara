@@ -5,7 +5,7 @@ module Foobara
         Foobara::TypeDeclarations::TypeBuilder.reset_all
         # TODO: this doesn't really belong here. I think we need to maybe call reset in reverse order?
         Foobara::Domain::DomainModuleExtension.all.each do |domain|
-          var = "@foobara_type_namespace"
+          var = "@foobara_type_builder"
 
           if domain.instance_variable_defined?(var)
             domain.remove_instance_variable(var)
@@ -26,7 +26,7 @@ module Foobara
         %w[
           foobara_children
           foobara_registry
-          foobara_type_namespace
+          foobara_type_builder
         ].each do |var_name|
           var_name = "@#{var_name}"
 

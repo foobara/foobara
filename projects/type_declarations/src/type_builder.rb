@@ -21,7 +21,7 @@ module Foobara
         end
 
         def current
-          Thread.current[:foobara_namespace] || GlobalDomain.foobara_type_namespace
+          Thread.current[:foobara_type_builder] || GlobalDomain.foobara_type_builder
         end
 
         def using(namespace_or_symbol)
@@ -33,13 +33,13 @@ module Foobara
                         # :nocov:
                       end
 
-          old_namespace = Thread.current[:foobara_namespace]
+          old_namespace = Thread.current[:foobara_type_builder]
 
           begin
-            Thread.current[:foobara_namespace] = namespace
+            Thread.current[:foobara_type_builder] = namespace
             yield
           ensure
-            Thread.current[:foobara_namespace] = old_namespace
+            Thread.current[:foobara_type_builder] = old_namespace
           end
         end
 
@@ -55,7 +55,7 @@ module Foobara
 
       def initialize(
         name,
-        accesses: GlobalDomain.foobara_type_namespace,
+        accesses: GlobalDomain.foobara_type_builder,
         type_declaration_handler_registry: TypeDeclarations::TypeDeclarationHandlerRegistry.new(enforce_unique: false)
       )
         self.name = name

@@ -13,7 +13,7 @@ module Foobara
           def attributes(additional_attributes_type_declaration)
             update_namespace
 
-            handler = domain.foobara_type_namespace.handler_for_class(
+            handler = domain.foobara_type_builder.handler_for_class(
               Foobara::TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
             )
 
