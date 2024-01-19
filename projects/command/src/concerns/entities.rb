@@ -19,8 +19,7 @@ module Foobara
           def entity_class_paths
             # TODO: bust this cache when changing inputs_type??
             @entity_class_paths ||= Entity.construct_associations(
-              inputs_type,
-              type_namespace: domain.foobara_type_namespace
+              inputs_type
             ).transform_values(&:target_class)
           end
 

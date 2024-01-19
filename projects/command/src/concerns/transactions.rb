@@ -25,8 +25,7 @@ module Foobara
           @relevant_entity_classes ||= begin
             entity_classes = if inputs_type
                                Entity.construct_associations(
-                                 inputs_type,
-                                 type_namespace: self.class.namespace
+                                 inputs_type
                                ).values.uniq.map(&:target_class)
                              else
                                []
@@ -34,8 +33,7 @@ module Foobara
 
             if result_type
               entity_classes += Entity.construct_associations(
-                result_type,
-                type_namespace: self.class.namespace
+                result_type
               ).values.uniq.map(&:target_class)
             end
 
