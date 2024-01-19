@@ -14,7 +14,7 @@ module Foobara
           end
 
           def desugarize(sugary_type_declaration)
-            type = type_for_symbol(sugary_type_declaration[:type])
+            type = lookup_type!(sugary_type_declaration[:type])
 
             # TODO: just use the symbol and nothing else??
             # maybe confusing in languages with no distinction between symbol and string?

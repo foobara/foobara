@@ -12,8 +12,8 @@ module Foobara
           TypeBuilder.current.type_declaration_handler_for(...)
         end
 
-        def type_for_symbol(symbol)
-          Foobara::Namespace.current.foobara_lookup_type!(symbol)
+        def lookup_type!(...)
+          Foobara::Namespace.current.foobara_lookup_type!(...)
         end
 
         def type_registered?(...)
@@ -27,7 +27,7 @@ module Foobara
 
       foobara_delegate :type_for_declaration,
                        :type_declaration_handler_for,
-                       :type_for_symbol,
+                       :lookup_type!,
                        :type_registered?,
                        :handler_for_class,
                        to: :class

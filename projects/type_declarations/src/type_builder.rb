@@ -59,7 +59,6 @@ module Foobara
 
         foobara_delegate :type_registered,
                          :type_registries,
-                         :type_for_symbol,
                          :type_declaration_handler_registries,
                          :type_declaration_handler_for,
                          :type_declaration_handler_for_handler_class,
@@ -108,16 +107,6 @@ module Foobara
 
       def type_registries
         accesses_up_hierarchy.map(&:type_registry)
-      end
-
-      def type_for_symbol(symbol)
-        type_registries.each do |registry|
-          if registry.registered?(symbol)
-            return registry[symbol]
-          end
-        end
-
-        Foobara.foobara_lookup_type(symbol)
       end
 
       def accesses_up_hierarchy
