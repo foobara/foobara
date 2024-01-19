@@ -86,7 +86,7 @@ module Foobara
             # :nocov:
             parent = parent.foobara_parent_namespace
             # :nocov:
-          end
+          end || GlobalOrganization
         end
 
         def foobara_domain?

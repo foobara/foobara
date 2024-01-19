@@ -87,7 +87,18 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
 
       let!(:command_class) do
-        stub_class "SomeOrg::SomeDomain::SomeCommand", Foobara::Command
+        stub_module "SomeOtherOrg" do
+          foobara_organization!
+        end
+        stub_module "SomeOtherOrg::SomeOtherDomain" do
+          foobara_domain!
+        end
+        stub_class "SomeOtherOrg::SomeOtherDomain::SomeOtherCommand", Foobara::Command do
+          inputs email: :email
+        end
+        stub_class "SomeOrg::SomeDomain::SomeCommand", Foobara::Command do
+          depends_on SomeOtherOrg::SomeOtherDomain::SomeOtherCommand
+        end
       end
 
       it "registers the command" do
@@ -101,12 +112,22 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
 
       context "when registering via domain" do
-        it "registers the command" do
+        before do
           command_connector.connect(domain_module)
+        end
 
+        it "registers the command" do
           transformed_commands = command_connector.command_registry.registry.values
           expect(transformed_commands.size).to eq(1)
           expect(transformed_commands.first.command_class).to eq(command_class)
+        end
+
+        context "when generating a manifest" do
+          it "includes the organization" do
+            manifest = command_connector.foobara_manifest
+
+            expect(manifest[:organization].keys).to match_array(%i[SomeOrg global_organization])
+          end
         end
       end
     end

@@ -157,22 +157,25 @@ module Foobara
         (domain_name.nil? || domain_name == dom&.foobara_domain_name)
     end
 
+    # TODO: break this method up and/or come up with more abstract ways to transform domains...
     def foobara_manifest
       # Drive all of this off of the list of exposed commands...
       to_include = Set.new
+      domains = Set.new
+      organizations = Set.new
+      included_command_references = Set.new
 
       command_registry.registry.each_value do |transformed_command_class|
+        included_command_references << transformed_command_class.foobara_manifest_reference
         to_include << transformed_command_class
-        domain = transformed_command_class.domain
-        to_include << domain unless domain == GlobalDomain
-        organization = transformed_command_class.organization
-        to_include << organization unless organization == GlobalOrganization
+        domains << transformed_command_class.domain
+        organizations << transformed_command_class.organization
       end
 
       included = Set.new
       additional_to_include = Set.new
 
-      h = {}
+      h = { domain: {}, organization: {} }
 
       until to_include.empty? && additional_to_include.empty?
         object = nil
@@ -183,11 +186,15 @@ module Foobara
             additional_to_include.delete(o)
 
             if o.is_a?(::Module)
-              if o.foobara_domain? || o.foobara_organization?
+              if o.foobara_domain?
+                domains << o
                 next
-              end
-
-              if o.is_a?(::Class) && o < Foobara::Command
+              elsif o.foobara_organization?
+                organizations << o
+                next
+              elsif o.is_a?(::Class) && o < Foobara::Command
+                # TODO: will this work just fine if the command is a sub command with errors??
+                # TODO: ^ test that
                 next
               end
             end
@@ -226,6 +233,44 @@ module Foobara
         end
 
         included << object
+      end
+
+      domains.each do |domain|
+        organizations << domain.foobara_organization
+
+        domain_manifest = domain.foobara_manifest(to_include: Set.new)
+
+        # TODO: we need to trim types and commands...
+        domain_manifest[:types] = domain_manifest[:types].select do |type_name|
+          type = domain.foobara_lookup_type!(type_name)
+          included.include?(type)
+        end
+
+        domain_manifest[:commands] = domain_manifest[:commands].select do |command_name|
+          command = domain.foobara_lookup_command!(command_name)
+          included_command_references.include?(command.foobara_manifest_reference)
+        end
+
+        h[:domain][domain.foobara_manifest_reference.to_sym] = domain_manifest
+
+        included << domain
+      end
+
+      organizations.each do |organization|
+        organization_manifest = organization.foobara_manifest(to_include: Set.new)
+
+        organization_manifest[:domains] = organization_manifest[:domains].select do |domain_name|
+          domain = if domain_name == "global_organization::global_domain"
+                     GlobalDomain
+                   else
+                     organization.foobara_lookup_domain!(domain_name)
+                   end
+          included.include?(domain)
+        end
+
+        h[:organization][organization.foobara_manifest_reference.to_sym] = organization_manifest
+
+        included << organization
       end
 
       h

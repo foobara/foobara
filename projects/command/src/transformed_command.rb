@@ -47,6 +47,9 @@ module Foobara
                        to: :command_class
 
       def foobara_manifest(to_include:)
+        to_include << domain
+        to_include << organization
+
         types = types_depended_on.select(&:registered?).map do |t|
           to_include << t
           t.foobara_manifest_reference
@@ -62,8 +65,8 @@ module Foobara
 
         command_class.foobara_manifest(to_include:).merge(
           types_depended_on: types,
-          inputs_type: inputs_type.reference_or_declaration_data,
-          result_type: result_type.reference_or_declaration_data,
+          inputs_type: inputs_type&.reference_or_declaration_data,
+          result_type: result_type&.reference_or_declaration_data,
           error_types: error_types_manifest(to_include:),
           capture_unknown_error:,
           inputs_transformers:,
@@ -106,6 +109,8 @@ module Foobara
 
       # TODO: how do we handle the error_transformer's affects??
       def error_context_type_map
+        return {} unless inputs_type
+
         runtime_errors = command_class.error_context_type_map.select do |_key, error_class|
           error_class < Foobara::RuntimeError
         end
