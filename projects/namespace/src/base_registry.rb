@@ -2,8 +2,15 @@ module Foobara
   class Namespace
     class BaseRegistry
       class WouldMakeRegistryAmbiguousError < StandardError; end
+      class NotRegisteredError < StandardError; end
 
       def register(_scoped)
+        # :nocov:
+        raise "Subclass responsibility"
+        # :nocov:
+      end
+
+      def unregister(_scoped)
         # :nocov:
         raise "Subclass responsibility"
         # :nocov:

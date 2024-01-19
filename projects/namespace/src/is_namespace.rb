@@ -55,16 +55,18 @@ module Foobara
       end
 
       def foobara_register(scoped)
-        begin
-          foobara_registry.register(scoped)
-        rescue PrefixlessRegistry::RegisteringScopedWithPrefixError,
-               BaseRegistry::WouldMakeRegistryAmbiguousError => e
-          _upgrade_registry(e)
-          return foobara_register(scoped)
-        end
-
+        foobara_registry.register(scoped)
         # awkward??
         scoped.scoped_namespace = self
+      rescue PrefixlessRegistry::RegisteringScopedWithPrefixError,
+             BaseRegistry::WouldMakeRegistryAmbiguousError => e
+        _upgrade_registry(e)
+        foobara_register(scoped)
+      end
+
+      def foobara_unregister(scoped)
+        foobara_registry.unregister(scoped)
+        scoped.scoped_namespace = nil
       end
 
       def foobara_lookup(path, absolute: false, filter: nil, lookup_in_children: true)
@@ -156,8 +158,8 @@ module Foobara
         all
       end
 
-      def foobara_registered?(name, filter: nil, lookup_in_children: true)
-        !foobara_lookup(name, filter:, lookup_in_children:).nil?
+      def foobara_registered?(...)
+        !foobara_lookup(...).nil?
       end
 
       def method_missing(method_name, *, **, &)

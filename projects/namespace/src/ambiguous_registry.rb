@@ -13,6 +13,25 @@ module Foobara
         registry[short_name] |= [scoped]
       end
 
+      def unregister(scoped)
+        short_name = scoped.scoped_short_name
+        entry = registry[short_name]
+
+        unless entry
+          raise NotRegisteredError, "Not registered: #{short_name.inspect}"
+        end
+
+        registered = lookup([short_name])
+
+        unless registered
+          raise NotRegisteredError, "Not registered: #{short_name.inspect}"
+        end
+
+        unless entry.delete(registered)
+          raise NotRegisteredError, "Not registered: #{short_name.inspect}"
+        end
+      end
+
       def lookup(path, filter = nil)
         *prefix, short_name = path
         matches = apply_filter(registry[short_name], filter)

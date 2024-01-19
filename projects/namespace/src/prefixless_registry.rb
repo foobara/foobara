@@ -10,18 +10,23 @@ module Foobara
       end
 
       def register(scoped)
-        if scoped.scoped_prefix
-          raise RegisteringScopedWithPrefixError,
-                "Cannot register scoped with a prefix: #{scoped.scoped_name.inspect}"
+        key = to_key(scoped)
+
+        if registry.key?(key)
+          raise WouldMakeRegistryAmbiguousError, "#{key} is already registered"
         end
 
-        short_name = scoped.scoped_short_name
+        registry[key] = scoped
+      end
 
-        if registry.key?(short_name)
-          raise WouldMakeRegistryAmbiguousError, "#{short_name} is already registered"
+      def unregister(scoped)
+        key = to_key(scoped)
+
+        unless registry.key?(key)
+          raise NotRegisteredError, "#{key} is not registered"
         end
 
-        registry[short_name] = scoped
+        registry.delete(key)
       end
 
       def lookup(path, filter = nil)
@@ -32,6 +37,15 @@ module Foobara
 
       def each_scoped_without_filter(&)
         registry.each_value(&)
+      end
+
+      def to_key(scoped)
+        if scoped.scoped_prefix
+          raise RegisteringScopedWithPrefixError,
+                "Cannot register scoped with a prefix: #{scoped.scoped_name.inspect}"
+        end
+
+        scoped.scoped_short_name
       end
     end
   end
