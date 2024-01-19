@@ -41,12 +41,12 @@ module Foobara
       foobara_all_domain
     end
 
-    def all_types
-      all_namespaces.map(&:all_types).flatten
+    def all_commands
+      foobara_all_command
     end
 
-    def all_namespaces
-      [*all_domains.map(&:foobara_type_namespace), GlobalDomain.foobara_type_namespace]
+    def all_types
+      foobara_all_type
     end
   end
 end

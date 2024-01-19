@@ -113,9 +113,9 @@ module Foobara
 
         def foobara_register_model(model_class, reregister: false)
           type = model_class.model_type
-          foobara_type_namespace.register_type(model_class.model_symbol, type)
 
-          if foobara_registered?(type.scoped_full_name, absolute: true, lookup_in_children: false)
+          if type.scoped_path_set? && foobara_registered?(type.scoped_full_name, absolute: true,
+                                                                                 lookup_in_children: false)
             if reregister
               foobara_unregister(type)
             else

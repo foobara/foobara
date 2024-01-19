@@ -163,8 +163,10 @@ module Foobara
 
       command_registry.registry.each_value do |transformed_command_class|
         to_include << transformed_command_class
-        to_include << transformed_command_class.domain
-        to_include << transformed_command_class.organization
+        domain = transformed_command_class.domain
+        to_include << domain unless domain == GlobalDomain
+        organization = transformed_command_class.organization
+        to_include << organization unless organization == GlobalOrganization
       end
 
       included = Set.new

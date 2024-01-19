@@ -43,8 +43,7 @@ module Foobara
           end
         end
 
-        foobara_delegate :type_registries,
-                         :type_declaration_handler_registries,
+        foobara_delegate :type_declaration_handler_registries,
                          :type_declaration_handler_for,
                          :type_declaration_handler_for_handler_class,
                          :handlers,
@@ -68,19 +67,6 @@ module Foobara
       end
 
       foobara_delegate :all_types, to: :type_registry
-
-      def register_type(symbol, type)
-        type_registry[symbol.to_sym] = type
-      end
-
-      def registry_for_symbol(symbol)
-        symbol = symbol.to_sym if symbol.is_a?(::String)
-        type_registries.find { |registry| registry.registered?(symbol) }
-      end
-
-      def type_registries
-        accesses_up_hierarchy.map(&:type_registry)
-      end
 
       def accesses_up_hierarchy
         [self, *accesses, *accesses.map(&:accesses_up_hierarchy).flatten].uniq

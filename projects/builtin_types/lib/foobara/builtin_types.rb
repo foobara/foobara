@@ -9,6 +9,12 @@ module Foobara
         @builtin_types ||= Set.new
       end
 
+      def [](symbol)
+        builtin_types.find do |type|
+          type.type_symbol == symbol
+        end
+      end
+
       def install!
         duck = build_and_register!(:duck, nil, ::Object)
         # TODO: should we ban ::Object that are ::Enumerable from atomic_duck?

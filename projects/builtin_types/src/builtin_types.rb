@@ -5,8 +5,6 @@ module Foobara
 
   module BuiltinTypes
     class << self
-      foobara_delegate :global_registry, to: Types
-      foobara_delegate :[], :[]=, :registered?, to: :global_registry
       foobara_delegate :global_type_declaration_handler_registry, to: TypeDeclarations
 
       # TODO: break this up
@@ -56,11 +54,10 @@ module Foobara
 
         builtin_types << type
 
-        global_registry.register(type_symbol, type)
-
         Foobara::Namespace::NamespaceHelpers.foobara_namespace!(type)
-        type.scoped_path = [type_symbol.to_s]
-        type.foobara_parent_namespace ||= Foobara
+
+        type.type_symbol = type_symbol
+        type.foobara_parent_namespace ||= GlobalDomain
         type.foobara_parent_namespace.foobara_register(type)
 
         supported_transformers_module = Util.constant_value(builtin_type_module, :SupportedTransformers)

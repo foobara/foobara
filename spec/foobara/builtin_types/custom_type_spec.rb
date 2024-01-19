@@ -319,10 +319,8 @@ RSpec.describe "custom types" do
           let(:type) { type_declaration_handler.process_value!(type: :custom_complex, be_pointless: :true_symbol) }
 
           before do
-            # TODO: stop registering these on type builders
-            namespace.register_type(:custom_complex, type)
-
             # TODO: make this less awkward...
+            type.type_symbol = :custom_complex
             Foobara::GlobalDomain.foobara_register(type)
             type.foobara_parent_namespace = Foobara::GlobalDomain
           end

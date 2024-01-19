@@ -155,8 +155,8 @@ RSpec.describe Foobara::Domain do
           expect(manifest[:result_type][:element_type_declarations][:bar][:type]).to eq(:integer)
 
           expect(Foobara.foobara_all_organization).to include(organization)
-          expect(Foobara.foobara_all_domain).to include(domain)
-          expect(Foobara.foobara_all_command).to include(command_class)
+          expect(Foobara.all_domains).to include(domain)
+          expect(Foobara.all_commands).to include(command_class)
         end
       end
 

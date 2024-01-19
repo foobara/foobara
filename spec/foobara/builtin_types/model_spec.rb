@@ -127,7 +127,8 @@ RSpec.describe ":model" do
   end
 
   it "extends duck" do
-    expect(type.extends_type?(Foobara::Types.global_registry[:duck])).to be(true)
+    duck = Foobara.foobara_lookup_type!(:duck)
+    expect(type.extends_type?(duck)).to be(true)
   end
 
   describe "#process_value!" do
@@ -192,17 +193,23 @@ RSpec.describe ":model" do
 
   describe "registering model on a namespace" do
     let(:namespace) do
-      Foobara::TypeDeclarations::TypeBuilder.new("model registration test")
+      domain.foobara_type_namespace
+    end
+
+    let(:domain) do
+      Foobara::GlobalDomain
     end
 
     around do |example|
-      Foobara::TypeDeclarations::TypeBuilder.using namespace do
+      Foobara::Namespace.use domain, namespace do
         example.run
       end
     end
 
     before do
-      namespace.register_type(type.name, type)
+      type.type_symbol = type.name.to_sym
+      domain.foobara_register(type)
+      type.foobara_parent_namespace = domain
     end
 
     it "can be used by symbol" do

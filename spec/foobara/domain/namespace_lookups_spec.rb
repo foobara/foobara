@@ -115,7 +115,7 @@ RSpec.describe "Foobara namespace lookup" do
 
       expect(OrgA::DomainB::CommandA::SomeError.scoped_namespace).to eq(OrgA::DomainB::CommandA)
 
-      expect(number.foobara_parent_namespace).to eq(Foobara)
+      expect(number.foobara_parent_namespace).to eq(Foobara::GlobalDomain)
       expect(Foobara.foobara_lookup_type("number")).to eq(number)
       expect(Foobara.foobara_lookup_type("::number")).to eq(number)
 
