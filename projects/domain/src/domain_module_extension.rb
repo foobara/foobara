@@ -107,11 +107,6 @@ module Foobara
           end
         end
 
-        # TODO: kill this
-        def foobara_type_registered?(type_or_symbol)
-          foobara_type_namespace.type_registered?(type_or_symbol)
-        end
-
         def foobara_command_classes
           foobara_all_command(lookup_in_children: false)
         end
