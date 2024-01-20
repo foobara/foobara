@@ -1,6 +1,6 @@
 module Foobara
-  Monorepo.project :command_connectors
-
   module CommandConnectorsHttp
   end
+
+  Monorepo.project :command_connectors_http
 end

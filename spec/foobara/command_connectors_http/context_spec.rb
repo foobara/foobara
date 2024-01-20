@@ -1,5 +1,3 @@
-Foobara::Monorepo.project :command_connectors_http
-
 RSpec.describe Foobara::CommandConnectors::Http::Request do
   let(:context) { described_class.new(path:) }
   let(:path) { "/run/Whatever" }

@@ -1,5 +1,3 @@
-Foobara::Monorepo.project :command_connectors_http
-
 RSpec.describe Foobara::CommandConnectors::Http do
   after do
     Foobara.reset_alls

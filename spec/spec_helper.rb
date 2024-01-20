@@ -15,6 +15,8 @@ SimpleCov.start do
 end
 
 require_relative "../require_all_projects"
+require "foobara/command_connectors"
+require "foobara/command_connectors_http"
 
 RSpec.configure do |config|
   config.filter_run_when_matching :focus

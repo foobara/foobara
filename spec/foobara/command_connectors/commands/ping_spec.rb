@@ -1,5 +1,3 @@
-Foobara::Monorepo.project :command_connectors_http
-
 RSpec.describe Foobara::CommandConnectors::Commands::Ping do
   let(:command_connector) do
     Foobara::CommandConnectors::Http.new(default_serializers:)

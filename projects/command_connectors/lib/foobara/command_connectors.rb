@@ -7,4 +7,6 @@ module Foobara
   module CommandConnectors
     foobara_domain!
   end
+
+  Monorepo.project :command_connectors
 end
