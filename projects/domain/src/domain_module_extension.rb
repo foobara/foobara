@@ -108,14 +108,13 @@ module Foobara
         end
 
         def foobara_command_classes
-          foobara_all_command(lookup_in_children: false)
+          foobara_all_command(mode: Namespace::LookupMode::DIRECT)
         end
 
         def foobara_register_model(model_class, reregister: false)
           type = model_class.model_type
 
-          if type.scoped_path_set? && foobara_registered?(type.scoped_full_name, absolute: true,
-                                                                                 lookup_in_children: false)
+          if type.scoped_path_set? && foobara_registered?(type.scoped_full_name, mode: Namespace::LookupMode::DIRECT)
             if reregister
               foobara_unregister(type)
             else
@@ -197,7 +196,7 @@ module Foobara
               # :nocov:
             end
 
-            # TODO: need to address this?
+            foobara_depends_on_namespaces << domain
             foobara_type_builder.accesses << domain.foobara_type_builder
 
             foobara_depends_on << domain_name
@@ -216,12 +215,12 @@ module Foobara
             domain.foobara_manifest_reference
           end
 
-          commands = foobara_all_command(lookup_in_children: false).map do |command_class|
+          commands = foobara_all_command(mode: Namespace::LookupMode::DIRECT).map do |command_class|
             to_include << command_class
             command_class.foobara_manifest_reference
           end
 
-          types = foobara_all_type(lookup_in_children: false).map do |type|
+          types = foobara_all_type(mode: Namespace::LookupMode::DIRECT).map do |type|
             to_include << type
             type.foobara_manifest_reference
           end

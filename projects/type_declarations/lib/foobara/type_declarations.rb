@@ -11,11 +11,6 @@ module Foobara
           end
         end
 
-        # TODO: this feels like the wrong place to do this but doing it here for now to make sure it's done when
-        # most important
-        @original_scoped ||= Foobara.foobara_registry.all_scoped
-        @original_children ||= Foobara.foobara_children
-
         Util.descendants(Error).each do |error_class|
           if error_class.instance_variable_defined?(:@context_type)
             error_class.remove_instance_variable(:@context_type)
@@ -64,6 +59,8 @@ module Foobara
       end
 
       def install!
+        capture_current_namespaces
+
         reset_all
 
         Foobara::Error.include(ErrorExtension)
@@ -126,6 +123,15 @@ module Foobara
 
       def new_project_added(_project)
         capture_current_namespaces
+      end
+
+      private
+
+      def capture_current_namespaces
+        # TODO: this feels like the wrong place to do this but doing it here for now to make sure it's done when
+        # most important
+        @original_scoped = Foobara.foobara_registry.all_scoped
+        @original_children = Foobara.foobara_children
       end
     end
   end

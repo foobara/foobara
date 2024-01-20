@@ -21,7 +21,7 @@ module Foobara
 
           def foobara_manifest(to_include:)
             depends = depends_on.map do |command_name|
-              other_command = Foobara.foobara_lookup!(command_name, absolute: true)
+              other_command = Foobara.foobara_lookup!(command_name, mode: Foobara::Namespace::LookupMode::ABSOLUTE)
               to_include << other_command
               other_command.foobara_manifest_reference
             end

@@ -19,7 +19,7 @@ module Foobara
         end
 
         def foobara_owns_domain?(domain)
-          foobara_each_domain(lookup_in_children: false) do |d|
+          foobara_each_domain(mode: Namespace::LookupMode::DIRECT) do |d|
             if d == domain || (d == domain.mod if domain.respond_to?(:mod))
               return true
             end
@@ -29,13 +29,13 @@ module Foobara
         end
 
         def foobara_domains
-          foobara_all_domain(lookup_in_children: false)
+          foobara_all_domain(mode: Namespace::LookupMode::DIRECT)
         end
 
         def foobara_manifest(to_include:)
           domain_names = []
 
-          foobara_each_domain(lookup_in_children: false) do |domain|
+          foobara_domains.each do |domain|
             to_include << domain
             domain_names << domain.foobara_manifest_reference
           end

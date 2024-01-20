@@ -1,4 +1,8 @@
 RSpec.describe "Foobara namespace lookup" do
+  after do
+    Foobara.reset_alls
+  end
+
   before do
     stub_class :GlobalError, Foobara::Error
 
@@ -58,6 +62,7 @@ RSpec.describe "Foobara namespace lookup" do
     stub_class "OrgB::DomainB::CommandA", Foobara::Command
     stub_class "OrgB::DomainB::CommandA::SomeError", Foobara::Error
     stub_class "OrgB::DomainB::CommandB", Foobara::Command
+    stub_class "OrgB::DomainB::OnlyInB", Foobara::Command
     stub_module "OrgB::DomainB::Foo"
     stub_module "OrgB::DomainB::Foo::Bar"
     stub_class "OrgB::DomainB::Foo::Bar::CommandA", Foobara::Command
@@ -76,6 +81,9 @@ RSpec.describe "Foobara namespace lookup" do
 
   describe "#lookup_*" do
     it "finds the expected objects given certain paths" do
+      expect(Foobara.foobara_lookup_organization("OrgA")).to eq(OrgA)
+      expect(Foobara.foobara_lookup_organization("::OrgA")).to eq(OrgA)
+
       expect(OrgA.foobara_parent_namespace).to eq(Foobara)
       expect(OrgA.scoped_path).to eq(%w[OrgA])
       expect(OrgA.scoped_full_path).to eq(%w[OrgA])
@@ -135,6 +143,35 @@ RSpec.describe "Foobara namespace lookup" do
       expect(Foobara.foobara_lookup("number::supported_validators::max::MaxExceededError")).to eq(
         Foobara::BuiltinTypes::Number::SupportedValidators::Max::MaxExceededError
       )
+    end
+
+    context "when one domain depends on another" do
+      it "can lookup items in the other domain after marking it as dependent" do
+        expect(
+          Foobara.foobara_lookup_organization("OrgA", mode: Foobara::Namespace::LookupMode::STRICT)
+        ).to eq(OrgA)
+        expect(
+          Foobara.foobara_lookup_organization("::OrgA", mode: Foobara::Namespace::LookupMode::DIRECT)
+        ).to eq(OrgA)
+        expect(OrgA::DomainA.foobara_lookup_command("CommandA")).to eq(OrgA::DomainA::CommandA)
+        expect(OrgA::DomainA.foobara_lookup_command("DomainA::CommandA")).to eq(OrgA::DomainA::CommandA)
+
+        expect(
+          OrgA::DomainA.foobara_lookup_command("OrgB::DomainB::CommandB", mode: Foobara::Namespace::LookupMode::STRICT)
+        ).to be_nil
+        expect(
+          OrgA::DomainA.foobara_lookup_command("OnlyInB")
+        ).to be_nil
+
+        OrgA::DomainA.foobara_depends_on(OrgB::DomainB)
+
+        expect(
+          OrgA::DomainA.foobara_lookup_command("OrgB::DomainB::CommandB", mode: Foobara::Namespace::LookupMode::STRICT)
+        ).to be(OrgB::DomainB::CommandB)
+        expect(
+          OrgA::DomainA.foobara_lookup_command("OnlyInB")
+        ).to be(OrgB::DomainB::OnlyInB)
+      end
     end
   end
 end

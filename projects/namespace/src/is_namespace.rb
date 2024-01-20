@@ -50,6 +50,10 @@ module Foobara
         ns
       end
 
+      def foobara_depends_on_namespaces
+        @foobara_depends_on_namespaces ||= []
+      end
+
       def foobara_root?
         foobara_parent_namespace.nil?
       end
@@ -69,50 +73,78 @@ module Foobara
         scoped.scoped_namespace = nil
       end
 
-      def foobara_lookup(path, absolute: false, filter: nil, lookup_in_children: true)
+      def foobara_lookup(
+        path,
+        filter: nil,
+        mode: LookupMode::GENERAL,
+        allowed_namespaces: nil,
+        visited: nil
+      )
+        LookupMode.validate!(mode)
+
+        if mode == LookupMode::STRICT
+          return foobara_lookup(
+            path,
+            filter:,
+            mode: LookupMode::GENERAL,
+            allowed_namespaces: [self, *foobara_depends_on_namespaces]
+          )
+        end
+
         path = Namespace.to_registry_path(path)
 
         if path[0] == ""
-          return foobara_root_namespace.foobara_lookup(path[(foobara_root_namespace.scoped_path.size + 1)..],
-                                                       absolute: true, filter:)
+          if mode == LookupMode::DIRECT
+            return nil unless scoped_full_name == ""
+
+            path = path[1..]
+          else
+            path = path[(foobara_root_namespace.scoped_path.size + 1)..]
+          end
+
+          return foobara_root_namespace.foobara_lookup(path, filter:, mode: LookupMode::ABSOLUTE, allowed_namespaces:)
         end
 
-        scoped = foobara_registry.lookup(path, filter)
+        scoped = if allowed_namespaces.nil? || allowed_namespaces.include?(self)
+                   foobara_registry.lookup(path, filter)
+                 end
+
+        if scoped || mode == LookupMode::DIRECT
+          return scoped
+        end
+
+        visited ||= Set.new
+        visited << [path, mode, self]
+
+        # self is here so that we can match this path if the path is prefixed with ourselves.
+        to_consider = if mode == LookupMode::ABSOLUTE || !foobara_root?
+                        foobara_children
+                      else
+                        [self, *foobara_children]
+                      end
+
+        scoped = _lookup_in(path, to_consider, filter:, allowed_namespaces:, visited:)
         return scoped if scoped
 
-        if lookup_in_children
-          matching_child = nil
-          matching_child_score = 0
-          last_resort = []
-
-          to_consider = absolute ? foobara_children : [self, *foobara_children]
-
-          to_consider.each do |namespace|
-            if namespace.scoped_path.empty?
-              last_resort << namespace
-            else
-              match_count = namespace._path_start_match_count(path)
-
-              if match_count > matching_child_score
-                matching_child = namespace
-                matching_child_score = match_count
-              end
-            end
-          end
-
-          if matching_child
-            scoped = matching_child.foobara_lookup(path[matching_child_score..], absolute: true, filter:)
+        if mode == LookupMode::GENERAL && foobara_parent_namespace
+          unless visited&.include?([path, mode, foobara_parent_namespace])
+            scoped = foobara_parent_namespace.foobara_lookup(path, filter:, mode:, allowed_namespaces:, visited:)
             return scoped if scoped
-          else
-            last_resort.each do |namespace|
-              scoped = namespace.foobara_lookup(path, absolute: true, filter:)
-              return scoped if scoped
-            end
           end
         end
 
-        unless absolute
-          foobara_parent_namespace&.foobara_lookup(path, filter:)
+        scoped = _lookup_in(path, foobara_depends_on_namespaces, filter:, allowed_namespaces:, visited:)
+        return scoped if scoped
+
+        if mode == LookupMode::GENERAL
+          foobara_depends_on_namespaces.each do |namespace|
+            next if visited&.include?([path, mode, namespace])
+
+            scoped = namespace.foobara_lookup(path, filter:, mode:, allowed_namespaces:, visited:)
+            return scoped if scoped
+          end
+
+          nil
         end
       end
 
@@ -132,20 +164,26 @@ module Foobara
         object
       end
 
-      def foobara_each(filter: nil, lookup_in_children: true, &)
+      def foobara_each(filter: nil, mode: Namespace::LookupMode::GENERAL, &)
         foobara_registry.each_scoped(filter:, &)
 
-        if lookup_in_children
+        return if mode == Namespace::LookupMode::DIRECT
+
+        if mode == Namespace::LookupMode::GENERAL
           foobara_children.each do |child|
-            child.foobara_each(filter:, &)
+            child.foobara_each(filter:, mode:, &)
           end
+        end
+
+        foobara_depends_on_namespaces.each do |dependent|
+          dependent.foobara_each(filter:, mode:, &)
         end
       end
 
-      def foobara_all(filter: nil, lookup_in_children: true)
+      def foobara_all(filter: nil, mode: Namespace::LookupMode::GENERAL)
         all = []
 
-        foobara_each(filter:, lookup_in_children:) do |scoped|
+        foobara_each(filter:, mode:) do |scoped|
           all << scoped
         end
 
@@ -219,6 +257,46 @@ module Foobara
       end
 
       protected
+
+      def _lookup_in(path, namespaces, filter:, allowed_namespaces:, visited:)
+        matching_children = []
+        last_resort = []
+
+        namespaces.each do |namespace|
+          if namespace.scoped_path.empty?
+            last_resort << namespace
+          else
+            match_count = namespace._path_start_match_count(path)
+
+            if match_count > 0
+              matching_children << [match_count, namespace]
+            end
+          end
+        end
+
+        matching_children.sort_by(&:first).reverse.each do |(matching_child_score, matching_child)|
+          next if visited&.include?([path, LookupMode::ABSOLUTE, matching_child])
+
+          scoped = matching_child.foobara_lookup(
+            path[matching_child_score..],
+            mode: LookupMode::ABSOLUTE,
+            filter:,
+            allowed_namespaces:,
+            visited:
+          )
+
+          return scoped if scoped
+        end
+
+        last_resort.uniq.each do |namespace|
+          next if visited&.include?([path, LookupMode::ABSOLUTE, namespace])
+
+          scoped = namespace.foobara_lookup(path, filter:, mode: LookupMode::ABSOLUTE, allowed_namespaces:, visited:)
+          return scoped if scoped
+        end
+
+        nil
+      end
 
       def _path_start_match_count(path)
         count = 0

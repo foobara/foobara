@@ -36,7 +36,7 @@ module Foobara
         if registerable.foobara_organization?
           registerable.foobara_domains.map { |domain| register(domain, *, **) }
         elsif registerable.foobara_domain?
-          registerable.foobara_each_command(lookup_in_children: false) do |command_class|
+          registerable.foobara_each_command(mode: Namespace::LookupMode::DIRECT) do |command_class|
             register(command_class, *, **)
           end
         else

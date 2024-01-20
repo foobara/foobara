@@ -18,9 +18,7 @@ module Foobara
 
             # TODO: just use the symbol and nothing else??
             # maybe confusing in languages with no distinction between symbol and string?
-            sugary_type_declaration[:type] = type.foobara_manifest_reference.to_sym
-
-            sugary_type_declaration
+            sugary_type_declaration.merge(type: type.foobara_manifest_reference.to_sym)
           end
         end
       end
