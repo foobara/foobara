@@ -64,15 +64,12 @@ module Foobara
       end
 
       def type_declaration_handler_for(type_declaration)
-        # TODO: is it actually necessary to enter the namespace for this?
-        TypeBuilder.using self do
-          handlers.each do |handler|
-            return handler if handler.applicable?(type_declaration)
-          end
-
-          raise NoTypeDeclarationHandlerFoundError,
-                "No type declaration handler found for #{type_declaration}"
+        handlers.each do |handler|
+          return handler if handler.applicable?(type_declaration)
         end
+
+        raise NoTypeDeclarationHandlerFoundError,
+              "No type declaration handler found for #{type_declaration}"
       end
 
       def handlers
@@ -86,11 +83,8 @@ module Foobara
       def type_for_declaration(*type_declaration_bits)
         type_declaration = type_declaration_bits_to_type_declaration(type_declaration_bits)
 
-        # TODO: is it actually necessary to enter the namespace for this?
-        TypeBuilder.using self do
-          handler = type_declaration_handler_for(type_declaration)
-          handler.process_value!(type_declaration)
-        end
+        handler = type_declaration_handler_for(type_declaration)
+        handler.process_value!(type_declaration)
       end
 
       private

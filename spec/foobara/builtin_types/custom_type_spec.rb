@@ -159,13 +159,18 @@ RSpec.describe "custom types" do
       PointlessValidator
     end
 
-    # TODO: rename this...
+    let(:domain) do
+      stub_module :CustomTypeSpec do
+        foobara_domain!
+      end
+    end
+
     let(:type_builder) do
-      Foobara::TypeDeclarations::TypeBuilder.new(:custom_type_spec)
+      domain.foobara_type_builder
     end
 
     def in_namespace(&)
-      Foobara::TypeDeclarations::TypeBuilder.using(type_builder, &)
+      Foobara::Namespace.use(domain, type_builder, &)
     end
 
     before do
@@ -233,15 +238,17 @@ RSpec.describe "custom types" do
     end
 
     context "when using the type against valid data from complex type non sugar type declaration" do
+      around do |example|
+        in_namespace { example.run }
+      end
+
       before do
         type.register_supported_processor_class(pointless_validator)
       end
 
       context "when valid" do
-        it "can process the thing", :focus do
-          value = in_namespace do
-            type.process_value!(n: 5, c: [1, 2])
-          end
+        it "can process the thing" do
+          value = type.process_value!(n: 5, c: [1, 2])
 
           complex = value[:c]
 
