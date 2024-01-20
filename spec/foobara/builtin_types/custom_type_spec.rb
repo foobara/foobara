@@ -20,9 +20,9 @@ RSpec.describe "custom types" do
         }
       }
     end
-    let(:type) { namespace.type_for_declaration(type_declaration) }
+    let(:type) { type_builder.type_for_declaration(type_declaration) }
 
-    let(:type_declaration_handler) { namespace.type_declaration_handler_for(type_declaration) }
+    let(:type_declaration_handler) { type_builder.type_declaration_handler_for(type_declaration) }
     let(:type_declaration_handler_class) do
       custom_caster = array_to_complex_caster.new
       klass = complex_class
@@ -160,16 +160,16 @@ RSpec.describe "custom types" do
     end
 
     # TODO: rename this...
-    let(:namespace) do
+    let(:type_builder) do
       Foobara::TypeDeclarations::TypeBuilder.new(:custom_type_spec)
     end
 
     def in_namespace(&)
-      Foobara::TypeDeclarations::TypeBuilder.using(namespace, &)
+      Foobara::TypeDeclarations::TypeBuilder.using(type_builder, &)
     end
 
     before do
-      namespace.register_type_declaration_handler(type_declaration_handler_class.new)
+      type_builder.register_type_declaration_handler(type_declaration_handler_class.new)
     end
 
     context "when type declaration invalid" do
@@ -238,7 +238,7 @@ RSpec.describe "custom types" do
       end
 
       context "when valid" do
-        it "can process the thing" do
+        it "can process the thing", :focus do
           value = in_namespace do
             type.process_value!(n: 5, c: [1, 2])
           end
@@ -308,7 +308,7 @@ RSpec.describe "custom types" do
         context "when not registered" do
           it "raises" do
             expect {
-              namespace.type_for_declaration(:custom_complex)
+              type_builder.type_for_declaration(:custom_complex)
             }.to raise_error(Foobara::TypeDeclarations::TypeBuilder::NoTypeDeclarationHandlerFoundError)
           end
         end
@@ -325,7 +325,7 @@ RSpec.describe "custom types" do
           end
 
           it "gives the complex type for the complex symbol" do
-            expect(namespace.type_for_declaration(:custom_complex)).to be(type)
+            expect(type_builder.type_for_declaration(:custom_complex)).to be(type)
           end
 
           it "can cast if needed" do
