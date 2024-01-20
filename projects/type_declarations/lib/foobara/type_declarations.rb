@@ -123,6 +123,10 @@ module Foobara
           end
         end
       end
+
+      def new_project_added(_project)
+        capture_current_namespaces
+      end
     end
   end
 end

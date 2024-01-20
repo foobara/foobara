@@ -41,6 +41,12 @@ module Foobara
           self.module.reset_all
         end
       end
+
+      def new_project_added(project)
+        if self.module.respond_to?(:new_project_added)
+          self.module.new_project_added(project)
+        end
+      end
     end
   end
 end

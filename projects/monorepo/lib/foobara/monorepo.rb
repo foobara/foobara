@@ -15,8 +15,10 @@ module Foobara
   # inside and outside of the monorepo.
   module Monorepo
     class << self
+      attr_accessor :is_installed
+
       def all_projects
-        @all_projects ||= []
+        @all_projects ||= {}
       end
 
       def projects(*symbols)
@@ -26,15 +28,35 @@ module Foobara
       end
 
       def project(symbol)
-        all_projects << Project.new(symbol).tap(&:load)
+        if all_projects.key?(symbol)
+          # :nocov:
+          raise ArgumentError, "Project #{symbol} already loaded"
+          # :nocov:
+        end
+
+        project = Project.new(symbol)
+        project.load
+
+        all_projects[symbol] = project
+
+        if is_installed
+          project.install!
+
+          all_projects.each_pair do |key, existing_project|
+            next if key == symbol
+
+            existing_project.new_project_added(project)
+          end
+        end
       end
 
       def install!
-        all_projects.each(&:install!)
+        self.is_installed = true
+        all_projects.each_value(&:install!)
       end
 
       def reset_alls
-        all_projects.each(&:reset_all)
+        all_projects.each_value(&:reset_all)
       end
     end
   end
