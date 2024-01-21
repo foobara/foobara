@@ -6,24 +6,35 @@ module Foobara
 
         module ClassMethods
           def inputs(*args, &block)
-            if block && !args.empty?
-              # :nocov:
-              raise "Cannot provide both block and declaration"
-              # :nocov:
-            end
+            @inputs_type = case args.size
+                           when 0
+                             unless block
+                               # :nocov:
+                               raise ArgumentError, "expected 1 argument or a block but got 0 arguments and no block"
+                               # :nocov:
+                             end
 
-            inputs_type_declaration = if block
-                                        Foobara::TypeDeclarations::Dsl::Attributes.to_declaration(&block)
-                                      elsif args.size == 1
-                                        args.first
-                                      else
-                                        # :nocov:
-                                        raise ArgumentError,
-                                              "expected 1 argument or a block but got #{args.size} arguments"
-                                        # :nocov:
-                                      end
+                             declaration = Foobara::TypeDeclarations::Dsl::Attributes.to_declaration(&block)
+                             type_for_declaration(declaration)
+                           when 1
+                             if block
+                               # :nocov:
+                               raise ArgumentError, "Cannot provide both block and declaration"
+                               # :nocov:
+                             end
 
-            @inputs_type = type_for_declaration(inputs_type_declaration)
+                             type = args.first
+
+                             if type.is_a?(Types::Type)
+                               type
+                             else
+                               type_for_declaration(type)
+                             end
+                           else
+                             # :nocov:
+                             raise ArgumentError, "expected 0 or 1 argument but got #{args.size} arguments"
+                             # :nocov:
+                           end
 
             register_possible_input_errors
 

@@ -28,7 +28,7 @@ RSpec.describe "Entity inputs for commands" do
     end
 
     stub_class :CreateUser, Foobara::Command do
-      inputs User.attributes_type.declaration_data
+      inputs User.attributes_type
       result User
 
       def execute
