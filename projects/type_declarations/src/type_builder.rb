@@ -1,41 +1,9 @@
 module Foobara
   module TypeDeclarations
     class TypeBuilder
-      include TruncatedInspect
-
       class NoTypeDeclarationHandlerFoundError < StandardError; end
 
-      class << self
-        def current
-          Thread.current[:foobara_type_builder] || GlobalDomain.foobara_type_builder
-        end
-
-        def using(namespace_or_symbol)
-          namespace = if namespace_or_symbol.is_a?(TypeBuilder)
-                        namespace_or_symbol
-                      else
-                        # :nocov:
-                        raise ArgumentError, "Expected #{namespace_or_symbol} to be a symbol or namespace"
-                        # :nocov:
-                      end
-
-          old_namespace = Thread.current[:foobara_type_builder]
-
-          begin
-            Thread.current[:foobara_type_builder] = namespace
-            yield
-          ensure
-            Thread.current[:foobara_type_builder] = old_namespace
-          end
-        end
-
-        foobara_delegate :type_declaration_handler_registries,
-                         :type_declaration_handler_for,
-                         :type_declaration_handler_for_handler_class,
-                         :handlers,
-                         :type_for_declaration,
-                         to: :current
-      end
+      include TruncatedInspect
 
       attr_accessor :name, :type_declaration_handler_registry, :accesses
 

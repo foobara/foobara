@@ -4,7 +4,7 @@ RSpec.describe ":entity" do
   end
 
   let(:type) do
-    Foobara::TypeDeclarations::TypeBuilder.type_for_declaration(type_declaration)
+    Foobara::Domain.current.foobara_type_from_declaration(type_declaration)
   end
 
   let(:type_declaration) do
@@ -322,16 +322,13 @@ RSpec.describe ":entity" do
       end
     end
 
-    describe "registering model on a type_builder" do
+    describe "registering model on a domain" do
       let(:domain) do
         Foobara::GlobalDomain
       end
-      let(:type_builder) do
-        domain.foobara_type_builder
-      end
 
       around do |example|
-        Foobara::Namespace.use domain, type_builder do
+        Foobara::Namespace.use domain do
           example.run
         end
       end

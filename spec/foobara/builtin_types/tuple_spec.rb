@@ -1,6 +1,6 @@
 RSpec.describe ":tuple" do
   let(:type) do
-    Foobara::TypeDeclarations::TypeBuilder.type_for_declaration(type_declaration)
+    Foobara::Domain.current.foobara_type_from_declaration(type_declaration)
   end
 
   let(:outcome) { type.process_value(value) }

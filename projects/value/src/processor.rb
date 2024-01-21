@@ -103,12 +103,11 @@ module Foobara
       end
 
       attr_accessor :declaration_data, :parent_declaration_data
-      attr_writer :created_in_namespace, :created_in_deprecated_namespace
+      attr_writer :created_in_namespace
 
       def initialize(*args)
         # TODO: get this out of here somehow?
         unless Foobara::Namespace.current == Foobara
-          self.created_in_deprecated_namespace = TypeDeclarations::TypeBuilder.current
           self.created_in_namespace = Foobara::Namespace.current
         end
 
@@ -128,10 +127,6 @@ module Foobara
         if requires_parent_declaration_data?
           self.parent_declaration_data = args.first
         end
-      end
-
-      def created_in_deprecated_namespace
-        @created_in_deprecated_namespace ||= GlobalDomain.foobara_type_builder
       end
 
       def created_in_namespace
@@ -169,7 +164,7 @@ module Foobara
       end
 
       def possible_errors
-        Foobara::Namespace.use created_in_namespace, created_in_deprecated_namespace do
+        Foobara::Namespace.use created_in_namespace do
           error_classes.to_h do |error_class|
             # TODO: strange that this is set this way?
             key = ErrorKey.new(symbol: error_class.symbol, category: error_class.category)

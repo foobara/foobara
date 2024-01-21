@@ -21,6 +21,10 @@ module Foobara
 
         domain.foobara_type_from_declaration(type_declaration)
       end
+
+      def current
+        to_domain(Namespace.current)
+      end
     end
   end
 end

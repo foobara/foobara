@@ -43,7 +43,7 @@ RSpec.describe ":array" do
   end
 
   context "when using an element_type_declaration" do
-    let(:type) { Foobara::TypeDeclarations::TypeBuilder.type_for_declaration([:integer]) }
+    let(:type) { Foobara::Domain.current.foobara_type_from_declaration([:integer]) }
 
     context "when element types match the element_type_declaration" do
       let(:array) { [1, 2, 3, 4] }

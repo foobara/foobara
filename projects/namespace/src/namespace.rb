@@ -10,7 +10,7 @@ module Foobara
       end
 
       # TODO: eliminate deprecated_namespace and yield instead
-      def use(namespace, deprecated_namespace, &)
+      def use(namespace)
         unless namespace.is_a?(Namespace::IsNamespace)
           # :nocov:
           raise ArgumentError, "Expected #{namespace} to be a namespace"
@@ -20,11 +20,11 @@ module Foobara
         old_namespace = current
 
         if old_namespace == namespace
-          TypeDeclarations::TypeBuilder.using(deprecated_namespace, &)
+          yield
         else
           begin
             Thread.current[:foobara_current_namespace] = namespace
-            TypeDeclarations::TypeBuilder.using(deprecated_namespace, &)
+            yield
           ensure
             Thread.current[:foobara_current_namespace] = old_namespace
           end

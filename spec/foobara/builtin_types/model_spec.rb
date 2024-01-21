@@ -4,7 +4,7 @@ RSpec.describe ":model" do
   end
 
   let(:type) do
-    Foobara::TypeDeclarations::TypeBuilder.type_for_declaration(type_declaration)
+    Foobara::Domain.current.foobara_type_from_declaration(type_declaration)
   end
 
   let(:type_declaration) do
@@ -201,7 +201,7 @@ RSpec.describe ":model" do
     end
 
     around do |example|
-      Foobara::Namespace.use domain, namespace do
+      Foobara::Namespace.use domain do
         example.run
       end
     end

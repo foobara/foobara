@@ -170,7 +170,7 @@ RSpec.describe "custom types" do
     end
 
     def in_namespace(&)
-      Foobara::Namespace.use(domain, type_builder, &)
+      Foobara::Namespace.use(domain, &)
     end
 
     before do

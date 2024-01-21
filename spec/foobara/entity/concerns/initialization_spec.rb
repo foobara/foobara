@@ -85,7 +85,7 @@ RSpec.describe Foobara::Entity::Concerns::Initialization do
 
     describe "creation through casting" do
       def type_for_declaration(...)
-        Foobara::TypeDeclarations::TypeBuilder.current.type_for_declaration(...)
+        Foobara::Domain.current.foobara_type_from_declaration(...)
       end
 
       let(:type) do

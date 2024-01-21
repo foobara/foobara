@@ -101,9 +101,9 @@ module Foobara
           end
         end
 
-        def foobara_type_from_declaration(type_declaration)
-          Foobara::Namespace.use self, foobara_type_builder do
-            foobara_type_builder.type_for_declaration(type_declaration)
+        def foobara_type_from_declaration(...)
+          Foobara::Namespace.use self do
+            foobara_type_builder.type_for_declaration(...)
           end
         end
 
@@ -135,7 +135,7 @@ module Foobara
         # TODO: kill this off
         def foobara_register_entity(name, attributes_type_declaration, model_base_class = nil)
           # TODO: introduce a Namespace#scope method to simplify this a bit
-          Foobara::Namespace.use self, foobara_type_builder do
+          Foobara::Namespace.use self do
             handler = foobara_type_builder.handler_for_class(
               Foobara::TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
             )

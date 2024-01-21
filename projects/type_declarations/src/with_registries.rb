@@ -5,11 +5,11 @@ module Foobara
 
       module ClassMethods
         def type_for_declaration(...)
-          TypeBuilder.current.type_for_declaration(...)
+          Domain.current.foobara_type_from_declaration(...)
         end
 
         def type_declaration_handler_for(...)
-          TypeBuilder.current.type_declaration_handler_for(...)
+          Domain.current.foobara_type_builder.type_declaration_handler_for(...)
         end
 
         def lookup_type!(...)
@@ -21,7 +21,7 @@ module Foobara
         end
 
         def handler_for_class(...)
-          TypeBuilder.current.handler_for_class(...)
+          Domain.current.foobara_type_builder.handler_for_class(...)
         end
       end
 
