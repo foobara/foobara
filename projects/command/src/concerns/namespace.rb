@@ -12,13 +12,6 @@ module Foobara
           def type_for_declaration(...)
             domain.foobara_type_from_declaration(...)
           end
-
-          def namespace
-            # TODO: lets just couple this stuff. Currently this is overwritten by the extension.
-            # :nocov:
-            TypeDeclarations::TypeBuilder.current
-            # :nocov:
-          end
         end
 
         foobara_delegate :type_for_declaration, to: :class

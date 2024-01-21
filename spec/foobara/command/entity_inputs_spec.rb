@@ -77,7 +77,7 @@ RSpec.describe "Entity inputs for commands" do
   context "when creating with bad mutable value" do
     it "raises an error" do
       expect {
-        CreateFan.namespace.type_for_declaration(
+        CreateFan.domain.foobara_type_from_declaration(
           type: User,
           mutable: :bad_attribute_name
         )
