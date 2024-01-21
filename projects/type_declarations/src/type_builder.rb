@@ -48,8 +48,31 @@ module Foobara
         handlers.find { |handler| handler.instance_of?(klass) }
       end
 
-      def type_for_declaration(*type_declaration_bits)
-        type_declaration = type_declaration_bits_to_type_declaration(type_declaration_bits)
+      def type_for_declaration(*type_declaration_bits, &block)
+        type_declaration = if block
+                             unless type_declaration_bits.empty?
+                               # :nocov:
+                               raise ArgumentError, "Cannot provide both block and declaration"
+                               # :nocov:
+                             end
+
+                             block
+                           else
+                             case type_declaration_bits.size
+                             when 0
+                               # :nocov:
+                               raise ArgumentError, "expected 1 argument or a block but got 0 arguments and no block"
+                               # :nocov:
+                             when 1
+                               declaration = type_declaration_bits.first
+
+                               return declaration if declaration.is_a?(Types::Type)
+
+                               declaration
+                             else
+                               type_declaration_bits_to_type_declaration(type_declaration_bits)
+                             end
+                           end
 
         handler = type_declaration_handler_for(type_declaration)
         handler.process_value!(type_declaration)
@@ -58,30 +81,21 @@ module Foobara
       private
 
       def type_declaration_bits_to_type_declaration(type_declaration_bits)
-        case type_declaration_bits.length
-        when 0
-          # :nocov:
-          raise ArgumentError, "Expected a type declaration or type declaration bits, but 0 args given instead."
-          # :nocov:
-        when 1
-          type_declaration_bits.first
-        else
-          type, *symbolic_processors, processor_data = type_declaration_bits
+        type, *symbolic_processors, processor_data = type_declaration_bits
 
-          if !symbolic_processors.empty?
-            symbolic_processors = symbolic_processors.to_h { |symbol| [symbol, true] }
+        if !symbolic_processors.empty?
+          symbolic_processors = symbolic_processors.to_h { |symbol| [symbol, true] }
 
-            if processor_data.is_a?(::Hash) && !processor_data.empty?
-              processor_data.merge(symbolic_processors)
-            else
-              symbolic_processors
-            end
-          elsif processor_data.is_a?(::Hash)
-            processor_data
+          if processor_data.is_a?(::Hash) && !processor_data.empty?
+            processor_data.merge(symbolic_processors)
           else
-            { processor_data.to_sym => true }
-          end.merge(type:)
-        end
+            symbolic_processors
+          end
+        elsif processor_data.is_a?(::Hash)
+          processor_data
+        else
+          { processor_data.to_sym => true }
+        end.merge(type:)
       end
     end
   end
