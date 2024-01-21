@@ -2,14 +2,10 @@ RSpec.describe Foobara::Command do
   context "with simple command" do
     let(:command_class) {
       stub_class "CalculateExponent", described_class do
-        inputs(
-          type: :attributes,
-          element_type_declarations: {
-            exponent: :integer,
-            base: { type: :integer, required: true }
-          },
-          required: :exponent
-        )
+        inputs do
+          exponent :integer, :required
+          base :integer, :required
+        end
 
         attr_accessor :exponential
 

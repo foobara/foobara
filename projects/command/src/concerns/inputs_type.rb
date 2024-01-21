@@ -5,7 +5,24 @@ module Foobara
         include Concern
 
         module ClassMethods
-          def inputs(inputs_type_declaration)
+          def inputs(*args, &block)
+            if block && !args.empty?
+              # :nocov:
+              raise "Cannot provide both block and declaration"
+              # :nocov:
+            end
+
+            inputs_type_declaration = if block
+                                        Foobara::TypeDeclarations::Dsl::Attributes.to_declaration(&block)
+                                      elsif args.size == 1
+                                        args.first
+                                      else
+                                        # :nocov:
+                                        raise ArgumentError,
+                                              "expected 1 argument or a block but got #{args.size} arguments"
+                                        # :nocov:
+                                      end
+
             @inputs_type = type_for_declaration(inputs_type_declaration)
 
             register_possible_input_errors
