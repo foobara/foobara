@@ -322,16 +322,16 @@ RSpec.describe ":entity" do
       end
     end
 
-    describe "registering model on a namespace" do
+    describe "registering model on a type_builder" do
       let(:domain) do
         Foobara::GlobalDomain
       end
-      let(:namespace) do
+      let(:type_builder) do
         domain.foobara_type_builder
       end
 
       around do |example|
-        Foobara::TypeDeclarations::TypeBuilder.using namespace do
+        Foobara::Namespace.use domain, type_builder do
           example.run
         end
       end
