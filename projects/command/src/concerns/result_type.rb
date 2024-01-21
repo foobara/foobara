@@ -5,8 +5,8 @@ module Foobara
         include Concern
 
         module ClassMethods
-          def result(result_type_declaration)
-            @result_type = type_for_declaration(result_type_declaration)
+          def result(...)
+            @result_type = type_for_declaration(...)
           end
 
           def result_type

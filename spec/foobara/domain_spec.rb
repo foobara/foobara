@@ -109,7 +109,10 @@ RSpec.describe Foobara::Domain do
 
       let(:command_class) {
         stub_class "#{domain.foobara_full_domain_name}::SomeCommand", Foobara::Command do
-          result(foo: :string, bar: :integer)
+          result do
+            foo :string
+            bar :integer
+          end
         end
       }
 
