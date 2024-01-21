@@ -10,14 +10,17 @@ module Foobara
           attr_reader :model_type
           attr_writer :attributes_type
 
-          def attributes(additional_attributes_type_declaration)
+          def attributes(*args, **opts, &)
             update_namespace
 
-            handler = domain.foobara_type_builder.handler_for_class(
-              Foobara::TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
-            )
+            new_type = domain.foobara_type_from_declaration(*args, **opts, &)
 
-            new_type = handler.type_for_declaration(additional_attributes_type_declaration)
+            unless new_type.extends_symbol?(:attributes)
+              # :nocov:
+              raise ArgumentError, "Expected #{args} #{opts} to extend :attributes " \
+                                   "but instead it resulted in: #{new_type.declaration_data}"
+              # :nocov:
+            end
 
             existing_type = attributes_type
 

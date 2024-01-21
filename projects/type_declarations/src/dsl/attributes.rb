@@ -1,6 +1,7 @@
 module Foobara
   module TypeDeclarations
     module Dsl
+      # NOTE: when debugging stuff, it's helpful to comment out the inheritance from BasicObject
       class Attributes < BasicObject
         class << self
           def to_declaration(&)

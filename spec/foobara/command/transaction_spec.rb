@@ -59,14 +59,16 @@ RSpec.describe Foobara::Command::Concerns::Entities do
 
       # TODO: how to support self-referential models??
       stub_class(:Applicant, Person) do
-        attributes is_active: { type: :boolean, default: true },
-                   friends: [User],
-                   attrs: {
-                     foo: :symbol,
-                     bar: [:integer],
-                     duckfoo: :duck,
-                     duckbar: [:duck]
-                   }
+        attributes do
+          is_active :boolean, default: true
+          friends [User]
+          attrs do
+            foo :symbol
+            bar [:integer]
+            duckfoo :duck
+            duckbar [:duck]
+          end
+        end
       end
 
       stub_class(:Package, Base) do
@@ -79,9 +81,11 @@ RSpec.describe Foobara::Command::Concerns::Entities do
       end
 
       stub_class(:Employee, Person) do
-        attributes assignments: { type: :array, element_type_declaration: Assignment, default: [] },
-                   past_assignments: [Assignment],
-                   priority_assignment: Assignment
+        attributes do
+          assignments [Assignment], default: []
+          past_assignments [Assignment]
+          priority_assignment Assignment
+        end
 
         association :past_users, "past_assignments.#.package.applicants.#.user"
         association :priority_package, :"priority_assignment.package"

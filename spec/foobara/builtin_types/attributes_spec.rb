@@ -76,6 +76,27 @@ RSpec.describe Foobara::BuiltinTypes::Attributes::SupportedTransformers::Default
       end
     end
 
+    context "when type_declaration is a dsl proc" do
+      let(:type_declaration) do
+        proc do
+          a :integer
+          b :integer, default: 1
+          c :integer, default: "2"
+        end
+      end
+
+      it "works just like a hash declaration of the same type" do
+        attributes = type.process_value!(a: 100, b: 200, c: "300")
+        expect(attributes).to eq(a: 100, b: 200, c: 300)
+
+        attributes = type.process_value!(a: 100, c: "300")
+        expect(attributes).to eq(a: 100, b: 1, c: 300)
+
+        attributes = type.process_value!(a: 100)
+        expect(attributes).to eq(a: 100, b: 1, c: 2)
+      end
+    end
+
     context "when type_declaration specifies defaults on a per-attribute level" do
       let(:type_declaration) do
         {
