@@ -235,26 +235,50 @@ module Foobara
         casters_manifest = []
         transformers_manifest = []
         validators_manifest = []
+        caster_classes_manifest = []
+        transformer_classes_manifest = []
+        validator_classes_manifest = []
 
         casters.each do |caster|
-          to_include << caster
-          casters_manifest << caster.foobara_manifest_reference
+          klass = caster.class
+          to_include << klass
+          caster_classes_manifest << klass.foobara_manifest_reference
+
+          if caster.scoped_path_set?
+            to_include << caster
+            casters_manifest << caster.foobara_manifest_reference
+          end
         end
 
         transformers.each do |transformer|
-          to_include << transformer
-          transformers_manifest << transformer.foobara_manifest_reference
+          klass = transformer.class
+          to_include << klass
+          transformer_classes_manifest << klass.foobara_manifest_reference
+
+          if transformer.scoped_path_set?
+            to_include << transformer
+            transformers_manifest << transformer.foobara_manifest_reference
+          end
         end
 
         validators.each do |validator|
-          to_include << validator
-          validators_manifest << validator.foobara_manifest_reference
+          klass = validator.class
+          to_include << klass
+          validator_classes_manifest << klass.foobara_manifest_reference
+
+          if validator.scoped_path_set?
+            to_include << validator
+            validators_manifest << validator.foobara_manifest_reference
+          end
         end
 
         {
           casters: casters_manifest,
+          caster_classes: caster_classes_manifest,
           transformers: transformers_manifest,
-          validators: validators_manifest
+          transformer_classes: transformer_classes_manifest,
+          validators: validators_manifest,
+          validator_classes: validator_classes_manifest
         }
       end
 
