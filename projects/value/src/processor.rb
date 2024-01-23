@@ -162,7 +162,7 @@ module Foobara
       def possible_errors
         Foobara::Namespace.use created_in_namespace do
           error_classes.map do |error_class|
-            PossibleError.new(error_class, data: { symbol => declaration_data })
+            PossibleError.new(error_class, processor: self)
           end
         end
       end

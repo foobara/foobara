@@ -44,11 +44,9 @@ module Foobara
 
             element_types.each.with_index do |element_type, index|
               element_type.possible_errors.each do |possible_error|
-                possibilities << PossibleError.new(
-                  possible_error.error_class,
-                  key: possible_error.key.prepend_path(index),
-                  data: possible_error.data
-                )
+                possible_error = possible_error.dup
+                possible_error.prepend_path!(index)
+                possibilities << possible_error
               end
             end
 

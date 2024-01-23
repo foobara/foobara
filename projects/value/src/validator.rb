@@ -46,7 +46,7 @@ module Foobara
       end
 
       def possible_errors
-        [PossibleError.new(error_class, data: { symbol => declaration_data })]
+        [PossibleError.new(error_class, processor: self)]
       end
     end
   end

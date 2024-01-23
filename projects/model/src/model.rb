@@ -94,11 +94,9 @@ module Foobara
             # TODO: this doesn't feel quite right... we should be excluding errors so that we don't
             # miss any that are on attributes_type unrelated to the elements.
             element_types[attribute_name].possible_errors.each do |possible_error|
-              p << PossibleError.new(
-                possible_error.error_class,
-                key: possible_error.key.prepend_path(attribute_name),
-                data: possible_error.data
-              )
+              possible_error = possible_error.dup
+              possible_error.prepend_path!(attribute_name)
+              p << possible_error
             end
           end
 

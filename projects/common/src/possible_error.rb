@@ -1,10 +1,22 @@
 module Foobara
   class PossibleError
-    attr_accessor :key, :error_class, :data
+    attr_accessor :key, :error_class, :data, :processor
 
-    def initialize(error_class, key: nil, data: nil, symbol: error_class.symbol, category: error_class.category)
+    def initialize(
+      error_class,
+      key: nil,
+      data: nil,
+      symbol: error_class.symbol,
+      category: error_class.category,
+      processor: nil
+    )
       self.error_class = error_class
-      self.data = data
+      self.processor = processor
+      self.data = if data
+                    data
+                  elsif processor
+                    { processor.symbol => processor.declaration_data }
+                  end
       self.key = if key
                    if key.is_a?(ErrorKey)
                      key

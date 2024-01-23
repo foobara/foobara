@@ -35,7 +35,7 @@ module Foobara
 
           def possible_errors
             required_attribute_names.map do |required_attribute_name|
-              possible_error = PossibleError.new(error_class)
+              possible_error = PossibleError.new(error_class, processor: self)
               possible_error.prepend_path!(required_attribute_name)
               possible_error
             end
