@@ -62,7 +62,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
     let(:error_context_type_map) { command_class.error_context_type_map }
 
     it "contains subcommand error information" do
-      expect(error_context_type_map).to eq(
+      expect(error_context_type_map.transform_values(&:error_class)).to eq(
         "data.cannot_cast" => Foobara::Value::Processor::Casting::CannotCastError,
         "data.unexpected_attributes" =>
           Foobara::BuiltinTypes::Attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError,

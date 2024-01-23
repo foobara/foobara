@@ -306,7 +306,7 @@ RSpec.describe ":entity" do
       let(:mutable) { true }
 
       it "gives expected possible errors" do
-        expect(type.possible_errors).to eq(
+        expect(type.possible_errors.to_h { |p| [p.key.to_sym, p.error_class] }).to eq(
           "data.bar.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
           "data.bar.missing_required_attribute":
             Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::MissingRequiredAttributeError,

@@ -40,13 +40,15 @@ module Foobara
           end
 
           def possible_errors
-            possibilities = super
+            possibilities = super.dup
 
             element_types.each.with_index do |element_type, index|
-              element_type.possible_errors.each_pair do |key, error_class|
-                key = ErrorKey.prepend_path(key, index)
-
-                possibilities[key.to_sym] = error_class
+              element_type.possible_errors.each do |possible_error|
+                possibilities << PossibleError.new(
+                  possible_error.error_class,
+                  key: possible_error.key.prepend_path(index),
+                  data: possible_error.data
+                )
               end
             end
 

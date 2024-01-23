@@ -21,7 +21,7 @@ module Foobara
 
           # Why is this here in entity/ instead of in model/?
           def possible_errors
-            return {} if parent_declaration_data == { type: :entity }
+            return [] if parent_declaration_data == { type: :entity }
 
             mutable = parent_declaration_data.key?(:mutable) ? parent_declaration_data[:mutable] : false
 

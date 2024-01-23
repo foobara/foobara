@@ -864,6 +864,19 @@ RSpec.describe Foobara::CommandConnectors::Http do
             )
           end
         end
+
+        describe "#possible_errors" do
+          it "contains paths matching the transformed inputs" do
+            transformed_command = command_connector.transformed_command_from_name("ComputeExponent")
+            expect(transformed_command.possible_errors.map(&:key).map(&:to_s)).to contain_exactly(
+              "runtime.some_runtime",
+              "data.cannot_cast",
+              "data.unexpected_attributes",
+              "data.bbaassee.cannot_cast",
+              "data.exponent.cannot_cast"
+            )
+          end
+        end
       end
     end
 

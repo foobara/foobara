@@ -64,15 +64,15 @@ module Foobara
           end
 
           def possible_errors
-            possibilities = super
+            possibilities = [*super]
 
             element_type_declarations.each_pair do |attribute_name, attribute_declaration|
               attribute_type = type_for_declaration(attribute_declaration)
 
-              attribute_type.possible_errors.each_pair do |key, error_class|
-                key = ErrorKey.prepend_path(key, attribute_name)
-
-                possibilities[key.to_sym] = error_class
+              attribute_type.possible_errors.each do |possible_error|
+                possible_error = possible_error.dup
+                possible_error.prepend_path!(attribute_name)
+                possibilities << possible_error
               end
             end
 

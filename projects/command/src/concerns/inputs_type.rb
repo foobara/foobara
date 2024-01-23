@@ -33,8 +33,8 @@ module Foobara
 
           def register_possible_input_errors
             # TODO: let's derive these at runtime and memoize...
-            inputs_type.possible_errors.each_pair do |key, error_class|
-              register_possible_error_class(key, error_class)
+            inputs_type.possible_errors.each do |possible_error|
+              register_possible_error_class(possible_error)
             end
           end
         end

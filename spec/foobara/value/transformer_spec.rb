@@ -21,7 +21,7 @@ RSpec.describe Foobara::Value::Transformer do
 
   describe "#possible_errors" do
     it "is always empty" do
-      expect(transformer.possible_errors).to eq({})
+      expect(transformer.possible_errors).to eq([])
     end
   end
 

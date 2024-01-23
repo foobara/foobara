@@ -28,15 +28,11 @@ module Foobara
           end
 
           def possible_errors
-            possibilities = super
-
-            element_type.possible_errors.each_pair do |key, error_class|
-              key = ErrorKey.prepend_path(key, :"#")
-
-              possibilities[key.to_sym] = error_class
-            end
-
-            possibilities
+            super + element_type.possible_errors.map do |possible_error|
+                      possible_error = possible_error.dup
+                      possible_error.prepend_path!(:"#")
+                      possible_error
+                    end
           end
         end
       end

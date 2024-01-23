@@ -6,50 +6,64 @@ module Foobara
 
         module ClassMethods
           def possible_errors
-            error_context_type_map.transform_keys(&:to_sym)
+            error_context_type_map.values
           end
 
           def errors_type_declaration(to_include:)
-            error_context_type_map.to_h do |key, error_class|
+            error_context_type_map.to_h do |key, possible_error|
+              error_class = possible_error.error_class
               to_include << error_class
               [key, ErrorKey.to_h(key).merge(key:, error: error_class.foobara_manifest_reference)]
             end
           end
 
           def possible_error(*args)
-            case args.size
-            when 1
-              error_class = args.first
-              symbol = error_class.symbol
-            when 2
-              symbol, error_class_or_context_type_declaration = args
-              error_class = to_runtime_error_class(symbol, error_class_or_context_type_declaration)
-            else
-              # :nocov:
-              raise ArgumentError, "Expected an error or a symbol and error context type declaration"
-              # :nocov:
-            end
+            possible_error = case args.size
+                             when 1
+                               arg = args.first
 
-            error_key = ErrorKey.new(symbol:, category: :runtime)
+                               if arg.is_a?(PossibleError)
+                                 # TODO: test this code path
+                                 # :nocov:
+                                 arg
+                                 # :nocov:
+                               elsif arg.is_a?(::Class) && arg < Foobara::Error
+                                 PossibleError.new(arg)
+                               else
+                                 # :nocov:
+                                 raise ArgumentError, "Expected a PossibleError or an Error but got #{arg}"
+                                 # :nocov:
+                               end
+                             when 2
+                               symbol, error_class_or_context_type_declaration, data = args
+                               error_class = to_runtime_error_class(symbol, error_class_or_context_type_declaration)
+                               PossibleError.new(error_class, symbol:, data:)
+                             else
+                               # :nocov:
+                               raise ArgumentError, "Expected an error or a symbol and error context type declaration"
+                               # :nocov:
+                             end
 
-            register_possible_error_class(error_key, error_class)
+            register_possible_error_class(possible_error)
           end
 
-          def possible_input_error(path, symbol, error_class_or_context_type_declaration)
+          def possible_input_error(path, symbol, error_class_or_context_type_declaration, data = nil)
             error_class = to_input_error_class(symbol, error_class_or_context_type_declaration)
 
-            key = ErrorKey.new(symbol:, path:, category: error_class.category)
+            # TODO: allow passing a path: to PossibleError.new, or maybe a prepend_path:
+            possible_error = PossibleError.new(error_class, symbol:, data:)
+            possible_error.prepend_path!(path)
 
-            register_possible_error_class(key, error_class)
+            register_possible_error_class(possible_error)
           end
 
-          # TODO: rename... this maps keys to error_classes...
+          # TODO: kill this method in favor of possible_errors
           def error_context_type_map
             @error_context_type_map ||= {}
           end
 
-          def register_possible_error_class(key, error_class)
-            error_context_type_map[key.to_s] = error_class
+          def register_possible_error_class(possible_error)
+            error_context_type_map[possible_error.key.to_s] = possible_error
           end
 
           # TODO: should we cache these???

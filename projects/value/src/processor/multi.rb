@@ -28,13 +28,8 @@ module Foobara
           super || processors.any? { |processor| processor.applicable?(value) }
         end
 
-        # format?
-        # maybe [path, symbol, context_type] ?
-        # maybe [path, error_class] ?
         def possible_errors
-          processors.inject(super) do |possibilities, processor|
-            possibilities.merge(processor.possible_errors)
-          end
+          super + processors.map(&:possible_errors).flatten
         end
 
         def register(processor)

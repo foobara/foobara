@@ -102,7 +102,7 @@ RSpec.describe "Entity inputs for commands" do
         expect(user2.fan_count).to eq(1)
       end
 
-      expect(CreateUser.possible_errors).to eq(
+      expect(CreateUser.possible_errors.to_h { |p| [p.key.to_sym, p.error_class] }).to eq(
         "data.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
         "data.missing_required_attribute":
           Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::MissingRequiredAttributeError,
@@ -116,7 +116,7 @@ RSpec.describe "Entity inputs for commands" do
         "data.fan_count.max_exceeded": Foobara::BuiltinTypes::Number::SupportedValidators::Max::MaxExceededError
       )
 
-      expect(CreateFan.possible_errors).to eq(
+      expect(CreateFan.possible_errors.to_h { |p| [p.key.to_sym, p.error_class] }).to eq(
         "data.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
         "data.unexpected_attributes":
           Foobara::BuiltinTypes::Attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError,

@@ -86,22 +86,25 @@ module Foobara
         elsif mutable
           element_types = attributes_type.element_types
 
-          h = {}
+          p = []
 
           Util.array(mutable).each do |attribute_name|
             attribute_name = attribute_name.to_sym
 
-            element_types[attribute_name].possible_errors.each_pair do |key, value|
-              error_key = ErrorKey.parse(key)
-              error_key.prepend_path!(attribute_name)
-
-              h[error_key.to_sym] = value
+            # TODO: this doesn't feel quite right... we should be excluding errors so that we don't
+            # miss any that are on attributes_type unrelated to the elements.
+            element_types[attribute_name].possible_errors.each do |possible_error|
+              p << PossibleError.new(
+                possible_error.error_class,
+                key: possible_error.key.prepend_path(attribute_name),
+                data: possible_error.data
+              )
             end
           end
 
-          h
+          p
         else
-          {}
+          []
         end
       end
 

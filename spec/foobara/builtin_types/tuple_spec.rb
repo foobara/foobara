@@ -31,7 +31,7 @@ RSpec.describe ":tuple" do
 
     describe "#possible_errors" do
       it "converts to strict type declaration successfully" do
-        expect(type.possible_errors).to eq(
+        expect(type.possible_errors.to_h { |p| [p.key.to_sym, p.error_class] }).to eq(
           "data.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
           "data.incorrect_tuple_size": Foobara::BuiltinTypes::Array::SupportedValidators::Size::IncorrectTupleSizeError,
           "data.0.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,

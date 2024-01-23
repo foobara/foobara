@@ -15,7 +15,7 @@ module Foobara
 
             return if !start && registered?
 
-            to_process = [*base_type, *element_type, *possible_errors.values]
+            to_process = [*base_type, *element_type, *possible_errors.map(&:error_class)]
 
             if element_types
               to_process += case element_types

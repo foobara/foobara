@@ -15,7 +15,7 @@ module Foobara
               # :nocov:
             end
 
-            error_context_type_map[key]
+            error_context_type_map[key].error_class
           end
 
           def lookup_runtime_error_class(symbol)
@@ -28,7 +28,7 @@ module Foobara
               # :nocov:
             end
 
-            error_context_type_map[key]
+            error_context_type_map[key].error_class
           end
 
           def lookup_error_class(key)
@@ -40,7 +40,7 @@ module Foobara
               # :nocov:
             end
 
-            error_context_type_map[key]
+            error_context_type_map[key].error_class
           end
         end
 

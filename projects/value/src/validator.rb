@@ -46,9 +46,7 @@ module Foobara
       end
 
       def possible_errors
-        key = ErrorKey.new(symbol: error_symbol, category: error_class.category)
-
-        { key.to_sym => error_class }
+        [PossibleError.new(error_class, data: { symbol => declaration_data })]
       end
     end
   end

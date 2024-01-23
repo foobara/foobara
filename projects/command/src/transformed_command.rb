@@ -107,26 +107,39 @@ module Foobara
         end
       end
 
-      # TODO: how do we handle the error_transformer's affects??
       def error_context_type_map
-        return {} unless inputs_type
+        @error_context_type_map ||= begin
+          set = {}
 
-        runtime_errors = command_class.error_context_type_map.select do |_key, error_class|
-          error_class < Foobara::RuntimeError
+          command_class.possible_errors.each do |possible_error|
+            # For now, we get the input errors off the transformed inputs_type.
+            # This way if an inputs transformer changes the path of an input, we don't wind up with the old path
+            # in the errors.
+            if possible_error.error_class < Foobara::RuntimeError
+              set[possible_error.key.to_s] = possible_error
+            end
+          end
+
+          inputs_type&.possible_errors&.each do |possible_error|
+            set[possible_error.key.to_s] = possible_error
+          end
+
+          errors_transformers.each do |transformer|
+            set = transformer.transform_error_context_type_map(self, set)
+          end
+
+          set
         end
+      end
 
-        map = inputs_type.possible_errors.transform_keys(&:to_s).merge(runtime_errors)
-
-        errors_transformers.each do |transformer|
-          map = transformer.transform_error_context_type_map(self, map)
-        end
-
-        map
+      def possible_errors
+        @possible_errors ||= error_context_type_map.values
       end
 
       # TODO: fix this, should really match non-transformed structure.
       def error_types_manifest(to_include:)
-        error_context_type_map.to_h do |key, error_class|
+        error_context_type_map.to_h do |key, possible_error|
+          error_class = possible_error.error_class
           to_include << error_class
           [key, ErrorKey.to_h(key).merge(key:, error: error_class.foobara_manifest_reference)]
         end

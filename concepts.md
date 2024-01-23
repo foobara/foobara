@@ -219,10 +219,6 @@ class AtLeastOnePresent < ValueValidator
     Error
   end
   
-  def error_symbol
-    :missing_both_phone_and_email
-  end
-  
   def validator_data_type
     # TODO: should use enumerated type here??
     type_builder_registry.from(:array, element_type: [:symbol])

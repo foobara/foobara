@@ -150,10 +150,6 @@ module Foobara
         self.class::Runner.new(self, value)
       end
 
-      def error_symbol
-        error_class.symbol
-      end
-
       # TODO: probably actually better to pass it through to the error class method. Bring that back.
       def error_message(_value)
         error_class.message
@@ -165,10 +161,8 @@ module Foobara
 
       def possible_errors
         Foobara::Namespace.use created_in_namespace do
-          error_classes.to_h do |error_class|
-            # TODO: strange that this is set this way?
-            key = ErrorKey.new(symbol: error_class.symbol, category: error_class.category)
-            [key.to_sym, error_class]
+          error_classes.map do |error_class|
+            PossibleError.new(error_class, data: { symbol => declaration_data })
           end
         end
       end
@@ -287,7 +281,8 @@ module Foobara
       end
 
       def foobara_manifest(to_include:)
-        errors = possible_errors.transform_values do |error_class|
+        errors = possible_errors.map do |possible_error|
+          error_class = possible_error.error_class
           to_include << error_class
           error_class.foobara_manifest_reference
         end

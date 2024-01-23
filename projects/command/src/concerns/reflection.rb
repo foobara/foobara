@@ -119,7 +119,10 @@ module Foobara
           end
 
           def errors_types_depended_on
-            @errors_types_depended_on ||= error_context_type_map.values.map(&:types_depended_on).inject(:|) || Set.new
+            @errors_types_depended_on ||= begin
+              error_classes = possible_errors.map(&:error_class)
+              error_classes.map(&:types_depended_on).inject(:|) || Set.new
+            end
           end
         end
 

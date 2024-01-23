@@ -8,11 +8,13 @@ module Foobara
           # adhering to processor interface. Not sure how best to address this.
           def transform_error_context_type_map(transformed_command, map)
             if transformed_command.requires_authentication
-              map = map.merge("runtime.unauthenticated" => CommandConnector::UnauthenticatedError)
+              possible_error = PossibleError.new(CommandConnector::UnauthenticatedError)
+              map = map.merge(possible_error.key.to_s => possible_error)
             end
 
             if transformed_command.allowed_rule
-              map = map.merge("runtime.not_allowed" => CommandConnector::NotAllowedError)
+              possible_error = PossibleError.new(CommandConnector::NotAllowedError)
+              map = map.merge(possible_error.key.to_s => possible_error)
             end
 
             map

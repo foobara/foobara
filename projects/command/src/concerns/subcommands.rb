@@ -80,9 +80,10 @@ module Foobara
           private
 
           def register_possible_subcommand_errors(subcommand_class)
-            subcommand_class.error_context_type_map.each_pair do |key, error_class|
-              error_key = ErrorKey.prepend_runtime_path(key, subcommand_class.full_command_symbol)
-              register_possible_error_class(error_key, error_class)
+            subcommand_class.possible_errors.each do |possible_error|
+              possible_error = possible_error.dup
+              possible_error.prepend_runtime_path!(subcommand_class.full_command_symbol)
+              register_possible_error_class(possible_error)
             end
           end
         end
