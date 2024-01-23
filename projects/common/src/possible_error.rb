@@ -16,6 +16,14 @@ module Foobara
                  end
     end
 
+    def dup
+      PossibleError.new(
+        error_class,
+        key: key.dup,
+        data:
+      )
+    end
+
     def prepend_path!(...)
       key.prepend_path!(...)
     end
