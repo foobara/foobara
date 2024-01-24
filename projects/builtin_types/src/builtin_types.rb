@@ -97,17 +97,20 @@ module Foobara
         ].each do |(mod, klasses, instances)|
           next unless mod
 
-          prefix = Util.underscore_sym(Util.non_full_name(mod))
+          prefix = Util.non_full_name(mod)
 
           [*klasses, *instances].each do |scoped|
             if !scoped.scoped_path_set? || scoped.scoped_path_autoset?
               # TODO: Do we actually need this?
-              scoped.scoped_path = [prefix, scoped.symbol]
+              short_name = Util.non_full_name(scoped)
+              short_name = Util.underscore(short_name) unless scoped.is_a?(::Class)
+
+              scoped.scoped_path = [prefix, short_name]
             end
 
             parent = scoped.scoped_namespace
 
-            if parent.nil? || parent == Foobara
+            if parent.nil? || parent == Foobara || parent == GlobalDomain
               scoped.foobara_parent_namespace = type
               type.foobara_register(scoped)
             end
