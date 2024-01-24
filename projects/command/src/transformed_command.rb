@@ -147,8 +147,8 @@ module Foobara
       end
 
       def possible_errors_manifest(to_include:)
-        possible_errors.map do |possible_error|
-          possible_error.foobara_manifest(to_include:)
+        possible_errors.to_h do |possible_error|
+          [possible_error.key.to_s, possible_error.foobara_manifest(to_include:)]
         end
       end
 
