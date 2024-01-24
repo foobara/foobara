@@ -19,9 +19,9 @@ module Foobara
         TypeDeclaration.new(root_manifest, [*path, :result_type])
       end
 
-      def error_types
+      def possible_errors
         super.keys.to_h do |key|
-          [key, PossibleError.new(root_manifest, [*path, :error_types, key])]
+          [key, PossibleError.new(root_manifest, [*path, :possible_errors, key])]
         end
       end
 

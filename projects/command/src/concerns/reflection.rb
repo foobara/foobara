@@ -55,8 +55,6 @@ module Foobara
               inputs_types_depended_on:,
               result_types_depended_on:,
               errors_types_depended_on:,
-              # TODO: eliminate this in favor of possible_errors
-              error_types: errors_type_declaration(to_include:),
               possible_errors:,
               depends_on:,
               full_command_name:,

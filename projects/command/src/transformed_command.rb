@@ -67,7 +67,6 @@ module Foobara
           types_depended_on: types,
           inputs_type: inputs_type&.reference_or_declaration_data,
           result_type: result_type&.reference_or_declaration_data,
-          error_types: error_types_manifest(to_include:),
           possible_errors: possible_errors_manifest(to_include:),
           capture_unknown_error:,
           inputs_transformers:,
@@ -135,15 +134,6 @@ module Foobara
 
       def possible_errors
         @possible_errors ||= error_context_type_map.values
-      end
-
-      # TODO: fix this, should really match non-transformed structure.
-      def error_types_manifest(to_include:)
-        error_context_type_map.to_h do |key, possible_error|
-          error_class = possible_error.error_class
-          to_include << error_class
-          [key, ErrorKey.to_h(key).merge(key:, error: error_class.foobara_manifest_reference)]
-        end
       end
 
       def possible_errors_manifest(to_include:)

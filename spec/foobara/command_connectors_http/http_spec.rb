@@ -384,7 +384,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
           describe "#manifest" do
             it "contains the errors for not allowed" do
-              error_manifest = command_connector.foobara_manifest[:command][:ComputeExponent][:error_types]
+              error_manifest = command_connector.foobara_manifest[:command][:ComputeExponent][:possible_errors]
 
               expect(error_manifest.keys).to include("runtime.not_allowed")
             end
@@ -430,7 +430,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
       describe "#manifest" do
         it "contains the errors for not allowed" do
-          error_manifest = command_connector.foobara_manifest[:command][:ComputeExponent][:error_types]
+          error_manifest = command_connector.foobara_manifest[:command][:ComputeExponent][:possible_errors]
 
           expect(error_manifest.keys).to include("runtime.unauthenticated")
         end
@@ -805,7 +805,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
             inputs_type = h[:inputs_type]
             result_type = h[:result_type]
-            error_types = h[:error_types]
+            error_types = h[:possible_errors]
 
             expect(inputs_type).to eq(
               type: :attributes,
@@ -821,13 +821,32 @@ RSpec.describe Foobara::CommandConnectors::Http do
               }
             )
             expect(error_types).to eq(
+              "runtime.some_runtime" => {
+                path: [],
+                runtime_path: [],
+                category: :runtime,
+                symbol: :some_runtime,
+                key: "runtime.some_runtime",
+                error: "SomeRuntimeError",
+                processor: nil,
+                processor_class: nil,
+                processor_manifest_data: nil
+              },
               "data.cannot_cast" => {
                 path: [],
                 runtime_path: [],
                 category: :data,
                 symbol: :cannot_cast,
                 key: "data.cannot_cast",
-                error: "Value::Processor::Casting::CannotCastError"
+                error: "Value::Processor::Casting::CannotCastError",
+                processor: nil,
+                processor_class: "Value::Processor::Casting",
+                processor_manifest_data: {
+                  casting: { cast_to: { type: :attributes,
+                                        element_type_declarations: {
+                                          bbaassee: { type: :string }, exponent: { type: :string }
+                                        } } }
+                }
               },
               "data.unexpected_attributes" => {
                 path: [],
@@ -835,7 +854,11 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 category: :data,
                 symbol: :unexpected_attributes,
                 key: "data.unexpected_attributes",
-                error: "attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError"
+                error: "attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError",
+                processor: nil,
+                processor_class: "attributes::SupportedProcessors::ElementTypeDeclarations",
+                processor_manifest_data: { element_type_declarations: { bbaassee: { type: :string },
+                                                                        exponent: { type: :string } } }
               },
               "data.bbaassee.cannot_cast" => {
                 path: [:bbaassee],
@@ -843,7 +866,10 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 category: :data,
                 symbol: :cannot_cast,
                 key: "data.bbaassee.cannot_cast",
-                error: "Value::Processor::Casting::CannotCastError"
+                error: "Value::Processor::Casting::CannotCastError",
+                processor: nil,
+                processor_class: nil,
+                processor_manifest_data: { casting: { cast_to: { type: :string } } }
               },
               "data.exponent.cannot_cast" => {
                 path: [:exponent],
@@ -851,15 +877,10 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 category: :data,
                 symbol: :cannot_cast,
                 key: "data.exponent.cannot_cast",
-                error: "Value::Processor::Casting::CannotCastError"
-              },
-              "runtime.some_runtime" => {
-                path: [],
-                runtime_path: [],
-                category: :runtime,
-                symbol: :some_runtime,
-                key: "runtime.some_runtime",
-                error: "SomeRuntimeError"
+                error: "Value::Processor::Casting::CannotCastError",
+                processor: nil,
+                processor_class: nil,
+                processor_manifest_data: { casting: { cast_to: { type: :string } } }
               }
             )
           end

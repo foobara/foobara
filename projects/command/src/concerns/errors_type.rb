@@ -9,14 +9,6 @@ module Foobara
             error_context_type_map.values
           end
 
-          def errors_type_declaration(to_include:)
-            error_context_type_map.to_h do |key, possible_error|
-              error_class = possible_error.error_class
-              to_include << error_class
-              [key, ErrorKey.to_h(key).merge(key:, error: error_class.foobara_manifest_reference)]
-            end
-          end
-
           def possible_error(*args)
             possible_error = case args.size
                              when 1

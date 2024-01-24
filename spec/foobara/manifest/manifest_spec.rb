@@ -152,7 +152,7 @@ RSpec.describe Foobara::Manifest do
     expect(global_command.organization_name).to eq("global_organization")
     expect(global_command.inputs_type).to be_empty
 
-    global_possible_error = command.error_types["data.cannot_cast"]
+    global_possible_error = command.possible_errors["data.cannot_cast"]
     expect(global_possible_error.scoped_category).to be_nil
     expect(global_possible_error.parent).to be_nil
     expect(global_possible_error._path).to be_a(Array)
@@ -169,7 +169,7 @@ RSpec.describe Foobara::Manifest do
     expect(global_error.domain_name).to eq("global_domain")
     expect(global_error.error_name).to eq("CannotCastError")
 
-    local_possible_error = command.error_types["runtime.something_went_wrong"]
+    local_possible_error = command.possible_errors["runtime.something_went_wrong"]
     expect(local_possible_error.scoped_category).to be_nil
     expect(local_possible_error.parent).to be_nil
     local_error = local_possible_error.error
