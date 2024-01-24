@@ -68,6 +68,7 @@ module Foobara
           inputs_type: inputs_type&.reference_or_declaration_data,
           result_type: result_type&.reference_or_declaration_data,
           error_types: error_types_manifest(to_include:),
+          possible_errors: possible_errors_manifest(to_include:),
           capture_unknown_error:,
           inputs_transformers:,
           result_transformers:,
@@ -142,6 +143,12 @@ module Foobara
           error_class = possible_error.error_class
           to_include << error_class
           [key, ErrorKey.to_h(key).merge(key:, error: error_class.foobara_manifest_reference)]
+        end
+      end
+
+      def possible_errors_manifest(to_include:)
+        possible_errors.map do |possible_error|
+          possible_error.foobara_manifest(to_include:)
         end
       end
 

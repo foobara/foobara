@@ -20,7 +20,7 @@ module Foobara
           end
 
           def foobara_manifest(to_include:)
-            depends = depends_on.map do |command_name|
+            depends_on = self.depends_on.map do |command_name|
               other_command = Foobara.foobara_lookup!(command_name, mode: Foobara::Namespace::LookupMode::ABSOLUTE)
               to_include << other_command
               other_command.foobara_manifest_reference
@@ -46,13 +46,19 @@ module Foobara
               t.foobara_manifest_reference
             end
 
+            possible_errors = self.possible_errors.map do |possible_error|
+              possible_error.foobara_manifest(to_include:)
+            end
+
             h = {
               types_depended_on: types,
               inputs_types_depended_on:,
               result_types_depended_on:,
               errors_types_depended_on:,
+              # TODO: eliminate this in favor of possible_errors
               error_types: errors_type_declaration(to_include:),
-              depends_on: depends,
+              possible_errors:,
+              depends_on:,
               full_command_name:,
               # TODO: allow inputs type to be nil or really any type?
               inputs_type: inputs_type&.reference_or_declaration_data || {
