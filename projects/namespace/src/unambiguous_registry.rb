@@ -19,6 +19,8 @@ module Foobara
           new_entries[key] = scoped
         end
 
+        all << scoped
+
         registry.merge!(new_entries)
       end
 
@@ -37,8 +39,10 @@ module Foobara
       end
 
       def each_scoped_without_filter(&)
-        registry.each_value(&)
+        all.each(&)
       end
+
+      private
 
       # TODO: why don't we do this in UnambiguousRegistry??
       def to_keys(scoped)
@@ -48,6 +52,10 @@ module Foobara
         prefixes.map do |prefix|
           [*prefix, short_name]
         end
+      end
+
+      def all
+        @all ||= []
       end
     end
   end
