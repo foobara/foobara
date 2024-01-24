@@ -299,11 +299,8 @@ module Foobara
           manifest[:parent_declaration_data] = parent_declaration_data
         end
 
+        # TODO: should just reference the processor_class
         self.class.foobara_manifest(to_include:).merge(manifest)
-      end
-
-      def foobara_manifest_reference
-        self.class.foobara_manifest_reference
       end
 
       def method_missing(method, *args, **opts)
