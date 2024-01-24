@@ -8,7 +8,7 @@ module Foobara
     # in the http connector.
     def manifest
       to_include = foobara_all_organization.to_set
-      included = Set.new
+      included = {}
 
       h = {}
 
@@ -16,10 +16,13 @@ module Foobara
         object = to_include.first
         to_include.delete(object)
 
+        unless object.scoped_path_set?
+          # :nocov:
+          raise "no scoped path set for #{object}"
+          # :nocov:
+        end
+
         manifest_reference = object.foobara_manifest_reference.to_sym
-
-        next if included.include?(manifest_reference)
-
         category_symbol = Foobara.foobara_category_symbol_for(object)
 
         unless category_symbol
@@ -28,10 +31,20 @@ module Foobara
           # :nocov:
         end
 
+        if included.key?(manifest_reference)
+          if included[manifest_reference] == category_symbol
+            next
+          else
+            # :nocov:
+            raise "Collision for #{manifest_reference}: #{included[manifest_reference]} and #{category_symbol}"
+            # :nocov:
+          end
+        end
+
         cat = h[category_symbol] ||= {}
         cat[manifest_reference] = object.foobara_manifest(to_include:)
 
-        included << manifest_reference
+        included[manifest_reference] = category_symbol
       end
 
       h
