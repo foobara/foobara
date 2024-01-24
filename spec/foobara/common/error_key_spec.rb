@@ -37,4 +37,20 @@ RSpec.describe Foobara::ErrorKey do
       it { is_expected.to eq("path1>path2>some_runtime_path>some_category.some_path.some_symbol") }
     end
   end
+
+  describe ".to_h" do
+    subject { described_class.to_h(key) }
+
+    let(:key) { "path1>path2>some_category.some_path.some_symbol" }
+    let(:expected_hash) do
+      {
+        category: :some_category,
+        runtime_path: %i[path1 path2],
+        path: [:some_path],
+        symbol: :some_symbol
+      }
+    end
+
+    it { is_expected.to eq(expected_hash) }
+  end
 end
