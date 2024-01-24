@@ -175,12 +175,17 @@ module Foobara
       def foobara_manifest(to_include:)
         types = []
 
+        possible_errors_manifests = possible_errors.map do |possible_error|
+          [possible_error.key.to_s, possible_error.foobara_manifest(to_include:)]
+        end
+
         h = {
           name:,
           target_classes: target_classes.map(&:name),
           base_type: base_type&.full_type_name&.to_sym,
           declaration_data:,
-          types_depended_on: types
+          types_depended_on: types,
+          possible_errors: possible_errors_manifests
         }
 
         types_depended_on.each do |dependent_type|
