@@ -4,7 +4,7 @@ RSpec.describe Foobara::BuiltinTypes::Duck::SupportedCasters::AllowNil do
   end
 
   let(:type) do
-    Foobara::GlobalDomain.foobara_type_from_declaration(*type_declaration)
+    Foobara::GlobalDomain.foobara_type_from_declaration(*Foobara::Util.array(type_declaration))
   end
 
   describe ".instance" do
@@ -38,6 +38,37 @@ RSpec.describe Foobara::BuiltinTypes::Duck::SupportedCasters::AllowNil do
       outcome = type.process_value(nil)
       expect(outcome).to be_success
       expect(outcome.result).to be_nil
+    end
+  end
+
+  context "entire attributes that are allow_nil" do
+    let(:type_declaration) do
+      {
+        type: :attributes,
+        element_type_declarations: {
+          foo: :integer
+        },
+        required: :foo,
+        allow_nil: true
+      }
+    end
+
+    context "when not nil" do
+      it "works as usual" do
+        outcome = type.process_value(foo: 5)
+
+        expect(outcome).to be_success
+        expect(outcome.result).to eq(foo: 5)
+      end
+    end
+
+    context "when nil" do
+      it "returns nil" do
+        outcome = type.process_value(nil)
+
+        expect(outcome).to be_success
+        expect(outcome.result).to be_nil
+      end
     end
   end
 
@@ -81,6 +112,25 @@ RSpec.describe Foobara::BuiltinTypes::Duck::SupportedCasters::AllowNil do
         explicit_true: nil,
         explicit_false: 5
       )
+    end
+
+    context "when registering it" do
+      before do
+        # TODO: we need a helper to simplify this...
+        Foobara::Namespace::NamespaceHelpers.foobara_namespace!(type)
+
+        type.type_symbol = :some_type
+        type.foobara_parent_namespace ||= Foobara::GlobalDomain
+        type.foobara_parent_namespace.foobara_register(type)
+      end
+
+      it "shows up in the manifest" do
+        manifest = Foobara.manifest
+
+        expect(
+          manifest[:type][:some_type][:declaration_data][:element_type_declarations][:implicit_true][:allow_nil]
+        ).to eq(true)
+      end
     end
   end
 end

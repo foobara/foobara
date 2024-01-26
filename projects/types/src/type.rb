@@ -248,12 +248,12 @@ module Foobara
         all_supported_processor_classes.each do |processor_class|
           to_include << processor_class
 
-          target = if processor_class < Value::Transformer
-                     supported_transformers
+          target = if processor_class < Value::Caster
+                     supported_casters
                    elsif processor_class < Value::Validator
                      supported_validators
-                   elsif processor_class < Value::Caster
-                     supported_casters
+                   elsif processor_class < Value::Transformer
+                     supported_transformers
                    else
                      supported_processors
                    end
