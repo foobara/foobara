@@ -316,11 +316,6 @@ module Foobara
           manifest[:declaration_data] = declaration_data
         end
 
-        if requires_parent_declaration_data?
-          manifest[:parent_declaration_data] = parent_declaration_data
-        end
-
-        # TODO: should just reference the processor_class
         self.class.foobara_manifest(to_include:).merge(manifest)
       end
 
