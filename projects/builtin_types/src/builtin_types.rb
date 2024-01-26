@@ -20,7 +20,7 @@ module Foobara
                            Util.constant_values(casters_module, extends: Value::Processor)
                          end
         casters = caster_classes&.map do |caster_class|
-          caster_class.new_with_agnostic_args(true, declaration_data)
+          caster_class.new_with_agnostic_args(parent_declaration_data: declaration_data)
         end
 
         transformers_module = Util.constant_value(builtin_type_module, :Transformers)
@@ -28,7 +28,7 @@ module Foobara
                                 Util.constant_values(transformers_module, extends: Value::Processor)
                               end
         transformers = transformer_classes&.map do |transformer_class|
-          transformer_class.new_with_agnostic_args(true, declaration_data)
+          transformer_class.new_with_agnostic_args(parent_declaration_data: declaration_data)
         end || []
 
         validators_module = Util.constant_value(builtin_type_module, :Validators)
@@ -36,7 +36,7 @@ module Foobara
                               Util.constant_values(validators_module, extends: Value::Processor)
                             end
         validators = validator_classes&.map do |validator_class|
-          validator_class.new_with_agnostic_args(true, declaration_data)
+          validator_class.new_with_agnostic_args(parent_declaration_data: declaration_data)
         end || []
 
         type = Foobara::Types::Type.new(

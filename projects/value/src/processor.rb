@@ -18,6 +18,10 @@ module Foobara
           name || "Anonymous"
         end
 
+        def default_declaration_data
+          true
+        end
+
         def foobara_manifest(to_include:)
           super.merge(
             name: processor_name,
@@ -25,18 +29,35 @@ module Foobara
           )
         end
 
-        def new_with_agnostic_args(declaration_data, parent_declaration_data)
-          args = if requires_declaration_data?
-                   declaration_data.nil? ? [true] : [declaration_data]
-                 else
-                   []
-                 end
+        def new_with_agnostic_args(**rest)
+          allowed_keys = %i[declaration_data parent_declaration_data]
 
-          args << parent_declaration_data if requires_parent_declaration_data?
+          invalid_keys = rest.keys - allowed_keys
 
-          if args.empty? || args == [true]
+          unless invalid_keys.empty?
+            # :nocov:
+            raise ArgumentError, "Invalid keys: #{invalid_keys.join(", ")} expected one of #{allowed_keys.join(", ")}"
+            # :nocov:
+          end
+
+          args = []
+
+          if requires_declaration_data?
+            args << if rest.key?(:declaration_data)
+                      rest[:declaration_data]
+                    else
+                      default_declaration_data
+                    end
+          end
+
+          if requires_parent_declaration_data?
+            args << rest[:parent_declaration_data] if requires_parent_declaration_data?
+          end
+
+          if args.empty? || args == [default_declaration_data]
             instance
           else
+            # TODO: This feels goofy that the positional types of this interface is dependent on these flags...
             new(*args)
           end
         end
@@ -49,7 +70,7 @@ module Foobara
               # :nocov:
             end
 
-            requires_declaration_data? ? new(true) : new
+            requires_declaration_data? ? new(default_declaration_data) : new
           end
         end
 
@@ -265,7 +286,7 @@ module Foobara
                                     self.parent_declaration_data
                                   end
 
-        self.class.new_with_agnostic_args(declaration_data, parent_declaration_data)
+        self.class.new_with_agnostic_args(declaration_data:, parent_declaration_data:)
       end
 
       def inspect
