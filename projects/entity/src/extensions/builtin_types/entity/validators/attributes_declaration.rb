@@ -2,21 +2,13 @@ module Foobara
   module BuiltinTypes
     module Entity
       module Validators
-        # Why is this here instead of Model??
-        # TODO: move to model...
-        class CreatedInValidState < TypeDeclarations::Processor
-          class << self
-            def requires_parent_declaration_data?
-              true
-            end
+        class AttributesDeclaration < Model::Validators::AttributesDeclaration
+          def always_applicable?
+            false
           end
 
           def applicable?(record)
             record.created? || record.built?
-          end
-
-          def process_value(record)
-            Outcome.new(result: record, errors: record.validation_errors)
           end
 
           # Why is this here in entity/ instead of in model/?

@@ -20,7 +20,7 @@ module Foobara
                            Util.constant_values(casters_module, extends: Value::Processor)
                          end
         casters = caster_classes&.map do |caster_class|
-          caster_class.new_with_agnostic_args(true, declaration_data)
+          caster_class.new_with_agnostic_args(parent_declaration_data: declaration_data)
         end
 
         transformers_module = Util.constant_value(builtin_type_module, :Transformers)
@@ -28,7 +28,7 @@ module Foobara
                                 Util.constant_values(transformers_module, extends: Value::Processor)
                               end
         transformers = transformer_classes&.map do |transformer_class|
-          transformer_class.new_with_agnostic_args(true, declaration_data)
+          transformer_class.new_with_agnostic_args(parent_declaration_data: declaration_data)
         end || []
 
         validators_module = Util.constant_value(builtin_type_module, :Validators)
@@ -36,14 +36,14 @@ module Foobara
                               Util.constant_values(validators_module, extends: Value::Processor)
                             end
         validators = validator_classes&.map do |validator_class|
-          validator_class.new_with_agnostic_args(true, declaration_data)
+          validator_class.new_with_agnostic_args(parent_declaration_data: declaration_data)
         end || []
 
         type = Foobara::Types::Type.new(
           declaration_data,
           base_type:,
           name: type_symbol,
-          casters: casters.nil? || casters.empty? ? base_type&.casters.dup || [] : casters,
+          casters:,
           transformers:,
           validators:,
           # TODO: this is for controlling casting or not casting but could give the wrong information from a
@@ -59,6 +59,10 @@ module Foobara
         type.foobara_parent_namespace ||= GlobalDomain
         type.foobara_parent_namespace.foobara_register(type)
 
+        supported_casters_module = Util.constant_value(builtin_type_module, :SupportedCasters)
+        supported_caster_classes = if supported_casters_module
+                                     Util.constant_values(supported_casters_module, extends: Value::Processor)
+                                   end
         supported_transformers_module = Util.constant_value(builtin_type_module, :SupportedTransformers)
         supported_transformer_classes = if supported_transformers_module
                                           Util.constant_values(supported_transformers_module, extends: Value::Processor)
@@ -75,6 +79,7 @@ module Foobara
         processor_classes = [*transformers, *validators].map(&:class)
 
         [
+          *supported_caster_classes,
           *supported_transformer_classes,
           *supported_validator_classes,
           *supported_processor_classes
@@ -91,6 +96,7 @@ module Foobara
           [casters_module, caster_classes, casters],
           [transformers_module, transformer_classes, transformers],
           [validators_module, validator_classes, validators],
+          [supported_casters_module, supported_caster_classes],
           [supported_processors_module, supported_processor_classes],
           [supported_transformers_module, supported_transformer_classes],
           [supported_validators_module, supported_validator_classes]

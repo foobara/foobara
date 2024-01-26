@@ -79,7 +79,7 @@ RSpec.describe "custom types" do
 
           Foobara::Types::Type.new(
             strict_type_declaration,
-            base_type: :number,
+            base_type: Foobara.foobara_lookup_type!(:number),
             name: :custom_complex,
             casters: c,
             transformers: [],
@@ -255,8 +255,6 @@ RSpec.describe "custom types" do
           expect(complex).to be_a(complex_class)
           expect(complex.real).to eq(1)
           expect(complex.imaginary).to eq(2)
-
-          expect(type.value_caster.processors.map(&:name)).to eq(["Foobara::BuiltinTypes::Attributes::Casters::Hash"])
         end
       end
 

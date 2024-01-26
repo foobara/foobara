@@ -85,5 +85,9 @@ module Foobara
         [error.key, error.to_h]
       end
     end
+
+    def keys
+      error_array.map(&:key)
+    end
   end
 end

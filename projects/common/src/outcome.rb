@@ -75,8 +75,10 @@ module Foobara
       return if success?
 
       if errors.size == 1
+        binding.pry
         raise errors.first
       else
+        binding.pry
         raise UnsuccessfulOutcomeError, errors
       end
     end
@@ -88,6 +90,10 @@ module Foobara
 
     def errors_hash
       error_collection.to_h
+    end
+
+    def error_keys
+      error_collection.keys
     end
   end
 end
