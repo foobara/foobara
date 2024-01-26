@@ -41,7 +41,7 @@ RSpec.describe Foobara::BuiltinTypes::Duck::SupportedCasters::AllowNil do
     end
   end
 
-  context "entire attributes that are allow_nil" do
+  context "with entire attributes that allow_nil" do
     let(:type_declaration) do
       {
         type: :attributes,
@@ -72,7 +72,7 @@ RSpec.describe Foobara::BuiltinTypes::Duck::SupportedCasters::AllowNil do
     end
   end
 
-  context "attribute that is allow_nil" do
+  context "with attribute that is allow_nil" do
     let(:type_declaration) do
       proc do
         default :integer
@@ -129,7 +129,7 @@ RSpec.describe Foobara::BuiltinTypes::Duck::SupportedCasters::AllowNil do
 
         expect(
           manifest[:type][:some_type][:declaration_data][:element_type_declarations][:implicit_true][:allow_nil]
-        ).to eq(true)
+        ).to be(true)
       end
     end
   end

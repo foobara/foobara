@@ -276,12 +276,27 @@ RSpec.describe ":entity" do
       let(:value) { type.process_value!(value_to_process) }
 
       context "when instantiating via type declaration instead of class" do
-        let(:value_to_process) do
-          "10"
+        context "when constructed from string version of primary key" do
+          let(:value_to_process) do
+            "10"
+          end
+
+          it "constructs value" do
+            expect(value).to be_a(constructed_model)
+          end
         end
 
-        it "constructs value" do
-          expect(value).to be_a(constructed_model)
+        context "when constructed from attributes hash" do
+          let(:value_to_process) do
+            { "foo" => 10, "bar" => :baz }
+          end
+
+          it "constructs created value" do
+            expect(value).to be_a(constructed_model)
+            expect(value).to be_created
+            expect(value.foo).to eq(10)
+            expect(value.bar).to eq("baz")
+          end
         end
       end
 
