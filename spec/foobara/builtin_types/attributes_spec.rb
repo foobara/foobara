@@ -3,6 +3,23 @@ RSpec.describe Foobara::BuiltinTypes::Attributes::SupportedTransformers::Default
     Foobara::Domain.current.foobara_type_from_declaration(type_declaration)
   }
 
+  context "when value is an attributes array" do
+    let(:type_declaration) do
+      { foo: :integer, bar: :symbol }
+    end
+
+    let(:value_to_process) do
+      [%w[foo 10], %w[bar baz]]
+    end
+
+    it "constructs created value" do
+      value = type.process_value!(value_to_process)
+      expect(value).to be_a(Hash)
+      expect(value[:foo]).to eq(10)
+      expect(value[:bar]).to eq(:baz)
+    end
+  end
+
   describe "defaults" do
     context "when defaults is not a hash" do
       let(:type_declaration) do

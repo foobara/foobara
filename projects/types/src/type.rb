@@ -45,10 +45,11 @@ module Foobara
         **opts
       )
         self.base_type = base_type
-        self.casters = Util.array(casters)
-        self.transformers = transformers
-        self.validators = validators
-        self.element_processors = element_processors
+        self.casters = [*casters, *base_type&.casters]
+        self.transformers = [*transformers, *base_type&.transformers]
+        self.validators = [*validators, *base_type&.validators]
+        self.element_processors = [*element_processors, *base_type&.element_processors]
+
         self.structure_count = structure_count
         # TODO: combine these maybe with the term "children_types"?
         self.element_types = element_types
@@ -57,6 +58,34 @@ module Foobara
         self.target_classes = Util.array(target_classes)
 
         super(*args, **opts.merge(processors:, prioritize: false))
+
+        validate_processors!
+      end
+
+      def validate_processors!
+        all = [casters, transformers, validators, element_processors]
+
+        all.each do |processor_group|
+          processor_group.each.with_index do |processor, index|
+            if processor.requires_parent_declaration_data?
+              processor_group[index] = processor.dup_processor(parent_declaration_data: declaration_data)
+            end
+          end
+
+          processor_group.group_by(&:symbol).each_pair do |symbol, members|
+            if members.size > 1
+              if members.map { |m| m.class.name }.uniq.size == members.size
+                members[1..].each do |member|
+                  processor_group.delete(member)
+                end
+              else
+                # :nocov:
+                raise "Type #{name} has multiple processors with symbol #{symbol}"
+                # :nocov:
+              end
+            end
+          end
+        end
       end
 
       def target_class

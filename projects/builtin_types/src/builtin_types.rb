@@ -43,7 +43,7 @@ module Foobara
           declaration_data,
           base_type:,
           name: type_symbol,
-          casters: casters.nil? || casters.empty? ? base_type&.casters.dup || [] : casters,
+          casters:,
           transformers:,
           validators:,
           # TODO: this is for controlling casting or not casting but could give the wrong information from a
