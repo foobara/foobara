@@ -37,19 +37,17 @@ module Foobara
           end
         end
 
-        attr_accessor :casters, :target_classes
+        attr_accessor :target_classes
 
         def initialize(*args, casters:, target_classes: nil)
           self.target_classes = Util.array(target_classes)
-          self.casters = casters
-          super(*args)
-        end
 
-        def processors
-          [
-            does_not_need_cast_processor,
+          processors = [
+            *does_not_need_cast_processor,
             *casters
-          ].compact
+          ]
+
+          super(*args, processors:)
         end
 
         def needs_cast?(value)
