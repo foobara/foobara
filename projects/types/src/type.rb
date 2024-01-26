@@ -60,9 +60,6 @@ module Foobara
         super(*args, **opts.merge(processors:, prioritize: false))
 
         validate_processors!
-      rescue => e
-        binding.pry
-        raise
       end
 
       def validate_processors!
@@ -82,8 +79,9 @@ module Foobara
                   processor_group.delete(member)
                 end
               else
-                binding.pry
+                # :nocov:
                 raise "Type #{name} has multiple processors with symbol #{symbol}"
+                # :nocov:
               end
             end
           end

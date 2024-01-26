@@ -75,10 +75,8 @@ module Foobara
       return if success?
 
       if errors.size == 1
-        binding.pry
         raise errors.first
       else
-        binding.pry
         raise UnsuccessfulOutcomeError, errors
       end
     end

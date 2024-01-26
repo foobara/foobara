@@ -60,7 +60,6 @@ RSpec.describe Foobara::BuiltinTypes::Duck::SupportedCasters::AllowNil do
       )
 
       expect(outcome).to_not be_success
-      binding.pry
       expect(outcome.error_keys).to eq(
         [
           "data.default.cannot_cast",

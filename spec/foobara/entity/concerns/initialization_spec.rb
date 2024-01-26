@@ -171,7 +171,7 @@ RSpec.describe Foobara::Entity::Concerns::Initialization do
           end
         end
 
-        it "fails when creating by hash but works when creating by foreign key", :focus do
+        it "fails when creating by hash but works when creating by foreign key" do
           applicant_class.transaction do |tx|
             outcome = type.process_value(
               [
@@ -181,7 +181,6 @@ RSpec.describe Foobara::Entity::Concerns::Initialization do
               ]
             )
 
-            binding.pry
             expect(outcome).to_not be_success
 
             error_hash = outcome.errors_hash

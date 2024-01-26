@@ -3,10 +3,6 @@ module Foobara
     module Entity
       module Validators
         class AttributesDeclaration < Model::Validators::AttributesDeclaration
-          def always_applicable?
-            false
-          end
-
           def applicable?(record)
             record.created? || record.built?
           end

@@ -35,7 +35,9 @@ module Foobara
           invalid_keys = rest.keys - allowed_keys
 
           unless invalid_keys.empty?
+            # :nocov:
             raise ArgumentError, "Invalid keys: #{invalid_keys.join(", ")} expected one of #{allowed_keys.join(", ")}"
+            # :nocov:
           end
 
           args = []
