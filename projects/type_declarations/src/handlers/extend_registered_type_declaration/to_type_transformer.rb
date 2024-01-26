@@ -26,20 +26,23 @@ module Foobara
                 parent_declaration_data: strict_type_declaration
               )
 
-              case processor
-              when Value::Validator
-                validators << processor
-              when Value::Transformer
-                transformers << processor
-              when Types::ElementProcessor
-                element_processors ||= []
-                element_processors << processor
-              else
-                # TODO: add validator that these are all fine so we don't have to bother here...
-                # :nocov:
-                raise "Not sure where to put #{processor}"
-                # :nocov:
-              end
+              category = case processor
+                         when Value::Caster
+                           casters
+                         when Value::Validator
+                           validators
+                         when Value::Transformer
+                           transformers
+                         when Types::ElementProcessor
+                           element_processors
+                         else
+                           # TODO: add validator that these are all fine so we don't have to bother here...
+                           # :nocov:
+                           raise "Not sure where to put #{processor}"
+                           # :nocov:
+                         end
+
+              category << processor
             end
 
             Types::Type.new(

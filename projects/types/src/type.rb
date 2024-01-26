@@ -240,6 +240,7 @@ module Foobara
       end
 
       def supported_processor_manifest(to_include)
+        supported_casters = []
         supported_transformers = []
         supported_validators = []
         supported_processors = []
@@ -247,10 +248,12 @@ module Foobara
         all_supported_processor_classes.each do |processor_class|
           to_include << processor_class
 
-          target = if processor_class < Value::Transformer
-                     supported_transformers
+          target = if processor_class < Value::Caster
+                     supported_casters
                    elsif processor_class < Value::Validator
                      supported_validators
+                   elsif processor_class < Value::Transformer
+                     supported_transformers
                    else
                      supported_processors
                    end
@@ -259,6 +262,7 @@ module Foobara
         end
 
         {
+          supported_casters:,
           supported_transformers:,
           supported_validators:,
           supported_processors:
