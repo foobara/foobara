@@ -89,5 +89,9 @@ module Foobara
     def errors_hash
       error_collection.to_h
     end
+
+    def error_keys
+      error_collection.keys
+    end
   end
 end
