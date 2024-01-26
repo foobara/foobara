@@ -17,6 +17,10 @@ module Foobara
             end
           end
 
+          def applicable?(value)
+            value.is_a?(::Hash)
+          end
+
           def required_attribute_names
             required
           end

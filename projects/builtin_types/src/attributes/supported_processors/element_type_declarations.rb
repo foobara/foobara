@@ -18,6 +18,10 @@ module Foobara
             end
           end
 
+          def applicable?(value)
+            value.is_a?(::Hash)
+          end
+
           def allowed_attributes
             @allowed_attributes ||= declaration_data.keys
           end
