@@ -73,13 +73,94 @@ module Foobara
 
     attr_accessor :command_registry, :authenticator
 
-    def request_to_command(_request)
-      # :nocov:
-      raise "subclass responsibility"
-      # :nocov:
+    def request_to_command(request)
+      action = request.action
+      inputs = nil
+      full_command_name = request.full_command_name
+
+      case action
+      when "run"
+        transformed_command_class = command_registry[full_command_name]
+
+        unless transformed_command_class
+          # :nocov:
+          raise NoCommandFoundError, "Could not find command registered for #{full_command_name}"
+          # :nocov:
+        end
+
+        request.command_class = transformed_command_class
+
+        inputs = request.inputs
+      when "describe"
+        manifestable = transformed_command_from_name(full_command_name) || type_from_name(full_command_name)
+
+        unless manifestable
+          # :nocov:
+          raise NoCommandOrTypeFoundError, "Could not find command or type registered for #{full_command_name}"
+          # :nocov:
+        end
+
+        command_class = Foobara::CommandConnectors::Commands::Describe
+        full_command_name = command_class.full_command_name
+
+        inputs = { manifestable: }
+        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+      when "describe_command"
+        transformed_command_class = transformed_command_from_name(full_command_name)
+
+        unless transformed_command_class
+          # :nocov:
+          raise NoCommandFoundError, "Could not find command registered for #{full_command_name}"
+          # :nocov:
+        end
+
+        command_class = Foobara::CommandConnectors::Commands::Describe
+        full_command_name = command_class.full_command_name
+
+        inputs = { manifestable: transformed_command_class }
+        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+      when "describe_type"
+        type = type_from_name(full_command_name)
+
+        unless type
+          # :nocov:
+          raise NoTypeFoundError, "Could not find type registered for #{full_command_name}"
+          # :nocov:
+        end
+
+        command_class = Foobara::CommandConnectors::Commands::Describe
+        full_command_name = command_class.full_command_name
+
+        inputs = { manifestable: type }
+        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+      when "manifest"
+        command_class = Foobara::CommandConnectors::Commands::Describe
+        full_command_name = command_class.full_command_name
+
+        inputs = { manifestable: self }
+        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+      when "ping"
+        command_class = Foobara::CommandConnectors::Commands::Ping
+        full_command_name = command_class.full_command_name
+
+        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+      when "query_git_commit_info"
+        # TODO: this feels out of control... should just accomplish this through run I think instead. Same with ping.
+        command_class = Foobara::CommandConnectors::Commands::QueryGitCommitInfo
+        full_command_name = command_class.full_command_name
+
+        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+      else
+        binding.pry
+        # :nocov:
+        raise InvalidContextError, "Not sure what to do with #{action}"
+        # :nocov:
+      end
+
+      transformed_command_class.new(inputs)
     end
 
-    def command_to_request(_command)
+    def request_to_response(_command)
       # :nocov:
       raise "subclass responsibility"
       # :nocov:
@@ -107,8 +188,18 @@ module Foobara
     def run(...)
       request = build_request(...)
       command = request_to_command(request)
+      request.command = command
       command.run
-      command_to_response(command)
+
+      response = request_to_response(request)
+      response.request = request
+
+      response
+    end
+
+    def build_command(...)
+      request = build_request(...)
+      request_to_command(request)
     end
 
     def registered_types_depended_on
