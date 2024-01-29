@@ -73,6 +73,18 @@ module Foobara
 
     attr_accessor :command_registry, :authenticator
 
+    def request_to_command(_request)
+      # :nocov:
+      raise "subclass responsibility"
+      # :nocov:
+    end
+
+    def command_to_request(_command)
+      # :nocov:
+      raise "subclass responsibility"
+      # :nocov:
+    end
+
     def initialize(authenticator: nil, default_serializers: nil)
       self.command_registry = CommandRegistry.new(authenticator:)
       self.authenticator = authenticator
@@ -90,12 +102,6 @@ module Foobara
 
     def build_request(...)
       self.class::Request.new(...)
-    end
-
-    def context_to_request(_context)
-      # :nocov:
-      raise "subclass responsibility"
-      # :nocov:
     end
 
     def run(...)

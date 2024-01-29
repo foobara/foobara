@@ -130,6 +130,8 @@ module Foobara
         static_headers.dup
       end
 
+      private
+
       def static_headers
         @static_headers ||= ENV.each_with_object({}) do |(key, value), headers|
           match = key.match(/\AFOOBARA_HTTP_RESPONSE_HEADER_(.*)\z/)
