@@ -151,7 +151,6 @@ module Foobara
 
         transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
       else
-        binding.pry
         # :nocov:
         raise InvalidContextError, "Not sure what to do with #{action}"
         # :nocov:
@@ -195,11 +194,6 @@ module Foobara
       response.request = request
 
       response
-    end
-
-    def build_command(...)
-      request = build_request(...)
-      request_to_command(request)
     end
 
     def registered_types_depended_on
