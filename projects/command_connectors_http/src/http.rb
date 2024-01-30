@@ -11,7 +11,8 @@ module Foobara
       end
 
       # TODO: eliminate passing the command here...
-      def command_to_response(command)
+      def request_to_response(request)
+        command = request.command
         outcome = command.outcome
 
         # TODO: feels awkward to call this here... Maybe use result/errors transformers instead??

@@ -159,7 +159,7 @@ module Foobara
       transformed_command_class.new(inputs)
     end
 
-    def command_to_request(_command)
+    def request_to_response(_command)
       # :nocov:
       raise "subclass responsibility"
       # :nocov:
@@ -187,8 +187,13 @@ module Foobara
     def run(...)
       request = build_request(...)
       command = request_to_command(request)
+      request.command = command
       command.run
-      command_to_response(command)
+
+      response = request_to_response(request)
+      response.request = request
+
+      response
     end
 
     def registered_types_depended_on
