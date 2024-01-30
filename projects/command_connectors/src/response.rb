@@ -5,10 +5,13 @@ module Foobara
                     :body,
                     :request
 
-      def initialize(status:, body:)
+      def initialize(status:, body:, request:)
         self.status = status
         self.body = body
+        self.request = request
       end
+
+      foobara_delegate :command, :error, to: :request
     end
   end
 end
