@@ -1,15 +1,12 @@
 module Foobara
   module CommandConnectors
     class Http < CommandConnector
-      class Response
-        attr_accessor :status,
-                      :headers,
-                      :body
+      class Response < CommandConnectors::Response
+        attr_accessor :headers
 
-        def initialize(status, headers, body)
-          self.status = status
+        def initialize(headers:, **opts)
           self.headers = headers
-          self.body = body
+          super(**opts)
         end
       end
     end
