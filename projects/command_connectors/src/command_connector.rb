@@ -150,6 +150,11 @@ module Foobara
         full_command_name = command_class.full_command_name
 
         transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+      when "help"
+        command_class = self.class::Commands::Help
+        full_command_name = command_class.full_command_name
+
+        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
       else
         # :nocov:
         raise InvalidContextError, "Not sure what to do with #{action}"

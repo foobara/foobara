@@ -921,6 +921,15 @@ RSpec.describe Foobara::CommandConnectors::Http do
       end
     end
 
+    context "with help path" do
+      let(:path) { "/help" }
+
+      it "gives some help" do
+        expect(response.status).to be(200)
+        expect(response.body).to match(/helping!!/)
+      end
+    end
+
     describe "connector manifest" do
       describe "#manifest" do
         let(:manifest) { command_connector.foobara_manifest }
