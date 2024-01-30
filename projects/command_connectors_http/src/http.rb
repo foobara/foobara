@@ -43,7 +43,7 @@ module Foobara
 
         headers = headers_for(command)
 
-        Response.new(status:, headers:, body:)
+        Response.new(status:, headers:, body:, request:)
       end
 
       def headers_for(_command)

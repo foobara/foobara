@@ -150,6 +150,11 @@ module Foobara
         full_command_name = command_class.full_command_name
 
         transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+      when "help"
+        command_class = self.class::Help
+        full_command_name = command_class.full_command_name
+
+        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
       else
         # :nocov:
         raise InvalidContextError, "Not sure what to do with #{action}"
@@ -185,14 +190,33 @@ module Foobara
     end
 
     def run(...)
-      request = build_request(...)
-      command = request_to_command(request)
-      request.command = command
-      command.run
+      request, command = build_request_and_command(...)
 
+      if command
+        command.run
+      elsif !request.error
+        # :nocov:
+        raise "No command returned from #request_to_command"
+        # :nocov:
+      end
+
+      build_response(request)
+    end
+
+    def build_request_and_command(...)
+      request = build_request(...)
+
+      unless request.error
+        command = request_to_command(request)
+        request.command = command
+      end
+
+      [request, command]
+    end
+
+    def build_response(request)
       response = request_to_response(request)
       response.request = request
-
       response
     end
 

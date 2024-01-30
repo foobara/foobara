@@ -2,7 +2,7 @@ module Foobara
   module CommandConnectors
     class Request
       # TODO: this feels like a smell of some sort...
-      attr_accessor :command_class, :command
+      attr_accessor :command_class, :command, :error
 
       def full_command_name
         # :nocov:
