@@ -185,14 +185,33 @@ module Foobara
     end
 
     def run(...)
-      request = build_request(...)
-      command = request_to_command(request)
-      request.command = command
-      command.run
+      request, command = build_request_and_command(...)
 
+      if command
+        command.run
+        # :nocov:
+      elsif !request.error
+        raise "No command returned from #request_to_command"
+        # :nocov:
+      end
+
+      build_response(request)
+    end
+
+    def build_request_and_command(...)
+      request = build_request(...)
+
+      unless request.error
+        command = request_to_command(request)
+        request.command = command
+      end
+
+      [request, command]
+    end
+
+    def build_response(request)
       response = request_to_response(request)
       response.request = request
-
       response
     end
 
