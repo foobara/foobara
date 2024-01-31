@@ -8,7 +8,12 @@ module Foobara
       foobara_delegate :global_type_declaration_handler_registry, to: TypeDeclarations
 
       # TODO: break this up
-      def build_and_register!(type_symbol, base_type, target_classes = const_get("::#{Util.classify(type_symbol)}"))
+      def build_and_register!(
+        type_symbol,
+        base_type,
+        target_classes = const_get("::#{Util.classify(type_symbol)}"),
+        description: "Built-in #{type_symbol} type"
+      )
         declaration_data = { type: type_symbol.to_sym }
 
         module_symbol = Util.classify(type_symbol).to_sym
@@ -48,7 +53,8 @@ module Foobara
           validators:,
           # TODO: this is for controlling casting or not casting but could give the wrong information from a
           # reflection point of view...
-          target_classes:
+          target_classes:,
+          description:
         )
 
         builtin_types << type

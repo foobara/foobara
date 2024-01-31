@@ -1,4 +1,4 @@
-RSpec.describe Foobara::BuiltinTypes::Attributes::SupportedTransformers::Defaults do
+RSpec.describe Foobara::BuiltinTypes::Attributes do
   let(:type) {
     Foobara::Domain.current.foobara_type_from_declaration(type_declaration)
   }
@@ -20,6 +20,25 @@ RSpec.describe Foobara::BuiltinTypes::Attributes::SupportedTransformers::Default
     end
   end
 
+  describe "when attributes has its own description and element declaration types do as well" do
+    let(:type_declaration) do
+      {
+        type: :attributes,
+        element_type_declarations: {
+          foo: { type: :integer, description: "foo desc" },
+          bar: { type: :string, description: "bar desc" }
+        },
+        description: "attributes desc"
+      }
+    end
+
+    it "has all the expected descriptions on the correct types" do
+      expect(type.description).to eq("attributes desc")
+      expect(type.element_types[:foo].description).to eq("foo desc")
+      expect(type.element_types[:bar].description).to eq("bar desc")
+    end
+  end
+
   describe "defaults" do
     context "when defaults is not a hash" do
       let(:type_declaration) do
@@ -36,8 +55,8 @@ RSpec.describe Foobara::BuiltinTypes::Attributes::SupportedTransformers::Default
         expect {
           type
         }.to raise_error(
-          described_class::TypeDeclarationExtension::ExtendAttributesTypeDeclaration::TypeDeclarationValidators::
-              HashWithSymbolicKeys::InvalidDefaultValuesGivenError
+          described_class::SupportedTransformers::Defaults::TypeDeclarationExtension::ExtendAttributesTypeDeclaration::
+              TypeDeclarationValidators::HashWithSymbolicKeys::InvalidDefaultValuesGivenError
         )
       end
     end
@@ -59,8 +78,8 @@ RSpec.describe Foobara::BuiltinTypes::Attributes::SupportedTransformers::Default
         expect {
           type
         }.to raise_error(
-          described_class::TypeDeclarationExtension::ExtendAttributesTypeDeclaration::TypeDeclarationValidators::
-              ValidAttributeNames::InvalidDefaultValueGivenError
+          described_class::SupportedTransformers::Defaults::TypeDeclarationExtension::ExtendAttributesTypeDeclaration::
+              TypeDeclarationValidators::ValidAttributeNames::InvalidDefaultValueGivenError
         )
       end
     end

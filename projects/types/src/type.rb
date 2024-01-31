@@ -27,13 +27,15 @@ module Foobara
                     :element_type,
                     :raw_declaration_data,
                     :name,
-                    :target_classes
+                    :target_classes,
+                    :description
       attr_reader :type_symbol
 
       def initialize(
         *args,
         target_classes:,
         base_type:,
+        description: nil,
         name: "anonymous",
         casters: [],
         transformers: [],
@@ -45,6 +47,7 @@ module Foobara
         **opts
       )
         self.base_type = base_type
+        self.description = description
         self.casters = [*casters, *base_type&.casters]
         self.transformers = [*transformers, *base_type&.transformers]
         self.validators = [*validators, *base_type&.validators]
@@ -210,6 +213,7 @@ module Foobara
 
         h = {
           name:,
+          description:,
           target_classes: target_classes.map(&:name),
           base_type: base_type&.full_type_name&.to_sym,
           declaration_data:,
