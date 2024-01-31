@@ -194,6 +194,9 @@ module Foobara
     def run(...)
       request, command = build_request_and_command(...)
 
+      # TODO: feels like a smell
+      request.command_connector = self
+
       if command
         command.run
         # :nocov:
