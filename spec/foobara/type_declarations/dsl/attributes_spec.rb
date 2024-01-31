@@ -3,7 +3,7 @@ RSpec.describe Foobara::TypeDeclarations::Dsl::Attributes do
     it "creates the expected declaration" do
       declaration = described_class.to_declaration do
         first_name :string, :required
-        age :integer, min: 0
+        age :integer, "User's age", min: 0
         nested do
           foo [:integer]
           bar :float, default: 1.0
@@ -14,7 +14,7 @@ RSpec.describe Foobara::TypeDeclarations::Dsl::Attributes do
         type: :attributes,
         element_type_declarations: {
           first_name: :string,
-          age: { type: :integer, min: 0 },
+          age: { type: :integer, min: 0, description: "User's age" },
           nested: {
             type: :attributes,
             element_type_declarations: {

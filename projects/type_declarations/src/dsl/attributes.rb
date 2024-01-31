@@ -27,20 +27,30 @@ module Foobara
           _disable_method_missing do
             declaration = declaration.dup
 
-            # if block_given?
-            # declaration = self.class.to_declaration(&).merge(declaration)
             unless block
               type, *processor_symbols = processor_symbols
             end
 
             processor_symbols.each do |processor_symbol|
-              unless processor_symbol.is_a?(::Symbol)
+              case processor_symbol
+              when ::String
+                description = processor_symbol
+
+                if declaration.key?(:description)
+                  # :nocov:
+                  raise ArgumentError, "Expected only one description but " \
+                                       "got #{description.inspect} and #{declaration[:description].inspect}"
+                  # :nocov:
+                end
+
+                declaration[:description] = description
+              when ::Symbol
+                declaration[processor_symbol] = true
+              else
                 # :nocov:
                 raise ArgumentError, "expected a Symbol, got #{processor_symbol.inspect}"
                 # :nocov:
               end
-
-              declaration[processor_symbol] = true
             end
 
             if declaration.delete(:required)
