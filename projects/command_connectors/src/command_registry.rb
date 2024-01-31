@@ -5,6 +5,7 @@ module Foobara
 
     def initialize(authenticator: nil)
       self.authenticator = authenticator
+      # TODO: swap these out for Namespace which already supports this kind of lookup.
       self.registry = {}
       self.short_name_to_transformed_command = {}
     end

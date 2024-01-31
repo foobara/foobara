@@ -2,6 +2,7 @@ module Foobara
   class Command
     include TruncatedInspect
 
+    include Concerns::Description
     include Concerns::Namespace
 
     include Concerns::InputsType
