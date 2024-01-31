@@ -1,6 +1,10 @@
 RSpec.describe ":array" do
   let(:type) { Foobara::BuiltinTypes[:array] }
 
+  it "is a builtin type" do
+    expect(Foobara::BuiltinTypes.builtin?(type)).to be(true)
+  end
+
   describe "#process_value!" do
     subject { type.process_value!(value) }
 

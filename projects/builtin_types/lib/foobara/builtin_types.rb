@@ -9,6 +9,10 @@ module Foobara
         @builtin_types ||= Set.new
       end
 
+      def builtin?(type)
+        builtin_types.include?(type)
+      end
+
       def [](symbol)
         builtin_types.find do |type|
           type.type_symbol == symbol
