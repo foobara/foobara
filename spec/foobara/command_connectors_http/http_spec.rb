@@ -565,7 +565,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
         end
 
         context "with AtomicSerializer" do
-          let(:serializers) { described_class::Serializers::AtomicSerializer }
+          let(:serializers) { Foobara::CommandConnectors::Serializers::AtomicSerializer }
 
           context "when user exists with a referral" do
             let(:user) do
@@ -594,7 +594,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
         end
 
         context "with AggregateSerializer" do
-          let(:serializers) { described_class::Serializers::AggregateSerializer }
+          let(:serializers) { Foobara::CommandConnectors::Serializers::AggregateSerializer }
           let(:pre_commit_transformers) { Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer }
 
           context "when user exists with a referral" do
@@ -660,7 +660,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
               }
               expect(manifest).to be_a(Hash)
               manifest = command_manifest[:serializers].find { |h|
-                h[:name] == "Foobara::CommandConnectors::Http::Serializers::AggregateSerializer"
+                h[:name] == "Foobara::CommandConnectors::Serializers::AggregateSerializer"
               }
               expect(manifest).to be_a(Hash)
             end
@@ -672,7 +672,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
               let(:default_serializers) do
                 [
-                  described_class::Serializers::AggregateSerializer,
+                  Foobara::CommandConnectors::Serializers::AggregateSerializer,
                   Foobara::CommandConnectors::Serializers::ErrorsSerializer,
                   Foobara::CommandConnectors::Serializers::JsonSerializer
                 ]
@@ -689,7 +689,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 }
                 expect(manifest).to be_a(Hash)
                 manifest = command_manifest[:serializers].find { |h|
-                  h[:name] == "Foobara::CommandConnectors::Http::Serializers::AggregateSerializer"
+                  h[:name] == "Foobara::CommandConnectors::Serializers::AggregateSerializer"
                 }
                 expect(manifest).to be_a(Hash)
               end
@@ -702,7 +702,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
                   expect(command_manifest[:pre_commit_transformers]).to be_empty
 
                   manifest = command_manifest[:serializers].find { |h|
-                    h[:name] == "Foobara::CommandConnectors::Http::Serializers::AggregateSerializer"
+                    h[:name] == "Foobara::CommandConnectors::Serializers::AggregateSerializer"
                   }
                   expect(manifest).to be_nil
                 end
@@ -712,7 +712,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
         end
 
         context "with RecordStoreSerializer" do
-          let(:serializers) { described_class::Serializers::RecordStoreSerializer }
+          let(:serializers) { Foobara::CommandConnectors::Serializers::RecordStoreSerializer }
           let(:aggregate_entities) { true }
 
           context "when user exists with a referral" do

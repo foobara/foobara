@@ -71,10 +71,10 @@ module Foobara
       if aggregate_entities
         pre_commit_transformers << Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer
         # TODO: Http should not appear at all in this project...
-        serializers << Foobara::CommandConnectors::Http::Serializers::AggregateSerializer
+        serializers << Foobara::CommandConnectors::Serializers::AggregateSerializer
       elsif aggregate_entities == false
         pre_commit_transformers.delete(Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer)
-        serializers.delete(Foobara::CommandConnectors::Http::Serializers::AggregateSerializer)
+        serializers.delete(Foobara::CommandConnectors::Serializers::AggregateSerializer)
       end
 
       Foobara::TransformedCommand.subclass(
