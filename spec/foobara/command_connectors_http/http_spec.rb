@@ -43,6 +43,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
     described_class.new(authenticator:, default_serializers:)
   end
 
+  let(:command_registry) { command_connector.command_registry }
+
   let(:authenticator) { nil }
   let(:default_serializers) do
     [Foobara::CommandConnectors::Serializers::ErrorsSerializer, Foobara::CommandConnectors::Serializers::JsonSerializer]
@@ -107,6 +109,15 @@ RSpec.describe Foobara::CommandConnectors::Http do
         transformed_command = transformed_commands.first
         expect(transformed_command.full_command_symbol).to eq(:"some_org::some_domain::some_command")
         expect(transformed_command.command_class).to eq(command_class)
+
+        command_classes = []
+
+        command_registry.each_transformed_command_class do |klass|
+          command_classes << klass
+        end
+
+        expect(command_classes).to eq([transformed_command])
+        expect(command_registry.all_transformed_command_classes).to eq([transformed_command])
       end
 
       context "when registering via domain" do

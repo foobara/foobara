@@ -254,5 +254,13 @@ module Foobara
 
       (org_name.nil? || org_name == org) && (domain_name.nil? || domain_name == dom&.foobara_domain_name)
     end
+
+    def all_transformed_command_classes
+      registry.values
+    end
+
+    def each_transformed_command_class(&)
+      registry.each_value(&)
+    end
   end
 end
