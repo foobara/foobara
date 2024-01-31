@@ -42,6 +42,7 @@ module Foobara
       foobara_delegate :full_command_name,
                        :full_command_symbol,
                        :command_name,
+                       :description,
                        :domain,
                        :organization,
                        to: :command_class
@@ -56,8 +57,8 @@ module Foobara
         end
 
         inputs_transformers = self.inputs_transformers.map { |t| t.foobara_manifest(to_include:) }
-        result_transformers =  self.result_transformers.map { |t| t.foobara_manifest(to_include:) }
-        errors_transformers =  self.errors_transformers.map { |t| t.foobara_manifest(to_include:) }
+        result_transformers = self.result_transformers.map { |t| t.foobara_manifest(to_include:) }
+        errors_transformers = self.errors_transformers.map { |t| t.foobara_manifest(to_include:) }
         pre_commit_transformers = self.pre_commit_transformers.map { |t| t.foobara_manifest(to_include:) }
         serializers = self.serializers.map do |s|
           s.respond_to?(:foobara_manifest) ? s.foobara_manifest(to_include:) : { proc: s.to_s }
@@ -188,7 +189,7 @@ module Foobara
       construct_command
     end
 
-    foobara_delegate :full_command_name, to: :command_class
+    foobara_delegate :full_command_name, :description, to: :command_class
     foobara_delegate :command_class,
                      :capture_unknown_error,
                      :inputs_transformers,

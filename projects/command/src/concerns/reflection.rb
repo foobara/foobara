@@ -51,6 +51,7 @@ module Foobara
             end
 
             h = {
+              description:,
               types_depended_on: types,
               inputs_types_depended_on:,
               result_types_depended_on:,

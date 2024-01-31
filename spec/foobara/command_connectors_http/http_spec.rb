@@ -97,6 +97,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
           inputs email: :email
         end
         stub_class "SomeOrg::SomeDomain::SomeCommand", Foobara::Command do
+          description "just some command"
           depends_on SomeOtherOrg::SomeOtherDomain::SomeOtherCommand
         end
       end
@@ -136,6 +137,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
             manifest = command_connector.foobara_manifest
 
             expect(manifest[:organization].keys).to match_array(%i[SomeOrg global_organization])
+            expect(manifest[:command][:"SomeOrg::SomeDomain::SomeCommand"][:description]).to eq("just some command")
           end
         end
       end
