@@ -7,6 +7,10 @@ module Foobara
           YAML.dump(object)
         end
 
+        def deserialize(string)
+          YAML.load(string)
+        end
+
         def priority
           Priority::LOW
         end

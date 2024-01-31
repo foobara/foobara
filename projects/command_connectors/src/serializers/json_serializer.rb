@@ -7,6 +7,10 @@ module Foobara
           JSON.fast_generate(object)
         end
 
+        def deserialize(string)
+          JSON.parse(string)
+        end
+
         def priority
           Priority::LOW
         end

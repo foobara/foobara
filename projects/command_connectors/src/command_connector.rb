@@ -189,6 +189,7 @@ module Foobara
       self.class::Request.new(...)
     end
 
+    # TODO: maybe introduce a Runner interface?
     def run(...)
       request, command = build_request_and_command(...)
 
