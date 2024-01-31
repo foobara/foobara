@@ -154,6 +154,7 @@ module Foobara
         command_class = self.class::Commands::Help
         full_command_name = command_class.full_command_name
 
+        inputs = { request: }
         transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
       else
         # :nocov:
