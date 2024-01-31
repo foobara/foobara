@@ -86,6 +86,10 @@ module Foobara
       end
     end
 
+    def to_sentence
+      Util.to_sentence(error_array.map(&:message))
+    end
+
     def keys
       error_array.map(&:key)
     end

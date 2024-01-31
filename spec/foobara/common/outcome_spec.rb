@@ -47,4 +47,19 @@ RSpec.describe Foobara::Outcome do
       it { is_expected_to_not_raise }
     end
   end
+
+  describe "#errors_sentence" do
+    subject { outcome.errors_sentence }
+
+    let(:outcome) do
+      described_class.errors(
+        [
+          Foobara::Error.new(symbol: :error1, message: "message1"),
+          Foobara::Error.new(symbol: :error2, message: "message2")
+        ]
+      )
+    end
+
+    it { is_expected.to eq("message1, and message2") }
+  end
 end

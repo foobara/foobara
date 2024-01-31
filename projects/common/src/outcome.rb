@@ -90,6 +90,10 @@ module Foobara
       error_collection.to_h
     end
 
+    def errors_sentence
+      error_collection.to_sentence
+    end
+
     def error_keys
       error_collection.keys
     end
