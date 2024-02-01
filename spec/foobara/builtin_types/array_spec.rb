@@ -85,4 +85,20 @@ RSpec.describe ":array" do
       end
     end
   end
+
+  context "when extending with an array literal and a description" do
+    let(:type_declaration) do
+      { type: [:string], description: "An array of strings" }
+    end
+
+    let(:type) do
+      Foobara::Domain.current.foobara_type_from_declaration(type_declaration)
+    end
+
+    it "has the description and is an array type as expected" do
+      expect(type.extends_symbol?(:array)).to be(true)
+      expect(type.description).to eq("An array of strings")
+      expect(type.process_value!([:foo, 1])).to eq(%w[foo 1])
+    end
+  end
 end
