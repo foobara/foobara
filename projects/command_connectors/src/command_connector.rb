@@ -156,6 +156,12 @@ module Foobara
 
         inputs = { request: }
         transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+      when "list"
+        command_class = self.class::Commands::ListCommands
+        full_command_name = command_class.full_command_name
+
+        inputs = { request: }
+        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
       else
         # :nocov:
         raise InvalidContextError, "Not sure what to do with #{action}"
