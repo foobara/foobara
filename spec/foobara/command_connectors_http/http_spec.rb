@@ -781,9 +781,11 @@ RSpec.describe Foobara::CommandConnectors::Http do
             end
 
             def transform(inputs)
+              inputs = inputs.transform_keys(&:to_sym)
+
               {
-                base: inputs["bbaassee"],
-                exponent: inputs["exponent"]
+                base: inputs[:bbaassee],
+                exponent: inputs[:exponent]
               }
             end
           end

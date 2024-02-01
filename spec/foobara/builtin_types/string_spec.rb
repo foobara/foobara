@@ -22,7 +22,7 @@ RSpec.describe ":string" do
       it {
         is_expected_to_raise(
           Foobara::Value::Processor::Casting::CannotCastError,
-          /Expected it to be a String, or be a Symbol\z/
+          /Expected it to be a String, be a Numeric, or be a Symbol\z/
         )
       }
     end

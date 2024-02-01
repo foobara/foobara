@@ -10,13 +10,6 @@ RSpec.describe ":email" do
       it { is_expected.to eq("foo@bar.baz") }
     end
 
-    context "when not string or symbol" do
-      let(:value) { 1001 }
-
-      # TODO: don't use casting to detect that casting isn't required...
-      it { is_expected_to_raise(Foobara::Value::Processor::Casting::CannotCastError) }
-    end
-
     context "when not castable" do
       let(:value) { Object.new }
 
