@@ -261,6 +261,10 @@ module Foobara
       end
     end
 
+    # TODO: let's get this out of here...
+    # we might want to have diferent serializers for different command instances of the same class.
+    # but currently serializers is set on the class. Since this class should not be concerned with serialization, we
+    # should just try to relocate this to the Request which could delegate to the registry for defaults.
     def serializer
       return nil if serializers.empty?
 
