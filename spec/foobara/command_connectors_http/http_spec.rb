@@ -968,6 +968,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
             user_class
 
             stub_class :QueryUser, Foobara::Command do
+              description "Queries a user"
               inputs user: User
               result :User
             end
@@ -1018,6 +1019,30 @@ RSpec.describe Foobara::CommandConnectors::Http do
               expect(response.status).to be(200)
               json = JSON.parse(response.body)
               expect(json["type"].keys).to include("User")
+            end
+          end
+
+          context "with list path" do
+            let(:query_string) { nil }
+            let(:path) { "/list" }
+
+            it "lists commands" do
+              expect(response.status).to be(200)
+              json = JSON.parse(response.body)
+
+              expect(json).to eq([["QueryUser", nil]])
+            end
+
+            context "when verbose" do
+              # TODO: would be nice to not have to do =true here...
+              let(:query_string) { "verbose=true" }
+
+              it "lists commands" do
+                expect(response.status).to be(200)
+                json = JSON.parse(response.body)
+
+                expect(json).to eq([["QueryUser", "Queries a user"]])
+              end
             end
           end
 

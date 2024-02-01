@@ -31,7 +31,7 @@ module Foobara
         end
 
         def parsed_query_string
-          if query_string.empty?
+          if query_string.nil? || query_string.empty?
             {}
           else
             # TODO: override this in rack connector to use better rack utils

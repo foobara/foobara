@@ -157,10 +157,21 @@ module Foobara
         inputs = { request: }
         transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
       when "list"
-        command_class = self.class::Commands::ListCommands
+        mod = self.class::Commands
+        command_class = if mod.const_defined?(:ListCommands)
+                          # TODO: test this
+                          # :nocov:
+                          mod::ListCommands
+                          # :nocov:
+                        else
+                          CommandConnectors::Commands::ListCommands
+                        end
+
         full_command_name = command_class.full_command_name
 
-        inputs = { request: }
+        request.command_class = command_class
+        inputs = request.inputs.merge(request:)
+
         transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
       else
         # :nocov:
