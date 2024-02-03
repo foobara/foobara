@@ -35,9 +35,9 @@ module Foobara
         transformed_command_class
       when Module
         if registerable.foobara_organization?
-          registerable.foobara_domains.map { |domain| register(domain, *, **) }
+          registerable.foobara_domains.map { |domain| register(domain, *, **) }.flatten
         elsif registerable.foobara_domain?
-          registerable.foobara_each_command(mode: Namespace::LookupMode::DIRECT) do |command_class|
+          registerable.foobara_all_command(mode: Namespace::LookupMode::DIRECT).map do |command_class|
             register(command_class, *, **)
           end
         else
