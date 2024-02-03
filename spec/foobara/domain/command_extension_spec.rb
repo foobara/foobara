@@ -170,4 +170,23 @@ RSpec.describe Foobara::Domain::CommandExtension do
       end
     end
   end
+
+  describe "#domain" do
+    context "when command has a prefix" do
+      let(:command_class) do
+        stub_module "SomeDomain" do
+          foobara_domain!
+        end
+        stub_module "SomeDomain::SomePrefix" do
+          foobara_namespace!
+          foobara_autoset_namespace!
+        end
+        stub_class "SomeDomain::SomePrefix::SomeCommand", Foobara::Command
+      end
+
+      it "returns the domain" do
+        expect(command_class.domain).to eq(SomeDomain)
+      end
+    end
+  end
 end

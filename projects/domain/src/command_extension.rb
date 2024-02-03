@@ -27,6 +27,8 @@ module Foobara
               d = namespace
               break
             end
+
+            namespace = namespace.foobara_parent_namespace
           end
 
           d
