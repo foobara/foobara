@@ -51,11 +51,18 @@ module Foobara
 
           # TODO: kill this method in favor of possible_errors
           def error_context_type_map
-            @error_context_type_map ||= {}
+            @error_context_type_map ||= if superclass < Foobara::Command
+                                          superclass.error_context_type_map.dup
+                                        end || {}
           end
 
           def register_possible_error_class(possible_error)
             error_context_type_map[possible_error.key.to_s] = possible_error
+          end
+
+          def unregister_possible_error_if_registered(possible_error)
+            key = possible_error.key.to_s
+            error_context_type_map.delete(key)
           end
 
           # TODO: should we cache these???
