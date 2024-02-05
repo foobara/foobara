@@ -8,12 +8,12 @@ module Foobara
         class Halt < StandardError; end
 
         module ClassMethods
-          def run(inputs)
-            new(inputs).run
+          def run(...)
+            new(...).run
           end
 
-          def run!(inputs)
-            new(inputs).run!
+          def run!(...)
+            new(...).run!
           end
         end
 
