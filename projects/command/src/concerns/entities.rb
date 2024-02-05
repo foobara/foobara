@@ -11,9 +11,13 @@ module Foobara
               @depends_on_entities ||= Set.new
             else
               entities_to_add.each do |entity_class|
-                depends_on_entities << entity_class
+                depends_on_entity(entity_class)
               end
             end
+          end
+
+          def depends_on_entity(entity_class)
+            depends_on_entities << entity_class
           end
 
           def entity_class_paths
