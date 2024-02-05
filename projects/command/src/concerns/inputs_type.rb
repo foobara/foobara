@@ -6,6 +6,12 @@ module Foobara
 
         module ClassMethods
           def inputs(...)
+            old_inputs_type = inputs_type
+
+            old_inputs_type&.possible_errors&.each do |possible_error|
+              unregister_possible_error_if_registered(possible_error)
+            end
+
             @inputs_type = type_for_declaration(...)
 
             register_possible_input_errors
