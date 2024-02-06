@@ -10,54 +10,29 @@ module Foobara
       self.short_name_to_transformed_command = {}
     end
 
-    def register(registerable, *, **)
-      case registerable
-      when Class
-        unless registerable < Command
-          # :nocov:
-          raise "Don't know how to register #{registerable} (#{registerable.class})"
-          # :nocov:
-        end
+    def register(command_class, *, **)
+      transformed_command_class = transform_command_class(command_class, *, **)
 
-        transformed_command_class = transform_command_class(registerable, *, **)
+      full_name = transformed_command_class.full_command_name
 
-        full_name = transformed_command_class.full_command_name
-
-        if registry.key?(full_name)
-          # :nocov:
-          raise "Command #{full_name} already registered"
-          # :nocov:
-        end
-
-        registry[full_name] = transformed_command_class
-
-        short_name = transformed_command_class.command_name
-        existing_entry = short_name_to_transformed_command[short_name]
-
-        short_name_to_transformed_command[short_name] = if existing_entry
-                                                          [*existing_entry, transformed_command_class]
-                                                        else
-                                                          transformed_command_class
-                                                        end
-
-        transformed_command_class
-      when Module
-        if registerable.foobara_organization?
-          registerable.foobara_domains.map { |domain| register(domain, *, **) }.flatten
-        elsif registerable.foobara_domain?
-          registerable.foobara_all_command(mode: Namespace::LookupMode::DIRECT).map do |command_class|
-            register(command_class, *, **)
-          end
-        else
-          # :nocov:
-          raise "Don't know how to register #{registerable} (#{registerable.class})"
-          # :nocov:
-        end
-      else
+      if registry.key?(full_name)
         # :nocov:
-        raise "Don't know how to register #{registerable} (#{registerable.class})"
+        raise "Command #{full_name} already registered"
         # :nocov:
       end
+
+      registry[full_name] = transformed_command_class
+
+      short_name = transformed_command_class.command_name
+      existing_entry = short_name_to_transformed_command[short_name]
+
+      short_name_to_transformed_command[short_name] = if existing_entry
+                                                        [*existing_entry, transformed_command_class]
+                                                      else
+                                                        transformed_command_class
+                                                      end
+
+      transformed_command_class
     end
 
     def transform_command_class(

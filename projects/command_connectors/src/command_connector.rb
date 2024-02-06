@@ -199,8 +199,33 @@ module Foobara
       end
     end
 
-    def connect(...)
-      command_registry.register(...)
+    def connect(registerable, *, **)
+      case registerable
+      when Class
+        unless registerable < Command
+          # :nocov:
+          raise "Don't know how to register #{registerable} (#{registerable.class})"
+          # :nocov:
+        end
+
+        command_registry.register(registerable, *, **)
+      when Module
+        if registerable.foobara_organization?
+          registerable.foobara_domains.map { |domain| connect(domain, *, **) }.flatten
+        elsif registerable.foobara_domain?
+          registerable.foobara_all_command(mode: Namespace::LookupMode::DIRECT).map do |command_class|
+            connect(command_class, *, **)
+          end
+        else
+          # :nocov:
+          raise "Don't know how to register #{registerable} (#{registerable.class})"
+          # :nocov:
+        end
+      else
+        # :nocov:
+        raise "Don't know how to register #{registerable} (#{registerable.class})"
+        # :nocov:
+      end
     end
 
     def build_request(...)
