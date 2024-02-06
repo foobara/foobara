@@ -13,26 +13,11 @@ module Foobara
             object = object.attributes
           end
 
-          deep_serialize(object)
+          entities_to_primary_keys_serializer.serialize(object)
         end
 
-        def deep_serialize(object)
-          case object
-          when Entity
-            # TODO: handle polymorphism? Would require iterating over the result type not the object!
-            # Is there maybe prior art for this in the associations stuff?
-            object.primary_key
-          when Model
-            object.attributes
-          when Array
-            object.map { |element| deep_serialize(element) }
-          when Hash
-            object.to_h do |key, value|
-              [deep_serialize(key), deep_serialize(value)]
-            end
-          else
-            object
-          end
+        def entities_to_primary_keys_serializer
+          @entities_to_primary_keys_serializer ||= EntitiesToPrimaryKeysSerializer.new(declaration_data)
         end
       end
     end
