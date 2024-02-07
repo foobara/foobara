@@ -79,7 +79,9 @@ module Foobara
           transaction = Foobara::Persistence::EntityBase::Transaction.open_transaction_for(self)
 
           unless transaction
+            # :nocov:
             raise NoCurrentTransactionError, "Trying to load a #{entity_name} outside of a transaction."
+            # :nocov:
           end
 
           unless transaction.loading?(self)

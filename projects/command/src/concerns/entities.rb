@@ -35,7 +35,7 @@ module Foobara
             paths.each do |path|
               path = DataPath.new(path)
               entity_class = entity_class_paths[path.to_s]
-              error_class = NotFoundError.subclass(self, entity_class, path)
+              error_class = Entity::NotFoundError.subclass(self, entity_class, path)
               h[path.to_s] = error_class
               possible_error(error_class)
             end
@@ -71,7 +71,8 @@ module Foobara
             end
 
             thunks_to_load
-          rescue Foobara::Persistence::EntityAttributesCrudDriver::Table::CannotFindError => e
+          rescue Foobara::Persistence::EntityAttributesCrudDriver::Table::CannotFindError,
+                 Entity::NotFoundError => e
             add_runtime_error(error_class.new(e.record_id))
           end
         end

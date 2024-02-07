@@ -48,6 +48,14 @@ module Foobara
             if !record.is_a?(Foobara::Entity) || !record.loaded?
               current_transaction_table.load(record)
             end
+          rescue ::Foobara::Persistence::EntityAttributesCrudDriver::Table::CannotFindError
+            primary_key = if record.is_a?(Foobara::Entity)
+                            record.primary_key
+                          else
+                            record
+                          end
+
+            raise NotFoundError.new(primary_key, entity_class: self)
           end
 
           def load_aggregate(record_or_record_id)
