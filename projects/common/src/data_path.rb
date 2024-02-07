@@ -45,6 +45,14 @@ module Foobara
         data_path.value_at(object)
       end
 
+      def set_value_at(object, value, data_path)
+        unless data_path.is_a?(DataPath)
+          data_path = new(data_path)
+        end
+
+        data_path.set_value_at(object, value)
+      end
+
       def prepend_path(key, *)
         if key.is_a?(DataPath)
           key.prepend(*)
@@ -249,7 +257,8 @@ module Foobara
         end
       else
         # :nocov:
-        raise ArgumentError, "expected nil, a symbol, or a string, an integer, or an array of such values "
+        raise ArgumentError,
+              "expected nil, a symbol, or a string, an integer, or an array of such values but was a #{key_parts.class}"
         # :nocov:
       end
     end
