@@ -57,7 +57,7 @@ module Foobara
 
             # TODO: this belongs elsewhere
             def each_table(&)
-              tables.each_value(&)
+              tables.values.each(&)
             end
 
             def rollback!(because_of = nil)
