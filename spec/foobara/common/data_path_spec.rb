@@ -139,4 +139,121 @@ RSpec.describe Foobara::DataPath do
       end
     end
   end
+
+  describe "#simple_collection?" do
+    subject { described_class.new(path).simple_collection? }
+
+    context "when not a collection" do
+      let(:path) { %i[foo bar] }
+
+      it { is_expected.to be(false) }
+    end
+
+    context "when not simple" do
+      let(:path) { %i[foo # bar #] }
+
+      it { is_expected.to be(false) }
+    end
+
+    context "when simple and a collection" do
+      let(:path) { %i[foo bar baz #] }
+
+      it { is_expected.to be(true) }
+    end
+  end
+
+  describe ".set_value_at" do
+    # rubocop:disable Style/OpenStructUse
+    let(:object) do
+      [
+        {
+          a: {
+            b: [1, 2, { c: 4 }],
+            d: OpenStruct.new
+          }
+        },
+        "whatever"
+      ]
+    end
+
+    context "when changing value of a hash" do
+      let(:path) { [0, :a, :b, 2, :c] }
+
+      it "can dig through the structure and set the value" do
+        described_class.set_value_at(object, 100, path)
+
+        expect(object).to eq(
+          [
+            {
+              a: {
+                b: [1, 2, { c: 100 }],
+                d: OpenStruct.new
+              }
+            },
+            "whatever"
+          ]
+        )
+      end
+    end
+
+    context "when changing value of a hash indifferently" do
+      let(:object) do
+        {
+          "a" => {
+            "b" => 10
+          }
+        }
+      end
+      let(:path) { %w[a b] }
+
+      it "can dig through the structure and set the value" do
+        described_class.set_value_at(object, 100, path)
+
+        expect(object).to eq("a" => { "b" => 100 })
+      end
+    end
+
+    context "when changing an array element" do
+      let(:path) { [0, :a, :b, 1] }
+
+      it "can dig through the structure and set the value" do
+        described_class.set_value_at(object, 100, path)
+
+        expect(object).to eq(
+          [
+            {
+              a: {
+                b: [1, 100, { c: 4 }],
+                d: OpenStruct.new
+              }
+            },
+            "whatever"
+          ]
+        )
+      end
+    end
+
+    context "when changing via method" do
+      let(:path) { [0, :a, :d, :z] }
+
+      it "can dig through the structure and set the value" do
+        object[0][:a][:d].z = 15
+
+        described_class.set_value_at(object, 200, path)
+
+        expect(object).to eq(
+          [
+            {
+              a: {
+                b: [1, 2, { c: 4 }],
+                d: OpenStruct.new(z: 200)
+              }
+            },
+            "whatever"
+          ]
+        )
+      end
+    end
+    # rubocop:enable Style/OpenStructUse
+  end
 end

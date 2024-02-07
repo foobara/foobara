@@ -152,37 +152,8 @@ module Foobara
       to_type.to_s
     end
 
-    def values_at(objects, parts = path)
-      objects = Util.array(objects)
-
-      return objects if parts.empty?
-
-      path_part, *parts = parts
-
-      objects = case path_part
-                when :"#"
-                  objects.flatten.uniq
-                when Symbol
-                  objects.map do |object|
-                    if object.is_a?(::Hash)
-                      if object.key?(path_part.to_s)
-                        object[path_part.to_s]
-                      else
-                        object[path_part]
-                      end
-                    else
-                      object.send(path_part)
-                    end
-                  end
-                when Integer
-                  objects.map { |value| value[path_part] }
-                else
-                  # :nocov:
-                  raise "Bad path part: #{path_part.inspect}"
-                  # :nocov:
-                end.compact
-
-      values_at(objects, parts)
+    def values_at(object, parts = path)
+      _values_at([object], parts)
     end
 
     def value_at(object, parts = path)
@@ -212,7 +183,9 @@ module Foobara
         if owner.respond_to?(method)
           owner.send(method, value)
         else
+          # :nocov:
           raise "Bad path: #{parts}"
+          # :nocov:
         end
       end
 
@@ -261,6 +234,37 @@ module Foobara
               "expected nil, a symbol, or a string, an integer, or an array of such values but was a #{key_parts.class}"
         # :nocov:
       end
+    end
+
+    def _values_at(objects, parts = path)
+      return objects if parts.empty?
+
+      path_part, *parts = parts
+
+      objects = case path_part
+                when :"#"
+                  objects.flatten.uniq
+                when Symbol
+                  objects.map do |object|
+                    if object.is_a?(::Hash)
+                      if object.key?(path_part.to_s)
+                        object[path_part.to_s]
+                      else
+                        object[path_part]
+                      end
+                    else
+                      object.send(path_part)
+                    end
+                  end
+                when Integer
+                  objects.map { |value| value[path_part] }
+                else
+                  # :nocov:
+                  raise "Bad path part: #{path_part.inspect}"
+                  # :nocov:
+                end.compact
+
+      _values_at(objects, parts)
     end
   end
 end
