@@ -182,7 +182,7 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
         expect {
           entity_class.load(entity1.primary_key)
           # TODO: come up with a more sensible error
-        }.to raise_error(Foobara::Persistence::EntityAttributesCrudDriver::Table::CannotFindError)
+        }.to raise_error(Foobara::Entity::NotFoundError)
 
         expect(entity_class.all.to_a).to be_empty
       end

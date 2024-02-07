@@ -30,7 +30,7 @@ module Foobara
                      case error
                      when CommandConnector::UnknownError
                        500
-                     when CommandConnector::NotFoundError, Foobara::Command::Concerns::Entities::NotFoundError
+                     when CommandConnector::NotFoundError, Foobara::Entity::NotFoundError
                        # TODO: we should not be coupled to Entities here...
                        404
                      when CommandConnector::UnauthenticatedError

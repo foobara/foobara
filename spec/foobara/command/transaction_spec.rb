@@ -522,7 +522,7 @@ RSpec.describe Foobara::Command::Concerns::Entities do
         Applicant.transaction do
           expect {
             Applicant.load(applicant_id)
-          }.to raise_error(Foobara::Persistence::EntityAttributesCrudDriver::Table::CannotFindError)
+          }.to raise_error(Foobara::Entity::NotFoundError)
         end
       end
     end
