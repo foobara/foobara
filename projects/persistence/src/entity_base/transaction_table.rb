@@ -252,7 +252,12 @@ module Foobara
         end
 
         def find_by(attributes_filter)
-          attributes_filter = entity_class.attributes_type.process_value!(attributes_filter)
+          element_types = entity_class.attributes_type.element_types
+
+          attributes_filter = attributes_filter.to_h do |attribute_name, value|
+            [attribute_name,  element_types[attribute_name].process_value!(value)]
+          end
+
           attributes_filter = to_persistable(attributes_filter, false)
 
           tracked_records.each do |record|
