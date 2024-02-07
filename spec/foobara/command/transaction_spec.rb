@@ -193,7 +193,7 @@ RSpec.describe Foobara::Command::Concerns::Entities do
         context = error.context
 
         expect(context[:entity_class]).to eq("Employee")
-        expect(context[:primary_key]).to eq(100)
+        expect(context[:criteria]).to eq(100)
         expect(context[:data_path]).to eq("employee")
       end
     end

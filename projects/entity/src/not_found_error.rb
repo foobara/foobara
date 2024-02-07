@@ -24,7 +24,7 @@ module Foobara
             singleton_class.define_method :context_type_declaration do
               {
                 entity_class: :string, # TODO: we don't have a way to specify an exact value for a type
-                primary_key: entity_class.primary_key_type.declaration_data,
+                criteria: :duck, # TODO: find_by attributes unioned with primary key
                 data_path: :string # TODO: we don't have a way to specify an exact value for a type
               }
             end
@@ -38,18 +38,18 @@ module Foobara
         def context_type_declaration
           {
             entity_class: :string, # TODO: we don't have a way to specify an exact value for a type
-            primary_key: :duck, # TODO: probably should be integer or string but no union types yet
+            criteria: :duck, # TODO: probably should be integer or string but no union types yet
             data_path: :string # TODO: we don't have a way to specify an exact value for a type
           }
         end
       end
 
-      attr_accessor :data_path, :entity_class, :record_id
+      attr_accessor :data_path, :entity_class, :criteria
 
       foobara_delegate :primary_key_attribute, :full_entity_name, to: :entity_class
 
-      def initialize(record_id, entity_class: self.class.entity_class, data_path: self.class.data_path)
-        self.record_id = record_id
+      def initialize(criteria, entity_class: self.class.entity_class, data_path: self.class.data_path)
+        self.criteria = criteria
         self.entity_class = entity_class
         self.data_path = data_path || ""
 
@@ -59,17 +59,13 @@ module Foobara
       def context
         {
           entity_class: full_entity_name,
-          primary_key: record_id,
+          criteria:,
           data_path: data_path.to_s
         }
       end
 
       def message
-        "Could not find #{entity_class} with #{primary_key_attribute} of #{record_id}"
-      end
-
-      def primary_key_attribute
-        entity_class.primary_key_attribute
+        "Could not find #{entity_class} for #{criteria}"
       end
     end
   end
