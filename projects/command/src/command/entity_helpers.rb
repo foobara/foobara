@@ -53,6 +53,19 @@ module Foobara
         declaration
       end
 
+      def type_declaration_for_find_by(entity_class)
+        element_type_declarations = {}
+
+        entity_class.attributes_type.element_types.each_pair do |attribute_name, attribute_type|
+          element_type_declarations[attribute_name] = attribute_type.declaration_data
+        end
+
+        {
+          type: :attributes,
+          element_type_declarations:
+        }
+      end
+
       def update_aggregate(object, value, type = object.class.model_type)
         return value if object.nil?
 
