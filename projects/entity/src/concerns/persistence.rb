@@ -78,6 +78,10 @@ module Foobara
           # TODO: how to get this out of here??
           transaction = Foobara::Persistence::EntityBase::Transaction.open_transaction_for(self)
 
+          unless transaction
+            raise NoCurrentTransactionError, "Trying to load a #{entity_name} outside of a transaction."
+          end
+
           unless transaction.loading?(self)
             transaction.load(self)
           end
