@@ -33,5 +33,25 @@ RSpec.describe Foobara::TypeDeclarations::Dsl::Attributes do
 
       expect(type).to be_a(Foobara::Types::Type)
     end
+
+    context "when accidentally creating an attribute due to calling a method that doesn't exist" do
+      it "raises an informative error" do
+        expect {
+          described_class.to_declaration do
+            attribute not_an_attribute(:asdf).whatever, description: "should fail"
+          end
+        }.to raise_error(Foobara::TypeDeclarations::Dsl::BadAttributeError)
+      end
+
+      context "when attribute doesn't have a type" do
+        it "raises an informative error" do
+          expect {
+            described_class.to_declaration do
+              attribute not_an_attribute, description: "should fail"
+            end
+          }.to raise_error(Foobara::TypeDeclarations::Dsl::NoTypeGivenError)
+        end
+      end
+    end
   end
 end

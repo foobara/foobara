@@ -1,6 +1,40 @@
 module Foobara
   module TypeDeclarations
     module Dsl
+      class NoTypeGivenError < StandardError; end
+
+      class BadAttributeError < StandardError
+        attr_accessor :attribute_name, :method_name
+
+        def initialize(attribute_name, method_name)
+          self.attribute_name = attribute_name
+          self.method_name = method_name
+
+          super("You probably did not mean to declare an attribute named \"#{attribute_name}\" " \
+                "but you tried to access .\"#{method_name}\" method on it. " \
+                "Return values of attribute declarations do not return anything meaningful.")
+        end
+      end
+
+      # Using this class as a proxy to explode if somebody accidentally tries to use the return value of an
+      # attribute declaration
+      # NOTE: when debugging stuff, it's helpful to comment out the inheritance from BasicObject
+      class AttributeCreated < BasicObject
+        def initialize(name)
+          @_name = name
+        end
+
+        def method_missing(method_name, ...)
+          ::Kernel.raise BadAttributeError.new(@_name, method_name)
+        end
+
+        def respond_to_missing?(...)
+          # :nocov:
+          false
+          # :nocov:
+        end
+      end
+
       # NOTE: when debugging stuff, it's helpful to comment out the inheritance from BasicObject
       class Attributes < BasicObject
         class << self
@@ -29,6 +63,12 @@ module Foobara
 
             unless block
               type, *processor_symbols = processor_symbols
+
+              unless type
+                ::Kernel.raise NoTypeGivenError, "Expected a type but attribute #{attribute_name} was declared " \
+                                                 "without a type. (Perhaps you didn't mean for #{attribute_name} " \
+                                                 "to be an attribute?)"
+              end
             end
 
             processor_symbols.each do |processor_symbol|
@@ -38,8 +78,8 @@ module Foobara
 
                 if declaration.key?(:description)
                   # :nocov:
-                  raise ArgumentError, "Expected only one description but " \
-                                       "got #{description.inspect} and #{declaration[:description].inspect}"
+                  ::Kernel.raise ArgumentError, "Expected only one description but " \
+                                                "got #{description.inspect} and #{declaration[:description].inspect}"
                   # :nocov:
                 end
 
@@ -48,7 +88,7 @@ module Foobara
                 declaration[processor_symbol] = true
               else
                 # :nocov:
-                raise ArgumentError, "expected a Symbol, got #{processor_symbol.inspect}"
+                ::Kernel.raise ArgumentError, "expected a Symbol, got #{processor_symbol.inspect}"
                 # :nocov:
               end
             end
@@ -76,6 +116,8 @@ module Foobara
             end
 
             _type_declaration
+
+            AttributeCreated.new(attribute_name)
           end
         end
 

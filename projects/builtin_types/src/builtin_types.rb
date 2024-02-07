@@ -59,8 +59,10 @@ module Foobara
 
         builtin_types << type
 
+        # TODO: is this necessary?
         Foobara::Namespace::NamespaceHelpers.foobara_namespace!(type)
 
+        # TODO: really need to encapsulate this somehow...
         type.type_symbol = type_symbol
         type.foobara_parent_namespace ||= GlobalDomain
         type.foobara_parent_namespace.foobara_register(type)
