@@ -187,6 +187,36 @@ module Foobara
       values.first
     end
 
+    def set_value_at(object, value, parts = path)
+      owner = value_at(object, parts[0..-2])
+      index = parts.last
+
+      if owner.is_a?(::Hash)
+        if owner.key?(index.to_s)
+          owner[index.to_s] = value
+        else
+          owner[index] = value
+        end
+      elsif owner.is_a?(::Array)
+        owner[index] = value
+      else
+        method = "#{index}="
+        if owner.respond_to?(method)
+          owner.send(method, value)
+        else
+          raise "Bad path: #{parts}"
+        end
+      end
+
+      value
+    end
+
+    # Helper method that determines if the path points to an array and non of the atoms along the way are also arrays.
+    # And that there's at least one atom (we are going to consider a collection to be "named" not an anonymous array.)
+    def simple_collection?
+      path.size > 1 && path.last == :"#" && path[0..-2].none? { |part| part == :"#" }
+    end
+
     def ==(other)
       self.class == other.class && path == other.path
     end
