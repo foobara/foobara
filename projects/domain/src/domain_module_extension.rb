@@ -213,17 +213,17 @@ module Foobara
             domain = Domain.to_domain(name)
             to_include << domain
             domain.foobara_manifest_reference
-          end
+          end.sort
 
           commands = foobara_all_command(mode: Namespace::LookupMode::DIRECT).map do |command_class|
             to_include << command_class
             command_class.foobara_manifest_reference
-          end
+          end.sort
 
           types = foobara_all_type(mode: Namespace::LookupMode::DIRECT).map do |type|
             to_include << type
             type.foobara_manifest_reference
-          end
+          end.sort
 
           super(to_include:).merge(
             organization_name:,

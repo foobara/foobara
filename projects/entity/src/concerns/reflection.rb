@@ -18,26 +18,19 @@ module Foobara
           end
 
           def foobara_manifest(to_include:)
-            associations = {}
-            deep_associations = {}
-
-            self.associations.each_pair do |path, type|
+            associations = self.associations.map do |(path, type)|
               entity_class = type.target_class
               entity_name = entity_class.full_entity_name
 
-              associations[path] = entity_name
-            end
+              [path, entity_name]
+            end.sort.to_h
 
-            h = self.deep_associations.sort_by do |path, _type|
-              [DataPath.new(path).path.size, path]
-            end.to_h
-
-            h.each_pair do |path, type|
+            deep_associations = self.deep_associations.map do |(path, type)|
               entity_class = type.target_class
               entity_name = entity_class.full_entity_name
 
-              deep_associations[path] = entity_name
-            end
+              [path, entity_name]
+            end.sort.to_h
 
             {
               attributes_type: attributes_type.declaration_data,

@@ -49,7 +49,7 @@ module Foobara
         types = types_depended_on.map do |t|
           to_include << t
           t.foobara_manifest_reference
-        end
+        end.sort
 
         super.merge(types_depended_on: types).merge(to_h)
       end

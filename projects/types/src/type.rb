@@ -207,20 +207,6 @@ module Foobara
       def foobara_manifest(to_include:)
         types = []
 
-        possible_errors_manifests = possible_errors.map do |possible_error|
-          [possible_error.key.to_s, possible_error.foobara_manifest(to_include:)]
-        end
-
-        h = {
-          name:,
-          description:,
-          target_classes: target_classes.map(&:name),
-          base_type: base_type&.full_type_name&.to_sym,
-          declaration_data:,
-          types_depended_on: types,
-          possible_errors: possible_errors_manifests
-        }
-
         types_depended_on.each do |dependent_type|
           if dependent_type.registered?
             types << dependent_type.foobara_manifest_reference
@@ -228,13 +214,27 @@ module Foobara
           end
         end
 
+        possible_errors_manifests = possible_errors.map do |possible_error|
+          [possible_error.key.to_s, possible_error.foobara_manifest(to_include:)]
+        end.sort.to_h
+
+        h = {
+          name:,
+          description:,
+          target_classes: target_classes.map(&:name).sort,
+          base_type: base_type&.full_type_name&.to_sym,
+          declaration_data:,
+          types_depended_on: types.sort,
+          possible_errors: possible_errors_manifests
+        }
+
         h.merge!(
           supported_processor_manifest(to_include).merge(
             processors: processor_manifest(to_include)
           )
         )
 
-        target_classes.each do |target_class|
+        target_classes.sort_by(&:name).each do |target_class|
           if target_class.respond_to?(:foobara_manifest)
             h.merge!(target_class.foobara_manifest(to_include:))
           end
@@ -266,10 +266,10 @@ module Foobara
         end
 
         {
-          supported_casters:,
-          supported_transformers:,
-          supported_validators:,
-          supported_processors:
+          supported_casters: supported_casters.sort,
+          supported_transformers: supported_transformers.sort,
+          supported_validators: supported_validators.sort,
+          supported_processors: supported_processors.sort
         }
       end
 
@@ -315,12 +315,12 @@ module Foobara
         end
 
         {
-          casters: casters_manifest,
-          caster_classes: caster_classes_manifest,
-          transformers: transformers_manifest,
-          transformer_classes: transformer_classes_manifest,
-          validators: validators_manifest,
-          validator_classes: validator_classes_manifest
+          casters: casters_manifest.sort,
+          caster_classes: caster_classes_manifest.sort,
+          transformers: transformers_manifest.sort,
+          transformer_classes: transformer_classes_manifest.sort,
+          validators: validators_manifest.sort,
+          validator_classes: validator_classes_manifest.sort
         }
       end
 

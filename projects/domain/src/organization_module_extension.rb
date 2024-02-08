@@ -33,16 +33,14 @@ module Foobara
         end
 
         def foobara_manifest(to_include:)
-          domain_names = []
-
-          foobara_domains.each do |domain|
+          domains = foobara_domains.map do |domain|
             to_include << domain
-            domain_names << domain.foobara_manifest_reference
-          end
+            domain.foobara_manifest_reference
+          end.sort
 
           super.merge(
             organization_name: foobara_organization_name,
-            domains: domain_names
+            domains:
           )
         end
       end

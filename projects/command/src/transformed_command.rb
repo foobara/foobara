@@ -54,7 +54,7 @@ module Foobara
         types = types_depended_on.select(&:registered?).map do |t|
           to_include << t
           t.foobara_manifest_reference
-        end
+        end.sort
 
         inputs_transformers = self.inputs_transformers.map { |t| t.foobara_manifest(to_include:) }
         result_transformers = self.result_transformers.map { |t| t.foobara_manifest(to_include:) }
@@ -138,9 +138,9 @@ module Foobara
       end
 
       def possible_errors_manifest(to_include:)
-        possible_errors.to_h do |possible_error|
+        possible_errors.map do |possible_error|
           [possible_error.key.to_s, possible_error.foobara_manifest(to_include:)]
-        end
+        end.sort.to_h
       end
 
       def types_depended_on

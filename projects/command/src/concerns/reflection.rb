@@ -24,31 +24,31 @@ module Foobara
               other_command = Foobara.foobara_lookup!(command_name, mode: Foobara::Namespace::LookupMode::ABSOLUTE)
               to_include << other_command
               other_command.foobara_manifest_reference
-            end
+            end.sort
 
             types = types_depended_on.map do |t|
               to_include << t
               t.foobara_manifest_reference
-            end
+            end.sort
 
             inputs_types_depended_on = self.inputs_types_depended_on.map do |t|
               to_include << t
               t.foobara_manifest_reference
-            end
+            end.sort
 
             result_types_depended_on = self.result_types_depended_on.map do |t|
               to_include << t
               t.foobara_manifest_reference
-            end
+            end.sort
 
             errors_types_depended_on = self.errors_types_depended_on.map do |t|
               to_include << t
               t.foobara_manifest_reference
-            end
+            end.sort
 
-            possible_errors = self.possible_errors.to_h do |possible_error|
+            possible_errors = self.possible_errors.map do |possible_error|
               [possible_error.key.to_s, possible_error.foobara_manifest(to_include:)]
-            end
+            end.sort.to_h
 
             h = {
               description:,

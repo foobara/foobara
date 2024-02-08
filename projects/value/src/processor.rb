@@ -34,7 +34,7 @@ module Foobara
           )
 
           unless errors.empty?
-            manifest[:error_classes] = errors
+            manifest[:error_classes] = errors.sort
           end
 
           manifest
@@ -315,7 +315,7 @@ module Foobara
       # TODO: is this in the wrong place? Should this be an extension?
 
       def foobara_manifest(to_include:)
-        possible_errors = self.possible_errors.to_h do |possible_error|
+        possible_errors = self.possible_errors.map do |possible_error|
           [possible_error.key.to_s, possible_error.foobara_manifest(to_include:)]
         end
 
@@ -331,7 +331,7 @@ module Foobara
         end
 
         unless possible_errors.empty?
-          manifest[:possible_errors] = possible_errors
+          manifest[:possible_errors] = possible_errors.sort.to_h
         end
 
         manifest

@@ -29,7 +29,16 @@ module Foobara
         end
 
         def possible_errors
-          super + processors.map(&:possible_errors).flatten
+          h = super.to_h do |possible_error|
+            [possible_error.key.to_s, possible_error]
+          end
+
+          processors.map(&:possible_errors).flatten.each do |possible_error|
+            h[possible_error.key.to_s] = possible_error
+          end
+
+          # TODO: change this back to a hash
+          h.values
         end
 
         def register(processor)
