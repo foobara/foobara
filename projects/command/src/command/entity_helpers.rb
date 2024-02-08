@@ -57,7 +57,7 @@ module Foobara
         element_type_declarations = {}
 
         entity_class.attributes_type.element_types.each_pair do |attribute_name, attribute_type|
-          element_type_declarations[attribute_name] = attribute_type.declaration_data
+          element_type_declarations[attribute_name] = attribute_type.reference_or_declaration_data
         end
 
         {

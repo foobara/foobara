@@ -281,9 +281,7 @@ RSpec.describe Foobara::Command::Concerns::Entities do
       context "with entity class as inputs" do
         let(:create_command) do
           stub_class(:CreateUser, Foobara::Command) do
-            # TODO: does this work with User instead of :User ?
-            # We can't come up with a cleaner way to do this?
-            inputs User.attributes_type.declaration_data
+            inputs User.attributes_type
             result User
 
             # TODO: automatically include result type if it's an entity to avoid this in such cases
@@ -323,7 +321,7 @@ RSpec.describe Foobara::Command::Concerns::Entities do
             # TODO: does this work with User instead of :User ?
             # We can't come up with a cleaner way to do this?
             inputs user: User
-            result User
+            result User.entity_type
 
             def execute
               user

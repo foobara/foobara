@@ -64,11 +64,7 @@ module Foobara
                                raise ArgumentError, "expected 1 argument or a block but got 0 arguments and no block"
                                # :nocov:
                              when 1
-                               declaration = type_declaration_bits.first
-
-                               return declaration if declaration.is_a?(Types::Type)
-
-                               declaration
+                               type_declaration_bits.first
                              else
                                type_declaration_bits_to_type_declaration(type_declaration_bits)
                              end

@@ -969,7 +969,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
             stub_class :QueryUser, Foobara::Command do
               description "Queries a user"
-              inputs user: User
+              inputs user: User.entity_type
               result :User
             end
           end
