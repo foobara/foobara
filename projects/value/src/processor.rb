@@ -23,10 +23,21 @@ module Foobara
         end
 
         def foobara_manifest(to_include:)
-          super.merge(
+          errors = error_classes.map do |error_class|
+            to_include << error_class
+            error_class.foobara_manifest_reference
+          end
+
+          manifest = super.merge(
             name: processor_name,
             processor_type: :processor
           )
+
+          unless errors.empty?
+            manifest[:error_classes] = errors
+          end
+
+          manifest
         end
 
         def new_with_agnostic_args(**rest)
@@ -301,22 +312,29 @@ module Foobara
         s
       end
 
+      # TODO: is this in the wrong place? Should this be an extension?
+
       def foobara_manifest(to_include:)
-        errors = possible_errors.map do |possible_error|
-          error_class = possible_error.error_class
-          to_include << error_class
-          error_class.foobara_manifest_reference
+        possible_errors = self.possible_errors.to_h do |possible_error|
+          [possible_error.key.to_s, possible_error.foobara_manifest(to_include:)]
         end
 
-        manifest = self.class.foobara_manifest(to_include:).merge(
-          possible_errors: errors
-        )
+        manifest = super.dup
+
+        if scoped_category == :processor
+          to_include << self.class
+          manifest[:processor_class] = self.class.foobara_manifest_reference
+        end
 
         if requires_declaration_data?
           manifest[:declaration_data] = declaration_data
         end
 
-        self.class.foobara_manifest(to_include:).merge(manifest)
+        unless possible_errors.empty?
+          manifest[:possible_errors] = possible_errors
+        end
+
+        manifest
       end
 
       def method_missing(method, *args, **opts)
