@@ -5,10 +5,12 @@ module Foobara
     class Entity < Type
       self.category_symbol = :type
 
+      optional_keys(:associations)
+
       alias entity_manifest relevant_manifest
 
       def has_associations?
-        !associations.empty?
+        associations && !associations.empty?
       end
 
       def attributes_type

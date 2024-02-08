@@ -218,19 +218,17 @@ module Foobara
           [possible_error.key.to_s, possible_error.foobara_manifest(to_include:)]
         end.sort.to_h
 
-        h = {
+        h = Util.remove_blank(
           name:,
-          description:,
           target_classes: target_classes.map(&:name).sort,
-          base_type: base_type&.full_type_name&.to_sym,
           declaration_data:,
           types_depended_on: types.sort,
           possible_errors: possible_errors_manifests
-        }
+        ).merge(description:, base_type: base_type&.full_type_name&.to_sym)
 
         h.merge!(
           supported_processor_manifest(to_include).merge(
-            processors: processor_manifest(to_include)
+            Util.remove_blank(processors: processor_manifest(to_include))
           )
         )
 
@@ -265,12 +263,12 @@ module Foobara
           target << processor_class.foobara_manifest_reference
         end
 
-        {
+        Util.remove_blank(
           supported_casters: supported_casters.sort,
           supported_transformers: supported_transformers.sort,
           supported_validators: supported_validators.sort,
           supported_processors: supported_processors.sort
-        }
+        )
       end
 
       def processor_manifest(to_include)
@@ -314,14 +312,14 @@ module Foobara
           end
         end
 
-        {
+        Util.remove_blank(
           casters: casters_manifest.sort,
           caster_classes: caster_classes_manifest.sort,
           transformers: transformers_manifest.sort,
           transformer_classes: transformer_classes_manifest.sort,
           validators: validators_manifest.sort,
           validator_classes: validator_classes_manifest.sort
-        }
+        )
       end
 
       def registered?

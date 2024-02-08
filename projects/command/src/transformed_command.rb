@@ -65,18 +65,20 @@ module Foobara
         end
 
         command_class.foobara_manifest(to_include:).merge(
-          types_depended_on: types,
-          inputs_type: inputs_type&.reference_or_declaration_data,
-          result_type: result_type&.reference_or_declaration_data,
-          possible_errors: possible_errors_manifest(to_include:),
-          capture_unknown_error:,
-          inputs_transformers:,
-          result_transformers:,
-          errors_transformers:,
-          pre_commit_transformers:,
-          serializers:,
-          requires_authentication:,
-          authenticator: authenticator&.manifest
+          Util.remove_blank(
+            types_depended_on: types,
+            inputs_type: inputs_type&.reference_or_declaration_data,
+            result_type: result_type&.reference_or_declaration_data,
+            possible_errors: possible_errors_manifest(to_include:),
+            capture_unknown_error:,
+            inputs_transformers:,
+            result_transformers:,
+            errors_transformers:,
+            pre_commit_transformers:,
+            serializers:,
+            requires_authentication:,
+            authenticator: authenticator&.manifest
+          )
         )
       end
 

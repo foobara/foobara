@@ -32,7 +32,7 @@ module Foobara
               [path, entity_name]
             end.sort.to_h
 
-            {
+            Util.remove_blank(
               attributes_type: attributes_type.declaration_data,
               depends_on: depends_on.map(&:full_entity_name),
               deep_depends_on: deep_depends_on.map(&:full_entity_name),
@@ -45,7 +45,7 @@ module Foobara
               model_class: entity_type.declaration_data[:model_class],
               primary_key_attribute:,
               primary_key_type: attributes_type.declaration_data[:element_type_declarations][primary_key_attribute]
-            }
+            )
           end
         end
       end

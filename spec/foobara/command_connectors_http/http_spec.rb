@@ -699,7 +699,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
                 it "does not contain pre_commit_transformers in its manifest" do
                   command_manifest = command_connector.foobara_manifest[:command][:QueryUser]
-                  expect(command_manifest[:pre_commit_transformers]).to be_empty
+                  expect(command_manifest[:pre_commit_transformers]).to be_nil
 
                   manifest = command_manifest[:serializers].find { |h|
                     h[:name] == "Foobara::CommandConnectors::Serializers::AggregateSerializer"
@@ -837,24 +837,16 @@ RSpec.describe Foobara::CommandConnectors::Http do
             )
             expect(error_types).to eq(
               "runtime.some_runtime" => {
-                path: [],
-                runtime_path: [],
                 category: :runtime,
                 symbol: :some_runtime,
                 key: "runtime.some_runtime",
-                error: "SomeRuntimeError",
-                processor: nil,
-                processor_class: nil,
-                processor_manifest_data: nil
+                error: "SomeRuntimeError"
               },
               "data.cannot_cast" => {
-                path: [],
-                runtime_path: [],
                 category: :data,
                 symbol: :cannot_cast,
                 key: "data.cannot_cast",
                 error: "Value::Processor::Casting::CannotCastError",
-                processor: nil,
                 processor_class: "Value::Processor::Casting",
                 processor_manifest_data: {
                   casting: { cast_to: { type: :attributes,
@@ -864,37 +856,28 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 }
               },
               "data.unexpected_attributes" => {
-                path: [],
-                runtime_path: [],
                 category: :data,
                 symbol: :unexpected_attributes,
                 key: "data.unexpected_attributes",
                 error: "attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError",
-                processor: nil,
                 processor_class: "attributes::SupportedProcessors::ElementTypeDeclarations",
                 processor_manifest_data: { element_type_declarations: { bbaassee: { type: :string },
                                                                         exponent: { type: :string } } }
               },
               "data.bbaassee.cannot_cast" => {
                 path: [:bbaassee],
-                runtime_path: [],
                 category: :data,
                 symbol: :cannot_cast,
                 key: "data.bbaassee.cannot_cast",
                 error: "Value::Processor::Casting::CannotCastError",
-                processor: nil,
-                processor_class: nil,
                 processor_manifest_data: { casting: { cast_to: { type: :string } } }
               },
               "data.exponent.cannot_cast" => {
                 path: [:exponent],
-                runtime_path: [],
                 category: :data,
                 symbol: :cannot_cast,
                 key: "data.exponent.cannot_cast",
                 error: "Value::Processor::Casting::CannotCastError",
-                processor: nil,
-                processor_class: nil,
                 processor_manifest_data: { casting: { cast_to: { type: :string } } }
               }
             )

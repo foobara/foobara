@@ -64,12 +64,14 @@ module Foobara
 
       processor_manifest_data = data unless processor_reference
 
-      key.to_h.merge(
-        key: key.to_s,
-        error: error_class.foobara_manifest_reference,
-        processor: processor_reference,
-        processor_class: processor_class&.foobara_manifest_reference,
-        processor_manifest_data:
+      Util.remove_blank(
+        key.to_h.merge(
+          key: key.to_s,
+          error: error_class.foobara_manifest_reference,
+          processor: processor_reference,
+          processor_class: processor_class&.foobara_manifest_reference,
+          processor_manifest_data:
+        )
       )
     end
   end

@@ -50,8 +50,7 @@ module Foobara
               [possible_error.key.to_s, possible_error.foobara_manifest(to_include:)]
             end.sort.to_h
 
-            h = {
-              description:,
+            h = Util.remove_blank(
               types_depended_on: types,
               inputs_types_depended_on:,
               result_types_depended_on:,
@@ -65,7 +64,7 @@ module Foobara
                 element_type_declarations: {},
                 required: []
               }
-            }
+            ).merge(description:)
 
             if result_type
               # TODO: find a way to represent literal types like "nil"

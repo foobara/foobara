@@ -49,9 +49,15 @@ module Foobara
         types = types_depended_on.map do |t|
           to_include << t
           t.foobara_manifest_reference
-        end.sort
+        end
 
-        super.merge(types_depended_on: types).merge(to_h)
+        manifest = super
+
+        unless types.empty?
+          manifest[:types_depended_on] = types.sort
+        end
+
+        manifest.merge(Util.remove_blank(to_h))
       end
     end
 

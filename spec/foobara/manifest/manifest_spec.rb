@@ -80,7 +80,7 @@ RSpec.describe Foobara::Manifest do
 
     expect(entity).to be_a(Foobara::Manifest::Entity)
     expect(entity.primary_key_name).to eq("id")
-    expect(entity.has_associations?).to be(false)
+    expect(entity).to_not have_associations
 
     expect(entity.primary_key_type.to_type).to eq(integer)
     expect(entity.types_depended_on).to include(integer)
@@ -155,7 +155,7 @@ RSpec.describe Foobara::Manifest do
     global_possible_error = command.possible_errors["data.cannot_cast"]
     expect(global_possible_error.scoped_category).to be_nil
     expect(global_possible_error.parent).to be_nil
-    expect(global_possible_error._path).to be_a(Array)
+    expect(global_possible_error._path).to be_nil
     global_error = global_possible_error.error
     expect(global_error).to be_a(Foobara::Manifest::Error)
     expect(global_error.scoped_category).to eq(:error)

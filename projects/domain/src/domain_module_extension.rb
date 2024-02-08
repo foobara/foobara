@@ -225,13 +225,18 @@ module Foobara
             type.foobara_manifest_reference
           end.sort
 
-          super(to_include:).merge(
+          manifest = super.merge(
             organization_name:,
             domain_name:,
-            depends_on:,
             commands:,
             types:
           )
+
+          unless depends_on.empty?
+            manifest[:depends_on] = depends_on
+          end
+
+          manifest
         end
       end
     end
