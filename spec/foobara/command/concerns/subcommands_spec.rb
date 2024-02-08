@@ -25,8 +25,6 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
 
       inputs should_fail: :integer
 
-      possible_error(self::ItFailedError)
-
       def execute
         # TODO: add boolean input type as well as symbol and string
         if should_fail == 1

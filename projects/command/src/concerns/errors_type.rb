@@ -5,6 +5,20 @@ module Foobara
         include Concern
 
         module ClassMethods
+          def process_error_constants
+            return if @error_constants_processed
+
+            @error_constants_processed = true
+
+            Util.constant_values(self, extends: Foobara::RuntimeError).each do |error_class|
+              key = PossibleError.new(error_class).key.to_s
+
+              unless error_context_type_map.key?(key)
+                possible_error error_class
+              end
+            end
+          end
+
           def possible_errors
             error_context_type_map.values
           end
@@ -51,6 +65,7 @@ module Foobara
 
           # TODO: kill this method in favor of possible_errors
           def error_context_type_map
+            process_error_constants
             @error_context_type_map ||= if superclass < Foobara::Command
                                           superclass.error_context_type_map.dup
                                         end || {}
