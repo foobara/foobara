@@ -5,7 +5,7 @@ module Foobara
       module Casters
         class Array < Value::Caster
           def applicable?(value)
-            value.is_a?(::Array) && value.all? { |element| element.size == 2 }
+            value.is_a?(::Array) && value.all? { |element| element.is_a?(::Array) && element.size == 2 }
           end
 
           def applies_message
