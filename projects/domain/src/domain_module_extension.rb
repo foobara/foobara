@@ -133,9 +133,39 @@ module Foobara
         end
 
         # TODO: kill this off
-        def foobara_register_entity(name, attributes_type_declaration, model_base_class = nil)
+        def foobara_register_entity(name, *args, &block)
           # TODO: introduce a Namespace#scope method to simplify this a bit
           Foobara::Namespace.use self do
+            if block
+              args = [TypeDeclarations::Dsl::Attributes.to_declaration(&block), *args]
+            end
+
+            attributes_type_declaration, *args = args
+
+            model_base_class, description = case args.size
+                                            when 0
+                                              []
+                                            when 1, 2
+                                              arg, other = args
+
+                                              if args.first.is_a?(::String)
+                                                [other, arg]
+                                              else
+                                                args
+                                              end
+                                            else
+                                              # :nocov:
+                                              raise ArgumentError, "Too many arguments"
+                                              # :nocov:
+                                            end
+
+            if model_base_class
+              attributes_type_declaration = TypeDeclarations::Attributes.merge(
+                model_base_class.attributes_type.declaration_data,
+                attributes_type_declaration
+              )
+            end
+
             handler = foobara_type_builder.handler_for_class(
               Foobara::TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
             )
@@ -146,12 +176,15 @@ module Foobara
             primary_key = attributes_type.element_types.keys.first
 
             foobara_type_builder.type_for_declaration(
-              type: :entity,
-              name:,
-              model_base_class:,
-              attributes_declaration: attributes_type_declaration,
-              model_module: self,
-              primary_key:
+              Util.remove_blank(
+                type: :entity,
+                name:,
+                model_base_class:,
+                attributes_declaration: attributes_type_declaration,
+                model_module: self,
+                primary_key:,
+                description:
+              )
             )
           end
         end

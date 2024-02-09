@@ -85,6 +85,26 @@ RSpec.describe Foobara::Domain do
         expect(record).to be_a(domain::SomeEntity)
       end
     end
+
+    context "when passing a block" do
+      it "creates an entity class" do
+        domain.foobara_register_entity(:Base, "some base entity") do
+          id :integer
+        end
+
+        domain.foobara_register_entity(entity_name, domain::Base, "Some description") do
+          first_name :string
+        end
+
+        expect(entity_class).to be < Foobara::Entity
+        expect(entity_class.description).to eq("Some description")
+
+        entity_class.transaction do
+          record = entity_class.create(first_name: "fn")
+          expect(record).to be_a(domain::SomeEntity)
+        end
+      end
+    end
   end
 
   context "with simple command" do

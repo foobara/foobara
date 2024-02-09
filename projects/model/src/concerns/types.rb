@@ -25,12 +25,12 @@ module Foobara
             existing_type = attributes_type
 
             if existing_type
-              merged_declaration = TypeDeclarations::Attributes.merge(
+              declaration = TypeDeclarations::Attributes.merge(
                 existing_type.declaration_data,
                 new_type.declaration_data
               )
 
-              new_type = domain.foobara_type_from_declaration(merged_declaration)
+              new_type = domain.foobara_type_from_declaration(declaration)
             end
 
             self.attributes_type = new_type
