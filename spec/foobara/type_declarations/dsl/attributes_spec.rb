@@ -8,6 +8,9 @@ RSpec.describe Foobara::TypeDeclarations::Dsl::Attributes do
           foo [:integer]
           bar :float, default: 1.0
         end
+        array_of_attributes :array do
+          timestamp :datetime
+        end
       end
 
       expect(declaration).to eq(
@@ -24,6 +27,15 @@ RSpec.describe Foobara::TypeDeclarations::Dsl::Attributes do
             defaults: {
               bar: 1.0
             }
+          },
+          array_of_attributes: {
+            type: :array,
+            element_type_declaration: {
+              type: :attributes,
+              element_type_declarations: {
+                timestamp: :datetime
+              }
+            }
           }
         },
         required: [:first_name]
@@ -32,6 +44,26 @@ RSpec.describe Foobara::TypeDeclarations::Dsl::Attributes do
       type = Foobara::Domain.current.foobara_type_from_declaration(declaration)
 
       expect(type).to be_a(Foobara::Types::Type)
+
+      value = type.process_value!(
+        first_name: "John",
+        age: "30",
+        nested: { foo: [1, "2"] },
+        array_of_attributes: [
+          { timestamp: 1_707_520_958 },
+          { timestamp: 1_707_520_959 }
+        ]
+      )
+
+      expect(value).to eq(
+        first_name: "John",
+        age: 30,
+        nested: { foo: [1, 2], bar: 1.0 },
+        array_of_attributes: [
+          { timestamp: Time.parse("2024-02-09 23:22:38 +0000") },
+          { timestamp: Time.parse("2024-02-09 23:22:39 +0000") }
+        ]
+      )
     end
 
     context "when accidentally creating an attribute due to calling a method that doesn't exist" do

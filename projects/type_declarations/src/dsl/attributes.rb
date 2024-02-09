@@ -61,7 +61,11 @@ module Foobara
           _disable_method_missing do
             declaration = declaration.dup
 
-            unless block
+            if block
+              if processor_symbols.first == :array
+                type, *processor_symbols = processor_symbols
+              end
+            else
               type, *processor_symbols = processor_symbols
 
               unless type
@@ -107,7 +111,16 @@ module Foobara
               _add_attribute(attribute_name, type)
             else
               declaration = if block
-                              Attributes.to_declaration(&block).merge(declaration)
+                              attributes_declaration = Attributes.to_declaration(&block).merge(declaration)
+
+                              if type == :array
+                                {
+                                  type: :array,
+                                  element_type_declaration: attributes_declaration
+                                }
+                              else
+                                attributes_declaration
+                              end
                             else
                               declaration.merge(type:)
                             end
