@@ -10,7 +10,11 @@ module Foobara
 
         def optional_keys(*values, default: nil)
           if values.empty?
-            @optional_keys ||= Set.new
+            @optional_keys ||= if superclass == Object
+                                 Set.new
+                               else
+                                 superclass.optional_keys.dup
+                               end
           else
             if default
               default = default.freeze
