@@ -5,7 +5,7 @@ module Foobara
     class Entity < Type
       self.category_symbol = :type
 
-      optional_keys(:associations)
+      optional_key(:associations, default: {})
 
       alias entity_manifest relevant_manifest
 

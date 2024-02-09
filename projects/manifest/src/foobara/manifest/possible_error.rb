@@ -1,7 +1,7 @@
 module Foobara
   module Manifest
     class PossibleError < BaseManifest
-      optional_key(:path)
+      optional_key(:path, default: [])
 
       def possible_error_manifest
         relevant_manifest

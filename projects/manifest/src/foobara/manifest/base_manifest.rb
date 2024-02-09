@@ -8,18 +8,30 @@ module Foobara
       class << self
         attr_accessor :category_symbol
 
-        def optional_keys(*values)
+        def optional_keys(*values, default: nil)
           if values.empty?
             @optional_keys ||= Set.new
           else
+            if default
+              default = default.freeze
+            end
+
             values.each do |value|
-              optional_keys << value.to_sym
+              value = value.to_sym
+              optional_keys << value
+              if default
+                optional_key_defaults[value] = default
+              end
             end
           end
         end
 
-        def optional_key(value)
-          optional_keys(value)
+        def optional_key_defaults
+          @optional_key_defaults ||= {}
+        end
+
+        def optional_key(value, default: nil)
+          optional_keys(value, default:)
         end
 
         def category_to_manifest_class(category_symbol)
@@ -116,7 +128,7 @@ module Foobara
         if key?(method_name)
           self[method_name]
         elsif optional_key?(method_name)
-          nil
+          self.class.optional_key_defaults[method_name.to_sym]
         else
           # :nocov:
           super
@@ -143,7 +155,8 @@ module Foobara
       end
 
       def respond_to_missing?(method_name, include_private = false)
-        relevant_manifest.key?(method_name.to_sym) || relevant_manifest.key?(method_name.to_s) || super
+        relevant_manifest.key?(method_name.to_sym) || relevant_manifest.key?(method_name.to_s) ||
+          optional_key?(method_name) || super
       end
 
       def ==(other)
