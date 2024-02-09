@@ -25,31 +25,12 @@ module Foobara
             existing_type = attributes_type
 
             if existing_type
-              # TODO: make a first-class way to update/merge/union types!!
-              element_type_declarations = {}
-              required = []
-              defaults = {}
-
-              [existing_type, new_type].each do |type|
-                element_type_declarations.merge!(type.declaration_data[:element_type_declarations])
-                type_defaults = type.declaration_data[:defaults]
-                type_required = type.declaration_data[:required]
-
-                if type_defaults && !type_defaults.empty?
-                  defaults.merge!(type_defaults)
-                end
-
-                if type_required && !type_required.empty?
-                  required += type_required
-                end
-              end
-
-              new_type = domain.foobara_type_from_declaration(
-                type: :attributes,
-                element_type_declarations:,
-                required:,
-                defaults:
+              merged_declaration = TypeDeclarations::Attributes.merge(
+                existing_type.declaration_data,
+                new_type.declaration_data
               )
+
+              new_type = domain.foobara_type_from_declaration(merged_declaration)
             end
 
             self.attributes_type = new_type
@@ -76,13 +57,14 @@ module Foobara
           end
 
           def type_declaration(attributes_declaration)
-            {
+            Util.remove_blank(
               type: :model,
               name: model_name,
               model_class: self,
               model_base_class: superclass,
-              attributes_declaration:
-            }
+              attributes_declaration:,
+              description:
+            )
           end
 
           def attributes_type

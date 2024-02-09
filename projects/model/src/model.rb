@@ -11,6 +11,19 @@ module Foobara
     class << self
       attr_accessor :domain, :is_abstract
 
+      def description(*args)
+        case args.size
+        when 0
+          @description
+        when 1
+          @description = args.first
+        else
+          # :nocov:
+          raise ArgumentError, "expected 0 or 1 argument, got #{args.size}"
+          # :nocov:
+        end
+      end
+
       def organization_name
         domain.foobara_organization_name
       end
