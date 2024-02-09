@@ -15,8 +15,10 @@ RSpec.describe Foobara::Manifest do
     end
 
     stub_class "SomeOtherDomain::SomeOtherUser", Foobara::Entity do
-      attributes id: :integer,
-                 first_name: :string
+      attributes do
+        id :integer
+        first_name :string, :allow_nil
+      end
       primary_key :id
     end
 
@@ -26,10 +28,14 @@ RSpec.describe Foobara::Manifest do
     end
 
     stub_class "SomeOrg::SomeDomain::User", Foobara::Entity do
-      attributes id: :integer,
-                 name: { type: :string, required: true },
-                 ratings: [:integer],
-                 junk: { type: :associative_array, value_type_declaration: :array }
+      attributes do
+        id :integer
+        name :string, :required
+        phone :string, :allow_nil
+        ratings [:integer]
+        junk :associative_array, value_type_declaration: :array
+      end
+
       primary_key :id
     end
 
@@ -91,7 +97,7 @@ RSpec.describe Foobara::Manifest do
     expect(entity.target_class).to eq("SomeOrg::SomeDomain::User")
     expect(entity.entity_manifest).to be_a(Hash)
     expect(entity.type_manifest).to be_a(Hash)
-    expect(entity.attribute_names).to match_array(%w[name ratings junk])
+    expect(entity.attribute_names).to match_array(%w[name ratings junk phone])
 
     expect(manifest.types).to include(entity)
     expect(entity.organization.types).to include(entity)
@@ -104,6 +110,7 @@ RSpec.describe Foobara::Manifest do
     expect(attributes.required?("ratings")).to be(false)
     expect(attributes.required).to eq([:name])
     expect(attributes.attribute_declarations[:ratings].element_type.type).to eq(:integer)
+    expect(attributes.attribute_declarations[:phone].allows_nil?).to be(true)
 
     new_attributes = Foobara::Manifest::TypeDeclaration.new(attributes.root_manifest, attributes.path)
     expect(new_attributes).to be_a(Foobara::Manifest::Attributes)

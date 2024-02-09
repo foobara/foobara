@@ -3,6 +3,8 @@ require_relative "base_manifest"
 module Foobara
   module Manifest
     class TypeDeclaration < BaseManifest
+      optional_keys(:allow_nil, :one_of)
+
       class << self
         def new(root_manifest, path)
           type_declaration = super(root_manifest, path)
@@ -20,6 +22,10 @@ module Foobara
             type_declaration
           end
         end
+      end
+
+      def allows_nil?
+        allow_nil
       end
 
       def type_declaration_manifest
