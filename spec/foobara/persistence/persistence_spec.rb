@@ -7,19 +7,8 @@ RSpec.describe Foobara::Persistence do
     before do
       described_class.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
 
-      stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-      Class.new(Foobara::Entity) do
-        class << self
-          def name
-            "User"
-          end
-        end
-
-        stub_class.call(self)
-
+      stub_class :User, Foobara::Entity do
         attributes id: :integer
-
         primary_key :id
       end
     end
