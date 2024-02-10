@@ -133,6 +133,8 @@ RSpec.describe Foobara::Manifest do
     model = manifest.model_by_name("SomeOrg::SomeDomain::Address")
 
     expect(model).to be_a(Foobara::Manifest::Model)
+    expect(model.model?).to be(true)
+    expect(entity.attributes_type.attribute_declarations[:address].to_model).to eq(model)
 
     expect(model.types_depended_on).to include(string)
     expect(model.scoped_category).to eq(:type)

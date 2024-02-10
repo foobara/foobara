@@ -32,6 +32,23 @@ module Foobara
         relevant_manifest
       end
 
+      def model?
+        return @model if defined?(@model)
+
+        @model = to_type.model?
+      end
+
+      def to_model
+        raise "not an model" unless model?
+        raise "model extension instead of an model" unless relevant_manifest.size == 1
+
+        type = to_type
+
+        raise "not an model" unless type.model?
+
+        type
+      end
+
       def entity?
         return @entity if defined?(@entity)
 
