@@ -30,9 +30,6 @@ module Foobara
             sugary_type_declaration[:element_type_declaration] = strict
 
             sugary_type_declaration
-          rescue => e
-            binding.pry
-            raise
           end
 
           def priority
