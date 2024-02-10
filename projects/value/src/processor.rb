@@ -218,6 +218,9 @@ module Foobara
 
       def process_value!(value)
         process_value(value).result!
+      rescue => e
+        binding.pry
+        raise
       end
 
       def process_outcome(old_outcome)

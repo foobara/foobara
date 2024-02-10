@@ -198,6 +198,8 @@ module Foobara
       attribute_name = attribute_name.to_sym
 
       if mutable == true || mutable.include?(attribute_name)
+        binding.pry if attribute_name.to_sym == :choices
+
         outcome = cast_attribute(attribute_name, value)
         attributes[attribute_name] = outcome.success? ? outcome.result : value
       else

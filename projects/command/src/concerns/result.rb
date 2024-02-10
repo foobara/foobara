@@ -16,6 +16,7 @@ module Foobara
           if outcome.success?
             outcome.result
           else
+            result_type.process_value!(result)
             raise CouldNotProcessResult, outcome.errors
           end
         end
