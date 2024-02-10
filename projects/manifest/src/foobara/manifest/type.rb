@@ -8,11 +8,15 @@ module Foobara
         def new(root_manifest, path)
           type = super(root_manifest, path)
 
-          if self == Type && type.entity?
-            Entity.new(type.root_manifest, type.path)
-          else
-            type
+          if self == Type
+            if type.entity?
+              type = Entity.new(type.root_manifest, type.path)
+            elsif type.model?
+              type = Model.new(type.root_manifest, type.path)
+            end
           end
+
+          type
         end
       end
 
@@ -25,6 +29,18 @@ module Foobara
 
         while type
           return true if type.type_symbol == :entity
+
+          type = type.base_type
+        end
+
+        false
+      end
+
+      def model?
+        type = base_type
+
+        while type
+          return true if type.type_symbol == :model
 
           type = type.base_type
         end

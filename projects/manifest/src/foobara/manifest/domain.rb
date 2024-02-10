@@ -23,6 +23,10 @@ module Foobara
         @entities ||= types.select(&:entity?)
       end
 
+      def models
+        @models ||= types.select(&:model?)
+      end
+
       def domain_name
         relevant_manifest["domain_name"] || relevant_manifest[:domain_name]
       end

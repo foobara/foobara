@@ -1,20 +1,16 @@
-require_relative "type"
+require_relative "model"
 
 module Foobara
   module Manifest
-    class Entity < Type
+    class Entity < Model
       self.category_symbol = :type
 
       optional_key(:associations, default: {})
 
-      alias entity_manifest relevant_manifest
+      alias entity_manifest model_manifest
 
       def has_associations?
         associations && !associations.empty?
-      end
-
-      def attributes_type
-        Attributes.new(root_manifest, [*path, :attributes_type])
       end
 
       def primary_key_name
@@ -26,7 +22,7 @@ module Foobara
       end
 
       def attribute_names
-        attributes_type.attribute_names - [primary_key_name]
+        super - [primary_key_name]
       end
     end
   end

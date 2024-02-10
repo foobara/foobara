@@ -35,10 +35,22 @@ module Foobara
         organizations.map(&:entities).flatten
       end
 
+      def models
+        organizations.map(&:models).flatten
+      end
+
       def entity_by_name(name)
         type = type_by_name(name)
 
         raise "#{name} is not an entity" unless type.entity?
+
+        type
+      end
+
+      def model_by_name(name)
+        type = type_by_name(name)
+
+        raise "#{name} is not a model" unless type.model?
 
         type
       end
