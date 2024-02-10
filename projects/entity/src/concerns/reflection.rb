@@ -32,19 +32,16 @@ module Foobara
               [path, entity_name]
             end.sort.to_h
 
-            Util.remove_blank(
-              attributes_type: attributes_type.declaration_data,
-              depends_on: depends_on.map(&:full_entity_name),
-              deep_depends_on: deep_depends_on.map(&:full_entity_name),
-              associations:,
-              deep_associations:,
-              organization_name:,
-              domain_name:,
-              entity_name:,
-              model_base_class: entity_type.declaration_data[:model_base_class],
-              model_class: entity_type.declaration_data[:model_class],
-              primary_key_attribute:,
-              primary_key_type: attributes_type.declaration_data[:element_type_declarations][primary_key_attribute]
+            super.merge(
+              Util.remove_blank(
+                depends_on: depends_on.map(&:full_entity_name),
+                deep_depends_on: deep_depends_on.map(&:full_entity_name),
+                associations:,
+                deep_associations:,
+                entity_name:,
+                primary_key_attribute:,
+                primary_key_type: attributes_type.declaration_data[:element_type_declarations][primary_key_attribute]
+              )
             )
           end
         end

@@ -10,13 +10,13 @@ module Foobara
 
           if self == Type
             if type.entity?
-              Entity.new(type.root_manifest, type.path)
+              type = Entity.new(type.root_manifest, type.path)
             elsif type.model?
-              Model.new(type.root_manifest, type.path)
+              type = Model.new(type.root_manifest, type.path)
             end
-          else
-            type
           end
+
+          type
         end
       end
 
@@ -25,14 +25,35 @@ module Foobara
       end
 
       def entity?
-        # TODO: test this with inheritance
-        binding.pry
-        base_type&.to_sym == :entity
+        type = base_type
+
+        while type
+          return true if type.type_symbol == :entity
+
+          type = type.base_type
+        end
+
+        false
       end
 
       def model?
-        binding.pry
-        base_type&.to_sym == :model
+        type = base_type
+
+        while type
+          return true if type.type_symbol == :model
+
+          type = type.base_type
+        end
+
+        false
+      end
+
+      def base_type
+        base_type_symbol = self[:base_type]
+
+        if base_type_symbol
+          Type.new(root_manifest, [:type, self[:base_type]])
+        end
       end
 
       def target_class

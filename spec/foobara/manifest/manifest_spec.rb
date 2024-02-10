@@ -27,6 +27,17 @@ RSpec.describe Foobara::Manifest do
       foobara_depends_on "SomeOtherDomain"
     end
 
+    stub_module "SomeOrg::SomeDomain::Types"
+
+    stub_class "SomeOrg::SomeDomain::Types::Address", Foobara::Model do
+      attributes do
+        street :string
+        city :string
+        state :string
+        zip :string
+      end
+    end
+
     stub_class "SomeOrg::SomeDomain::User", Foobara::Entity do
       attributes do
         id :integer
@@ -34,6 +45,7 @@ RSpec.describe Foobara::Manifest do
         phone :string, :allow_nil
         ratings [:integer]
         junk :associative_array, value_type_declaration: :array
+        address SomeOrg::SomeDomain::Types::Address
       end
 
       primary_key :id
@@ -67,6 +79,7 @@ RSpec.describe Foobara::Manifest do
 
   it "is a Manifest" do
     integer = Foobara::Manifest::Type.new(raw_manifest, %i[type integer])
+    string = Foobara::Manifest::Type.new(raw_manifest, %i[type string])
 
     expect(manifest).to be_a(Foobara::Manifest::RootManifest)
     expect(manifest.global_domain).to be_global
@@ -97,7 +110,7 @@ RSpec.describe Foobara::Manifest do
     expect(entity.target_class).to eq("SomeOrg::SomeDomain::User")
     expect(entity.entity_manifest).to be_a(Hash)
     expect(entity.type_manifest).to be_a(Hash)
-    expect(entity.attribute_names).to match_array(%w[name ratings junk phone])
+    expect(entity.attribute_names).to match_array(%w[name ratings junk phone address])
 
     expect(manifest.types).to include(entity)
     expect(entity.organization.types).to include(entity)
@@ -117,13 +130,36 @@ RSpec.describe Foobara::Manifest do
     expect(new_attributes).to eql(attributes)
     expect(new_attributes.hash).to eql(attributes.hash)
 
+    model = manifest.model_by_name("SomeOrg::SomeDomain::Address")
+
+    expect(model).to be_a(Foobara::Manifest::Model)
+
+    expect(model.types_depended_on).to include(string)
+    expect(model.scoped_category).to eq(:type)
+    expect(model.parent).to eq(domain)
+    expect(manifest.models).to include(model)
+
+    expect(model.target_class).to eq("SomeOrg::SomeDomain::Types::Address")
+    expect(model.model_manifest).to be_a(Hash)
+    expect(model.type_manifest).to be_a(Hash)
+    expect(model.attribute_names).to match_array(%w[street city state zip])
+
+    expect(manifest.types).to include(model)
+    expect(model.organization.types).to include(model)
+
+    attributes = model.attributes_type
+    expect(attributes.scoped_category).to be_nil
+    expect(attributes.parent).to be_nil
+    expect(attributes).to be_a(Foobara::Manifest::Attributes)
+    expect(attributes.attribute_declarations[:street].type).to eq(:string)
+
     command = manifest.command_by_name("SomeOrg::SomeDomain::QueryUser")
 
     expect(command).to be_a(Foobara::Manifest::Command)
     expect(command.scoped_category).to eq(:command)
     expect(command.parent_category).to eq(:domain)
     expect(command.parent_name).to eq("SomeOrg::SomeDomain")
-    expect(entity.parent).to eq(domain)
+    expect(command.parent).to eq(domain)
     expect(command.command_name).to eq("QueryUser")
     expect(manifest.commands).to include(command)
     expect(command.command_manifest).to be_a(Hash)

@@ -7,6 +7,7 @@ module Foobara
     class AttributeIsImmutableError < StandardError; end
 
     include Concerns::Types
+    include Concerns::Reflection
 
     class << self
       attr_accessor :domain, :is_abstract

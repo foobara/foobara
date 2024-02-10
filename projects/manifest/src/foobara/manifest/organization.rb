@@ -29,6 +29,10 @@ module Foobara
         domains.map(&:entities).flatten
       end
 
+      def models
+        domains.map(&:models).flatten
+      end
+
       def global?
         reference == "global_organization"
       end

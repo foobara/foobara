@@ -1,3 +1,5 @@
+require_relative "model"
+
 module Foobara
   module Manifest
     class Entity < Model
