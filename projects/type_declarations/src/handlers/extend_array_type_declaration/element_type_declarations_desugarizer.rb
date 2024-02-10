@@ -9,31 +9,30 @@ module Foobara
         # TODO: make a quick way to convert a couple simple procs into a transformer
         class ElementTypeDeclarationsDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(sugary_type_declaration)
-            raise "implement"
             return false unless sugary_type_declaration.is_a?(::Hash)
             return false unless Util.all_symbolizable_keys?(sugary_type_declaration)
 
             sugary_type_declaration = Util.symbolize_keys(sugary_type_declaration)
 
-            return true unless sugary_type_declaration.key?(:type)
+            return false unless sugary_type_declaration.key?(:type)
 
             type_symbol = sugary_type_declaration[:type]
 
-            if type_symbol == :attributes
-              Util.all_symbolizable_keys?(sugary_type_declaration[:element_type_declarations])
-            elsif type_symbol.is_a?(::Symbol)
-              !type_registered?(type_symbol)
-            end
+            type_symbol == :array && sugary_type_declaration.key?(:element_type_declaration)
           end
 
           def desugarize(sugary_type_declaration)
-            binding.pry
-            sugary_type_declaration[:element_type_declarations].transform_values! do |element_type_declaration|
-              handler = type_declaration_handler_for(element_type_declaration)
-              handler.desugarize(element_type_declaration)
-            end
+            sugar = sugary_type_declaration[:element_type_declaration]
+
+            handler = type_declaration_handler_for(sugar)
+            strict = handler.desugarize(sugar)
+
+            sugary_type_declaration[:element_type_declaration] = strict
 
             sugary_type_declaration
+          rescue => e
+            binding.pry
+            raise
           end
 
           def priority
