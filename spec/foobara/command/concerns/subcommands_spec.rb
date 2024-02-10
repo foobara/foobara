@@ -50,8 +50,12 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
     end
 
     context "when command not registered via #depends_on" do
+      let(:command_class) do
+        stub_class(:SomeCommand, Foobara::Command)
+      end
+
       it "is false" do
-        expect(command_class.depends_on?(Object)).to be(false)
+        expect(command_class.depends_on?(command_class)).to be(false)
       end
     end
   end

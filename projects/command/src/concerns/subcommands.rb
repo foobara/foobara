@@ -40,7 +40,7 @@ module Foobara
         module ClassMethods
           def depends_on?(subcommand_name)
             if subcommand_name.is_a?(Class)
-              subcommand_name = subcommand_name.name
+              subcommand_name = subcommand_name.scoped_full_name.to_sym
             end
 
             depends_on.include?(subcommand_name.to_sym)
@@ -54,7 +54,7 @@ module Foobara
             end
 
             subcommand_classes.each do |subcommand_class|
-              subcommand_name = subcommand_class.name.to_sym
+              subcommand_name = subcommand_class.scoped_full_name.to_sym
 
               if depends_on.include?(subcommand_name)
                 # :nocov:
