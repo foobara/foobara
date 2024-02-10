@@ -21,7 +21,23 @@ module Foobara
       end
 
       def entity?
-        base_type&.to_sym == :entity
+        type = base_type
+
+        while type
+          return true if type.type_symbol == :entity
+
+          type = type.base_type
+        end
+
+        false
+      end
+
+      def base_type
+        base_type_symbol = self[:base_type]
+
+        if base_type_symbol
+          Type.new(root_manifest, [:type, self[:base_type]])
+        end
       end
 
       def target_class
