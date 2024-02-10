@@ -28,7 +28,7 @@ module Foobara
         type = base_type
 
         while type
-          return true if type.type_symbol == :entity
+          return true if type.reference.to_sym == :entity
 
           type = type.base_type
         end
@@ -40,7 +40,7 @@ module Foobara
         type = base_type
 
         while type
-          return true if type.type_symbol == :model
+          return true if type.reference.to_sym == :model
 
           type = type.base_type
         end

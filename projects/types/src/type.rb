@@ -219,7 +219,6 @@ module Foobara
         end.sort.to_h
 
         h = Util.remove_blank(
-          type_symbol:,
           name:,
           target_classes: target_classes.map(&:name).sort,
           declaration_data:,
