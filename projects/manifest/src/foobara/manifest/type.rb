@@ -8,8 +8,12 @@ module Foobara
         def new(root_manifest, path)
           type = super(root_manifest, path)
 
-          if self == Type && type.entity?
-            Entity.new(type.root_manifest, type.path)
+          if self == Type
+            if type.entity?
+              Entity.new(type.root_manifest, type.path)
+            elsif type.model?
+              Model.new(type.root_manifest, type.path)
+            end
           else
             type
           end
@@ -21,7 +25,14 @@ module Foobara
       end
 
       def entity?
+        # TODO: test this with inheritance
+        binding.pry
         base_type&.to_sym == :entity
+      end
+
+      def model?
+        binding.pry
+        base_type&.to_sym == :model
       end
 
       def target_class
