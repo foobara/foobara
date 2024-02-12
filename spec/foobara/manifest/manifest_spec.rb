@@ -148,6 +148,7 @@ RSpec.describe Foobara::Manifest do
 
     expect(manifest.types).to include(model)
     expect(model.organization.types).to include(model)
+    expect(model.has_associations?).to be(false)
 
     attributes = model.attributes_type
     expect(attributes.scoped_category).to be_nil
