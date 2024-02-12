@@ -37,6 +37,8 @@ module Foobara
       end
 
       def model?
+        return false if reference == "entity"
+
         type = base_type
 
         while type
