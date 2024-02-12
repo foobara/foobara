@@ -464,6 +464,8 @@ module Foobara
             else
               object.primary_key
             end
+          when Model
+            to_persistable(object.attributes, false)
           when ::Hash
             object.transform_values do |value|
               to_persistable(value, false)
