@@ -659,10 +659,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 h[:name] == "Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer"
               }
               expect(manifest).to be_a(Hash)
-              manifest = command_manifest[:serializers].find { |h|
-                h[:name] == "Foobara::CommandConnectors::Serializers::AggregateSerializer"
-              }
-              expect(manifest).to be_a(Hash)
+              expect(command_manifest[:serializers]).to include("CommandConnectors::Serializers::AggregateSerializer")
             end
 
             context "with aggregate serializer as default serializer" do
@@ -688,10 +685,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
                   h[:name] == "Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer"
                 }
                 expect(manifest).to be_a(Hash)
-                manifest = command_manifest[:serializers].find { |h|
-                  h[:name] == "Foobara::CommandConnectors::Serializers::AggregateSerializer"
-                }
-                expect(manifest).to be_a(Hash)
+                expect(command_manifest[:serializers]).to include("CommandConnectors::Serializers::AggregateSerializer")
               end
 
               context "when disabled via aggregate_entities: false" do
@@ -701,10 +695,9 @@ RSpec.describe Foobara::CommandConnectors::Http do
                   command_manifest = command_connector.foobara_manifest[:command][:QueryUser]
                   expect(command_manifest[:pre_commit_transformers]).to be_nil
 
-                  manifest = command_manifest[:serializers].find { |h|
-                    h[:name] == "Foobara::CommandConnectors::Serializers::AggregateSerializer"
-                  }
-                  expect(manifest).to be_nil
+                  expect(
+                    command_manifest[:serializers]
+                  ).to_not include("CommandConnectors::Serializers::AggregateSerializer")
                 end
               end
             end

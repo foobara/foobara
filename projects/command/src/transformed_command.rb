@@ -61,7 +61,12 @@ module Foobara
         errors_transformers = self.errors_transformers.map { |t| t.foobara_manifest(to_include:) }
         pre_commit_transformers = self.pre_commit_transformers.map { |t| t.foobara_manifest(to_include:) }
         serializers = self.serializers.map do |s|
-          s.respond_to?(:foobara_manifest) ? s.foobara_manifest(to_include:) : { proc: s.to_s }
+          if s.respond_to?(:foobara_manifest)
+            to_include << s
+            s.foobara_manifest_reference
+          else
+            { proc: s.to_s }
+          end
         end
 
         command_class.foobara_manifest(to_include:).merge(
