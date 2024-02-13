@@ -134,6 +134,8 @@ module Foobara
               type.element_types.each_pair do |attribute_name, element_type|
                 construct_associations(element_type, path.append(attribute_name), result)
               end
+            elsif type.extends_symbol?(:model)
+              construct_associations(type.element_types, path, result)
             elsif type.extends_symbol?(:associative_array)
               # not going to bother testing this for now
               # :nocov:
