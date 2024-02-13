@@ -1,7 +1,7 @@
 module Foobara
   module TypeDeclarations
     module Handlers
-      class ExtendRegisteredModelTypeDeclaration < ExtendRegisteredTypeDeclaration
+      class RegisteredTypeDeclaration < TypeDeclarationHandler
         class ModelClassDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(sugary_type_declaration)
             sugary_type_declaration.is_a?(Class) && sugary_type_declaration < Model
@@ -14,7 +14,7 @@ module Foobara
           end
 
           def priority
-            Priority::FIRST
+            Priority::FIRST - 1
           end
         end
       end
