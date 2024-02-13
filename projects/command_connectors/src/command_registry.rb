@@ -46,18 +46,22 @@ module Foobara
       allowed_rule: default_allowed_rule,
       requires_authentication: nil,
       authenticator: self.authenticator,
-      aggregate_entities: nil
+      aggregate_entities: nil,
+      atomic_entities: nil
     )
       serializers = [*serializers, *default_serializers]
       pre_commit_transformers = [*pre_commit_transformers, *default_pre_commit_transformers]
 
       if aggregate_entities
         pre_commit_transformers << Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer
-        # TODO: Http should not appear at all in this project...
         serializers << Foobara::CommandConnectors::Serializers::AggregateSerializer
       elsif aggregate_entities == false
         pre_commit_transformers.delete(Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer)
         serializers.delete(Foobara::CommandConnectors::Serializers::AggregateSerializer)
+      end
+
+      if atomic_entities
+        serializers << Foobara::CommandConnectors::Serializers::AtomicSerializer
       end
 
       Foobara::TransformedCommand.subclass(

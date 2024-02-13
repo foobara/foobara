@@ -71,6 +71,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
   let(:requires_authentication) { nil }
   let(:capture_unknown_error) { false }
   let(:aggregate_entities) { nil }
+  let(:atomic_entities) { nil }
 
   describe "#connect" do
     context "when command is in an organization" do
@@ -164,7 +165,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
         requires_authentication:,
         pre_commit_transformers:,
         capture_unknown_error:,
-        aggregate_entities:
+        aggregate_entities:,
+        atomic_entities:
       )
     end
 
@@ -562,6 +564,15 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         before do
           User.attributes referral: referral_class, point: point_class
+        end
+
+        context "with atomic_entities: true" do
+          let(:atomic_entities) { true }
+
+          it "includes the AtomicSerializer" do
+            command_manifest = command_connector.foobara_manifest[:command][:QueryUser]
+            expect(command_manifest[:serializers]).to include("CommandConnectors::Serializers::AtomicSerializer")
+          end
         end
 
         context "with AtomicSerializer" do
