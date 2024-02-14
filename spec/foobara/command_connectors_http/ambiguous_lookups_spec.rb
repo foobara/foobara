@@ -34,6 +34,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
     end
 
     stub_class("DomainA::SomeCommand", Foobara::Command) do
+      description "Some Command Description"
+
       depends_on_entities(User, DomainA::User)
     end
 
@@ -88,6 +90,40 @@ RSpec.describe Foobara::CommandConnectors::Http do
       expect(some_command.command_name).to eq("SomeCommand")
       expect(some_command_again.command_name).to eq("SomeCommandAgain")
       expect(some_command_again.command_class.command_name).to eq("SomeCommand")
+
+      manifest = some_command_again.foobara_manifest(to_include: Set.new)
+
+      expect(manifest[:scoped_path]).to eq(["SomeCommandAgain"])
+      expect(manifest[:scoped_name]).to eq("SomeCommandAgain")
+      expect(manifest[:scoped_short_name]).to eq("SomeCommandAgain")
+      expect(manifest[:scoped_prefix]).to be_nil
+      expect(manifest[:scoped_full_path]).to eq(%w[DomainA SomeCommandAgain])
+      expect(manifest[:scoped_full_name]).to eq("DomainA::SomeCommandAgain")
+      expect(manifest[:scoped_category]).to eq(:command)
+      expect(manifest[:reference]).to eq("DomainA::SomeCommandAgain")
+      expect(manifest[:domain]).to eq("DomainA")
+      expect(manifest[:organization]).to eq("global_organization")
+      expect(manifest[:parent]).to eq([:domain, "DomainA"])
+      expect(manifest[:types_depended_on]).to be_an(Array)
+      expect(manifest[:full_command_name]).to eq("DomainA::SomeCommandAgain")
+      expect(manifest[:inputs_type]).to be_a(Hash)
+      expect(manifest[:description]).to eq("Some Command Description")
+      expect(manifest[:command]).to eq("DomainA::SomeCommand")
+      expect(manifest[:domain_name]).to eq("DomainA")
+      expect(manifest[:organization_name]).to eq("global_organization")
+      expect(manifest[:errors_transformers]).to be_nil
+    end
+
+    it "includes the suffixed commands in the manifest" do
+      manifest = command_connector.foobara_manifest
+
+      domain_manifest = manifest[:domain][:DomainA]
+      commands_list = domain_manifest[:commands]
+
+      expect(commands_list).to eq([
+                                    "DomainA::SomeCommand",
+                                    "DomainA::SomeCommandAgain"
+                                  ])
     end
   end
 end

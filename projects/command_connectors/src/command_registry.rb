@@ -37,7 +37,6 @@ module Foobara
 
     def transform_command_class(
       command_class,
-      full_command_name: nil,
       suffix: nil,
       capture_unknown_error: nil,
       inputs_transformers: nil,
@@ -69,7 +68,6 @@ module Foobara
 
       Foobara::TransformedCommand.subclass(
         command_class,
-        full_command_name:,
         suffix:,
         capture_unknown_error:,
         inputs_transformers: [*inputs_transformers, *default_inputs_transformers],
