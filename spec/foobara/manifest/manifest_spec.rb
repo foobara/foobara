@@ -51,6 +51,16 @@ RSpec.describe Foobara::Manifest do
       primary_key :id
     end
 
+    stub_class "SomeOrg::SomeDomain::Referral", Foobara::Entity do
+      attributes do
+        id :integer
+        user SomeOrg::SomeDomain::User
+        channel :string
+      end
+
+      primary_key :id
+    end
+
     stub_class "SomeOrg::SomeDomain::QueryUser", Foobara::Command
     stub_class "SomeOrg::SomeDomain::QueryUser::SomethingWentWrongError", Foobara::RuntimeError do
       class << self
@@ -68,6 +78,11 @@ RSpec.describe Foobara::Manifest do
       load_all
 
       possible_error SomeOrg::SomeDomain::QueryUser::SomethingWentWrongError
+    end
+
+    stub_class "SomeOrg::SomeDomain::QueryReferral", Foobara::Command do
+      inputs id: :integer
+      result :Referral
     end
 
     stub_class "GlobalCommand", Foobara::Command
@@ -129,6 +144,10 @@ RSpec.describe Foobara::Manifest do
     expect(new_attributes).to be_a(Foobara::Manifest::Attributes)
     expect(new_attributes).to eql(attributes)
     expect(new_attributes.hash).to eql(attributes.hash)
+
+    entity_with_associations = manifest.entity_by_name("SomeOrg::SomeDomain::Referral")
+    expect(entity_with_associations).to have_associations
+    expect(entity_with_associations.associations[:user]).to eq(entity)
 
     model = manifest.model_by_name("SomeOrg::SomeDomain::Address")
 

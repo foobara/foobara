@@ -42,6 +42,10 @@ module Foobara
               write_attribute!(attribute_name, value)
             else
               attribute_name = attribute_name.to_sym
+              # This is a bit of a problem when creating invalid models from attributes...
+              # feels like we should do the best we can instead of not casting it at all. That is, better to have
+              # an invalid Model instance than a hash when a Model is expected.
+              # How do we go about doing that?
               outcome = cast_attribute(attribute_name, value)
               attributes[attribute_name] = outcome.success? ? outcome.result : value
             end
