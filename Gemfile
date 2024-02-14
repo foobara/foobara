@@ -8,6 +8,7 @@ gemspec
 gem "foobara-rubocop-rules", github: "foobara/rubocop-rules"
 gem "foobara-spec-helpers", github: "foobara/spec-helpers"
 gem "foobara-util", github: "foobara/util"
+# gem "foobara-util", path: "../util"
 gem "guard-rspec"
 gem "pry"
 gem "pry-byebug"

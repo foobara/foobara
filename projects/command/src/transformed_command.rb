@@ -1,8 +1,19 @@
 module Foobara
+  # TODO: feels so strange that this doesn't inherit from command
   class TransformedCommand
     class << self
-      attr_accessor :command_class, :capture_unknown_error, :inputs_transformers, :result_transformers,
-                    :errors_transformers, :pre_commit_transformers, :serializers, :allowed_rule, :requires_authentication, :authenticator, :full_command_name
+      attr_accessor :command_class,
+                    :capture_unknown_error,
+                    :inputs_transformers,
+                    :result_transformers,
+                    :errors_transformers,
+                    :pre_commit_transformers,
+                    :serializers,
+                    :allowed_rule,
+                    :requires_authentication,
+                    :authenticator,
+                    :full_command_name,
+                    :command_name
 
       def subclass(
         command_class,
@@ -19,18 +30,22 @@ module Foobara
         capture_unknown_error: false
       )
         if Util.all_blank_or_false?(
-          inputs_transformers,
-          result_transformers,
-          errors_transformers,
-          pre_commit_transformers,
-          serializers,
-          allowed_rule,
-          requires_authentication,
-          authenticator,
-          full_command_name,
-          suffix
+          [
+            inputs_transformers,
+            result_transformers,
+            errors_transformers,
+            pre_commit_transformers,
+            serializers,
+            allowed_rule,
+            requires_authentication,
+            authenticator,
+            full_command_name,
+            suffix
+          ]
         )
-          return command_class
+
+          # TODO: hmmmm, make this work somehow... probably have to change what the registry stores
+          #   return command_class
         end
 
         full_command_name ||= if suffix
@@ -41,6 +56,7 @@ module Foobara
 
         Class.new(self).tap do |klass|
           klass.full_command_name = full_command_name
+          klass.command_name = Util.non_full_name(full_command_name)
           klass.command_class = command_class
           klass.capture_unknown_error = capture_unknown_error
           klass.inputs_transformers = Util.array(inputs_transformers)
@@ -60,11 +76,7 @@ module Foobara
                        to: :command_class
 
       def full_command_symbol
-        full_command_name.to_sym
-      end
-
-      def command_name
-        @command_name ||= Util.non_full_name(full_command_name)
+        @full_command_symbol ||= Util.underscore_sym(full_command_name)
       end
 
       def foobara_manifest(to_include:)
@@ -216,8 +228,10 @@ module Foobara
       construct_command
     end
 
-    foobara_delegate :full_command_name, :description, to: :command_class
-    foobara_delegate :command_class,
+    foobara_delegate :description, to: :command_class
+    foobara_delegate :full_command_name,
+                     :command_name,
+                     :command_class,
                      :capture_unknown_error,
                      :inputs_transformers,
                      :result_transformers,

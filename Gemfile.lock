@@ -14,7 +14,7 @@ GIT
 
 GIT
   remote: https://github.com/foobara/util.git
-  revision: 57d4e606ad1cb88144b3837ca9c2dae69bf20d22
+  revision: b2e2e9c04d866b26c21b6e223bc359c76fcea0f8
   specs:
     foobara-util (0.1.0)
 
