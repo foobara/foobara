@@ -395,6 +395,15 @@ module Foobara
         included << object
       end
 
+      domain_to_commands = {}
+
+      h[:command].each_pair do |command_key, command_manifest|
+        domain_key = command_manifest[:domain]
+
+        list = domain_to_commands[domain_key] ||= []
+        list << command_key.to_s
+      end
+
       domains.each do |domain|
         organizations << domain.foobara_organization
 
@@ -406,10 +415,7 @@ module Foobara
           included.include?(type)
         end
 
-        domain_manifest[:commands] = domain_manifest[:commands].select do |command_name|
-          command = domain.foobara_lookup_command!(command_name)
-          included_command_references.include?(command.foobara_manifest_reference)
-        end
+        domain_manifest[:commands] = domain_to_commands[domain.foobara_manifest_reference]
 
         h[:domain][domain.foobara_manifest_reference.to_sym] = domain_manifest
 

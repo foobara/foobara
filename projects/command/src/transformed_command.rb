@@ -59,8 +59,6 @@ module Foobara
                           command_class.scoped_path
                         end
 
-        binding.pry if scoped_path.nil? || scoped_path.empty?
-
         scoped_namespace = command_class.scoped_namespace
 
         Class.new(self).tap do |klass|
