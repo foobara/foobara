@@ -1,5 +1,4 @@
 module Foobara
-  # TODO: move to foobara monorepo if this is generic...
   class CommandRegistry
     attr_accessor :registry, :authenticator, :default_allowed_rule, :short_name_to_transformed_command
 
@@ -11,6 +10,7 @@ module Foobara
     end
 
     def register(command_class, *, **)
+      # TODO: no need to transform if there's no transformers
       transformed_command_class = transform_command_class(command_class, *, **)
 
       full_name = transformed_command_class.full_command_name
@@ -37,6 +37,8 @@ module Foobara
 
     def transform_command_class(
       command_class,
+      full_command_name: nil,
+      suffix: nil,
       capture_unknown_error: nil,
       inputs_transformers: nil,
       result_transformers: nil,
@@ -49,6 +51,7 @@ module Foobara
       aggregate_entities: nil,
       atomic_entities: nil
     )
+      # TODO: get the serializers out of here if possible
       serializers = [*serializers, *default_serializers]
       pre_commit_transformers = [*pre_commit_transformers, *default_pre_commit_transformers]
 
@@ -66,6 +69,8 @@ module Foobara
 
       Foobara::TransformedCommand.subclass(
         command_class,
+        full_command_name:,
+        suffix:,
         capture_unknown_error:,
         inputs_transformers: [*inputs_transformers, *default_inputs_transformers],
         result_transformers: [*result_transformers, *default_result_transformers],

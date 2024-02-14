@@ -73,4 +73,21 @@ RSpec.describe Foobara::CommandConnectors::Http do
       expect(command_connector.type_from_name(:"DomainB::User").target_class).to eq(DomainB::User)
     end
   end
+
+  describe "when connecting a command twice but with a suffix" do
+    before do
+      command_connector.connect(DomainA::SomeCommand, suffix: "Again")
+    end
+
+    it "registers it again but with the new name" do
+      some_command = command_connector.transformed_command_from_name("DomainA::SomeCommand")
+      some_command_again = command_connector.transformed_command_from_name("DomainA::SomeCommandAgain")
+
+      expect(some_command.command_class).to eq(DomainA::SomeCommand)
+      expect(some_command_again.command_class).to eq(DomainA::SomeCommand)
+      expect(some_command.command_name).to eq("SomeCommand")
+      expect(some_command_again.command_name).to eq("SomeCommandAgain")
+      expect(some_command_again.command_class.command_name).to eq("SomeCommand")
+    end
+  end
 end
