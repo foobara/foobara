@@ -192,7 +192,7 @@ module Foobara
       value
     end
 
-    # Helper method that determines if the path points to an array and non of the atoms along the way are also arrays.
+    # Helper method that determines if the path points to an array and none of the atoms along the way are also arrays.
     # And that there's at least one atom (we are going to consider a collection to be "named" not an anonymous array.)
     def simple_collection?
       path.size > 1 && path.last == :"#" && path[0..-2].none? { |part| part == :"#" }

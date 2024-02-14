@@ -153,6 +153,7 @@ module Foobara
           table_for(record).created?(record)
         end
 
+        # WARNING! this seems to bypass validations, hmmm....
         def flush_created_record!(record)
           table_for(record).flush_created_record!(record)
         end
