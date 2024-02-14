@@ -1,6 +1,10 @@
 module Foobara
   # TODO: feels so strange that this doesn't inherit from command
   class TransformedCommand
+    extend Scoped
+
+    include Manifestable
+
     class << self
       attr_accessor :command_class,
                     :capture_unknown_error,
@@ -11,9 +15,7 @@ module Foobara
                     :serializers,
                     :allowed_rule,
                     :requires_authentication,
-                    :authenticator,
-                    :full_command_name,
-                    :command_name
+                    :authenticator
 
       def subclass(
         command_class,
@@ -25,7 +27,6 @@ module Foobara
         allowed_rule:,
         requires_authentication:,
         authenticator:,
-        full_command_name: nil,
         suffix: nil,
         capture_unknown_error: false
       )
@@ -39,7 +40,6 @@ module Foobara
             allowed_rule,
             requires_authentication,
             authenticator,
-            full_command_name,
             suffix
           ]
         )
@@ -48,15 +48,24 @@ module Foobara
           #   return command_class
         end
 
-        full_command_name ||= if suffix
-                                "#{command_class.full_command_name}#{suffix}"
-                              else
-                                command_class.full_command_name
-                              end
+        if requires_authentication || allowed_rule
+          errors_transformers |= [Foobara::CommandConnectors::Transformers::AuthErrorsTransformer]
+        end
+
+        scoped_path ||= if suffix
+                          *prefix, short = command_class.scoped_path
+                          [*prefix, "#{short}#{suffix}"]
+                        else
+                          command_class.scoped_path
+                        end
+
+        binding.pry if scoped_path.nil? || scoped_path.empty?
+
+        scoped_namespace = command_class.scoped_namespace
 
         Class.new(self).tap do |klass|
-          klass.full_command_name = full_command_name
-          klass.command_name = Util.non_full_name(full_command_name)
+          klass.scoped_path = scoped_path
+          klass.scoped_namespace = scoped_namespace
           klass.command_class = command_class
           klass.capture_unknown_error = capture_unknown_error
           klass.inputs_transformers = Util.array(inputs_transformers)
@@ -68,6 +77,14 @@ module Foobara
           klass.requires_authentication = requires_authentication
           klass.authenticator = authenticator
         end
+      end
+
+      def full_command_name
+        scoped_full_name
+      end
+
+      def command_name
+        @command_name ||= Util.non_full_name(full_command_name)
       end
 
       foobara_delegate :description,
@@ -101,8 +118,10 @@ module Foobara
           end
         end
 
-        command_class.foobara_manifest(to_include:).merge(
+        command_class.foobara_manifest(to_include:).merge(super).merge(
           Util.remove_blank(
+            scoped_category: :command,
+            full_command_name:,
             types_depended_on: types,
             inputs_type: inputs_type&.reference_or_declaration_data,
             result_type: result_type&.reference_or_declaration_data,
@@ -117,10 +136,6 @@ module Foobara
             authenticator: authenticator&.manifest
           )
         )
-      end
-
-      def foobara_manifest_reference
-        command_class.foobara_manifest_reference
       end
 
       def inputs_type
