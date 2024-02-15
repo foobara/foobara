@@ -17,19 +17,23 @@ module Foobara
                     :scoped_path,
                     :scoped_namespace
 
-      def initialize(command_class,
-                     scoped_path: nil,
-                     suffix: nil,
-                     exposed_domain: nil,
-                     capture_unknown_error: nil,
-                     inputs_transformers: nil,
-                     result_transformers: nil,
-                     errors_transformers: nil,
-                     pre_commit_transformers: nil,
-                     serializers: nil,
-                     allowed_rule: nil,
-                     requires_authentication: nil,
-                     authenticator: nil)
+      def initialize(
+        command_class,
+        scoped_path: nil,
+        suffix: nil,
+        exposed_domain: nil,
+        capture_unknown_error: nil,
+        inputs_transformers: nil,
+        result_transformers: nil,
+        errors_transformers: nil,
+        pre_commit_transformers: nil,
+        serializers: nil,
+        allowed_rule: nil,
+        requires_authentication: nil,
+        authenticator: nil,
+        aggregate_entities: nil,
+        atomic_entities: nil
+      )
 
         if requires_authentication || allowed_rule
           errors_transformers = [

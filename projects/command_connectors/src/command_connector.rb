@@ -182,6 +182,11 @@ module Foobara
       transformed_command_class.new(inputs)
     end
 
+    # Feels like we should just register these if we're going to make use of them via "actions"...
+    def transform_command_class(klass)
+      CommandRegistry::ExposedCommand.new(klass).transformed_command_class
+    end
+
     def request_to_response(_command)
       # :nocov:
       raise "subclass responsibility"

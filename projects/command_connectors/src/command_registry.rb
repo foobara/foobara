@@ -5,6 +5,7 @@ module Foobara
     attr_accessor :authenticator, :default_allowed_rule
 
     def initialize(authenticator: nil)
+      self.scoped_path = []
       self.authenticator = authenticator
 
       customized = %i[command domain organization]
@@ -58,13 +59,11 @@ module Foobara
     end
 
     def [](name)
-      key = if name.is_a?(Class)
-              name.full_command_name
-            else
-              name.to_s
-            end
+      if name.is_a?(Class)
+        name.full_command_name
+      end
 
-      registry[key]
+      foobara_lookup(name)
     end
 
     def allowed_rule_registry

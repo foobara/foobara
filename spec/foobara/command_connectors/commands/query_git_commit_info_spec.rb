@@ -44,7 +44,7 @@ RSpec.describe Foobara::CommandConnectors::Commands::Ping do
           HERE
         end
 
-        it "contains the sha1" do
+        it "contains the sha1", :focus do
           expect(response.status).to be(200)
           data = JSON.parse(response.body)
           expect(data).to eq(
