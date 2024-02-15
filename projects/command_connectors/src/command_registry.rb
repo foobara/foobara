@@ -6,6 +6,18 @@ module Foobara
 
     def initialize(authenticator: nil)
       self.authenticator = authenticator
+
+      customized = %i[command domain organization]
+
+      Foobara.foobara_categories.each_pair do |symbol, proc|
+        next if customized.include?(symbol)
+
+        foobara_add_category(symbol, &proc)
+      end
+
+      foobara_add_category_for_instance_of(:command, ExposedCommand)
+      foobara_add_category_for_instance_of(:domain, ExposedDomain)
+      foobara_add_category_for_instance_of(:organization, ExposedOrganization)
     end
 
     def register(command_class, **opts)
