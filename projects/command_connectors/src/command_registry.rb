@@ -1,86 +1,48 @@
 module Foobara
   class CommandRegistry
-    attr_accessor :registry, :authenticator, :default_allowed_rule, :short_name_to_transformed_command
+    foobara_instances_are_namespaces!
+
+    attr_accessor :authenticator, :default_allowed_rule
 
     def initialize(authenticator: nil)
       self.authenticator = authenticator
-      # TODO: swap these out for Namespace which already supports this kind of lookup.
-      self.registry = {}
-      self.short_name_to_transformed_command = {}
     end
 
-    def register(command_class, *, **)
+    def register(command_class, **opts)
       # TODO: no need to transform if there's no transformers
-      transformed_command_class = transform_command_class(command_class, *, **)
+      full_name = exposed_command.full_command_name
 
-      full_name = transformed_command_class.full_command_name
+      domain_full_name = command_class.full_domain_name
+      exposed_domain = foobara_lookup_domain(full_domain_name) || build_and_register_exposed_domain(domain_full_name)
 
-      if registry.key?(full_name)
-        # :nocov:
-        raise "Command #{full_name} already registered"
-        # :nocov:
-      end
+      exposed_command = ExposedCommand.new(command_class, **opts.merge(exposed_domain:))
 
-      registry[full_name] = transformed_command_class
+      foobara_register_command(exposed_command)
 
-      short_name = transformed_command_class.command_name
-      existing_entry = short_name_to_transformed_command[short_name]
-
-      short_name_to_transformed_command[short_name] = if existing_entry
-                                                        [*existing_entry, transformed_command_class]
-                                                      else
-                                                        transformed_command_class
-                                                      end
-
-      transformed_command_class
+      exposed_command
     end
 
-    def transform_command_class(
-      command_class,
-      suffix: nil,
-      capture_unknown_error: nil,
-      inputs_transformers: nil,
-      result_transformers: nil,
-      errors_transformers: nil,
-      pre_commit_transformers: nil,
-      serializers: nil,
-      allowed_rule: default_allowed_rule,
-      requires_authentication: nil,
-      authenticator: self.authenticator,
-      aggregate_entities: nil,
-      atomic_entities: nil
-    )
-      # TODO: get the serializers out of here if possible
-      serializers = [*serializers, *default_serializers]
-      pre_commit_transformers = [*pre_commit_transformers, *default_pre_commit_transformers]
+    def build_and_register_exposed_domain(domain_full_name)
+      domain_module = Foobara.foobara_lookup_domain!(domain_full_name)
 
-      if aggregate_entities
-        pre_commit_transformers << Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer
-        serializers << Foobara::CommandConnectors::Serializers::AggregateSerializer
-      elsif aggregate_entities == false
-        pre_commit_transformers.delete(Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer)
-        serializers.delete(Foobara::CommandConnectors::Serializers::AggregateSerializer)
-      end
+      organization_full_name = command_class.full_organization_name
+      exposed_organization = foobara_lookup_organization(organization_full_name) ||
+                             build_and_register_exposed_organization(organization_full_name)
 
-      if atomic_entities
-        serializers << Foobara::CommandConnectors::Serializers::AtomicSerializer
-      end
+      exposed_domain = ExposedDomain.new(domain_module, exposed_organization:)
 
-      Foobara::TransformedCommand.subclass(
-        command_class,
-        suffix:,
-        capture_unknown_error:,
-        inputs_transformers: [*inputs_transformers, *default_inputs_transformers],
-        result_transformers: [*result_transformers, *default_result_transformers],
-        errors_transformers: [*errors_transformers, *default_errors_transformers],
-        pre_commit_transformers:,
-        # TODO: maybe treat serializer as a result transformer instead??
-        serializers:,
-        # TODO: Maybe treat these three as a pre-execute validator??
-        allowed_rule: allowed_rule && to_allowed_rule(allowed_rule),
-        requires_authentication:,
-        authenticator:
-      )
+      foobara_register_domain(exposed_domain, registry: self)
+
+      exposed_domain
+    end
+
+    def build_and_register_exposed_organization(organization_full_name)
+      organization_module = Foobara.foobara_lookup_organization!(organization_full_name)
+      exposed_organization = ExposedOrganization.new(organization_module)
+
+      foobara_register_organization(exposed_organization)
+
+      exposed_organization
     end
 
     def [](name)

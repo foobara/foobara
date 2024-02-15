@@ -8,9 +8,9 @@ module Foobara
                     :scoped_path,
                     :scoped_namespace
 
-      def initialize(domain_module, exposed_organization:, scoped_path: nil)
+      def initialize(domain_module, exposed_organization:)
         self.domain_module = domain_module
-        self.scoped_path = scoped_path || domain_module.scoped_path
+        self.scoped_path = domain_module.scoped_path
         self.scoped_namespace = exposed_organization
       end
 

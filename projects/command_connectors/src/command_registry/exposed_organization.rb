@@ -8,10 +8,10 @@ module Foobara
                     :scoped_path,
                     :scoped_namespace
 
-      def initialize(organization_module, exposed_organization:, scoped_path: nil)
+      def initialize(organization_module, registry:)
         self.organization_module = organization_module
-        self.scoped_path = scoped_path || organization_module.scoped_path
-        self.scoped_namespace = exposed_organization
+        self.scoped_path = organization_module.scoped_path
+        self.scoped_namespace = registry
       end
 
       def full_organization_name
