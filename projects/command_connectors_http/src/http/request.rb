@@ -11,10 +11,13 @@ module Foobara
           self.query_string = query_string
           self.body = body
 
+          binding.pry
+
           super()
         end
 
         def inputs
+          binding.pry
           @inputs ||= parsed_body.merge(parsed_query_string)
         end
 

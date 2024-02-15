@@ -179,12 +179,18 @@ module Foobara
         # :nocov:
       end
 
-      transformed_command_class.new(inputs)
+      if inputs && !inputs.empty?
+        transformed_command_class.new(inputs)
+      else
+        transformed_command_class.new
+      end
     end
 
     # Feels like we should just register these if we're going to make use of them via "actions"...
     def transform_command_class(klass)
-      CommandRegistry::ExposedCommand.new(klass).transformed_command_class
+      CommandRegistry::ExposedCommand.new(klass).transformed_command_class.tap do |c|
+        binding.pry
+      end
     end
 
     def request_to_response(_command)
@@ -236,8 +242,11 @@ module Foobara
     end
 
     # TODO: maybe introduce a Runner interface?
-    def run(...)
-      request, command = build_request_and_command(...)
+    def run(*args, **opts)
+      binding.pry
+      puts args
+      puts opts
+      request, command = build_request_and_command(*args, **opts)
 
       # TODO: feels like a smell
       request.command_connector = self
