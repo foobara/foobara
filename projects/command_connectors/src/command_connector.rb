@@ -318,6 +318,7 @@ module Foobara
     end
 
     # TODO: break this method up and/or come up with more abstract ways to transform domains...
+    # TODO: this stuff
     def foobara_manifest
       # Drive all of this off of the list of exposed commands...
       to_include = Set.new
