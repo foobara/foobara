@@ -26,13 +26,12 @@ module Foobara
         @full_organization_symbol ||= Util.underscore_sym(full_organization_name)
       end
 
+      # TODO: unable to address types here so it is handled as a hack higher up...
       def foobara_manifest(to_include:)
-        organization_module.foobara_manifest(to_include:).merge(super).merge(
-          Util.remove_blank(
-            scoped_category: :organization,
-            full_organization_name:
-          )
-        )
+        organization_manifest = organization.foobara_manifest(to_include: Set.new)
+        domains = foobara_all_domain(mode: Foobara::Namespace::LookupMode::DIRECT).map(&:full_domain_name)
+
+        organization_manifest.merge(domains:)
       end
     end
   end

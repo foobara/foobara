@@ -322,21 +322,13 @@ module Foobara
     def foobara_manifest
       # Drive all of this off of the list of exposed commands...
       to_include = Set.new
-      domains = Set.new
-      organizations = Set.new
-      included_command_references = Set.new
 
-      command_registry.registry.each_value do |transformed_command_class|
-        included_command_references << transformed_command_class.foobara_manifest_reference
-        to_include << transformed_command_class
-        domains << transformed_command_class.domain
-        organizations << transformed_command_class.organization
+      command_registry.foobara_each do |exposed_whatever|
+        to_include << exposed_whatever
       end
 
       included = Set.new
       additional_to_include = Set.new
-
-      h = { domain: {}, organization: {} }
 
       until to_include.empty? && additional_to_include.empty?
         object = nil
@@ -348,14 +340,13 @@ module Foobara
 
             if o.is_a?(::Module)
               if o.foobara_domain?
-                domains << o
+                binding.pry
                 next
               elsif o.foobara_organization?
-                organizations << o
+                binding.pry
                 next
               elsif o.is_a?(::Class) && o < Foobara::Command
-                # TODO: will this work just fine if the command is a sub command with errors??
-                # TODO: ^ test that
+                binding.pry
                 next
               end
             end
@@ -373,11 +364,7 @@ module Foobara
 
         manifest_reference = object.foobara_manifest_reference.to_sym
 
-        category_symbol = if object.is_a?(::Class) && object < Foobara::TransformedCommand
-                            :command
-                          else
-                            Foobara.foobara_category_symbol_for(object)
-                          end
+        category_symbol = command_registry.foobara_category_symbol_for(object)
 
         raise "no category symbol for #{object}" unless category_symbol
 
@@ -396,51 +383,14 @@ module Foobara
         included << object
       end
 
-      domain_to_commands = {}
-
-      h[:command].each_pair do |command_key, command_manifest|
-        domain_key = command_manifest[:domain]
-
-        list = domain_to_commands[domain_key] ||= []
-        list << command_key.to_s
-      end
-
-      domains.each do |domain|
-        organizations << domain.foobara_organization
-
-        domain_manifest = domain.foobara_manifest(to_include: Set.new)
-
-        # TODO: we need to trim types and commands...
+      h[:domain].value do |domain_manifest|
+        # TODO: hack, we need to trim types down to what is actually included in this manifest
         domain_manifest[:types] = domain_manifest[:types].select do |type_name|
-          type = domain.foobara_lookup_type!(type_name)
-          included.include?(type)
+          h[:type].key?(type_name).tap do |b|
+            binding.pry # test if ysmbol or not...
+          end
         end
-
-        domain_manifest[:commands] = domain_to_commands[domain.foobara_manifest_reference]
-
-        h[:domain][domain.foobara_manifest_reference.to_sym] = domain_manifest
-
-        included << domain
       end
-
-      organizations.each do |organization|
-        organization_manifest = organization.foobara_manifest(to_include: Set.new)
-
-        organization_manifest[:domains] = organization_manifest[:domains].select do |domain_name|
-          domain = if domain_name == "global_organization::global_domain"
-                     GlobalDomain
-                   else
-                     organization.foobara_lookup_domain!(domain_name)
-                   end
-          included.include?(domain)
-        end
-
-        h[:organization][organization.foobara_manifest_reference.to_sym] = organization_manifest
-
-        included << organization
-      end
-
-      h
     end
   end
 end
