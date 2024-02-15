@@ -28,7 +28,9 @@ module Foobara
       domain_full_name = command_class.full_domain_name
       exposed_domain = foobara_lookup_domain(full_domain_name) || build_and_register_exposed_domain(domain_full_name)
 
-      exposed_command = ExposedCommand.new(command_class, **opts.merge(exposed_domain:))
+      exposed_command = ExposedCommand.new(
+        command_class, **opts.merge(exposed_domain:, authenticator: opts[:authenticator] || authenticator)
+      )
 
       foobara_register_command(exposed_command)
 
