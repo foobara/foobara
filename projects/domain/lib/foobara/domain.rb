@@ -31,6 +31,8 @@ module Foobara
         Foobara.foobara_add_category_for_subclass_of(:error, Error)
 
         Types::Type.foobara_instances_are_namespaces!
+
+        Foobara::Error.foobara_autoregister_subclasses(default_namespace: Foobara)
       end
     end
   end

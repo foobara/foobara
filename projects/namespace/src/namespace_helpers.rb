@@ -33,6 +33,10 @@ module Foobara
           def inherited(subclass)
             super
 
+            _autoregister_subclass(subclass)
+          end
+
+          def _autoregister_subclass(subclass)
             subclass.extend ::Foobara::Scoped
 
             NamespaceHelpers.foobara_autoset_namespace(subclass, default_namespace: scoped_default_namespace)
@@ -136,6 +140,10 @@ module Foobara
           klass.include ScopedDefaultNamespace unless klass < ScopedDefaultNamespace
           klass.scoped_default_namespace = default_namespace if default_namespace
           klass.include AutoRegisterSubclasses unless klass < AutoRegisterSubclasses
+
+          Util.descendants(klass).each do |subclass|
+            klass._autoregister_subclass(subclass)
+          end
         end
 
         def foobara_autoset_namespace(mod, default_namespace: nil)
