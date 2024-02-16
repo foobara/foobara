@@ -85,13 +85,27 @@ module Foobara
     end
 
     def build_and_register_exposed_organization(full_organization_name)
-      organization_module = Foobara.foobara_lookup_organization!(full_organization_name)
-      exposed_organization = ExposedOrganization.new(organization_module)
+      org = if full_organization_name.to_s == "global_organization"
+              GlobalOrganization
+            else
+              Foobara.foobara_lookup_organization!(full_organization_name)
+            end
 
+      exposed_organization = ExposedOrganization.new(org)
       foobara_register(exposed_organization)
       exposed_organization.foobara_parent_namespace = self
 
       exposed_organization
+    end
+
+    def exposed_global_domain
+      exposed_global_organization.foobara_lookup_domain("") ||
+        build_and_register_exposed_domain("")
+    end
+
+    def exposed_global_organization
+      foobara_lookup_organization("") ||
+        build_and_register_exposed_organization("")
     end
 
     def [](name)

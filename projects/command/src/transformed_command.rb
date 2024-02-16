@@ -3,6 +3,8 @@ module Foobara
   class TransformedCommand
     class << self
       attr_accessor :command_class,
+                    :command_name,
+                    :full_command_name,
                     :capture_unknown_error,
                     :inputs_transformers,
                     :result_transformers,
@@ -16,6 +18,8 @@ module Foobara
 
       def subclass(
         command_class,
+        full_command_name:,
+        command_name:,
         inputs_transformers:,
         result_transformers:,
         errors_transformers:,
@@ -29,6 +33,8 @@ module Foobara
       )
         Class.new(self).tap do |klass|
           klass.command_class = command_class
+          klass.command_name = command_name
+          klass.full_command_name = full_command_name
           klass.capture_unknown_error = capture_unknown_error
           klass.inputs_transformers = Util.array(inputs_transformers)
           klass.result_transformers = Util.array(result_transformers)

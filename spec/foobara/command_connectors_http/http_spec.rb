@@ -130,8 +130,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
           command_connector.connect(domain_module)
         end
 
-        it "registers the command", :focus do
-          transformed_commands = command_connector.command_registry.registry.values
+        it "registers the command" do
+          transformed_commands = command_connector.all_transformed_command_classes
           expect(transformed_commands.size).to eq(1)
           expect(transformed_commands.first.command_class).to eq(command_class)
         end

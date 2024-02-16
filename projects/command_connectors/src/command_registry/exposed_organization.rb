@@ -32,6 +32,10 @@ module Foobara
 
         organization_manifest.merge(domains:)
       end
+
+      def foobara_manifest_reference
+        organization_module.foobara_manifest_reference
+      end
     end
   end
 end
