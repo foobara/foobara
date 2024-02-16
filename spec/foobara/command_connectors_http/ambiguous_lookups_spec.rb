@@ -52,19 +52,19 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
   describe "#transformed_command_from_name" do
     it "can find the correct command or type despite ambiguities" do
-      expect(command_connector.transformed_command_from_name("SomeCommand").command_class).to eq(SomeCommand)
-      expect(command_connector.transformed_command_from_name(:SomeCommand).command_class).to eq(SomeCommand)
+      expect(command_connector.lookup_command("SomeCommand").command_class).to eq(SomeCommand)
+      expect(command_connector.lookup_command(:SomeCommand).command_class).to eq(SomeCommand)
       expect(
-        command_connector.transformed_command_from_name("DomainA::SomeCommand").command_class
+        command_connector.lookup_command("DomainA::SomeCommand").command_class
       ).to eq(DomainA::SomeCommand)
       expect(
-        command_connector.transformed_command_from_name(:"DomainA::SomeCommand").command_class
+        command_connector.lookup_command(:"DomainA::SomeCommand").command_class
       ).to eq(DomainA::SomeCommand)
       expect(
-        command_connector.transformed_command_from_name("DomainB::SomeCommand").command_class
+        command_connector.lookup_command("DomainB::SomeCommand").command_class
       ).to eq(DomainB::SomeCommand)
       expect(
-        command_connector.transformed_command_from_name(:"DomainB::SomeCommand").command_class
+        command_connector.lookup_command(:"DomainB::SomeCommand").command_class
       ).to eq(DomainB::SomeCommand)
 
       expect(command_connector.type_from_name("User").target_class).to eq(User)
@@ -82,8 +82,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
     end
 
     it "registers it again but with the new name" do
-      some_command = command_connector.transformed_command_from_name("DomainA::SomeCommand")
-      some_command_again = command_connector.transformed_command_from_name("DomainA::SomeCommandAgain")
+      some_command = command_connector.lookup_command("DomainA::SomeCommand")
+      some_command_again = command_connector.lookup_command("DomainA::SomeCommandAgain")
 
       expect(some_command.command_class).to eq(DomainA::SomeCommand)
       expect(some_command_again.command_class).to eq(DomainA::SomeCommand)

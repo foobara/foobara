@@ -1,17 +1,16 @@
 module Foobara
   # TODO: feels so strange that this doesn't inherit from command
   class TransformedCommand
-    extend Scoped
-
-    include Manifestable
-
     class << self
       attr_accessor :command_class,
+                    :command_name,
+                    :full_command_name,
                     :capture_unknown_error,
                     :inputs_transformers,
                     :result_transformers,
                     :errors_transformers,
                     :pre_commit_transformers,
+                    # TODO: get at least these serializers out of here...
                     :serializers,
                     :allowed_rule,
                     :requires_authentication,
@@ -19,6 +18,8 @@ module Foobara
 
       def subclass(
         command_class,
+        full_command_name:,
+        command_name:,
         inputs_transformers:,
         result_transformers:,
         errors_transformers:,
@@ -30,41 +31,10 @@ module Foobara
         suffix: nil,
         capture_unknown_error: false
       )
-        if Util.all_blank_or_false?(
-          [
-            inputs_transformers,
-            result_transformers,
-            errors_transformers,
-            pre_commit_transformers,
-            serializers,
-            allowed_rule,
-            requires_authentication,
-            authenticator,
-            suffix
-          ]
-        )
-
-          # TODO: hmmmm, make this work somehow... probably have to change what the registry stores
-          #   return command_class
-        end
-
-        if requires_authentication || allowed_rule
-          errors_transformers |= [Foobara::CommandConnectors::Transformers::AuthErrorsTransformer]
-        end
-
-        scoped_path ||= if suffix
-                          *prefix, short = command_class.scoped_path
-                          [*prefix, "#{short}#{suffix}"]
-                        else
-                          command_class.scoped_path
-                        end
-
-        scoped_namespace = command_class.scoped_namespace
-
         Class.new(self).tap do |klass|
-          klass.scoped_path = scoped_path
-          klass.scoped_namespace = scoped_namespace
           klass.command_class = command_class
+          klass.command_name = command_name
+          klass.full_command_name = full_command_name
           klass.capture_unknown_error = capture_unknown_error
           klass.inputs_transformers = Util.array(inputs_transformers)
           klass.result_transformers = Util.array(result_transformers)
@@ -77,64 +47,10 @@ module Foobara
         end
       end
 
-      def full_command_name
-        scoped_full_name
-      end
-
-      def command_name
-        @command_name ||= Util.non_full_name(full_command_name)
-      end
-
       foobara_delegate :description,
                        :domain,
                        :organization,
                        to: :command_class
-
-      def full_command_symbol
-        @full_command_symbol ||= Util.underscore_sym(full_command_name)
-      end
-
-      def foobara_manifest(to_include:)
-        to_include << domain
-        to_include << organization
-
-        types = types_depended_on.select(&:registered?).map do |t|
-          to_include << t
-          t.foobara_manifest_reference
-        end.sort
-
-        inputs_transformers = self.inputs_transformers.map { |t| t.foobara_manifest(to_include:) }
-        result_transformers = self.result_transformers.map { |t| t.foobara_manifest(to_include:) }
-        errors_transformers = self.errors_transformers.map { |t| t.foobara_manifest(to_include:) }
-        pre_commit_transformers = self.pre_commit_transformers.map { |t| t.foobara_manifest(to_include:) }
-        serializers = self.serializers.map do |s|
-          if s.respond_to?(:foobara_manifest)
-            to_include << s
-            s.foobara_manifest_reference
-          else
-            { proc: s.to_s }
-          end
-        end
-
-        command_class.foobara_manifest(to_include:).merge(super).merge(
-          Util.remove_blank(
-            scoped_category: :command,
-            full_command_name:,
-            types_depended_on: types,
-            inputs_type: inputs_type&.reference_or_declaration_data,
-            result_type: result_type&.reference_or_declaration_data,
-            possible_errors: possible_errors_manifest(to_include:),
-            capture_unknown_error:,
-            inputs_transformers:,
-            result_transformers:,
-            errors_transformers:,
-            pre_commit_transformers:,
-            serializers:,
-            requires_authentication:,
-            authenticator: authenticator&.manifest
-          )
-        )
-      end
 
       def inputs_type
         input_transformer = inputs_transformers.find do |transformer|
@@ -230,11 +146,48 @@ module Foobara
 
         types
       end
+
+      def foobara_manifest(to_include:)
+        types = types_depended_on.select(&:registered?).map do |t|
+          to_include << t
+          t.foobara_manifest_reference
+        end.sort
+
+        inputs_transformers = self.inputs_transformers.map { |t| t.foobara_manifest(to_include:) }
+        result_transformers = self.result_transformers.map { |t| t.foobara_manifest(to_include:) }
+        errors_transformers = self.errors_transformers.map { |t| t.foobara_manifest(to_include:) }
+        pre_commit_transformers = self.pre_commit_transformers.map { |t| t.foobara_manifest(to_include:) }
+        serializers = self.serializers.map do |s|
+          if s.respond_to?(:foobara_manifest)
+            to_include << s
+            s.foobara_manifest_reference
+          else
+            { proc: s.to_s }
+          end
+        end
+
+        command_class.foobara_manifest(to_include:).merge(
+          Util.remove_blank(
+            types_depended_on: types,
+            inputs_type: inputs_type&.reference_or_declaration_data,
+            result_type: result_type&.reference_or_declaration_data,
+            possible_errors: possible_errors_manifest(to_include:),
+            capture_unknown_error:,
+            inputs_transformers:,
+            result_transformers:,
+            errors_transformers:,
+            pre_commit_transformers:,
+            serializers:,
+            requires_authentication:,
+            authenticator: authenticator&.manifest
+          )
+        )
+      end
     end
 
     attr_accessor :command, :untransformed_inputs, :transformed_inputs, :outcome, :authenticated_user
 
-    def initialize(untransformed_inputs)
+    def initialize(untransformed_inputs = {})
       self.untransformed_inputs = untransformed_inputs || {}
 
       transform_inputs

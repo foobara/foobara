@@ -69,9 +69,15 @@ module Foobara
                      :allowed_rules,
                      :transform_command_class,
                      :transformed_command_from_name,
+                     :each_transformed_command_class,
+                     :all_transformed_command_classes,
                      to: :command_registry
 
     attr_accessor :command_registry, :authenticator
+
+    def lookup_command(name)
+      command_registry.foobara_lookup_command(name)
+    end
 
     def request_to_command(request)
       action = request.action
@@ -80,7 +86,7 @@ module Foobara
 
       case action
       when "run"
-        transformed_command_class = command_registry[full_command_name]
+        transformed_command_class = transformed_command_from_name(full_command_name)
 
         unless transformed_command_class
           # :nocov:
@@ -104,7 +110,8 @@ module Foobara
         full_command_name = command_class.full_command_name
 
         inputs = { manifestable: }
-        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+        transformed_command_class = transformed_command_from_name(full_command_name) ||
+                                    transform_command_class(command_class)
       when "describe_command"
         transformed_command_class = transformed_command_from_name(full_command_name)
 
@@ -118,7 +125,8 @@ module Foobara
         full_command_name = command_class.full_command_name
 
         inputs = { manifestable: transformed_command_class }
-        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+        transformed_command_class = transformed_command_from_name(full_command_name) ||
+                                    transform_command_class(command_class)
       when "describe_type"
         type = type_from_name(full_command_name)
 
@@ -132,30 +140,35 @@ module Foobara
         full_command_name = command_class.full_command_name
 
         inputs = { manifestable: type }
-        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+        transformed_command_class = transformed_command_from_name(full_command_name) ||
+                                    transform_command_class(command_class)
       when "manifest"
         command_class = Foobara::CommandConnectors::Commands::Describe
         full_command_name = command_class.full_command_name
 
         inputs = { manifestable: self }
-        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+        transformed_command_class = transformed_command_from_name(full_command_name) ||
+                                    transform_command_class(command_class)
       when "ping"
         command_class = Foobara::CommandConnectors::Commands::Ping
         full_command_name = command_class.full_command_name
 
-        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+        transformed_command_class = transformed_command_from_name(full_command_name) ||
+                                    transform_command_class(command_class)
       when "query_git_commit_info"
         # TODO: this feels out of control... should just accomplish this through run I think instead. Same with ping.
         command_class = Foobara::CommandConnectors::Commands::QueryGitCommitInfo
         full_command_name = command_class.full_command_name
 
-        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+        transformed_command_class = transformed_command_from_name(full_command_name) ||
+                                    transform_command_class(command_class)
       when "help"
         command_class = self.class::Commands::Help
         full_command_name = command_class.full_command_name
 
         inputs = { request: }
-        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+        transformed_command_class = transformed_command_from_name(full_command_name) ||
+                                    transform_command_class(command_class)
       when "list"
         mod = self.class::Commands
         command_class = if mod.const_defined?(:ListCommands)
@@ -172,14 +185,25 @@ module Foobara
         request.command_class = command_class
         inputs = request.inputs.merge(request:)
 
-        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+        transformed_command_class = transformed_command_from_name(full_command_name) ||
+                                    transform_command_class(command_class)
       else
         # :nocov:
         raise InvalidContextError, "Not sure what to do with #{action}"
         # :nocov:
       end
 
-      transformed_command_class.new(inputs)
+      if inputs && !inputs.empty?
+        transformed_command_class.new(inputs)
+      else
+        transformed_command_class.new
+      end
+    end
+
+    # Feels like we should just register these if we're going to make use of them via "actions"...
+    # TODO: figure out how to kill this
+    def transform_command_class(klass)
+      command_registry.create_exposed_command_without_domain(klass).transformed_command_class
     end
 
     def request_to_response(_command)
@@ -231,8 +255,8 @@ module Foobara
     end
 
     # TODO: maybe introduce a Runner interface?
-    def run(...)
-      request, command = build_request_and_command(...)
+    def run(*, **)
+      request, command = build_request_and_command(*, **)
 
       # TODO: feels like a smell
       request.command_connector = self
@@ -270,7 +294,7 @@ module Foobara
         types_depended_on = Set.new
 
         # TODO: should group by org and domain...
-        command_registry.registry.each_value do |transformed_command_class|
+        each_transformed_command_class do |transformed_command_class|
           types_depended_on |= transformed_command_class.types_depended_on
         end
 
@@ -318,24 +342,21 @@ module Foobara
     end
 
     # TODO: break this method up and/or come up with more abstract ways to transform domains...
+    # TODO: this stuff
     def foobara_manifest
       # Drive all of this off of the list of exposed commands...
       to_include = Set.new
-      domains = Set.new
-      organizations = Set.new
-      included_command_references = Set.new
+      to_include << command_registry.exposed_global_organization
+      to_include << command_registry.exposed_global_domain
 
-      command_registry.registry.each_value do |transformed_command_class|
-        included_command_references << transformed_command_class.foobara_manifest_reference
-        to_include << transformed_command_class
-        domains << transformed_command_class.domain
-        organizations << transformed_command_class.organization
+      command_registry.foobara_each do |exposed_whatever|
+        to_include << exposed_whatever
       end
 
       included = Set.new
       additional_to_include = Set.new
 
-      h = { domain: {}, organization: {} }
+      h = {}
 
       until to_include.empty? && additional_to_include.empty?
         object = nil
@@ -346,15 +367,7 @@ module Foobara
             additional_to_include.delete(o)
 
             if o.is_a?(::Module)
-              if o.foobara_domain?
-                domains << o
-                next
-              elsif o.foobara_organization?
-                organizations << o
-                next
-              elsif o.is_a?(::Class) && o < Foobara::Command
-                # TODO: will this work just fine if the command is a sub command with errors??
-                # TODO: ^ test that
+              if o.foobara_domain? || o.foobara_organization? || (o.is_a?(::Class) && o < Foobara::Command)
                 next
               end
             end
@@ -372,11 +385,7 @@ module Foobara
 
         manifest_reference = object.foobara_manifest_reference.to_sym
 
-        category_symbol = if object.is_a?(::Class) && object < Foobara::TransformedCommand
-                            :command
-                          else
-                            Foobara.foobara_category_symbol_for(object)
-                          end
+        category_symbol = command_registry.foobara_category_symbol_for(object)
 
         raise "no category symbol for #{object}" unless category_symbol
 
@@ -395,51 +404,18 @@ module Foobara
         included << object
       end
 
-      domain_to_commands = {}
-
-      h[:command].each_pair do |command_key, command_manifest|
-        domain_key = command_manifest[:domain]
-
-        list = domain_to_commands[domain_key] ||= []
-        list << command_key.to_s
-      end
-
-      domains.each do |domain|
-        organizations << domain.foobara_organization
-
-        domain_manifest = domain.foobara_manifest(to_include: Set.new)
-
-        # TODO: we need to trim types and commands...
+      h[:domain].each_value do |domain_manifest|
+        # TODO: hack, we need to trim types down to what is actually included in this manifest
         domain_manifest[:types] = domain_manifest[:types].select do |type_name|
-          type = domain.foobara_lookup_type!(type_name)
-          included.include?(type)
+          h[:type].key?(type_name.to_sym)
         end
-
-        domain_manifest[:commands] = domain_to_commands[domain.foobara_manifest_reference]
-
-        h[:domain][domain.foobara_manifest_reference.to_sym] = domain_manifest
-
-        included << domain
-      end
-
-      organizations.each do |organization|
-        organization_manifest = organization.foobara_manifest(to_include: Set.new)
-
-        organization_manifest[:domains] = organization_manifest[:domains].select do |domain_name|
-          domain = if domain_name == "global_organization::global_domain"
-                     GlobalDomain
-                   else
-                     organization.foobara_lookup_domain!(domain_name)
-                   end
-          included.include?(domain)
-        end
-
-        h[:organization][organization.foobara_manifest_reference.to_sym] = organization_manifest
-
-        included << organization
       end
 
       h
+    end
+
+    def all_exposed_commands
+      command_registry.foobara_all_command
     end
   end
 end

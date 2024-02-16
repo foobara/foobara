@@ -1,96 +1,119 @@
 module Foobara
   class CommandRegistry
-    attr_accessor :registry, :authenticator, :default_allowed_rule, :short_name_to_transformed_command
+    include TruncatedInspect
+
+    foobara_instances_are_namespaces!
+
+    attr_accessor :authenticator, :default_allowed_rule
 
     def initialize(authenticator: nil)
+      self.scoped_path = []
       self.authenticator = authenticator
-      # TODO: swap these out for Namespace which already supports this kind of lookup.
-      self.registry = {}
-      self.short_name_to_transformed_command = {}
-    end
 
-    def register(command_class, *, **)
-      # TODO: no need to transform if there's no transformers
-      transformed_command_class = transform_command_class(command_class, *, **)
+      customized = %i[command domain organization]
 
-      full_name = transformed_command_class.full_command_name
+      Foobara.foobara_categories.each_pair do |symbol, proc|
+        next if customized.include?(symbol)
 
-      if registry.key?(full_name)
-        # :nocov:
-        raise "Command #{full_name} already registered"
-        # :nocov:
+        foobara_add_category(symbol, &proc)
       end
 
-      registry[full_name] = transformed_command_class
-
-      short_name = transformed_command_class.command_name
-      existing_entry = short_name_to_transformed_command[short_name]
-
-      short_name_to_transformed_command[short_name] = if existing_entry
-                                                        [*existing_entry, transformed_command_class]
-                                                      else
-                                                        transformed_command_class
-                                                      end
-
-      transformed_command_class
+      foobara_add_category_for_instance_of(:command, ExposedCommand)
+      foobara_add_category_for_instance_of(:domain, ExposedDomain)
+      foobara_add_category_for_instance_of(:organization, ExposedOrganization)
     end
 
-    def transform_command_class(
-      command_class,
-      suffix: nil,
-      capture_unknown_error: nil,
+    def register(command_class, **)
+      create_exposed_command(command_class, **)
+    end
+
+    def create_exposed_command(command_class, **)
+      full_domain_name = command_class.domain.scoped_full_name
+      exposed_domain = foobara_lookup_domain(full_domain_name) || build_and_register_exposed_domain(full_domain_name)
+
+      exposed_command = create_exposed_command_without_domain(command_class, **)
+
+      exposed_domain.foobara_register(exposed_command)
+
+      exposed_command
+    end
+
+    # TODO: eliminate this method
+    def create_exposed_command_without_domain(command_class, **)
+      ExposedCommand.new(command_class, **apply_defaults(**))
+    end
+
+    def apply_defaults(
       inputs_transformers: nil,
       result_transformers: nil,
       errors_transformers: nil,
       pre_commit_transformers: nil,
       serializers: nil,
       allowed_rule: default_allowed_rule,
-      requires_authentication: nil,
       authenticator: self.authenticator,
-      aggregate_entities: nil,
-      atomic_entities: nil
+      **opts
     )
-      # TODO: get the serializers out of here if possible
-      serializers = [*serializers, *default_serializers]
-      pre_commit_transformers = [*pre_commit_transformers, *default_pre_commit_transformers]
-
-      if aggregate_entities
-        pre_commit_transformers << Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer
-        serializers << Foobara::CommandConnectors::Serializers::AggregateSerializer
-      elsif aggregate_entities == false
-        pre_commit_transformers.delete(Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer)
-        serializers.delete(Foobara::CommandConnectors::Serializers::AggregateSerializer)
-      end
-
-      if atomic_entities
-        serializers << Foobara::CommandConnectors::Serializers::AtomicSerializer
-      end
-
-      Foobara::TransformedCommand.subclass(
-        command_class,
-        suffix:,
-        capture_unknown_error:,
+      opts.merge(
         inputs_transformers: [*inputs_transformers, *default_inputs_transformers],
         result_transformers: [*result_transformers, *default_result_transformers],
         errors_transformers: [*errors_transformers, *default_errors_transformers],
-        pre_commit_transformers:,
-        # TODO: maybe treat serializer as a result transformer instead??
-        serializers:,
-        # TODO: Maybe treat these three as a pre-execute validator??
+        pre_commit_transformers: [*pre_commit_transformers, *default_pre_commit_transformers],
+        serializers: [*serializers, *default_serializers],
         allowed_rule: allowed_rule && to_allowed_rule(allowed_rule),
-        requires_authentication:,
         authenticator:
       )
     end
 
-    def [](name)
-      key = if name.is_a?(Class)
-              name.full_command_name
+    def build_and_register_exposed_domain(domain_full_name)
+      # TODO: would be nice to not have to do this...
+      domain_module = if domain_full_name.to_s == ""
+                        GlobalDomain
+                      else
+                        Foobara.foobara_lookup_domain!(domain_full_name)
+                      end
+
+      full_organization_name = domain_module.foobara_full_organization_name
+      exposed_organization = foobara_lookup_organization(full_organization_name) ||
+                             build_and_register_exposed_organization(full_organization_name)
+
+      exposed_domain = ExposedDomain.new(domain_module)
+
+      exposed_organization.foobara_register(exposed_domain)
+      exposed_domain.foobara_parent_namespace = exposed_organization
+
+      exposed_domain
+    end
+
+    def build_and_register_exposed_organization(full_organization_name)
+      org = if full_organization_name.to_s == ""
+              GlobalOrganization
             else
-              name.to_s
+              Foobara.foobara_lookup_organization!(full_organization_name)
             end
 
-      registry[key]
+      exposed_organization = ExposedOrganization.new(org)
+      foobara_register(exposed_organization)
+      exposed_organization.foobara_parent_namespace = self
+
+      exposed_organization
+    end
+
+    def exposed_global_domain
+      exposed_global_organization.foobara_lookup_domain("") ||
+        build_and_register_exposed_domain("")
+    end
+
+    def exposed_global_organization
+      foobara_lookup_organization("") ||
+        build_and_register_exposed_organization("")
+    end
+
+    def [](name)
+      if name.is_a?(Class)
+        name.full_command_name
+      end
+
+      foobara_lookup(name)
     end
 
     def allowed_rule_registry
@@ -218,42 +241,15 @@ module Foobara
     end
 
     def transformed_command_from_name(name)
-      transformed_command_name, domain, org = name.to_s.split("::").reverse
-      transformed_commands = short_name_to_transformed_command[transformed_command_name]
-
-      if transformed_commands
-        if transformed_commands.is_a?(::Array)
-          transformed_commands = transformed_commands.select do |transformed_command|
-            domain_org_match_transformed_command?(transformed_command, domain, org)
-          end
-
-          if transformed_commands.size > 1
-            # What are we doing here? Is this necessary?
-            # I suppose the idea here is that if it's ambiguous we return the most unqualified of names.
-            # Perhaps better to raise an exception?
-            transformed_commands.find { |transformed_command| transformed_command.domain == GlobalDomain }
-          else
-            transformed_commands.first
-          end
-        elsif domain_org_match_transformed_command?(transformed_commands, domain, org)
-          transformed_commands
-        end
-      end
-    end
-
-    def domain_org_match_transformed_command?(transformed_command, domain_name, org_name)
-      dom = transformed_command.domain
-      org = dom&.foobara_organization_name
-
-      (org_name.nil? || org_name == org) && (domain_name.nil? || domain_name == dom&.foobara_domain_name)
+      foobara_lookup_command(name)&.transformed_command_class
     end
 
     def all_transformed_command_classes
-      registry.values
+      foobara_all_command.map(&:transformed_command_class)
     end
 
     def each_transformed_command_class(&)
-      registry.each_value(&)
+      foobara_all_command.map(&:transformed_command_class).each(&)
     end
   end
 end

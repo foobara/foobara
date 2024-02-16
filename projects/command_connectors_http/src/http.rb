@@ -1,6 +1,8 @@
 module Foobara
   module CommandConnectors
     class Http < CommandConnector
+      include TruncatedInspect
+
       def request_to_command(context)
         if context.method == "OPTIONS"
           # TODO: this feels a bit hacky and like overkill...

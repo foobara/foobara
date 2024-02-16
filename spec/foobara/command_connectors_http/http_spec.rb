@@ -106,10 +106,13 @@ RSpec.describe Foobara::CommandConnectors::Http do
       it "registers the command" do
         command_connector.connect(org_module)
 
-        transformed_commands = command_connector.command_registry.registry.values
-        expect(transformed_commands.size).to eq(1)
-        transformed_command = transformed_commands.first
-        expect(transformed_command.full_command_symbol).to eq(:"some_org::some_domain::some_command")
+        exposed_commands = command_connector.all_exposed_commands
+        expect(exposed_commands.size).to eq(1)
+        exposed_command = exposed_commands.first
+
+        expect(exposed_command.full_command_symbol).to eq(:"some_org::some_domain::some_command")
+
+        transformed_command = exposed_command.transformed_command_class
         expect(transformed_command.command_class).to eq(command_class)
 
         command_classes = []
@@ -128,7 +131,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
         end
 
         it "registers the command" do
-          transformed_commands = command_connector.command_registry.registry.values
+          transformed_commands = command_connector.all_transformed_command_classes
           expect(transformed_commands.size).to eq(1)
           expect(transformed_commands.first.command_class).to eq(command_class)
         end
@@ -166,9 +169,12 @@ RSpec.describe Foobara::CommandConnectors::Http do
         pre_commit_transformers:,
         capture_unknown_error:,
         aggregate_entities:,
-        atomic_entities:
+        atomic_entities:,
+        suffix:
       )
     end
+
+    let(:suffix) { nil }
 
     it "runs the command" do
       expect(response.status).to be(200)
@@ -209,6 +215,9 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
     context "without serializers" do
       let(:default_serializers) { nil }
+      # Setting a suffix guarantees it will be transformed
+      let(:suffix) { "Whatever" }
+      let(:path) { "/run/ComputeExponentWhatever" }
 
       it "runs the command" do
         expect(response.status).to be(200)
