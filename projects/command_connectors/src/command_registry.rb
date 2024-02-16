@@ -21,20 +21,45 @@ module Foobara
       foobara_add_category_for_instance_of(:organization, ExposedOrganization)
     end
 
-    def register(command_class, **opts)
-      # TODO: no need to transform if there's no transformers
-      full_name = exposed_command.full_command_name
-
-      domain_full_name = command_class.full_domain_name
-      exposed_domain = foobara_lookup_domain(full_domain_name) || build_and_register_exposed_domain(domain_full_name)
-
-      exposed_command = ExposedCommand.new(
-        command_class, **opts.merge(exposed_domain:, authenticator: opts[:authenticator] || authenticator)
-      )
+    def register(command_class, **)
+      exposed_command = create_exposed_command(command_class, **)
 
       foobara_register_command(exposed_command)
 
       exposed_command
+    end
+
+    def create_exposed_command(command_class, **opts)
+      domain_full_name = command_class.domain.foobara_full_domain_name
+      exposed_domain = foobara_lookup_domain(full_domain_name) || build_and_register_exposed_domain(domain_full_name)
+
+      create_exposed_command_without_domain(**opts.merge(exposed_domain:))
+    end
+
+    # TODO: eliminate this method
+    def create_exposed_command_without_domain(command_class, **)
+      ExposedCommand.new(command_class, **apply_defaults(**))
+    end
+
+    def apply_defaults(
+      inputs_transformers: nil,
+      result_transformers: nil,
+      errors_transformers: nil,
+      pre_commit_transformers: nil,
+      serializers: nil,
+      allowed_rule: default_allowed_rule,
+      authenticator: self.authenticator,
+      **opts
+    )
+      opts.merge(
+        inputs_transformers: [*inputs_transformers, *default_inputs_transformers],
+        result_transformers: [*result_transformers, *default_result_transformers],
+        errors_transformers: [*errors_transformers, *default_errors_transformers],
+        pre_commit_transformers: [*pre_commit_transformers, *default_pre_commit_transformers],
+        serializers: [*serializers, *default_serializers],
+        allowed_rule: allowed_rule && to_allowed_rule(allowed_rule),
+        authenticator:
+      )
     end
 
     def build_and_register_exposed_domain(domain_full_name)

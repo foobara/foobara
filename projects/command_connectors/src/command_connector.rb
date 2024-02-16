@@ -187,10 +187,9 @@ module Foobara
     end
 
     # Feels like we should just register these if we're going to make use of them via "actions"...
+    # TODO: figure out how to kill this
     def transform_command_class(klass)
-      CommandRegistry::ExposedCommand.new(klass).transformed_command_class.tap do |c|
-        binding.pry
-      end
+      command_registry.create_exposed_command_without_domain(klass).transformed_command_class
     end
 
     def request_to_response(_command)
@@ -242,11 +241,8 @@ module Foobara
     end
 
     # TODO: maybe introduce a Runner interface?
-    def run(*args, **opts)
-      binding.pry
-      puts args
-      puts opts
-      request, command = build_request_and_command(*args, **opts)
+    def run(*, **)
+      request, command = build_request_and_command(*, **)
 
       # TODO: feels like a smell
       request.command_connector = self

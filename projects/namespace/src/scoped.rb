@@ -6,7 +6,6 @@ module Foobara
 
     def scoped_path
       unless defined?(@scoped_path)
-        binding.pry
         # :nocov:
         raise NoScopedPathSetError, "No scoped path set. Explicitly set it to nil if that's what you want."
         # :nocov:
