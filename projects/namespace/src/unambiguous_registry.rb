@@ -50,7 +50,7 @@ module Foobara
         prefixes = scoped.scoped_prefix ? Util.power_set(scoped.scoped_prefix) : [[]]
 
         prefixes.map do |prefix|
-          [*prefix, short_name]
+          [*prefix, *short_name]
         end
       end
 

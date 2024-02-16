@@ -1,17 +1,15 @@
 module Foobara
   class CommandRegistry
     class ExposedOrganization
-      include Scoped
+      foobara_instances_are_namespaces!
+
       include IsManifestable
 
-      attr_accessor :organization_module,
-                    :scoped_path,
-                    :scoped_namespace
+      attr_accessor :organization_module
 
-      def initialize(organization_module, registry:)
+      def initialize(organization_module)
         self.organization_module = organization_module
         self.scoped_path = organization_module.scoped_path
-        self.scoped_namespace = registry
       end
 
       def full_organization_name

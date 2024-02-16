@@ -69,9 +69,15 @@ module Foobara
                      :allowed_rules,
                      :transform_command_class,
                      :transformed_command_from_name,
+                     :each_transformed_command_class,
+                     :all_transformed_command_classes,
                      to: :command_registry
 
     attr_accessor :command_registry, :authenticator
+
+    def lookup_command(name)
+      command_registry.foobara_lookup_command(name)
+    end
 
     def request_to_command(request)
       action = request.action
@@ -280,7 +286,7 @@ module Foobara
         types_depended_on = Set.new
 
         # TODO: should group by org and domain...
-        command_registry.registry.each_value do |transformed_command_class|
+        each_transformed_command_class do |transformed_command_class|
           types_depended_on |= transformed_command_class.types_depended_on
         end
 

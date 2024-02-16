@@ -22,18 +22,18 @@ module Foobara
     end
 
     def register(command_class, **)
-      exposed_command = create_exposed_command(command_class, **)
-
-      foobara_register(exposed_command)
-
-      exposed_command
+      create_exposed_command(command_class, **)
     end
 
-    def create_exposed_command(command_class, **opts)
+    def create_exposed_command(command_class, **)
       full_domain_name = command_class.domain.foobara_full_domain_name
       exposed_domain = foobara_lookup_domain(full_domain_name) || build_and_register_exposed_domain(full_domain_name)
 
-      create_exposed_command_without_domain(command_class, **opts.merge(exposed_domain:))
+      exposed_command = create_exposed_command_without_domain(command_class, **)
+
+      exposed_domain.foobara_register(exposed_command)
+
+      exposed_command
     end
 
     # TODO: eliminate this method
@@ -74,18 +74,20 @@ module Foobara
       exposed_organization = foobara_lookup_organization(full_organization_name) ||
                              build_and_register_exposed_organization(full_organization_name)
 
-      exposed_domain = ExposedDomain.new(domain_module, exposed_organization:)
+      exposed_domain = ExposedDomain.new(domain_module)
 
-      foobara_register(exposed_domain)
+      exposed_organization.foobara_register(exposed_domain)
+      exposed_domain.foobara_parent_namespace = exposed_organization
 
       exposed_domain
     end
 
     def build_and_register_exposed_organization(full_organization_name)
       organization_module = Foobara.foobara_lookup_organization!(full_organization_name)
-      exposed_organization = ExposedOrganization.new(organization_module, registry: self)
+      exposed_organization = ExposedOrganization.new(organization_module)
 
       foobara_register(exposed_organization)
+      exposed_organization.foobara_parent_namespace = self
 
       exposed_organization
     end
@@ -223,17 +225,15 @@ module Foobara
     end
 
     def transformed_command_from_name(name)
-      foobara_lookup_command(name)&.transformed_command
-    rescue Foobara::Namespace::AmbiguousRegistry::AmbiguousLookupError => e
-      foobara_lookup_command("::#{name}", mode: Namespace::LookupMode::ABSOLUTE)
+      foobara_lookup_command(name)&.transformed_command_class
     end
 
     def all_transformed_command_classes
-      registry.values
+      foobara_all_command.map(&:transformed_command_class)
     end
 
     def each_transformed_command_class(&)
-      registry.each_value(&)
+      foobara_all_command.map(&:transformed_command_class).each(&)
     end
   end
 end

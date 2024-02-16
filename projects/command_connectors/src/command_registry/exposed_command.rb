@@ -21,7 +21,6 @@ module Foobara
         command_class,
         scoped_path: nil,
         suffix: nil,
-        exposed_domain: nil,
         capture_unknown_error: nil,
         inputs_transformers: nil,
         result_transformers: nil,
@@ -47,7 +46,6 @@ module Foobara
                         else
                           command_class.scoped_path
                         end
-        scoped_namespace = exposed_domain
 
         if aggregate_entities
           pre_commit_transformers = [
@@ -72,7 +70,6 @@ module Foobara
 
         self.command_class = command_class
         self.scoped_path = scoped_path
-        self.scoped_namespace = scoped_namespace
         self.capture_unknown_error = capture_unknown_error
         self.inputs_transformers = inputs_transformers
         self.result_transformers = result_transformers

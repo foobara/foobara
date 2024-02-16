@@ -82,7 +82,6 @@ module Foobara
 
         if candidates
           if candidates.size > 1
-            binding.pry
             raise AmbiguousLookupError,
                   "Ambiguous match for #{path.inspect}. Matches the following: #{candidates.inspect}"
           end

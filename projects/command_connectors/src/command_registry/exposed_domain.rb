@@ -1,17 +1,15 @@
 module Foobara
   class CommandRegistry
     class ExposedDomain
-      include Scoped
+      foobara_instances_are_namespaces!
+
       include IsManifestable
 
-      attr_accessor :domain_module,
-                    :scoped_path,
-                    :scoped_namespace
+      attr_accessor :domain_module
 
-      def initialize(domain_module, exposed_organization:)
+      def initialize(domain_module)
         self.domain_module = domain_module
         self.scoped_path = domain_module.scoped_path
-        self.scoped_namespace = exposed_organization
       end
 
       def full_domain_name
