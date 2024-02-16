@@ -346,6 +346,8 @@ module Foobara
       included = Set.new
       additional_to_include = Set.new
 
+      h = {}
+
       until to_include.empty? && additional_to_include.empty?
         object = nil
 

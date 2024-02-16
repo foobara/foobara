@@ -3,6 +3,7 @@ module Foobara
     class ExposedCommand
       include Scoped
       include IsManifestable
+      include TruncatedInspect
 
       attr_accessor :command_class,
                     :capture_unknown_error,
@@ -94,9 +95,6 @@ module Foobara
       end
 
       def foobara_manifest(to_include:)
-        to_include << domain
-        to_include << organization
-
         types = transformed_command_class.types_depended_on.select(&:registered?).map do |t|
           to_include << t
           t.foobara_manifest_reference

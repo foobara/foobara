@@ -81,9 +81,9 @@ RSpec.describe Foobara::CommandConnectors::Http do
       command_connector.connect(DomainA::SomeCommand, suffix: "Again")
     end
 
-    it "registers it again but with the new name", :focus do
-      some_command = command_connector.transformed_command_from_name("DomainA::SomeCommand")
-      some_command_again = command_connector.transformed_command_from_name("DomainA::SomeCommandAgain")
+    it "registers it again but with the new name" do
+      some_command = command_connector.lookup_command("DomainA::SomeCommand")
+      some_command_again = command_connector.lookup_command("DomainA::SomeCommandAgain")
 
       expect(some_command.command_class).to eq(DomainA::SomeCommand)
       expect(some_command_again.command_class).to eq(DomainA::SomeCommand)
