@@ -2,7 +2,7 @@ module Foobara
   class CommandRegistry
     foobara_instances_are_namespaces!
 
-    attr_accessor :authenticator
+    attr_accessor :authenticator, :default_allowed_rule
 
     def initialize(authenticator: nil)
       self.scoped_path = []

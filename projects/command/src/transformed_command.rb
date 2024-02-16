@@ -144,7 +144,7 @@ module Foobara
 
     attr_accessor :command, :untransformed_inputs, :transformed_inputs, :outcome, :authenticated_user
 
-    def initialize(untransformed_inputs)
+    def initialize(untransformed_inputs = {})
       self.untransformed_inputs = untransformed_inputs || {}
 
       transform_inputs
