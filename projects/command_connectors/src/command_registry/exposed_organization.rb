@@ -13,18 +13,6 @@ module Foobara
         self.scoped_path = organization_module.scoped_path
       end
 
-      def full_organization_name
-        scoped_full_name
-      end
-
-      def organization_name
-        @organization_name ||= Util.non_full_name(full_organization_name)
-      end
-
-      def full_organization_symbol
-        @full_organization_symbol ||= Util.underscore_sym(full_organization_name)
-      end
-
       # TODO: unable to address types here so it is handled as a hack higher up...
       def foobara_manifest(to_include:)
         organization_manifest = organization_module.foobara_manifest(to_include: Set.new)

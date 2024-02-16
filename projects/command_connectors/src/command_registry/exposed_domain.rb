@@ -17,14 +17,6 @@ module Foobara
         scoped_full_name
       end
 
-      def domain_name
-        @domain_name ||= Util.non_full_name(full_domain_name)
-      end
-
-      def full_domain_symbol
-        @full_domain_symbol ||= Util.underscore_sym(full_domain_name)
-      end
-
       # TODO: unable to address types here so it is handled as a hack higher up...
       def foobara_manifest(to_include:)
         domain_manifest = domain_module.foobara_manifest(to_include: Set.new)

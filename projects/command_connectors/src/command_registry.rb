@@ -28,7 +28,7 @@ module Foobara
     end
 
     def create_exposed_command(command_class, **)
-      full_domain_name = command_class.domain.foobara_full_domain_name
+      full_domain_name = command_class.domain.scoped_full_name
       exposed_domain = foobara_lookup_domain(full_domain_name) || build_and_register_exposed_domain(full_domain_name)
 
       exposed_command = create_exposed_command_without_domain(command_class, **)
@@ -66,7 +66,7 @@ module Foobara
 
     def build_and_register_exposed_domain(domain_full_name)
       # TODO: would be nice to not have to do this...
-      domain_module = if domain_full_name.to_s == "global_organization::global_domain"
+      domain_module = if domain_full_name.to_s == ""
                         GlobalDomain
                       else
                         Foobara.foobara_lookup_domain!(domain_full_name)
@@ -85,7 +85,7 @@ module Foobara
     end
 
     def build_and_register_exposed_organization(full_organization_name)
-      org = if full_organization_name.to_s == "global_organization"
+      org = if full_organization_name.to_s == ""
               GlobalOrganization
             else
               Foobara.foobara_lookup_organization!(full_organization_name)
