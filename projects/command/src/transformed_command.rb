@@ -140,6 +140,43 @@ module Foobara
 
         types
       end
+
+      def foobara_manifest(to_include:)
+        types = types_depended_on.select(&:registered?).map do |t|
+          to_include << t
+          t.foobara_manifest_reference
+        end.sort
+
+        inputs_transformers = self.inputs_transformers.map { |t| t.foobara_manifest(to_include:) }
+        result_transformers = self.result_transformers.map { |t| t.foobara_manifest(to_include:) }
+        errors_transformers = self.errors_transformers.map { |t| t.foobara_manifest(to_include:) }
+        pre_commit_transformers = self.pre_commit_transformers.map { |t| t.foobara_manifest(to_include:) }
+        serializers = self.serializers.map do |s|
+          if s.respond_to?(:foobara_manifest)
+            to_include << s
+            s.foobara_manifest_reference
+          else
+            { proc: s.to_s }
+          end
+        end
+
+        command_class.foobara_manifest(to_include:).merge(
+          Util.remove_blank(
+            types_depended_on: types,
+            inputs_type: inputs_type&.reference_or_declaration_data,
+            result_type: result_type&.reference_or_declaration_data,
+            possible_errors: possible_errors_manifest(to_include:),
+            capture_unknown_error:,
+            inputs_transformers:,
+            result_transformers:,
+            errors_transformers:,
+            pre_commit_transformers:,
+            serializers:,
+            requires_authentication:,
+            authenticator: authenticator&.manifest
+          )
+        )
+      end
     end
 
     attr_accessor :command, :untransformed_inputs, :transformed_inputs, :outcome, :authenticated_user

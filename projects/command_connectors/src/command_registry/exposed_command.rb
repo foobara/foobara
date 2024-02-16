@@ -95,40 +95,10 @@ module Foobara
       end
 
       def foobara_manifest(to_include:)
-        types = transformed_command_class.types_depended_on.select(&:registered?).map do |t|
-          to_include << t
-          t.foobara_manifest_reference
-        end.sort
-
-        inputs_transformers = self.inputs_transformers.map { |t| t.foobara_manifest(to_include:) }
-        result_transformers = self.result_transformers.map { |t| t.foobara_manifest(to_include:) }
-        errors_transformers = self.errors_transformers.map { |t| t.foobara_manifest(to_include:) }
-        pre_commit_transformers = self.pre_commit_transformers.map { |t| t.foobara_manifest(to_include:) }
-        serializers = self.serializers.map do |s|
-          if s.respond_to?(:foobara_manifest)
-            to_include << s
-            s.foobara_manifest_reference
-          else
-            { proc: s.to_s }
-          end
-        end
-
-        command_class.foobara_manifest(to_include:).merge(super).merge(
+        transformed_command_class.foobara_manifest(to_include:).merge(super).merge(
           Util.remove_blank(
             scoped_category: :command,
-            full_command_name:,
-            types_depended_on: types,
-            inputs_type: transformed_command_class.inputs_type&.reference_or_declaration_data,
-            result_type: transformed_command_class.result_type&.reference_or_declaration_data,
-            possible_errors: transformed_command_class.possible_errors_manifest(to_include:),
-            capture_unknown_error:,
-            inputs_transformers:,
-            result_transformers:,
-            errors_transformers:,
-            pre_commit_transformers:,
-            serializers:,
-            requires_authentication:,
-            authenticator: authenticator&.manifest
+            full_command_name:
           )
         )
       end

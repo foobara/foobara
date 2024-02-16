@@ -357,14 +357,7 @@ module Foobara
             additional_to_include.delete(o)
 
             if o.is_a?(::Module)
-              if o.foobara_domain?
-                binding.pry
-                next
-              elsif o.foobara_organization?
-                binding.pry
-                next
-              elsif o.is_a?(::Class) && o < Foobara::Command
-                binding.pry
+              if o.foobara_domain? || o.foobara_organization? || (o.is_a?(::Class) && o < Foobara::Command)
                 next
               end
             end
@@ -401,14 +394,14 @@ module Foobara
         included << object
       end
 
-      h[:domain].value do |domain_manifest|
+      h[:domain].each_value do |domain_manifest|
         # TODO: hack, we need to trim types down to what is actually included in this manifest
         domain_manifest[:types] = domain_manifest[:types].select do |type_name|
-          h[:type].key?(type_name).tap do |b|
-            binding.pry # test if ysmbol or not...
-          end
+          h[:type].key?(type_name.to_sym)
         end
       end
+
+      h
     end
   end
 end
