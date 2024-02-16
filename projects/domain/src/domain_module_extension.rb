@@ -76,6 +76,10 @@ module Foobara
           foobara_organization&.foobara_organization_name
         end
 
+        def foobara_full_organization_name
+          foobara_organization&.foobara_full_organization_name
+        end
+
         def foobara_organization
           parent = foobara_parent_namespace
 

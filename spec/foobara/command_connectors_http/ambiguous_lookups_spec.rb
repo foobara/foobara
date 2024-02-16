@@ -51,7 +51,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
   let(:command_connector) { described_class.new }
 
   describe "#transformed_command_from_name" do
-    it "can find the correct command or type despite ambiguities" do
+    it "can find the correct command or type despite ambiguities", :focus do
       expect(command_connector.transformed_command_from_name("SomeCommand").command_class).to eq(SomeCommand)
       expect(command_connector.transformed_command_from_name(:SomeCommand).command_class).to eq(SomeCommand)
       expect(

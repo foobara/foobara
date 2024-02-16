@@ -8,10 +8,14 @@ module Foobara
       include Manifestable
 
       module ClassMethods
-        attr_writer :foobara_organization_name
+        attr_writer :foobara_organization_name, :foobara_full_organization_name
 
         def foobara_organization_name
           @foobara_organization_name || scoped_name
+        end
+
+        def foobara_full_organization_name
+          @foobara_full_organization_name || scoped_full_name
         end
 
         def foobara_organization?

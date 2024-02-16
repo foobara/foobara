@@ -24,16 +24,16 @@ module Foobara
     def register(command_class, **)
       exposed_command = create_exposed_command(command_class, **)
 
-      foobara_register_command(exposed_command)
+      foobara_register(exposed_command)
 
       exposed_command
     end
 
     def create_exposed_command(command_class, **opts)
-      domain_full_name = command_class.domain.foobara_full_domain_name
-      exposed_domain = foobara_lookup_domain(full_domain_name) || build_and_register_exposed_domain(domain_full_name)
+      full_domain_name = command_class.domain.foobara_full_domain_name
+      exposed_domain = foobara_lookup_domain(full_domain_name) || build_and_register_exposed_domain(full_domain_name)
 
-      create_exposed_command_without_domain(**opts.merge(exposed_domain:))
+      create_exposed_command_without_domain(command_class, **opts.merge(exposed_domain:))
     end
 
     # TODO: eliminate this method
@@ -63,24 +63,29 @@ module Foobara
     end
 
     def build_and_register_exposed_domain(domain_full_name)
-      domain_module = Foobara.foobara_lookup_domain!(domain_full_name)
+      # TODO: would be nice to not have to do this...
+      domain_module = if domain_full_name.to_s == "global_organization::global_domain"
+                        GlobalDomain
+                      else
+                        Foobara.foobara_lookup_domain!(domain_full_name)
+                      end
 
-      organization_full_name = command_class.full_organization_name
-      exposed_organization = foobara_lookup_organization(organization_full_name) ||
-                             build_and_register_exposed_organization(organization_full_name)
+      full_organization_name = domain_module.foobara_full_organization_name
+      exposed_organization = foobara_lookup_organization(full_organization_name) ||
+                             build_and_register_exposed_organization(full_organization_name)
 
       exposed_domain = ExposedDomain.new(domain_module, exposed_organization:)
 
-      foobara_register_domain(exposed_domain, registry: self)
+      foobara_register(exposed_domain)
 
       exposed_domain
     end
 
-    def build_and_register_exposed_organization(organization_full_name)
-      organization_module = Foobara.foobara_lookup_organization!(organization_full_name)
-      exposed_organization = ExposedOrganization.new(organization_module)
+    def build_and_register_exposed_organization(full_organization_name)
+      organization_module = Foobara.foobara_lookup_organization!(full_organization_name)
+      exposed_organization = ExposedOrganization.new(organization_module, registry: self)
 
-      foobara_register_organization(exposed_organization)
+      foobara_register(exposed_organization)
 
       exposed_organization
     end
@@ -218,34 +223,9 @@ module Foobara
     end
 
     def transformed_command_from_name(name)
-      transformed_command_name, domain, org = name.to_s.split("::").reverse
-      transformed_commands = short_name_to_transformed_command[transformed_command_name]
-
-      if transformed_commands
-        if transformed_commands.is_a?(::Array)
-          transformed_commands = transformed_commands.select do |transformed_command|
-            domain_org_match_transformed_command?(transformed_command, domain, org)
-          end
-
-          if transformed_commands.size > 1
-            # What are we doing here? Is this necessary?
-            # I suppose the idea here is that if it's ambiguous we return the most unqualified of names.
-            # Perhaps better to raise an exception?
-            transformed_commands.find { |transformed_command| transformed_command.domain == GlobalDomain }
-          else
-            transformed_commands.first
-          end
-        elsif domain_org_match_transformed_command?(transformed_commands, domain, org)
-          transformed_commands
-        end
-      end
-    end
-
-    def domain_org_match_transformed_command?(transformed_command, domain_name, org_name)
-      dom = transformed_command.domain
-      org = dom&.foobara_organization_name
-
-      (org_name.nil? || org_name == org) && (domain_name.nil? || domain_name == dom&.foobara_domain_name)
+      foobara_lookup_command(name)&.transformed_command
+    rescue Foobara::Namespace::AmbiguousRegistry::AmbiguousLookupError => e
+      foobara_lookup_command("::#{name}", mode: Namespace::LookupMode::ABSOLUTE)
     end
 
     def all_transformed_command_classes
