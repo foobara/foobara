@@ -106,10 +106,13 @@ RSpec.describe Foobara::CommandConnectors::Http do
       it "registers the command" do
         command_connector.connect(org_module)
 
-        transformed_commands = command_connector.command_registry.registry.values
-        expect(transformed_commands.size).to eq(1)
-        transformed_command = transformed_commands.first
-        expect(transformed_command.full_command_symbol).to eq(:"some_org::some_domain::some_command")
+        exposed_commands = command_connector.all_exposed_commands
+        expect(exposed_commands.size).to eq(1)
+        exposed_command = exposed_commands.first
+
+        expect(exposed_command.full_command_symbol).to eq(:"some_org::some_domain::some_command")
+
+        transformed_command = exposed_command.transformed_command_class
         expect(transformed_command.command_class).to eq(command_class)
 
         command_classes = []
@@ -127,7 +130,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
           command_connector.connect(domain_module)
         end
 
-        it "registers the command" do
+        it "registers the command", :focus do
           transformed_commands = command_connector.command_registry.registry.values
           expect(transformed_commands.size).to eq(1)
           expect(transformed_commands.first.command_class).to eq(command_class)

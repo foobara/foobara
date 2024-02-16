@@ -1,5 +1,7 @@
 module Foobara
   class CommandRegistry
+    include TruncatedInspect
+
     foobara_instances_are_namespaces!
 
     attr_accessor :authenticator, :default_allowed_rule

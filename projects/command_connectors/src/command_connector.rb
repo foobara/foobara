@@ -403,5 +403,9 @@ module Foobara
 
       h
     end
+
+    def all_exposed_commands
+      command_registry.foobara_all_command
+    end
   end
 end
