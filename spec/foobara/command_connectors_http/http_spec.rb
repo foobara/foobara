@@ -169,9 +169,12 @@ RSpec.describe Foobara::CommandConnectors::Http do
         pre_commit_transformers:,
         capture_unknown_error:,
         aggregate_entities:,
-        atomic_entities:
+        atomic_entities:,
+        suffix:
       )
     end
+
+    let(:suffix) { nil }
 
     it "runs the command" do
       expect(response.status).to be(200)
@@ -212,6 +215,9 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
     context "without serializers" do
       let(:default_serializers) { nil }
+      # Setting a suffix guarantees it will be transformed
+      let(:suffix) { "Whatever" }
+      let(:path) { "/run/ComputeExponentWhatever" }
 
       it "runs the command" do
         expect(response.status).to be(200)
