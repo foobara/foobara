@@ -86,7 +86,7 @@ module Foobara
 
       case action
       when "run"
-        transformed_command_class = command_registry[full_command_name]
+        transformed_command_class = transformed_command_from_name(full_command_name)
 
         unless transformed_command_class
           # :nocov:
@@ -110,7 +110,7 @@ module Foobara
         full_command_name = command_class.full_command_name
 
         inputs = { manifestable: }
-        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+        transformed_command_class = transformed_command_from_name(full_command_name) || transform_command_class(command_class)
       when "describe_command"
         transformed_command_class = transformed_command_from_name(full_command_name)
 
@@ -124,7 +124,7 @@ module Foobara
         full_command_name = command_class.full_command_name
 
         inputs = { manifestable: transformed_command_class }
-        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+        transformed_command_class = transformed_command_from_name(full_command_name) || transform_command_class(command_class)
       when "describe_type"
         type = type_from_name(full_command_name)
 
@@ -138,30 +138,30 @@ module Foobara
         full_command_name = command_class.full_command_name
 
         inputs = { manifestable: type }
-        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+        transformed_command_class = transformed_command_from_name(full_command_name) || transform_command_class(command_class)
       when "manifest"
         command_class = Foobara::CommandConnectors::Commands::Describe
         full_command_name = command_class.full_command_name
 
         inputs = { manifestable: self }
-        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+        transformed_command_class = transformed_command_from_name(full_command_name) || transform_command_class(command_class)
       when "ping"
         command_class = Foobara::CommandConnectors::Commands::Ping
         full_command_name = command_class.full_command_name
 
-        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+        transformed_command_class = transformed_command_from_name(full_command_name) || transform_command_class(command_class)
       when "query_git_commit_info"
         # TODO: this feels out of control... should just accomplish this through run I think instead. Same with ping.
         command_class = Foobara::CommandConnectors::Commands::QueryGitCommitInfo
         full_command_name = command_class.full_command_name
 
-        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+        transformed_command_class = transformed_command_from_name(full_command_name) || transform_command_class(command_class)
       when "help"
         command_class = self.class::Commands::Help
         full_command_name = command_class.full_command_name
 
         inputs = { request: }
-        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+        transformed_command_class = transformed_command_from_name(full_command_name) || transform_command_class(command_class)
       when "list"
         mod = self.class::Commands
         command_class = if mod.const_defined?(:ListCommands)
@@ -178,7 +178,7 @@ module Foobara
         request.command_class = command_class
         inputs = request.inputs.merge(request:)
 
-        transformed_command_class = command_registry[full_command_name] || transform_command_class(command_class)
+        transformed_command_class = transformed_command_from_name(full_command_name) || transform_command_class(command_class)
       else
         # :nocov:
         raise InvalidContextError, "Not sure what to do with #{action}"
