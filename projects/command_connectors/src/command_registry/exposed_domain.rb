@@ -13,10 +13,6 @@ module Foobara
         self.scoped_path = domain_module.scoped_path
       end
 
-      def full_domain_name
-        scoped_full_name
-      end
-
       # TODO: unable to address types here so it is handled as a hack higher up...
       def foobara_manifest(to_include:)
         domain_manifest = domain_module.foobara_manifest(to_include: Set.new)

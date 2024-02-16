@@ -413,7 +413,7 @@ module Foobara
         end
       end
 
-      h
+      h.sort.to_h
     end
 
     def all_exposed_commands

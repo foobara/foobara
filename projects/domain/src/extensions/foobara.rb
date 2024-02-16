@@ -47,7 +47,7 @@ module Foobara
         included[manifest_reference] = category_symbol
       end
 
-      h
+      h.sort.to_h
     end
 
     def all_domains
