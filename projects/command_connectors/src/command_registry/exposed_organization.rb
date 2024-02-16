@@ -16,7 +16,8 @@ module Foobara
       # TODO: unable to address types here so it is handled as a hack higher up...
       def foobara_manifest(to_include:)
         organization_manifest = organization_module.foobara_manifest(to_include: Set.new)
-        domains = foobara_all_domain(mode: Foobara::Namespace::LookupMode::DIRECT).map(&:full_domain_name)
+        mode = Foobara::Namespace::LookupMode::DIRECT
+        domains = foobara_all_domain(mode:).map(&:foobara_manifest_reference).sort
 
         organization_manifest.merge(domains:)
       end

@@ -20,7 +20,8 @@ module Foobara
       # TODO: unable to address types here so it is handled as a hack higher up...
       def foobara_manifest(to_include:)
         domain_manifest = domain_module.foobara_manifest(to_include: Set.new)
-        commands = foobara_all_command(mode: Foobara::Namespace::LookupMode::DIRECT).map(&:full_command_name)
+        mode = Foobara::Namespace::LookupMode::DIRECT
+        commands = foobara_all_command(mode:).map(&:foobara_manifest_reference).sort
 
         domain_manifest.merge(commands:)
       end
