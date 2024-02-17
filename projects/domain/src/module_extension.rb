@@ -38,9 +38,6 @@ module Foobara
 
         include(OrganizationModuleExtension)
 
-        # TODO: remove this hack
-        return if self == Foobara
-
         unless is_a?(Namespace::IsNamespace)
           foobara_namespace!
           foobara_autoset_namespace!(default_namespace: Namespace.global)

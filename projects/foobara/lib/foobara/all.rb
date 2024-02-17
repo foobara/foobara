@@ -26,7 +26,7 @@ module Foobara
     # type declarations to expose its context type.
     project "domain"
 
-    Foobara.foobara_organization!
+    #     Foobara.foobara_organization!
 
     projects "common",
              "value",
