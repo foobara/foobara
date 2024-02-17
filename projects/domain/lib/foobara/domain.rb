@@ -10,8 +10,6 @@ module Foobara
 
         @installed = true
 
-        Foobara::Command.include(Foobara::Domain::CommandExtension)
-        # Feels so odd to have this here but the manifest definition elsewhere
         Foobara::Value::Processor.include Manifestable
         Foobara::Value::Processor.include IsManifestable
         Foobara::Error.include Manifestable

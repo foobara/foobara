@@ -108,7 +108,6 @@ RSpec.describe Foobara::CommandConnectors::Http do
       expect(manifest[:full_command_name]).to eq("DomainA::SomeCommandAgain")
       expect(manifest[:inputs_type]).to be_a(Hash)
       expect(manifest[:description]).to eq("Some Command Description")
-      expect(manifest[:command]).to eq("DomainA::SomeCommand")
       expect(manifest[:domain_name]).to eq("DomainA")
       expect(manifest[:organization_name]).to eq("global_organization")
       expect(manifest[:errors_transformers]).to be_nil

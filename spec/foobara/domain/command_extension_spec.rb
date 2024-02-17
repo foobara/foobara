@@ -1,4 +1,4 @@
-RSpec.describe Foobara::Domain::CommandExtension do
+RSpec.describe Foobara::Command do
   after do
     Foobara.reset_alls
   end
@@ -35,7 +35,7 @@ RSpec.describe Foobara::Domain::CommandExtension do
     let(:command_class1) {
       subcommand_class = command_class2
 
-      stub_class command_class1_name, Foobara::Command do
+      stub_class command_class1_name, described_class do
         depends_on subcommand_class
         inputs foo: :integer
 
@@ -46,7 +46,7 @@ RSpec.describe Foobara::Domain::CommandExtension do
     }
 
     let(:command_class2) {
-      stub_class command_class2_name, Foobara::Command do
+      stub_class command_class2_name, described_class do
         def execute
           100 if subcommand?
         end
@@ -54,7 +54,7 @@ RSpec.describe Foobara::Domain::CommandExtension do
     }
 
     let(:top_level_command_class) {
-      stub_class "TopLevelCommand", Foobara::Command
+      stub_class "TopLevelCommand", described_class
     }
 
     let(:command) { command_class1.new }
@@ -181,7 +181,7 @@ RSpec.describe Foobara::Domain::CommandExtension do
           foobara_namespace!
           foobara_autoset_namespace!
         end
-        stub_class "SomeDomain::SomePrefix::SomeCommand", Foobara::Command
+        stub_class "SomeDomain::SomePrefix::SomeCommand", described_class
       end
 
       it "returns the domain" do

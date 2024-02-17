@@ -63,7 +63,9 @@ module Foobara
                 type: :attributes,
                 element_type_declarations: {},
                 required: []
-              }
+              },
+              domain_name: domain.foobara_manifest_reference,
+              organization_name: organization.foobara_manifest_reference
             ).merge(description:)
 
             if result_type
