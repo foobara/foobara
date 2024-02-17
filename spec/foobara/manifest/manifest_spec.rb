@@ -225,7 +225,7 @@ RSpec.describe Foobara::Manifest do
     expect(global_error).to be_a(Foobara::Manifest::Error)
     expect(global_error.scoped_category).to eq(:error)
     expect(global_error.parent).to eq(
-      Foobara::Manifest::ProcessorClass.new(raw_manifest, [:processor_class, "Value::Processor::Casting"])
+      Foobara::Manifest::ProcessorClass.new(raw_manifest, [:processor_class, "Foobara::Value::Processor::Casting"])
     )
     expect(global_error.error_manifest).to be_a(Hash)
     expect(global_error.symbol).to be_a(Symbol)

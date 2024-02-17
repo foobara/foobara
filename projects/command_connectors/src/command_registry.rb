@@ -12,10 +12,10 @@ module Foobara
 
       customized = %i[command domain organization]
 
-      Foobara.foobara_categories.keys.reverse.each do |symbol|
+      Namespace.global.foobara_categories.keys.reverse.each do |symbol|
         next if customized.include?(symbol)
 
-        proc = Foobara.foobara_categories[symbol]
+        proc = Namespace.global.foobara_categories[symbol]
 
         foobara_add_category(symbol, &proc)
       end
@@ -71,7 +71,7 @@ module Foobara
       domain_module = if domain_full_name.to_s == ""
                         GlobalDomain
                       else
-                        Foobara.foobara_lookup_domain!(domain_full_name)
+                        Namespace.global.foobara_lookup_domain!(domain_full_name)
                       end
 
       full_organization_name = domain_module.foobara_full_organization_name
@@ -90,7 +90,7 @@ module Foobara
       org = if full_organization_name.to_s == ""
               GlobalOrganization
             else
-              Foobara.foobara_lookup_organization!(full_organization_name)
+              Namespace.global.foobara_lookup_organization!(full_organization_name)
             end
 
       exposed_organization = ExposedOrganization.new(org)

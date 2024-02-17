@@ -29,7 +29,7 @@ module Foobara
       end
 
       if parent
-        parent_category = Foobara.foobara_category_symbol_for(parent)
+        parent_category = Namespace.global.foobara_category_symbol_for(parent)
 
         if parent_category
           to_include << parent

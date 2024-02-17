@@ -10,7 +10,7 @@ module Foobara
         when nil
           global
         when ::String, ::Symbol
-          domain = Foobara.foobara_lookup_domain(object)
+          domain = Namespace.global.foobara_lookup_domain(object)
 
           unless domain
             # :nocov:

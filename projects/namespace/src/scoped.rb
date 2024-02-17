@@ -92,7 +92,7 @@ module Foobara
     end
 
     def scoped_category
-      @scoped_category ||= Foobara.foobara_category_symbol_for(self)
+      @scoped_category ||= Namespace.global.foobara_category_symbol_for(self)
     end
   end
 end

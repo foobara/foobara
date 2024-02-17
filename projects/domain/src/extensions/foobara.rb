@@ -7,7 +7,7 @@ module Foobara
     # The manifest itself will only contain full scoped names. This is kind of analogous to a store serializer
     # in the http connector.
     def manifest
-      to_include = foobara_all_organization.to_set
+      to_include = Namespace.global.foobara_all_organization.to_set
       included = {}
 
       h = {}
@@ -23,7 +23,7 @@ module Foobara
         end
 
         manifest_reference = object.foobara_manifest_reference.to_sym
-        category_symbol = Foobara.foobara_category_symbol_for(object)
+        category_symbol = Namespace.global.foobara_category_symbol_for(object)
 
         unless category_symbol
           # :nocov:
@@ -50,16 +50,20 @@ module Foobara
       h.sort.to_h
     end
 
+    def all_organizations
+      Namespace.global.foobara_all_organization
+    end
+
     def all_domains
-      foobara_all_domain
+      Namespace.global.foobara_all_domain
     end
 
     def all_commands
-      foobara_all_command
+      Namespace.global.foobara_all_command
     end
 
     def all_types
-      foobara_all_type
+      Namespace.global.foobara_all_type
     end
   end
 end

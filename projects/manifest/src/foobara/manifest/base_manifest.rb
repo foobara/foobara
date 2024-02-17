@@ -69,21 +69,13 @@ module Foobara
       def domain
         domain_reference = self[:domain]
 
-        if domain_reference
           Domain.new(root_manifest, [:domain, domain_reference])
-        else
-          global_domain
-        end
       end
 
       def organization
         organization_reference = self[:organization]
 
-        if organization_reference
           Organization.new(root_manifest, [:organization, organization_reference])
-        else
-          global_organization
-        end
       end
 
       def parent
