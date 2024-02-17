@@ -4,20 +4,6 @@ module Foobara
     module CommandExtension
       include Concern
 
-      class CannotAccessDomain < StandardError; end
-
-      def run_subcommand!(subcommand_class, inputs = {})
-        domain = self.class.domain
-        sub_domain = subcommand_class.domain
-
-        unless domain.foobara_depends_on?(sub_domain)
-          raise CannotAccessDomain,
-                "Cannot access #{sub_domain} or its commands because #{domain} does not depend on it"
-        end
-
-        super
-      end
-
       module ClassMethods
         def domain
           namespace = foobara_parent_namespace

@@ -6,6 +6,7 @@ module Foobara
 
         class AlreadyRegisteredSubcommand < StandardError; end
         class SubcommandNotRegistered < StandardError; end
+        class CannotAccessDomain < StandardError; end
 
         attr_accessor :is_subcommand
 
@@ -16,6 +17,14 @@ module Foobara
         end
 
         def run_subcommand!(subcommand_class, inputs = {})
+          domain = self.class.domain
+          sub_domain = subcommand_class.domain
+
+          unless domain.foobara_depends_on?(sub_domain)
+            raise CannotAccessDomain,
+                  "Cannot access #{sub_domain} or its commands because #{domain} does not depend on it"
+          end
+
           verify_depends_on!(subcommand_class)
 
           subcommand = subcommand_class.new(inputs)
