@@ -20,6 +20,16 @@ module Foobara
       end
 
       def install!
+        # So strange to do this here... hmmm...
+        # maybe better to do it in their original location and re-wire-up the namespaces later?
+        Value::Processor.foobara_subclasses_are_namespaces!(default_parent: Foobara, autoregister: true)
+        # Do we really need both to be namespaces??
+        Value::Processor.foobara_instances_are_namespaces!(default_parent: Foobara, autoregister: true)
+
+        reinstall_types!
+      end
+
+      def reinstall_types!
         duck = build_and_register!(:duck, nil, ::Object)
         # TODO: should we ban ::Object that are ::Enumerable from atomic_duck?
         atomic_duck = build_and_register!(:atomic_duck, duck, ::Object)
@@ -60,7 +70,7 @@ module Foobara
 
         builtin_types.clear
 
-        install!
+        reinstall_types!
       end
     end
   end
