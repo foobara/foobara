@@ -5,6 +5,9 @@ module Foobara
       # Do we really need both to be namespaces??
       foobara_instances_are_namespaces!(default_parent: Foobara)
 
+      include Manifestable
+      include IsManifestable
+
       module Priority
         FIRST = 0
         HIGH = 10
@@ -92,7 +95,7 @@ module Foobara
             # TODO: we shouldn´t have wo ways to do this. But keeping this check for now until the old
             # namespace implementation is removed.
             error_klasses2 = if is_a?(Foobara::Namespace::IsNamespace)
-                               foobara_all_error
+                               foobara_all_error(mode: Namespace::LookupMode::DIRECT)
                              end
 
             if error_klasses.sort_by(&:name) != error_klasses2.sort_by(&:name)

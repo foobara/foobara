@@ -8,22 +8,11 @@ module Foobara
           # :nocov:
         end
 
+        # TODO: delete this?
         @installed = true
 
-        Foobara::Value::Processor.include Manifestable
-        Foobara::Value::Processor.include IsManifestable
-        Foobara::Error.include Manifestable
-
-        Foobara.foobara_add_category(:organization) do
-          is_a?(Module) && foobara_organization?
-        end
-        Foobara.foobara_add_category(:domain) do
-          is_a?(Module) && foobara_domain?
-        end
-
-        Foobara.foobara_add_category_for_subclass_of(:processor_class, Value::Processor)
-        Foobara.foobara_add_category_for_instance_of(:processor, Value::Processor)
-        Foobara.foobara_add_category_for_subclass_of(:error, Error)
+        Foobara.foobara_add_category(:organization) { is_a?(Module) && foobara_organization? }
+        Foobara.foobara_add_category(:domain) { is_a?(Module) && foobara_domain? }
       end
     end
   end

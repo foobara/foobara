@@ -1,10 +1,13 @@
 module Foobara
   class Error < StandardError
+    foobara_autoregister_subclasses(default_namespace: Foobara::GlobalDomain)
+
+    include Manifestable
+
     # TODO: rename :path to data_path
     attr_accessor :error_key, :message, :context, :is_fatal
 
     # Need to do this early so doing it here... not sure if this is OK as it couples namespaces and errors
-    foobara_autoregister_subclasses(default_namespace: Foobara)
 
     class << self
       def symbol

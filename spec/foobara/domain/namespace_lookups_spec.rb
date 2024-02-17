@@ -115,7 +115,7 @@ RSpec.describe "Foobara namespace lookup" do
       expect(Foobara.foobara_lookup_command("OrgA::DomainA::CommandA")).to eq(OrgA::DomainA::CommandA)
       expect(Foobara.foobara_lookup_command("::OrgA::DomainA::CommandA")).to eq(OrgA::DomainA::CommandA)
 
-      expect(GlobalError.scoped_namespace).to eq(Foobara)
+      expect(GlobalError.scoped_namespace).to eq(Foobara::GlobalDomain)
       expect(GlobalError.scoped_path).to eq(%w[GlobalError])
       expect(GlobalError.scoped_full_path).to eq(%w[GlobalError])
       expect(Foobara.foobara_lookup_error("GlobalError")).to eq(GlobalError)

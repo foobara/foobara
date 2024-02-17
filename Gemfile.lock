@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/foobara/rubocop-rules.git
-  revision: ab767521b18ac1d78a3d746d858ae1fc29b542f6
+  revision: ea100ea86b708a441ef66ce0861dc72237316f2a
   specs:
     foobara-rubocop-rules (0.0.1)
       rubocop
@@ -59,7 +59,7 @@ GEM
       nenv (~> 0.1)
       shellany (~> 0.0)
     parallel (1.24.0)
-    parser (3.3.0.4)
+    parser (3.3.0.5)
       ast (~> 2.4.1)
       racc
     pry (0.14.2)
@@ -92,7 +92,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.12.0)
     rspec-support (3.12.1)
-    rubocop (1.60.1)
+    rubocop (1.60.2)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
       parallel (~> 1.10)

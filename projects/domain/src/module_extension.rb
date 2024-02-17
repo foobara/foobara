@@ -1,3 +1,6 @@
+require_relative "organization_module_extension"
+require_relative "domain_module_extension"
+
 module Foobara
   module Domain
     # TODO: should we just couple domain project and commands project to simplify this connection?
@@ -62,25 +65,3 @@ module Foobara
 end
 
 Module.include(Foobara::Domain::ModuleExtension)
-
-module Foobara
-  module GlobalOrganization
-    foobara_namespace!(scoped_path: [])
-    self.foobara_parent_namespace = Foobara
-    Foobara.foobara_register(self)
-
-    foobara_organization!
-    self.foobara_manifest_reference = self.foobara_organization_name = "global_organization"
-  end
-
-  module GlobalDomain
-    foobara_namespace!(scoped_path: [])
-    self.foobara_parent_namespace = GlobalOrganization
-    GlobalOrganization.foobara_register(self)
-
-    foobara_domain!
-    self.foobara_domain_name = "global_domain"
-    self.foobara_full_domain_name = "#{GlobalOrganization.foobara_organization_name}::#{foobara_domain_name}"
-    self.foobara_manifest_reference = foobara_full_domain_name
-  end
-end
