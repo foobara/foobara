@@ -12,6 +12,42 @@ module Foobara
           def type_for_declaration(...)
             domain.foobara_type_from_declaration(...)
           end
+
+          def domain
+            namespace = foobara_parent_namespace
+
+            while namespace
+              if namespace.is_a?(Module) && namespace.foobara_domain?
+                d = namespace
+                break
+              end
+
+              namespace = namespace.foobara_parent_namespace
+            end
+
+            d
+          end
+
+          # TODO: prefix these...
+          def organization
+            domain.foobara_organization
+          end
+
+          def full_command_name
+            scoped_full_name
+          end
+
+          def organization_symbol
+            domain&.organization_symbol
+          end
+
+          def domain_symbol
+            domain&.domain_symbol
+          end
+
+          def full_command_symbol
+            @full_command_symbol ||= Util.underscore_sym(full_command_name)
+          end
         end
 
         foobara_delegate :type_for_declaration, to: :class
