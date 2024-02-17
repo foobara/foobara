@@ -85,7 +85,17 @@ RSpec.describe Foobara::Manifest do
       result :Referral
     end
 
-    stub_class "GlobalCommand", Foobara::Command
+    stub_class "GlobalError", Foobara::RuntimeError do
+      class << self
+        def context_type_declaration
+          {}
+        end
+      end
+    end
+
+    stub_class "GlobalCommand", Foobara::Command do
+      possible_error GlobalError
+    end
   end
 
   let(:manifest) { Foobara::Manifest::RootManifest.new(raw_manifest) }
@@ -217,22 +227,26 @@ RSpec.describe Foobara::Manifest do
     expect(global_command.organization_name).to eq("global_organization")
     expect(global_command.inputs_type).to be_empty
 
-    global_possible_error = command.possible_errors["data.cannot_cast"]
-    expect(global_possible_error.scoped_category).to be_nil
-    expect(global_possible_error.parent).to be_nil
-    expect(global_possible_error._path).to eq([])
-    global_error = global_possible_error.error
-    expect(global_error).to be_a(Foobara::Manifest::Error)
-    expect(global_error.scoped_category).to eq(:error)
-    expect(global_error.parent).to eq(
-      Foobara::Manifest::ProcessorClass.new(raw_manifest, [:processor_class, "Foobara::Value::Processor::Casting"])
+    foobara_possible_error = command.possible_errors["data.cannot_cast"]
+    expect(foobara_possible_error.scoped_category).to be_nil
+    expect(foobara_possible_error.parent).to be_nil
+    expect(foobara_possible_error._path).to eq([])
+    foobara_error = foobara_possible_error.error
+    expect(foobara_error).to be_a(Foobara::Manifest::Error)
+    expect(foobara_error.scoped_category).to eq(:error)
+    expect(foobara_error.parent).to eq(
+      Foobara::Manifest::ProcessorClass.new(
+        raw_manifest,
+        [:processor_class, "Foobara::Value::Processor::Casting"]
+      )
     )
-    expect(global_error.error_manifest).to be_a(Hash)
-    expect(global_error.symbol).to be_a(Symbol)
-    expect(global_error.organization.organization_name).to eq(manifest.global_organization.organization_name)
-    expect(global_error.organization_name).to eq("global_organization")
-    expect(global_error.domain_name).to eq("global_domain")
-    expect(global_error.error_name).to eq("CannotCastError")
+    expect(foobara_error.error_manifest).to be_a(Hash)
+    expect(foobara_error.symbol).to be_a(Symbol)
+    expect(foobara_error.organization.organization_name).to eq("Foobara")
+    expect(foobara_error.organization_name).to eq("Foobara")
+    expect(foobara_error.domain_name).to eq("Value")
+    expect(foobara_error.scoped_full_name).to eq("Foobara::Value::Processor::Casting::CannotCastError")
+    expect(foobara_error.error_name).to eq("CannotCastError")
 
     local_possible_error = command.possible_errors["runtime.something_went_wrong"]
     expect(local_possible_error.scoped_category).to be_nil
@@ -245,6 +259,19 @@ RSpec.describe Foobara::Manifest do
     expect(local_error.domain_name).to eq("SomeDomain")
     expect(local_error.error_name).to eq("SomethingWentWrongError")
     expect(local_error.types_depended_on.map(&:name)).to include(:attributes)
+
+    global_error = Foobara::Manifest::Error.new(raw_manifest, [:error, "GlobalError"])
+
+    expect(global_error).to be_a(Foobara::Manifest::Error)
+    expect(global_error.scoped_category).to eq(:error)
+    expect(global_error.parent).to eq(manifest.global_domain)
+    expect(global_error.error_manifest).to be_a(Hash)
+    expect(global_error.symbol).to be_a(Symbol)
+    expect(global_error.organization).to eq(manifest.global_organization)
+    expect(global_error.organization_name).to eq("global_organization")
+    expect(global_error.domain_name).to eq("global_domain")
+    expect(global_error.scoped_full_name).to eq("GlobalError")
+    expect(global_error.error_name).to eq("GlobalError")
 
     org = manifest.organization_by_name("SomeOrg")
     expect(org).to be_a(Foobara::Manifest::Organization)

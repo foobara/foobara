@@ -62,3 +62,5 @@ module Foobara
 end
 
 Module.include(Foobara::Domain::ModuleExtension)
+
+Foobara.foobara_organization!
