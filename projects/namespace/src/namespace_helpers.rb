@@ -155,7 +155,7 @@ module Foobara
           mod.scoped_namespace = default_namespace if default_namespace
         end
 
-        def foobara_autoset_scoped_path(mod)
+        def foobara_autoset_scoped_path(mod, make_top_level: false)
           return if mod.scoped_path_set?
 
           scoped_path = mod.name.split("::")
@@ -171,7 +171,7 @@ module Foobara
 
             next_mod = Util.constant_value(next_mod, path_part)
 
-            if next_mod.is_a?(IsNamespace) && next_mod != mod
+            if next_mod.is_a?(IsNamespace) && next_mod != mod && !make_top_level
               adjusted_scoped_path = []
               next
             end
@@ -208,8 +208,8 @@ module Foobara
         NamespaceHelpers.foobara_autoset_namespace(self, default_namespace:)
       end
 
-      def foobara_autoset_scoped_path!
-        NamespaceHelpers.foobara_autoset_scoped_path(self)
+      def foobara_autoset_scoped_path!(make_top_level: false)
+        NamespaceHelpers.foobara_autoset_scoped_path(self, make_top_level:)
       end
     end
   end

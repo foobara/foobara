@@ -40,8 +40,8 @@ module Foobara
 
         unless is_a?(Namespace::IsNamespace)
           foobara_namespace!
-          foobara_autoset_namespace!(default_namespace: Namespace.global)
-          foobara_autoset_scoped_path!
+          self.scoped_namespace = Namespace.global
+          foobara_autoset_scoped_path!(make_top_level: true)
 
           # TODO: wow this is awkward. We should find a cleaner way to set children on namespaces.
           parent = foobara_parent_namespace

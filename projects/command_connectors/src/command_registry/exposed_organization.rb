@@ -10,9 +10,7 @@ module Foobara
 
       def initialize(organization_module)
         self.organization_module = organization_module
-        # we're not going to bother generating any possible namespaces above the org level.
-        # but since there might be an org embedded in an org here, we need the full path
-        self.scoped_path = organization_module.scoped_full_path
+        self.scoped_path = organization_module.scoped_path
       end
 
       # TODO: unable to address types here so it is handled as a hack higher up...
