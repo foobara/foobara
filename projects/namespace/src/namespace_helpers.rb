@@ -16,6 +16,10 @@ module Foobara
           def inherited(subclass)
             super
 
+            _namespacify_subclass(subclass)
+          end
+
+          def _namespacify_subclass(subclass)
             subclass.extend ::Foobara::Scoped
 
             NamespaceHelpers.foobara_autoset_namespace(subclass, default_namespace: scoped_default_namespace)
@@ -76,6 +80,7 @@ module Foobara
         include ::Foobara::Namespace::IsNamespace
 
         def initialize(*, **, &)
+          # Strange to have to terminate inheritance like this, hmmm...
           if Foobara::Util.super_method_takes_parameters?(self, InstancesAreNamespaces, __method__)
             # :nocov:
             super
@@ -121,6 +126,10 @@ module Foobara
 
           klass.include SubclassesAreNamespaces unless klass < SubclassesAreNamespaces
 
+          Util.descendants(klass).each do |subclass|
+            klass._namespacify_subclass(subclass)
+          end
+
           if autoregister
             foobara_autoregister_subclasses(klass)
           end
@@ -133,6 +142,20 @@ module Foobara
 
           if autoregister
             klass.include AutoRegisterInstances
+          end
+
+          scoped_default_namespace = klass.scoped_default_namespace
+
+          ObjectSpace.each_object(klass) do |instance|
+            parent_namespace = instance.scoped_namespace || scoped_default_namespace
+            NamespaceHelpers.initialize_foobara_namespace(instance, parent_namespace:)
+
+            if autoregister
+              # TODO: test this path
+              # :nocov:
+              parent_namespace&.foobara_register(self)
+              # :nocov:
+            end
           end
         end
 

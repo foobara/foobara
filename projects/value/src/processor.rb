@@ -1,10 +1,6 @@
 module Foobara
   module Value
     class Processor
-      foobara_subclasses_are_namespaces!(default_parent: Foobara)
-      # Do we really need both to be namespaces??
-      foobara_instances_are_namespaces!(default_parent: Foobara)
-
       module Priority
         FIRST = 0
         HIGH = 10
