@@ -114,6 +114,7 @@ module Foobara
           prefix = Util.non_full_name(mod)
 
           [*klasses, *instances].each do |scoped|
+            # binding.pry if scoped.is_a?(Value::Processor)
             if !scoped.scoped_path_set? || scoped.scoped_path_autoset?
               # TODO: Do we actually need this?
               short_name = Util.non_full_name(scoped)

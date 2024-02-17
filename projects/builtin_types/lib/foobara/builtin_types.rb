@@ -22,9 +22,9 @@ module Foobara
       def install!
         # So strange to do this here... hmmm...
         # maybe better to do it in their original location and re-wire-up the namespaces later?
-        Value::Processor.foobara_subclasses_are_namespaces!(default_parent: Foobara, autoregister: true)
+        Value::Processor.foobara_subclasses_are_namespaces!(default_parent: Foobara)
         # Do we really need both to be namespaces??
-        Value::Processor.foobara_instances_are_namespaces!(default_parent: Foobara, autoregister: true)
+        Value::Processor.foobara_instances_are_namespaces!(default_parent: Foobara)
 
         reinstall_types!
       end
