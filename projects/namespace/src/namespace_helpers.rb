@@ -151,10 +151,7 @@ module Foobara
             NamespaceHelpers.initialize_foobara_namespace(instance, parent_namespace:)
 
             if autoregister
-              # TODO: test this path
-              # :nocov:
-              parent_namespace&.foobara_register(self)
-              # :nocov:
+              # parent_namespace&.foobara_register(instance)
             end
           end
         end
