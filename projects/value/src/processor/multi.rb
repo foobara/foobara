@@ -29,6 +29,8 @@ module Foobara
         end
 
         def possible_errors
+          return @possible_errors if @possible_errors
+
           h = super.to_h do |possible_error|
             [possible_error.key.to_s, possible_error]
           end
@@ -38,7 +40,7 @@ module Foobara
           end
 
           # TODO: change this back to a hash
-          h.values
+          @possible_errors = h.values
         end
 
         def register(processor)

@@ -24,11 +24,8 @@ module Foobara
     # various components of the foobara framework that have some level of coupling.
     # for example, Error in common knows about (or could be implemented to know about)
     # type declarations to expose its context type.
-    project "domain"
-
-    #     Foobara.foobara_organization!
-
-    projects "common",
+    projects "domain",
+             "common",
              "value",
              "types",
              "type_declarations",
