@@ -242,10 +242,6 @@ module Foobara
 
         # TODO: can we kill this skip concept?
         def foobara_manifest(to_include:)
-          organization_name = foobara_organization_name
-
-          domain_name = foobara_domain_name
-
           depends_on = foobara_depends_on.map do |name|
             domain = Domain.to_domain(name)
             to_include << domain
