@@ -37,14 +37,6 @@ module Foobara
             scoped_full_name
           end
 
-          def organization_symbol
-            domain&.organization_symbol
-          end
-
-          def domain_symbol
-            domain&.domain_symbol
-          end
-
           def full_command_symbol
             @full_command_symbol ||= Util.underscore_sym(full_command_name)
           end
