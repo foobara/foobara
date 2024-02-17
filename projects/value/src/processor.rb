@@ -1,9 +1,9 @@
 module Foobara
   module Value
     class Processor
-      foobara_subclasses_are_namespaces!(default_parent: Foobara)
+      foobara_subclasses_are_namespaces!(default_parent: GlobalDomain)
       # Do we really need both to be namespaces??
-      foobara_instances_are_namespaces!(default_parent: Foobara)
+      foobara_instances_are_namespaces!(default_parent: GlobalDomain)
 
       include Manifestable
       include IsManifestable
