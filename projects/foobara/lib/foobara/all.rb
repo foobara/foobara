@@ -28,10 +28,10 @@ module Foobara
     # type declarations to expose its context type.
     projects "common",
              "value",
+             "domain",
              "types",
              "type_declarations",
              "builtin_types",
-             "domain",
              "model",
              "entity",
              "command",

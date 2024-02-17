@@ -4,6 +4,9 @@ module Foobara
     class Type < Value::Processor::Pipeline
       include Concerns::SupportedProcessorRegistration
       include Concerns::Reflection
+      include IsManifestable
+
+      foobara_instances_are_namespaces!
 
       class << self
         def requires_declaration_data?
@@ -327,4 +330,6 @@ module Foobara
       end
     end
   end
+
+  Type = Foobara::Types::Type
 end

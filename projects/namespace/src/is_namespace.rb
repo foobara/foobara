@@ -11,7 +11,7 @@ module Foobara
       end
 
       def foobara_add_category(symbol, &block)
-        @foobara_categories = foobara_categories.merge(symbol.to_sym => block)
+        @foobara_categories = { symbol.to_sym => block }.merge(foobara_categories)
       end
 
       def foobara_add_category_for_instance_of(symbol, klass)

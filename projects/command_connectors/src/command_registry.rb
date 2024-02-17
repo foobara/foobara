@@ -12,8 +12,10 @@ module Foobara
 
       customized = %i[command domain organization]
 
-      Foobara.foobara_categories.each_pair do |symbol, proc|
+      Foobara.foobara_categories.keys.reverse.each do |symbol|
         next if customized.include?(symbol)
+
+        proc = Foobara.foobara_categories[symbol]
 
         foobara_add_category(symbol, &proc)
       end
