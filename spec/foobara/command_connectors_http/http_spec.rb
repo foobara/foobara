@@ -578,9 +578,11 @@ RSpec.describe Foobara::CommandConnectors::Http do
         context "with atomic_entities: true" do
           let(:atomic_entities) { true }
 
-          it "includes the AtomicSerializer"  do
+          it "includes the AtomicSerializer" do
             command_manifest = command_connector.foobara_manifest[:command][:QueryUser]
-            expect(command_manifest[:serializers]).to include("Foobara::CommandConnectors::Serializers::AtomicSerializer")
+            expect(
+              command_manifest[:serializers]
+            ).to include("Foobara::CommandConnectors::Serializers::AtomicSerializer")
           end
         end
 
@@ -680,8 +682,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
               }
               expect(manifest).to be_a(Hash)
               expect(command_manifest[:serializers]).to include(
-                                                          "Foobara::CommandConnectors::Serializers::AggregateSerializer"
-                                                        )
+                "Foobara::CommandConnectors::Serializers::AggregateSerializer"
+              )
             end
 
             context "with aggregate serializer as default serializer" do
@@ -708,8 +710,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 }
                 expect(manifest).to be_a(Hash)
                 expect(command_manifest[:serializers]).to include(
-  "Foobara::CommandConnectors::Serializers::AggregateSerializer"
-                                                          )
+                  "Foobara::CommandConnectors::Serializers::AggregateSerializer"
+                )
               end
 
               context "when disabled via aggregate_entities: false" do

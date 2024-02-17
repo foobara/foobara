@@ -69,13 +69,13 @@ module Foobara
       def domain
         domain_reference = self[:domain]
 
-          Domain.new(root_manifest, [:domain, domain_reference])
+        Domain.new(root_manifest, [:domain, domain_reference])
       end
 
       def organization
         organization_reference = self[:organization]
 
-          Organization.new(root_manifest, [:organization, organization_reference])
+        Organization.new(root_manifest, [:organization, organization_reference])
       end
 
       def parent
