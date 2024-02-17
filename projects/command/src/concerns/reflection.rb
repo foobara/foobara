@@ -58,15 +58,12 @@ module Foobara
               errors_types_depended_on:,
               possible_errors:,
               depends_on:,
-              full_command_name:,
               # TODO: allow inputs type to be nil or really any type?
               inputs_type: inputs_type&.reference_or_declaration_data || {
                 type: :attributes,
                 element_type_declarations: {},
                 required: []
-              },
-              domain_name: domain.foobara_manifest_reference,
-              organization_name: organization.foobara_manifest_reference
+              }
             ).merge(description:)
 
             if result_type

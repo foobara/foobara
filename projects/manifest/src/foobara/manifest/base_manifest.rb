@@ -58,14 +58,6 @@ module Foobara
         end
       end
 
-      def domain_name
-        domain.domain_name
-      end
-
-      def organization_name
-        organization.organization_name
-      end
-
       def domain
         domain_reference = self[:domain]
 
@@ -106,10 +98,6 @@ module Foobara
         type_symbol = type_declaration.type
 
         Type.new(root_manifest, [:type, type_symbol])
-      end
-
-      def domain_name_to_domain(full_domain_name)
-        Domain.new(root_manifest, [:domain, full_domain_name])
       end
 
       def global_domain

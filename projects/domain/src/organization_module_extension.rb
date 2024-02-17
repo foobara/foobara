@@ -42,10 +42,7 @@ module Foobara
             domain.foobara_manifest_reference
           end.sort
 
-          super.merge(
-            organization_name: foobara_organization_name,
-            domains:
-          )
+          super.merge(domains:)
         end
       end
     end
