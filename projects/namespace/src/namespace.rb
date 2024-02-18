@@ -3,7 +3,9 @@ module Foobara
     include IsNamespace
 
     class << self
-      attr_accessor :global
+      def global
+        @global ||= Namespace.new([])
+      end
 
       def current
         Thread.current[:foobara_current_namespace] || global
@@ -48,8 +50,6 @@ module Foobara
         end
       end
     end
-
-    self.global = Foobara
 
     class NotFoundError < StandardError; end
 

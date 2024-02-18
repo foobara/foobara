@@ -13,7 +13,7 @@ module Foobara
       def install!
         TypeDeclarations.register_type_declaration(TypeDeclarations::Handlers::ExtendEntityTypeDeclaration.new)
 
-        model = Foobara.foobara_lookup_type!(:model)
+        model = Namespace.global.foobara_lookup_type!(:model)
         BuiltinTypes.build_and_register!(:entity, model, nil)
       end
 

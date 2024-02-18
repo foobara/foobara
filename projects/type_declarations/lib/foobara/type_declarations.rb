@@ -26,7 +26,7 @@ module Foobara
 
           # Don't we only have to do this for Foobara and not all of these??
           [
-            Foobara,
+            Namespace.global,
             Foobara::GlobalOrganization,
             Foobara::GlobalDomain,
             Domain,
@@ -40,11 +40,11 @@ module Foobara
         end
 
         @original_scoped.each do |scoped|
-          Foobara.foobara_register(scoped)
+          Namespace.global.foobara_register(scoped)
         end
 
         @original_children.each do |child|
-          Foobara.foobara_children << child
+          Namespace.global.foobara_children << child
         end
 
         GlobalDomain.foobara_parent_namespace = GlobalOrganization
@@ -130,8 +130,8 @@ module Foobara
       def capture_current_namespaces
         # TODO: this feels like the wrong place to do this but doing it here for now to make sure it's done when
         # most important
-        @original_scoped = Foobara.foobara_registry.all_scoped
-        @original_children = Foobara.foobara_children
+        @original_scoped = Namespace.global.foobara_registry.all_scoped
+        @original_children = Namespace.global.foobara_children
       end
     end
   end

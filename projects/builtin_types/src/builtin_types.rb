@@ -124,7 +124,7 @@ module Foobara
 
             parent = scoped.scoped_namespace
 
-            if parent.nil? || parent == Foobara || parent == GlobalDomain
+            if parent.nil? || parent == Foobara || parent == Namespace.global || parent == GlobalDomain
               scoped.foobara_parent_namespace = type
               type.foobara_register(scoped)
             end

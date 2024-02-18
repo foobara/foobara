@@ -13,10 +13,6 @@ module Foobara
         end
       end
 
-      def organization_name
-        relevant_manifest["organization_name"] || relevant_manifest[:organization_name]
-      end
-
       def commands
         domains.map(&:commands).flatten
       end

@@ -580,7 +580,9 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
           it "includes the AtomicSerializer" do
             command_manifest = command_connector.foobara_manifest[:command][:QueryUser]
-            expect(command_manifest[:serializers]).to include("CommandConnectors::Serializers::AtomicSerializer")
+            expect(
+              command_manifest[:serializers]
+            ).to include("Foobara::CommandConnectors::Serializers::AtomicSerializer")
           end
         end
 
@@ -679,7 +681,9 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 h[:name] == "Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer"
               }
               expect(manifest).to be_a(Hash)
-              expect(command_manifest[:serializers]).to include("CommandConnectors::Serializers::AggregateSerializer")
+              expect(command_manifest[:serializers]).to include(
+                "Foobara::CommandConnectors::Serializers::AggregateSerializer"
+              )
             end
 
             context "with aggregate serializer as default serializer" do
@@ -705,7 +709,9 @@ RSpec.describe Foobara::CommandConnectors::Http do
                   h[:name] == "Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer"
                 }
                 expect(manifest).to be_a(Hash)
-                expect(command_manifest[:serializers]).to include("CommandConnectors::Serializers::AggregateSerializer")
+                expect(command_manifest[:serializers]).to include(
+                  "Foobara::CommandConnectors::Serializers::AggregateSerializer"
+                )
               end
 
               context "when disabled via aggregate_entities: false" do
@@ -859,8 +865,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 category: :data,
                 symbol: :cannot_cast,
                 key: "data.cannot_cast",
-                error: "Value::Processor::Casting::CannotCastError",
-                processor_class: "Value::Processor::Casting",
+                error: "Foobara::Value::Processor::Casting::CannotCastError",
+                processor_class: "Foobara::Value::Processor::Casting",
                 processor_manifest_data: {
                   casting: { cast_to: { type: :attributes,
                                         element_type_declarations: {
@@ -882,7 +888,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 category: :data,
                 symbol: :cannot_cast,
                 key: "data.bbaassee.cannot_cast",
-                error: "Value::Processor::Casting::CannotCastError",
+                error: "Foobara::Value::Processor::Casting::CannotCastError",
                 processor_manifest_data: { casting: { cast_to: { type: :string } } }
               },
               "data.exponent.cannot_cast" => {
@@ -890,7 +896,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 category: :data,
                 symbol: :cannot_cast,
                 key: "data.exponent.cannot_cast",
-                error: "Value::Processor::Casting::CannotCastError",
+                error: "Foobara::Value::Processor::Casting::CannotCastError",
                 processor_manifest_data: { casting: { cast_to: { type: :string } } }
               }
             )

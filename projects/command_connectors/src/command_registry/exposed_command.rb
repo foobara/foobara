@@ -98,7 +98,8 @@ module Foobara
         transformed_command_class.foobara_manifest(to_include:).merge(super).merge(
           Util.remove_blank(
             scoped_category: :command,
-            full_command_name:
+            domain: command_class.domain.foobara_manifest_reference,
+            organization: command_class.organization.foobara_manifest_reference
           )
         )
       end

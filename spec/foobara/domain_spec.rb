@@ -138,7 +138,7 @@ RSpec.describe Foobara::Domain do
 
       describe "finding organization by name" do
         it "can find by name" do
-          expect(Foobara.foobara_lookup_organization(:SomeOrg).scoped_name).to eq("SomeOrg")
+          expect(Foobara::Namespace.global.foobara_lookup_organization(:SomeOrg).scoped_name).to eq("SomeOrg")
         end
       end
 
@@ -177,7 +177,7 @@ RSpec.describe Foobara::Domain do
           manifest = Foobara.manifest[:command][:"SomeOrg::SomeDomain::SomeCommand"]
           expect(manifest[:result_type][:element_type_declarations][:bar][:type]).to eq(:integer)
 
-          expect(Foobara.foobara_all_organization).to include(organization)
+          expect(Foobara.all_organizations).to include(organization)
           expect(Foobara.all_domains).to include(domain)
           expect(Foobara.all_commands).to include(command_class)
         end

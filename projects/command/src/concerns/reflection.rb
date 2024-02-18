@@ -21,7 +21,8 @@ module Foobara
 
           def foobara_manifest(to_include:)
             depends_on = self.depends_on.map do |command_name|
-              other_command = Foobara.foobara_lookup!(command_name, mode: Foobara::Namespace::LookupMode::ABSOLUTE)
+              other_command = Foobara::Namespace.global.foobara_lookup!(command_name,
+                                                                        mode: Foobara::Namespace::LookupMode::ABSOLUTE)
               to_include << other_command
               other_command.foobara_manifest_reference
             end.sort
@@ -57,15 +58,12 @@ module Foobara
               errors_types_depended_on:,
               possible_errors:,
               depends_on:,
-              full_command_name:,
               # TODO: allow inputs type to be nil or really any type?
               inputs_type: inputs_type&.reference_or_declaration_data || {
                 type: :attributes,
                 element_type_declarations: {},
                 required: []
-              },
-              domain_name: domain.foobara_manifest_reference,
-              organization_name: organization.foobara_manifest_reference
+              }
             ).merge(description:)
 
             if result_type

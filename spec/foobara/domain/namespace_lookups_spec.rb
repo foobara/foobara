@@ -81,14 +81,14 @@ RSpec.describe "Foobara namespace lookup" do
 
   describe "#lookup_*" do
     it "finds the expected objects given certain paths" do
-      expect(Foobara.foobara_lookup_organization("OrgA")).to eq(OrgA)
-      expect(Foobara.foobara_lookup_organization("::OrgA")).to eq(OrgA)
+      expect(Foobara::Namespace.global.foobara_lookup_organization("OrgA")).to eq(OrgA)
+      expect(Foobara::Namespace.global.foobara_lookup_organization("::OrgA")).to eq(OrgA)
 
-      expect(OrgA.foobara_parent_namespace).to eq(Foobara)
+      expect(OrgA.foobara_parent_namespace).to eq(Foobara::Namespace.global)
       expect(OrgA.scoped_path).to eq(%w[OrgA])
       expect(OrgA.scoped_full_path).to eq(%w[OrgA])
-      expect(Foobara.foobara_lookup_organization("OrgA")).to eq(OrgA)
-      expect(Foobara.foobara_lookup_organization("::OrgA")).to eq(OrgA)
+      expect(Foobara::Namespace.global.foobara_lookup_organization("OrgA")).to eq(OrgA)
+      expect(Foobara::Namespace.global.foobara_lookup_organization("::OrgA")).to eq(OrgA)
 
       expect(OrgA::DomainA.foobara_parent_namespace).to eq(OrgA)
       expect(OrgA::DomainA.scoped_path).to eq(%w[DomainA])
@@ -96,10 +96,10 @@ RSpec.describe "Foobara namespace lookup" do
       expect(OrgA::DomainA.scoped_full_name).to eq("OrgA::DomainA")
       expect(OrgA::DomainA.scoped_absolute_name).to eq("::OrgA::DomainA")
       expect(
-        Foobara.foobara_lookup_domain("OrgA::DomainA")
+        Foobara::Namespace.global.foobara_lookup_domain("OrgA::DomainA")
       ).to eq(OrgA::DomainA)
       expect(
-        Foobara.foobara_lookup_domain("::OrgA::DomainA")
+        Foobara::Namespace.global.foobara_lookup_domain("::OrgA::DomainA")
       ).to eq(OrgA::DomainA)
 
       expect(OrgA::DomainA.foobara_lookup_domain(:DomainA)).to eq(OrgA::DomainA)
@@ -112,20 +112,22 @@ RSpec.describe "Foobara namespace lookup" do
       expect(OrgA::DomainA::CommandA.scoped_full_path).to eq(%w[OrgA DomainA CommandA])
       expect(OrgA::DomainA::CommandA.scoped_absolute_name).to eq("::OrgA::DomainA::CommandA")
       expect(OrgA::DomainA::CommandA.scoped_full_name).to eq("OrgA::DomainA::CommandA")
-      expect(Foobara.foobara_lookup_command("OrgA::DomainA::CommandA")).to eq(OrgA::DomainA::CommandA)
-      expect(Foobara.foobara_lookup_command("::OrgA::DomainA::CommandA")).to eq(OrgA::DomainA::CommandA)
+      expect(Foobara::Namespace.global.foobara_lookup_command("OrgA::DomainA::CommandA")).to eq(OrgA::DomainA::CommandA)
+      expect(Foobara::Namespace.global.foobara_lookup_command("::OrgA::DomainA::CommandA")).to eq(
+        OrgA::DomainA::CommandA
+      )
 
       expect(GlobalError.scoped_namespace).to eq(Foobara::GlobalDomain)
       expect(GlobalError.scoped_path).to eq(%w[GlobalError])
       expect(GlobalError.scoped_full_path).to eq(%w[GlobalError])
-      expect(Foobara.foobara_lookup_error("GlobalError")).to eq(GlobalError)
-      expect(Foobara.foobara_lookup_error("::GlobalError")).to eq(GlobalError)
+      expect(Foobara::Namespace.global.foobara_lookup_error("GlobalError")).to eq(GlobalError)
+      expect(Foobara::Namespace.global.foobara_lookup_error("::GlobalError")).to eq(GlobalError)
 
       expect(OrgA::DomainB::CommandA::SomeError.scoped_namespace).to eq(OrgA::DomainB::CommandA)
 
       expect(number.foobara_parent_namespace).to eq(Foobara::GlobalDomain)
-      expect(Foobara.foobara_lookup_type("number")).to eq(number)
-      expect(Foobara.foobara_lookup_type("::number")).to eq(number)
+      expect(Foobara::Namespace.global.foobara_lookup_type("number")).to eq(number)
+      expect(Foobara::Namespace.global.foobara_lookup_type("::number")).to eq(number)
 
       expect(Max.foobara_lookup("TooBig")).to eq(Max::TooBig)
 
@@ -133,14 +135,14 @@ RSpec.describe "Foobara namespace lookup" do
         number.foobara_lookup_processor_class("SupportedValidators::Max")
       ).to eq(Foobara::BuiltinTypes::Number::SupportedValidators::Max)
       expect(
-        Foobara.foobara_lookup_processor_class("number::Max")
+        Foobara::Namespace.global.foobara_lookup_processor_class("number::Max")
       ).to eq(Foobara::BuiltinTypes::Number::SupportedValidators::Max)
       expect(
-        Foobara.foobara_lookup_processor_class("::number::Max")
+        Foobara::Namespace.global.foobara_lookup_processor_class("::number::Max")
       ).to eq(Foobara::BuiltinTypes::Number::SupportedValidators::Max)
 
       expect(Max.foobara_lookup("TooBig")).to eq(Max::TooBig)
-      expect(Foobara.foobara_lookup("number::SupportedValidators::Max::MaxExceededError")).to eq(
+      expect(Foobara::Namespace.global.foobara_lookup("number::SupportedValidators::Max::MaxExceededError")).to eq(
         Foobara::BuiltinTypes::Number::SupportedValidators::Max::MaxExceededError
       )
     end
@@ -148,10 +150,10 @@ RSpec.describe "Foobara namespace lookup" do
     context "when one domain depends on another" do
       it "can lookup items in the other domain after marking it as dependent" do
         expect(
-          Foobara.foobara_lookup_organization("OrgA", mode: Foobara::Namespace::LookupMode::STRICT)
+          Foobara::Namespace.global.foobara_lookup_organization("OrgA", mode: Foobara::Namespace::LookupMode::STRICT)
         ).to eq(OrgA)
         expect(
-          Foobara.foobara_lookup_organization("::OrgA", mode: Foobara::Namespace::LookupMode::DIRECT)
+          Foobara::Namespace.global.foobara_lookup_organization("::OrgA", mode: Foobara::Namespace::LookupMode::DIRECT)
         ).to eq(OrgA)
         expect(OrgA::DomainA.foobara_lookup_command("CommandA")).to eq(OrgA::DomainA::CommandA)
         expect(OrgA::DomainA.foobara_lookup_command("DomainA::CommandA")).to eq(OrgA::DomainA::CommandA)

@@ -127,7 +127,7 @@ RSpec.describe ":model" do
   end
 
   it "extends duck" do
-    duck = Foobara.foobara_lookup_type!(:duck)
+    duck = Foobara::Namespace.global.foobara_lookup_type!(:duck)
     expect(type.extends_type?(duck)).to be(true)
   end
 

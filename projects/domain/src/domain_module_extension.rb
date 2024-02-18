@@ -10,7 +10,7 @@ module Foobara
         when nil
           global
         when ::String, ::Symbol
-          domain = Foobara.foobara_lookup_domain(object)
+          domain = Namespace.global.foobara_lookup_domain(object)
 
           unless domain
             # :nocov:
@@ -60,7 +60,7 @@ module Foobara
         attr_writer :foobara_domain_name, :foobara_full_domain_name
 
         def foobara_domain_name
-          # TODO: eliminate this global concept concept
+          # TODO: does this work properly with prefixes?
           @foobara_domain_name || scoped_name
         end
 
@@ -242,10 +242,6 @@ module Foobara
 
         # TODO: can we kill this skip concept?
         def foobara_manifest(to_include:)
-          organization_name = foobara_organization_name
-
-          domain_name = foobara_domain_name
-
           depends_on = foobara_depends_on.map do |name|
             domain = Domain.to_domain(name)
             to_include << domain
@@ -262,12 +258,7 @@ module Foobara
             type.foobara_manifest_reference
           end.sort
 
-          manifest = super.merge(
-            organization_name:,
-            domain_name:,
-            commands:,
-            types:
-          )
+          manifest = super.merge(commands:, types:)
 
           unless depends_on.empty?
             manifest[:depends_on] = depends_on

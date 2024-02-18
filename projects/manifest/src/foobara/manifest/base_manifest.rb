@@ -58,32 +58,16 @@ module Foobara
         end
       end
 
-      def domain_name
-        domain.domain_name
-      end
-
-      def organization_name
-        organization.organization_name
-      end
-
       def domain
         domain_reference = self[:domain]
 
-        if domain_reference
-          Domain.new(root_manifest, [:domain, domain_reference])
-        else
-          global_domain
-        end
+        Domain.new(root_manifest, [:domain, domain_reference])
       end
 
       def organization
         organization_reference = self[:organization]
 
-        if organization_reference
-          Organization.new(root_manifest, [:organization, organization_reference])
-        else
-          global_organization
-        end
+        Organization.new(root_manifest, [:organization, organization_reference])
       end
 
       def parent
@@ -114,10 +98,6 @@ module Foobara
         type_symbol = type_declaration.type
 
         Type.new(root_manifest, [:type, type_symbol])
-      end
-
-      def domain_name_to_domain(full_domain_name)
-        Domain.new(root_manifest, [:domain, full_domain_name])
       end
 
       def global_domain

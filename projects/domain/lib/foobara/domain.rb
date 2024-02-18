@@ -11,8 +11,8 @@ module Foobara
         # TODO: delete this?
         @installed = true
 
-        Foobara.foobara_add_category(:organization) { is_a?(Module) && foobara_organization? }
-        Foobara.foobara_add_category(:domain) { is_a?(Module) && foobara_domain? }
+        Namespace.global.foobara_add_category(:organization) { is_a?(Module) && foobara_organization? }
+        Namespace.global.foobara_add_category(:domain) { is_a?(Module) && foobara_domain? }
       end
     end
   end

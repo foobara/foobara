@@ -1,5 +1,6 @@
 module Foobara
   # TODO: feels so strange that this doesn't inherit from command
+  # TODO: move this to command connectors project
   class TransformedCommand
     class << self
       attr_accessor :command_class,
