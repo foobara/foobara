@@ -25,7 +25,7 @@ module Foobara
               namespace = namespace.foobara_parent_namespace
             end
 
-            d
+            d || GlobalDomain
           end
 
           # TODO: prefix these...
