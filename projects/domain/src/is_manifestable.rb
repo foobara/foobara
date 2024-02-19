@@ -15,13 +15,13 @@ module Foobara
         scoped = scoped.scoped_namespace
       end
 
-      @foobara_domain = nil
+      @foobara_domain = GlobalDomain
     end
 
     def foobara_organization
       if is_a?(::Module) && foobara_organization?
         self
-      elsif foobara_domain
+      else
         foobara_domain.foobara_organization
       end
     end
