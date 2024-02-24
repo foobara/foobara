@@ -1,4 +1,8 @@
 RSpec.describe Foobara::Command::Concerns::Runtime do
+  after do
+    Foobara.reset_alls
+  end
+
   let(:command_class) {
     stub_class(:CalculateExponent, Foobara::Command) do
       inputs exponent: :integer,
@@ -48,6 +52,31 @@ RSpec.describe Foobara::Command::Concerns::Runtime do
       expect(command.respond_to?(:exponent)).to be(true)
       expect(command.base).to eq(4)
       expect(command.exponent).to eq(3)
+      expect(command.run!).to eq(4**3)
+    end
+  end
+
+  context "with a model as inputs" do
+    let(:command_class) do
+      stub_class(:CalculateInputs, Foobara::Model) do
+        attributes do
+          base :integer
+          exponent :integer
+        end
+      end
+      stub_class(:CalculateExponent, Foobara::Command) do
+        inputs CalculateInputs
+
+        def execute
+          base**exponent
+        end
+      end
+    end
+
+    let(:command) { command_class.new(inputs) }
+    let(:inputs) { { base: 4, exponent: 3 } }
+
+    it "gives convenient access to the inputs" do
       expect(command.run!).to eq(4**3)
     end
   end

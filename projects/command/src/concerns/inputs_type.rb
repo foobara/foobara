@@ -12,7 +12,13 @@ module Foobara
               unregister_possible_error_if_registered(possible_error)
             end
 
-            @inputs_type = type_for_declaration(...)
+            type = type_for_declaration(...)
+
+            if type.extends_symbol?(:model) && !type.extends_symbol?(:entity)
+              type = type.element_types
+            end
+
+            @inputs_type = type
 
             register_possible_input_errors
 
