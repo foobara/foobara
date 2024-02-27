@@ -79,6 +79,8 @@ module Foobara
       command_registry.foobara_lookup_command(name)
     end
 
+    # TODO: maybe instead connect commands with a shortcut_only: "describe" option
+    # in order to make this easier to extend and manage.
     def request_to_command(request)
       action = request.action
       inputs = nil
