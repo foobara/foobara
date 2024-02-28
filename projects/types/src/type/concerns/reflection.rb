@@ -62,8 +62,14 @@ module Foobara
           end
 
           def inspect
+            name = if scoped_path_set?
+                     scoped_full_name
+                   else
+                     "Anonymous #{base_type.type_symbol}"
+                   end
+
             # :nocov:
-            "#<Type:#{scoped_full_name}:0x#{object_id.to_s(16)} #{declaration_data}>"
+            "#<Type:#{name}:0x#{object_id.to_s(16)} #{declaration_data}>"
             # :nocov:
           end
         end
