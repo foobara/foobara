@@ -54,27 +54,31 @@ module Foobara
                        to: :command_class
 
       def inputs_type
-        input_transformer = inputs_transformers.find do |transformer|
-          transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer && transformer.input_type
+        type = command_class.inputs_type
+
+        inputs_transformers.reverse.each do |transformer|
+          if transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer
+            new_type = transformer.type(type)
+
+            type = new_type if new_type
+          end
         end
 
-        if input_transformer
-          input_transformer.input_type
-        else
-          command_class.inputs_type
-        end
+        type
       end
 
       def result_type
-        output_transformer = result_transformers.reverse.find do |transformer|
-          transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer && transformer.output_type
+        type = command_class.result_type
+
+        result_transformers.each do |transformer|
+          if transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer
+            new_type = transformer.type(type)
+
+            type = new_type if new_type
+          end
         end
 
-        if output_transformer
-          output_transformer.output_type
-        else
-          command_class.result_type
-        end
+        type
       end
 
       def error_context_type_map
@@ -248,7 +252,7 @@ module Foobara
     def inputs_transformer
       return nil if inputs_transformers.empty?
 
-      transformers = transformers_to_processors(inputs_transformers)
+      transformers = transformers_to_processors(inputs_transformers, command_class.inputs_type)
 
       if transformers.size == 1
         transformers.first
@@ -260,7 +264,7 @@ module Foobara
     def result_transformer
       return nil if result_transformers.empty?
 
-      transformers = transformers_to_processors(result_transformers)
+      transformers = transformers_to_processors(result_transformers, command_class.result_type)
 
       if transformers.size == 1
         transformers.first
@@ -270,13 +274,13 @@ module Foobara
     end
 
     # TODO: let's get this out of here...
-    # we might want to have diferent serializers for different command instances of the same class.
+    # we might want to have different serializers for different command instances of the same class.
     # but currently serializers is set on the class. Since this class should not be concerned with serialization, we
     # should just try to relocate this to the Request which could delegate to the registry for defaults.
     def serializer
       return nil if serializers.empty?
 
-      transformers = transformers_to_processors(serializers)
+      transformers = transformers_to_processors(serializers, nil)
 
       if transformers.size == 1
         transformers.first
@@ -288,7 +292,7 @@ module Foobara
     def errors_transformer
       return nil if errors_transformers.empty?
 
-      transformers = transformers_to_processors(errors_transformers)
+      transformers = transformers_to_processors(errors_transformers, nil)
 
       if transformers.size == 1
         transformers.first
@@ -301,7 +305,7 @@ module Foobara
     def pre_commit_transformer
       return nil if pre_commit_transformers.empty?
 
-      transformers = transformers_to_processors(pre_commit_transformers)
+      transformers = transformers_to_processors(pre_commit_transformers, nil)
 
       if transformers.size == 1
         transformers.first
@@ -310,10 +314,17 @@ module Foobara
       end
     end
 
-    def transformers_to_processors(transformers)
+    def transformers_to_processors(transformers, from_type)
       transformers.map do |transformer|
         if transformer.is_a?(Class)
-          transformer.new(self)
+          if transformer < TypeDeclarations::TypedTransformer
+            transformer.new(from_type).tap do |tx|
+              new_type = tx.type
+              from_type = new_type if new_type
+            end
+          else
+            transformer.new(self)
+          end
         elsif transformer.is_a?(Value::Processor)
           transformer
         elsif transformer.respond_to?(:call)
