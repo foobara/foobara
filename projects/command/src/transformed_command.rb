@@ -58,7 +58,7 @@ module Foobara
 
         inputs_transformers.reverse.each do |transformer|
           if transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer
-            new_type = transformer.input_type(type)
+            new_type = transformer.type(type)
 
             type = new_type if new_type
           end
@@ -68,15 +68,17 @@ module Foobara
       end
 
       def result_type
-        output_transformer = result_transformers.reverse.find do |transformer|
-          transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer && transformer.output_type
+        type = command_class.result_type
+
+        result_transformers.each do |transformer|
+          if transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer
+            new_type = transformer.type(type)
+
+            type = new_type if new_type
+          end
         end
 
-        if output_transformer
-          output_transformer.output_type
-        else
-          command_class.result_type
-        end
+        type
       end
 
       def error_context_type_map
@@ -290,7 +292,7 @@ module Foobara
     def errors_transformer
       return nil if errors_transformers.empty?
 
-      transformers = transformers_to_processors(errors_transformers, command_class.error_type)
+      transformers = transformers_to_processors(errors_transformers, nil)
 
       if transformers.size == 1
         transformers.first
@@ -314,9 +316,8 @@ module Foobara
 
     def transformers_to_processors(transformers, from_type)
       transformers.map do |transformer|
-        binding.pry
         if transformer.is_a?(Class)
-          if transformer.is_a?(TypeDeclarations::TypedTransformer)
+          if transformer < TypeDeclarations::TypedTransformer
             transformer.new(from_type).tap do |tx|
               new_type = tx.type
               from_type = new_type if new_type

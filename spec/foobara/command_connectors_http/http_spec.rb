@@ -791,7 +791,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
         let(:inputs_transformer) do
           stub_class "SomeTransformer", Foobara::TypeDeclarations::TypedTransformer do
             class << self
-              def type_declaration(_previous_input_type)
+              def type_declaration(_from_type)
                 {
                   bbaassee: :string,
                   exponent: :string
@@ -814,7 +814,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
         let(:result_transformer) do
           stub_class :SomeOtherTransformer, Foobara::TypeDeclarations::TypedTransformer do
             class << self
-              def output_type_declaration(_previous_output_type)
+              def type_declaration(_from_type)
                 { answer: :string }
               end
             end
@@ -825,7 +825,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
           end
         end
 
-        it "runs the command", :focus do
+        it "runs the command" do
           expect(response.status).to be(200)
           expect(response.headers).to be_a(Hash)
           expect(JSON.parse(response.body)).to eq("answer" => "8")

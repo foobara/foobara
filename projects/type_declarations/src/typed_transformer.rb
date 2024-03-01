@@ -19,7 +19,8 @@ module Foobara
         # 1. Command takes model A
         # 2. we want an inputs transformer that takes A.attributes_type
         # 3. Therefore its type is A.attributes_type
-        # 4. And also, its output type is A.attributes_type in this case since there's no need to actually create the models.
+        # 4. And also, its output type is A.attributes_type in this case since there's no need to actually create the
+        #    models.
         # 5. So to tell our type, we must know the type of what comes next.
         #
         # Use case 2:
@@ -53,7 +54,7 @@ module Foobara
         # So we might be able to get away with a transformed_type that accepts the from_type. And the calling code can
         # interpret how it goes. This might create some awkwardness or confusion at least when creating one of the
         # two types of transformer.
-        def type_declaration(from_type)
+        def type_declaration(_from_type)
           nil
         end
 
@@ -75,18 +76,19 @@ module Foobara
       end
 
       def process_value(value)
-        input = if from_type
-                  input_outcome = from_type.process_value(value)
-                  input_outcome.success? ? input_outcome.result : value
-                else
-                  value
-                end
+        # input = if from_type
+        #           binding.pry
+        #           input_outcome = from_type.process_value(value)
+        #           input_outcome.success? ? input_outcome.result : value
+        #         else
+        #           value
+        #         end
 
-        output = transform(input)
+        output = transform(value)
 
-        if type
-          output = type.process_value!(output)
-        end
+        # if type
+        #   output = type.process_value!(output)
+        # end
 
         Outcome.success(output)
       end
