@@ -54,15 +54,17 @@ module Foobara
                        to: :command_class
 
       def inputs_type
-        input_transformer = inputs_transformers.find do |transformer|
-          transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer && transformer.input_type
+        type = command_class.inputs_type
+
+        inputs_transformers.reverse.each do |transformer|
+          if transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer
+            new_type = transformer.input_type(type)
+
+            type = new_type if new_type
+          end
         end
 
-        if input_transformer
-          input_transformer.input_type
-        else
-          command_class.inputs_type
-        end
+        type
       end
 
       def result_type
@@ -312,6 +314,7 @@ module Foobara
 
     def transformers_to_processors(transformers)
       transformers.map do |transformer|
+        binding.pry
         if transformer.is_a?(Class)
           transformer.new(self)
         elsif transformer.is_a?(Value::Processor)
