@@ -250,7 +250,7 @@ module Foobara
     def inputs_transformer
       return nil if inputs_transformers.empty?
 
-      transformers = transformers_to_processors(inputs_transformers)
+      transformers = transformers_to_processors(inputs_transformers, command_class.inputs_type)
 
       if transformers.size == 1
         transformers.first
@@ -262,7 +262,7 @@ module Foobara
     def result_transformer
       return nil if result_transformers.empty?
 
-      transformers = transformers_to_processors(result_transformers)
+      transformers = transformers_to_processors(result_transformers, command_class.result_type)
 
       if transformers.size == 1
         transformers.first
@@ -278,7 +278,7 @@ module Foobara
     def serializer
       return nil if serializers.empty?
 
-      transformers = transformers_to_processors(serializers)
+      transformers = transformers_to_processors(serializers, nil)
 
       if transformers.size == 1
         transformers.first
@@ -290,7 +290,7 @@ module Foobara
     def errors_transformer
       return nil if errors_transformers.empty?
 
-      transformers = transformers_to_processors(errors_transformers)
+      transformers = transformers_to_processors(errors_transformers, command_class.error_type)
 
       if transformers.size == 1
         transformers.first
@@ -303,7 +303,7 @@ module Foobara
     def pre_commit_transformer
       return nil if pre_commit_transformers.empty?
 
-      transformers = transformers_to_processors(pre_commit_transformers)
+      transformers = transformers_to_processors(pre_commit_transformers, nil)
 
       if transformers.size == 1
         transformers.first
@@ -312,11 +312,18 @@ module Foobara
       end
     end
 
-    def transformers_to_processors(transformers)
+    def transformers_to_processors(transformers, from_type)
       transformers.map do |transformer|
         binding.pry
         if transformer.is_a?(Class)
-          transformer.new(self)
+          if transformer.is_a?(TypeDeclarations::TypedTransformer)
+            transformer.new(from_type).tap do |tx|
+              new_type = tx.type
+              from_type = new_type if new_type
+            end
+          else
+            transformer.new(self)
+          end
         elsif transformer.is_a?(Value::Processor)
           transformer
         elsif transformer.respond_to?(:call)

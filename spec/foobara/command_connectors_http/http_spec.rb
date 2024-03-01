@@ -791,7 +791,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
         let(:inputs_transformer) do
           stub_class "SomeTransformer", Foobara::TypeDeclarations::TypedTransformer do
             class << self
-              def input_type_declaration(_previous_input_type)
+              def type_declaration(_previous_input_type)
                 {
                   bbaassee: :string,
                   exponent: :string
