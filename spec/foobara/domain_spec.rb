@@ -65,6 +65,19 @@ RSpec.describe Foobara::Domain do
     end
   end
 
+  describe ".foobara_register_type" do
+    let(:type_symbol) { :some_type }
+    let(:type_declaration) { %i[string downcase] }
+
+    it "creates and registers a type" do
+      domain.foobara_register_type(type_symbol, *type_declaration)
+
+      type = domain.foobara_lookup(type_symbol)
+
+      expect(type.process_value!("FooBarBaz")).to eq("foobarbaz")
+    end
+  end
+
   describe ".foobara_register_entity" do
     let(:entity_name) { :SomeEntity }
     let(:primary_key) { :id }

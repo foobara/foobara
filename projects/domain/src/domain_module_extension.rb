@@ -115,6 +115,16 @@ module Foobara
           foobara_all_command(mode: Namespace::LookupMode::DIRECT)
         end
 
+        def foobara_register_type(type_symbol, ...)
+          type = foobara_type_from_declaration(...)
+
+          type.type_symbol = type_symbol
+          type.foobara_parent_namespace ||= self
+          foobara_register(type)
+
+          type
+        end
+
         def foobara_register_model(model_class, reregister: false)
           type = model_class.model_type
 
