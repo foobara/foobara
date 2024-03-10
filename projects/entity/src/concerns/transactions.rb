@@ -13,14 +13,14 @@ module Foobara
             Foobara::Persistence.current_transaction!(self)
           end
 
-          def transaction(mode: nil, skip_dependent_transactions: false, &block)
+          def transaction(mode: nil, skip_dependent_transactions: false, &)
             if skip_dependent_transactions
-              entity_base.transaction(mode, &block)
+              entity_base.transaction(mode, &)
             else
               Foobara::Persistence.transaction(
                 self, *deep_depends_on,
                 mode:,
-                &block
+                &
               )
             end
           end

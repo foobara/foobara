@@ -156,6 +156,29 @@ RSpec.describe Foobara::BuiltinTypes::Attributes do
         expect(attributes).to eq(a: 100, b: 1, c: 2)
       end
     end
+
+    context "when attribute is present but is nil" do
+      subject { type.process_value!(foo: "foo", bar: nil)[:bar] }
+
+      let(:type_declaration) do
+        {
+          type: :attributes,
+          element_type_declarations: {
+            foo: { type: :string },
+            bar: { type: :string, allow_nil:, default: "baz" }
+          }
+        }
+      end
+      let(:allow_nil) { false }
+
+      it { is_expected.to eq("baz") }
+
+      context "when attribute is marked as allow_nil => true" do
+        let(:allow_nil) { true }
+
+        it { is_expected.to be_nil }
+      end
+    end
   end
 
   describe "required attributes" do

@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/foobara/rubocop-rules.git
-  revision: ea100ea86b708a441ef66ce0861dc72237316f2a
+  revision: e9d8f5c45ea37810f369d1c2f46e3e386d5abb2c
   specs:
     foobara-rubocop-rules (0.0.1)
       rubocop
@@ -8,7 +8,7 @@ GIT
 
 GIT
   remote: https://github.com/foobara/spec-helpers.git
-  revision: f59ca59324280455353ef3ba85f95ce7da24bfdc
+  revision: e4ecc7b01a73b08dc12bd7422162a6afb0abec89
   specs:
     foobara-spec-helpers (0.1.0)
 
@@ -92,7 +92,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.12.0)
     rspec-support (3.12.1)
-    rubocop (1.60.2)
+    rubocop (1.62.0)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
       parallel (~> 1.10)
@@ -100,18 +100,18 @@ GEM
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 1.8, < 3.0)
       rexml (>= 3.2.5, < 4.0)
-      rubocop-ast (>= 1.30.0, < 2.0)
+      rubocop-ast (>= 1.31.1, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 2.4.0, < 3.0)
-    rubocop-ast (1.30.0)
-      parser (>= 3.2.1.0)
+    rubocop-ast (1.31.2)
+      parser (>= 3.3.0.4)
     rubocop-capybara (2.20.0)
       rubocop (~> 1.41)
     rubocop-factory_bot (2.25.1)
       rubocop (~> 1.41)
     rubocop-rake (0.6.0)
       rubocop (~> 1.0)
-    rubocop-rspec (2.26.1)
+    rubocop-rspec (2.27.1)
       rubocop (~> 1.40)
       rubocop-capybara (~> 2.17)
       rubocop-factory_bot (~> 2.22)
