@@ -109,6 +109,10 @@ module Foobara
           object.scoped_path = scoped_path if scoped_path
 
           object.extend ::Foobara::Namespace::IsNamespace
+
+          if object.is_a?(Module)
+            Namespace::NamespaceHelpers.update_children_with_new_parent(object)
+          end
         end
 
         def foobara_subclasses_are_namespaces!(klass, default_parent: nil, autoregister: nil)
