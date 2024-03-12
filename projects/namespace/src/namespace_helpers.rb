@@ -183,7 +183,7 @@ module Foobara
           mod.scoped_path = adjusted_scoped_path
         end
 
-        def _update_children_with_new_parent(new_parent, start_at = new_parent)
+        def update_children_with_new_parent(new_parent, start_at = new_parent)
           start_at.constants(false).each do |constant|
             value = start_at.const_get(constant, false)
 
@@ -203,7 +203,7 @@ module Foobara
                 value.foobara_parent_namespace = new_parent
               end
             else
-              _update_children_with_new_parent(new_parent, value)
+              update_children_with_new_parent(new_parent, value)
             end
           end
         end

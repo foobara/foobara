@@ -28,7 +28,7 @@ module Foobara
           self.foobara_parent_namespace = parent
 
           if is_a?(Module)
-            Namespace::NamespaceHelpers._update_children_with_new_parent(self)
+            Namespace::NamespaceHelpers.update_children_with_new_parent(self)
           end
         end
       end
@@ -53,7 +53,7 @@ module Foobara
           self.foobara_parent_namespace = parent
 
           if is_a?(Module)
-            Namespace::NamespaceHelpers._update_children_with_new_parent(self)
+            Namespace::NamespaceHelpers.update_children_with_new_parent(self)
           end
         end
       end
