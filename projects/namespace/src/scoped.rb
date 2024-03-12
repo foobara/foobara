@@ -82,6 +82,10 @@ module Foobara
       defined?(@scoped_path)
     end
 
+    def unset_scoped_path
+      remove_instance_variable(:@scoped_path)
+    end
+
     def scoped_ignore_module?(mod)
       @scoped_ignore_modules&.include?(mod) || scoped_namespace&.scoped_ignore_module?(mod)
     end

@@ -109,6 +109,10 @@ module Foobara
           object.scoped_path = scoped_path if scoped_path
 
           object.extend ::Foobara::Namespace::IsNamespace
+
+          if object.is_a?(Module)
+            Namespace::NamespaceHelpers.update_children_with_new_parent(object)
+          end
         end
 
         def foobara_subclasses_are_namespaces!(klass, default_parent: nil, autoregister: nil)
@@ -181,6 +185,31 @@ module Foobara
 
           mod.scoped_path_autoset = true
           mod.scoped_path = adjusted_scoped_path
+        end
+
+        def update_children_with_new_parent(new_parent, start_at = new_parent)
+          start_at.constants(false).each do |constant|
+            value = start_at.const_get(constant, false)
+
+            next unless value.is_a?(Module)
+
+            if value.is_a?(Scoped)
+              next unless value.scoped_path_autoset?
+
+              value.unset_scoped_path
+              Namespace::NamespaceHelpers.foobara_autoset_scoped_path(value)
+
+              value.scoped_namespace&.foobara_unregister(value)
+              new_parent.foobara_register(value)
+
+              if value.is_a?(Namespace::IsNamespace)
+                value.foobara_parent_namespace&.foobara_children&.delete(value)
+                value.foobara_parent_namespace = new_parent
+              end
+            else
+              update_children_with_new_parent(new_parent, value)
+            end
+          end
         end
       end
 
