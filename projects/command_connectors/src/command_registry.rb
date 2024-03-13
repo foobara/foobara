@@ -243,7 +243,7 @@ module Foobara
     end
 
     def transformed_command_from_name(name)
-      foobara_lookup_command(name)&.transformed_command_class
+      foobara_lookup_command(name, mode: Namespace::LookupMode::RELAXED)&.transformed_command_class
     end
 
     def all_transformed_command_classes
