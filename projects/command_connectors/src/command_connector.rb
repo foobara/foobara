@@ -293,60 +293,10 @@ module Foobara
       response
     end
 
-    def registered_types_depended_on
-      @registered_types_depended_on ||= begin
-        types_depended_on = Set.new
-
-        # TODO: should group by org and domain...
-        each_transformed_command_class do |transformed_command_class|
-          types_depended_on |= transformed_command_class.types_depended_on
-        end
-
-        # TODO: does this play nicely with types with same symbol in different namespaces??
-        types_depended_on.select(&:registered?)
-      end
-    end
-
-    def registered_types_depended_on_by_symbol
-      @registered_types_depended_on_by_symbol ||= registered_types_depended_on.group_by(&:type_symbol).to_h do |k, v|
-        if v.size == 1
-          [k, v.first]
-        else
-          [k, v]
-        end
-      end
-    end
-
-    # TODO: relocate these methods into namespace or type registry or somewhere other than here
     def type_from_name(name)
-      type_name, domain, org = name.to_s.split("::").reverse
-      types = registered_types_depended_on_by_symbol[type_name.to_sym]
-
-      if types
-        if types.is_a?(::Array)
-          types = types.select { |type| domain_org_match_type?(type, domain, org) }
-
-          if types.size > 1
-            # What are we doing here?
-            types.find  { |type| Domain.to_domain(type) == GlobalDomain }
-          else
-            types.first
-          end
-        elsif domain_org_match_type?(types, domain, org)
-          types
-        end
-      end
+      Foobara.foobara_lookup_type(name, mode: Namespace::LookupMode::RELAXED)
     end
 
-    def domain_org_match_type?(type, domain_name, org_name)
-      dom = Domain.to_domain(type)
-
-      (org_name.nil? || org_name == dom&.foobara_organization_name) &&
-        (domain_name.nil? || domain_name == dom&.foobara_domain_name)
-    end
-
-    # TODO: break this method up and/or come up with more abstract ways to transform domains...
-    # TODO: this stuff
     def foobara_manifest
       # Drive all of this off of the list of exposed commands...
       to_include = Set.new
