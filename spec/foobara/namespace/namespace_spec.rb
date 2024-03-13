@@ -76,7 +76,7 @@ RSpec.describe Foobara::Namespace do
           keys.each do |key|
             expect {
               namespace.foobara_lookup!(key)
-            }.to raise_error(Foobara::Namespace::AmbiguousRegistry::AmbiguousLookupError)
+            }.to raise_error(Foobara::Namespace::AmbiguousLookupError)
           end
 
           keys = [

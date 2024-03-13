@@ -21,10 +21,11 @@ module Foobara
     # TODO: don't we have an enumerated class/project for this?
     module LookupMode
       GENERAL = :general
+      RELAXED = :relaxed
       DIRECT = :direct
       STRICT = :strict
       ABSOLUTE = :absolute
-      ALL = [GENERAL, DIRECT, STRICT, ABSOLUTE].freeze
+      ALL = [GENERAL, RELAXED, DIRECT, STRICT, ABSOLUTE].freeze
 
       class << self
         def validate!(mode)

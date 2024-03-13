@@ -1,5 +1,7 @@
 module Foobara
   class Namespace
+    class AmbiguousLookupError < StandardError; end
+
     class BaseRegistry
       class WouldMakeRegistryAmbiguousError < StandardError; end
       class NotRegisteredError < StandardError; end

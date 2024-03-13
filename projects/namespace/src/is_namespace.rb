@@ -93,6 +93,32 @@ module Foobara
 
         path = Namespace.to_registry_path(path)
 
+        if mode == LookupMode::RELAXED
+          scoped = foobara_lookup(
+            path,
+            filter:,
+            mode: LookupMode::GENERAL,
+            allowed_namespaces:,
+            visited:
+          )
+          return scoped if scoped
+
+          candidates = foobara_children.map do |namespace|
+            next if visited&.include?([path, mode, namespace])
+
+            namespace.foobara_lookup(path, filter:, mode:, allowed_namespaces:, visited:)
+          end.compact
+
+          if candidates.size > 1
+            # :nocov:
+            raise AmbiguousNameError,
+                  "#{path} is ambiguous. Matches the following: #{candidates.map(&:scoped_full_name)}"
+            # :nocov:
+          end
+
+          return candidates.first
+        end
+
         if path[0] == ""
           if mode == LookupMode::DIRECT
             return nil unless scoped_full_name == ""

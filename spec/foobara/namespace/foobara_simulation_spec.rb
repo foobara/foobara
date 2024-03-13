@@ -238,5 +238,13 @@ RSpec.describe Foobara::Namespace do
         FoobaraSimulation::Max::TooBig
       )
     end
+
+    context "with relaxed mode" do
+      it "can find scoped object without prefixes" do
+        expect(
+          FoobaraSimulation::Foobara.foobara_lookup("TooBig", mode: Foobara::Namespace::LookupMode::RELAXED)
+        ).to eq(FoobaraSimulation::Max::TooBig)
+      end
+    end
   end
 end

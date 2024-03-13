@@ -1,8 +1,6 @@
 module Foobara
   class Namespace
     class AmbiguousRegistry < BaseRegistry
-      class AmbiguousLookupError < StandardError; end
-
       def registry
         @registry ||= {}
       end

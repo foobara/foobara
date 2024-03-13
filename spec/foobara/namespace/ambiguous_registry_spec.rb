@@ -47,7 +47,7 @@ RSpec.describe Foobara::Namespace::AmbiguousRegistry do
       it "raises" do
         expect {
           registry.lookup(%w[z User])
-        }.to raise_error(Foobara::Namespace::AmbiguousRegistry::AmbiguousLookupError)
+        }.to raise_error(Foobara::Namespace::AmbiguousLookupError)
       end
     end
 
