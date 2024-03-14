@@ -1,5 +1,7 @@
 module Foobara
   module Manifest
+    class InvalidPath < StandardError; end
+
     class BaseManifest
       include TruncatedInspect
 
@@ -53,7 +55,7 @@ module Foobara
 
         if relevant_manifest.nil?
           # :nocov:
-          raise "invalid path #{path}"
+          raise InvalidPath, "invalid path #{path}"
           # :nocov:
         end
       end
