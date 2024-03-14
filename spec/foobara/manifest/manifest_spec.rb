@@ -151,6 +151,7 @@ RSpec.describe Foobara::Manifest do
 
     new_attributes = Foobara::Manifest::TypeDeclaration.new(attributes.root_manifest, attributes.path)
     expect(new_attributes).to be_a(Foobara::Manifest::Attributes)
+    expect(new_attributes).to be_attributes
     expect(new_attributes).to eql(attributes)
     expect(new_attributes.hash).to eql(attributes.hash)
 

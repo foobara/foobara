@@ -10,7 +10,7 @@ module Foobara
           type_declaration = super(root_manifest, path)
 
           if self == TypeDeclaration
-            case  type_declaration.type.to_sym
+            case type_declaration.type.to_sym
             when :attributes
               Attributes.new(type_declaration.root_manifest, type_declaration.path)
             when :array
@@ -30,6 +30,10 @@ module Foobara
 
       def type_declaration_manifest
         relevant_manifest
+      end
+
+      def attributes?
+        type.to_sym == :attributes
       end
 
       def model?
