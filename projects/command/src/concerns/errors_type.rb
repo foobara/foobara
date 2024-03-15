@@ -53,10 +53,24 @@ module Foobara
             register_possible_error_class(possible_error)
           end
 
-          def possible_input_error(path, symbol, error_class_or_context_type_declaration = {}, data = nil)
-            error_class = to_input_error_class(symbol, error_class_or_context_type_declaration)
+          def possible_input_error(
+            path,
+            symbol_or_error_class,
+            error_class_or_context_type_declaration = {},
+            data = nil
+          )
+            error_class, symbol = if symbol_or_error_class.is_a?(Class)
+                                    [symbol_or_error_class, symbol_or_error_class.symbol]
+                                  else
+                                    [
+                                      to_input_error_class(
+                                        symbol_or_error_class,
+                                        error_class_or_context_type_declaration
+                                      ),
+                                      symbol_or_error_class
+                                    ]
+                                  end
 
-            # TODO: allow passing a path: to PossibleError.new, or maybe a prepend_path:
             possible_error = PossibleError.new(error_class, symbol:, data:)
             possible_error.prepend_path!(path)
 

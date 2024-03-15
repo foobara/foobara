@@ -81,6 +81,54 @@ RSpec.describe Foobara::Command::Concerns::Errors do
       end
     end
 
+    context "with additional possible input error as a class" do
+      let(:command_class) do
+        stub_class "CannotBeFiveError", Foobara::Value::DataError do
+          class << self
+            def context_type_declaration
+              {
+                value: :integer,
+                cannot_be: :integer
+              }
+            end
+          end
+        end
+
+        stub_class(:CalculateExponent, command_base_class) do
+          possible_input_error(:exponent, CannotBeFiveError)
+
+          def validate
+            super
+
+            if exponent == 5
+              error = CannotBeFiveError.new(
+                message: "Cannot be five",
+                context: { value: exponent, cannot_be: 5 },
+                path: :exponent
+              )
+
+              add_input_error(error)
+            end
+          end
+        end
+      end
+
+      context "when input requirements not met" do
+        let(:exponent) { 5 }
+
+        it "is not success" do
+          expect(outcome).to_not be_success
+          expect(errors.size).to eq(1)
+          expect(error).to be_a(Foobara::Value::DataError)
+          expect(error.context).to eq(value: 5, cannot_be: 5)
+          expect(error.message).to eq("Cannot be five")
+          expect(error.symbol).to eq(:cannot_be_five)
+          expect(error.path).to eq([:exponent])
+          expect(error.attribute_name).to eq(:exponent)
+        end
+      end
+    end
+
     context "with possible runtime error" do
       let(:command_class) do
         stub_class(:CalculateExponentCannotBeFive, command_base_class) do
