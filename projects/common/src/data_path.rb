@@ -2,6 +2,8 @@ module Foobara
   # TODO: figure out how to share code between here and ErrorKey
   # TODO: use this to implement computed attributes
   class DataPath
+    class BadPathError < StandardError; end
+
     # TODO: use this wherever it makes sense
     EMPTY_PATH = [].freeze
 
@@ -184,7 +186,7 @@ module Foobara
           owner.send(method, value)
         else
           # :nocov:
-          raise "Bad path: #{parts}"
+          raise BadPathError, "Bad path: #{parts}"
           # :nocov:
         end
       end
