@@ -310,7 +310,15 @@ module Foobara
       included = Set.new
       additional_to_include = Set.new
 
-      h = {}
+      h = {
+        organization: {},
+        domain: {},
+        type: {},
+        command: {},
+        error: {},
+        processor: {},
+        processor_class: {}
+      }
 
       until to_include.empty? && additional_to_include.empty?
         object = nil
