@@ -146,6 +146,7 @@ RSpec.describe Foobara::Manifest do
     expect(attributes.required?("name")).to be(true)
     expect(attributes.required?("ratings")).to be(false)
     expect(attributes.required).to eq([:name])
+    expect(attributes.attribute_declarations[:ratings]).to be_array
     expect(attributes.attribute_declarations[:ratings].element_type.type).to eq(:integer)
     expect(attributes.attribute_declarations[:phone].allows_nil?).to be(true)
 

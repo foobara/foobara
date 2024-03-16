@@ -36,6 +36,10 @@ module Foobara
         type.to_sym == :attributes
       end
 
+      def array?
+        type.to_sym == :array
+      end
+
       def model?
         return @model if defined?(@model)
 
