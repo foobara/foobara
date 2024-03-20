@@ -279,5 +279,13 @@ module Foobara
     def hash
       attributes.hash
     end
+
+    def to_h
+      attributes
+    end
+
+    def to_json(*_args)
+      to_h.to_json
+    end
   end
 end

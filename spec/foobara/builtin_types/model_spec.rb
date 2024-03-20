@@ -18,7 +18,6 @@ RSpec.describe ":model" do
   let(:attributes_declaration) do
     {
       foo: { type: :integer, max: 10 },
-      # TODO: aren't we supposed to be doing required: false instead??
       bar: { type: :string, required: true }
     }
   end
@@ -297,5 +296,13 @@ RSpec.describe ":model" do
         expect(constructed_model.domain.foobara_domain_name).to eq("SomeDomain")
       end
     end
+  end
+
+  describe "#to_json" do
+    subject { instance.to_json }
+
+    let(:instance) { constructed_model.new(foo: 1, bar: "adf") }
+
+    it { is_expected.to eq('{"foo":1,"bar":"adf"}') }
   end
 end
