@@ -85,5 +85,23 @@ RSpec.describe Foobara::TypeDeclarations::Dsl::Attributes do
         end
       end
     end
+
+    context "when declaring sub-attributes via hash" do
+      it "assumes you are trying to create an attribute whose type is attributes" do
+        declaration = described_class.to_declaration do
+          foo bar: :string
+        end
+
+        expect(declaration).to eq(
+          element_type_declarations: {
+            foo: {
+              element_type_declarations: { bar: :string },
+              type: :attributes
+            }
+          },
+          type: :attributes
+        )
+      end
+    end
   end
 end

@@ -69,9 +69,14 @@ module Foobara
               type, *processor_symbols = processor_symbols
 
               unless type
-                ::Kernel.raise NoTypeGivenError, "Expected a type but attribute #{attribute_name} was declared " \
-                                                 "without a type. (Perhaps you didn't mean for #{attribute_name} " \
-                                                 "to be an attribute?)"
+                if processor_symbols.empty? && !declaration.empty?
+                  type = :attributes
+                  declaration = { element_type_declarations: declaration }
+                else
+                  ::Kernel.raise NoTypeGivenError, "Expected a type but attribute #{attribute_name} was declared " \
+                                                   "without a type. (Perhaps you didn't mean for #{attribute_name} " \
+                                                   "to be an attribute?)"
+                end
               end
             end
 
