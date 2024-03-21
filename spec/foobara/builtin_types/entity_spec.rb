@@ -437,4 +437,18 @@ RSpec.describe ":entity" do
       end
     end
   end
+
+  describe "#to_json" do
+    subject { instance.to_json }
+
+    let(:instance) { constructed_model.build(pk: 100, foo: 1, bar: "adf") }
+
+    it { is_expected.to eq("100") }
+
+    context "with no primary key" do
+      let(:instance) { constructed_model.build(foo: 1, bar: "adf") }
+
+      it { is_expected_to_raise(Foobara::Entity::CannotConvertRecordWithoutPrimaryKeyToJsonError) }
+    end
+  end
 end
