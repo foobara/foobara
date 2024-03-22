@@ -1,5 +1,6 @@
 module Foobara
   module Persistence
+    class NoTableOrCrudDriverError < StandardError; end
     class NoTransactionOpenError < StandardError; end
 
     class << self
@@ -145,7 +146,8 @@ module Foobara
           tables_for_entity_class_name[entity_class_name] = table
         else
           # :nocov:
-          raise "Can't find table for #{entity_class_name} and can't dynamically build one without default crud driver."
+          raise NoTableOrCrudDriverError,
+                "Can't find table for #{entity_class_name} and can't dynamically build one without default crud driver."
           # :nocov:
         end
       end
