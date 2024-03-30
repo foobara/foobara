@@ -15,7 +15,7 @@ module Foobara
 
             if type_registered?(type_symbol)
               type = type_for_declaration(type_symbol)
-              type.extends_symbol?(expected_type_symbol)
+              type.extends?(expected_type_symbol)
             end
           end
         end

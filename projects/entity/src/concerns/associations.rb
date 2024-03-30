@@ -114,15 +114,15 @@ module Foobara
             path = DataPath.new,
             result = {}
           )
-            if type.extends_symbol?(:entity)
+            if type.extends?(:entity)
               result[path.to_s] = type
-            elsif type.extends_symbol?(:tuple)
+            elsif type.extends?(:tuple)
               element_types = type.element_types
 
               element_types&.each&.with_index do |element_type, index|
                 construct_associations(element_type, path.append(index), result)
               end
-            elsif type.extends_symbol?(:array)
+            elsif type.extends?(:array)
               # TODO: what to do about an associative array type?? Unclear how to make a key from that...
               # TODO: raise if associative array contains a non-persisted record to handle this edge case for now.
               element_type = type.element_type
@@ -130,13 +130,13 @@ module Foobara
               if element_type
                 construct_associations(element_type, path.append(:"#"), result)
               end
-            elsif type.extends_symbol?(:attributes)
+            elsif type.extends?(:attributes)
               type.element_types.each_pair do |attribute_name, element_type|
                 construct_associations(element_type, path.append(attribute_name), result)
               end
-            elsif type.extends_symbol?(:model)
+            elsif type.extends?(:model)
               construct_associations(type.target_class.attributes_type, path, result)
-            elsif type.extends_symbol?(:associative_array)
+            elsif type.extends?(:associative_array)
               # not going to bother testing this for now
               # :nocov:
               if contains_associations?(type)
@@ -150,13 +150,13 @@ module Foobara
           end
 
           def contains_associations?(type = entity_type, initial = true)
-            if type.extends_symbol?(:entity)
+            if type.extends?(:entity)
               if initial
                 contains_associations?(type.element_types, false)
               else
                 true
               end
-            elsif type.extends_symbol?(:array)
+            elsif type.extends?(:array)
               # TODO: what to do about an associative array type?? Unclear how to make a key from that...
               # TODO: raise if associative array contains a non-persisted record to handle this edge case for now.
               element_type = type.element_type
@@ -164,11 +164,11 @@ module Foobara
               if element_type
                 contains_associations?(element_type, false)
               end
-            elsif type.extends_symbol?(:attributes)
+            elsif type.extends?(:attributes)
               type.element_types.values.any? do |element_type|
                 contains_associations?(element_type, false)
               end
-            elsif type.extends_symbol?(:associative_array)
+            elsif type.extends?(:associative_array)
               element_types = type.element_types
 
               if element_types

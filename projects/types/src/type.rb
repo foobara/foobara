@@ -108,12 +108,34 @@ module Foobara
         target_classes.first
       end
 
-      def extends_type?(type)
-        base_type == type || base_type&.extends_type?(type)
+      def extends?(type)
+        case type
+        when Type
+          extends_type?(type)
+        when Symbol, String
+          concrete_type = created_in_namespace.foobara_lookup_type(type)
+          if concrete_type.nil?
+            # :nocov:
+            raise "No type found for #{type}"
+            # :nocov:
+          end
+
+          extends_type?(concrete_type)
+        else
+          # :nocov:
+          raise ArgumentError, "Expected a Type or a Symbol/String, but got #{type.inspect}"
+          # :nocov:
+        end
       end
 
-      def extends_symbol?(symbol)
-        type_symbol == symbol || base_type&.extends_symbol?(symbol)
+      def extends_type?(type)
+        unless type
+          # :nocov:
+          raise ArgumentError, "Expected a type but got nil"
+          # :nocov:
+        end
+
+        base_type == type || base_type&.extends_type?(type)
       end
 
       def type_symbol=(type_symbol)

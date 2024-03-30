@@ -14,7 +14,7 @@ module Foobara
 
             type = type_for_declaration(...)
 
-            if type.extends_symbol?(:model) && !type.extends_symbol?(:entity)
+            if type.extends?(:model) && !type.extends?(:entity)
               type = type.element_types
             end
 

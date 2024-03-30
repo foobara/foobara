@@ -15,7 +15,7 @@ module Foobara
 
             new_type = domain.foobara_type_from_declaration(*args, **opts, &)
 
-            unless new_type.extends_symbol?(:attributes)
+            unless new_type.extends?(:attributes)
               # :nocov:
               raise ArgumentError, "Expected #{args} #{opts} to extend :attributes " \
                                    "but instead it resulted in: #{new_type.declaration_data}"

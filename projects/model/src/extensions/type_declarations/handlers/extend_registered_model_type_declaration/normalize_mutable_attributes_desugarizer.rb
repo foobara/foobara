@@ -11,7 +11,7 @@ module Foobara
 
               if !mutable.is_a?(::Array) || (mutable.is_a?(::Array) && mutable.any? { |k| !k.is_a?(::Symbol) })
                 type = type_for_declaration(value[:type])
-                type.extends_symbol?(:model)
+                type.extends?(:model)
               end
             end
           end

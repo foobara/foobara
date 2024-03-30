@@ -133,7 +133,7 @@ module Foobara
               foobara_unregister(type)
             else
               # :nocov:
-              raise AlreadyRegisteredError, "Already registered: #{type}"
+              raise AlreadyRegisteredError, "Already registered: #{type.inspect}"
               # :nocov:
             end
           end
