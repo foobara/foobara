@@ -129,13 +129,23 @@ module Foobara
       end
 
       def extends_type?(type)
+        return true if self == type
+
         unless type
           # :nocov:
           raise ArgumentError, "Expected a type but got nil"
           # :nocov:
         end
 
-        base_type == type || base_type&.extends_type?(type)
+        if registered?
+          if type.registered?
+            if type.foobara_manifest_reference == foobara_manifest_reference
+              return true
+            end
+          end
+        end
+
+        base_type&.extends_type?(type)
       end
 
       def type_symbol=(type_symbol)
