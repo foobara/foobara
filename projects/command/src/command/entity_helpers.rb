@@ -16,7 +16,7 @@ module Foobara
         end
 
         entity_class.associations.each_pair do |data_path, type|
-          if type.extends?(:entity)
+          if type.extends?(BuiltinTypes[:entity])
             target_class = type.target_class
 
             entry = type_declaration_value_at(declaration, DataPath.new(data_path).path)
@@ -39,7 +39,7 @@ module Foobara
         # expect all associations to be expressed as primary key values
         # TODO: should we have a special type for encapsulating primary keys types??
         entity_class.associations.each_pair do |data_path, type|
-          if type.extends?(:entity)
+          if type.extends?(BuiltinTypes[:entity])
             target_class = type.target_class
             # TODO: do we really need declaration_data? Why cant we use the type directly?
             # TODO: make this work with the type directly for performance reasons.
@@ -69,7 +69,7 @@ module Foobara
       def update_aggregate(object, value, type = object.class.model_type)
         return value if object.nil?
 
-        if type.extends?(:model)
+        if type.extends?(BuiltinTypes[:model])
           element_types = type.element_types.element_types
 
           value.each_pair do |attribute_name, new_value|
@@ -83,7 +83,7 @@ module Foobara
           end
 
           object
-        elsif type.extends?(:attributes)
+        elsif type.extends?(BuiltinTypes[:attributes])
           element_types = type.element_types
 
           object = object.dup
@@ -99,15 +99,15 @@ module Foobara
           end
 
           object
-        elsif type.extends?(:tuple)
+        elsif type.extends?(BuiltinTypes[:tuple])
           # :nocov:
           raise "Tuple not yet supported"
         # :nocov:
-        elsif type.extends?(:associative_array)
+        elsif type.extends?(BuiltinTypes[:associative_array])
           # :nocov:
           raise "Associated array not yet supported"
         # :nocov:
-        elsif type.extends?(:array)
+        elsif type.extends?(BuiltinTypes[:array])
           element_type = type.element_type
 
           value.map.with_index do |element, index|

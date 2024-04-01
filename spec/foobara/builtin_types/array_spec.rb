@@ -96,7 +96,7 @@ RSpec.describe ":array" do
     end
 
     it "has the description and is an array type as expected" do
-      expect(type.extends?(:array)).to be(true)
+      expect(type.extends?(Foobara::BuiltinTypes[:array])).to be(true)
       expect(type.description).to eq("An array of strings")
       expect(type.process_value!([:foo, 1])).to eq(%w[foo 1])
     end
