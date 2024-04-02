@@ -36,7 +36,6 @@ module Foobara
           return handler if handler.applicable?(type_declaration)
         end
 
-        binding.pry
         raise NoTypeDeclarationHandlerFoundError,
               "No type declaration handler found for #{type_declaration}"
       end
@@ -72,9 +71,7 @@ module Foobara
                            end
 
         handler = type_declaration_handler_for(type_declaration)
-        handler.process_value!(type_declaration).tap do |h|
-          binding.pry if JSON.generate(h) =~ /_desug/
-        end
+        handler.process_value!(type_declaration)
       end
 
       private

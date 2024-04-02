@@ -8,7 +8,6 @@ module Foobara
         # TODO: make a quick way to convert a couple simple procs into a transformer
         class ToTypeTransformer < RegisteredTypeDeclaration::ToTypeTransformer
           def transform(strict_type_declaration)
-            # binding.pry if JSON.generate(strict_type_declaration) =~ /_desug/
             # TODO: maybe cache this stuff??
             base_type = super
 

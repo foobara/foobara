@@ -7,8 +7,6 @@ module Foobara
         def applicable?(sugary_type_declaration)
           strict_type_declaration = desugarize(sugary_type_declaration)
 
-          binding.pry if JSON.generate(strict_type_declaration) =~ /_desug/
-
           return false unless strict_type_declaration.is_a?(::Hash)
           # if there's no processors to extend the existing type with, then we don't handle that here
           return false if strict_type_declaration.keys == [:type]

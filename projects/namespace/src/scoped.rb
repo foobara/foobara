@@ -60,18 +60,6 @@ module Foobara
       @scoped_full_name ||= scoped_full_path.join("::")
     end
 
-    def scoped_full_symbol
-      @scoped_full_symbol ||= scoped_full_name.to_sym
-    end
-
-    def scoped_absolute_name
-      @scoped_absolute_name ||= "::#{scoped_full_name}"
-    end
-
-    def scoped_absolute_symbol
-      @scoped_absolute_symbol ||= scoped_absolute_name.to_sym
-    end
-
     attr_writer :foobara_manifest_reference
 
     def foobara_manifest_reference

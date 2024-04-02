@@ -162,9 +162,6 @@ module Foobara
         if requires_parent_declaration_data?
           self.parent_declaration_data = args.first
         end
-
-        binding.pry if JSON.generate(declaration_data) =~ /_desug/
-        binding.pry if JSON.generate(parent_declaration_data) =~ /_desug/
       end
 
       def created_in_namespace

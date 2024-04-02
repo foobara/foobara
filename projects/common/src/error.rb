@@ -39,7 +39,6 @@ module Foobara
       end
 
       def to_h
-        binding.pry if JSON.generate(context_type.declaration_data) =~ /_desug/
         {
           category:,
           symbol:,

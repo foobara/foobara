@@ -182,7 +182,6 @@ module Foobara
         object = foobara_lookup(name, **)
 
         unless object
-          binding.pry
           # :nocov:
           raise NotFoundError, "Could not find #{name}"
           # :nocov:
