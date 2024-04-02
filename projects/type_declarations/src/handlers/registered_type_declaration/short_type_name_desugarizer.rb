@@ -4,6 +4,8 @@ module Foobara
   module TypeDeclarations
     module Handlers
       class RegisteredTypeDeclaration < TypeDeclarationHandler
+        # type_symbol is basically just a flag that lets us know that type is fully qualified.
+        # rather hacky but other potential workarounds seemed gnarlier
         class ShortTypeNameDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(sugary_type_declaration)
             if sugary_type_declaration.is_a?(::Hash) && sugary_type_declaration.key?(:type) &&
