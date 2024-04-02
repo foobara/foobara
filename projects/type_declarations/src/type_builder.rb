@@ -72,7 +72,9 @@ module Foobara
                            end
 
         handler = type_declaration_handler_for(type_declaration)
-        handler.process_value!(type_declaration)
+        handler.process_value!(type_declaration).tap do |h|
+          binding.pry if JSON.generate(h) =~ /_desug/
+        end
       end
 
       private

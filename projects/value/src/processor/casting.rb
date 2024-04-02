@@ -48,6 +48,8 @@ module Foobara
           ]
 
           super(*args, processors:)
+
+          binding.pry if JSON.generate(declaration_data) =~ /_desug/
         end
 
         def needs_cast?(value)

@@ -20,8 +20,6 @@ module Foobara
             type_symbol = sugary_type_declaration[:type]
             type = lookup_type!(type_symbol)
 
-            binding.pry if type_symbol == :model && type.full_type_symbol == :"Foobara::Ai::Anthropic::model"
-
             desugarized = sugary_type_declaration[:_desugarized] || {}
             desugarized[:type_absolutified] = true
             # TODO: just use the symbol and nothing else??
