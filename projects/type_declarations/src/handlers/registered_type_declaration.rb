@@ -11,7 +11,8 @@ module Foobara
           return false unless strict_type_declaration.is_a?(::Hash)
 
           # we only handle case where it's a builtin type not an extension of one
-          if strict_type_declaration.keys == [:type]
+          if strict_type_declaration.size == 2 && strict_type_declaration.key?(:type) &&
+             strict_type_declaration.key?(:type_symbol)
             type_symbol = strict_type_declaration[:type]
             type_registered?(type_symbol)
           end

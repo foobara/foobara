@@ -66,7 +66,7 @@ module Foobara
           end
 
           def non_processor_keys
-            %i[type description]
+            %i[type type_symbol description]
           end
         end
       end
