@@ -11,11 +11,11 @@ module Foobara
             return false if type_symbol == expected_type_symbol
             # If there's only one element, then we are probably attempting a registered type lookup, not
             # extending a registered model to create a new type.
-            return false if strict_type_declaration.size == 1
+            return false if strict_type_declaration.size == 2 && strict_type_declaration.key?(:type_symbol)
 
             if type_registered?(type_symbol)
               type = type_for_declaration(type_symbol)
-              type.extends?(expected_type_symbol)
+              type.extends?(BuiltinTypes[expected_type_symbol])
             end
           end
         end
