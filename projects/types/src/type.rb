@@ -153,6 +153,14 @@ module Foobara
         @type_symbol = type_symbol
       end
 
+      def full_type_symbol
+        return @full_type_symbol if defined?(@full_type_symbol)
+
+        @full_type_symbol ||= if scoped_path_set?
+                                scoped_full_name.to_sym
+                              end
+      end
+
       def processors
         [
           value_caster,
