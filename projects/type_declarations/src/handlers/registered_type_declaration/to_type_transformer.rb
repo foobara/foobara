@@ -15,7 +15,7 @@ module Foobara
           end
 
           def registered_type(strict_type_declaration)
-            lookup_type!(type_symbol(strict_type_declaration))
+            lookup_absolute_type!(type_symbol(strict_type_declaration), mode: Namespace::LookupMode::ABSOLUTE)
           end
 
           def target_classes(strict_type_declaration)

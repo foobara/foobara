@@ -66,7 +66,7 @@ module Foobara
           end
 
           def non_processor_keys
-            %i[type description]
+            %i[type _desugarized description]
           end
         end
       end

@@ -102,11 +102,12 @@ module Foobara
       end
 
       def desugarizer
+        # TODO: memoize this?
         Value::Processor::Pipeline.new(processors: desugarizers)
       end
 
       def desugarize(value)
-        Value::Processor::Pipeline.new(processors: desugarizers).process_value!(value)
+        desugarizer.process_value!(value)
       end
 
       def type_declaration_validator
