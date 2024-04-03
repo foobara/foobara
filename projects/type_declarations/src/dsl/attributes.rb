@@ -36,7 +36,7 @@ module Foobara
       end
 
       # NOTE: when debugging stuff, it's helpful to comment out the inheritance from BasicObject
-      class Attributes < BasicObject
+      class Attributes # < BasicObject
         class << self
           def to_declaration(&)
             new._to_declaration(&)
@@ -122,7 +122,7 @@ module Foobara
 
                               if type == :array
                                 {
-                                  type: "::array",
+                                  type: :array,
                                   element_type_declaration: attributes_declaration
                                 }
                               else
@@ -191,6 +191,8 @@ module Foobara
 
             handler = Domain.current.foobara_type_builder.handler_for_class(Handlers::ExtendAttributesTypeDeclaration)
             handler.desugarize(sugar).tap do |h|
+              require "json"
+              binding.pry if $stop
               binding.pry if JSON.generate(h) =~ /::array/
             end
           end

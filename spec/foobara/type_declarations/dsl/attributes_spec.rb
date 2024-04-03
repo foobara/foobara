@@ -1,6 +1,6 @@
 RSpec.describe Foobara::TypeDeclarations::Dsl::Attributes do
   describe ".to_declaration" do
-    it "creates the expected declaration", :focus do
+    it "creates the expected declaration" do
       declaration = described_class.to_declaration do
         first_name :string, :required
         age :integer, "User's age", min: 0
