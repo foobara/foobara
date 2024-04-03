@@ -58,7 +58,7 @@ module Foobara
 
           def type_declaration(attributes_declaration)
             Util.remove_blank(
-              type: :model,
+              type: "::model",
               name: model_name,
               model_class: self,
               model_base_class: superclass,

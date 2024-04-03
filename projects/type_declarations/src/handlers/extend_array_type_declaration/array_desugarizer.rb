@@ -12,7 +12,7 @@ module Foobara
           end
 
           def desugarize(sugary_type_declaration)
-            strict_type_declaration = { type: :array }
+            strict_type_declaration = { type: :array, _desugarized: { type_absolutified: true } }
 
             unless sugary_type_declaration.empty?
               element_type_declaration = sugary_type_declaration.first

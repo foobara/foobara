@@ -60,10 +60,14 @@ module Foobara
           element_type_declarations[attribute_name] = attribute_type.reference_or_declaration_data
         end
 
-        {
-          type: :attributes,
+        handler = Domain.global.foobara_type_builder.handler_for_class(
+          TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
+        )
+
+        handler.desugarize(
+          type: "::attributes",
           element_type_declarations:
-        }
+        )
       end
 
       def update_aggregate(object, value, type = object.class.model_type)

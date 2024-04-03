@@ -32,6 +32,7 @@ module Foobara
             unless strictish_type_declaration?(sugary_type_declaration)
               sugary_type_declaration = {
                 type: :attributes,
+                _desugarized: { type_absolutified: true },
                 element_type_declarations: sugary_type_declaration
               }
             end
