@@ -60,7 +60,7 @@ module Foobara
               depends_on:,
               # TODO: allow inputs type to be nil or really any type?
               inputs_type: inputs_type&.reference_or_declaration_data || {
-                type: :attributes,
+                type: "::attributes",
                 element_type_declarations: {},
                 required: []
               }

@@ -191,7 +191,7 @@ module Foobara
 
             foobara_type_builder.type_for_declaration(
               Util.remove_blank(
-                type: :entity,
+                type: "::entity",
                 name:,
                 model_base_class:,
                 attributes_declaration: attributes_type_declaration,

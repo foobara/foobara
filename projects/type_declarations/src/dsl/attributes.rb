@@ -62,6 +62,8 @@ module Foobara
             declaration = declaration.dup
 
             if block
+              # TODO: technically, current namespace might have an overridden :array type so instead we
+              # should lookup :array he to see if we get BuiltinTypes[:array] or not (or "::array" or not)
               if processor_symbols.first == :array
                 type, *processor_symbols = processor_symbols
               end
@@ -120,7 +122,7 @@ module Foobara
 
                               if type == :array
                                 {
-                                  type: :array,
+                                  type: "::array",
                                   element_type_declaration: attributes_declaration
                                 }
                               else
@@ -179,12 +181,19 @@ module Foobara
         end
 
         def _type_declaration
-          @_type_declaration ||= {
-            type: :attributes,
-            element_type_declarations: {},
-            required: [],
-            defaults: {}
-          }
+          @_type_declaration ||= begin
+            sugar = {
+              type: "::attributes",
+              element_type_declarations: {},
+              required: [],
+              defaults: {}
+            }
+
+            handler = Domain.current.foobara_type_builder.handler_for_class(Handlers::ExtendAttributesTypeDeclaration)
+            handler.desugarize(sugar).tap do |h|
+              binding.pry if JSON.generate(h) =~ /::array/
+            end
+          end
         end
       end
     end

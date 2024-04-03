@@ -12,7 +12,7 @@ module Foobara
                !sugary_type_declaration.dig(:_desugarized, :type_absolutified)
               type_symbol = sugary_type_declaration[:type]
 
-              type_symbol.is_a?(::Symbol) && type_registered?(type_symbol)
+              (type_symbol.is_a?(::Symbol) || type_symbol.is_a?(::String)) && type_registered?(type_symbol)
             end
           end
 

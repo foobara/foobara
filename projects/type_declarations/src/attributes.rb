@@ -22,7 +22,7 @@ module Foobara
           end
 
           {
-            type: :attributes,
+            type: "::attributes",
             element_type_declarations:,
             required:,
             defaults:
