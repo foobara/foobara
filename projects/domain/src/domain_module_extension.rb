@@ -1,6 +1,7 @@
 module Foobara
   module Domain
     class NoSuchDomain < StandardError; end
+    class NoSuchOrganization < StandardError; end
     class AlreadyRegisteredError < StandardError; end
 
     class << self
