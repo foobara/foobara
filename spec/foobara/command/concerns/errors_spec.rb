@@ -78,6 +78,38 @@ RSpec.describe Foobara::Command::Concerns::Errors do
           expect(error.path).to eq([:exponent])
           expect(error.attribute_name).to eq(:exponent)
         end
+
+        context "when error added via positional arguments" do
+          let(:command_class) do
+            stub_class(:CalculateExponent, command_base_class) do
+              possible_input_error(:exponent, :cannot_be_five, value: :integer, cannot_be: :integer)
+
+              def validate
+                super
+
+                if exponent == 5
+                  add_input_error(
+                    :exponent,
+                    :cannot_be_five,
+                    "Cannot be five",
+                    value: exponent, cannot_be: 5
+                  )
+                end
+              end
+            end
+          end
+
+          it "is not success" do
+            expect(outcome).to_not be_success
+            expect(errors.size).to eq(1)
+            expect(error).to be_a(Foobara::Value::DataError)
+            expect(error.context).to eq(value: 5, cannot_be: 5)
+            expect(error.message).to eq("Cannot be five")
+            expect(error.symbol).to eq(:cannot_be_five)
+            expect(error.path).to eq([:exponent])
+            expect(error.attribute_name).to eq(:exponent)
+          end
+        end
       end
     end
 

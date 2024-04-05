@@ -91,9 +91,16 @@ module Foobara
 
                     error_class = self.class.lookup_input_error_class(symbol, path)
                     error_class.new(**error_args.merge(path:))
+                  elsif args.is_a?(::Array) && (args.size == 2 || args.size == 3)
+                    input, symbol, message = args
+                    context = opts
+
+                    error_class = self.class.lookup_input_error_class(symbol, input)
+                    error_class.new(path: Util.array(input), symbol:, context:, message:)
                   else
                     # :nocov:
-                    raise ArgumentError, "Invalid arguments given. Expected an error or keyword args for an error"
+                    raise ArgumentError,
+                          "Invalid arguments given. Expected an error or args for an error"
                     # :nocov:
                   end
 
