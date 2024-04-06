@@ -14,7 +14,7 @@ SimpleCov.start do
   # minimum_coverage line: 100, branch: 100
 end
 
-require_relative "../require_all_projects"
+require "foobara/all"
 require "foobara/command_connectors"
 require "foobara/command_connectors_http"
 

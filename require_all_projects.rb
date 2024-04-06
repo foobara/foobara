@@ -1,1 +1,0 @@
-require "foobara/all"
