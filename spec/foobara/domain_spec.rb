@@ -39,6 +39,45 @@ RSpec.describe Foobara::Domain do
     end
   end
 
+  describe ".to_organization" do
+    context "when nil" do
+      it "is the global organization" do
+        expect(described_class.to_organization(nil)).to be(Foobara::GlobalOrganization)
+      end
+    end
+
+    context "when non-organization scoped to a organization" do
+      before do
+        stub_module "SomeOrganization" do
+          foobara_organization!
+        end
+        stub_class "SomeOrganization::SomeError", Foobara::RuntimeError
+      end
+
+      it "returns that organization" do
+        expect(described_class.to_organization(SomeOrganization::SomeError)).to be(SomeOrganization)
+      end
+
+      context "when lookup by symbol" do
+        it "returns the expected org" do
+          expect(described_class.to_organization(:SomeOrganization)).to be(SomeOrganization)
+        end
+      end
+
+      context "when has no org" do
+        let(:scoped) do
+          stub_class(:SomeScoped) do
+            extend Foobara::Scoped
+          end
+        end
+
+        it "returns global org" do
+          expect(described_class.to_organization(scoped)).to be(Foobara::GlobalOrganization)
+        end
+      end
+    end
+  end
+
   describe ".create" do
     after do
       Object.send(:remove_const, "SomeOrg")
@@ -61,6 +100,27 @@ RSpec.describe Foobara::Domain do
         expect {
           described_class.create("SomeOrg::SomeDomain")
         }.to raise_error(described_class::DomainAlreadyExistsError)
+      end
+    end
+  end
+
+  describe ".create_organization" do
+    after do
+      Object.send(:remove_const, "A") if Object.const_defined?("A")
+    end
+
+    context "when organization parent modules don't exist" do
+      before do
+        stub_module("A")
+      end
+
+      it "creates the org with its parent modules" do
+        described_class.create_organization("A::B::C::D")
+
+        expect(A::B).to be_a(Module)
+        expect(A::B::C).to be_a(Module)
+        expect(A::B::C::D).to be_a(Module)
+        expect(A::B::C::D).to be_foobara_organization
       end
     end
   end
