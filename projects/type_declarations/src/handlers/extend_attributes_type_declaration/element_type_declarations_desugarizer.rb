@@ -9,10 +9,17 @@ module Foobara
         # TODO: make a quick way to convert a couple simple procs into a transformer
         class ElementTypeDeclarationsDesugarizer < HashDesugarizer
           def desugarize(sugary_type_declaration)
-            sugary_type_declaration[:element_type_declarations].transform_values! do |element_type_declaration|
-              handler = type_declaration_handler_for(element_type_declaration)
-              handler.desugarize(element_type_declaration)
-            end
+            sugary_type_declaration = sugary_type_declaration.dup
+
+            sugary_type_declaration[:element_type_declarations] =
+              sugary_type_declaration[:element_type_declarations].to_h do |attribute_name, element_type_declaration|
+                if attribute_name != :_desugarized
+                  handler = type_declaration_handler_for(element_type_declaration)
+                  element_type_declaration = handler.desugarize(element_type_declaration)
+                end
+
+                [attribute_name, element_type_declaration]
+              end
 
             sugary_type_declaration
           end
