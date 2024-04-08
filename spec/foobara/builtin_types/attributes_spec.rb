@@ -182,6 +182,30 @@ RSpec.describe Foobara::BuiltinTypes::Attributes do
   end
 
   describe "required attributes" do
+    context "when all strings" do
+      let(:type_declaration) do
+        {
+          "type" => "attributes",
+          "element_type_declarations" => {
+            "a" => { "type" => "integer" },
+            "b" => { "type" => "integer" }
+          },
+          "required" => ["a"]
+        }
+      end
+
+      it "still works" do
+        expect(type.process_value!(a: 1)).to eq(a: 1)
+        expect {
+          type.process_value!(b: 1)
+        }.to raise_error(
+          Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::MissingRequiredAttributeError
+        ) do |e|
+          expect(e.context[:attribute_name]).to eq(:a)
+        end
+      end
+    end
+
     context "when required is not an array of symbols" do
       let(:type_declaration) do
         {

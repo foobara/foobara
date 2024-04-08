@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/foobara/rubocop-rules.git
-  revision: e9d8f5c45ea37810f369d1c2f46e3e386d5abb2c
+  revision: 14fed1e360c95f20531aee72f95d7ce27e8cc9a2
   specs:
     foobara-rubocop-rules (0.0.1)
       rubocop
@@ -14,7 +14,7 @@ GIT
 
 GIT
   remote: https://github.com/foobara/util.git
-  revision: b2e2e9c04d866b26c21b6e223bc359c76fcea0f8
+  revision: 659d4e4fd5dd74ca005650fc4bcc2ac1ee7809ec
   specs:
     foobara-util (0.1.0)
 
@@ -47,7 +47,7 @@ GEM
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
-    json (2.7.1)
+    json (2.7.2)
     language_server-protocol (3.17.0.3)
     listen (3.8.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
@@ -92,7 +92,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.12.0)
     rspec-support (3.12.1)
-    rubocop (1.62.1)
+    rubocop (1.63.1)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
       parallel (~> 1.10)
@@ -111,10 +111,13 @@ GEM
       rubocop (~> 1.41)
     rubocop-rake (0.6.0)
       rubocop (~> 1.0)
-    rubocop-rspec (2.27.1)
+    rubocop-rspec (2.29.1)
       rubocop (~> 1.40)
       rubocop-capybara (~> 2.17)
       rubocop-factory_bot (~> 2.22)
+      rubocop-rspec_rails (~> 2.28)
+    rubocop-rspec_rails (2.28.2)
+      rubocop (~> 1.40)
     ruby-progressbar (1.13.0)
     shellany (0.0.1)
     simplecov (0.22.0)

@@ -1,6 +1,7 @@
 module Foobara
   module TypeDeclarations
     module Handlers
+      # Why doesn't this inherit from ExtendModelTypeDeclaration
       class ExtendRegisteredModelTypeDeclaration < ExtendRegisteredTypeDeclaration
         def applicable?(sugary_type_declaration)
           strict_type_declaration = desugarize(sugary_type_declaration)

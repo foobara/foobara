@@ -5,7 +5,6 @@ module Foobara
   module TypeDeclarations
     module Handlers
       class ExtendAttributesTypeDeclaration < ExtendAssociativeArrayTypeDeclaration
-        # TODO: make a quick way to convert a couple simple procs into a transformer
         class HashDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(sugary_type_declaration)
             return false unless sugary_type_declaration.is_a?(::Hash)
@@ -17,9 +16,10 @@ module Foobara
 
             type_symbol = sugary_type_declaration[:type]
 
-            if type_symbol == :attributes
+            if [:attributes, "attributes"].include?(type_symbol)
               Util.all_symbolizable_keys?(sugary_type_declaration[:element_type_declarations])
             elsif type_symbol.is_a?(::Symbol)
+              # Why is this done?
               !type_registered?(type_symbol)
             end
           end
@@ -35,6 +35,7 @@ module Foobara
                 _desugarized: { type_absolutified: true },
                 element_type_declarations: sugary_type_declaration
               }
+
             end
 
             Util.symbolize_keys!(sugary_type_declaration[:element_type_declarations])

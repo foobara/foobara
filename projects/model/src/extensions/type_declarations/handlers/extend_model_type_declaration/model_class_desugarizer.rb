@@ -16,11 +16,18 @@ module Foobara
           end
 
           def desugarize(strictish_type_declaration)
-            model_class = if strictish_type_declaration.key?(:model_class)
-                            klass = strictish_type_declaration[:model_class]
-                            klass.is_a?(::Class) ? klass : Object.const_get(klass)
+            klass = strictish_type_declaration[:model_class]
+
+            model_class = if klass.is_a?(::Class)
+                            klass
+                          elsif klass && Object.const_defined?(klass)
+                            Object.const_get(klass)
                           else
                             model_base_class = strictish_type_declaration[:model_base_class] || default_model_base_class
+
+                            if model_base_class.is_a?(::String) || model_base_class.is_a?(::Symbol)
+                              model_base_class = Object.const_get(model_base_class)
+                            end
 
                             # TODO: why not call this domain_module instead????
                             model_module = if strictish_type_declaration.key?(:model_module)

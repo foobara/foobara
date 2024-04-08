@@ -13,6 +13,14 @@ module Foobara
 
                   def desugarize(rawish_type_declaration)
                     required_attributes = Util.array(rawish_type_declaration[:required])
+                    # TODO: move this to a transformer...
+                    required_attributes = required_attributes.map do |value|
+                      if value.is_a?(::String)
+                        value.to_sym
+                      else
+                        value
+                      end
+                    end
 
                     element_type_declarations = rawish_type_declaration[:element_type_declarations]
 

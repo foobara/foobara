@@ -1,6 +1,13 @@
 RSpec.describe ":model" do
   after do
     Foobara.reset_alls
+    %i[
+      SomeModel
+      SomeOrg
+      SomeDomain
+    ].each do |const|
+      Object.send(:remove_const, const) if Object.const_defined?(const)
+    end
   end
 
   let(:type) do
@@ -128,6 +135,21 @@ RSpec.describe ":model" do
   it "extends duck" do
     duck = Foobara::Namespace.global.foobara_lookup_type!(:duck)
     expect(type.extends?(duck)).to be(true)
+  end
+
+  context "when model class name is given but doesn't exist" do
+    let(:type_declaration) do
+      {
+        type: :model,
+        name: model_name,
+        attributes_declaration:,
+        model_class: model_name
+      }
+    end
+
+    it "creates the model class" do
+      expect(type.target_class).to be(SomeModel)
+    end
   end
 
   describe "#process_value!" do
