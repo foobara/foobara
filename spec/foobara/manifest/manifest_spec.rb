@@ -247,6 +247,7 @@ RSpec.describe Foobara::Manifest do
     expect(foobara_error.domain.scoped_full_name).to eq("Foobara::Value")
     expect(foobara_error.scoped_full_name).to eq("Foobara::Value::Processor::Casting::CannotCastError")
     expect(foobara_error.error_name).to eq("CannotCastError")
+    expect(manifest.errors).to include(foobara_error)
 
     local_possible_error = command.possible_errors["runtime.something_went_wrong"]
     expect(local_possible_error.scoped_category).to be_nil

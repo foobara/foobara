@@ -1,7 +1,7 @@
 module Foobara
   module Value
     class Processor
-      foobara_subclasses_are_namespaces!(default_parent: GlobalDomain)
+      foobara_subclasses_are_namespaces!(default_parent: GlobalDomain, autoregister: true)
       # Do we really need both to be namespaces??
       foobara_instances_are_namespaces!(default_parent: GlobalDomain)
 

@@ -39,6 +39,12 @@ module Foobara
         organizations.map(&:models).flatten
       end
 
+      def errors
+        @errors ||= DataPath.value_at(:error, root_manifest).keys.map do |reference|
+          Error.new(root_manifest, [:error, reference])
+        end
+      end
+
       def entity_by_name(name)
         type = type_by_name(name)
 
