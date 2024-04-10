@@ -54,13 +54,26 @@ module Foobara
           t.foobara_manifest_reference
         end
 
+        base = nil
+        # don't bother including these core errors
+        unless superclass == Foobara::Error || superclass == Foobara::RuntimeError || superclass == Value::DataError
+          base = superclass
+          to_include << base
+        end
+
         manifest = super
 
         unless types.empty?
           manifest[:types_depended_on] = types.sort
         end
 
-        manifest.merge(Util.remove_blank(to_h))
+        h = manifest.merge(Util.remove_blank(to_h))
+
+        if base
+          h[:base_error] = base.foobara_manifest_reference
+        end
+
+        h
       end
     end
 
