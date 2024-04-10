@@ -33,7 +33,7 @@ RSpec.describe ":model" do
 
   it "creates a type that targets a Model subclass" do
     expect(type).to be_a(Foobara::Types::Type)
-    expect(constructed_model.name).to eq("Foobara::Model::SomeModel")
+    expect(constructed_model.name).to eq("SomeModel")
 
     value = constructed_model.new
 
@@ -128,7 +128,7 @@ RSpec.describe ":model" do
   end
 
   it "sets model_class and model_base_class" do
-    expect(type.declaration_data[:model_class]).to eq("Foobara::Model::SomeModel")
+    expect(type.declaration_data[:model_class]).to eq("SomeModel")
     expect(type.declaration_data[:model_base_class]).to eq("Foobara::Model")
   end
 
@@ -143,7 +143,8 @@ RSpec.describe ":model" do
         type: :model,
         name: model_name,
         attributes_declaration:,
-        model_class: model_name
+        model_class: model_name,
+        model_base_class: "Foobara::Model"
       }
     end
 

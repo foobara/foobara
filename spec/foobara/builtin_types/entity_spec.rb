@@ -1,6 +1,14 @@
 RSpec.describe ":entity" do
   after do
     Foobara.reset_alls
+    %i[
+      SomeModel
+      SomeEntity
+      SomeOrg
+      SomeDomain
+    ].each do |const|
+      Object.send(:remove_const, const) if Object.const_defined?(const)
+    end
   end
 
   let(:type) do
@@ -40,7 +48,7 @@ RSpec.describe ":entity" do
       tx.open!
 
       expect(type).to be_a(Foobara::Types::Type)
-      expect(constructed_model.name).to eq("Foobara::Entity::SomeEntity")
+      expect(constructed_model.name).to eq("SomeEntity")
 
       value = tx.create(constructed_model)
 
@@ -137,7 +145,7 @@ RSpec.describe ":entity" do
 
     it "creates a type that targets a Model subclass" do
       expect(type).to be_a(Foobara::Types::Type)
-      expect(constructed_model.name).to eq("Foobara::Entity::SomeEntity")
+      expect(constructed_model.name).to eq("SomeEntity")
 
       value = constructed_model.create
 
@@ -214,7 +222,7 @@ RSpec.describe ":entity" do
     end
 
     it "sets model_class and model_base_class" do
-      expect(type.declaration_data[:model_class]).to eq("Foobara::Entity::SomeEntity")
+      expect(type.declaration_data[:model_class]).to eq("SomeEntity")
       expect(type.declaration_data[:model_base_class]).to eq("Foobara::Entity")
     end
 
@@ -349,8 +357,8 @@ RSpec.describe ":entity" do
       end
 
       it "can be used by symbol" do
-        expect(type.target_class).to eq(Foobara::Entity::SomeEntity)
-        expect(domain.foobara_lookup_type!(:SomeEntity).target_class).to eq(Foobara::Entity::SomeEntity)
+        expect(type.target_class).to eq(SomeEntity)
+        expect(domain.foobara_lookup_type!(:SomeEntity).target_class).to eq(SomeEntity)
       end
 
       context "when used as attribute type" do
