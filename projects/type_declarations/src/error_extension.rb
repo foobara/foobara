@@ -22,18 +22,34 @@ module Foobara
     self.validate_error_context_enabled = true
 
     module ErrorExtension
+      class NoContextTypeSetError < StandardError
+        def initialize
+          super("No context type declaration set. Either set it or mark the error as abstract")
+        end
+      end
+
       include Concern
       # TODO: replace this with some kind of Foobara::TypeBuilder version
       include WithRegistries
 
       module ClassMethods
         def context_type
-          @context_type ||= Foobara::Domain.foobara_type_from_declaration(self, context_type_declaration)
+          @context_type ||= begin
+            Foobara::Domain.foobara_type_from_declaration(self, context_type_declaration)
+          rescue NoContextTypeSetError
+            if abstract?
+              nil
+            else
+              # :nocov:
+              raise
+              # :nocov:
+            end
+          end
         end
 
         def context_type_declaration
           # :nocov:
-          raise "subclass responsibility"
+          raise NoContextTypeSetError
           # :nocov:
         end
       end

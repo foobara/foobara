@@ -5,7 +5,22 @@ module Foobara
         if args.size == 1
           context_type.types_depended_on(args.first)
         elsif args.empty?
-          context_type.types_depended_on
+          begin
+            if context_type
+              context_type.types_depended_on
+            else
+              raise Foobara::TypeDeclarations::ErrorExtension::NoContextTypeSetError
+            end
+          rescue Foobara::TypeDeclarations::ErrorExtension::NoContextTypeSetError
+            if abstract?
+              []
+            else
+              # :nocov:
+              raise
+              # :nocov:
+            end
+          end
+
         else
           # :nocov:
           raise ArgumentError, "Too many arguments #{args}"

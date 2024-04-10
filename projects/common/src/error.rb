@@ -10,6 +10,14 @@ module Foobara
     # Need to do this early so doing it here... not sure if this is OK as it couples namespaces and errors
 
     class << self
+      def abstract
+        @abstract = true
+      end
+
+      def abstract?
+        @abstract
+      end
+
       def symbol
         Util.non_full_name_underscore(self).gsub(/_error$/, "").to_sym
       end
@@ -43,7 +51,7 @@ module Foobara
           category:,
           symbol:,
           # TODO: this is a bad dependency direction but maybe time to bite the bullet and finally merge these...
-          context_type_declaration: context_type.declaration_data,
+          context_type_declaration: context_type&.declaration_data,
           is_fatal: fatal?
         }
       end
@@ -56,7 +64,7 @@ module Foobara
 
         base = nil
         # don't bother including these core errors
-        unless superclass == Foobara::Error || superclass == Foobara::RuntimeError || superclass == Value::DataError
+        unless superclass == Foobara::Error
           base = superclass
           to_include << base
         end

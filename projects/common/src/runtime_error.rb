@@ -3,6 +3,8 @@ Foobara.require_project_file("common", "error")
 module Foobara
   # NOTE: annoyingly this will clash with ::RuntimeError if not fully qualified when using
   class RuntimeError < Error
+    abstract
+
     class << self
       def category
         :runtime
