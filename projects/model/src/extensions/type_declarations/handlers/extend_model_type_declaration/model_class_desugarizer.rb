@@ -18,7 +18,7 @@ module Foobara
           def desugarize(strictish_type_declaration)
             klass = strictish_type_declaration[:model_class]
 
-            model_class = if klass&.is_a?(::Class)
+            model_class = if klass.is_a?(::Class)
                             klass
                           elsif klass && Object.const_defined?(klass)
                             Object.const_get(klass)
