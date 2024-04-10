@@ -1,6 +1,13 @@
 RSpec.describe ":model" do
   after do
     Foobara.reset_alls
+    %i[
+      SomeModel
+      SomeOrg
+      SomeDomain
+    ].each do |const|
+      Object.send(:remove_const, const) if Object.const_defined?(const)
+    end
   end
 
   let(:type) do
@@ -140,12 +147,8 @@ RSpec.describe ":model" do
       }
     end
 
-    it "creates the model class", :focus do
-      type
-      binding.pry
-      # TODO: make sure this constant is removed in an after block
-      expect(type.target_class).to be_a(SomeModel)
-      binding.pry
+    it "creates the model class" do
+      expect(type.target_class).to be(SomeModel)
     end
   end
 

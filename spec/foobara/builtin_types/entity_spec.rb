@@ -35,7 +35,7 @@ RSpec.describe ":entity" do
       Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
     end
 
-    it "creates a type that targets a Model subclass" do
+    it "creates a type that targets a Model subclass", :focus do
       tx = constructed_model.transaction
       tx.open!
 
