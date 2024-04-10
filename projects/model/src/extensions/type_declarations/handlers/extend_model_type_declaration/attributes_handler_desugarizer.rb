@@ -15,9 +15,6 @@ module Foobara
             handler = handler_for_class(ExtendAttributesTypeDeclaration)
             attributes_type_declaration = sugary_type_declaration[:attributes_declaration]
 
-            #            binding.pry if sugary_type_declaration["model_class"].to_s == "SomeOrg::Auth::User"
-            # binding.pry if sugary_type_declaration[:model_class].to_s == "SomeOrg::Auth::User"
-
             sugary_type_declaration.merge(attributes_declaration: handler.desugarize(attributes_type_declaration))
           end
         end

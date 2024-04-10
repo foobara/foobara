@@ -29,10 +29,6 @@ module Foobara
 
             Util.symbolize_keys!(sugary_type_declaration)
 
-            if sugary_type_declaration[:type].is_a?(::String)
-              sugary_type_declaration[:type] = sugary_type_declaration[:type].to_sym
-            end
-
             unless strictish_type_declaration?(sugary_type_declaration)
               sugary_type_declaration = {
                 type: :attributes,
@@ -40,8 +36,6 @@ module Foobara
                 element_type_declarations: sugary_type_declaration
               }
 
-              binding.pry if sugary_type_declaration.dig(:element_type_declarations, :attributes_declaration)
-              binding.pry if sugary_type_declaration.dig(:element_type_declarations, "attributes_declaration")
             end
 
             Util.symbolize_keys!(sugary_type_declaration[:element_type_declarations])

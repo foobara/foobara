@@ -130,6 +130,25 @@ RSpec.describe ":model" do
     expect(type.extends?(duck)).to be(true)
   end
 
+  context "when model class name is given but doesn't exist" do
+    let(:type_declaration) do
+      {
+        type: :model,
+        name: model_name,
+        attributes_declaration:,
+        model_class: model_name
+      }
+    end
+
+    it "creates the model class", :focus do
+      type
+      binding.pry
+      # TODO: make sure this constant is removed in an after block
+      expect(type.target_class).to be_a(SomeModel)
+      binding.pry
+    end
+  end
+
   describe "#process_value!" do
     let(:value) { type.process_value!(value_to_process) }
 

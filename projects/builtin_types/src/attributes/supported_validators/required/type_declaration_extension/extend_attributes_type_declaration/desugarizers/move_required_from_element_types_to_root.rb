@@ -13,14 +13,12 @@ module Foobara
 
                   def desugarize(rawish_type_declaration)
                     required_attributes = Util.array(rawish_type_declaration[:required])
+                    # TODO: move this to a transformer...
                     required_attributes = required_attributes.map do |value|
-                      case value
-                      when ::String
+                      if value.is_a?(::String)
                         value.to_sym
-                      when ::Symbol
-                        value
                       else
-                        raise "Expected 'required' to be a string or symbol but got #{value.class}:#{value}"
+                        value
                       end
                     end
 

@@ -100,8 +100,6 @@ RSpec.describe "Entity inputs for commands" do
 
         expect(user1.fan_count).to eq(2)
         expect(user2.fan_count).to eq(1)
-
-        binding.pry
       end
 
       expect(CreateUser.possible_errors.to_h { |p| [p.key.to_sym, p.error_class] }).to eq(
