@@ -81,6 +81,10 @@ module Foobara
           h[:base_error] = base.foobara_manifest_reference
         end
 
+        if abstract?
+          h[:abstract] = true
+        end
+
         h
       end
     end
