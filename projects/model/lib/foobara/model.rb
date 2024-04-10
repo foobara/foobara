@@ -16,10 +16,6 @@ module Foobara
       end
 
       def reset_all
-        Foobara::Util.constant_values(self, extends: Foobara::Model).each do |dynamic_model|
-          remove_const(Util.non_full_name(dynamic_model))
-        end
-
         install!
       end
     end

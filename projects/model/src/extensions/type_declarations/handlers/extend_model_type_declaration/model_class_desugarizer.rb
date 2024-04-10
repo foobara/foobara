@@ -45,7 +45,7 @@ module Foobara
                                                # :nocov:
                                              end
                                            else
-                                             default_model_base_class
+                                             Object
                                            end
 
                             model_name = strictish_type_declaration[:name]
