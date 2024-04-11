@@ -15,6 +15,7 @@ module Foobara
       end
     end
 
+    # TODO: why path instead of runtime path?
     def initialize(message: nil, symbol: nil, context: nil, path: nil)
       args = { message:, symbol:, context:, path: }.compact
       super(**args.merge(category: self.class.category))

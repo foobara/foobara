@@ -28,7 +28,7 @@ RSpec.describe Foobara::Command::Concerns::Subcommands do
       def execute
         # TODO: add boolean input type as well as symbol and string
         if should_fail == 1
-          add_runtime_error(self.class::ItFailedError.new(context: { foo: 10 }, message: "It failed!"))
+          add_runtime_error(:it_failed, "It failed!", foo: 10)
         end
 
         100

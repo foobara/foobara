@@ -91,7 +91,7 @@ module Foobara
 
                     error_class = self.class.lookup_input_error_class(symbol, path)
                     error_class.new(**error_args.merge(path:))
-                  elsif args.is_a?(::Array) && (args.size == 2 || args.size == 3)
+                  elsif args.size == 2 || args.size == 3
                     input, symbol, message = args
                     context = opts
 
@@ -114,7 +114,9 @@ module Foobara
         end
 
         def add_runtime_error(*args, **opts)
-          error = if args.size == 1 && opts.empty?
+          error = if args.size == 1 && opts.empty? && (
+            args.first.is_a?(::Class) || args.first.is_a?(Foobara::RuntimeError)
+          )
                     error = args.first
 
                     if error.is_a?(::Class) && error < Foobara::RuntimeError
@@ -141,9 +143,15 @@ module Foobara
 
                     error_class = self.class.lookup_runtime_error_class(symbol)
                     error_class.new(**error_args)
+                  elsif args.is_a?(::Array) && (args.size == 1 || args.size == 2)
+                    symbol, message = args
+                    context = opts
+
+                    error_class = self.class.lookup_runtime_error_class(symbol)
+                    error_class.new(symbol:, context:, message:)
                   else
                     # :nocov:
-                    raise ArgumentError, "Invalid arguments given. Expected an error or keyword args for an error"
+                    raise ArgumentError, "Invalid arguments given. Expected an error or args/opts to build error"
                     # :nocov:
                   end
 
