@@ -11,6 +11,10 @@ module Foobara
         Error.new(root_manifest, [:error, possible_error_manifest["error"]])
       end
 
+      def processor_manifest_data
+        self[:processor_manifest_data]
+      end
+
       # TODO: this has to die
 
       # oops, shadowed the convenience method

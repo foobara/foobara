@@ -2,6 +2,7 @@ module Foobara
   class PossibleError
     attr_accessor :key, :error_class, :data, :processor
 
+    # why can't we set path here?
     def initialize(
       error_class,
       key: nil,
