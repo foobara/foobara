@@ -1021,6 +1021,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
               expect(response.status).to be(200)
               json = JSON.parse(response.body)
               expect(json["type"].keys).to include("User")
+              expect(json["metadata"]["url"]).to eq("/manifest")
+              expect(json["metadata"]["when"]).to match(/^\d{4}-\d{2}-\d{2}/)
             end
           end
 

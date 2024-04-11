@@ -1,17 +1,45 @@
+require "uri"
+
 module Foobara
   module CommandConnectors
     class Http < CommandConnector
       class Request < CommandConnectors::Request
-        attr_accessor :path, :method, :headers, :query_string, :body
+        attr_accessor :path, :method, :headers, :query_string, :body, :scheme, :host, :port, :cookies, :remote_ip
 
-        def initialize(path:, method: nil, headers: {}, query_string: "", body: "")
+        def initialize(
+          path:,
+          method: nil,
+          headers: {},
+          query_string: "",
+          body: "",
+          scheme: nil,
+          host: nil,
+          port: nil,
+          cookies: nil,
+          remote_ip: nil
+        )
           self.path = path
           self.method = method
           self.headers = headers
           self.query_string = query_string
           self.body = body
+          self.scheme = scheme
+          self.host = host
+          self.port = port
+          self.cookies = cookies
+          self.remote_ip = remote_ip
 
           super()
+        end
+
+        def url
+          URI::Generic.build(
+            scheme:,
+            host:,
+            port:,
+            path:,
+            query: query_string
+          ).to_s
         end
 
         def inputs

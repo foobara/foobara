@@ -2,11 +2,15 @@ module Foobara
   module CommandConnectors
     module Commands
       class Describe < Foobara::Command
-        inputs manifestable: :duck
+        inputs manifestable: :duck,
+               request: :duck
         result :associative_array
 
         def execute
           build_manifest
+          stamp_request_metadata
+
+          manifest
         end
 
         attr_accessor :manifest
@@ -17,6 +21,13 @@ module Foobara
                           else
                             manifestable.foobara_manifest(to_include: Set.new)
                           end
+        end
+
+        def stamp_request_metadata
+          manifest[:metadata] = {
+            url: request.url,
+            when: Time.now
+          }
         end
       end
     end

@@ -111,7 +111,7 @@ module Foobara
         command_class = Foobara::CommandConnectors::Commands::Describe
         full_command_name = command_class.full_command_name
 
-        inputs = { manifestable: }
+        inputs = { manifestable:, request: }
         transformed_command_class = transformed_command_from_name(full_command_name) ||
                                     transform_command_class(command_class)
       when "describe_command"
@@ -126,7 +126,7 @@ module Foobara
         command_class = Foobara::CommandConnectors::Commands::Describe
         full_command_name = command_class.full_command_name
 
-        inputs = { manifestable: transformed_command_class }
+        inputs = { manifestable: transformed_command_class, request: }
         transformed_command_class = transformed_command_from_name(full_command_name) ||
                                     transform_command_class(command_class)
       when "describe_type"
@@ -141,14 +141,14 @@ module Foobara
         command_class = Foobara::CommandConnectors::Commands::Describe
         full_command_name = command_class.full_command_name
 
-        inputs = { manifestable: type }
+        inputs = { manifestable: type, request: }
         transformed_command_class = transformed_command_from_name(full_command_name) ||
                                     transform_command_class(command_class)
       when "manifest"
         command_class = Foobara::CommandConnectors::Commands::Describe
         full_command_name = command_class.full_command_name
 
-        inputs = { manifestable: self }
+        inputs = { manifestable: self, request: }
         transformed_command_class = transformed_command_from_name(full_command_name) ||
                                     transform_command_class(command_class)
       when "ping"
