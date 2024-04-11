@@ -38,7 +38,7 @@ module Foobara
             host:,
             port:,
             path:,
-            query: query_string
+            query: query_string.nil? || query_string.empty? ? nil : query_string
           ).to_s
         end
 
