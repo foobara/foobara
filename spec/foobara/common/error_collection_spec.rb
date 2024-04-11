@@ -12,7 +12,9 @@ RSpec.describe Foobara::ErrorCollection do
     let(:message) { "m" }
     let(:context) { { foo: :bar } }
 
-    let(:error_class) { Foobara::Error.subclass(symbol:, message:, context_type_declaration: { foo: :symbol }) }
+    let(:error_class) do
+      Foobara::Error.subclass(symbol:, message:, context_type_declaration: { foo: :symbol }, is_fatal: true)
+    end
     let(:error) { error_class.new(context:) }
 
     context "when adding error instance" do
@@ -25,6 +27,7 @@ RSpec.describe Foobara::ErrorCollection do
         expect(error_collection.size).to eq(1)
         error = error_collection.errors.first
         expect(error).to be_a(Foobara::Error)
+        expect(error.is_fatal).to be(true)
         expect(error.symbol).to eq(symbol)
         expect(error.message).to eq(message)
         expect(error.context).to eq(context)

@@ -98,27 +98,6 @@ module Foobara
             value: :duck
           }
         end
-
-        # TODO: this doesn't feel like the right place for this...
-        Foobara::Error.singleton_class.define_method(
-          :subclass
-        ) do |superclass = self, symbol:, context_type_declaration:, message: nil|
-          Util.make_class "#{superclass.name}::#{Util.classify(symbol)}", superclass do
-            singleton_class.define_method :symbol do
-              symbol
-            end
-
-            singleton_class.define_method :context_type_declaration do
-              context_type_declaration
-            end
-
-            if message
-              singleton_class.define_method :message do
-                message
-              end
-            end
-          end
-        end
       end
 
       def new_project_added(_project)

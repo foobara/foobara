@@ -22,6 +22,7 @@ module Foobara
         Util.non_full_name_underscore(self).gsub(/_error$/, "").to_sym
       end
 
+      # Is this actually used?
       def path
         ErrorKey::EMPTY_PATH
       end
@@ -86,6 +87,50 @@ module Foobara
         end
 
         h
+      end
+
+      def subclass(
+        # TODO: technically context_type_declaration doesn't belong here. But maybe it should.
+        context_type_declaration:,
+        name: nil,
+        symbol: nil,
+        message: nil,
+        base_error: self,
+        category: base_error.category,
+        is_fatal: false,
+        abstract: false
+      )
+        name ||= "#{base_error.name}::#{Util.classify(symbol)}Error"
+
+        klass = Util.make_class_p(name, base_error) do
+          singleton_class.define_method :category do
+            category
+          end
+
+          if symbol
+            singleton_class.define_method :symbol do
+              symbol
+            end
+          end
+
+          singleton_class.define_method :fatal? do
+            is_fatal
+          end
+
+          singleton_class.define_method :context_type_declaration do
+            context_type_declaration
+          end
+
+          if message
+            singleton_class.define_method :message do
+              message
+            end
+          end
+        end
+
+        klass.abstract if abstract
+
+        klass
       end
     end
 
