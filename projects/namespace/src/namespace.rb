@@ -34,12 +34,13 @@ module Foobara
       end
 
       def to_registry_path(object)
-        return object if object.is_a?(::Array)
+        return object.map(&:to_s) if object.is_a?(::Array)
 
         object = object.to_s if object.is_a?(::Symbol)
 
         case object
         when ::String
+          # TODO: Why don't we use symbols instead of strings here?
           object.split("::")
         when Foobara::Scoped
           object.scoped_path
