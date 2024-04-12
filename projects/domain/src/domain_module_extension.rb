@@ -95,6 +95,8 @@ module Foobara
           type.foobara_parent_namespace ||= self
           foobara_register(type)
 
+          _set_type_constant(type)
+
           type
         end
 
@@ -248,6 +250,39 @@ module Foobara
           end
 
           manifest
+        end
+
+        def _set_type_constant(type)
+          domain = if scoped_full_path.empty?
+                     GlobalDomain
+                   else
+                     self
+                   end
+
+          path = type.scoped_path
+          if path.first == "Types"
+            path = path[1..]
+          end
+
+          types_mod = if domain.const_defined?(:Types)
+                        domain.const_get(:Types)
+                      else
+                        domain.const_set(:Types, Module.new)
+                      end
+
+          if type.scoped_prefix
+            types_mod = Util.make_module_p("#{types_mod.name}::#{path[0..-2].join("::")}")
+          end
+
+          if type.scoped_short_name =~ /\A[a-z]/
+            unless types_mod.respond_to?(type.scoped_short_name)
+              types_mod.singleton_class.define_method type.scoped_short_name do
+                type
+              end
+            end
+          else
+            types_mod.const_set(type.scoped_short_name, type)
+          end
         end
       end
     end
