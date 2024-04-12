@@ -74,7 +74,12 @@ module Foobara
             possible_error = PossibleError.new(error_class, symbol:, data:)
             possible_error.prepend_path!(path)
 
+            manually_added_possible_input_errors << possible_error
             register_possible_error_class(possible_error)
+          end
+
+          def manually_added_possible_input_errors
+            @manually_added_possible_input_errors ||= []
           end
 
           # TODO: kill this method in favor of possible_errors

@@ -15,7 +15,16 @@ RSpec.describe Foobara::CommandConnectors::Http do
         end
       end
 
+      input_error_class = sc.call(:SomeInputError, Foobara::Value::DataError) do
+        class << self
+          def context_type_declaration
+            :duck
+          end
+        end
+      end
+
       possible_error error_klass
+      possible_input_error :base, input_error_class
 
       inputs exponent: :integer,
              base: :integer
@@ -861,6 +870,13 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 key: "runtime.some_runtime",
                 error: "SomeRuntimeError"
               },
+              "data.base.some_input" => {
+                path: [:base],
+                category: :data,
+                symbol: :some_input,
+                key: "data.base.some_input",
+                error: "SomeInputError"
+              },
               "data.cannot_cast" => {
                 category: :data,
                 symbol: :cannot_cast,
@@ -908,6 +924,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
             transformed_command = command_connector.transformed_command_from_name("ComputeExponent")
             expect(transformed_command.possible_errors.map(&:key).map(&:to_s)).to contain_exactly(
               "runtime.some_runtime",
+              "data.base.some_input",
               "data.cannot_cast",
               "data.unexpected_attributes",
               "data.bbaassee.cannot_cast",

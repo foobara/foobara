@@ -94,6 +94,10 @@ module Foobara
             end
           end
 
+          command_class.manually_added_possible_input_errors.each do |possible_error|
+            set[possible_error.key.to_s] = possible_error
+          end
+
           inputs_type&.possible_errors&.each do |possible_error|
             set[possible_error.key.to_s] = possible_error
           end
