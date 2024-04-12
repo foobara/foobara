@@ -16,6 +16,14 @@ module Foobara
 
                     one_of = Util.constant_values(mod)
 
+                    one_of = begin
+                      one_of.sort
+                    rescue
+                      # :nocov:
+                      one_of.sort_by(&:inspect)
+                      # :nocov:
+                    end
+
                     rawish_type_declaration.merge(one_of:)
                   end
 
