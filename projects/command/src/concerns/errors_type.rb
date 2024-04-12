@@ -74,7 +74,7 @@ module Foobara
             possible_error = PossibleError.new(error_class, symbol:, data:)
             possible_error.prepend_path!(path)
 
-            manually_added_possible_input_errors << possible_error
+            possible_error.manually_added = true
             register_possible_error_class(possible_error)
           end
 
@@ -91,6 +91,10 @@ module Foobara
           end
 
           def register_possible_error_class(possible_error)
+            if possible_error.manually_added
+              manually_added_possible_input_errors << possible_error
+            end
+
             error_context_type_map[possible_error.key.to_s] = possible_error
           end
 

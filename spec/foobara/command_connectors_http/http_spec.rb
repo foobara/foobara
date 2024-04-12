@@ -875,7 +875,8 @@ RSpec.describe Foobara::CommandConnectors::Http do
                 category: :data,
                 symbol: :some_input,
                 key: "data.base.some_input",
-                error: "SomeInputError"
+                error: "SomeInputError",
+                manually_added: true
               },
               "data.cannot_cast" => {
                 category: :data,

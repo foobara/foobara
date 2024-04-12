@@ -233,6 +233,7 @@ RSpec.describe Foobara::Manifest do
     expect(foobara_possible_error.parent).to be_nil
     expect(foobara_possible_error._path).to eq([])
     expect(foobara_possible_error.processor_manifest_data).to be_a(Hash)
+    expect(foobara_possible_error.manually_added).to be_falsey
 
     foobara_error = foobara_possible_error.error
     expect(foobara_error).to be_a(Foobara::Manifest::Error)

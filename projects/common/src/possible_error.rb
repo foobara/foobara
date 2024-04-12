@@ -1,6 +1,6 @@
 module Foobara
   class PossibleError
-    attr_accessor :key, :error_class, :data, :processor
+    attr_accessor :key, :error_class, :data, :processor, :manually_added
 
     # why can't we set path here?
     def initialize(
@@ -71,7 +71,8 @@ module Foobara
           error: error_class.foobara_manifest_reference,
           processor: processor_reference,
           processor_class: processor_class&.foobara_manifest_reference,
-          processor_manifest_data:
+          processor_manifest_data:,
+          manually_added:
         )
       )
     end

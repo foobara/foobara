@@ -15,6 +15,10 @@ module Foobara
         self[:processor_manifest_data]
       end
 
+      def manually_added
+        self[:manually_added]
+      end
+
       # TODO: this has to die
 
       # oops, shadowed the convenience method
