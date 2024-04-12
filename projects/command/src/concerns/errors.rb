@@ -113,7 +113,7 @@ module Foobara
           halt!
         end
 
-        def add_runtime_error(*args, **opts)
+        def add_runtime_error(*args, halt: true, **opts)
           error = if args.size == 1 && opts.empty? && (
             args.first.is_a?(::Class) || args.first.is_a?(Foobara::RuntimeError)
           )
@@ -156,7 +156,11 @@ module Foobara
                   end
 
           add_error(error)
-          halt!
+          if halt
+            halt!
+          else
+            error
+          end
         end
 
         def process_error(error)

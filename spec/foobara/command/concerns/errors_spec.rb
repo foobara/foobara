@@ -171,7 +171,8 @@ RSpec.describe Foobara::Command::Concerns::Errors do
               add_runtime_error(
                 symbol: :exponent_cannot_be_five,
                 message: "Exponent cannot be five",
-                context: { value: exponent, cannot_be: 5 }
+                context: { value: exponent, cannot_be: 5 },
+                halt: false
               )
             else
               super
