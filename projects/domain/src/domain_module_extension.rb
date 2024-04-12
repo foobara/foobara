@@ -84,6 +84,13 @@ module Foobara
         def foobara_register_type(type_symbol, ...)
           type = foobara_type_from_declaration(...)
 
+          if type_symbol.is_a?(::Array)
+            type.scoped_path = type_symbol
+            type.type_symbol = type_symbol.join("::")
+          else
+            type.type_symbol = type_symbol
+          end
+
           type.type_symbol = type_symbol
           type.foobara_parent_namespace ||= self
           foobara_register(type)
