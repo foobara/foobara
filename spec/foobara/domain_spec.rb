@@ -129,12 +129,61 @@ RSpec.describe Foobara::Domain do
     let(:type_symbol) { :some_type }
     let(:type_declaration) { %i[string downcase] }
 
-    it "creates and registers a type" do
+    it "creates and registers a type and puts it on the Types module" do
       domain.foobara_register_type(type_symbol, *type_declaration)
 
       type = domain.foobara_lookup(type_symbol)
 
       expect(type.process_value!("FooBarBaz")).to eq("foobarbaz")
+      expect(SomeDomain::Types.some_type).to be(type)
+    end
+
+    context "when type constant is upper case" do
+      let(:type_symbol) { "SomeType" }
+
+      it "creates and registers a type and puts it on the Types module as a constant" do
+        domain.foobara_register_type(type_symbol, *type_declaration)
+
+        type = domain.foobara_lookup(type_symbol)
+        expect(type).to be_a(Foobara::Types::Type)
+        expect(SomeDomain::Types::SomeType).to be(type)
+      end
+    end
+
+    context "when registering on the GlobalDomain" do
+      it "creates and registers the type and puts it on the Types module" do
+        type = Foobara::GlobalDomain.foobara_register_type(type_symbol, *type_declaration)
+        expect(type).to be_a(Foobara::Types::Type)
+        expect(Foobara::GlobalDomain::Types.some_type).to be(type)
+      end
+    end
+
+    context "when it already has a Types prefix" do
+      let(:type_symbol) { %i[Types Foo Bar some_type] }
+
+      it "creates and registers the type and puts it on the existing Types module" do
+        domain.foobara_register_type(type_symbol, *type_declaration)
+
+        type = domain.foobara_lookup(type_symbol)
+
+        expect(type).to be_a(Foobara::Types::Type)
+        expect(SomeDomain::Types::Foo::Bar.some_type).to be(type)
+      end
+
+      context "when the Types module already exists" do
+        before do
+          stub_module("SomeDomain::Types")
+        end
+
+        it "creates and registers the type and puts it on the existing Types module" do
+          domain.foobara_register_type(type_symbol, *type_declaration)
+
+          type = domain.foobara_lookup(type_symbol)
+
+          expect(type).to be_a(Foobara::Types::Type)
+          expect(SomeDomain::Types::Foo::Bar.some_type).to be(type)
+        end
+      end
     end
   end
 
