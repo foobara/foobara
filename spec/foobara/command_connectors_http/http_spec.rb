@@ -963,6 +963,15 @@ RSpec.describe Foobara::CommandConnectors::Http do
         expect(response.status).to be(200)
         expect(response.body).to match(/helping!!/)
       end
+
+      context "when asking for help with a specific element" do
+        let(:path) { "/help/ComputeExponent" }
+
+        it "gives some help", :focus do
+          expect(response.status).to be(200)
+          expect(response.body).to match(/helping!!/)
+        end
+      end
     end
 
     describe "connector manifest" do

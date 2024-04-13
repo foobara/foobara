@@ -75,6 +75,10 @@ module Foobara
           @action
         end
 
+        def argument
+          path.split("/")[2]
+        end
+
         def set_action_and_command_name
           @action, @full_command_name = path[1..].split("/")
         end

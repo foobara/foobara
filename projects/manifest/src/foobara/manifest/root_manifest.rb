@@ -76,6 +76,11 @@ module Foobara
       def organization_by_name(name)
         Organization.new(root_manifest, [:organization, name])
       end
+
+      # TODO: this isn't quite right. If the thing is there but is nil or false, this should be truthy.
+      def contains?(reference, category)
+        DataPath.value_at(root_manifest, [category, reference])
+      end
     end
   end
 end
