@@ -148,31 +148,21 @@ RSpec.describe "Foobara namespace lookup" do
     end
 
     context "when one domain depends on another" do
-      it "can lookup items in the other domain after marking it as dependent" do
-        expect(
-          Foobara::Namespace.global.foobara_lookup_organization("OrgA", mode: Foobara::Namespace::LookupMode::STRICT)
-        ).to eq(OrgA)
+      it "can lookup items in the other domain after marking it as dependent", :focus do
+        expect(Foobara::Namespace.global.foobara_lookup_organization("OrgA")).to eq(OrgA)
         expect(
           Foobara::Namespace.global.foobara_lookup_organization("::OrgA", mode: Foobara::Namespace::LookupMode::DIRECT)
         ).to eq(OrgA)
         expect(OrgA::DomainA.foobara_lookup_command("CommandA")).to eq(OrgA::DomainA::CommandA)
         expect(OrgA::DomainA.foobara_lookup_command("DomainA::CommandA")).to eq(OrgA::DomainA::CommandA)
 
-        expect(
-          OrgA::DomainA.foobara_lookup_command("OrgB::DomainB::CommandB", mode: Foobara::Namespace::LookupMode::STRICT)
-        ).to be_nil
-        expect(
-          OrgA::DomainA.foobara_lookup_command("OnlyInB")
-        ).to be_nil
+        expect(OrgA::DomainA.foobara_lookup_command("OrgB::DomainB::CommandB")).to be_nil
+        expect(OrgA::DomainA.foobara_lookup_command("OnlyInB")).to be_nil
 
         OrgA::DomainA.foobara_depends_on(OrgB::DomainB)
 
-        expect(
-          OrgA::DomainA.foobara_lookup_command("OrgB::DomainB::CommandB", mode: Foobara::Namespace::LookupMode::STRICT)
-        ).to be(OrgB::DomainB::CommandB)
-        expect(
-          OrgA::DomainA.foobara_lookup_command("OnlyInB")
-        ).to be(OrgB::DomainB::OnlyInB)
+        expect(OrgA::DomainA.foobara_lookup_command("OrgB::DomainB::CommandB")).to be(OrgB::DomainB::CommandB)
+        expect(OrgA::DomainA.foobara_lookup_command("OnlyInB")).to be(OrgB::DomainB::OnlyInB)
       end
     end
   end

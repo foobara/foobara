@@ -76,6 +76,26 @@ module Foobara
       def organization_by_name(name)
         Organization.new(root_manifest, [:organization, name])
       end
+
+      # TODO: this isn't quite right. If the thing is there but is nil or false, this should be truthy.
+      def contains?(reference, category)
+        DataPath.value_at([category, reference], root_manifest)
+      end
+
+      def lookup(reference)
+        prioritized_categories = %i[command type error domain organization processor processor_class]
+
+        prioritized_categories.each do |category|
+          path = [category, reference]
+          raw_manifest = DataPath.value_at(path, root_manifest)
+
+          if raw_manifest
+            return self.class.category_to_manifest_class(category).new(root_manifest, path)
+          end
+        end
+
+        nil
+      end
     end
   end
 end

@@ -961,7 +961,35 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
       it "gives some help" do
         expect(response.status).to be(200)
-        expect(response.body).to match(/helping!!/)
+        expect(response.body).to match(/root/)
+      end
+
+      context "when asking for help with a specific element" do
+        let(:path) { "/help/ComputeExponent" }
+
+        it "gives some help" do
+          expect(response.status).to be(200)
+          expect(response.body).to match(/ComputeExponent/)
+        end
+      end
+
+      context "when it is something accessible through GlobalOrganization but not the connector" do
+        before do
+          Foobara::GlobalDomain.foobara_register_type(%w[Foo Bar whatever], :string, :downcase)
+          command_connector.connect(new_command)
+        end
+
+        let(:new_command) do
+          stub_class(:NewCommand, Foobara::Command) do
+            inputs whatever: :"Foo::Bar::whatever"
+          end
+        end
+        let(:path) { "/help/whatever" }
+
+        it "gives some help" do
+          expect(response.status).to be(200)
+          expect(response.body).to match(/whatever/)
+        end
       end
     end
 

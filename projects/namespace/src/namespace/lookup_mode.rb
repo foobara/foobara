@@ -9,11 +9,10 @@ module Foobara
     #   children: n
     #   parent: n
     #   dependent: n
-    # 3. strict: this namespace and dependent namespaces.
-    #            We want to encapsulate and hide names that we haven't explicitly declared.
+    # 3. strict
     #   children: n
-    #   parent: n
-    #   dependent: y
+    #   parent: y
+    #   dependent: n
     # 4. absolute
     #   children: y
     #   parent: n
