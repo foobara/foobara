@@ -1,5 +1,6 @@
 module Foobara
   class Namespace
+    # TODO: need to define these better...
     # use-cases
     # 1. general: just general lookup. find it wherever the heck it might be
     #   children: y

@@ -123,26 +123,23 @@ module Foobara
           return foobara_root_namespace.foobara_lookup(path, filter:, mode: LookupMode::ABSOLUTE)
         end
 
-        scoped = foobara_registry.lookup(path, filter)
+        partial = foobara_registry.lookup(path, filter)
 
         if mode == LookupMode::DIRECT
-          return scoped
+          return partial
         end
 
-        if scoped
-          if scoped.scoped_path == path
-            return scoped
+        if partial
+          if partial.scoped_path == path
+            return partial
           end
         end
 
-        # if there's a partial match, include self
-        to_consider = scoped ? [self] : []
+        to_consider = [self]
 
-        to_consider += if mode == LookupMode::STRICT
-                         foobara_children.select { |child| child.scoped_path.empty? }
-                       else
-                         foobara_children
-                       end
+        if mode != LookupMode::STRICT
+          to_consider += foobara_children
+        end
 
         scoped = _lookup_in(path, to_consider, filter:, visited:)
         return scoped if scoped
@@ -158,8 +155,6 @@ module Foobara
         to_consider = case mode
                       when LookupMode::GENERAL
                         foobara_depends_on_namespaces
-                      when LookupMode::STRICT
-                        foobara_depends_on_namespaces.select { |namespace| namespace.scoped_path.empty? }
                       else
                         []
                       end
@@ -169,10 +164,12 @@ module Foobara
         end.compact
 
         if candidates.size > 1
+          # :nocov:
           raise AmbiguousLookupError, "Multiple things matched #{path}"
+          # :nocov:
         end
 
-        candidates.first
+        candidates.first || partial
       end
 
       def foobara_parent_namespace
