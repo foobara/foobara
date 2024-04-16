@@ -32,6 +32,14 @@ module Foobara
       def global?
         reference == "global_organization"
       end
+
+      def organization_name
+        scoped_name
+      end
+
+      def full_organization_name
+        scoped_full_name
+      end
     end
   end
 end

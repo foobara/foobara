@@ -30,6 +30,14 @@ module Foobara
       def global?
         reference == "global_organization::global_domain"
       end
+
+      def domain_name
+        scoped_name
+      end
+
+      def full_domain_name
+        scoped_full_name
+      end
     end
   end
 end

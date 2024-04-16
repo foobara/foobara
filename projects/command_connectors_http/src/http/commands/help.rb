@@ -4,10 +4,9 @@ module Foobara
       module Commands
         class Help < Command
           description "Will extract items from the request to help with. Assumes the help is desired in HTML format"
-
           inputs request: Request
-
           result :string
+          possible_error CommandConnector::NotFoundError
 
           def execute
             load_manifest
@@ -26,25 +25,27 @@ module Foobara
             self.root_manifest = Manifest::RootManifest.new(raw_manifest)
           end
 
-          def determine_object_to_help_with(mode: Namespace::LookupMode::GENERAL)
+          def determine_object_to_help_with(mode: Namespace::LookupMode::ABSOLUTE)
             arg = request.argument
 
             if arg
-              result = command_connector.command_registry.foobara_lookup(arg)
+              result = command_connector.command_registry.foobara_lookup(arg, mode:)
 
               if result
                 self.object_to_help_with = result
               else
-                result = GlobalOrganization.foobara_lookup(arg)
+                result = GlobalOrganization.foobara_lookup(arg, mode:)
 
                 if result && root_manifest.contains?(result.foobara_manifest_reference,
                                                      result.scoped_category)
                   self.object_to_help_with = result
+                elsif mode == Namespace::LookupMode::ABSOLUTE
+                  determine_object_to_help_with(mode: Namespace::LookupMode::GENERAL)
                 elsif mode == Namespace::LookupMode::GENERAL
                   determine_object_to_help_with(mode: Namespace::LookupMode::RELAXED)
                 else
                   # TODO: add an input error instead for missing record to trigger 404
-                  raise "cannot find #{arg}"
+                  add_runtime_error(CommandConnector::NotFoundError.new(arg))
                 end
               end
             else

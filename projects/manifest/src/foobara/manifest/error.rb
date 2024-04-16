@@ -15,6 +15,10 @@ module Foobara
         scoped_name
       end
 
+      def full_error_name
+        scoped_full_name
+      end
+
       def abstract
         self[:abstract]
       end

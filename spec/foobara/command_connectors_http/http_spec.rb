@@ -957,7 +957,40 @@ RSpec.describe Foobara::CommandConnectors::Http do
     end
 
     context "with help path" do
+      let(:org_module) do
+        stub_module :SomeOrg do
+          foobara_organization!
+        end
+      end
       let(:path) { "/help" }
+
+      let(:domain_module) do
+        org_module
+        stub_module("SomeOrg::SomeDomain") do
+          foobara_domain!
+        end
+      end
+
+      let(:another_command_class) do
+        domain_module
+        stub_module "SomeOtherOrg" do
+          foobara_organization!
+        end
+        stub_module "SomeOtherOrg::SomeOtherDomain" do
+          foobara_domain!
+        end
+        stub_class "SomeOtherOrg::SomeOtherDomain::SomeOtherCommand", Foobara::Command do
+          inputs email: :email
+        end
+        stub_class "SomeOrg::SomeDomain::SomeCommand", Foobara::Command do
+          description "just some command"
+          depends_on SomeOtherOrg::SomeOtherDomain::SomeOtherCommand
+        end
+      end
+
+      before do
+        command_connector.connect(another_command_class)
+      end
 
       it "gives some help" do
         expect(response.status).to be(200)
@@ -989,6 +1022,130 @@ RSpec.describe Foobara::CommandConnectors::Http do
         it "gives some help" do
           expect(response.status).to be(200)
           expect(response.body).to match(/whatever/)
+        end
+      end
+
+      context "when it doesn't exist" do
+        let(:path) { "/help/nonexistent" }
+
+        it "is not success" do
+          expect(response.status).to be(404)
+          expect(response.body).to match(/Not found/)
+        end
+      end
+
+      context "when rendering a domain" do
+        let(:path) { "/help/SomeOrg::SomeDomain" }
+
+        it "gives some help" do
+          expect(response.status).to be(200)
+          expect(response.body).to match(/SomeOrg::SomeDomain/)
+        end
+      end
+
+      context "when rendering an organization" do
+        let(:path) { "/help/SomeOrg" }
+
+        let(:presenter) { response.request.command.command.presenter }
+
+        it "gives some help" do
+          expect(response.status).to be(200)
+          expect(response.body).to match(/SomeOrg/)
+
+          expect(presenter).to be_a(Foobara::CommandConnectors::Http::Commands::Help::Presenter::Organization)
+          expect(presenter.respond_to?(:organization_name)).to be(true)
+        end
+      end
+
+      context "when rendering an entity" do
+        let(:path) { "/help/SomeOrg::SomeDomain::User" }
+
+        let(:user_entity) do
+          SomeOrg::SomeDomain.foobara_type_from_declaration(
+            attributes_declaration: {
+              first_name: :string,
+              id: :integer
+            },
+            model_module: "SomeOrg::SomeDomain",
+            name: "User",
+            primary_key: "id",
+            type: "entity"
+          )
+        end
+        let(:some_command) do
+          user_entity
+
+          stub_class("SomeOrg::SomeDomain::SomeCommand", Foobara::Command) do
+            inputs user: :User
+          end
+        end
+
+        before do
+          command_connector.connect(some_command)
+        end
+
+        it "gives some help" do
+          expect(response.status).to be(200)
+          expect(response.body).to match(/SomeOrg::SomeDomain::User/)
+        end
+      end
+
+      context "when rendering a model" do
+        let(:path) { "/help/User" }
+
+        let(:user_model) do
+          SomeOrg::SomeDomain.foobara_type_from_declaration(
+            attributes_declaration: {
+              first_name: :string,
+              id: :integer
+            },
+            model_module: "SomeOrg::SomeDomain",
+            name: "User",
+            type: "model"
+          )
+        end
+        let(:some_command) do
+          user_model
+
+          stub_class("SomeOrg::SomeDomain::SomeCommand", Foobara::Command) do
+            inputs user: :User
+          end
+        end
+
+        before do
+          command_connector.connect(some_command)
+        end
+
+        it "gives some help" do
+          expect(response.status).to be(200)
+          expect(response.body).to match(/SomeOrg::SomeDomain::User/)
+        end
+      end
+
+      context "when rendering an error" do
+        let(:path) { "/help/SomeInputError" }
+
+        it "gives some help" do
+          expect(response.status).to be(200)
+          expect(response.body).to match(/SomeInputError/)
+        end
+      end
+
+      context "when rendering a processor" do
+        let(:path) { "/help/email::Transformers::downcase" }
+
+        it "gives some help" do
+          expect(response.status).to be(200)
+          expect(response.body).to match(/email::Transformers::downcase/)
+        end
+      end
+
+      context "when rendering a processor class" do
+        let(:path) { "/help/email::Transformers::Downcase" }
+
+        it "gives some help" do
+          expect(response.status).to be(200)
+          expect(response.body).to match(/email::Transformers::Downcase/)
         end
       end
     end

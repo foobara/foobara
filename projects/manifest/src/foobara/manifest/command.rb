@@ -11,6 +11,10 @@ module Foobara
         scoped_short_name
       end
 
+      def full_command_name
+        scoped_full_name
+      end
+
       def inputs_type
         Attributes.new(root_manifest, [*path, :inputs_type])
       end

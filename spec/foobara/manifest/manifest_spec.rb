@@ -115,6 +115,7 @@ RSpec.describe Foobara::Manifest do
     expect(domain).to be_a(Foobara::Manifest::Domain)
     expect(domain.scoped_category).to eq(:domain)
     expect(manifest.domains).to include(domain)
+    expect(domain.domain_name).to eq("SomeDomain")
 
     expect(domain.organization).to_not be_global
     expect(domain).to_not be_global
@@ -179,6 +180,7 @@ RSpec.describe Foobara::Manifest do
     expect(manifest.types).to include(model)
     expect(model.organization.types).to include(model)
     expect(model.has_associations?).to be(false)
+    expect(model.type_name).to eq("Address")
 
     attributes = model.attributes_type
     expect(attributes.scoped_category).to be_nil
@@ -283,5 +285,6 @@ RSpec.describe Foobara::Manifest do
     expect(org.scoped_category).to eq(:organization)
     expect(org.parent).to be_nil
     expect(manifest.organizations).to include(org)
+    expect(org.organization_name).to eq("SomeOrg")
   end
 end

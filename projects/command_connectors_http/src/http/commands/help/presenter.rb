@@ -39,7 +39,9 @@ module Foobara
                 when Manifest::ProcessorClass
                   Presenter::ProcessorClass
                 else
+                  # :nocov:
                   raise "No presenter found for #{manifest.path}"
+                  # :nocov:
                 end.new(manifest)
               end
 

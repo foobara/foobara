@@ -73,6 +73,14 @@ module Foobara
           Type.new(root_manifest, [:type, type_reference])
         end
       end
+
+      def type_name
+        scoped_name
+      end
+
+      def full_type_name
+        scoped_full_name
+      end
     end
   end
 end
