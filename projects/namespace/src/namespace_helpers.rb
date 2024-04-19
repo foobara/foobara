@@ -105,7 +105,9 @@ module Foobara
         def foobara_namespace!(object, scoped_path: nil, ignore_modules: nil)
           object.extend ::Foobara::Scoped
 
-          object.scoped_ignore_modules = ignore_modules if ignore_modules
+          if ignore_modules
+            object.scoped_ignore_modules = ignore_modules
+          end
           object.scoped_path = scoped_path if scoped_path
 
           object.extend ::Foobara::Namespace::IsNamespace
@@ -186,12 +188,19 @@ module Foobara
           mod.scoped_path_autoset = true
           mod.scoped_path = adjusted_scoped_path
 
-          update_children_with_new_parent(mod)
+          if mod.is_a?(IsNamespace)
+            update_children_with_new_parent(mod)
+          end
         end
 
         def update_children_with_new_parent(mod)
           unless mod.scoped_path_set?
             mod.foobara_autoset_scoped_path!
+          end
+
+          if mod.scoped_full_path.empty?
+            # hard to really know what we're trying to do here. Just bail out.
+            return
           end
 
           # how to do this?
@@ -214,9 +223,11 @@ module Foobara
             binding.pry unless scoped.scoped_path_set?
             binding.pry unless mod.scoped_path_set?
             if _start_with?(scoped.scoped_full_path, mod.scoped_full_path)
+              binding.pry if scoped.scoped_full_path.include?("FoobaraSimulation")
               scoped.scoped_path = scoped.scoped_full_path[mod.scoped_full_path.size..]
 
               if parent
+                binding.pry if scoped.class.name.include?("Type")
                 parent.foobara_unregister(scoped)
 
                 mod.foobara_register(scoped)
@@ -229,6 +240,9 @@ module Foobara
               end
             end
           end
+        rescue => e
+          binding.pry
+          raise
         end
 
         # TODO: move to util

@@ -25,7 +25,6 @@ module Foobara
         "@scoped_absolute_name",
         "@scoped_name",
         "@scoped_prefix",
-        "@scoped_ignore_modules",
         "@scoped_full_name",
         "@scoped_full_path"
       ].each do |variable|
@@ -39,6 +38,9 @@ module Foobara
     end
 
     def scoped_path=(path)
+      if path.include?("FoobaraSimulation")
+        binding.pry
+      end
       scoped_clear_caches
 
       @scoped_path = path.map(&:to_s)
