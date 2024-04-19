@@ -14,6 +14,7 @@ module Foobara
             build_presenter
             load_template
             generate_html_from_template
+            set_header_to_html
 
             html
           end
@@ -72,6 +73,11 @@ module Foobara
 
           def generate_html_from_template
             self.html = template.result(presenter.instance_eval { binding })
+          end
+
+          def set_header_to_html
+            request.response_headers ||= {}
+            request.response_headers = request.response_headers.merge("content-type" => "text/html")
           end
 
           def manifest_to_help_with

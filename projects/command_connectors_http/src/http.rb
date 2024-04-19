@@ -42,6 +42,7 @@ module Foobara
                        500
                      when CommandConnector::NotFoundError, Foobara::Entity::NotFoundError
                        # TODO: we should not be coupled to Entities here...
+                       body ||= "Not found"
                        404
                      when CommandConnector::UnauthenticatedError
                        401
@@ -51,13 +52,19 @@ module Foobara
                    end || 422
                  end
 
-        headers = headers_for(command)
+        headers = headers_for(request)
 
         Response.new(status:, headers:, body:, request:)
       end
 
-      def headers_for(_command)
-        static_headers.dup
+      def headers_for(request)
+        response_headers = request.response_headers
+
+        if response_headers
+          static_headers.merge(response_headers)
+        else
+          static_headers.dup
+        end
       end
 
       private

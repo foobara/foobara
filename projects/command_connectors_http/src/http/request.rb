@@ -4,7 +4,17 @@ module Foobara
   module CommandConnectors
     class Http < CommandConnector
       class Request < CommandConnectors::Request
-        attr_accessor :path, :method, :headers, :query_string, :body, :scheme, :host, :port, :cookies, :remote_ip
+        attr_accessor :path,
+                      :method,
+                      :headers,
+                      :query_string,
+                      :body,
+                      :scheme,
+                      :host,
+                      :port,
+                      :cookies,
+                      :remote_ip,
+                      :response_headers
 
         def initialize(
           path:,
