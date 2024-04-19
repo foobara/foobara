@@ -28,6 +28,7 @@ module Foobara
         # :nocov:
       end
 
+      # TODO: should return an enumerator
       def each_scoped(filter: nil, &block)
         each_scoped_without_filter do |scoped|
           scoped = apply_filter(scoped, filter) if filter

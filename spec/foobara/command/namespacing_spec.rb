@@ -27,7 +27,6 @@ RSpec.describe "Command namespacing" do
     before do
       command_class
       organization_module.foobara_organization!
-      $stop = true
       domain_module.foobara_domain!
     end
 

@@ -194,10 +194,6 @@ module Foobara
         end
 
         def update_children_with_new_parent(mod)
-          unless mod.scoped_path_set?
-            mod.foobara_autoset_scoped_path!
-          end
-
           if mod.scoped_full_path.empty?
             # hard to really know what we're trying to do here. Just bail out.
             return
@@ -207,12 +203,6 @@ module Foobara
           # I guess we could just iterate over all objects and patch up any with matching prefixes?
           # is this expensive to have to look at all of them or no? I guess at least it's a one-time thing.
           Foobara.foobara_root_namespace.foobara_each do |scoped|
-            if $stop
-              if mod.scoped_full_path == ["SomeOrg"] && scoped.scoped_full_path == %w[SomeOrg SomeDomain]
-                #                 binding.pry
-              end
-            end
-
             parent = scoped.scoped_namespace
             next if parent == mod
 
@@ -220,14 +210,10 @@ module Foobara
               next if _start_with?(parent.scoped_full_path, mod.scoped_full_path)
             end
 
-            binding.pry unless scoped.scoped_path_set?
-            binding.pry unless mod.scoped_path_set?
             if _start_with?(scoped.scoped_full_path, mod.scoped_full_path)
-              binding.pry if scoped.scoped_full_path.include?("FoobaraSimulation")
               scoped.scoped_path = scoped.scoped_full_path[mod.scoped_full_path.size..]
 
               if parent
-                binding.pry if scoped.class.name.include?("Type")
                 parent.foobara_unregister(scoped)
 
                 mod.foobara_register(scoped)
@@ -240,9 +226,6 @@ module Foobara
               end
             end
           end
-        rescue => e
-          binding.pry
-          raise
         end
 
         # TODO: move to util

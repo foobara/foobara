@@ -40,4 +40,27 @@ RSpec.describe Foobara::Namespace::NamespaceHelpers do
       end
     end
   end
+
+  describe ".update_children_with_new_parent" do
+    let(:parent_module) do
+      stub_module("ParentModule")
+    end
+    let(:child_module) do
+      parent_module
+      stub_module("ParentModule::ChildModule") do
+        extend Foobara::Scoped
+        foobara_autoset_scoped_path!
+        Foobara::GlobalDomain.foobara_register(self)
+      end
+    end
+
+    context "when retroactively making parent module a namespace" do
+      it "updates the scoped_path" do
+        expect {
+          parent_module.foobara_namespace!
+          parent_module.foobara_autoset_scoped_path!
+        }.to change(child_module, :scoped_path).from(%w[ParentModule ChildModule]).to(["ChildModule"])
+      end
+    end
+  end
 end

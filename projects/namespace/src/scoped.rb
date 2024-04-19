@@ -38,9 +38,6 @@ module Foobara
     end
 
     def scoped_path=(path)
-      if path.include?("FoobaraSimulation")
-        binding.pry
-      end
       scoped_clear_caches
 
       @scoped_path = path.map(&:to_s)
@@ -98,10 +95,6 @@ module Foobara
 
     def scoped_path_set?
       defined?(@scoped_path)
-    end
-
-    def unset_scoped_path
-      remove_instance_variable(:@scoped_path)
     end
 
     def scoped_ignore_module?(mod)
