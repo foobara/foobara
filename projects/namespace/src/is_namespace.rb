@@ -5,6 +5,11 @@ module Foobara
     module IsNamespace
       include Scoped
 
+      def scoped_clear_caches
+        super
+        foobara_each(&:scoped_clear_caches)
+      end
+
       def foobara_parent_namespace=(namespace)
         self.scoped_namespace = namespace
         scoped_namespace.foobara_children << self if namespace
@@ -70,6 +75,7 @@ module Foobara
 
       def foobara_unregister(scoped)
         foobara_registry.unregister(scoped)
+        foobara_children.delete(scoped)
         scoped.scoped_namespace = nil
       end
 
