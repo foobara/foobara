@@ -9,7 +9,15 @@ module Foobara
           return Foobara::CommandConnectors::Http::Commands::GetOptions.new
         end
 
-        super
+        command = super
+
+        if context.action == "help"
+          # Let's unwrap the transformed command to avoid serialization
+          # TODO: maybe instead register Help without serializers?
+          command = command.command
+        end
+
+        command
       end
 
       # TODO: eliminate passing the command here...
