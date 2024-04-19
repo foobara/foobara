@@ -66,10 +66,16 @@ module Foobara
         # how to do this?
         # I guess we could just iterate over all objects and patch up any with matching prefixes
         Foobara.foobara_root_namespace.foobara_each do |scoped|
+          if $stop
+            if mod.scoped_full_path == ["SomeOrg"] && scoped.scoped_full_path == %w[SomeOrg SomeDomain]
+              binding.pry
+            end
+          end
+
           parent = scoped.scoped_namespace
           next if parent == mod
 
-          if parent
+          if parent && !parent.scoped_full_path.empty?
             next if _start_with?(parent.scoped_full_path, mod.scoped_full_path)
           end
 

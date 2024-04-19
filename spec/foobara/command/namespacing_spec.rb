@@ -18,14 +18,22 @@ RSpec.describe "Command namespacing" do
   end
 
   context "when org and domain are created first" do
-    before do
-      command_class
-      $stop = true
-      domain_module.foobara_domain!
-      organization_module.foobara_organization!
+    let(:command_class) do
+      domain_module
+      stub_module("SomeOrg::SomeDomain::SomePrefix")
+      stub_class("SomeOrg::SomeDomain::SomePrefix::SomeCommand", Foobara::Command)
     end
 
-    it "has all the namespaces wired up properly" do
+    before do
+      binding.pry
+      command_class
+      $stop = true
+      organization_module.foobara_organization!
+      domain_module.foobara_domain!
+    end
+
+    it "has all the namespaces wired up properly", :focus do
+      binding.pry
       expect(command_class.scoped_namespace).to eq(domain_module)
       expect(command_class.foobara_parent_namespace).to eq(domain_module)
       expect(command_class.foobara_domain).to eq(domain_module)
