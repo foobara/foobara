@@ -109,8 +109,8 @@ module Foobara
       def capture_current_namespaces
         # TODO: this feels like the wrong place to do this but doing it here for now to make sure it's done when
         # most important
-        @original_scoped = Namespace.global.foobara_registry.all_scoped
-        @original_children = Namespace.global.foobara_children
+        @original_scoped = Namespace.global.foobara_registry.all_scoped.dup
+        @original_children = Namespace.global.foobara_children.dup
       end
     end
   end

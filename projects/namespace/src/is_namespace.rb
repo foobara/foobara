@@ -70,6 +70,7 @@ module Foobara
 
       def foobara_unregister(scoped)
         foobara_registry.unregister(scoped)
+        foobara_children.delete(scoped)
         scoped.scoped_namespace = nil
       end
 

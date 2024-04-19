@@ -1,4 +1,8 @@
 RSpec.describe "Command namespacing" do
+  after do
+    Foobara.reset_alls
+  end
+
   let(:organization_module) do
     stub_module(:SomeOrg)
   end
@@ -15,9 +19,10 @@ RSpec.describe "Command namespacing" do
 
   context "when org and domain are created first" do
     before do
-      organization_module.foobara_organization!
-      domain_module.foobara_domain!
       command_class
+      $stop = true
+      domain_module.foobara_domain!
+      organization_module.foobara_organization!
     end
 
     it "has all the namespaces wired up properly" do
