@@ -43,7 +43,7 @@ RSpec.describe Foobara::Value::Processor do
 
   describe "#dup_processor" do
     context "when overriding declaration data" do
-      it "dups the processor" do
+      it "dups the processor", :focus do
         duped_processor = processor.dup_processor(declaration_data: { bar: "baz" })
 
         expect(processor.declaration_data).to eq(foo: :bar)
