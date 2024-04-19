@@ -15,8 +15,21 @@ module Foobara
     end
 
     def scoped_namespace=(scoped_namespace)
+      scoped_clear_caches
+
       @scoped_namespace = scoped_namespace
-      @scoped_ignore_modules = @scoped_full_name = @scoped_full_path = nil
+    end
+
+    def scoped_clear_caches
+      [
+        "@scoped_absolute_name",
+        "@scoped_name",
+        "@scoped_prefix",
+        "@scoped_full_name",
+        "@scoped_full_path"
+      ].each do |variable|
+        remove_instance_variable(variable) if instance_variable_defined?(variable)
+      end
     end
 
     def scoped_name=(name)
@@ -25,6 +38,8 @@ module Foobara
     end
 
     def scoped_path=(path)
+      scoped_clear_caches
+
       @scoped_path = path.map(&:to_s)
     end
 
@@ -80,10 +95,6 @@ module Foobara
 
     def scoped_path_set?
       defined?(@scoped_path)
-    end
-
-    def unset_scoped_path
-      remove_instance_variable(:@scoped_path)
     end
 
     def scoped_ignore_module?(mod)
