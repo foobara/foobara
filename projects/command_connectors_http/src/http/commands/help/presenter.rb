@@ -65,6 +65,78 @@ module Foobara
               self.manifest = manifest
             end
 
+            def render_html_list(data, skip_wrapper: false)
+              html = ""
+
+              case data
+              when ::Hash
+                html << "<ul>" unless skip_wrapper
+                data.each do |key, value|
+                  html << "<li>#{key}"
+                  html << "<ul>"
+                  html << render_html_list(value, skip_wrapper: true)
+                  html << "</ul>"
+                  html << "</li>"
+                end
+                html << "</ul>" unless skip_wrapper
+              when ::Array
+                html << "<ul>" unless skip_wrapper
+                data.each do |item|
+                  html << render_html_list(item)
+                end
+                html << "</ul>" unless skip_wrapper
+              when Manifest::Attributes
+                html << "<ul>" unless skip_wrapper
+                data.relevant_manifest.each_pair do |key, value|
+                  if key.to_s == "type"
+                    next
+                  end
+
+                  if key.to_s == "element_type_declarations"
+                    key = :attributes
+                    value = data.attribute_declarations
+                  end
+                  html << "<li>#{key}"
+                  html << "<ul>"
+                  html << render_html_list(value, skip_wrapper: true)
+                  html << "</ul>"
+                  html << "</li>"
+                end
+                html << "</ul>" unless skip_wrapper
+              when Manifest::TypeDeclaration
+                html << "<ul>" unless skip_wrapper
+                data.relevant_manifest.each_pair do |key, value|
+                  if key.to_s == "type"
+                    value = root_manifest.lookup_path(key, value)
+                  end
+                  html << "<li>#{key}"
+                  html << "<ul>"
+                  html << render_html_list(value, skip_wrapper: true)
+                  html << "</ul>"
+                  html << "</li>"
+                end
+                html << "</ul>" unless skip_wrapper
+              when Manifest::Type, Manifest::Command, Manifest::Error
+                html << foobara_reference_link(data)
+              when Manifest::PossibleError
+                html << render_html_list(data.error)
+              else
+                html << "<li>#{data}</li>"
+              end
+
+              html
+            end
+
+            def foobara_reference_link(manifest)
+              path = "/help/#{manifest.reference}"
+
+              "<a href=\"#{path}\">#{manifest.reference.split("::").last}</a>"
+            end
+
+            def root_manifest
+              @root_manifest ||= Manifest::RootManifest.new(manifest.root_manifest)
+            end
+
             def template_path
               self.class.template_path
             end

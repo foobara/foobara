@@ -994,7 +994,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
       it "gives some help" do
         expect(response.status).to be(200)
-        expect(response.body).to match(/root/)
+        expect(response.body).to match(/>Commands</)
       end
 
       context "when asking for help with a specific element" do
@@ -1014,7 +1014,10 @@ RSpec.describe Foobara::CommandConnectors::Http do
 
         let(:new_command) do
           stub_class(:NewCommand, Foobara::Command) do
-            inputs whatever: :"Foo::Bar::whatever"
+            inputs do
+              whatever :"Foo::Bar::whatever"
+              count :integer, min: 0
+            end
           end
         end
         let(:path) { "/help/whatever" }
@@ -1022,6 +1025,15 @@ RSpec.describe Foobara::CommandConnectors::Http do
         it "gives some help" do
           expect(response.status).to be(200)
           expect(response.body).to match(/whatever/)
+        end
+
+        context "when command" do
+          let(:path) { "/help/NewCommand" }
+
+          it "gives some help" do
+            expect(response.status).to be(200)
+            expect(response.body).to match(/NewCommand/)
+          end
         end
       end
 
@@ -1046,7 +1058,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
       context "when rendering an organization" do
         let(:path) { "/help/SomeOrg" }
 
-        let(:presenter) { response.request.command.command.presenter }
+        let(:presenter) { response.request.command.presenter }
 
         it "gives some help" do
           expect(response.status).to be(200)

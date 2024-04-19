@@ -8,7 +8,7 @@ module Foobara
       end
 
       def error
-        Error.new(root_manifest, [:error, possible_error_manifest["error"]])
+        Error.new(root_manifest, [:error, DataPath.value_at([:error], possible_error_manifest)])
       end
 
       def processor_manifest_data

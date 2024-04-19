@@ -82,6 +82,17 @@ module Foobara
         DataPath.value_at([category, reference], root_manifest)
       end
 
+      def lookup_path(category, reference)
+        path = [category, reference]
+        raw_manifest = DataPath.value_at(path, root_manifest)
+
+        if raw_manifest
+          return self.class.category_to_manifest_class(category).new(root_manifest, path)
+        end
+
+        nil
+      end
+
       def lookup(reference)
         prioritized_categories = %i[command type error domain organization processor processor_class]
 

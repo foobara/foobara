@@ -21,6 +21,8 @@ module Foobara
 
       def result_type
         TypeDeclaration.new(root_manifest, [*path, :result_type])
+      rescue Foobara::Manifest::InvalidPath
+        nil
       end
 
       def possible_errors
