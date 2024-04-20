@@ -105,12 +105,14 @@ module Foobara
         def foobara_namespace!(object, scoped_path: nil, ignore_modules: nil)
           object.extend ::Foobara::Scoped
 
-          object.scoped_ignore_modules = ignore_modules if ignore_modules
+          if ignore_modules
+            object.scoped_ignore_modules = ignore_modules
+          end
           object.scoped_path = scoped_path if scoped_path
 
           object.extend ::Foobara::Namespace::IsNamespace
 
-          if object.is_a?(Module)
+          if object.scoped_path_set?
             Namespace::NamespaceHelpers.update_children_with_new_parent(object)
           end
         end
@@ -185,31 +187,56 @@ module Foobara
 
           mod.scoped_path_autoset = true
           mod.scoped_path = adjusted_scoped_path
+
+          if mod.is_a?(IsNamespace)
+            update_children_with_new_parent(mod)
+          end
         end
 
-        def update_children_with_new_parent(new_parent, start_at = new_parent)
-          start_at.constants(false).each do |constant|
-            value = start_at.const_get(constant, false)
+        def update_children_with_new_parent(mod)
+          if mod.scoped_full_path.empty?
+            # hard to really know what we're trying to do here. Just bail out.
+            return
+          end
 
-            next unless value.is_a?(Module)
+          # how to do this?
+          # I guess we could just iterate over all objects and patch up any with matching prefixes?
+          # is this expensive to have to look at all of them or no? I guess at least it's a one-time thing.
+          Foobara.foobara_root_namespace.foobara_each do |scoped|
+            parent = scoped.scoped_namespace
+            next if parent == mod
 
-            if value.is_a?(Scoped)
-              next unless value.scoped_path_autoset?
+            if parent && !parent.scoped_full_path.empty?
+              next if _start_with?(parent.scoped_full_path, mod.scoped_full_path)
+            end
 
-              value.unset_scoped_path
-              Namespace::NamespaceHelpers.foobara_autoset_scoped_path(value)
+            if _start_with?(scoped.scoped_full_path, mod.scoped_full_path)
+              scoped.scoped_path = scoped.scoped_full_path[mod.scoped_full_path.size..]
 
-              value.scoped_namespace&.foobara_unregister(value)
-              new_parent.foobara_register(value)
+              if parent
+                parent.foobara_unregister(scoped)
 
-              if value.is_a?(Namespace::IsNamespace)
-                value.foobara_parent_namespace&.foobara_children&.delete(value)
-                value.foobara_parent_namespace = new_parent
+                mod.foobara_register(scoped)
+
+                if scoped.is_a?(Namespace::IsNamespace)
+                  scoped.foobara_parent_namespace = mod
+                else
+                  scoped.scoped_namespace = mod
+                end
               end
-            else
-              update_children_with_new_parent(new_parent, value)
             end
           end
+        end
+
+        # TODO: move to util
+        def _start_with?(large_array, small_array)
+          return false unless large_array.size > small_array.size
+
+          small_array.each.with_index do |item, index|
+            return false unless large_array[index] == item
+          end
+
+          true
         end
       end
 
