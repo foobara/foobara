@@ -83,11 +83,9 @@ module Foobara
       def model_name
         model_type&.scoped_name || Util.non_full_name(self)
       rescue Foobara::Scoped::NoScopedPathSetError
+        # :nocov:
         Util.non_full_name(self)
-      end
-
-      def model_symbol
-        model_name.to_sym
+        # :nocov:
       end
 
       def full_model_name

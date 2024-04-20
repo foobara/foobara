@@ -161,7 +161,7 @@ RSpec.describe Foobara::Manifest do
     expect(entity_with_associations).to have_associations
     expect(entity_with_associations.associations[:user]).to eq(entity)
 
-    model = manifest.model_by_name("SomeOrg::SomeDomain::Address")
+    model = manifest.model_by_name("SomeOrg::SomeDomain::Types::Address")
 
     expect(model).to be_a(Foobara::Manifest::Model)
     expect(model.model?).to be(true)
@@ -180,7 +180,7 @@ RSpec.describe Foobara::Manifest do
     expect(manifest.types).to include(model)
     expect(model.organization.types).to include(model)
     expect(model.has_associations?).to be(false)
-    expect(model.type_name).to eq("Address")
+    expect(model.type_name).to eq("Types::Address")
 
     attributes = model.attributes_type
     expect(attributes.scoped_category).to be_nil

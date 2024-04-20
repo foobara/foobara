@@ -88,10 +88,10 @@ module Foobara
             type.scoped_path = type_symbol
             type.type_symbol = type_symbol.join("::")
           else
+            type.scoped_path = [type_symbol]
             type.type_symbol = type_symbol
           end
 
-          type.type_symbol = type_symbol
           type.foobara_parent_namespace ||= self
           foobara_register(type)
 
