@@ -25,6 +25,8 @@ module Foobara
       end
 
       def unregister(scoped)
+        all.delete(scoped)
+
         to_keys(scoped).each do |key|
           unless registry.key?(key)
             raise NotRegisteredError, "Not registered: #{key.inspect}"
