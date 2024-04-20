@@ -57,9 +57,18 @@ module Foobara
           end
 
           def type_declaration(attributes_declaration)
+            if name.start_with?(domain.name)
+              model_module_name = domain.name
+              model_name = name.gsub(/^#{domain.name}::/, "")
+            else
+              model_module_name = Util.parent_module_name_for(name)
+              model_name = Util.non_full_name(self)
+            end
+
             Util.remove_blank(
               type: "::model",
               name: model_name,
+              model_module: model_module_name,
               model_class: self,
               model_base_class: superclass,
               attributes_declaration:,

@@ -37,13 +37,13 @@ module Foobara
                 if existing_model_type
                   if existing_model_type.declaration_data != type.declaration_data &&
                      domain.foobara_type_registered?(existing_model_type)
-                    type.type_symbol = model_class.model_symbol
+                    type.type_symbol = type.declaration_data[:name]
                     model_class.model_type = type
                     domain.foobara_reregister_model(model_class)
                   end
                 else
                   model_class.model_type = type
-                  type.type_symbol = model_class.model_symbol
+                  type.type_symbol = type.declaration_data[:name]
                   model_class.description type.declaration_data[:description]
                   domain = model_class.domain
                   domain.foobara_register_model(model_class)

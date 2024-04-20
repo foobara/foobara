@@ -149,8 +149,8 @@ module Foobara
       end
 
       def type_symbol=(type_symbol)
-        @scoped_path ||= [type_symbol.to_s]
-        @type_symbol = type_symbol
+        @scoped_path ||= type_symbol.to_s.split("::")
+        @type_symbol = type_symbol.to_sym
       end
 
       def full_type_symbol
