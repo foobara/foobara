@@ -152,12 +152,7 @@ module Foobara
             model_module = Util.make_module_p(model_module_name)
           end
 
-          begin
-            model_module.const_set(model_name.split("::").last, model_class)
-          rescue => e
-            binding.pry
-            raise
-          end
+          model_module.const_set(model_name.split("::").last, model_class)
         end
 
         model_class
