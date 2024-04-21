@@ -18,6 +18,24 @@ module Foobara
           def desugarize(strictish_type_declaration)
             klass = strictish_type_declaration[:model_class]
 
+            model_module = if strictish_type_declaration.key?(:model_module)
+                             mod = strictish_type_declaration[:model_module]
+
+                             case mod
+                             when ::Module
+                               mod
+                             when ::String, ::Symbol
+                               Object.const_get(mod)
+                             else
+                               # :nocov:
+                               raise ArgumentError,
+                                     "expected module_module to be a module or module name"
+                               # :nocov:
+                             end
+                           else
+                             Object
+                           end
+
             model_class = if klass.is_a?(::Class)
                             klass
                           elsif klass && Object.const_defined?(klass)
@@ -30,23 +48,6 @@ module Foobara
                             end
 
                             # TODO: why not call this domain_module instead????
-                            model_module = if strictish_type_declaration.key?(:model_module)
-                                             mod = strictish_type_declaration[:model_module]
-
-                                             case mod
-                                             when ::Module
-                                               mod
-                                             when ::String, ::Symbol
-                                               Object.const_get(mod)
-                                             else
-                                               # :nocov:
-                                               raise ArgumentError,
-                                                     "expected module_module to be a module or module name"
-                                               # :nocov:
-                                             end
-                                           else
-                                             Object
-                                           end
 
                             model_name = strictish_type_declaration[:name]
 
@@ -60,7 +61,7 @@ module Foobara
                           end
 
             strictish_type_declaration[:model_class] = model_class.name
-            model_module = Util.module_for(model_class)
+            model_module ||= Util.module_for(model_class)
 
             strictish_type_declaration[:model_module] = model_module&.name
             strictish_type_declaration[:model_base_class] = model_class.superclass.name
