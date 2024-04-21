@@ -81,8 +81,12 @@ module Foobara
           foobara_all_command(mode: Namespace::LookupMode::DIRECT)
         end
 
-        def foobara_register_type(type_symbol, ...)
-          type = foobara_type_from_declaration(...)
+        def foobara_register_type(type_symbol, *type_declaration_bits, &block)
+          type = if block.nil? && type_declaration_bits.size == 1 && type_declaration_bits.first.is_a?(Types::Type)
+                   type_declaration_bits.first
+                 else
+                   foobara_type_from_declaration(*type_declaration_bits, &block)
+                 end
 
           if type_symbol.is_a?(::Array)
             type.scoped_path = type_symbol

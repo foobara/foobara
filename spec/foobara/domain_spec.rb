@@ -138,6 +138,19 @@ RSpec.describe Foobara::Domain do
       expect(SomeDomain::Types.some_type).to be(type)
     end
 
+    context "when registering a Type instead of a type declaration" do
+      it "registers the type" do
+        new_type = domain.foobara_type_from_declaration(*type_declaration)
+
+        domain.foobara_register_type(type_symbol, new_type)
+
+        type = domain.foobara_lookup(type_symbol)
+
+        expect(type.process_value!("FooBarBaz")).to eq("foobarbaz")
+        expect(SomeDomain::Types.some_type).to be(type)
+      end
+    end
+
     context "when type constant is upper case" do
       let(:type_symbol) { "SomeType" }
 
