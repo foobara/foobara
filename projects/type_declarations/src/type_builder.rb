@@ -55,6 +55,13 @@ module Foobara
         end
       end
 
+      def type_for_strict_declaration(type_declaration)
+        TypeDeclarations.strict do
+          handler = type_declaration_handler_for(type_declaration)
+          handler.process_value!(type_declaration)
+        end
+      end
+
       def type_for_declaration(*type_declaration_bits, &block)
         type_declaration = if block
                              unless type_declaration_bits.empty?

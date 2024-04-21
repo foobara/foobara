@@ -28,7 +28,7 @@ module Foobara
           end
 
           def priority
-            Priority::FIRST + 2
+            Priority::FIRST
           end
         end
       end
