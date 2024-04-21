@@ -3,6 +3,11 @@ module Foobara
   require_project_file("type_declarations", "error_extension")
 
   module TypeDeclarations
+    module Mode
+      STRICT = :strict
+      STRICT_STRINGIFIED = :strict_stringified
+    end
+
     class << self
       def global_type_declaration_handler_registry
         GlobalDomain.foobara_type_builder.type_declaration_handler_registry
@@ -10,6 +15,24 @@ module Foobara
 
       def register_type_declaration(type_declaration_handler)
         global_type_declaration_handler_registry.register(type_declaration_handler)
+      end
+
+      def strict_stringified
+        old_mode = foobara_var_get(:foobara_type_declarations_mode)
+        begin
+          foobara_var_set(:foobara_type_declarations_mode, Mode::STRICT_STRINGIFIED)
+          yield
+        ensure
+          foobara_var_set(:foobara_type_declarations_mode, old_mode)
+        end
+      end
+
+      def strict?
+        Thread.foobara_var_get(:foobara_type_declarations_mode) == Mode::STRICT
+      end
+
+      def strict_stringified?
+        Thread.foobara_var_get(:foobara_type_declarations_mode) == Mode::STRICT_STRINGIFIED
       end
     end
   end

@@ -18,6 +18,7 @@ module Foobara
 
             additional_processors_to_apply = strict_type_declaration.except(*non_processor_keys)
 
+            binding.pry if $stop
             # TODO: validate the name
             additional_processors_to_apply.each_pair do |processor_symbol, declaration_data|
               processor_class = base_type.find_supported_processor_class(processor_symbol)
