@@ -13,9 +13,6 @@ module Foobara
             return false unless sugary_type_declaration.is_a?(::Hash) && TypeDeclarations.strict_stringified?
 
             !sugary_type_declaration.dig(:_desugarized, :type_absolutified)
-          rescue => e
-            binding.pry
-            raise
           end
 
           def desugarize(sugary_type_declaration)
