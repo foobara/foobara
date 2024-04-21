@@ -8,7 +8,9 @@ module Foobara
         # rather hacky but other potential workarounds seemed gnarlier
         class StrictDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(strict_type_declaration)
-            return false unless TypeDeclarations.strict?
+            # TODO: we shouldn't have to check if this is a hash. This means some other desugarizer is unnecessarily
+            # processing a type declaration as if it were sugary. Find and fix that to speed this up a tiny bit.
+            return false unless strict_type_declaration.is_a?(::Hash) && TypeDeclarations.strict?
 
             !strict_type_declaration.dig(:_desugarized, :type_absolutified)
           end
