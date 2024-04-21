@@ -133,6 +133,10 @@ module Foobara
 
         model_name = opts[:name]
 
+        if model_name.is_a?(::Symbol)
+          model_name = model_name.to_s
+        end
+
         # TODO: How are we going to set the domain and organization?
         model_class = Class.new(self) do
           singleton_class.define_method :model_name do
@@ -142,7 +146,13 @@ module Foobara
 
         if opts.key?(:model_module)
           model_module = opts[:model_module]
-          model_module.const_set(model_name, model_class)
+
+          if model_name.include?("::")
+            model_module_name = "#{model_module.name}::#{model_name.split("::")[..-2].join("::")}"
+            model_module = Util.make_module_p(model_module_name)
+          end
+
+          model_module.const_set(model_name.split("::").last, model_class)
         end
 
         model_class

@@ -153,6 +153,39 @@ RSpec.describe ":model" do
     end
   end
 
+  context "when model name has a prefix" do
+    let(:type_declaration) do
+      {
+        type: :model,
+        name: model_name,
+        attributes_declaration:,
+        model_class: model_name,
+        model_base_class: "Foobara::Model",
+        model_module: some_domain_module
+      }
+    end
+
+    let(:some_domain_module) do
+      some_organization_module
+      stub_module("SomeOrg::SomeDomain") do
+        foobara_domain!
+      end
+    end
+    let(:some_organization_module) do
+      stub_module("SomeOrg") do
+        foobara_organization!
+      end
+    end
+
+    let(:model_name) { "SomePrefix::SomeModel" }
+
+    it "creates the model class" do
+      expect(type.target_class).to be(SomeOrg::SomeDomain::SomePrefix::SomeModel)
+      expect(type.scoped_full_path).to eq(%w[SomeOrg SomeDomain SomePrefix SomeModel])
+      expect(type.scoped_prefix).to eq(["SomePrefix"])
+    end
+  end
+
   describe "#process_value!" do
     let(:value) { type.process_value!(value_to_process) }
 
