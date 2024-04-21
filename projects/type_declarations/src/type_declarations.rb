@@ -18,12 +18,12 @@ module Foobara
       end
 
       def strict_stringified
-        old_mode = foobara_var_get(:foobara_type_declarations_mode)
+        old_mode = Thread.foobara_var_get(:foobara_type_declarations_mode)
         begin
-          foobara_var_set(:foobara_type_declarations_mode, Mode::STRICT_STRINGIFIED)
+          Thread.foobara_var_set(:foobara_type_declarations_mode, Mode::STRICT_STRINGIFIED)
           yield
         ensure
-          foobara_var_set(:foobara_type_declarations_mode, old_mode)
+          Thread.foobara_var_set(:foobara_type_declarations_mode, old_mode)
         end
       end
 

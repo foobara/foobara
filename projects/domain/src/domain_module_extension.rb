@@ -78,8 +78,8 @@ module Foobara
         end
 
         def foobara_type_from_strict_stringified_declaration(...)
-          TypeDeclarations.strict_stringified do
-            foobara_type_from_declaration(...)
+          Foobara::Namespace.use self do
+            foobara_type_builder.type_for_strict_stringified_declaration(...)
           end
         end
 
