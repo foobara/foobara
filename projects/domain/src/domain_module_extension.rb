@@ -77,6 +77,18 @@ module Foobara
           end
         end
 
+        def foobara_type_from_strict_stringified_declaration(...)
+          Foobara::Namespace.use self do
+            foobara_type_builder.type_for_strict_stringified_declaration(...)
+          end
+        end
+
+        def foobara_type_from_strict_declaration(...)
+          Foobara::Namespace.use self do
+            foobara_type_builder.type_for_strict_declaration(...)
+          end
+        end
+
         def foobara_command_classes
           foobara_all_command(mode: Namespace::LookupMode::DIRECT)
         end

@@ -8,6 +8,8 @@ module Foobara
         # rather hacky but other potential workarounds seemed gnarlier
         class ShortTypeNameDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(sugary_type_declaration)
+            return false if TypeDeclarations.strict_stringified? || TypeDeclarations.strict?
+
             sugary_type_declaration = sugary_type_declaration.dup
 
             return false unless sugary_type_declaration.is_a?(::Hash)

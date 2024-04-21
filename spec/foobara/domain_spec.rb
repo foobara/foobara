@@ -151,6 +151,36 @@ RSpec.describe Foobara::Domain do
       end
     end
 
+    context "when registering a strict stringified declaration" do
+      let(:type_declaration) do
+        { "downcase" => true, "type" => "string" }
+      end
+
+      it "registers the type" do
+        type = domain.foobara_type_from_strict_stringified_declaration(type_declaration)
+
+        domain.foobara_register_type(type_symbol, type)
+
+        expect(type.process_value!("FooBarBaz")).to eq("foobarbaz")
+        expect(SomeDomain::Types.some_type).to be(type)
+      end
+    end
+
+    context "when registering a strict declaration" do
+      let(:type_declaration) do
+        { downcase: true, type: :string }
+      end
+
+      it "registers the type" do
+        type = domain.foobara_type_from_strict_declaration(type_declaration)
+
+        domain.foobara_register_type(type_symbol, type)
+
+        expect(type.process_value!("FooBarBaz")).to eq("foobarbaz")
+        expect(SomeDomain::Types.some_type).to be(type)
+      end
+    end
+
     context "when type constant is upper case" do
       let(:type_symbol) { "SomeType" }
 
