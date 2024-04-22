@@ -16,6 +16,11 @@ module Foobara
                           defaults: :attributes
                         }
                       end
+
+                      def fatal?
+                        # Since there could be multiple bad defaults
+                        true
+                      end
                     end
                   end
 
@@ -30,6 +35,7 @@ module Foobara
 
                     valid_attribute_names = strict_type_declaration[:element_type_declarations].keys
 
+                    # TODO: this should be one error instead of multiple
                     defaults.keys.map do |key|
                       unless valid_attribute_names.include?(key)
                         build_error(
