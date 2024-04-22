@@ -219,7 +219,7 @@ RSpec.describe Foobara::Domain do
         }
       end
 
-      it "upgrades the outer type from a module to a model class", :focus do
+      it "upgrades the outer type from a module to a model class" do
         inner_type = domain.foobara_register_type(inner_model_declaration[:name], inner_model_declaration)
 
         expect(SomeDomain::SomeOuterModel).to be_a(Module)

@@ -16,7 +16,6 @@ module Foobara
           end
 
           def desugarize(strictish_type_declaration)
-            binding.pry if strictish_type_declaration[:name] == "SomeOuterModel"
             klass = strictish_type_declaration[:model_class]
 
             model_module = if strictish_type_declaration.key?(:model_module)

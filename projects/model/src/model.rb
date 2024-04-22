@@ -149,7 +149,7 @@ module Foobara
 
           if model_name.include?("::")
             model_module_name = "#{model_module.name}::#{model_name.split("::")[..-2].join("::")}"
-            model_module = Util.make_module_p(model_module_name)
+            model_module = Util.make_module_p(model_module_name, tag: true)
           end
 
           const_name = model_name.split("::").last

@@ -14,7 +14,7 @@ GIT
 
 GIT
   remote: https://github.com/foobara/util.git
-  revision: 805cb5f345872db5cc5d855fa68011f98d00ad50
+  revision: 3773dcb765bc70dea2b14cfe179ed3849d5126c2
   specs:
     foobara-util (0.1.0)
 
@@ -92,7 +92,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.12.0)
     rspec-support (3.12.1)
-    rubocop (1.63.2)
+    rubocop (1.63.3)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
       parallel (~> 1.10)
