@@ -201,6 +201,41 @@ RSpec.describe Foobara::Domain do
       end
     end
 
+    context "when another model will be nested within it" do
+      let(:inner_model_declaration) do
+        {
+          type: :model,
+          name: "SomeOuterModel::SomeInnerModel",
+          model_module: "SomeDomain",
+          attributes_declaration: { first_name: { type: :string } }
+        }
+      end
+      let(:outer_model_declaration) do
+        {
+          type: :model,
+          name: "SomeOuterModel",
+          model_module: "SomeDomain",
+          attributes_declaration: { last_name: { type: :string } }
+        }
+      end
+
+      it "upgrades the outer type from a module to a model class", :focus do
+        inner_type = domain.foobara_register_type(inner_model_declaration[:name], inner_model_declaration)
+
+        expect(SomeDomain::SomeOuterModel).to be_a(Module)
+        expect(SomeDomain::SomeOuterModel).to_not be_a(Class)
+        expect(SomeDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
+        expect(SomeDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_type)
+
+        outer_type = domain.foobara_register_type(outer_model_declaration[:name], outer_model_declaration)
+
+        expect(SomeDomain::SomeOuterModel).to be_a(Class)
+        expect(SomeDomain::SomeOuterModel.model_type).to be(outer_type)
+        expect(SomeDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
+        expect(SomeDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_type)
+      end
+    end
+
     context "when it already has a Types prefix" do
       let(:type_symbol) { %i[Types Foo Bar some_type] }
 

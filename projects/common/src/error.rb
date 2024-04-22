@@ -76,7 +76,9 @@ module Foobara
           manifest[:types_depended_on] = types.sort
         end
 
-        h = manifest.merge(Util.remove_blank(to_h))
+        h = manifest.merge(Util.remove_blank(to_h)).merge(
+          error_class: name
+        )
 
         if base
           h[:base_error] = base.foobara_manifest_reference

@@ -12,6 +12,7 @@ module Foobara
 
           def desugarize(hash)
             model_class = hash[:type]
+            binding.pry
             hash.merge(type: model_class.model_type.foobara_manifest_reference.to_sym)
           end
 
