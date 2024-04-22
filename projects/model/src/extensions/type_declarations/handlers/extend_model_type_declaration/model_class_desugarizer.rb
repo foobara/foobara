@@ -66,6 +66,8 @@ module Foobara
                                 :@foobara_created_via_make_class
                               )
                                 existing_module_to_copy_over = existing_class
+                                parent_mod = Util.module_for(existing_class)
+                                parent_mod.send(:remove_const, Util.non_full_name(existing_class))
                                 existing_class = nil
                               end
                             end

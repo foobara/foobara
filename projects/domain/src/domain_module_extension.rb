@@ -338,7 +338,7 @@ module Foobara
                  # not allowing lower-case "constants" to be namespaces
                  type.extends?("::model")
 
-                # TODO: unset first to avoid warning...
+                types_mod.send(:remove_const, type.scoped_short_name)
                 types_mod.const_set(type.scoped_short_name, type.target_class)
 
                 DomainModuleExtension._copy_constants(existing_value, type.target_class)
