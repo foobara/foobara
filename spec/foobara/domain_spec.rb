@@ -202,6 +202,9 @@ RSpec.describe Foobara::Domain do
     end
 
     context "when another model will be nested within it" do
+      let(:inner_type_declaration) do
+        { type: :string, downcase: true }
+      end
       let(:inner_model_declaration) do
         {
           type: :model,
@@ -220,20 +223,20 @@ RSpec.describe Foobara::Domain do
       end
 
       it "upgrades the outer type from a module to a model class" do
-        inner_type = domain.foobara_register_type(inner_model_declaration[:name], inner_model_declaration)
+        inner_model = domain.foobara_register_type(inner_model_declaration[:name], inner_model_declaration)
 
         expect(SomeDomain::SomeOuterModel).to be_a(Module)
         expect(SomeDomain::SomeOuterModel).to_not be_a(Class)
         expect(SomeDomain::SomeOuterModel.instance_variable_get(:@foobara_created_via_make_class)).to be(true)
         expect(SomeDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
-        expect(SomeDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_type)
+        expect(SomeDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_model)
 
-        outer_type = domain.foobara_register_type(outer_model_declaration[:name], outer_model_declaration)
+        inner_model = domain.foobara_register_type(outer_model_declaration[:name], outer_model_declaration)
 
         expect(SomeDomain::SomeOuterModel).to be_a(Class)
-        expect(SomeDomain::SomeOuterModel.model_type).to be(outer_type)
+        expect(SomeDomain::SomeOuterModel.model_type).to be(inner_model)
         expect(SomeDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
-        expect(SomeDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_type)
+        expect(SomeDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_model)
       end
     end
 

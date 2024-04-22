@@ -94,7 +94,7 @@ RSpec.describe Foobara::BuiltinTypes::Attributes do
             c: :integer
           },
           defaults: {
-            b: 1,
+            "b" => 1,
             c: "2"
           }
         }

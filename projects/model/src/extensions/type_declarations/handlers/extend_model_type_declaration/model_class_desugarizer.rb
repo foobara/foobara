@@ -89,9 +89,6 @@ module Foobara
             strictish_type_declaration[:model_base_class] = model_class.superclass.name
 
             strictish_type_declaration
-          rescue => e
-            binding.pry
-            raise
           end
 
           def create_model_class_args(model_module:, type_declaration:)
