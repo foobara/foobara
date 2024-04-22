@@ -332,18 +332,22 @@ module Foobara
                  existing_value.instance_variable_get(:@foobara_created_via_make_class) &&
                  type.extends?("::model")
 
-                types_mod.const_set(type.scoped_short_name, type)
+                types_mod.const_set(type.scoped_short_name, type.target_class)
 
-                DomainModuleExtension._copy_constants(existing_value, type)
-
-                binding.pry
+                DomainModuleExtension._copy_constants(existing_value, type.target_class)
               else
                 raise CannotSetTypeConstantError,
                       "Already defined constant #{types_mod.name}::#{type.scoped_short_name}"
               end
             end
           else
-            types_mod.const_set(type.scoped_short_name, type)
+            symbol = type.scoped_short_name
+
+            if type.extends?("::model")
+              type = type.target_class
+            end
+
+            types_mod.const_set(symbol, type)
           end
         end
       end

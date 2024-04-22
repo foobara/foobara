@@ -236,11 +236,13 @@ RSpec.describe Foobara::Domain do
         expect(SomeDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
         expect(SomeDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_model)
 
-        inner_model = domain.foobara_register_type(outer_model_declaration[:name], outer_model_declaration)
+        outer_model = domain.foobara_register_type(outer_model_declaration[:name], outer_model_declaration)
 
         expect(SomeDomain::SomeOuterModel).to be_a(Class)
-        expect(SomeDomain::SomeOuterModel.model_type).to be(inner_model)
-        expect(SomeDomain::SomeOuterModel.some_inner_type).to be(inner_type)
+        expect(SomeDomain::SomeOuterModel.model_type).to be(outer_model)
+        expect(SomeDomain::Types::SomeOuterModel).to be_a(Class)
+        expect(SomeDomain::Types::SomeOuterModel.model_type).to be(outer_model)
+        expect(SomeDomain::Types::SomeOuterModel.some_inner_type).to be(inner_type)
         expect(SomeDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
         expect(SomeDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_model)
       end
