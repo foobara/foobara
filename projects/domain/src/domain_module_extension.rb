@@ -323,12 +323,22 @@ module Foobara
             end
           elsif types_mod.const_defined?(type.scoped_short_name, false)
             existing_value = types_mod.const_get(type.scoped_short_name)
+            existing_value_type = if existing_value.is_a?(::Class) && existing_value < Foobara::Model
+                                    # TODO: test this code path
+                                    # :nocov:
+                                    existing_value.model_type
+                                    # :nocov:
+                                  else
+                                    existing_value
+                                  end
 
-            if existing_value != type
+            if existing_value_type != type
               if existing_value.is_a?(::Module) && !existing_value.is_a?(::Class) &&
                  existing_value.instance_variable_get(:@foobara_created_via_make_class) &&
+                 # not allowing lower-case "constants" to be namespaces
                  type.extends?("::model")
 
+                # TODO: unset first to avoid warning...
                 types_mod.const_set(type.scoped_short_name, type.target_class)
 
                 DomainModuleExtension._copy_constants(existing_value, type.target_class)
