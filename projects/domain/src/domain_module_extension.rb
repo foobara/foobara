@@ -2,6 +2,7 @@ module Foobara
   module Domain
     class NoSuchDomain < StandardError; end
     class AlreadyRegisteredError < StandardError; end
+    class CannotSetTypeConstantError < StandardError; end
 
     class << self
       def global
@@ -14,7 +15,23 @@ module Foobara
         def all
           @all ||= []
         end
+
+        def _copy_constants(old_mod, new_class)
+          old_mod.constants.each do |const_name|
+            value = old_mod.const_get(const_name)
+            new_class.const_set(const_name, value)
+          end
+
+          lower_case_constants = old_mod.instance_variable_get(:@foobara_lowercase_constants)
+
+          lower_case_constants&.each do |lower_case_constant|
+            new_class.singleton_class.define_method lower_case_constant do
+              old_mod.send(lower_case_constant)
+            end
+          end
+        end
       end
+
       include Concern
       include Manifestable
 
@@ -182,13 +199,14 @@ module Foobara
 
             foobara_type_builder.type_for_declaration(
               Util.remove_blank(
-                type: "::entity",
+                type: :entity,
                 name:,
                 model_base_class:,
                 attributes_declaration: attributes_type_declaration,
                 model_module: self,
                 primary_key:,
-                description:
+                description:,
+                _desugarized: { type_absolutified: true }
               )
             )
           end
@@ -287,7 +305,8 @@ module Foobara
                       end
 
           if type.scoped_prefix
-            types_mod = Util.make_module_p("#{types_mod.name}::#{path[0..-2].join("::")}")
+            const_name = [types_mod.name, *path[0..-2]].join("::")
+            types_mod = Util.make_module_p(const_name, tag: true)
           end
 
           if type.scoped_short_name =~ /\A[a-z]/
@@ -295,9 +314,39 @@ module Foobara
               types_mod.singleton_class.define_method type.scoped_short_name do
                 type
               end
+
+              unless types_mod.instance_variable_defined?(:@foobara_lowercase_constants)
+                types_mod.instance_variable_set(:@foobara_lowercase_constants, [])
+              end
+
+              types_mod.instance_variable_get(:@foobara_lowercase_constants) << type.scoped_short_name
+            end
+          elsif types_mod.const_defined?(type.scoped_short_name, false)
+            existing_value = types_mod.const_get(type.scoped_short_name)
+
+            if existing_value != type
+              if existing_value.is_a?(::Module) && !existing_value.is_a?(::Class) &&
+                 existing_value.instance_variable_get(:@foobara_created_via_make_class) &&
+                 type.extends?("::model")
+
+                types_mod.const_set(type.scoped_short_name, type.target_class)
+
+                DomainModuleExtension._copy_constants(existing_value, type.target_class)
+              else
+                # :nocov:
+                raise CannotSetTypeConstantError,
+                      "Already defined constant #{types_mod.name}::#{type.scoped_short_name}"
+                # :nocov:
+              end
             end
           else
-            types_mod.const_set(type.scoped_short_name, type)
+            symbol = type.scoped_short_name
+
+            if type.extends?("::model")
+              type = type.target_class
+            end
+
+            types_mod.const_set(symbol, type)
           end
         end
       end

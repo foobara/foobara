@@ -201,6 +201,53 @@ RSpec.describe Foobara::Domain do
       end
     end
 
+    context "when another model will be nested within it" do
+      let(:inner_type_declaration) do
+        { type: :string, downcase: true }
+      end
+      let(:inner_model_declaration) do
+        {
+          type: :model,
+          name: "SomeOuterModel::SomeInnerModel",
+          model_module: "SomeDomain",
+          attributes_declaration: { first_name: { type: :string } }
+        }
+      end
+      let(:outer_model_declaration) do
+        {
+          type: :model,
+          name: "SomeOuterModel",
+          model_module: "SomeDomain",
+          attributes_declaration: { last_name: { type: :string } }
+        }
+      end
+
+      it "upgrades the outer type from a module to a model class" do
+        inner_model = domain.foobara_register_type(inner_model_declaration[:name], inner_model_declaration)
+        inner_type = domain.foobara_register_type(%w[SomeOuterModel some_inner_type], inner_type_declaration)
+
+        expect(SomeDomain::SomeOuterModel).to be_a(Module)
+        expect(SomeDomain::SomeOuterModel).to_not be_a(Class)
+        expect(SomeDomain::SomeOuterModel.instance_variable_get(:@foobara_created_via_make_class)).to be(true)
+        expect(SomeDomain::Types::SomeOuterModel).to be_a(Module)
+        expect(SomeDomain::Types::SomeOuterModel).to_not be_a(Class)
+        expect(SomeDomain::Types::SomeOuterModel.instance_variable_get(:@foobara_created_via_make_class)).to be(true)
+        expect(SomeDomain::Types::SomeOuterModel.some_inner_type).to be(inner_type)
+        expect(SomeDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
+        expect(SomeDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_model)
+
+        outer_model = domain.foobara_register_type(outer_model_declaration[:name], outer_model_declaration)
+
+        expect(SomeDomain::SomeOuterModel).to be_a(Class)
+        expect(SomeDomain::SomeOuterModel.model_type).to be(outer_model)
+        expect(SomeDomain::Types::SomeOuterModel).to be_a(Class)
+        expect(SomeDomain::Types::SomeOuterModel.model_type).to be(outer_model)
+        expect(SomeDomain::Types::SomeOuterModel.some_inner_type).to be(inner_type)
+        expect(SomeDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
+        expect(SomeDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_model)
+      end
+    end
+
     context "when it already has a Types prefix" do
       let(:type_symbol) { %i[Types Foo Bar some_type] }
 

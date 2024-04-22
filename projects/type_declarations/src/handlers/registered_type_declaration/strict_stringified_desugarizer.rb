@@ -19,14 +19,14 @@ module Foobara
             sugary_type_declaration = Util.symbolize_keys(sugary_type_declaration)
             type_symbol = sugary_type_declaration[:type]
 
-            if type_symbol.is_a?(::String)
-              type_symbol = type_symbol.to_sym
-              sugary_type_declaration[:type] = type_symbol
-            end
+            type = Foobara.foobara_root_namespace.foobara_lookup_type!(type_symbol,
+                                                                       mode: Namespace::LookupMode::ABSOLUTE)
+
+            type_symbol = type.full_type_symbol
 
             desugarized = sugary_type_declaration[:_desugarized] || {}
             desugarized[:type_absolutified] = true
-            sugary_type_declaration.merge(_desugarized: desugarized)
+            sugary_type_declaration.merge(_desugarized: desugarized, type: type_symbol)
           end
 
           def priority

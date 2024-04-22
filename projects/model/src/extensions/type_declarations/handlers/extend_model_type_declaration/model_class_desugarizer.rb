@@ -38,7 +38,7 @@ module Foobara
 
             model_class = if klass.is_a?(::Class)
                             klass
-                          elsif klass && Object.const_defined?(klass)
+                          elsif klass && Object.const_defined?(klass) && Object.const_get(klass).is_a?(::Class)
                             Object.const_get(klass)
                           else
                             model_base_class = strictish_type_declaration[:model_base_class] || default_model_base_class
@@ -51,12 +51,35 @@ module Foobara
 
                             model_name = strictish_type_declaration[:name]
 
-                            if model_module.const_defined?(model_name)
-                              model_module.const_get(model_name)
-                            else
-                              model_base_class.subclass(
-                                **create_model_class_args(model_module:, type_declaration: strictish_type_declaration)
+                            existing_class = if model_module.const_defined?(model_name)
+                                               model_module.const_get(model_name)
+                                             end
+
+                            # TODO: This is a pretty crazy situation and hacky. Should come up with a better solution.
+                            # Here's the situation: if models are nested, like A::B and A and A::B are modules, then
+                            # if A::B is imported first, A will be created as a module via make_module_p.
+                            # But then when we are here creating A, A is already in use incorrectly as a module.
+                            # We need to move A out of the way but set all of its constants on the newly created model
+                            # A.
+                            if existing_class.is_a?(::Module) && !existing_class.is_a?(::Class)
+                              if existing_class.instance_variable_get(
+                                :@foobara_created_via_make_class
                               )
+                                existing_module_to_copy_over = existing_class
+                                existing_class = nil
+                              end
+                            end
+
+                            # TODO: feels too destructive to be in a desugarizer. Technically probably should be in the
+                            # to type transformer instead.
+                            existing_class || model_base_class.subclass(
+                              **create_model_class_args(model_module:, type_declaration: strictish_type_declaration)
+                            ).tap do |model_class|
+                              if existing_module_to_copy_over
+                                Foobara::Domain::DomainModuleExtension._copy_constants(
+                                  existing_module_to_copy_over, model_class
+                                )
+                              end
                             end
                           end
 

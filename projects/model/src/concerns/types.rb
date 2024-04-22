@@ -66,13 +66,14 @@ module Foobara
             end
 
             Util.remove_blank(
-              type: "::model",
+              type: :model,
               name: model_name,
               model_module: model_module_name,
               model_class: self,
               model_base_class: superclass,
               attributes_declaration:,
-              description:
+              description:,
+              _desugarized: { type_absolutified: true }
             )
           end
 
