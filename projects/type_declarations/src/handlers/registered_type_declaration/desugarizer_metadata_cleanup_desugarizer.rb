@@ -12,6 +12,8 @@ module Foobara
           end
 
           def desugarize(strict_type_declaration)
+            strict_type_declaration = strict_type_declaration.dup
+
             strict_type_declaration.delete(:_desugarized)
 
             strict_type_declaration
