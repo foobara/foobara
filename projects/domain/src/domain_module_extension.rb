@@ -309,6 +309,7 @@ module Foobara
                     "Already defined constant #{types_mod.name}::#{type.scoped_short_name}"
             end
           else
+            binding.pry if type.type_symbol =~ /some_inner_type/
             types_mod.const_set(type.scoped_short_name, type)
           end
         end

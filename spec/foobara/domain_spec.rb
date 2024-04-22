@@ -224,10 +224,15 @@ RSpec.describe Foobara::Domain do
 
       it "upgrades the outer type from a module to a model class" do
         inner_model = domain.foobara_register_type(inner_model_declaration[:name], inner_model_declaration)
+        inner_type = domain.foobara_register_type(%w[SomeOuterModel some_inner_type], inner_type_declaration)
 
         expect(SomeDomain::SomeOuterModel).to be_a(Module)
         expect(SomeDomain::SomeOuterModel).to_not be_a(Class)
         expect(SomeDomain::SomeOuterModel.instance_variable_get(:@foobara_created_via_make_class)).to be(true)
+        expect(SomeDomain::Types::SomeOuterModel).to be_a(Module)
+        expect(SomeDomain::Types::SomeOuterModel).to_not be_a(Class)
+        expect(SomeDomain::Types::SomeOuterModel.instance_variable_get(:@foobara_created_via_make_class)).to be(true)
+        expect(SomeDomain::Types::SomeOuterModel.some_inner_type).to be(inner_type)
         expect(SomeDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
         expect(SomeDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_model)
 
@@ -235,6 +240,7 @@ RSpec.describe Foobara::Domain do
 
         expect(SomeDomain::SomeOuterModel).to be_a(Class)
         expect(SomeDomain::SomeOuterModel.model_type).to be(inner_model)
+        expect(SomeDomain::SomeOuterModel.some_inner_type).to be(inner_type)
         expect(SomeDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
         expect(SomeDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_model)
       end
