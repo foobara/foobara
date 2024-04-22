@@ -15,7 +15,26 @@ module Foobara
         def all
           @all ||= []
         end
+
+        def _copy_constants(old_mod, new_class)
+          old_mod.constants.each do |const_name|
+            value = old_mod.const_get(const_name)
+            new_class.const_set(const_name, value)
+          end
+
+          lower_case_constants = old_mod.instance_variable_get(:@foobara_lowercase_constants)
+
+          lower_case_constants&.each do |lower_case_constant|
+            new_class.singleton_class.define_method lower_case_constant do
+              old_mod.send(lower_case_constant)
+            end
+          end
+        rescue => e
+          binding.pry
+          raise
+        end
       end
+
       include Concern
       include Manifestable
 
@@ -298,19 +317,32 @@ module Foobara
               types_mod.singleton_class.define_method type.scoped_short_name do
                 type
               end
+
+              unless types_mod.instance_variable_defined?(:@foobara_lowercase_constants)
+                types_mod.instance_variable_set(:@foobara_lowercase_constants, [])
+              end
+
+              types_mod.instance_variable_get(:@foobara_lowercase_constants) << type.scoped_short_name
             end
           elsif types_mod.const_defined?(type.scoped_short_name, false)
             existing_value = types_mod.const_get(type.scoped_short_name)
 
-            unless existing_value == type || (
-              existing_value.is_a?(::Class) && existing_value < Model && existing_value.model_type == type
-            )
-              binding.pry
-              raise CannotSetTypeConstantError,
-                    "Already defined constant #{types_mod.name}::#{type.scoped_short_name}"
+            if existing_value != type
+              if existing_value.is_a?(::Module) && !existing_value.is_a?(::Class) &&
+                 existing_value.instance_variable_get(:@foobara_created_via_make_class) &&
+                 type.extends?("::model")
+
+                types_mod.const_set(type.scoped_short_name, type)
+
+                DomainModuleExtension._copy_constants(existing_value, type)
+
+                binding.pry
+              else
+                raise CannotSetTypeConstantError,
+                      "Already defined constant #{types_mod.name}::#{type.scoped_short_name}"
+              end
             end
           else
-            binding.pry if type.type_symbol =~ /some_inner_type/
             types_mod.const_set(type.scoped_short_name, type)
           end
         end

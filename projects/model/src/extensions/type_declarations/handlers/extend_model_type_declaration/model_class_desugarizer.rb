@@ -75,9 +75,10 @@ module Foobara
                             existing_class || model_base_class.subclass(
                               **create_model_class_args(model_module:, type_declaration: strictish_type_declaration)
                             ).tap do |model_class|
-                              existing_module_to_copy_over&.constants&.each do |const_name|
-                                value = existing_module_to_copy_over.const_get(const_name)
-                                model_class.const_set(const_name, value)
+                              if existing_module_to_copy_over
+                                Foobara::Domain::DomainModuleExtension._copy_constants(
+                                  existing_module_to_copy_over, model_class
+                                )
                               end
                             end
                           end
