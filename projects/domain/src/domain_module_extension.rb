@@ -29,9 +29,6 @@ module Foobara
               old_mod.send(lower_case_constant)
             end
           end
-        rescue => e
-          binding.pry
-          raise
         end
       end
 
@@ -336,8 +333,10 @@ module Foobara
 
                 DomainModuleExtension._copy_constants(existing_value, type.target_class)
               else
+                # :nocov:
                 raise CannotSetTypeConstantError,
                       "Already defined constant #{types_mod.name}::#{type.scoped_short_name}"
+                # :nocov:
               end
             end
           else
