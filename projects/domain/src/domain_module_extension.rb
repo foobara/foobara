@@ -290,7 +290,7 @@ module Foobara
 
           if type.scoped_prefix
             const_name = [types_mod.name, *path[0..-2]].join("::")
-            types_mod = Util.make_module_p(const_name)
+            types_mod = Util.make_module_p(const_name, tag: true)
           end
 
           if type.scoped_short_name =~ /\A[a-z]/
@@ -305,6 +305,7 @@ module Foobara
             unless existing_value == type || (
               existing_value.is_a?(::Class) && existing_value < Model && existing_value.model_type == type
             )
+              binding.pry
               raise CannotSetTypeConstantError,
                     "Already defined constant #{types_mod.name}::#{type.scoped_short_name}"
             end
