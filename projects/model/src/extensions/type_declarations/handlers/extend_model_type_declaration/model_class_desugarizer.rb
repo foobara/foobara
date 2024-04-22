@@ -16,6 +16,7 @@ module Foobara
           end
 
           def desugarize(strictish_type_declaration)
+            binding.pry if strictish_type_declaration[:name] == "SomeOuterModel"
             klass = strictish_type_declaration[:model_class]
 
             model_module = if strictish_type_declaration.key?(:model_module)
@@ -61,7 +62,7 @@ module Foobara
                             # But then when we are here creating A, A is already in use incorrectly as a module.
                             # We need to move A out of the way but set all of its constants on the newly created model
                             # A.
-                            if existing_class.is_a?(::Module)
+                            if existing_class.is_a?(::Module) && !existing_class.is_a?(::Class)
                               if existing_class.instance_variable_get(
                                 :@foobara_created_via_make_class
                               )
@@ -70,6 +71,8 @@ module Foobara
                               end
                             end
 
+                            # TODO: feels too destructive to be in a desugarizer. Technically probably should be in the
+                            # to type transformer instead.
                             existing_class || model_base_class.subclass(
                               **create_model_class_args(model_module:, type_declaration: strictish_type_declaration)
                             ).tap do |model_class|

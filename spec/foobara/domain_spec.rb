@@ -224,6 +224,7 @@ RSpec.describe Foobara::Domain do
 
         expect(SomeDomain::SomeOuterModel).to be_a(Module)
         expect(SomeDomain::SomeOuterModel).to_not be_a(Class)
+        expect(SomeDomain::SomeOuterModel.instance_variable_get(:@foobara_created_via_make_class)).to be(true)
         expect(SomeDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
         expect(SomeDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_type)
 
