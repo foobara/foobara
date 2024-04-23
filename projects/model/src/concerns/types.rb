@@ -11,8 +11,6 @@ module Foobara
           attr_writer :attributes_type
 
           def attributes(*args, **opts, &)
-            update_namespace
-
             new_type = domain.foobara_type_from_declaration(*args, **opts, &)
 
             unless new_type.extends?(BuiltinTypes[:attributes])
@@ -39,8 +37,6 @@ module Foobara
           end
 
           def set_model_type
-            update_namespace
-
             return if abstract?
 
             if attributes_type
@@ -57,12 +53,12 @@ module Foobara
           end
 
           def type_declaration(attributes_declaration)
-            if name.start_with?(domain.name)
-              model_module_name = domain.name
-              model_name = name.gsub(/^#{domain.name}::/, "")
+            if name.start_with?(closest_namespace_module.name)
+              model_module_name = closest_namespace_module.name
+              model_name = name.gsub(/^#{closest_namespace_module.name}::/, "")
             else
-              model_module_name = Util.parent_module_name_for(name)
-              model_name = Util.non_full_name(self)
+              model_module_name = nil
+              model_name = name
             end
 
             Util.remove_blank(
@@ -89,8 +85,6 @@ module Foobara
 
           def model_type=(model_type)
             @model_type = model_type
-
-            update_namespace
 
             attributes_type.element_types.each_key do |attribute_name|
               define_method attribute_name do

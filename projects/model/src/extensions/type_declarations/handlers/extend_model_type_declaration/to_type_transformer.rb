@@ -45,7 +45,6 @@ module Foobara
                   model_class.model_type = type
                   type.type_symbol = type.declaration_data[:name]
                   model_class.description type.declaration_data[:description]
-                  domain = model_class.domain
                   domain.foobara_register_model(model_class)
                 end
               end

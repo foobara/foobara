@@ -10,7 +10,7 @@ module Foobara
     include Concerns::Reflection
 
     class << self
-      attr_accessor :domain, :is_abstract
+      attr_accessor :is_abstract
 
       def description(*args)
         case args.size
@@ -42,16 +42,12 @@ module Foobara
         @is_abstract
       end
 
-      def update_namespace
-        return if @namespace_updated
-
-        @namespace_updated = true
-
+      def closest_namespace_module
         # TODO: Feels like we should use the autoset_namespace helpers here
         mod = Util.module_for(self)
 
         while mod
-          if mod.foobara_domain?
+          if mod.is_a?(Namespace::IsNamespace)
             namespace = mod
             break
           end
@@ -59,11 +55,34 @@ module Foobara
           mod = Util.module_for(mod)
         end
 
-        self.domain = if namespace&.foobara_domain?
-                        namespace
-                      else
-                        GlobalDomain
-                      end
+        if mod.nil? || mod == GlobalOrganization || mod == Foobara
+          GlobalDomain
+        else
+          namespace
+        end
+      end
+
+      def domain
+        if model_type
+          model_type.foobara_domain
+        else
+          mod = Util.module_for(self)
+
+          while mod
+            if mod.foobara_domain?
+              namespace = mod
+              break
+            end
+
+            mod = Util.module_for(mod)
+          end
+
+          if namespace&.foobara_domain?
+            namespace
+          else
+            GlobalDomain
+          end
+        end
       end
 
       def attribute_names

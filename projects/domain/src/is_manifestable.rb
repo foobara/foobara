@@ -1,5 +1,16 @@
 module Foobara
   module IsManifestable
+    def scoped_clear_caches
+      [
+        # TODO: what about this one??
+        # "@created_in_namespace",
+        "@foobara_domain"
+      ].each do |variable|
+        remove_instance_variable(variable) if instance_variable_defined?(variable)
+      end
+      super
+    end
+
     def foobara_domain
       return @foobara_domain if defined?(@foobara_domain)
 
