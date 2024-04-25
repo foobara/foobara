@@ -265,8 +265,7 @@ RSpec.describe Foobara::Domain do
         expect(SomeOtherDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
         expect(SomeOtherDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_model)
 
-        binding.pry
-        expect(Foobara::GlobalDomain.constants).to_not include(:Types)
+        expect(Foobara::GlobalDomain.constants(false)).to_not include(:Types)
       end
     end
 
