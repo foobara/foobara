@@ -38,8 +38,6 @@ module Foobara
     end
 
     def scoped_path=(path)
-      binding.pry if path.map(&:to_s) == ["SomeOuterModel::SomeInnerModel"]
-
       scoped_clear_caches
 
       @scoped_path = path.map(&:to_s)

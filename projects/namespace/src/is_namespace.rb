@@ -254,7 +254,6 @@ module Foobara
         match = method_name.to_s.match(/^foobara_(lookup|each|all)_(\w+)(!)?$/)
 
         if match
-          binding.pry if $stop
           filter = foobara_categories[match[2].to_sym]
 
           if filter

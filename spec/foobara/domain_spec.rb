@@ -238,7 +238,11 @@ RSpec.describe Foobara::Domain do
         expect(SomeOtherDomain::SomeOuterModel.instance_variable_get(:@foobara_created_via_make_class)).to be(true)
         expect(Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel).to be_a(Module)
         expect(Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel).to_not be_a(Class)
-        expect(Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel.instance_variable_get(:@foobara_created_via_make_class)).to be(true)
+        expect(
+          Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel.instance_variable_get(
+            :@foobara_created_via_make_class
+          )
+        ).to be(true)
         expect(Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel.some_inner_type).to be(inner_type)
         expect(Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
         expect(SomeOtherDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
@@ -266,6 +270,19 @@ RSpec.describe Foobara::Domain do
         expect(SomeOtherDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_model)
 
         expect(Foobara::GlobalDomain.constants(false)).to_not include(:Types)
+      end
+
+      context "when unregistering a type" do
+        it "can unregister it", :skip do
+          inner_type = Foobara::GlobalDomain.foobara_register_type(%w[SomeOtherDomain SomeOuterModel some_inner_type],
+                                                                   inner_type_declaration)
+
+          some_other_domain.foobara_domain!
+
+          expect {
+            some_other_domain.foobara_unregister(inner_type)
+          }.to change { some_other_domain::Types::SomeOuterModel.respond_to?(:some_inner_type) }.from(true).to(false)
+        end
       end
     end
 

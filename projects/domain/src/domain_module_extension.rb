@@ -37,10 +37,17 @@ module Foobara
 
           lower_case_constants = old_mod.instance_variable_get(:@foobara_lowercase_constants)
 
-          lower_case_constants&.each do |lower_case_constant|
-            new_class.singleton_class.define_method lower_case_constant do
-              old_mod.send(lower_case_constant)
+          if lower_case_constants && !lower_case_constants.empty?
+            lower_case_constants&.each do |lower_case_constant|
+              new_class.singleton_class.define_method lower_case_constant do
+                old_mod.send(lower_case_constant)
+              end
             end
+
+            new_lowercase_constants = new_class.instance_variable_get(:@foobara_lowercase_constants) || []
+            new_lowercase_constants += lower_case_constants
+
+            new_class.instance_variable_set(:@foobara_lowercase_constants, new_lowercase_constants)
           end
         end
       end
@@ -57,6 +64,7 @@ module Foobara
 
         def foobara_unregister(scoped)
           if scoped.is_a?(Foobara::Types::Type)
+            binding.pry
             parent_mod = nil
 
             if const_defined?(:Types, false)
@@ -78,6 +86,7 @@ module Foobara
 
                   if lower_case_constants&.include?(scoped.scoped_short_name)
                     parent_mod.singleton_class.undef_method scoped.scoped_short_name
+                    lower_case_constants.delete(scoped.scoped_short_name)
                   end
 
                   removed = true
@@ -102,6 +111,8 @@ module Foobara
                     # TODO: can we make this not coupled to model project??
                     value.is_a?(Types::Type) || (value.is_a?(::Class) && value < Foobara::Model)
                   end
+
+                  binding.pry
 
                   lower_case_constants = child.instance_variable_get(:@foobara_lowercase_constants)
                   break if lower_case_constants && !lower_case_constants.empty?
@@ -425,8 +436,6 @@ module Foobara
                 types_mod.send(:remove_const, type.scoped_short_name)
                 types_mod.const_set(type.scoped_short_name, type.target_class)
 
-                binding.pry if type.scoped_short_name == "SomeInnerModel"
-
                 DomainModuleExtension._copy_constants(existing_value, type.target_class)
               else
                 # :nocov:
@@ -443,16 +452,6 @@ module Foobara
             end
 
             types_mod.const_set(symbol, type)
-          end
-        end
-
-        def _move_over_types_from_global_domain_types_module
-          return if self == GlobalDomain
-
-          # return unless respond_to?(:foobara_each_type)
-
-          foobara_each_type do |type|
-            binding.pry
           end
         end
       end
