@@ -93,22 +93,22 @@ module Foobara
                 child_name = parent_name
 
                 while child_name
-                  child = begin
-                    Object.const_get(child_name)
-                  rescue => e
-                    binding.pry
-                    raise
-                  end
+                  child = Object.const_get(child_name)
 
                   break if child.foobara_domain?
 
                   break if child.foobara_organization?
-                  break if child.constants(false).empty?
+                  break if child.constants(false).any? do |constant|
+                    value = child.const_get(constant)
+
+                    # TODO: can we make this not coupled to model project??
+                    value.is_a?(Types::Type) || (value.is_a?(::Class) && value < Foobara::Model)
+                  end
 
                   lower_case_constants = child.instance_variable_get(:@foobara_lowercase_constants)
                   break if lower_case_constants && !lower_case_constants.empty?
 
-                  parent_name = Util.parent_module_name_for(child)
+                  parent_name = Util.parent_module_name_for(child_name)
                   break unless Object.const_defined?(parent_name)
 
                   parent = Object.const_get(parent_name)

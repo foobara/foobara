@@ -47,7 +47,6 @@ module Foobara
             # TODO: dry this up
             # TODO: this doesn't handle a type nested under a lower-case type for now
             if child.scoped_short_name =~ /^[a-z]/
-              binding.pry
               unless types_mod.respond_to?(child.scoped_short_name)
                 types_mod.singleton_class.define_method child.scoped_short_name do
                   child
