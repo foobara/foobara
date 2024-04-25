@@ -7,7 +7,18 @@ module Foobara
 
       def scoped_clear_caches
         super
+
         foobara_each(&:scoped_clear_caches)
+
+        if defined?(@foobara_categories)
+          if @foobara_categories.empty?
+            # :nocov:
+            remove_instance_variable(:@foobara_categories)
+            # :nocov:
+          elsif scoped_namespace
+            @foobara_categories = scoped_namespace.foobara_categories.merge(@foobara_categories)
+          end
+        end
       end
 
       def foobara_parent_namespace=(namespace)
