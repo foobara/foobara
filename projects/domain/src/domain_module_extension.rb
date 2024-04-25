@@ -64,7 +64,6 @@ module Foobara
 
         def foobara_unregister(scoped)
           if scoped.is_a?(Foobara::Types::Type)
-            binding.pry
             parent_mod = nil
 
             if const_defined?(:Types, false)
@@ -111,8 +110,6 @@ module Foobara
                     # TODO: can we make this not coupled to model project??
                     value.is_a?(Types::Type) || (value.is_a?(::Class) && value < Foobara::Model)
                   end
-
-                  binding.pry
 
                   lower_case_constants = child.instance_variable_get(:@foobara_lowercase_constants)
                   break if lower_case_constants && !lower_case_constants.empty?

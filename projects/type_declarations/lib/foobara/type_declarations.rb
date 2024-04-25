@@ -120,8 +120,10 @@ module Foobara
         @original_children = Namespace.global.foobara_children.dup
 
         if GlobalDomain.const_defined?(:Types, false)
+          # :nocov:
           @original_foobara_lowercase_constants =
             GlobalDomain::Types.instance_variable_get(:@foobara_lowercase_constants).dup
+          # :nocov:
         end
       end
     end

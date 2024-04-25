@@ -271,19 +271,6 @@ RSpec.describe Foobara::Domain do
 
         expect(Foobara::GlobalDomain.constants(false)).to_not include(:Types)
       end
-
-      context "when unregistering a type" do
-        it "can unregister it", :skip do
-          inner_type = Foobara::GlobalDomain.foobara_register_type(%w[SomeOtherDomain SomeOuterModel some_inner_type],
-                                                                   inner_type_declaration)
-
-          some_other_domain.foobara_domain!
-
-          expect {
-            some_other_domain.foobara_unregister(inner_type)
-          }.to change { some_other_domain::Types::SomeOuterModel.respond_to?(:some_inner_type) }.from(true).to(false)
-        end
-      end
     end
 
     context "when it already has a Types prefix" do
