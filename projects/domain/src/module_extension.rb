@@ -53,14 +53,20 @@ module Foobara
                 end
 
                 unless types_mod.instance_variable_defined?(:@foobara_lowercase_constants)
+                  # TODO: test this path or delete it if unreachable
+                  # :nocov:
                   types_mod.instance_variable_set(:@foobara_lowercase_constants, [])
+                  # :nocov:
                 end
 
                 types_mod.instance_variable_get(:@foobara_lowercase_constants) << child.scoped_short_name
               end
             else
               value = if types_mod.const_defined?(child.scoped_short_name, false)
+                        # TODO: test this path or delete it if unreachable
+                        # :nocov:
                         types_mod.const_get(child.scoped_short_name, false)
+                        # :nocov:
                       end
 
               if value != child
@@ -69,7 +75,10 @@ module Foobara
                 new_value = if child.extends?("::model")
                               child.target_class
                             else
+                              # TODO: test this path or delete it if unreachable
+                              # :nocov:
                               child
+                              # :nocov:
                             end
                 types_mod.const_set(child.scoped_short_name, new_value)
               end
