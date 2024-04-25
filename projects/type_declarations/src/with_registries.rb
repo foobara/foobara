@@ -22,6 +22,9 @@ module Foobara
 
         def type_registered?(...)
           Foobara::Namespace.current.foobara_type_registered?(...)
+        rescue => e
+          binding.pry
+          raise
         end
 
         def handler_for_class(...)

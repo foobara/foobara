@@ -193,6 +193,7 @@ module Foobara
           end
         end
 
+        # here??
         def update_children_with_new_parent(mod)
           if mod.scoped_full_path.empty?
             # hard to really know what we're trying to do here. Just bail out.
@@ -214,6 +215,7 @@ module Foobara
               scoped.scoped_path = scoped.scoped_full_path[mod.scoped_full_path.size..]
 
               if parent
+                binding.pry
                 parent.foobara_unregister(scoped)
 
                 mod.foobara_register(scoped)

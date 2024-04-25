@@ -16,11 +16,29 @@ module Foobara
           @all ||= []
         end
 
+        # TODO: rename this
         def _copy_constants(old_mod, new_class)
           old_mod.constants.each do |const_name|
             value = old_mod.const_get(const_name)
-            new_class.const_set(const_name, value)
+            if new_class.const_defined?(const_name)
+              # TODO: figure out how to test this path. Seems to occur when models are nested and loaded
+              # remotely in a certain order
+              # :nocov:
+              to_replace = new_class.const_get(const_name)
+              if to_replace != value
+                new_class.send(:remove_const, const_name)
+                new_class.const_set(const_name, value)
+              end
+              # :nocov:
+            else
+              new_class.const_set(const_name, value)
+            end
           end
+
+          # old_mod.constants.each do |constant|
+          #   binding.pry if constant =~ /Some.*Model/
+          #   old_mod.send(:remove_const, constant)
+          # end
 
           lower_case_constants = old_mod.instance_variable_get(:@foobara_lowercase_constants)
 
@@ -41,6 +59,53 @@ module Foobara
 
       module ClassMethods
         attr_writer :foobara_domain_name, :foobara_full_domain_name
+
+        def foobara_unregister(scoped)
+          if scoped.is_a?(Foobara::Types::Type)
+            parent_mod = nil
+
+            if const_defined?(:Types, false)
+              if scoped.scoped_short_name =~ /^[a-z]/
+                parent_mod = ["Foobara::GlobalDomain::Types", *scoped.scoped_full_path[0..-2]].join("::")
+
+                lower_case_constants = parent_mod.instance_variable_get(:@foobara_lowercase_constants)
+
+                if lower_case_constants&.include?(scoped.scoped_short_name)
+                  parent_mod.singleton_class.undef_method scoped.scoped_short_name
+                end
+              else
+                const_name = "Foobara::GlobalDomain::Types::#{scoped.scoped_full_path}"
+                if Object.const_defined?(const_name)
+                  parent_mod = Util.module_for(const_name)
+                  parent.send(:remove_const, scoped.scoped_short_name)
+                end
+              end
+            end
+
+            if parent_mod
+              child = parent_mod
+
+              while child && !child.foobara_domain? &&
+                    !child.foobara_organization? && child.constants(false).empty?
+                break if child.foobara_domain?
+                break if child.foobara_organization?
+                break if child.constants(false).empty?
+
+                lower_case_constants = child.instance_variable_get(:@foobara_lowercase_constants)
+                break if lower_case_constants && !lower_case_constants.empty?
+
+                parent = Util.module_for(child)
+
+                child_sym = Util.non_full_name(child).to_sym
+                parent.send(:remove_const, child_sym)
+
+                child = parent
+              end
+            end
+          end
+
+          super
+        end
 
         def foobara_domain_name
           # TODO: does this work properly with prefixes?
@@ -121,8 +186,10 @@ module Foobara
             type.scoped_path = type_symbol
             type.type_symbol = type_symbol.join("::")
           else
-            type.scoped_path = [type_symbol]
-            type.type_symbol = type_symbol
+            type_symbol = type_symbol.to_s if type_symbol.is_a?(::Symbol)
+
+            type.scoped_path = type_symbol.split("::")
+            type.type_symbol = type_symbol.to_sym
           end
 
           type.foobara_parent_namespace ||= self
@@ -287,6 +354,7 @@ module Foobara
         end
 
         def _set_type_constant(type)
+          binding.pry if type.scoped_full_path.last == "some_inner_type"
           domain = if scoped_full_path.empty?
                      GlobalDomain
                    else
@@ -309,6 +377,7 @@ module Foobara
             types_mod = Util.make_module_p(const_name, tag: true)
           end
 
+          # TODO: dry this up
           if type.scoped_short_name =~ /\A[a-z]/
             unless types_mod.respond_to?(type.scoped_short_name)
               types_mod.singleton_class.define_method type.scoped_short_name do
@@ -341,6 +410,8 @@ module Foobara
                 types_mod.send(:remove_const, type.scoped_short_name)
                 types_mod.const_set(type.scoped_short_name, type.target_class)
 
+                binding.pry if type.scoped_short_name == "SomeInnerModel"
+
                 DomainModuleExtension._copy_constants(existing_value, type.target_class)
               else
                 # :nocov:
@@ -357,6 +428,16 @@ module Foobara
             end
 
             types_mod.const_set(symbol, type)
+          end
+        end
+
+        def _move_over_types_from_global_domain_types_module
+          return if self == GlobalDomain
+
+          # return unless respond_to?(:foobara_each_type)
+
+          foobara_each_type do |type|
+            binding.pry
           end
         end
       end
