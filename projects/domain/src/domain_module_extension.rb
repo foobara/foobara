@@ -16,18 +16,38 @@ module Foobara
           @all ||= []
         end
 
+        # TODO: rename this
         def _copy_constants(old_mod, new_class)
           old_mod.constants.each do |const_name|
             value = old_mod.const_get(const_name)
-            new_class.const_set(const_name, value)
+            if new_class.const_defined?(const_name)
+              # TODO: figure out how to test this path. Seems to occur when models are nested and loaded
+              # remotely in a certain order
+              # :nocov:
+              to_replace = new_class.const_get(const_name)
+              if to_replace != value
+                new_class.send(:remove_const, const_name)
+                new_class.const_set(const_name, value)
+              end
+              # :nocov:
+            else
+              new_class.const_set(const_name, value)
+            end
           end
 
           lower_case_constants = old_mod.instance_variable_get(:@foobara_lowercase_constants)
 
-          lower_case_constants&.each do |lower_case_constant|
-            new_class.singleton_class.define_method lower_case_constant do
-              old_mod.send(lower_case_constant)
+          if lower_case_constants && !lower_case_constants.empty?
+            lower_case_constants&.each do |lower_case_constant|
+              new_class.singleton_class.define_method lower_case_constant do
+                old_mod.send(lower_case_constant)
+              end
             end
+
+            new_lowercase_constants = new_class.instance_variable_get(:@foobara_lowercase_constants) || []
+            new_lowercase_constants += lower_case_constants
+
+            new_class.instance_variable_set(:@foobara_lowercase_constants, new_lowercase_constants)
           end
         end
       end
@@ -41,6 +61,75 @@ module Foobara
 
       module ClassMethods
         attr_writer :foobara_domain_name, :foobara_full_domain_name
+
+        def foobara_unregister(scoped)
+          if scoped.is_a?(Foobara::Types::Type)
+            parent_mod = nil
+
+            if const_defined?(:Types, false)
+              parent_path = ["Foobara::GlobalDomain"]
+              unless scoped.type_symbol.to_s.start_with?("Types::")
+                parent_path << "Types"
+              end
+              parent_path += scoped.type_symbol.to_s.split("::")[..-2]
+
+              parent_name = parent_path.join("::")
+              child_name = [*parent_path, scoped.type_symbol.to_s.split("::").last].join("::")
+              removed = false
+
+              if Object.const_defined?(parent_name)
+                parent_mod = Object.const_get(parent_name)
+
+                if scoped.scoped_short_name =~ /^[a-z]/
+                  lower_case_constants = parent_mod.instance_variable_get(:@foobara_lowercase_constants)
+
+                  if lower_case_constants&.include?(scoped.scoped_short_name)
+                    parent_mod.singleton_class.undef_method scoped.scoped_short_name
+                    lower_case_constants.delete(scoped.scoped_short_name)
+                  end
+
+                  removed = true
+                elsif parent_mod.const_defined?(scoped.scoped_short_name, false)
+                  parent_mod.send(:remove_const, scoped.scoped_short_name)
+                  removed = true
+                end
+              end
+
+              if removed
+                child_name = parent_name
+
+                while child_name
+                  child = Object.const_get(child_name)
+
+                  break if child.foobara_domain?
+
+                  break if child.foobara_organization?
+                  break if child.constants(false).any? do |constant|
+                    value = child.const_get(constant)
+
+                    # TODO: can we make this not coupled to model project??
+                    value.is_a?(Types::Type) || (value.is_a?(::Class) && value < Foobara::Model)
+                  end
+
+                  lower_case_constants = child.instance_variable_get(:@foobara_lowercase_constants)
+                  break if lower_case_constants && !lower_case_constants.empty?
+
+                  parent_name = Util.parent_module_name_for(child_name)
+                  break unless Object.const_defined?(parent_name)
+
+                  parent = Object.const_get(parent_name)
+
+                  child_sym = Util.non_full_name(child).to_sym
+                  parent.send(:remove_const, child_sym)
+
+                  child_name = parent_name
+                end
+              end
+            end
+          end
+
+          super
+        end
 
         def foobara_domain_name
           # TODO: does this work properly with prefixes?
@@ -121,8 +210,10 @@ module Foobara
             type.scoped_path = type_symbol
             type.type_symbol = type_symbol.join("::")
           else
-            type.scoped_path = [type_symbol]
-            type.type_symbol = type_symbol
+            type_symbol = type_symbol.to_s if type_symbol.is_a?(::Symbol)
+
+            type.scoped_path = type_symbol.split("::")
+            type.type_symbol = type_symbol.to_sym
           end
 
           type.foobara_parent_namespace ||= self
@@ -309,6 +400,7 @@ module Foobara
             types_mod = Util.make_module_p(const_name, tag: true)
           end
 
+          # TODO: dry this up
           if type.scoped_short_name =~ /\A[a-z]/
             unless types_mod.respond_to?(type.scoped_short_name)
               types_mod.singleton_class.define_method type.scoped_short_name do

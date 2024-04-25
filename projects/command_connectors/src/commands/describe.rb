@@ -25,6 +25,7 @@ module Foobara
 
         def stamp_request_metadata
           manifest[:metadata] = {
+            # TODO: why is this here instead of in Http ??
             url: request.url,
             when: Time.now
           }

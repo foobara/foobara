@@ -39,6 +39,13 @@ module Foobara
           end
         end
 
+        if GlobalDomain.const_defined?(:Types, false)
+          GlobalDomain::Types.instance_variable_set(
+            :@foobara_lowercase_constants,
+            @original_foobara_lowercase_constants || []
+          )
+        end
+
         @original_scoped.each do |scoped|
           Namespace.global.foobara_register(scoped)
         end
@@ -111,6 +118,13 @@ module Foobara
         # most important
         @original_scoped = Namespace.global.foobara_registry.all_scoped.dup
         @original_children = Namespace.global.foobara_children.dup
+
+        if GlobalDomain.const_defined?(:Types, false)
+          # :nocov:
+          @original_foobara_lowercase_constants =
+            GlobalDomain::Types.instance_variable_get(:@foobara_lowercase_constants).dup
+          # :nocov:
+        end
       end
     end
   end

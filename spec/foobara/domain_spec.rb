@@ -202,49 +202,74 @@ RSpec.describe Foobara::Domain do
     end
 
     context "when another model will be nested within it" do
+      let(:some_other_domain) do
+        stub_module("SomeOtherDomain")
+      end
       let(:inner_type_declaration) do
         { type: :string, downcase: true }
       end
       let(:inner_model_declaration) do
+        some_other_domain
         {
           type: :model,
           name: "SomeOuterModel::SomeInnerModel",
-          model_module: "SomeDomain",
+          model_module: "SomeOtherDomain",
           attributes_declaration: { first_name: { type: :string } }
         }
       end
       let(:outer_model_declaration) do
+        some_other_domain
         {
           type: :model,
           name: "SomeOuterModel",
-          model_module: "SomeDomain",
+          model_module: "SomeOtherDomain",
           attributes_declaration: { last_name: { type: :string } }
         }
       end
 
       it "upgrades the outer type from a module to a model class" do
-        inner_model = domain.foobara_register_type(inner_model_declaration[:name], inner_model_declaration)
-        inner_type = domain.foobara_register_type(%w[SomeOuterModel some_inner_type], inner_type_declaration)
+        inner_model = Foobara::GlobalDomain.foobara_register_type(%w[SomeOtherDomain SomeOuterModel SomeInnerModel],
+                                                                  inner_model_declaration)
+        inner_type = Foobara::GlobalDomain.foobara_register_type(%w[SomeOtherDomain SomeOuterModel some_inner_type],
+                                                                 inner_type_declaration)
 
-        expect(SomeDomain::SomeOuterModel).to be_a(Module)
-        expect(SomeDomain::SomeOuterModel).to_not be_a(Class)
-        expect(SomeDomain::SomeOuterModel.instance_variable_get(:@foobara_created_via_make_class)).to be(true)
-        expect(SomeDomain::Types::SomeOuterModel).to be_a(Module)
-        expect(SomeDomain::Types::SomeOuterModel).to_not be_a(Class)
-        expect(SomeDomain::Types::SomeOuterModel.instance_variable_get(:@foobara_created_via_make_class)).to be(true)
-        expect(SomeDomain::Types::SomeOuterModel.some_inner_type).to be(inner_type)
-        expect(SomeDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
-        expect(SomeDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_model)
+        expect(SomeOtherDomain::SomeOuterModel).to be_a(Module)
+        expect(SomeOtherDomain::SomeOuterModel).to_not be_a(Class)
+        expect(SomeOtherDomain::SomeOuterModel.instance_variable_get(:@foobara_created_via_make_class)).to be(true)
+        expect(Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel).to be_a(Module)
+        expect(Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel).to_not be_a(Class)
+        expect(
+          Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel.instance_variable_get(
+            :@foobara_created_via_make_class
+          )
+        ).to be(true)
+        expect(Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel.some_inner_type).to be(inner_type)
+        expect(Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
+        expect(SomeOtherDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
+        expect(SomeOtherDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_model)
 
-        outer_model = domain.foobara_register_type(outer_model_declaration[:name], outer_model_declaration)
+        outer_model = Foobara::GlobalDomain.foobara_register_type(%w[SomeOtherDomain SomeOuterModel],
+                                                                  outer_model_declaration)
 
-        expect(SomeDomain::SomeOuterModel).to be_a(Class)
-        expect(SomeDomain::SomeOuterModel.model_type).to be(outer_model)
-        expect(SomeDomain::Types::SomeOuterModel).to be_a(Class)
-        expect(SomeDomain::Types::SomeOuterModel.model_type).to be(outer_model)
-        expect(SomeDomain::Types::SomeOuterModel.some_inner_type).to be(inner_type)
-        expect(SomeDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
-        expect(SomeDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_model)
+        expect(SomeOtherDomain::SomeOuterModel).to be_a(Class)
+        expect(SomeOtherDomain::SomeOuterModel.model_type).to be(outer_model)
+        expect(Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel).to be_a(Class)
+        expect(Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel.model_type).to be(outer_model)
+        expect(Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel.some_inner_type).to be(inner_type)
+        expect(SomeOtherDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
+        expect(SomeOtherDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_model)
+
+        some_other_domain.foobara_domain!
+
+        expect(SomeOtherDomain::SomeOuterModel).to be_a(Class)
+        expect(SomeOtherDomain::SomeOuterModel.model_type).to be(outer_model)
+        expect(SomeOtherDomain::Types::SomeOuterModel).to be_a(Class)
+        expect(SomeOtherDomain::Types::SomeOuterModel.model_type).to be(outer_model)
+        expect(SomeOtherDomain::Types::SomeOuterModel.some_inner_type).to be(inner_type)
+        expect(SomeOtherDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
+        expect(SomeOtherDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_model)
+
+        expect(Foobara::GlobalDomain.constants(false)).to_not include(:Types)
       end
     end
 
