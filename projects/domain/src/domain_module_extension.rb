@@ -88,8 +88,6 @@ module Foobara
               end
 
               if removed
-                binding.pry
-
                 child_name = parent_name
 
                 while child_name
