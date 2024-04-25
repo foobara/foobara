@@ -32,9 +32,8 @@ module Foobara
 
         children = foobara_children
         children = children.sort_by { |child| child.scoped_path.size }
-        binding.pry if name == "SomeOtherDomain"
-        # see if we are upgrading from prefix to domain and copy over types to Types module
 
+        # see if we are upgrading from prefix to domain and copy over types to Types module
         children.each do |child|
           types_mod_path = scoped_full_path.dup
           unless child.scoped_path.first == "Types"

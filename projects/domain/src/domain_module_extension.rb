@@ -35,11 +35,6 @@ module Foobara
             end
           end
 
-          # old_mod.constants.each do |constant|
-          #   binding.pry if constant =~ /Some.*Model/
-          #   old_mod.send(:remove_const, constant)
-          # end
-
           lower_case_constants = old_mod.instance_variable_get(:@foobara_lowercase_constants)
 
           lower_case_constants&.each do |lower_case_constant|
@@ -65,41 +60,64 @@ module Foobara
             parent_mod = nil
 
             if const_defined?(:Types, false)
-              if scoped.scoped_short_name =~ /^[a-z]/
-                parent_mod = ["Foobara::GlobalDomain::Types", *scoped.scoped_full_path[0..-2]].join("::")
+              parent_path = ["Foobara::GlobalDomain"]
+              unless scoped.type_symbol.to_s.start_with?("Types::")
+                parent_path << "Types"
+              end
+              parent_path += scoped.type_symbol.to_s.split("::")[..-2]
 
-                lower_case_constants = parent_mod.instance_variable_get(:@foobara_lowercase_constants)
+              parent_name = parent_path.join("::")
+              child_name = [*parent_path, scoped.type_symbol.to_s.split("::").last].join("::")
+              removed = false
 
-                if lower_case_constants&.include?(scoped.scoped_short_name)
-                  parent_mod.singleton_class.undef_method scoped.scoped_short_name
-                end
-              else
-                const_name = "Foobara::GlobalDomain::Types::#{scoped.scoped_full_path}"
-                if Object.const_defined?(const_name)
-                  parent_mod = Util.module_for(const_name)
-                  parent.send(:remove_const, scoped.scoped_short_name)
+              if Object.const_defined?(parent_name)
+                parent_mod = Object.const_get(parent_name)
+
+                if scoped.scoped_short_name =~ /^[a-z]/
+                  lower_case_constants = parent_mod.instance_variable_get(:@foobara_lowercase_constants)
+
+                  if lower_case_constants&.include?(scoped.scoped_short_name)
+                    parent_mod.singleton_class.undef_method scoped.scoped_short_name
+                  end
+
+                  removed = true
+                elsif parent_mod.const_defined?(scoped.scoped_short_name, false)
+                  parent_mod.send(:remove_const, scoped.scoped_short_name)
+                  removed = true
                 end
               end
-            end
 
-            if parent_mod
-              child = parent_mod
+              if removed
+                binding.pry
 
-              while child && !child.foobara_domain? &&
-                    !child.foobara_organization? && child.constants(false).empty?
-                break if child.foobara_domain?
-                break if child.foobara_organization?
-                break if child.constants(false).empty?
+                child_name = parent_name
 
-                lower_case_constants = child.instance_variable_get(:@foobara_lowercase_constants)
-                break if lower_case_constants && !lower_case_constants.empty?
+                while child_name
+                  child = begin
+                    Object.const_get(child_name)
+                  rescue => e
+                    binding.pry
+                    raise
+                  end
 
-                parent = Util.module_for(child)
+                  break if child.foobara_domain?
 
-                child_sym = Util.non_full_name(child).to_sym
-                parent.send(:remove_const, child_sym)
+                  break if child.foobara_organization?
+                  break if child.constants(false).empty?
 
-                child = parent
+                  lower_case_constants = child.instance_variable_get(:@foobara_lowercase_constants)
+                  break if lower_case_constants && !lower_case_constants.empty?
+
+                  parent_name = Util.parent_module_name_for(child)
+                  break unless Object.const_defined?(parent_name)
+
+                  parent = Object.const_get(parent_name)
+
+                  child_sym = Util.non_full_name(child).to_sym
+                  parent.send(:remove_const, child_sym)
+
+                  child_name = parent_name
+                end
               end
             end
           end
@@ -354,7 +372,6 @@ module Foobara
         end
 
         def _set_type_constant(type)
-          binding.pry if type.scoped_full_path.last == "some_inner_type"
           domain = if scoped_full_path.empty?
                      GlobalDomain
                    else

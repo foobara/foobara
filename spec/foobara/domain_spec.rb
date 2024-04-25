@@ -251,7 +251,6 @@ RSpec.describe Foobara::Domain do
         expect(SomeOtherDomain::SomeOuterModel.model_type).to be(outer_model)
         expect(Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel).to be_a(Class)
         expect(Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel.model_type).to be(outer_model)
-        binding.pry
         expect(Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel.some_inner_type).to be(inner_type)
         expect(SomeOtherDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
         expect(SomeOtherDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_model)

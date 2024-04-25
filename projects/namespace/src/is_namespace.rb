@@ -81,7 +81,6 @@ module Foobara
       end
 
       def foobara_unregister(scoped)
-        binding.pry
         foobara_registry.unregister(scoped)
         foobara_children.delete(scoped)
         scoped.scoped_namespace = nil

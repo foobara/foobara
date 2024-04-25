@@ -215,7 +215,6 @@ module Foobara
               scoped.scoped_path = scoped.scoped_full_path[mod.scoped_full_path.size..]
 
               if parent
-                binding.pry
                 parent.foobara_unregister(scoped)
 
                 mod.foobara_register(scoped)
