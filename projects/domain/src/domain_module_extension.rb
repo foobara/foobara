@@ -141,6 +141,14 @@ module Foobara
 
         def foobara_domain_map(value, from_type: nil, to_type: nil)
           mapper_class = foobara_domain_mapper_registry.lookup(from_type:, to_type:)
+          if mapper_class
+            mapper = mapper_class.new(value)
+            mapper.call
+          end
+        end
+
+        def foobara_domain_map!(value, from_type: nil, to_type: nil)
+          mapper_class = foobara_domain_mapper_registry.lookup(from_type:, to_type:)
           mapper = mapper_class.new(value)
           mapper.call
         end
