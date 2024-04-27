@@ -131,14 +131,6 @@ module Foobara
           super
         end
 
-        def foobara_domain_mapper_to_process(mapper)
-          foobara_domain_mappers_to_process << mapper
-        end
-
-        def foobara_domain_mappers_to_process
-          @foobara_domain_mappers_to_process ||= []
-        end
-
         def foobara_domain_map(value, from_type: nil, to_type: nil)
           mapper_class = foobara_domain_mapper_registry.lookup(from_type:, to_type:)
           if mapper_class
@@ -153,13 +145,8 @@ module Foobara
           mapper.call
         end
 
-        def foobara_process_domain_mappers
-          if defined?(@foobara_domain_mappers_to_process)
-            @foobara_domain_mappers_to_process.each do |mapper|
-              foobara_domain_mapper_registry(skip_check: true).register(mapper)
-            end
-            remove_instance_variable(:@foobara_domain_mappers_to_process)
-          end
+        def foobara_domain_mapper(mapper)
+          foobara_domain_mapper_registry(skip_check: true).register(mapper)
         end
 
         def foobara_domain_mapper_registry(skip_check: false)

@@ -67,7 +67,7 @@ RSpec.describe "Domain Mappers" do
 
   describe ".foobara_domain_map" do
     it "maps from one domain to the other", :focus do
-      to_value = domain_a.domain_map(from_value)
+      to_value = domain_a.foobara_domain_map(from_value)
       expect(to_value).to be_a(to_type)
       expect(to_value.name[:first]).to eq("foo")
       expect(to_value.name[:last]).to eq("bar")
