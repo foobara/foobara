@@ -131,6 +131,34 @@ module Foobara
           super
         end
 
+        def foobara_domain_mapper_to_process(mapper)
+          foobara_domain_mappers_to_process << mapper
+        end
+
+        def foobara_domain_mappers_to_process
+          @foobara_domain_mappers_to_process ||= []
+        end
+
+        def foobara_domain_map(value, from_type: nil, to_type: nil)
+          mapper_class = foobara_domain_mapper_registry.lookup(from_type:, to_type:)
+          mapper = mapper_class.new(value)
+          mapper.call
+        end
+
+        def foobara_process_domain_mappers
+          if defined?(@foobara_domain_mappers_to_process)
+            @foobara_domain_mappers_to_process.each do |mapper|
+              foobara_domain_mapper_registry.register(mapper)
+            end
+            remove_instance_variable(:@foobara_domain_mappers_to_process)
+          end
+        end
+
+        def foobara_domain_mapper_registry
+          foobara_process_domain_mappers
+          @foobara_domain_mapper_registry ||= DomainMapper::Registry.new
+        end
+
         def foobara_domain_name
           # TODO: does this work properly with prefixes?
           @foobara_domain_name || scoped_name

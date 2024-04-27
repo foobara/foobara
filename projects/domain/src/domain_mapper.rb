@@ -25,9 +25,28 @@ module Foobara
         end
       end
 
-      def extended(subclass)
+      def inherited(subclass)
+        parent = subclass
+        domain = nil
+
+        until domain
+          parent = Util.module_for(parent)
+
+          if parent.foobara_domain?
+            domain = parent
+          end
+        end
+
+        domain.foobara_domain_mapper_to_process(subclass)
+
         super
       end
+    end
+
+    attr_accessor :from_value
+
+    def call
+      raise "subclass responsibility"
     end
   end
 end
