@@ -21,7 +21,7 @@ module Foobara
              "state_machine",
              "namespace"
 
-    project "domain"
+    projects "domain"
 
     # various components of the foobara framework that have some level of coupling.
     # for example, Error in common knows about (or could be implemented to know about)
