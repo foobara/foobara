@@ -66,6 +66,42 @@ module Foobara
 
         nil
       end
+
+      def matches?(type_indicator, value)
+        return true if type_indicator.nil? || type_indicator == value
+
+        type = object_to_type(type_indicator)
+
+        return true if type.nil? || type == value
+
+        # relocate the target classes check to valid? ?
+        type.target_classes.any? do |target_class|
+          value.is_a?(target_class)
+        end && type.valid?(value)
+      end
+
+      private
+
+      def object_to_type(object)
+        if object
+          if object.is_a?(::Class)
+            if object < Foobara::Model
+              object.model_type
+            elsif object < Foobara::Command
+              object.inputs_type
+            else
+              domain.foobara_type_from_declaration(object)
+            end
+          else
+            case object
+            when Types::Type
+              object
+            when ::Symbol
+              foobara_lookup_type!(to_type)
+            end
+          end
+        end
+      end
     end
 
     def from_type
@@ -92,27 +128,6 @@ module Foobara
 
     def map(_from_value)
       raise "subclass repsonsibility"
-    end
-
-    private
-
-    def object_to_type(object)
-      if object
-        if object.is_a?(::Class)
-          if object < Foobara::Model
-            object.model_type
-          elsif object < Foobara::Command
-            object.inputs_type
-          end
-        else
-          case object
-          when Types::Type
-            object
-          when ::Symbol
-            foobara_lookup_type!(to_type)
-          end
-        end
-      end
     end
   end
 end

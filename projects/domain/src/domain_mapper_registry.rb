@@ -21,8 +21,8 @@ module Foobara
                                     end
       end
 
-      def lookup(from_type: nil, to_type: nil)
-        if from_type.nil?
+      def lookup(from: nil, to: nil)
+        if from.nil?
           if mappers.size == 1
             candidates = mappers.values.first
 
@@ -30,27 +30,27 @@ module Foobara
               if candidates.size == 1
                 candidates.first
               else
-                raise AmbiguousDomainMapperError.new(from_type, to_type, candidates)
+                raise AmbiguousDomainMapperError.new(from, to, candidates)
               end
             else
               candidates
             end
           elsif mappers.size > 1
-            raise AmbiguousDomainMapperError.new(from_type, to_type, mappers.values)
+            raise AmbiguousDomainMapperError.new(from, to, mappers.values)
           end
         else
-          candidates = mappers[from_type]
+          candidates = mappers[from]
 
           if candidates.is_a?(::Array)
             if candidates.size == 1
               candidates.first
             else
-              if to_type.nil?
-                raise AmbiguousDomainMapperError.new(from_type, to_type, candidates)
+              if to.nil?
+                raise AmbiguousDomainMapperError.new(from, to, candidates)
               end
 
               candidates.find do |candidate|
-                candidate.to_type == to_type
+                candidate.to_type == to
               end
             end
           else
