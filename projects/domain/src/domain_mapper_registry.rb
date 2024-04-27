@@ -14,14 +14,18 @@ module Foobara
       end
 
       def register(mapper)
-        mappers[mapper.from_type] = if mappers.key?(mapper.from_type)
-                                      [*mappers[mapper.from_type], mapper]
-                                    else
-                                      mapper
-                                    end
+        mappers << mapper
       end
 
       def lookup(from: nil, to: nil)
+        candidates = mappers.select do |mapper|
+          mapper.applicable?(from, to)
+        end
+
+        if candidates.size > 1
+          raise AmbiguousDomainMapperError.new(from, to, candidates)
+        end
+
         if from.nil?
           if mappers.size == 1
             candidates = mappers.values.first
@@ -60,7 +64,7 @@ module Foobara
       end
 
       def mappers
-        @mappers ||= {}
+        @mappers ||= []
       end
     end
   end
