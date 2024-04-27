@@ -32,6 +32,8 @@ module Foobara
               else
                 raise AmbiguousDomainMapperError.new(from_type, to_type, candidates)
               end
+            else
+              candidates
             end
           elsif mappers.size > 1
             raise AmbiguousDomainMapperError.new(from_type, to_type, mappers.values)

@@ -45,6 +45,10 @@ module Foobara
 
     attr_accessor :from_value
 
+    def initialize(from_value)
+      self.from_value = from_value
+    end
+
     def call
       raise "subclass responsibility"
     end

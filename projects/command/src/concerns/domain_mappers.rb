@@ -22,13 +22,17 @@ module Foobara
         end
 
         def domain_map!(from_value, from_type: nil, to_type: nil)
-          mapper = self.class.domain.foobara_domain_mapper_registry.lookup(from_type:, to_type:)
-          mapper.call(from_value)
+          mapper_class = self.class.domain.foobara_domain_mapper_registry.lookup(from_type:, to_type:)
+          mapper = mapper_class.new(from_value)
+          mapper.call
         end
 
         def domain_map(from_value, from_type: nil, to_type: nil)
-          mapper = self.class.domain.foobara_domain_mapper_registry.lookup(from_type:, to_type:)
-          mapper&.call(from_value)
+          mapper_class = self.class.domain.foobara_domain_mapper_registry.lookup(from_type:, to_type:)
+          if mapper_class
+            mapper = mapper_class.new(from_value)
+            mapper.call
+          end
         end
       end
     end
