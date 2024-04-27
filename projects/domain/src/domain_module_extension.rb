@@ -148,14 +148,14 @@ module Foobara
         def foobara_process_domain_mappers
           if defined?(@foobara_domain_mappers_to_process)
             @foobara_domain_mappers_to_process.each do |mapper|
-              foobara_domain_mapper_registry.register(mapper)
+              foobara_domain_mapper_registry(skip_check: true).register(mapper)
             end
             remove_instance_variable(:@foobara_domain_mappers_to_process)
           end
         end
 
-        def foobara_domain_mapper_registry
-          foobara_process_domain_mappers
+        def foobara_domain_mapper_registry(skip_check: false)
+          foobara_process_domain_mappers unless skip_check
           @foobara_domain_mapper_registry ||= DomainMapper::Registry.new
         end
 

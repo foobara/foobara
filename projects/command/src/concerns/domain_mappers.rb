@@ -9,7 +9,10 @@ module Foobara
 
           result = run_subcommand!(subcommand_class, inputs)
 
-          result_mapper = domain.foobara_domain_mapper_registry.lookup(from_type: result.class, to_type: self.class)
+          result_mapper = self.class.domain.foobara_domain_mapper_registry.lookup(
+            from_type: result.class,
+            to_type: self.class
+          )
 
           if result_mapper
             result_mapper.call(result)
@@ -19,12 +22,12 @@ module Foobara
         end
 
         def domain_map!(from_value, from_type: nil, to_type: nil)
-          mapper = domain.foobara_domain_mapper_registry.lookup(from_type:, to_type:)
+          mapper = self.class.domain.foobara_domain_mapper_registry.lookup(from_type:, to_type:)
           mapper.call(from_value)
         end
 
         def domain_map(from_value, from_type: nil, to_type: nil)
-          mapper = domain.foobara_domain_mapper_registry.lookup(from_type:, to_type:)
+          mapper = self.class.domain.foobara_domain_mapper_registry.lookup(from_type:, to_type:)
           mapper&.call(from_value)
         end
       end

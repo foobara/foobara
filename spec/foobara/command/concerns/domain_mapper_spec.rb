@@ -31,8 +31,8 @@ RSpec.describe Foobara::Command::Concerns::DomainMappers do
       subcommand_class
       stub_module("SomeDomain::DomainMappers")
       stub_class("SomeDomain::DomainMappers::SomeDomainMapper", Foobara::DomainMapper) do
-        from :string
-        to SomeDomain::SomeSubcommand
+        from_type :string
+        to_type SomeDomain::SomeSubcommand
 
         # TODO: pass from_value in instead for improved readability
         def call
@@ -41,9 +41,13 @@ RSpec.describe Foobara::Command::Concerns::DomainMappers do
       end
     end
 
-    it "maps the inputs", :focus do
-      expect(outcome).to be_success
+    let(:command) { command_class.new }
+    let(:outcome) { command.run }
+    let(:result) { outcome.result }
 
+    it "maps the inputs", :focus do
+      domain_mapper
+      expect(outcome).to be_success
       expect(result).to eq(foo: "bar")
     end
   end
