@@ -74,13 +74,11 @@ module Foobara
 
         return true if type.nil? || type == value
 
-        # relocate the target classes check to valid? ?
+        # TODO: relocate the target classes check to Type#valid? ?
         type.target_classes.any? do |target_class|
           value.is_a?(target_class)
         end && type.valid?(value)
       end
-
-      private
 
       def object_to_type(object)
         if object
@@ -128,6 +126,10 @@ module Foobara
 
     def map(_from_value)
       raise "subclass repsonsibility"
+    end
+
+    def applicable?(from_value, to_value)
+      self.class.matches?(from_type, from_value) && self.class.matches?(to_type, to_value)
     end
   end
 end
