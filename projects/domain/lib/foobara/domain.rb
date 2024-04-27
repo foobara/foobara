@@ -14,6 +14,12 @@ module Foobara
         Namespace.global.foobara_add_category(:organization) { is_a?(Module) && foobara_organization? }
         Namespace.global.foobara_add_category(:domain) { is_a?(Module) && foobara_domain? }
       end
+
+      def reset_all
+        if Foobara::DomainMapper.instance_variable_defined?(:@foobara_domain_mappers_to_process)
+          Foobara::DomainMapper.remove_instance_variable(:@foobara_domain_mappers_to_process)
+        end
+      end
     end
   end
 end

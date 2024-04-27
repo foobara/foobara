@@ -19,6 +19,7 @@ module Foobara
     include Concerns::Transactions
     include Concerns::Entities
     include Concerns::Subcommands
+    include Concerns::DomainMappers
     include Concerns::Reflection
 
     attr_reader :raw_inputs
