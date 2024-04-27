@@ -150,7 +150,7 @@ module Foobara
         end
 
         def foobara_domain_mapper_registry(skip_check: false)
-          foobara_process_domain_mappers unless skip_check
+          Foobara::DomainMapper.foobara_process_domain_mappers unless skip_check
           @foobara_domain_mapper_registry ||= DomainMapper::Registry.new
         end
 
