@@ -46,7 +46,7 @@ module Foobara
       def foobara_process_domain_mappers
         if defined?(@foobara_domain_mappers_to_process)
           @foobara_domain_mappers_to_process.each do |mapper|
-            domain.foobara_domain_mapper(mapper)
+            mapper.domain.foobara_domain_mapper(mapper)
           end
           remove_instance_variable(:@foobara_domain_mappers_to_process)
         end
@@ -61,7 +61,7 @@ module Foobara
           if candidate.nil?
             return nil
           elsif candidate.foobara_domain?
-            return domain
+            return candidate
           end
         end
       end
