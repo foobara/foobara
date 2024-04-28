@@ -94,7 +94,7 @@ module Foobara
             when Types::Type
               object
             when ::Symbol
-              foobara_lookup_type!(to_type)
+              domain.foobara_lookup_type!(object)
             end
           end
         end
