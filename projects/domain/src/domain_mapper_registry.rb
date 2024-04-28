@@ -26,41 +26,7 @@ module Foobara
           raise AmbiguousDomainMapperError.new(from, to, candidates)
         end
 
-        if from.nil?
-          if mappers.size == 1
-            candidates = mappers.values.first
-
-            if candidates.is_a?(::Array)
-              if candidates.size == 1
-                candidates.first
-              else
-                raise AmbiguousDomainMapperError.new(from, to, candidates)
-              end
-            else
-              candidates
-            end
-          elsif mappers.size > 1
-            raise AmbiguousDomainMapperError.new(from, to, mappers.values)
-          end
-        else
-          candidates = mappers[from]
-
-          if candidates.is_a?(::Array)
-            if candidates.size == 1
-              candidates.first
-            else
-              if to.nil?
-                raise AmbiguousDomainMapperError.new(from, to, candidates)
-              end
-
-              candidates.find do |candidate|
-                candidate.to_type == to
-              end
-            end
-          else
-            candidates
-          end
-        end
+        candidates.first
       end
 
       def mappers

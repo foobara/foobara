@@ -39,15 +39,15 @@ RSpec.describe "Domain Mappers" do
   end
 
   let(:domain_mapper) do
-    from = from_type
-    to = to_type
+    from_t = from_type
+    to_t = to_type
 
     # TODO: implement a stub_module_p
     stub_module("DomainA::DomainMappers")
     stub_module("DomainA::DomainMappers::DomainB")
     stub_class("DomainA::DomainMappers::DomainB::UserB", Foobara::DomainMapper) do
-      from_type from
-      to_type to
+      from from_t
+      to to_t
 
       # TODO: pass from_value in instead for improved readability
       def call

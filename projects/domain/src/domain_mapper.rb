@@ -53,18 +53,17 @@ module Foobara
       end
 
       def domain
-        parent = subclass
-        domain = nil
+        candidate = self
 
-        until domain
-          parent = Util.module_for(parent)
+        loop do
+          candidate = Util.module_for(candidate)
 
-          if parent.foobara_domain?
+          if candidate.nil?
+            return nil
+          elsif candidate.foobara_domain?
             return domain
           end
         end
-
-        nil
       end
 
       def matches?(type_indicator, value)
