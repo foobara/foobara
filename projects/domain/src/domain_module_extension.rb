@@ -4,6 +4,18 @@ module Foobara
     class AlreadyRegisteredError < StandardError; end
     class CannotSetTypeConstantError < StandardError; end
 
+    class NoDomainMapperFoundError < StandardError
+      attr_accessor :value, :from, :to
+
+      def initialize(value, from, to)
+        self.value = value
+        self.from = from
+        self.to = to
+
+        super("No domain mapper found for #{value}. from: #{from}. to: #{to}.")
+      end
+    end
+
     class << self
       def global
         GlobalDomain
@@ -132,17 +144,19 @@ module Foobara
         end
 
         def foobara_domain_map(value, from: nil, to: nil)
-          mapper_class = foobara_domain_mapper_registry.lookup(from:, to:)
-          if mapper_class
-            mapper = mapper_class.new(value)
-            mapper.call
+          mapper = foobara_domain_mapper_registry.lookup(from:, to:)
+          if mapper
+            mapper.call(value)
           end
         end
 
         def foobara_domain_map!(value, from: nil, to: nil)
-          mapper_class = foobara_domain_mapper_registry.lookup(from:, to:)
-          mapper = mapper_class.new(value)
-          mapper.call
+          mapper = foobara_domain_mapper_registry.lookup(from:, to:)
+          unless mapper
+            raise NoDomainMapperFoundError.new(value, from, to)
+          end
+
+          mapper.call(value)
         end
 
         def foobara_domain_mapper(mapper)

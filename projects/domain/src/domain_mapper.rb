@@ -67,7 +67,7 @@ module Foobara
       end
 
       def matches?(type_indicator, value)
-        return true if type_indicator.nil? || type_indicator == value
+        return true if type_indicator.nil? || value.nil? || type_indicator == value
 
         type = object_to_type(type_indicator)
 

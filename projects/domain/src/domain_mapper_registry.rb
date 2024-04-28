@@ -26,7 +26,15 @@ module Foobara
           raise AmbiguousDomainMapperError.new(from, to, candidates)
         end
 
-        candidates.first
+        value = candidates.first
+
+        return value if value
+
+        if from
+          lookup(from: nil, to:)
+        elsif to
+          lookup(from:, to: nil)
+        end
       end
 
       def mappers
