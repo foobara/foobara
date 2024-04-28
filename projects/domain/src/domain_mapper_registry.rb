@@ -17,7 +17,7 @@ module Foobara
         mappers << mapper
       end
 
-      def lookup(from: nil, to: nil)
+      def lookup(from: nil, to: nil, strict: true)
         candidates = mappers.select do |mapper|
           mapper.applicable?(from, to)
         end
@@ -30,10 +30,12 @@ module Foobara
 
         return value if value
 
-        if from
-          lookup(from: nil, to:)
-        elsif to
-          lookup(from:, to: nil)
+        unless strict
+          if from
+            lookup(from: nil, to:)
+          elsif to
+            lookup(from:, to: nil)
+          end
         end
       end
 

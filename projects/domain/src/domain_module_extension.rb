@@ -143,16 +143,18 @@ module Foobara
           super
         end
 
-        def foobara_domain_map(value, from: nil, to: nil)
-          mapper = foobara_domain_mapper_registry.lookup(from:, to:)
+        def foobara_domain_map(value, strict:, from: nil, to: nil)
+          mapper = foobara_domain_mapper_registry.lookup(from:, to:, strict:)
           if mapper
             mapper.call(value)
           end
         end
 
-        def foobara_domain_map!(value, from: nil, to: nil)
-          mapper = foobara_domain_mapper_registry.lookup(from:, to:)
+        def foobara_domain_map!(value, from: value, to: nil, strict: false)
+          mapper = foobara_domain_mapper_registry.lookup(from:, to:, strict:)
+
           unless mapper
+            binding.pry
             raise NoDomainMapperFoundError.new(value, from, to)
           end
 
