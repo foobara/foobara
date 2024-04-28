@@ -30,7 +30,7 @@ module Foobara
       end
 
       def inherited(subclass)
-        foobara_domain_mapper_to_process(subclass)
+        foobara_domain_mapper_to_process(subclass.instance)
 
         super
       end
@@ -113,6 +113,10 @@ module Foobara
       @to_type = object_to_type(self.class.to)
     end
 
+    def object_to_type(object)
+      self.class.object_to_type(object)
+    end
+
     def call(from_value)
       mapped_value = map(from_value)
 
@@ -129,6 +133,10 @@ module Foobara
 
     def applicable?(from_value, to_value)
       self.class.matches?(from_type, from_value) && self.class.matches?(to_type, to_value)
+    end
+
+    def domain
+      self.class.domain
     end
   end
 end

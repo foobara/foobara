@@ -131,7 +131,7 @@ module Foobara
           super
         end
 
-        def foobara_domain_map(value, from_type: nil, to_type: nil)
+        def foobara_domain_map(value, from: nil, to: nil)
           mapper_class = foobara_domain_mapper_registry.lookup(from:, to:)
           if mapper_class
             mapper = mapper_class.new(value)
@@ -139,7 +139,7 @@ module Foobara
           end
         end
 
-        def foobara_domain_map!(value, from_type: nil, to_type: nil)
+        def foobara_domain_map!(value, from: nil, to: nil)
           mapper_class = foobara_domain_mapper_registry.lookup(from:, to:)
           mapper = mapper_class.new(value)
           mapper.call

@@ -50,7 +50,7 @@ RSpec.describe "Domain Mappers" do
       to to_t
 
       # TODO: pass from_value in instead for improved readability
-      def call
+      def map(from_value)
         {
           name: {
             first: from_value.first_name,
