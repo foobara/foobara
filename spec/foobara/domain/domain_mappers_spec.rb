@@ -99,8 +99,8 @@ RSpec.describe "Domain Mappers" do
 
       it "raises" do
         expect {
-          domain_a.foobara_domain_map!(from_value, strict: true)
-        }
+          domain_a.foobara_domain_map!(from_value, from: :integer, strict: true)
+        }.to raise_error(Foobara::Domain::NoDomainMapperFoundError)
       end
     end
   end

@@ -6,7 +6,9 @@ module Foobara
           @from
         else
           if args.size > 1
+            # :nocov:
             raise ArgumentError, "only one argument allowed"
+            # :nocov:
           end
 
           @from = args.first
@@ -18,7 +20,9 @@ module Foobara
           @to
         else
           if args.size > 1
+            # :nocov:
             raise ArgumentError, "only one argument allowed"
+            # :nocov:
           end
 
           @to = args.first
@@ -59,7 +63,9 @@ module Foobara
           candidate = Util.module_for(candidate)
 
           if candidate.nil?
-            return nil
+            # :nocov:
+            raise "Domain mapper must be scoped within a domain but #{self.class.name} is not in a domain"
+            # :nocov:
           elsif candidate.foobara_domain?
             return candidate
           end
@@ -121,15 +127,13 @@ module Foobara
     def call(from_value)
       mapped_value = map(from_value)
 
-      if to_type
-        to_type.process_value!(mapped_value)
-      else
-        mapped_value
-      end
+      to_type.process_value!(mapped_value)
     end
 
     def map(_from_value)
+      # :nocov:
       raise "subclass repsonsibility"
+      # :nocov:
     end
 
     def applicable?(from_value, to_value)

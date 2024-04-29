@@ -49,7 +49,7 @@ RSpec.describe Foobara::Command::Concerns::DomainMappers do
     let(:outcome) { command.run }
     let(:result) { outcome.result }
 
-    it "maps the inputs" do
+    it "maps the inputs", :focus  do
       domain_mapper
       expect(outcome).to be_success
       expect(result).to eq(foo: "bar")
