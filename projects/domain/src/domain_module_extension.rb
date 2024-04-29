@@ -151,10 +151,10 @@ module Foobara
         end
 
         def foobara_domain_map!(value, from: value, to: nil, strict: false)
+          $stop = true
           mapper = foobara_domain_mapper_registry.lookup(from:, to:, strict:)
 
           unless mapper
-            binding.pry
             raise NoDomainMapperFoundError.new(value, from, to)
           end
 

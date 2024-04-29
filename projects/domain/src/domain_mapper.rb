@@ -71,12 +71,13 @@ module Foobara
 
         type = object_to_type(type_indicator)
 
-        return true if type.nil? || type == value
+        return true if type.nil? || type == value || type.valid?(value)
 
-        # TODO: relocate the target classes check to Type#valid? ?
-        type.target_classes.any? do |target_class|
-          value.is_a?(target_class)
-        end && type.valid?(value)
+        value_type = object_to_type(value)
+
+        if value_type != value
+          matches?(type, value_type)
+        end
       end
 
       def object_to_type(object)
