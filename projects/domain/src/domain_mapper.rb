@@ -89,12 +89,19 @@ module Foobara
 
         type = object_to_type(type_indicator)
 
-        return true if type.nil? || type == value || type.valid?(value)
+        return true if type.nil? || type == value
+        return true if type.applicable?(value) && type.process_value(value).success?
 
-        value_type = object_to_type(value)
+        if value.is_a?(Types::Type)
+          if !value.registered? && !type.registered?
+            value.declaration_data == type.declaration_data
+          end
+        else
+          value_type = object_to_type(value)
 
-        if value_type != value
-          matches?(type, value_type)
+          if value_type
+            matches?(type, value_type)
+          end
         end
       end
 
@@ -126,10 +133,6 @@ module Foobara
 
     def to_type
       self.class.to_type
-    end
-
-    def object_to_type(object)
-      self.class.object_to_type(object)
     end
 
     def call(from_value)

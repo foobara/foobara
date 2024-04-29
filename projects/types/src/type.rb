@@ -189,12 +189,6 @@ module Foobara
         value_caster.process_value!(value)
       end
 
-      def valid?(value)
-        if target_classes.any? { |target_class| value.is_a?(target_class) }
-          value_validator.nil? || value_validator.process_value(value).success?
-        end
-      end
-
       # TODO: an interesting thought... we have Processor and then a subclass of Processor and then an instance of
       # processor that encapsulates the declaration_data for that processor. But then we pass `value` to every
       # method in the instance of the processor as needed. This means it can't really memoize stuff. Should we create
