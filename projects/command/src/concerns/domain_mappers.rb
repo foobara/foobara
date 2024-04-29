@@ -10,8 +10,8 @@ module Foobara
           result = run_subcommand!(subcommand_class, inputs)
 
           result_mapper = self.class.domain.foobara_domain_mapper_registry.lookup(
-            from: result.class,
-            to: self.class,
+            from: result,
+            to: result_type,
             strict: true
           )
 

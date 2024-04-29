@@ -29,6 +29,18 @@ module Foobara
         end
       end
 
+      def from_type
+        return @from_type if defined?(@from_type)
+
+        @from_type = object_to_type(from)
+      end
+
+      def to_type
+        return @to_type if defined?(@to_type)
+
+        @to_type = object_to_type(to)
+      end
+
       def instance
         @instance ||= new
       end
@@ -109,15 +121,11 @@ module Foobara
     end
 
     def from_type
-      return @from_type if defined?(@from_type)
-
-      @from_type = object_to_type(self.class.from)
+      self.class.from_type
     end
 
     def to_type
-      return @to_type if defined?(@to_type)
-
-      @to_type = object_to_type(self.class.to)
+      self.class.to_type
     end
 
     def object_to_type(object)

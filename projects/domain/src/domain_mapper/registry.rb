@@ -17,7 +17,7 @@ module Foobara
         mappers << mapper
       end
 
-      def lookup(from: nil, to: nil, strict: true)
+      def lookup(from: nil, to: nil, strict: false)
         candidates = mappers.select do |mapper|
           mapper.applicable?(from, to)
         end

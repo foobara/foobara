@@ -14,13 +14,17 @@ RSpec.describe Foobara::Command::Concerns::DomainMappers do
       stub_class("SomeDomain::SomeCommand", Foobara::Command) do
         depends_on SomeDomain::SomeSubcommand
 
+        result :string
+
         def execute
           subcommand_inputs1 = domain_map("bar", to: SomeDomain::SomeSubcommand, from: :string, strict: true)
           subcommand_inputs2 = run_mapped_subcommand!(SomeDomain::SomeSubcommand, "bar")
 
-          raise "wtf" unless subcommand_inputs1 == subcommand_inputs2
+          unless subcommand_inputs1.transform_keys(&:to_s) == JSON.parse(subcommand_inputs2)
+            raise "wtf"
+          end
 
-          subcommand_inputs1
+          subcommand_inputs2
         end
       end
     end
@@ -52,6 +56,7 @@ RSpec.describe Foobara::Command::Concerns::DomainMappers do
 
     let(:result_domain_mapper) do
       subcommand_class
+      domain_mapper
       stub_module("SomeDomain::DomainMappers")
       stub_class("SomeDomain::DomainMappers::SomeResultDomainMapper", Foobara::DomainMapper) do
         from SomeDomain::DomainMappers::SomeDomainMapper.to_type
@@ -68,10 +73,11 @@ RSpec.describe Foobara::Command::Concerns::DomainMappers do
     let(:outcome) { command.run }
     let(:result) { outcome.result }
 
-    it "maps the inputs" do
+    it "maps the inputs", :focus do
       domain_mapper
+      result_domain_mapper
       expect(outcome).to be_success
-      expect(result).to eq(foo: "bar")
+      expect(result).to eq("{\"foo\":\"bar\"}")
     end
   end
 end
