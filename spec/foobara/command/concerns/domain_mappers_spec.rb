@@ -1,4 +1,8 @@
 RSpec.describe Foobara::Command::Concerns::DomainMappers do
+  after do
+    Foobara.reset_alls
+  end
+
   describe "#run_mapped_subcommand!" do
     let(:domain) do
       stub_module("SomeDomain") do
