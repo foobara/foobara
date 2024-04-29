@@ -1,4 +1,8 @@
 RSpec.describe "Domain Mappers" do
+  after do
+    Foobara.reset_alls
+  end
+
   let(:domain_a) do
     other = domain_b
     stub_module("DomainA") do
@@ -67,10 +71,37 @@ RSpec.describe "Domain Mappers" do
 
   describe ".foobara_domain_map" do
     it "maps from one domain to the other" do
+      to_value = domain_a.foobara_domain_map(from_value)
+      expect(to_value).to be_a(to_type)
+      expect(to_value.name[:first]).to eq("foo")
+      expect(to_value.name[:last]).to eq("bar")
+    end
+
+    context "when can't find a mapper" do
+      let(:from_value) { Object.new }
+
+      it "is nil" do
+        expect(domain_a.foobara_domain_map(from_value, from: :integer, strict: true)).to be_nil
+      end
+    end
+  end
+
+  describe ".foobara_domain_map!" do
+    it "maps from one domain to the other" do
       to_value = domain_a.foobara_domain_map!(from_value)
       expect(to_value).to be_a(to_type)
       expect(to_value.name[:first]).to eq("foo")
       expect(to_value.name[:last]).to eq("bar")
+    end
+
+    context "when can't find the mapper" do
+      let(:from_value) { Object.new }
+
+      it "raises" do
+        expect {
+          domain_a.foobara_domain_map!(from_value, strict: true)
+        }
+      end
     end
   end
 end

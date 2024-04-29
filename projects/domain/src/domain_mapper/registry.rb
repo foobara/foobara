@@ -19,7 +19,6 @@ module Foobara
 
       def lookup(from: nil, to: nil, strict: true)
         candidates = mappers.select do |mapper|
-          binding.pry if $stop
           mapper.applicable?(from, to)
         end
 

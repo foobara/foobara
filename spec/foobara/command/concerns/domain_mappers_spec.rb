@@ -11,9 +11,7 @@ RSpec.describe Foobara::Command::Concerns::DomainMappers do
         depends_on SomeDomain::SomeSubcommand
 
         def execute
-          run_mapped_subcommand!(SomeDomain::SomeSubcommand, "bar").tap do |o|
-            binding.pry
-          end
+          run_mapped_subcommand!(SomeDomain::SomeSubcommand, "bar")
         end
       end
     end
@@ -24,7 +22,6 @@ RSpec.describe Foobara::Command::Concerns::DomainMappers do
         inputs foo: :string
 
         def execute
-          binding.pry
           inputs
         end
       end
@@ -48,7 +45,7 @@ RSpec.describe Foobara::Command::Concerns::DomainMappers do
     let(:outcome) { command.run }
     let(:result) { outcome.result }
 
-    it "maps the inputs", :focus do
+    it "maps the inputs" do
       domain_mapper
       expect(outcome).to be_success
       expect(result).to eq(foo: "bar")

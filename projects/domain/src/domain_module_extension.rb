@@ -143,15 +143,13 @@ module Foobara
           super
         end
 
-        def foobara_domain_map(value, strict:, from: nil, to: nil)
+        def foobara_domain_map(value, from: nil, to: nil, strict: false)
           mapper = foobara_domain_mapper_registry.lookup(from:, to:, strict:)
-          if mapper
-            mapper.call(value)
-          end
+
+          mapper&.call(value)
         end
 
         def foobara_domain_map!(value, from: value, to: nil, strict: false)
-          $stop = true
           mapper = foobara_domain_mapper_registry.lookup(from:, to:, strict:)
 
           unless mapper
