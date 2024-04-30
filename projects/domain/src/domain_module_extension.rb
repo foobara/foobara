@@ -143,7 +143,21 @@ module Foobara
           super
         end
 
-        def foobara_domain_map(value, from: nil, to: nil, strict: false)
+        def foobara_domain_map(value, to: nil, strict: false, **opts)
+          invalid_keys = opts.keys - [:from]
+
+          if invalid_keys.any?
+            # :nocov:
+            raise ArgumentError, "Invalid options: #{invalid_keys.join(", ")}"
+            # :nocov:
+          end
+
+          from = if opts.key?(:from)
+                   opts[:from]
+                 elsif !strict
+                   value
+                 end
+
           mapper = foobara_domain_mapper_registry.lookup(from:, to:, strict:)
 
           mapper&.call(value)
