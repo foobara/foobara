@@ -65,4 +65,10 @@ RSpec.describe Foobara::DomainMapper do
       expect(mapped_value).to be_a(SomeClass)
     end
   end
+
+  describe ".call" do
+    it "calls the instance" do
+      expect(domain_mapper.call(1)).to be_a(SomeClass)
+    end
+  end
 end

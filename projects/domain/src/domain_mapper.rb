@@ -1,6 +1,10 @@
 module Foobara
   class DomainMapper
     class << self
+      def call(value)
+        instance.call(value)
+      end
+
       def from(*args)
         if args.empty?
           @from
