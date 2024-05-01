@@ -43,7 +43,7 @@ RSpec.describe Foobara::Manifest do
         id :integer
         name :string, :required
         phone :string, :allow_nil
-        ratings [:integer]
+        ratings [:integer], default: []
         junk :associative_array, value_type_declaration: :array
         address SomeOrg::SomeDomain::Types::Address
       end
@@ -150,6 +150,13 @@ RSpec.describe Foobara::Manifest do
     expect(attributes.attribute_declarations[:ratings]).to be_array
     expect(attributes.attribute_declarations[:ratings].element_type.type).to eq(:integer)
     expect(attributes.attribute_declarations[:phone].allows_nil?).to be(true)
+
+    attribute = attributes.attribute_declarations[:ratings]
+    expect(attribute).to be_attribute
+    expect(attribute.parent_attributes).to eq(attributes)
+    expect(attribute.attribute_name).to eq(:ratings)
+    expect(attribute).to_not be_required
+    expect(attribute.default).to eq([])
 
     new_attributes = Foobara::Manifest::TypeDeclaration.new(attributes.root_manifest, attributes.path)
     expect(new_attributes).to be_a(Foobara::Manifest::Attributes)

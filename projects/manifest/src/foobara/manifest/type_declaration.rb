@@ -24,6 +24,40 @@ module Foobara
         end
       end
 
+      # rubocop:disable Naming/MemoizedInstanceVariableName
+      # TODO: create an Attribute class to encapsulate this situation
+      def attribute?
+        return @is_attribute if defined?(@is_attribute)
+
+        parent_path_atom = path[2..][-2]
+        @is_attribute = [:element_type_declarations, "element_type_declarations"].include?(parent_path_atom)
+      end
+      # rubocop:enable Naming/MemoizedInstanceVariableName
+
+      def parent_attributes
+        return @parent_attributes if defined?(@parent_attributes)
+
+        raise "Not an attribute" unless attribute?
+
+        @parent_attributes = Attributes.new(root_manifest, path[0..-3])
+      end
+
+      def attribute_name
+        return @attribute_name if defined?(@attribute_name)
+
+        raise "Not an attribute" unless attribute?
+
+        @attribute_name = path[-1]
+      end
+
+      def required?
+        parent_attributes.required?(attribute_name)
+      end
+
+      def default
+        parent_attributes.default_for(attribute_name)
+      end
+
       def allows_nil?
         allow_nil
       end
