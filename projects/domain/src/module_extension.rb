@@ -33,6 +33,8 @@ module Foobara
 
         # see if we are upgrading from prefix to domain and copy over types to Types module
         children.each do |child|
+          next unless child.is_a?(Types::Type)
+
           types_mod_path = scoped_full_path.dup
           unless child.scoped_path.first == "Types"
             types_mod_path << "Types"
@@ -41,45 +43,43 @@ module Foobara
           types_mod_path += child.scoped_path[..-2]
           types_mod = Util.make_module_p(types_mod_path.join("::"))
 
-          if child.is_a?(Types::Type)
-            # TODO: dry this up
-            # TODO: this doesn't handle a type nested under a lower-case type for now
-            if child.scoped_short_name =~ /^[a-z]/
-              unless types_mod.respond_to?(child.scoped_short_name)
-                types_mod.singleton_class.define_method child.scoped_short_name do
-                  child
-                end
-
-                unless types_mod.instance_variable_defined?(:@foobara_lowercase_constants)
-                  # TODO: test this path or delete it if unreachable
-                  # :nocov:
-                  types_mod.instance_variable_set(:@foobara_lowercase_constants, [])
-                  # :nocov:
-                end
-
-                types_mod.instance_variable_get(:@foobara_lowercase_constants) << child.scoped_short_name
+          # TODO: dry this up
+          # TODO: this doesn't handle a type nested under a lower-case type for now
+          if child.scoped_short_name =~ /^[a-z]/
+            unless types_mod.respond_to?(child.scoped_short_name)
+              types_mod.singleton_class.define_method child.scoped_short_name do
+                child
               end
-            else
-              value = if types_mod.const_defined?(child.scoped_short_name, false)
-                        # TODO: test this path or delete it if unreachable
-                        # :nocov:
-                        types_mod.const_get(child.scoped_short_name, false)
-                        # :nocov:
-                      end
 
-              if value != child
-                types_mod.send(:remove_const, child.scoped_short_name) if value
-                # TODO: can we decouple this from the model project?
-                new_value = if child.extends?("::model")
-                              child.target_class
-                            else
-                              # TODO: test this path or delete it if unreachable
-                              # :nocov:
-                              child
-                              # :nocov:
-                            end
-                types_mod.const_set(child.scoped_short_name, new_value)
+              unless types_mod.instance_variable_defined?(:@foobara_lowercase_constants)
+                # TODO: test this path or delete it if unreachable
+                # :nocov:
+                types_mod.instance_variable_set(:@foobara_lowercase_constants, [])
+                # :nocov:
               end
+
+              types_mod.instance_variable_get(:@foobara_lowercase_constants) << child.scoped_short_name
+            end
+          else
+            value = if types_mod.const_defined?(child.scoped_short_name, false)
+                      # TODO: test this path or delete it if unreachable
+                      # :nocov:
+                      types_mod.const_get(child.scoped_short_name, false)
+                      # :nocov:
+                    end
+
+            if value != child
+              types_mod.send(:remove_const, child.scoped_short_name) if value
+              # TODO: can we decouple this from the model project?
+              new_value = if child.extends?("::model")
+                            child.target_class
+                          else
+                            # TODO: test this path or delete it if unreachable
+                            # :nocov:
+                            child
+                            # :nocov:
+                          end
+              types_mod.const_set(child.scoped_short_name, new_value)
             end
           end
         end

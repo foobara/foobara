@@ -41,7 +41,8 @@ module Foobara
       end
 
       def each_scoped_without_filter(&)
-        all.each(&)
+        # records can be unregistered in the block so dup first
+        all.dup.each(&)
       end
 
       private
