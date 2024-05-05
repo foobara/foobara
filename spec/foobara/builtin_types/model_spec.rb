@@ -127,6 +127,23 @@ RSpec.describe ":model" do
     end
   end
 
+  context "when model is in global domain" do
+    let(:type_declaration) do
+      {
+        type: :model,
+        name: model_name,
+        attributes_declaration:,
+        model_module: "Foobara::GlobalDomain"
+      }
+    end
+
+    describe "#full_model_name" do
+      subject { type.target_class.full_model_name }
+
+      it { is_expected.to eq(model_name) }
+    end
+  end
+
   it "sets model_class and model_base_class" do
     expect(type.declaration_data[:model_class]).to eq("SomeModel")
     expect(type.declaration_data[:model_base_class]).to eq("Foobara::Model")

@@ -21,16 +21,22 @@ module Foobara
             model_module = if strictish_type_declaration.key?(:model_module)
                              mod = strictish_type_declaration[:model_module]
 
-                             case mod
-                             when ::Module
-                               mod
-                             when ::String, ::Symbol
-                               Object.const_get(mod)
+                             mod = case mod
+                                   when ::Module
+                                     mod
+                                   when ::String, ::Symbol
+                                     Object.const_get(mod)
+                                   else
+                                     # :nocov:
+                                     raise ArgumentError,
+                                           "expected module_module to be a module or module name"
+                                     # :nocov:
+                                   end
+
+                             if mod == GlobalDomain
+                               Object
                              else
-                               # :nocov:
-                               raise ArgumentError,
-                                     "expected module_module to be a module or module name"
-                               # :nocov:
+                               mod
                              end
                            else
                              Object
@@ -87,6 +93,8 @@ module Foobara
 
             strictish_type_declaration[:model_class] = model_class.name
             model_module ||= Util.module_for(model_class)
+
+            model_module = nil if model_module == Object
 
             strictish_type_declaration[:model_module] = model_module&.name
             strictish_type_declaration[:model_base_class] = model_class.superclass.name
