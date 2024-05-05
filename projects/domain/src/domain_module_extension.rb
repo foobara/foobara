@@ -290,6 +290,8 @@ module Foobara
 
           foobara_register(type)
           type.foobara_parent_namespace = self
+
+          type.target_class
         end
 
         def foobara_reregister_model(model_class)
@@ -350,7 +352,7 @@ module Foobara
                 description:,
                 _desugarized: { type_absolutified: true }
               )
-            )
+            ).target_class
           end
         end
 
