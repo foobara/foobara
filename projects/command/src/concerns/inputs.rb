@@ -27,7 +27,7 @@ module Foobara
         foobara_delegate :inputs_type, to: :class
 
         def cast_and_validate_inputs
-          if inputs_type.nil? && raw_inputs.empty?
+          if inputs_type.nil? && (raw_inputs.nil? || raw_inputs.empty?)
             @inputs = {}
             return
           end
