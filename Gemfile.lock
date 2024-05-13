@@ -12,16 +12,11 @@ GIT
   specs:
     foobara-spec-helpers (0.1.0)
 
-GIT
-  remote: https://github.com/foobara/util.git
-  revision: 7459f1000de349ca3ba56122dc66c1a81dcf6c4e
-  specs:
-    foobara-util (0.1.0)
-
 PATH
   remote: .
   specs:
     foobara (0.0.1)
+      foobara-util
 
 GEM
   remote: https://rubygems.org/
@@ -32,6 +27,7 @@ GEM
     diff-lcs (1.5.0)
     docile (1.4.0)
     ffi (1.16.3)
+    foobara-util (0.0.1)
     formatador (1.1.0)
     guard (2.18.1)
       formatador (>= 0.2.4)
@@ -136,7 +132,6 @@ DEPENDENCIES
   foobara!
   foobara-rubocop-rules!
   foobara-spec-helpers!
-  foobara-util!
   guard-rspec
   pry
   pry-byebug
