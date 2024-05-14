@@ -1,5 +1,9 @@
 # Adding a new builtin type
 
+Note that adding a custom type is a different process involving writing handlers/desugarizers/declaration validators.
+TODO: add information to either this document or another about adding desugarizers, type declaration handlers,
+and type declaration validators.
+
 Let's go through the steps of adding a String builtin type
 
 ## Create a directory for the new type
@@ -8,21 +12,16 @@ Let's go through the steps of adding a String builtin type
 mkdir lib/foobara/builtin_types/string 
 ```
 
-## Add Casters
+## Add Casters if needed
 
 ```bash
 mkdir lib/foobara/builtin_types/string/casters
 ```
 
-We always need a caster that matches things that don't need to be cast.
-
-(TODO: maybe change this so it's not necessary anymore?)
-
-Let's also support casting Symbol to String...
-
 in `lib/foobara/builtin_types/string/casters/symbol.rb`
 
 ```ruby
+
 module Foobara
   module BuiltinTypes
     module String
@@ -57,6 +56,7 @@ mkdir lib/foobara/builtin_types/string/supported_validators
 in `lib/foobara/builtin_types/string/supported_validators/max_length.rb`
 
 ```ruby
+
 module Foobara
   module BuiltinTypes
     module String
@@ -101,6 +101,7 @@ end
 in `lib/foobara/builtin_types/string/supported_transformers/downcase.rb`
 
 ```ruby
+
 module Foobara
   module BuiltinTypes
     module String
