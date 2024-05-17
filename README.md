@@ -1,8 +1,8 @@
 # Foobara
 
-Foobara is a command-based software framework with an emphasis on reflection features to assist with
-metaprogramming to facilitate integration with other systems or subsystems. The goal of these two emphasized
-features is to help manage domain complexity in projects with higher domain complexity, however, Foobara
+Foobara is a command-based software framework with an emphasis on reflection features to facilitate integration with
+other systems or subsystems. The focus of the framework is to provide these features to help
+with managing domain complexity in projects with higher domain complexity. However, Foobara
 is also expected to be pleasant for use in projects with simpler domains as well.
 
 ## Installation
@@ -40,17 +40,11 @@ Each project has its own directory in the projects/ directory.
 
 ### Licensing
 
-My intention is to either release this under the MIT license or the Apache 2.0 license or under both with the
-user being allowed to decide which license they wish to use.
+Temporarily licensed under the AGPL-3.0 license. This is to to get the gem out there for convenient use in demos,
+releasing it under a very restrictive
+license to buy time on a final licensing decision (leaning towards `Apache-2.0 OR MIT`)
 
-Other projects in the Foobara ecosystem use the MIT license and my inclination is to use
-Apache 2.0 for this repository. It would be nice if there could be a way to state that if
-source code contributed to this project is used as input to AI systems, either as prompt input or training data,
-to generate similar projects, that that output would be considered a derived work and therefore subject to the
-license choice of this project. I'm assuming that's not a possibility.
+My intention is to either release this under MIT license, Apache 2.0, or MPL,
+or a similar license (permissive or possibly weak copyleft.)
 
-But I am hesitant to choose between MIT and Apache 2.0 and some other hypothetical license that doesn't yet exist
-for those reasons.
-
-If you are interested in making serious contributions to Foobara, please reach out to me, and I will
-likely prioritize licensing this project under one or both of the licenses mentioned above.
+See DECISION_LOG.md for the current thoughts on licensing.

@@ -1,0 +1,4 @@
+Temporarily released under the AGPL-3.0
+while a more permissive license is decided upon https://www.gnu.org/licenses/agpl-3.0.txt
+
+Copyright (c) 2023 Miles Georgi
