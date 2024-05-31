@@ -35,7 +35,7 @@ module Foobara
       attr_reader :type_symbol
 
       def initialize(
-        *args,
+        *,
         target_classes:,
         base_type:,
         description: nil,
@@ -63,7 +63,7 @@ module Foobara
         self.name = name
         self.target_classes = Util.array(target_classes)
 
-        super(*args, **opts.merge(processors:, prioritize: false))
+        super(*, **opts.merge(processors:, prioritize: false))
 
         validate_processors!
       end

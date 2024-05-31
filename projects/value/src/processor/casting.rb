@@ -39,7 +39,7 @@ module Foobara
 
         attr_accessor :target_classes
 
-        def initialize(*args, casters:, target_classes: nil)
+        def initialize(*, casters:, target_classes: nil)
           self.target_classes = Util.array(target_classes)
 
           processors = [
@@ -47,7 +47,7 @@ module Foobara
             *casters
           ]
 
-          super(*args, processors:)
+          super(*, processors:)
         end
 
         def needs_cast?(value)

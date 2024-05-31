@@ -6,7 +6,7 @@ module Foobara
 
       class << self
         def new(root_manifest, path)
-          type = super(root_manifest, path)
+          type = super
 
           if self == Type
             if type.entity?

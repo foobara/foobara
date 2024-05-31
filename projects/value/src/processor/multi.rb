@@ -10,10 +10,10 @@ module Foobara
           end
         end
 
-        def initialize(*args, processors: [], prioritize: true)
+        def initialize(*, processors: [], prioritize: true)
           self.prioritize = prioritize
           self.processors = prioritize ? processors.sort_by(&:priority) : processors
-          super(*args)
+          super(*)
         end
 
         def processor_names

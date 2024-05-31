@@ -94,7 +94,7 @@ module Foobara
 
       def process_value(raw_type_declaration)
         # TODO: deep_dup this again??
-        super(raw_type_declaration).tap do |type_outcome|
+        super.tap do |type_outcome|
           if type_outcome.success?
             type_outcome.result.raw_declaration_data = raw_type_declaration
           end

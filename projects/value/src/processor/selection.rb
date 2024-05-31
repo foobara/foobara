@@ -18,9 +18,9 @@ module Foobara
 
         attr_accessor :enforce_unique
 
-        def initialize(*args, enforce_unique: true, **opts)
+        def initialize(*, enforce_unique: true, **)
           self.enforce_unique = enforce_unique
-          super(*args, **opts)
+          super(*, **)
         end
 
         # TODO: move applies_message usage here from casting processor

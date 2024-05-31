@@ -7,7 +7,7 @@ module Foobara
 
         def initialize(...)
           self.class.all << self
-          super(...)
+          super
         end
 
         module ClassMethods

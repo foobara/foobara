@@ -4,9 +4,9 @@ module Foobara
       class Response < CommandConnectors::Response
         attr_accessor :headers
 
-        def initialize(headers:, **opts)
+        def initialize(headers:, **)
           self.headers = headers
-          super(**opts)
+          super(**)
         end
       end
     end

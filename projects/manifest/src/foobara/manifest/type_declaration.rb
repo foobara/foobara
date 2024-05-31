@@ -7,7 +7,7 @@ module Foobara
 
       class << self
         def new(root_manifest, path)
-          type_declaration = super(root_manifest, path)
+          type_declaration = super
 
           if self == TypeDeclaration
             case type_declaration.type.to_sym

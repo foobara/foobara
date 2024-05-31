@@ -533,7 +533,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
           end.id
         end
 
-        let(:result_transformers) { [proc { |user| user.attributes }] }
+        let(:result_transformers) { [proc(&:attributes)] }
 
         it "finds the user" do
           expect(response.status).to be(200)
@@ -1196,7 +1196,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
           let(:body) { "" }
 
           let(:serializers) {
-            [proc { |user| user.attributes }]
+            [proc(&:attributes)]
           }
 
           let(:user_class) do
