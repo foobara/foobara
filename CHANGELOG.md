@@ -1,3 +1,7 @@
+## [0.0.2] - 2024-06-20
+
+- Make sure content-type is json if we are json serializing an HTTP response
+
 ## [0.0.1] - 2024-05-31
 
 Very very alpha alpha release for convenience of demoing the project.

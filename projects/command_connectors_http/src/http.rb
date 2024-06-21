@@ -60,6 +60,15 @@ module Foobara
       def headers_for(request)
         response_headers = request.response_headers
 
+        if response_headers.nil? || !response_headers.key?("content-type")
+          if request.command.respond_to?(:serialize_result)
+            # TODO: we should ask the request this not the command.
+            if request.command.serializers.include?(Serializers::JsonSerializer)
+              response_headers = (response_headers || {}).merge("content-type" => "application/json")
+            end
+          end
+        end
+
         if response_headers
           static_headers.merge(response_headers)
         else
