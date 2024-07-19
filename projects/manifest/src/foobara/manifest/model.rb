@@ -15,6 +15,10 @@ module Foobara
         attributes_type.attribute_names
       end
 
+      def full_model_name
+        scoped_full_name
+      end
+
       # TODO: rename
       def has_associations?(type = attributes_type)
         case type

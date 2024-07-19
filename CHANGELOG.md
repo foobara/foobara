@@ -1,3 +1,7 @@
+## [unreleased]
+
+- Add some crude help info for models in http connector
+
 ## [0.0.2] - 2024-06-20
 
 - Make sure content-type is json if we are json serializing an HTTP response

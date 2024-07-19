@@ -25,6 +25,10 @@ module Foobara
         super - [primary_key_name]
       end
 
+      def full_entity_name
+        full_model_name
+      end
+
       def associations
         @associations ||= self[:associations].to_h do |path_key, type_name|
           [path_key.to_sym, Type.new(root_manifest, [:type, type_name])]
