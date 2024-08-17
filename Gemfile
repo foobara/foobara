@@ -6,6 +6,7 @@ gemspec
 # Development dependencies go here
 # TODO: move to .gemspec
 gem "foobara-rubocop-rules"
+# gem "foobara-rubocop-rules", path: "../rubocop-rules"
 gem "foobara-spec-helpers"
 # gem "foobara-util", path: "../util"
 gem "guard-rspec"
