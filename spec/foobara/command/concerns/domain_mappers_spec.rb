@@ -17,7 +17,7 @@ RSpec.describe Foobara::Command::Concerns::DomainMappers do
       result rtype
 
       def execute
-        run_mapped_subcommand!(SomeDomain::SomeSubcommand, "bar")
+        run_mapped_subcommand!(SomeDomain::SomeSubcommand, result_type, "bar")
       end
     end
   end

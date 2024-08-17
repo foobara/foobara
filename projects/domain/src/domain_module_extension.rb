@@ -4,18 +4,6 @@ module Foobara
     class AlreadyRegisteredError < StandardError; end
     class CannotSetTypeConstantError < StandardError; end
 
-    class NoDomainMapperFoundError < StandardError
-      attr_accessor :value, :from, :to
-
-      def initialize(value, from, to)
-        self.value = value
-        self.from = from
-        self.to = to
-
-        super("No domain mapper found for #{value}. from: #{from}. to: #{to}.")
-      end
-    end
-
     class << self
       def global
         GlobalDomain
@@ -152,6 +140,9 @@ module Foobara
             # :nocov:
           end
 
+          # TODO: how should we handle mapping nil?? Should it be like any other value or should we treat it as
+          # if nil weren't passed in?
+          # Should we maybe catch an ambiguous error below and try value instead of nil?
           from = if opts.key?(:from)
                    opts[:from]
                  elsif !strict
@@ -165,9 +156,8 @@ module Foobara
 
         def foobara_domain_map!(value, from: value, to: nil, strict: false)
           mapper = foobara_domain_mapper_registry.lookup(from:, to:, strict:)
-
           unless mapper
-            raise NoDomainMapperFoundError.new(value, from, to)
+            raise NoDomainMapperFoundError.new(from, to, value:)
           end
 
           mapper.call(value)

@@ -4,22 +4,35 @@ module Foobara
       module DomainMappers
         include Concern
 
-        def run_mapped_subcommand!(subcommand_class, unmapped_inputs)
+        def run_mapped_subcommand!(subcommand_class, *args)
+          unmapped_inputs, has_result_type, result_type =
+            case args.size
+            when 0
+              [{}]
+            when 1
+              [args.first]
+            when 2
+              [args[1], true, args[0]]
+            else
+              raise ArgumentError,
+                    "wrong number of arguments (#{args.size}. Expected inputs, result_type and inputs, or nothing."
+            end
+
           inputs = domain_map!(unmapped_inputs, to: subcommand_class, strict: true)
 
           result = run_subcommand!(subcommand_class, inputs)
 
-          result_mapper = self.class.domain.foobara_domain_mapper_registry.lookup(
-            from: result,
-            to: result_type,
-            strict: true
-          )
+          if has_result_type
+            result_mapper = self.class.domain.foobara_domain_mapper_registry.lookup!(
+              from: result,
+              to: result_type,
+              strict: true
+            )
 
-          if result_mapper
-            result_mapper.map(result)
-          else
-            result
+            result = result_mapper.map(result)
           end
+
+          result
         end
 
         def domain_map(...)
