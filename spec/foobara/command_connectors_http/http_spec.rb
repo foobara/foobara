@@ -1017,6 +1017,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
             inputs do
               whatever :"Foo::Bar::whatever"
               count :integer, min: 0
+              log [:string]
             end
           end
         end

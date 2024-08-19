@@ -1,3 +1,7 @@
+## [0.0.4] - 2024-08-19
+
+- Render element type for Array types in Http::Help
+
 ## [0.0.3] - 2024-08-15
 
 - Do not automatically try to map subcommand types to calling command result type

@@ -103,6 +103,22 @@ module Foobara
                   html << "</li>"
                 end
                 html << "</ul>" unless skip_wrapper
+              when Manifest::Array
+                html << "<ul>" unless skip_wrapper
+                data.relevant_manifest.each_pair do |key, value|
+                  next if key == :element_type_declaration
+
+                  if key.to_s == "type"
+                    value = root_manifest.lookup_path(key, value)
+                  end
+                  html << "<li>#{key}"
+                  html << "<ul>"
+                  html << render_html_list(value, skip_wrapper: true)
+                  html << "</ul>"
+                  html << "</li>"
+                end
+                html << render_html_list({ element_type: data.element_type }, skip_wrapper: true)
+                html << "</ul>" unless skip_wrapper
               when Manifest::TypeDeclaration
                 html << "<ul>" unless skip_wrapper
                 data.relevant_manifest.each_pair do |key, value|
