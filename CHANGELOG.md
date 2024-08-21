@@ -1,5 +1,6 @@
-## [unreleased]
+## [0.0.3] - 2024-08-15
 
+- Do not automatically try to map subcommand types to calling command result type
 - Add some crude help info for models in http connector
 
 ## [0.0.2] - 2024-06-20
