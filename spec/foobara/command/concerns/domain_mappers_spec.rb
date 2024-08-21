@@ -17,7 +17,7 @@ RSpec.describe Foobara::Command::Concerns::DomainMappers do
       result rtype
 
       def execute
-        run_mapped_subcommand!(SomeDomain::SomeSubcommand, "bar")
+        run_mapped_subcommand!(SomeDomain::SomeSubcommand, result_type, "bar")
       end
     end
   end
@@ -65,9 +65,25 @@ RSpec.describe Foobara::Command::Concerns::DomainMappers do
       domain_mapper
     end
 
-    it "maps the inputs" do
-      expect(outcome).to be_success
-      expect(result).to eq(foo: "bar")
+    context "when there's no result mapper" do
+      let(:command_class) do
+        rtype = result_type
+        subcommand_class
+        stub_class("SomeDomain::SomeCommand", Foobara::Command) do
+          depends_on SomeDomain::SomeSubcommand
+
+          result rtype
+
+          def execute
+            run_mapped_subcommand!(SomeDomain::SomeSubcommand, "bar")
+          end
+        end
+      end
+
+      it "maps the inputs" do
+        expect(outcome).to be_success
+        expect(result).to eq(foo: "bar")
+      end
     end
 
     context "when there's a result mapper" do
