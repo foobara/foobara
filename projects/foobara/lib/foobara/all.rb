@@ -8,9 +8,6 @@ module Foobara
   end
 
   module Monorepo
-    # universal
-    project "version"
-
     # could be independent projects
     projects "delegate",
              "concerns",
