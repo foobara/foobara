@@ -1,3 +1,7 @@
+## [0.0.6] - 2024-08-21
+
+- Give a way to check if a type is builtin by reference
+
 ## [0.0.5] - 2024-08-21
 
 - Render element type for Array types in Http::Help

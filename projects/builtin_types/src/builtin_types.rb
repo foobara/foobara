@@ -57,7 +57,7 @@ module Foobara
           description:
         )
 
-        builtin_types << type
+        add_builtin_type(type)
 
         # TODO: is this necessary?
         Foobara::Namespace::NamespaceHelpers.foobara_namespace!(type)

@@ -5,6 +5,10 @@ RSpec.describe ":array" do
     expect(Foobara::BuiltinTypes.builtin?(type)).to be(true)
   end
 
+  it "is a builtin reference" do
+    expect(Foobara::BuiltinTypes.builtin_reference?("array")).to be(true)
+  end
+
   describe "#process_value!" do
     subject { type.process_value!(value) }
 

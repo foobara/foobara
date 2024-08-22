@@ -9,8 +9,21 @@ module Foobara
         @builtin_types ||= Set.new
       end
 
+      def add_builtin_type(type)
+        @builtin_references = nil
+        builtin_types << type
+      end
+
+      def builtin_references
+        @builtin_references ||= builtin_types.to_set(&:foobara_manifest_reference)
+      end
+
       def builtin?(type)
         builtin_types.include?(type)
+      end
+
+      def builtin_reference?(reference)
+        builtin_references.include?(reference)
       end
 
       def [](symbol)
