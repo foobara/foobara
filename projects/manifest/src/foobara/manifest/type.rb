@@ -81,6 +81,10 @@ module Foobara
       def full_type_name
         scoped_full_name
       end
+
+      def builtin?
+        BuiltinTypes.builtin_reference?(reference)
+      end
     end
   end
 end

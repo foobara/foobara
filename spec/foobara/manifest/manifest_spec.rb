@@ -106,6 +106,8 @@ RSpec.describe Foobara::Manifest do
     integer = Foobara::Manifest::Type.new(raw_manifest, %i[type integer])
     string = Foobara::Manifest::Type.new(raw_manifest, %i[type string])
 
+    expect(integer).to be_builtin
+
     expect(manifest).to be_a(Foobara::Manifest::RootManifest)
     expect(manifest.global_domain).to be_global
     expect(manifest.scoped_category).to be_nil

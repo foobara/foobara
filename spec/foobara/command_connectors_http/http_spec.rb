@@ -473,7 +473,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
         it "is 401" do
           expect(response.status).to be(401)
           expect(response.headers).to be_a(Hash)
-          expect(JSON.parse(response.body)).to include { |e| e["key"] == "runtime.unauthenticated" }
+          expect(JSON.parse(response.body).map { |e| e["key"] }).to include("runtime.unauthenticated")
         end
       end
 
@@ -562,7 +562,7 @@ RSpec.describe Foobara::CommandConnectors::Http do
           errors = JSON.parse(response.body)
 
           expect(errors.size).to eq(1)
-          expect(errors).to include { |e| e["key"] == "runtime.user_not_found" }
+          expect(errors.map { |e| e["key"] }).to include("runtime.user_not_found")
         end
       end
 

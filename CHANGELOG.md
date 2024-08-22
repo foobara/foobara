@@ -1,3 +1,7 @@
+## [0.0.7] - 2024-08-21
+
+- Add Manifest::Type#builtin?
+
 ## [0.0.6] - 2024-08-21
 
 - Give a way to check if a type is builtin by reference
