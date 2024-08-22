@@ -391,7 +391,13 @@ module Foobara
         end
       end
 
-      h.sort.to_h
+      normalize_manifest(h)
+    end
+
+    def normalize_manifest(manifest_hash)
+      manifest_hash.map do |key, entries|
+        [key, entries.sort.to_h]
+      end.sort.to_h
     end
 
     def all_exposed_commands

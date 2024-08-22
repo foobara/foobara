@@ -1,3 +1,7 @@
+## [0.0.5] - 2024-08-21
+
+- Render element type for Array types in Http::Help
+
 ## [0.0.4] - 2024-08-19
 
 - Render element type for Array types in Http::Help
