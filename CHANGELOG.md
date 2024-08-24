@@ -1,3 +1,7 @@
+## [0.0.8] - 2024-08-23
+
+- Add a couple more entity attribute convenience helpers to commands
+
 ## [0.0.7] - 2024-08-21
 
 - Add Manifest::Type#builtin?

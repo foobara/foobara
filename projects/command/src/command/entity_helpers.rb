@@ -3,6 +3,45 @@ module Foobara
     module EntityHelpers
       module_function
 
+      # Just for convenience
+      def attributes_for_update(entity_class)
+        type_declaration_for_record_aggregate_update(entity_class)
+      end
+
+      # TODO: we should have metadata on the entity about whether it required a primary key
+      # upon creation or not instead of an option here.
+      def attributes_for_create(entity_class, includes_primary_key: false)
+        attributes_type = entity_class.attributes_type
+
+        return attributes_type if includes_primary_key
+
+        declaration = attributes_type.declaration_data
+        # TODO: just slice out the element type declarations
+        declaration = Util.deep_dup(declaration)
+
+        primary_key_attribute = entity_class.primary_key_attribute
+
+        if declaration.key?(:required) && declaration[:required].include?(primary_key_attribute)
+          declaration[:required].delete(primary_key_attribute)
+        end
+
+        if declaration.key?(:defaults) && declaration[:defaults].include?(primary_key_attribute)
+          declaration[:defaults].delete(primary_key_attribute)
+        end
+
+        if declaration.key?(:element_type_declarations)
+          if declaration[:element_type_declarations].key?(primary_key_attribute)
+            declaration[:element_type_declarations].delete(primary_key_attribute)
+          end
+        end
+
+        handler = Domain.global.foobara_type_builder.handler_for_class(
+          TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
+        )
+
+        handler.desugarize(declaration)
+      end
+
       def type_declaration_for_record_aggregate_update(entity_class, initial = true)
         declaration = entity_class.attributes_type.declaration_data
         # TODO: just slice out the element type declarations
