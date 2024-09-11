@@ -253,5 +253,9 @@ module Foobara
     def each_transformed_command_class(&)
       foobara_all_command.map(&:transformed_command_class).each(&)
     end
+
+    def size
+      foobara_all_command.size
+    end
   end
 end
