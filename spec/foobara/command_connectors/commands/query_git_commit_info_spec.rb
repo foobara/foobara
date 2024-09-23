@@ -1,26 +1,22 @@
 RSpec.describe Foobara::CommandConnector::Commands::Ping do
   let(:command_connector) do
-    Foobara::CommandConnectors::Http.new(default_serializers:)
+    Foobara::CommandConnector.new
   end
 
-  let(:default_serializers) do
-    [Foobara::CommandConnectors::Serializers::ErrorsSerializer, Foobara::CommandConnectors::Serializers::JsonSerializer]
-  end
-
-  let(:response) { command_connector.run(path:) }
+  let(:response) { command_connector.run(action:, inputs:) }
+  let(:inputs) { {} }
 
   describe "#run_command" do
     describe "with describe path" do
-      let(:path) { "/query_git_commit_info" }
+      let(:action) { "query_git_commit_info" }
       let(:file_name) { "git_commit_info.json" }
 
       context "without git_commit_info.json file" do
         it "describes the command" do
-          expect(response.status).to be(422)
-          data = JSON.parse(response.body)
-          error = data.first
-          expect(error["key"]).to eq("runtime.git_commit_info_file_not_found")
-          expect(error["message"]).to include(file_name)
+          expect(response.status).to be(1)
+          error_hash = response.body.to_h
+          expect(error_hash.keys).to include("runtime.git_commit_info_file_not_found")
+          expect(error_hash["runtime.git_commit_info_file_not_found"][:message]).to include(file_name)
         end
       end
 
@@ -45,13 +41,12 @@ RSpec.describe Foobara::CommandConnector::Commands::Ping do
         end
 
         it "contains the sha1" do
-          expect(response.status).to be(200)
-          data = JSON.parse(response.body)
-          expect(data).to eq(
-            "commit" => "00089edf2e6416addf7bc2370d5974a7a7c3c9ab",
-            "author" => "Miles Georgi <azimux@gmail.com>",
-            "date" => "Wed Nov 15 03:21:12 2023 +0000",
-            "message" => "Add env vars for foobara http connector response headers"
+          expect(response.status).to be(0)
+          expect(response.body).to eq(
+            commit: "00089edf2e6416addf7bc2370d5974a7a7c3c9ab",
+            author: "Miles Georgi <azimux@gmail.com>",
+            date: "Wed Nov 15 03:21:12 2023 +0000",
+            message: "Add env vars for foobara http connector response headers"
           )
         end
       end
