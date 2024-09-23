@@ -20,7 +20,6 @@ module Foobara
         command
       end
 
-      # TODO: eliminate passing the command here...
       def request_to_response(request)
         command = request.command
         outcome = command.outcome

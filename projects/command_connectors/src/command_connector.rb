@@ -126,7 +126,7 @@ module Foobara
           # :nocov:
         end
 
-        command_class = Foobara::CommandConnectors::Commands::Describe
+        command_class = self.class::Commands::Describe
         full_command_name = command_class.full_command_name
 
         inputs = { manifestable:, request: }
@@ -141,7 +141,7 @@ module Foobara
           # :nocov:
         end
 
-        command_class = Foobara::CommandConnectors::Commands::Describe
+        command_class = self.class::Commands::Describe
         full_command_name = command_class.full_command_name
 
         inputs = { manifestable: transformed_command_class, request: }
@@ -156,14 +156,14 @@ module Foobara
           # :nocov:
         end
 
-        command_class = Foobara::CommandConnectors::Commands::Describe
+        command_class = self.class::Commands::Describe
         full_command_name = command_class.full_command_name
 
         inputs = { manifestable: type, request: }
         transformed_command_class = transformed_command_from_name(full_command_name) ||
                                     transform_command_class(command_class)
       when "manifest"
-        command_class = Foobara::CommandConnectors::Commands::Describe
+        command_class = self.class::Commands::Describe
         full_command_name = command_class.full_command_name
 
         inputs = { manifestable: self, request: }
