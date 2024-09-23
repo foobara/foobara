@@ -3,7 +3,7 @@ require "uri"
 module Foobara
   module CommandConnectors
     class Http < CommandConnector
-      class Request < CommandConnectors::Request
+      class Request < CommandConnector::Request
         attr_accessor :path,
                       :method,
                       :headers,

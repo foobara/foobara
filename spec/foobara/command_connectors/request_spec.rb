@@ -1,4 +1,4 @@
-RSpec.describe Foobara::CommandConnectors::Request do
+RSpec.describe Foobara::CommandConnector::Request do
   let(:request) do
     described_class.new
   end

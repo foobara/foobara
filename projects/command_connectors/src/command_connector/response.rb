@@ -1,5 +1,5 @@
 module Foobara
-  module CommandConnectors
+  class CommandConnector
     class Response
       attr_accessor :status,
                     :body,

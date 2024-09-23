@@ -1,4 +1,4 @@
-RSpec.describe Foobara::CommandConnectors::Commands::Ping do
+RSpec.describe Foobara::CommandConnector::Commands::Ping do
   let(:command_connector) do
     Foobara::CommandConnectors::Http.new(default_serializers:)
   end

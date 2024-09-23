@@ -1,7 +1,7 @@
 module Foobara
   module CommandConnectors
     class Http < CommandConnector
-      class Response < CommandConnectors::Response
+      class Response < CommandConnector::Response
         attr_accessor :headers
 
         def initialize(headers:, **)

@@ -1,5 +1,5 @@
 module Foobara
-  module CommandConnectors
+  class CommandConnector
     module Commands
       # NOTE: this assumes that the following has been executed to generate the `git_commit_info.json` file:
       #

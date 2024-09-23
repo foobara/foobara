@@ -1,21 +1,32 @@
 module Foobara
-  module CommandConnectors
+  class CommandConnector
     class Request
       include TruncatedInspect
 
       # TODO: this feels like a smell of some sort...
-      attr_accessor :command_class, :command, :error, :command_connector, :serializers
+      attr_accessor :command_class,
+                    :command,
+                    :error,
+                    :command_connector,
+                    :serializers,
+                    :inputs,
+                    :full_command_name,
+                    :action
 
-      def full_command_name
-        # :nocov:
-        raise "subclass responsibility"
-        # :nocov:
-      end
+      def initialize(**opts)
+        valid_keys = %i[inputs full_command_name action]
 
-      def inputs
-        # :nocov:
-        raise "subclass responsibility"
-        # :nocov:
+        invalid_keys = opts.keys - valid_keys
+
+        unless invalid_keys.empty?
+          # :nocov:
+          raise ArgumentError, "invalid keys: #{invalid_keys} expected only #{valid_keys}"
+          # :nocov:
+        end
+
+        self.inputs = opts[:inputs] if opts.key?(:inputs)
+        self.action = opts[:action] if opts.key?(:action)
+        self.full_command_name = opts[:full_command_name] if opts.key?(:full_command_name)
       end
 
       def serializer
@@ -74,7 +85,7 @@ module Foobara
           when Value::Processor
             object
           when ::Symbol, ::String
-            klass = Serializer.serializer_from_symbol(object)
+            klass = Foobara::CommandConnectors::Serializer.serializer_from_symbol(object)
 
             unless klass
               # :nocov:

@@ -78,6 +78,16 @@ module Foobara
     class NoTypeFoundError < NotFoundError; end
     class NoCommandOrTypeFoundError < NotFoundError; end
 
+    class << self
+      def find_builtin_command_class(command_class_name)
+        Util.find_constant_through_class_hierarchy(self, "Commands::#{command_class_name}")
+      end
+    end
+
+    def find_builtin_command_class(command_class_name)
+      self.class.find_builtin_command_class(command_class_name)
+    end
+
     foobara_delegate :add_default_inputs_transformer,
                      :add_default_result_transformer,
                      :add_default_errors_transformer,
@@ -126,7 +136,7 @@ module Foobara
           # :nocov:
         end
 
-        command_class = self.class::Commands::Describe
+        command_class = find_builtin_command_class("Describe")
         full_command_name = command_class.full_command_name
 
         inputs = { manifestable:, request: }
@@ -141,7 +151,7 @@ module Foobara
           # :nocov:
         end
 
-        command_class = self.class::Commands::Describe
+        command_class = find_builtin_command_class("Describe")
         full_command_name = command_class.full_command_name
 
         inputs = { manifestable: transformed_command_class, request: }
@@ -156,49 +166,41 @@ module Foobara
           # :nocov:
         end
 
-        command_class = self.class::Commands::Describe
+        command_class = find_builtin_command_class("Describe")
         full_command_name = command_class.full_command_name
 
         inputs = { manifestable: type, request: }
         transformed_command_class = transformed_command_from_name(full_command_name) ||
                                     transform_command_class(command_class)
       when "manifest"
-        command_class = self.class::Commands::Describe
+        command_class = find_builtin_command_class("Describe")
         full_command_name = command_class.full_command_name
 
         inputs = { manifestable: self, request: }
         transformed_command_class = transformed_command_from_name(full_command_name) ||
                                     transform_command_class(command_class)
       when "ping"
-        command_class = Foobara::CommandConnectors::Commands::Ping
+        command_class = find_builtin_command_class("Ping")
         full_command_name = command_class.full_command_name
 
         transformed_command_class = transformed_command_from_name(full_command_name) ||
                                     transform_command_class(command_class)
       when "query_git_commit_info"
         # TODO: this feels out of control... should just accomplish this through run I think instead. Same with ping.
-        command_class = Foobara::CommandConnectors::Commands::QueryGitCommitInfo
+        command_class = find_builtin_command_class("QueryGitCommitInfo")
         full_command_name = command_class.full_command_name
 
         transformed_command_class = transformed_command_from_name(full_command_name) ||
                                     transform_command_class(command_class)
       when "help"
-        command_class = self.class::Commands::Help
+        command_class = find_builtin_command_class("Help")
         full_command_name = command_class.full_command_name
 
         inputs = { request: }
         transformed_command_class = transformed_command_from_name(full_command_name) ||
                                     transform_command_class(command_class)
       when "list"
-        mod = self.class::Commands
-        command_class = if mod.const_defined?(:ListCommands)
-                          # TODO: test this
-                          # :nocov:
-                          mod::ListCommands
-                          # :nocov:
-                        else
-                          CommandConnectors::Commands::ListCommands
-                        end
+        command_class = find_builtin_command_class("ListCommands")
 
         full_command_name = command_class.full_command_name
 
@@ -226,10 +228,9 @@ module Foobara
       command_registry.create_exposed_command_without_domain(klass).transformed_command_class
     end
 
-    def request_to_response(_command)
-      # :nocov:
-      raise "subclass responsibility"
-      # :nocov:
+    def request_to_response(request)
+      status = request.success? ? 0 : 1
+      self.class::Response.new(request:, status:, body: request.response_body)
     end
 
     def initialize(authenticator: nil, default_serializers: nil)

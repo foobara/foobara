@@ -4,7 +4,7 @@ module Foobara
       module Commands
         class Help < Command
           description "Will extract items from the request to help with. Assumes the help is desired in HTML format"
-          inputs request: Request
+          inputs request: Http::Request
           result :string
           possible_error CommandConnector::NotFoundError
 

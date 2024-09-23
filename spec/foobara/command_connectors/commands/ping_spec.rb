@@ -1,22 +1,14 @@
-RSpec.describe Foobara::CommandConnectors::Commands::Ping do
+RSpec.describe Foobara::CommandConnector::Commands::Ping do
   let(:command_connector) do
-    Foobara::CommandConnectors::Http.new(default_serializers:)
+    Foobara::CommandConnector.new
   end
 
-  let(:authenticator) { nil }
-  let(:default_serializers) do
-    [Foobara::CommandConnectors::Serializers::ErrorsSerializer, Foobara::CommandConnectors::Serializers::JsonSerializer]
-  end
-
-  let(:response) { command_connector.run(path:) }
+  let(:response) { command_connector.run(action: "ping") }
 
   describe "#run_command" do
-    let(:path) { "/ping" }
-
     it "pongs" do
-      expect(response.status).to be(200)
-      pong = JSON.parse(response.body)
-      expect(pong).to match(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} [+-]\d{4}$/)
+      expect(response.status).to be(0)
+      expect(response.body).to be_a(Time)
     end
   end
 end

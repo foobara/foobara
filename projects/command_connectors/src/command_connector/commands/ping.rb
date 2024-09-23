@@ -1,5 +1,5 @@
 module Foobara
-  module CommandConnectors
+  class CommandConnector
     module Commands
       class Ping < Foobara::Command
         result :datetime
