@@ -229,8 +229,16 @@ module Foobara
     end
 
     def request_to_response(request)
-      status = request.success? ? 0 : 1
-      self.class::Response.new(request:, status:, body: request.response_body)
+      command = request.command
+      outcome = command.outcome
+
+      status = outcome.success? ? 0 : 1
+
+      # TODO: feels awkward to call this here... Maybe use result/errors transformers instead??
+      # Or call the serializer here??
+      body = command.respond_to?(:serialize_result) ? command.serialize_result : request.response_body
+
+      self.class::Response.new(request:, status:, body:)
     end
 
     def initialize(authenticator: nil, default_serializers: nil)
