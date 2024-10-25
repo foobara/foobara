@@ -8,5 +8,5 @@ module Foobara
     foobara_domain!
   end
 
-  Monorepo.project :command_connectors
+  Monorepo.project "command_connectors"
 end
