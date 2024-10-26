@@ -104,6 +104,7 @@ module Foobara
                   break if child.foobara_domain?
 
                   break if child.foobara_organization?
+
                   break if child.constants(false).any? do |constant|
                     value = child.const_get(constant)
 

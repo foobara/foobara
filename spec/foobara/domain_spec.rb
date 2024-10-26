@@ -227,9 +227,11 @@ RSpec.describe Foobara::Domain do
         }
       end
 
-      it "upgrades the outer type from a module to a model class" do
+      it "upgrades the outer type from a module to a model class", :focus do
         inner_model = Foobara::GlobalDomain.foobara_register_type(%w[SomeOtherDomain SomeOuterModel SomeInnerModel],
                                                                   inner_model_declaration)
+        Foobara::GlobalDomain.foobara_register_type(%w[SomeOtherDomain SomeOuterModel SomeInnerModel SomeInnerInnerModel],
+                                                    inner_model_declaration)
         inner_type = Foobara::GlobalDomain.foobara_register_type(%w[SomeOtherDomain SomeOuterModel some_inner_type],
                                                                  inner_type_declaration)
 
@@ -270,6 +272,8 @@ RSpec.describe Foobara::Domain do
         expect(SomeOtherDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_model)
 
         expect(Foobara::GlobalDomain.constants(false)).to_not include(:Types)
+
+        SomeOtherDomain.foobara_unregister(SomeOtherDomain::SomeOuterModel.model_type)
       end
     end
 
@@ -341,6 +345,27 @@ RSpec.describe Foobara::Domain do
           expect(record).to be_a(domain::SomeEntity)
         end
       end
+    end
+  end
+
+  describe ".foobara_unregister" do
+    before do
+      stub_module("Org") do
+        foobara_organization!
+      end
+
+      stub_module("Org::SomeDomain") do
+        foobara_domain!
+      end
+
+      stub_class("Org::SomeDomain::SomeModel", Foobara::Model) do
+        attributes foo: :string
+      end
+      stub_class("Org::SomeDomain::SomeModel::SomeError", Foobara::Error)
+    end
+
+    it "can unregister a model with constants" do
+      Org::SomeDomain.foobara_unregister(Org::SomeDomain::SomeModel.model_type)
     end
   end
 
