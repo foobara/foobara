@@ -15,8 +15,6 @@ module Foobara
           # :nocov:
         end
 
-        include(DomainModuleExtension)
-
         unless is_a?(Namespace::IsNamespace)
           foobara_namespace!
           foobara_autoset_namespace!(default_namespace: Foobara::GlobalOrganization)
@@ -27,6 +25,8 @@ module Foobara
           parent.foobara_register(self)
           self.foobara_parent_namespace = parent
         end
+
+        include(DomainModuleExtension)
 
         children = foobara_children
         children = children.sort_by { |child| child.scoped_path.size }
