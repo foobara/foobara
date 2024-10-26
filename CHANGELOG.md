@@ -1,3 +1,7 @@
+## [0.0.10] - 2024-10-26
+
+- Extract http command connector to a different repostiory
+
 ## [0.0.9] - 2024-09-11
 
 - Add CommandRegistry#size

@@ -442,9 +442,9 @@ module Foobara
       end
     end
 
-    def method_missing(method_name, *, **, &)
+    def method_missing(method_name, ...)
       if command.respond_to?(method_name)
-        command.send(method_name, *, **, &)
+        command.send(method_name, ...)
       else
         # :nocov:
         super
