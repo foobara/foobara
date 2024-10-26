@@ -114,6 +114,7 @@ RSpec.describe Foobara::Manifest do
     expect(manifest.parent).to be_nil
 
     domain = manifest.domain_by_name("SomeOrg::SomeDomain")
+    expect(domain.full_domain_name).to eq("SomeOrg::SomeDomain")
     expect(domain).to be_a(Foobara::Manifest::Domain)
     expect(domain.scoped_category).to eq(:domain)
     expect(manifest.domains).to include(domain)
@@ -125,6 +126,8 @@ RSpec.describe Foobara::Manifest do
     entity = manifest.entity_by_name("SomeOrg::SomeDomain::User")
 
     expect(entity).to be_a(Foobara::Manifest::Entity)
+    expect(entity.full_type_name).to eq("SomeOrg::SomeDomain::User")
+    expect(entity.full_entity_name).to eq("SomeOrg::SomeDomain::User")
     expect(entity.primary_key_name).to eq("id")
     expect(entity).to_not have_associations
 
@@ -231,6 +234,8 @@ RSpec.describe Foobara::Manifest do
 
     global_command = manifest.command_by_name("GlobalCommand")
     expect(global_command).to be_a(Foobara::Manifest::Command)
+    expect(global_command.full_command_name).to eq("GlobalCommand")
+    expect(global_command.result_type).to be_nil
     expect(global_command.scoped_category).to eq(:command)
     expect(global_command.parent).to eq(global_domain)
     expect(global_command.domain).to eq(manifest.global_domain)
@@ -248,6 +253,7 @@ RSpec.describe Foobara::Manifest do
 
     foobara_error = foobara_possible_error.error
     expect(foobara_error).to be_a(Foobara::Manifest::Error)
+    expect(foobara_error.full_error_name).to eq("Foobara::Value::Processor::Casting::CannotCastError")
     expect(foobara_error.scoped_category).to eq(:error)
     expect(foobara_error.parent).to eq(
       Foobara::Manifest::ProcessorClass.new(
@@ -289,7 +295,16 @@ RSpec.describe Foobara::Manifest do
     expect(global_error.scoped_full_name).to eq("GlobalError")
     expect(global_error.error_name).to eq("GlobalError")
 
+    # TODO: disable this rubocop rule so we can just check against true
+    expect(manifest).to be_contains("duck::SupportedCasters::AllowNil", :processor_class)
+    processor_class = manifest.lookup_path(:processor_class, :"duck::SupportedCasters::AllowNil")
+    expect(processor_class.full_processor_class_name).to eq("duck::SupportedCasters::AllowNil")
+
+    processor = manifest.lookup("symbol::Casters::string")
+    expect(processor.full_processor_name).to eq("symbol::Casters::string")
+
     org = manifest.organization_by_name("SomeOrg")
+    expect(org.full_organization_name).to eq("SomeOrg")
     expect(org).to be_a(Foobara::Manifest::Organization)
     expect(org.scoped_category).to eq(:organization)
     expect(org.parent).to be_nil
