@@ -104,6 +104,8 @@ module Foobara
                   break if child.foobara_domain?
 
                   break if child.foobara_organization?
+
+                  # TODO: unclear why we need this check, hmmm, figure it out and document it (or delete if not needed)
                   break if child.constants(false).any? do |constant|
                     value = child.const_get(constant)
 
