@@ -40,11 +40,4 @@ Each project has its own directory in the projects/ directory.
 
 ### Licensing
 
-Temporarily licensed under the AGPL-3.0 license. This is to to get the gem out there for convenient use in demos,
-releasing it under a very restrictive
-license to buy time on a final licensing decision (leaning towards `Apache-2.0 OR MIT`)
-
-My intention is to either release this under MIT license, Apache 2.0, or MPL,
-or a similar license (permissive or possibly weak copyleft.)
-
-See DECISION_LOG.md for the current thoughts on licensing.
+Foobara is licensed under the Mozilla Public License Version 2.0. Please see LICENSE.txt for more info.

@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
                  "as well as many supporting libraries including entities."
   spec.description = spec.summary
   spec.homepage = "https://github.com/foobara/foobara"
-  spec.license = "AGPL-3.0"
+  spec.license = "MPL-2.0"
   spec.required_ruby_version = ">= #{File.read("#{__dir__}/.ruby-version")}"
 
   # spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"

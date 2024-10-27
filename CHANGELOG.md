@@ -1,3 +1,7 @@
+## [0.0.11] - 2024-10-27
+
+- Release under the MPL-2.0 license
+
 ## [0.0.10] - 2024-10-26
 
 - Extract http command connector to a different repostiory

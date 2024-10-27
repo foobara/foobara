@@ -1,23 +1,26 @@
 This document is intended to document the rationale behind certain key decisions
 
 <!-- TOC -->
-* [2024-06-24 make code in src/ non-colliding with other projects and add src to require_paths](#2024-06-24-make-code-in-src-non-colliding-with-other-projects-and-add-src-to-require_paths)
+* [2024-10-27 Release under the MPL-2.0 license](#2024-10-27-release-under-the-mpl-20-license)
   * [Decision](#decision)
   * [Rationale](#rationale)
-* [2024-05-31 Temporarily release under AGPLv3](#2024-05-31-temporarily-release-under-agplv3)
+* [2024-06-24 make code in src/ non-colliding with other projects and add src to require_paths](#2024-06-24-make-code-in-src-non-colliding-with-other-projects-and-add-src-to-require_paths)
   * [Decision](#decision-1)
   * [Rationale](#rationale-1)
-* [[TENTATIVE] 2024-05-30 Dual-license under Apache-2.0 OR MIT](#tentative-2024-05-30-dual-license-under-apache-20-or-mit)
+* [[RETRACTED] 2024-05-31 Temporarily release under AGPLv3](#retracted-2024-05-31-temporarily-release-under-agplv3)
   * [Decision](#decision-2)
   * [Rationale](#rationale-2)
+* [2024-05-30 Dual-license satellite foobara gems under Apache-2.0 OR MIT](#2024-05-30-dual-license-satellite-foobara-gems-under-apache-20-or-mit)
+  * [Decision](#decision-3)
+  * [Rationale](#rationale-3)
     * [Why MIT](#why-mit)
     * [Why Apache-2.0](#why-apache-20)
     * [Why Apache-2.0 OR MIT](#why-apache-20-or-mit)
     * [Other licenses that were contenders](#other-licenses-that-were-contenders)
     * [Other concern about the murky state of generative AI and copyright implications](#other-concern-about-the-murky-state-of-generative-ai-and-copyright-implications)
 * [[RETRACTED] 2024-05-19 License under user choice of 3 licenses](#retracted-2024-05-19-license-under-user-choice-of-3-licenses)
-  * [Decision](#decision-3)
-  * [Rationale](#rationale-3)
+  * [Decision](#decision-4)
+  * [Rationale](#rationale-4)
     * [Why MIT OR Apache 2.0](#why-mit-or-apache-20)
       * [Why MIT is attractive](#why-mit-is-attractive)
       * [Why Apache 2.0 is attractive](#why-apache-20-is-attractive)
@@ -28,6 +31,21 @@ This document is intended to document the rationale behind certain key decisions
     * [What would have been an ideal license?](#what-would-have-been-an-ideal-license)
   * [Conclusion](#conclusion)
 <!-- TOC -->
+
+# 2024-10-27 Release under the MPL-2.0 license
+
+## Decision
+
+Re-release under the more permissive MPL-2.0 license
+
+## Rationale
+
+Didn't know which license to release under and none seemed to be quite
+what I wanted. MPL-2.0 seems to be be the least-of-a-bad-fit of the popular licenses.
+Since I've released demos and would like people to play with it, it felt like I should
+just go with a more permissive license than the temporary one I was using.
+
+You can see old license-related decisions in this log for more details on the thought process.
 
 # 2024-06-24 make code in src/ non-colliding with other projects and add src to require_paths
 
@@ -49,7 +67,7 @@ would have to go find documentation somewhere or the source on github instead of
 ctrl clicking to jump to the code in the IDE. I don't see a way to tell RubyMine to just
 index everything. So for now, putting everything in require_path will make it reachable.
 
-# 2024-05-31 Temporarily release under AGPLv3
+# [RETRACTED] 2024-05-31 Temporarily release under AGPLv3
 
 ## Decision
 
@@ -59,7 +77,7 @@ Adopting a very restrictive license temporarily
 
 Unblocks demos that benefit from use of rubygems while buying time to officially finalize a licensing decision.
 
-# [TENTATIVE] 2024-05-30 Dual-license under Apache-2.0 OR MIT
+# 2024-05-30 Dual-license satellite foobara gems under Apache-2.0 OR MIT
 
 ## Decision
 
