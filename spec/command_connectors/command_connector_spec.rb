@@ -86,6 +86,35 @@ RSpec.describe Foobara::CommandConnector do
   let(:atomic_entities) { nil }
 
   describe "#connect" do
+    context "when command is connected before it is loaded" do
+      let(:command_class) do
+        stub_module :SomeOrg do
+          foobara_organization!
+        end
+
+        stub_module("SomeOrg::SomeDomain") do
+          foobara_domain!
+        end
+
+        stub_class "SomeOrg::SomeDomain::SomeCommand", Foobara::Command do
+          description "just some command"
+        end
+      end
+
+      it "registers the command and can run it" do
+        command_connector.connect("SomeOrg::SomeDomain::SomeCommand")
+
+        command_class
+
+        exposed_commands = command_connector.all_exposed_commands
+        expect(exposed_commands.size).to eq(1)
+        exposed_command = exposed_commands.first
+        transformed_command = exposed_command.transformed_command_class
+
+        expect(transformed_command.command_class).to eq(command_class)
+      end
+    end
+
     context "when command is in an organization" do
       let!(:org_module) do
         stub_module :SomeOrg do

@@ -250,6 +250,24 @@ module Foobara
       end
     end
 
+    def connect_delayed(registerable_name, *args, **opts)
+      delayed_connections[registerable_name] = { args:, opts: }
+    end
+
+    def delayed_connections
+      @delayed_connections ||= {}
+    end
+
+    def process_delayed_connections
+      delayed_connections.each_pair do |registerable_name, arg_hash|
+        args = arg_hash[:args]
+        opts = arg_hash[:opts] || {}
+
+        const = Object.const_get(registerable_name)
+        connect(const, *args, **opts)
+      end
+    end
+
     def connect(registerable, *, **)
       case registerable
       when Class
@@ -274,6 +292,8 @@ module Foobara
           raise "Don't know how to register #{registerable} (#{registerable.class})"
           # :nocov:
         end
+      when Symbol, String
+        connect_delayed(registerable, *, **)
       else
         # :nocov:
         raise "Don't know how to register #{registerable} (#{registerable.class})"
@@ -287,6 +307,8 @@ module Foobara
 
     # TODO: maybe introduce a Runner interface?
     def run(*, **)
+      process_delayed_connections
+
       request, command = build_request_and_command(*, **)
 
       # TODO: feels like a smell
@@ -325,6 +347,8 @@ module Foobara
     end
 
     def foobara_manifest
+      process_delayed_connections
+
       # Drive all of this off of the list of exposed commands...
       to_include = Set.new
       to_include << command_registry.exposed_global_organization
@@ -410,6 +434,8 @@ module Foobara
     end
 
     def all_exposed_commands
+      process_delayed_connections
+
       command_registry.foobara_all_command
     end
   end

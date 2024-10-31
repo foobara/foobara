@@ -1,3 +1,7 @@
+## [0.0.12] - 2024-10-30
+
+- Support delayed command connection
+
 ## [0.0.11] - 2024-10-27
 
 - Release under the MPL-2.0 license
