@@ -14,7 +14,7 @@ run `foob generate ruby-project --name your-org/your-new-project-name`
 
 ## Usage
 
-TODO: Write usage instructions here or defer to some tutorial somewhere
+You can find a code demo video and an overview video of what Foobara is at https://foobara.com
 
 ## Contributing
 
