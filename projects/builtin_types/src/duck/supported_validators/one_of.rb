@@ -3,6 +3,12 @@ module Foobara
     module Duck
       module SupportedValidators
         class OneOf < TypeDeclarations::Validator
+          class << self
+            def requires_parent_declaration_data?
+              true
+            end
+          end
+
           class ValueNotValidError < Foobara::Value::DataError
             class << self
               def context_type_declaration
@@ -16,6 +22,12 @@ module Foobara
 
           def valid_values
             declaration_data
+          end
+
+          def applicable?(value)
+            # Might there be some way this validator could be marked not-applicable that doesn't require coupling
+            # this processor to allow_nil? (or vice-versa)
+            !value.nil? || !parent_declaration_data[:allow_nil]
           end
 
           def validation_errors(value)

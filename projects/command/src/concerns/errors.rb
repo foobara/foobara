@@ -90,7 +90,7 @@ module Foobara
                     end
 
                     error_class = self.class.lookup_input_error_class(symbol, path)
-                    error_class.new(**error_args.merge(path:))
+                    error_class.new(**error_args, path:)
                   elsif args.size == 2 || args.size == 3
                     input, symbol, message = args
                     context = opts

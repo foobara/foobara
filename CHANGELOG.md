@@ -1,3 +1,7 @@
+## [0.0.13] - 2024-11-13
+
+- Do not fail :one_of if it is nil and :allows_nil
+
 ## [0.0.12] - 2024-10-30
 
 - Support delayed command connection

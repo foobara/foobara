@@ -12,6 +12,14 @@ RSpec.describe Foobara::BuiltinTypes::Duck::SupportedValidators::OneOf do
     end
   end
 
+  context "when allow_nil" do
+    let(:type_declaration) { [:integer, :allow_nil, { one_of: }] }
+
+    it "can be nil" do
+      expect(type.process_value!(nil)).to be_nil
+    end
+  end
+
   context "when not valid" do
     it "is not success" do
       outcome = type.process_value(2)
