@@ -71,6 +71,9 @@ module Foobara
           @outcome = Outcome.success(result)
         end
 
+        def execute
+        end
+
         def succeed
           # noop but for now helpful for carrying out state transition
         end
