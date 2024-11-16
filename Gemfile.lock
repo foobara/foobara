@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    foobara (0.0.13)
+    foobara (0.0.14)
       foobara-util
 
 GEM
@@ -34,7 +34,7 @@ GEM
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
-    json (2.8.1)
+    json (2.8.2)
     language_server-protocol (3.17.0.3)
     listen (3.9.0)
       rb-fsevent (~> 0.10, >= 0.10.3)

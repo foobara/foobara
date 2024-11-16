@@ -1,3 +1,8 @@
+## [0.0.14] - 2024-11-15
+
+- Provide a default execute because why not...
+- Allow require "foobara" instead of require "foobara/all"
+
 ## [0.0.13] - 2024-11-13
 
 - Do not fail :one_of if it is nil and :allows_nil
