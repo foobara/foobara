@@ -12,6 +12,7 @@ module Foobara
     include Concerns::Persistence
     include Concerns::Initialization
     include Concerns::Reflection
+    include Concerns::AttributeHelpers
 
     class << self
       prepend NewPrepend

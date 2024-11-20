@@ -1,3 +1,7 @@
+## [0.0.15] - 2024-11-20
+
+- Move entity attributes type declaration helpers from Command::EntityHelpers to Entity for convenience.
+
 ## [0.0.14] - 2024-11-15
 
 - Provide a default execute because why not...

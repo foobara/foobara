@@ -350,7 +350,7 @@ RSpec.describe Foobara::Command::Concerns::Entities do
           stub_class(:UpdateApplicant, Foobara::Command) do
             # TODO: does this work with User instead of :User ?
             # We can't come up with a cleaner way to do this?
-            inputs Foobara::Command::EntityHelpers.type_declaration_for_record_atom_update(Applicant)
+            inputs Applicant.attributes_for_atom_update
             result Applicant # seems like we should just use nil?
 
             def execute
@@ -406,7 +406,7 @@ RSpec.describe Foobara::Command::Concerns::Entities do
           stub_class(:UpdateApplicantAggregate, Foobara::Command) do
             # TODO: does this work with User instead of :User ?
             # We can't come up with a cleaner way to do this?
-            inputs Foobara::Command::EntityHelpers.type_declaration_for_record_aggregate_update(Applicant)
+            inputs Applicant.attributes_for_aggregate_update
             result Applicant # seems like we should just use nil?
 
             def execute
@@ -422,7 +422,7 @@ RSpec.describe Foobara::Command::Concerns::Entities do
             end
 
             def update_applicant
-              Foobara::Command::EntityHelpers.update_aggregate(applicant, inputs)
+              applicant.update_aggregate(inputs)
             end
           end
         end
