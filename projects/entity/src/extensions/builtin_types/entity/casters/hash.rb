@@ -2,6 +2,7 @@ module Foobara
   module BuiltinTypes
     module Entity
       module Casters
+        # TODO: We need a way of disabling/enabling this and it should probably be disabled by default.
         class Hash < Attributes::Casters::Hash
           class << self
             def requires_parent_declaration_data?

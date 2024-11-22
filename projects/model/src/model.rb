@@ -207,6 +207,7 @@ module Foobara
         end
       end
 
+      # why do we default to true here but false in the transformers?
       mutable = options.key?(:mutable) ? options[:mutable] : true
 
       self.mutable = if mutable.is_a?(::Array)
@@ -227,7 +228,7 @@ module Foobara
     def write_attribute(attribute_name, value)
       attribute_name = attribute_name.to_sym
 
-      if mutable == true || mutable.include?(attribute_name)
+      if mutable == true || mutable&.include?(attribute_name)
         outcome = cast_attribute(attribute_name, value)
         attributes[attribute_name] = outcome.success? ? outcome.result : value
       else
