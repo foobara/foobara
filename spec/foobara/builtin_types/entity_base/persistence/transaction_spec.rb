@@ -286,7 +286,7 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
 
           tx2 = entity_class.transaction(mode: :use_existing)
 
-          entity_class.entity_base.using_transaction(tx2) do
+          tx2.perform do
             expect(entity_class.count).to eq(4)
           end
 

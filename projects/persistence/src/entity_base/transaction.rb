@@ -157,6 +157,11 @@ module Foobara
         def flush_created_record!(record)
           table_for(record).flush_created_record!(record)
         end
+
+        # convenience method...
+        def perform(&)
+          entity_base.using_transaction(self, &)
+        end
       end
     end
   end

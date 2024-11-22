@@ -1,7 +1,8 @@
-## [0.0.16] - 2024-11-22
+## [0.0.17] - 2024-11-22
 
 - Fix bug where mutable not being set explicitly raises
 - Also, make it so models don't default to mutable false when processed by a model type
+- Add a Transaction#perform convenience method
 
 ## [0.0.15] - 2024-11-20
 
