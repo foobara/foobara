@@ -1,9 +1,42 @@
 # Foobara
 
-Foobara is a command-based software framework with an emphasis on reflection features to facilitate integration with
-other systems or subsystems. The focus of the framework is to provide these features to help
-with managing domain complexity in projects with higher domain complexity. However, Foobara
-is also expected to be pleasant for use in projects with simpler domains as well.
+Foobara is a software framework meant to help with projects that have
+a complicated business domain. It accomplishes this by helping to
+build projects that are command-centric and discoverable, as well as some other features.
+
+### Commands
+
+* Foobara commands are meant to encapsulate high-level domain operations.
+* They serve as the public interface to Foobara systems/subsystems.
+* They are organized into Organizations and Domains.
+
+### Discoverability
+* This means there is a formal machine-readable description of the systems/subsystems
+* The implication of this is that integration code can be abstracted away.
+
+### Implications of command-centric + discoverability
+* The system better communicates the mental model of the problem and the chosen solution
+* Engineers are able to spend more time writing code relevant to the domain and less time
+  writing code related to specific tech-stack, software pattern, or architecture decisions.
+* Engineers can spend more time operating within a specific mental model at a time instead of
+  multiple mental models all at once.
+
+### Other features for helping with Domain complexity
+
+* Domain mappers
+  * These can map a concept from one domain to another.
+  * This separation of concerns leads to commands that have code
+    that reflects the domain they belong to as opposed to logic from many different domains.
+* Remote commands
+  * These have the same interface as commands that live in other systems and act as a proxy to them.
+  * This allows rearchitecting of systems without changing interfaces and so reducing refactoring/testing required.
+  * These currently exist for both Ruby and Typescript
+* An extract-repo script
+  * Can be used to extract files from one Foobara project to another, preserving history.
+  * Making this easier can help with rearchitecting systems.
+* Custom crud-drivers (if needed)
+  * You could hypothetically write your own custom CRUD driver that knows how
+    to assemble an entity record with a clean mental model from a mismodeled legacy database.
 
 ## Installation
 

@@ -9,21 +9,20 @@ Gem::Specification.new do |spec|
   spec.summary = "Implements command pattern for encapsulating and managing domain complexity " \
                  "as well as many supporting libraries including entities."
   spec.description = spec.summary
-  spec.homepage = "https://github.com/foobara/foobara"
+  spec.homepage = "https://foobara.com"
   spec.license = "MPL-2.0"
   spec.required_ruby_version = ">= #{File.read("#{__dir__}/.ruby-version")}"
 
-  # spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
-
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = spec.homepage
-  spec.metadata["changelog_uri"] = "#{spec.homepage}/CHANGELOG.md"
+  spec.metadata["changelog_uri"] = "#{spec.homepage}/blob/main/CHANGELOG.md"
 
   spec.files = Dir[
     "projects/**/*",
     "LICENSE*.txt",
     "README.md",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    ".ruby-version"
   ]
 
   spec.require_paths = Dir.glob("./projects/*/lib", base: __dir__)
