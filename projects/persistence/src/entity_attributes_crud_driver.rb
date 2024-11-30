@@ -8,41 +8,29 @@ module Foobara
         self.tables = {}
       end
 
-      # TODO: audit that this interface is correct
+      # Default behavior is for technologies that don't have a connection concept
+      # in a proper sense
       def open_connection(_connection_or_credentials)
-        # :nocov:
-        raise "subclass responsibility"
-        # :nocov:
+        # should we return some kind of Connection object here even if it does nothing interesting?
       end
 
+      # Default behavior is for storage technologies that don't support proper
+      # transaction support
       def open_transaction
-        # :nocov:
-        raise "subclass responsibility"
-        # :nocov:
+        # Should we have some kind of fake transaction object that raises errors when used after rolledback/closed?
+        Object.new
       end
 
       def flush_transaction(_raw_tx)
-        # :nocov:
-        raise "subclass responsibility"
-        # :nocov:
       end
 
       def revert_transaction(_raw_tx)
-        # :nocov:
-        raise "subclass responsibility"
-        # :nocov:
       end
 
       def rollback_transaction(_raw_tx)
-        # :nocov:
-        raise "subclass responsibility"
-        # :nocov:
       end
 
       def close_transaction(_raw_tx)
-        # :nocov:
-        raise "subclass responsibility"
-        # :nocov:
       end
 
       def table_for(entity_class)

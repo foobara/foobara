@@ -2,26 +2,6 @@ module Foobara
   module Persistence
     module CrudDrivers
       class InMemoryMinimal < EntityAttributesCrudDriver
-        # TODO: delete
-        def open_connection(_connection_or_credentials)
-          # TODO: figure out what we expect here when there is no connection necessary
-          Object.new
-        end
-
-        def open_transaction
-          # TODO: figure out what we expect here when there is no native transaction support
-          Object.new
-        end
-
-        def close_transaction(_raw_tx)
-          # can't fail since there's no native transaction support...
-        end
-
-        def rollback_transaction(_raw_tx)
-          # nothing to do... except maybe enter a state where we don't flush anything else
-          # but can just rely on higher-up plumbing for that
-        end
-
         class Table < EntityAttributesCrudDriver::Table
           attr_accessor :records
 

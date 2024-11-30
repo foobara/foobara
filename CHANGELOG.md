@@ -1,3 +1,8 @@
+## [0.0.18] - 2024-11-30
+
+- Add some noop crud driver method implementations to
+  make implementing simple crud drivers easier
+
 ## [0.0.17] - 2024-11-22
 
 - Fix bug where mutable not being set explicitly raises
