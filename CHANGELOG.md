@@ -1,7 +1,8 @@
-## [0.0.18] - 2024-11-30
+## [0.0.19] - 2024-11-30
 
 - Add some noop crud driver method implementations to
   make implementing simple crud drivers easier
+- Allow serializers to be created without declaration_data
 
 ## [0.0.17] - 2024-11-22
 

@@ -17,6 +17,10 @@ module Foobara
         declaration_data
       end
 
+      def initialize(declaration_data = {})
+        super
+      end
+
       def transform(object)
         serialize(object)
       end
