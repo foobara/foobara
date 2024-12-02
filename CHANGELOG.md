@@ -1,3 +1,7 @@
+## [0.0.20] - 2024-12-01
+
+- Fix delayed_connections bug in command connector
+
 ## [0.0.19] - 2024-11-30
 
 - Add some noop crud driver method implementations to

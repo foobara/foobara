@@ -266,6 +266,8 @@ module Foobara
         const = Object.const_get(registerable_name)
         connect(const, *args, **opts)
       end
+
+      delayed_connections.clear
     end
 
     def connect(registerable, *, **)

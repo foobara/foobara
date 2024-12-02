@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    foobara (0.0.19)
+    foobara (0.0.20)
       foobara-util
 
 GEM
@@ -13,12 +13,12 @@ GEM
     diff-lcs (1.5.1)
     docile (1.4.1)
     ffi (1.17.0-x86_64-linux-gnu)
-    foobara-rubocop-rules (0.0.4)
+    foobara-rubocop-rules (0.0.5)
       rubocop
       rubocop-rspec
     foobara-spec-helpers (0.0.3)
       foobara-util
-    foobara-util (0.0.6)
+    foobara-util (0.0.7)
     formatador (1.1.0)
     guard (2.19.0)
       formatador (>= 0.2.4)
