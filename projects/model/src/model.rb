@@ -207,8 +207,14 @@ module Foobara
         end
       end
 
-      # why do we default to true here but false in the transformers?
-      mutable = options.key?(:mutable) ? options[:mutable] : true
+      mutable = if options.key?(:mutable)
+                  options[:mutable]
+                elsif self.class.model_type.declaration_data.key?(:mutable)
+                  self.class.model_type.declaration_data[:mutable]
+                else
+                  # why do we default to true here but false in the transformers?
+                  true
+                end
 
       self.mutable = if mutable.is_a?(::Array)
                        mutable.map(&:to_sym)
@@ -228,7 +234,7 @@ module Foobara
     def write_attribute(attribute_name, value)
       attribute_name = attribute_name.to_sym
 
-      if mutable == true || mutable&.include?(attribute_name)
+      if mutable == true || (mutable != false && mutable&.include?(attribute_name))
         outcome = cast_attribute(attribute_name, value)
         attributes[attribute_name] = outcome.success? ? outcome.result : value
       else

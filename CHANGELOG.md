@@ -1,6 +1,7 @@
-## [0.0.22] - 2024-12-03
+## [0.0.23] - 2024-12-03
 
 - Allow creating entity types from declaration without model_module
+- Make model classes with an mutable of false have instances that default to immutable
 
 ## [0.0.21] - 2024-12-02
 

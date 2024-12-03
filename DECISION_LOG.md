@@ -32,6 +32,32 @@ This document is intended to document the rationale behind certain key decisions
   * [Conclusion](#conclusion)
 <!-- TOC -->
 
+# 2024-12-03 Convert Entity to an immutable Model when importing across systems
+
+## Decision
+
+When foobara concepts are imported via remote-imports across systems,
+an entity in the source system should become a model in the importing system, but
+with the primary key changed to required.
+
+## Rationale
+
+If we were to write a local command that accepted the Entity, it
+would attempt to open a transaction. This is a sign that it's not really
+an entity in a proper sense from the point of view of the importing system.
+Any modifications to the actual entity record in the other system must be
+performed through remote commands exposed by that system. So it doesn't make
+sense to import it as an entity which has behavior that can't possibly
+be supported with the current interfaces.
+
+Also, entities should only be directly created within commands. Those commands
+should live in the same domain as the entity. Normally, that domain should not be
+split across systems and the domain itself should live in one system or even be that system.
+
+Therefore any sort of advanced way of communicating CRUD operations on a record
+across systems should be avoided and enforced by remote command calls to the system
+where the entity was imported from.
+
 # 2024-10-27 Release under the MPL-2.0 license
 
 ## Decision

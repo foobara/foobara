@@ -90,6 +90,33 @@ RSpec.describe ":model" do
     }.to raise_error(Foobara::Value::Processor::Casting::CannotCastError)
   end
 
+  context "when mutable is false" do
+    it "cannot be written to" do
+      record = constructed_model.new({ foo: 4, bar: "baz" }, mutable: false)
+      expect {
+        record.bar = "asdf"
+      }.to raise_error(Foobara::Model::AttributeIsImmutableError)
+    end
+  end
+
+  context "when mutable is false at model class level" do
+    let(:type_declaration) do
+      {
+        type: :model,
+        name: model_name,
+        attributes_declaration:,
+        mutable: false
+      }
+    end
+
+    it "cannot be written to" do
+      record = constructed_model.new(foo: 4, bar: "baz")
+      expect {
+        record.bar = "asdf"
+      }.to raise_error(Foobara::Model::AttributeIsImmutableError)
+    end
+  end
+
   context "when attribute isn't mutable" do
     it "cannot be written to" do
       record = constructed_model.new({ foo: 4, bar: "baz" }, mutable: [:foo])

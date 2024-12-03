@@ -20,7 +20,8 @@ RSpec.describe Foobara::Entity do
           }
         },
         primary_key: :id,
-        model_module: nil
+        model_module: nil,
+        mutable: false
       }
     end
 
