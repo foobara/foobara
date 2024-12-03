@@ -41,7 +41,7 @@ RSpec.describe Foobara::Command::Concerns::Errors do
     context "with additional possible input error" do
       let(:command_class) do
         stub_class(:CalculateExponent, command_base_class) do
-          possible_input_error(:exponent, :cannot_be_five, value: :integer, cannot_be: :integer)
+          possible_input_error(:exponent, :cannot_be_five, context: { value: :integer, cannot_be: :integer })
 
           def validate
             super
@@ -82,7 +82,7 @@ RSpec.describe Foobara::Command::Concerns::Errors do
         context "when error added via positional arguments" do
           let(:command_class) do
             stub_class(:CalculateExponent, command_base_class) do
-              possible_input_error(:exponent, :cannot_be_five, value: :integer, cannot_be: :integer)
+              possible_input_error(:exponent, :cannot_be_five, context: { value: :integer, cannot_be: :integer })
 
               def validate
                 super

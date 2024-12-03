@@ -56,16 +56,15 @@ module Foobara
           def possible_input_error(
             path,
             symbol_or_error_class,
-            error_class_or_context_type_declaration = {},
+            error_class_or_subclass_parameters = {},
             data = nil
           )
             error_class, symbol = if symbol_or_error_class.is_a?(Class)
                                     [symbol_or_error_class, symbol_or_error_class.symbol]
                                   else
                                     [
-                                      to_input_error_class(
-                                        symbol_or_error_class,
-                                        error_class_or_context_type_declaration
+                                      Foobara::DataError.subclass(
+                                        **error_class_or_subclass_parameters, symbol: symbol_or_error_class
                                       ),
                                       symbol_or_error_class
                                     ]
@@ -103,18 +102,10 @@ module Foobara
             error_context_type_map.delete(key)
           end
 
-          # TODO: should we cache these???
-          def to_input_error_class(symbol, context_type_declaration)
-            Foobara::Value::DataError.subclass(
-              symbol:,
-              context_type_declaration:
-            )
-          end
-
           def to_runtime_error_class(symbol, context_type_declaration)
             Foobara::RuntimeError.subclass(
               symbol:,
-              context_type_declaration:
+              context: context_type_declaration
             )
           end
         end

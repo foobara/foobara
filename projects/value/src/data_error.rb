@@ -24,4 +24,6 @@ module Foobara
       end
     end
   end
+
+  DataError = Value::DataError
 end

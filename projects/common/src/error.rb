@@ -93,7 +93,7 @@ module Foobara
 
       def subclass(
         # TODO: technically context_type_declaration doesn't belong here. But maybe it should.
-        context_type_declaration:,
+        context: {},
         name: nil,
         symbol: nil,
         message: nil,
@@ -120,7 +120,7 @@ module Foobara
           end
 
           singleton_class.define_method :context_type_declaration do
-            context_type_declaration
+            context
           end
 
           if message

@@ -13,7 +13,7 @@ RSpec.describe Foobara::ErrorCollection do
     let(:context) { { foo: :bar } }
 
     let(:error_class) do
-      Foobara::Error.subclass(symbol:, message:, context_type_declaration: { foo: :symbol }, is_fatal: true)
+      Foobara::Error.subclass(symbol:, message:, context: { foo: :symbol }, is_fatal: true)
     end
     let(:error) { error_class.new(context:) }
 
