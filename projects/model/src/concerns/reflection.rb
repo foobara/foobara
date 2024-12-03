@@ -5,7 +5,7 @@ module Foobara
         include Concern
 
         module ClassMethods
-          def foobara_manifest(to_include:)
+          def foobara_manifest(to_include: Set.new)
             Util.remove_blank(
               attributes_type: attributes_type.declaration_data,
               organization_name:,

@@ -17,7 +17,7 @@ module Foobara
             types.map(&:target_class).uniq
           end
 
-          def foobara_manifest(to_include:)
+          def foobara_manifest(to_include: Set.new)
             associations = self.associations.map do |(path, type)|
               entity_class = type.target_class
               entity_name = entity_class.full_entity_name

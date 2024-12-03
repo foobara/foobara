@@ -1,3 +1,7 @@
+## [0.0.21] - 2024-12-02
+
+- Allow #foobara_manifest to be called without a to_include Set
+
 ## [0.0.20] - 2024-12-01
 
 - Fix delayed_connections bug in command connector

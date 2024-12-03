@@ -4,7 +4,7 @@ module Foobara
   module TypeDeclarations
     class TypeDeclarationHandler < Value::Processor::Pipeline
       class << self
-        def foobara_manifest(to_include:)
+        def foobara_manifest(to_include: Set.new)
           # :nocov:
           super.merge(processor_type: :type_declaration_handler)
           # :nocov:

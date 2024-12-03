@@ -94,7 +94,7 @@ module Foobara
         @full_command_symbol ||= Util.underscore_sym(full_command_name)
       end
 
-      def foobara_manifest(to_include:)
+      def foobara_manifest(to_include: Set.new)
         transformed_command_class.foobara_manifest(to_include:).merge(super).merge(
           Util.remove_blank(
             scoped_category: :command,

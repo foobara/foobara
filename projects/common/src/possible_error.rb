@@ -46,7 +46,7 @@ module Foobara
     end
 
     # TODO: technically does not belong in this project but maybe it should
-    def foobara_manifest(to_include:)
+    def foobara_manifest(to_include: Set.new)
       to_include << error_class
 
       if processor

@@ -3,7 +3,7 @@ module Foobara
     # TODO: do we really need these??  Can't just use a transformer?
     class Caster < Transformer
       class << self
-        def foobara_manifest(to_include:)
+        def foobara_manifest(to_include: Set.new)
           super.merge(processor_type: :caster)
         end
 
