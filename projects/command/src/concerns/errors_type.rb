@@ -41,8 +41,13 @@ module Foobara
                                  # :nocov:
                                end
                              when 2
-                               symbol, error_class_or_context_type_declaration, data = args
-                               error_class = to_runtime_error_class(symbol, error_class_or_context_type_declaration)
+                               symbol, subclass_parameters, data = args
+
+                               error_class = Foobara::RuntimeError.subclass(
+                                 **subclass_parameters,
+                                 symbol:
+                               )
+
                                PossibleError.new(error_class, symbol:, data:)
                              else
                                # :nocov:
@@ -59,16 +64,15 @@ module Foobara
             error_class_or_subclass_parameters = {},
             data = nil
           )
-            error_class, symbol = if symbol_or_error_class.is_a?(Class)
-                                    [symbol_or_error_class, symbol_or_error_class.symbol]
-                                  else
-                                    [
-                                      Foobara::DataError.subclass(
-                                        **error_class_or_subclass_parameters, symbol: symbol_or_error_class
-                                      ),
-                                      symbol_or_error_class
-                                    ]
-                                  end
+            error_class = if symbol_or_error_class.is_a?(Class)
+                            symbol_or_error_class
+                          else
+                            Foobara::DataError.subclass(
+                              **error_class_or_subclass_parameters, symbol: symbol_or_error_class
+                            )
+                          end
+
+            symbol = error_class.symbol
 
             possible_error = PossibleError.new(error_class, symbol:, data:)
             possible_error.prepend_path!(path)
@@ -100,13 +104,6 @@ module Foobara
           def unregister_possible_error_if_registered(possible_error)
             key = possible_error.key.to_s
             error_context_type_map.delete(key)
-          end
-
-          def to_runtime_error_class(symbol, context_type_declaration)
-            Foobara::RuntimeError.subclass(
-              symbol:,
-              context: context_type_declaration
-            )
           end
         end
       end

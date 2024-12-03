@@ -1,5 +1,6 @@
-## [0.0.23] - 2024-12-03
+## [0.0.24] - 2024-12-03
 
+- Allow passing all Error subclass parameters into possible_*error calls
 - Allow creating entity types from declaration without model_module
 - Make model classes with an mutable of false have instances that default to immutable
 

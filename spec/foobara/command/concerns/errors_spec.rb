@@ -164,7 +164,7 @@ RSpec.describe Foobara::Command::Concerns::Errors do
     context "with possible runtime error" do
       let(:command_class) do
         stub_class(:CalculateExponentCannotBeFive, command_base_class) do
-          possible_error(:exponent_cannot_be_five, value: :integer, cannot_be: :integer)
+          possible_error(:exponent_cannot_be_five, context: { value: :integer, cannot_be: :integer })
 
           def execute
             if exponent == 5
