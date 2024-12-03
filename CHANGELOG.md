@@ -1,3 +1,7 @@
+## [0.0.22] - 2024-12-03
+
+- Allow creating entity types from declaration without model_module
+
 ## [0.0.21] - 2024-12-02
 
 - Allow #foobara_manifest to be called without a to_include Set

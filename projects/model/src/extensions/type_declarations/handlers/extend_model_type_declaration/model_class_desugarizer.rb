@@ -26,10 +26,12 @@ module Foobara
                                      mod
                                    when ::String, ::Symbol
                                      Object.const_get(mod)
+                                   when nil
+                                     Object
                                    else
                                      # :nocov:
                                      raise ArgumentError,
-                                           "expected module_module to be a module or module name"
+                                           "expected #{mod} to be a module or module name"
                                      # :nocov:
                                    end
 
