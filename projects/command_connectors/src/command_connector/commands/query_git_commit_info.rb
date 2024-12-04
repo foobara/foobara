@@ -26,10 +26,6 @@ module Foobara
             def context_type_declaration
               {}
             end
-
-            def context
-              {}
-            end
           end
         end
 

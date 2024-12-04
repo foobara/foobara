@@ -205,5 +205,41 @@ RSpec.describe Foobara::Command::Concerns::Errors do
         end
       end
     end
+
+    context "with possible runtime error with no context" do
+      let(:command_class) do
+        stub_class(:CalculateExponentCannotBeFive, command_base_class) do
+          possible_error(:exponent_cannot_be_five)
+
+          def execute
+            if exponent == 5
+              add_runtime_error CalculateExponentCannotBeFive::ExponentCannotBeFiveError
+            else
+              super
+            end
+          end
+        end
+      end
+
+      context  "when no error" do
+        it "is success" do
+          expect(outcome).to be_success
+          expect(result).to eq(64)
+        end
+      end
+
+      context "when error" do
+        let(:exponent) { 5 }
+
+        it "is not success" do
+          expect(outcome).to_not be_success
+          expect(errors.size).to eq(1)
+          expect(error).to be_a(Foobara::RuntimeError)
+          expect(error.context).to eq({})
+          expect(error.message).to eq("Exponent cannot be five")
+          expect(error.symbol).to eq(:exponent_cannot_be_five)
+        end
+      end
+    end
   end
 end

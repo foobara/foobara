@@ -35,6 +35,9 @@ module Foobara
                                  # :nocov:
                                elsif arg.is_a?(::Class) && arg < Foobara::Error
                                  PossibleError.new(arg)
+                               elsif arg.is_a?(::Symbol)
+                                 error_class = Foobara::RuntimeError.subclass(mod: self, symbol: arg)
+                                 PossibleError.new(error_class, symbol: arg)
                                else
                                  # :nocov:
                                  raise ArgumentError, "Expected a PossibleError or an Error but got #{arg}"

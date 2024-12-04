@@ -36,7 +36,7 @@ module Foobara
       end
 
       def message
-        nil
+        Util.humanize(symbol.to_s)
       end
 
       def context

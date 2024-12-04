@@ -7,7 +7,7 @@ module Foobara
         end
       end
 
-      def initialize(message: nil, symbol: nil, context: nil, path: nil)
+      def initialize(message: nil, symbol: nil, context: {}, path: nil)
         args = { message:, symbol:, context:, path: }.compact
         super(**args.merge(category: self.class.category))
       end

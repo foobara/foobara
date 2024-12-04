@@ -1,5 +1,7 @@
-## [0.0.25] - 2024-12-03
+## [0.0.26] - 2024-12-03
 
+- Add error defaults for message and context
+- Support registering possible runtime errors by symbol
 - Make sure errors created via Command.possible_*error are namespaced to that command
 - Allow passing all Error subclass parameters into possible_*error calls
 - Allow creating entity types from declaration without model_module
