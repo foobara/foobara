@@ -1,4 +1,8 @@
 RSpec.describe Foobara::Command::Concerns::Errors do
+  after do
+    Foobara.reset_alls
+  end
+
   context "with simple command" do
     let(:command_base_class) {
       stub_class(:CalculateExponentBase, Foobara::Command) do

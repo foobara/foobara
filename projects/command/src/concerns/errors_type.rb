@@ -44,6 +44,7 @@ module Foobara
                                symbol, subclass_parameters, data = args
 
                                error_class = Foobara::RuntimeError.subclass(
+                                 mod: self,
                                  **subclass_parameters,
                                  symbol:
                                )
@@ -68,7 +69,9 @@ module Foobara
                             symbol_or_error_class
                           else
                             Foobara::DataError.subclass(
-                              **error_class_or_subclass_parameters, symbol: symbol_or_error_class
+                              mod: self,
+                              **error_class_or_subclass_parameters,
+                              symbol: symbol_or_error_class
                             )
                           end
 

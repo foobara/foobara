@@ -98,11 +98,12 @@ module Foobara
         symbol: nil,
         message: nil,
         base_error: self,
+        mod: base_error,
         category: base_error.category,
         is_fatal: false,
         abstract: false
       )
-        name ||= "#{base_error.name}::#{Util.classify(symbol)}Error"
+        name ||= [*mod.name, "#{Util.classify(symbol)}Error"].join("::")
 
         klass = Util.make_class_p(name, base_error) do
           singleton_class.define_method :category do
