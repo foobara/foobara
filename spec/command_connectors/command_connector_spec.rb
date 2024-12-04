@@ -8,11 +8,7 @@ RSpec.describe Foobara::CommandConnector do
 
     stub_class(:ComputeExponent, Foobara::Command) do
       error_klass = sc.call(:SomeRuntimeError, Foobara::RuntimeError) do
-        class << self
-          def context_type_declaration
-            :duck
-          end
-        end
+        context :duck
       end
 
       input_error_class = sc.call(:SomeInputError, Foobara::Value::DataError) do

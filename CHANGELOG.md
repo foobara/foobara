@@ -1,3 +1,7 @@
+## [0.0.27] - 2024-12-04
+
+- Add some Error DSL convenience methods (symbol/message/context)
+
 ## [0.0.26] - 2024-12-03
 
 - Add error defaults for message and context

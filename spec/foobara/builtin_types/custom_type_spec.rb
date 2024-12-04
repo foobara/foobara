@@ -137,21 +137,13 @@ RSpec.describe "custom types" do
       end
 
       stub_class "PointlessValidator::Error", Foobara::Value::DataError do
-        class << self
-          def symbol
-            :real_should_not_match_imaginary
-          end
+        message "cant be the same!"
+        context foo: :symbol
+        symbol :real_should_not_match_imaginary
 
+        class << self
           def context
             { foo: :bar }
-          end
-
-          def message
-            "cant be the same!"
-          end
-
-          def context_type_declaration
-            { foo: :symbol }
           end
         end
       end

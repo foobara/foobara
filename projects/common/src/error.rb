@@ -18,8 +18,22 @@ module Foobara
         @abstract
       end
 
-      def symbol
-        Util.non_full_name_underscore(self).gsub(/_error$/, "").to_sym
+      def symbol(*args)
+        args_size = args.size
+
+        case args_size
+        when 0
+          Util.non_full_name_underscore(self).gsub(/_error$/, "").to_sym
+        when 1
+          arg = args.first
+          singleton_class.define_method :symbol do
+            arg
+          end
+        else
+          # :nocov:
+          raise ArgumentError, "expected 0 or 1 argument, got #{args_size}"
+          # :nocov:
+        end
       end
 
       # Is this actually used?
@@ -35,12 +49,40 @@ module Foobara
         nil
       end
 
-      def message
-        Util.humanize(symbol.to_s)
+      def message(*args)
+        args_size = args.size
+
+        case args_size
+        when 0
+          Util.humanize(symbol.to_s)
+        when 1
+          arg = args.first
+          singleton_class.define_method :message do
+            arg
+          end
+        else
+          # :nocov:
+          raise ArgumentError, "expected 0 or 1 argument, got #{args_size}"
+          # :nocov:
+        end
       end
 
-      def context
-        nil
+      def context(*args)
+        args_size = args.size
+
+        case args_size
+        when 0
+          {}
+        when 1
+          arg = args.first
+          singleton_class.define_method :context_type_declaration do
+            arg
+          end
+        else
+          # :nocov:
+          raise ArgumentError, "expected 0 or 1 argument, got #{args_size}"
+          # :nocov:
+        end
       end
 
       def fatal?
@@ -92,7 +134,7 @@ module Foobara
       end
 
       def subclass(
-        # TODO: technically context_type_declaration doesn't belong here. But maybe it should.
+        # TODO: technically context doesn't belong here. But maybe it should.
         context: {},
         name: nil,
         symbol: nil,
