@@ -1,3 +1,7 @@
+## [0.0.28] - 2024-12-05
+
+- Make Domain#foobara_depends_on? give a more intuitive answer
+
 ## [0.0.27] - 2024-12-04
 
 - Add some Error DSL convenience methods (symbol/message/context)

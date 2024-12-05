@@ -353,16 +353,14 @@ module Foobara
           nil
         end
 
+        def foobara_can_call_subcommands_from?(other_domain)
+          other_domain = Domain.to_domain(other_domain)
+          other_domain == self || self == GlobalDomain || foobara_depends_on?(other_domain)
+        end
+
         def foobara_depends_on?(other_domain)
           other_domain = Domain.to_domain(other_domain)
-
-          # TODO: Feels awkward to have to check if we're the global domain or not here.
-          # Also awkward to check if the other domain is global.
-          # Unclear what the solution is. To fix other domain check could just automatically call
-          # depends_on with the global domain in .foobara_domain! but not as clear how to fix the check
-          # against self.
-          self == GlobalDomain || other_domain == self || other_domain == GlobalDomain ||
-            foobara_depends_on.include?(other_domain.foobara_full_domain_name)
+          other_domain == GlobalDomain || foobara_depends_on.include?(other_domain.foobara_full_domain_name)
         end
 
         def foobara_depends_on(*domains)

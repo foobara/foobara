@@ -20,7 +20,7 @@ module Foobara
           domain = self.class.domain
           sub_domain = subcommand_class.domain
 
-          unless domain.foobara_depends_on?(sub_domain)
+          unless domain.foobara_can_call_subcommands_from?(sub_domain)
             raise CannotAccessDomain,
                   "Cannot access #{sub_domain} or its commands because #{domain} does not depend on it"
           end

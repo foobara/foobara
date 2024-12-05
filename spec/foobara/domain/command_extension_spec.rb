@@ -154,7 +154,7 @@ RSpec.describe Foobara::Command do
 
       describe "#depends_on?" do
         context "when checking by string" do
-          subject { domain_module1.foobara_depends_on?("SomeDomain2") }
+          subject { domain_module1.foobara_can_call_subcommands_from?("SomeDomain2") }
 
           it { is_expected.to be(true) }
         end
