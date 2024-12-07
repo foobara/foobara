@@ -35,12 +35,9 @@ module Foobara
                 domain = model_class.domain || Domain.global
 
                 if existing_model_type
-                  if existing_model_type.declaration_data != type.declaration_data &&
-                     domain.foobara_type_registered?(existing_model_type)
-                    type.type_symbol = type.declaration_data[:name]
-                    model_class.model_type = type
-                    domain.foobara_reregister_model(model_class)
-                  end
+                  # :nocov:
+                  raise "Did not expect #{type.declaration_data[:name]} to already exist"
+                  # :nocov:
                 else
                   model_class.model_type = type
                   type.type_symbol = type.declaration_data[:name]

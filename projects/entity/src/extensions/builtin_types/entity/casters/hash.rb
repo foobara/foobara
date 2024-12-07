@@ -25,7 +25,13 @@ module Foobara
           end
 
           def entity_class
-            Object.const_get(parent_declaration_data[:model_class])
+            type = parent_declaration_data[:type]
+
+            if type == :entity
+              Object.const_get(parent_declaration_data[:model_class])
+            else
+              Foobara::Namespace.current.foobara_lookup_type!(type).target_class
+            end
           end
         end
       end

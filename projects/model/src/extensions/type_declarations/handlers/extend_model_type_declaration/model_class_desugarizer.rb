@@ -44,9 +44,7 @@ module Foobara
                              Object
                            end
 
-            model_class = if klass.is_a?(::Class)
-                            klass
-                          elsif klass && Object.const_defined?(klass) && Object.const_get(klass).is_a?(::Class)
+            model_class = if klass && Object.const_defined?(klass) && Object.const_get(klass).is_a?(::Class)
                             Object.const_get(klass)
                           else
                             model_base_class = strictish_type_declaration[:model_base_class] || default_model_base_class

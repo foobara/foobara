@@ -264,27 +264,19 @@ module Foobara
           type
         end
 
-        def foobara_register_model(model_class, reregister: false)
+        def foobara_register_model(model_class)
           type = model_class.model_type
 
           if type.scoped_path_set? && foobara_registered?(type.scoped_full_name, mode: Namespace::LookupMode::DIRECT)
-            if reregister
-              foobara_unregister(type)
-            else
-              # :nocov:
-              raise AlreadyRegisteredError, "Already registered: #{type.inspect}"
-              # :nocov:
-            end
+            # :nocov:
+            raise AlreadyRegisteredError, "Already registered: #{type.inspect}"
+            # :nocov:
           end
 
           foobara_register(type)
           type.foobara_parent_namespace = self
 
           type.target_class
-        end
-
-        def foobara_reregister_model(model_class)
-          foobara_register_model(model_class, reregister: true)
         end
 
         # TODO: kill this off

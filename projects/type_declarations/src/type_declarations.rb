@@ -42,6 +42,15 @@ module Foobara
       def strict_stringified?
         Thread.foobara_var_get(:foobara_type_declarations_mode) == Mode::STRICT_STRINGIFIED
       end
+
+      # TODO: we should desugarize these but can't because of a bug where desugarizing entities results in creating the
+      # entity class in memory, whoops.
+      def declarations_equal?(declaration1, declaration2)
+        declaration1 = declaration1.reject { |(k, _v)| k.to_s.start_with?("_") }.to_h
+        declaration2 = declaration2.reject { |(k, _v)| k.to_s.start_with?("_") }.to_h
+
+        declaration1 == declaration2
+      end
     end
   end
 end

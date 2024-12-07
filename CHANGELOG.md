@@ -1,3 +1,9 @@
+## [0.0.29] - 2024-12-07
+
+- Fix problems with extending models/entities
+- Add a mutable class helper for models and improve mutable
+  use a bit
+
 ## [0.0.28] - 2024-12-05
 
 - Make Domain#foobara_depends_on? give a more intuitive answer

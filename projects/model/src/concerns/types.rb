@@ -10,6 +10,31 @@ module Foobara
           attr_reader :model_type
           attr_writer :attributes_type
 
+          def mutable(*args)
+            args_size = args.size
+            case args.size
+            when 0
+              if defined?(@mutable_override)
+                @mutable_override
+              else
+                type = model_type
+
+                if type
+                  if type.declaration_data.key?(:mutable)
+                    type.declaration_data[:mutable]
+                  end
+                end
+              end
+            when 1
+              @mutable_override = args.first
+              set_model_type
+            else
+              # :nocov:
+              raise ArgumentError, "Expected 0 or 1 arguments but got #{args_size}"
+              # :nocov:
+            end
+          end
+
           def attributes(*args, **opts, &)
             new_type = domain.foobara_type_from_declaration(*args, **opts, &)
 
@@ -42,13 +67,16 @@ module Foobara
             if attributes_type
               declaration = type_declaration(attributes_type.declaration_data)
 
-              domain.foobara_type_from_declaration(declaration)
-
-              unless @model_type
-                # :nocov:
-                raise "Expected model type to automatically be registered"
-                # :nocov:
+              if model_type
+                unless Foobara::TypeDeclarations.declarations_equal?(declaration, model_type.declaration_data)
+                  domain.foobara_unregister(model_type)
+                  self.model_type = nil
+                  domain.foobara_type_from_declaration(declaration)
+                end
+              else
+                domain.foobara_type_from_declaration(declaration)
               end
+
             end
           end
 
@@ -65,11 +93,12 @@ module Foobara
               type: :model,
               name: model_name,
               model_module: model_module_name,
-              model_class: self,
-              model_base_class: superclass,
+              model_class: name,
+              model_base_class: superclass.name,
               attributes_declaration:,
               description:,
-              _desugarized: { type_absolutified: true }
+              _desugarized: { type_absolutified: true },
+              mutable:
             )
           end
 
