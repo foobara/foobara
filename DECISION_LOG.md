@@ -32,7 +32,35 @@ This document is intended to document the rationale behind certain key decisions
   * [Conclusion](#conclusion)
 <!-- TOC -->
 
-# 2024-12-03 Convert Entity to an immutable Model when importing across systems
+# 2024-12-07 Create a RemoteEntity type?
+
+## Decision
+
+We will go back to importing remote entities as entities (instead of models) but
+we will keep them as immutable. We will stop casting inputs to remote commands
+on the client side and let them be cast on the server side (for now) and we will
+serialize records as their primary key values.
+
+## Rationale
+
+Ideally, we might want a new type called RemoteEntity which acts similar to Entity. But
+to save time and unblock tutorials, we will just go back.
+
+We really want remote entities to behave differently from models
+(and entities) in the following ways:
+
+* It is always immutable
+* It does not trigger opening a transaction and is not included in the list
+  of entities the command depends on
+* Primary keys are not cast to the Entity. They are just passed through to the command
+  on the other end.
+* Similarly, records are cast to their primary keys when issuing the remote request.
+* Should inherit from Model and not Entity.
+
+However, in the interest of time and unblocking tutorials, for now we will go
+with the simpler work-around of this decision
+
+# [MOSTLY RETRACTED] 2024-12-03 Convert Entity to an immutable Model when importing across systems
 
 ## Decision
 
