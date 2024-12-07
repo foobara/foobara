@@ -891,9 +891,96 @@ TODO
 
 ## Intermediate Foobara
 
+### Metadata manifests for discoverability
+
+Foobara concepts all have a manifest of metadata that can be queried programmatically.  This facilitates
+automation tooling and abstracting away integration code.
+
+Let's take a quick look at some metadata in our existing systems.
+
+Let's for example ask our Capybara entity for its manifest:
+
+```irb
+> Capybara.foobara_manifest
+==>
+{:attributes_type=>
+  {:type=>:attributes,
+   :element_type_declarations=>
+    {:id=>{:type=>:integer},
+     :name=>{:description=>"Official name", :type=>:string},
+     :nickname=>{:description=>"Informal name for friends", :type=>:string},
+     :age=>{:description=>"The number of times this capybara has gone around the sun", :type=>:integer}},
+   :required=>[:name, :age]},
+ :organization_name=>"global_organization",
+ :domain_name=>"global_domain",
+ :model_name=>"Capybara",
+ :model_base_class=>"Foobara::Entity",
+ :model_class=>"Capybara",
+ :entity_name=>"Capybara",
+ :primary_key_attribute=>:id}
+```
+
+Let's ask our Rack connector for a list of commands it exposes:
+
+```irb
+> command_connector.foobara_manifest[:command].keys
+==> [:CreateCapybara, :FindCapybara, :IncrementAge]
+```
+
+We can see all the different categories of concepts available by looking at the top-level keys:
+
+```irb
+> puts command_connector.foobara_manifest.keys.sort
+command
+domain
+error
+organization
+processor
+processor_class
+type
+```
+
 ### Remote Commands
 
-TODO
+One use of these metadata manifests is importing remote commands/orgs/domains/errors/types. This allows us to run
+commands from other systems as if they were implemented locally.
+
+Let's install foobara-remote-imports:
+
+```
+$ gem install foobara-remote-imports
+```
+
+And lLet's create a new script and import our various Capybara commands over HTTP:
+
+```ruby
+#!/usr/bin/env ruby
+
+require "foobara"
+require "foobara/remote_imports"
+
+Foobara::RemoteImports::ImportCommand.run!(manifest_url: "http://localhost:9292/manifest", cache: true)
+
+require "irb"
+IRB.start(__FILE__)
+```
+
+Let's run this new script and play with it:
+
+```
+$ ./part_2b_remote_commands_import.rb
+> capybara = FindCapybara.run!(id: 1)
+==> #<Capybara:0x00007f6895bb2998 @attributes={:name=>"Fumiko", :nickname=>"foo", :age=>100, :id=>1}, @mutable=false>
+> capybara.age
+==> 100
+```
+
+Great! We can now move commands, types, etc, around between systems without needing to refactor calling code.  Even
+errors work the same way:
+
+```
+
+```
 
 ### Subcommands
 
