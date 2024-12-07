@@ -14,12 +14,6 @@ module Foobara
         end
       end
 
-      # TODO: needed/useful transformers/validators to implement:
-      #
-      # allow_empty (validation at attribute level)
-      # allow_nil (validation at attribute level)
-      # one_of (validation at attribute level)
-
       attr_accessor :base_type,
                     :casters,
                     :transformers,

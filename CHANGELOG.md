@@ -3,6 +3,7 @@
 - Fix problems with extending models/entities
 - Add a mutable class helper for models and improve mutable
   use a bit
+- Fix bug when passing an unregistered Type instance to .foobara_registered?
 
 ## [0.0.28] - 2024-12-05
 

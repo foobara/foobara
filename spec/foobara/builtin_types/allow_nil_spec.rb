@@ -121,6 +121,7 @@ RSpec.describe Foobara::BuiltinTypes::Duck::SupportedCasters::AllowNil do
 
         type.type_symbol = :some_type
         type.foobara_parent_namespace ||= Foobara::GlobalDomain
+        expect(type.foobara_parent_namespace.foobara_registered?(type)).to be false
         type.foobara_parent_namespace.foobara_register(type)
       end
 

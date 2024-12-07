@@ -231,8 +231,12 @@ module Foobara
         all
       end
 
-      def foobara_registered?(...)
-        !foobara_lookup(...).nil?
+      def foobara_registered?(path, ...)
+        if path.is_a?(Types::Type)
+          return false unless path.scoped_path_set?
+        end
+
+        !foobara_lookup(path, ...).nil?
       end
 
       def method_missing(method_name, *, **, &)
