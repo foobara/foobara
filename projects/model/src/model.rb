@@ -180,6 +180,8 @@ module Foobara
       end
     end
 
+    abstract
+
     attr_accessor :mutable
 
     def initialize(attributes = nil, options = {})
