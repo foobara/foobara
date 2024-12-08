@@ -6,7 +6,6 @@ module Foobara
     include Concerns::Associations
     include Concerns::Transactions
     include Concerns::Queries
-    include Concerns::Types
     include Concerns::Attributes
     include Concerns::Persistence
     include Concerns::Initialization
