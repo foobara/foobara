@@ -89,6 +89,61 @@ module Foobara
           def count
             current_transaction_table.count
           end
+
+          def that_owns(record, filters = [])
+            containing_records = that_own(record, filters)
+
+            unless containing_records.empty?
+              if containing_records.size == 1
+                containing_records.first
+              else
+                # :nocov:
+                raise "Expected only one record to own #{record} but found #{containing_records.size}"
+                # :nocov:
+              end
+            end
+          end
+
+          def that_own(record, filters = [])
+            association_key = association_for([record.class, *filters])
+
+            data_path = DataPath.new(association_key)
+
+            done = false
+
+            containing_records = Util.array(record)
+
+            until done
+              last = data_path.path.last
+
+              if last == :"#"
+                method = :find_all_by_attribute_containing_any_of
+                attribute_name = data_path.path[-2]
+                data_path = DataPath.new(data_path.path[0..-3])
+              else
+                method = :find_all_by_attribute_any_of
+                attribute_name = last
+                data_path = DataPath.new(data_path.path[0..-2])
+              end
+
+              containing_entity_class_path = data_path.to_s
+
+              entity_class = if containing_entity_class_path.empty?
+                               done = true
+                               self
+                             else
+                               deep_associations[
+                                 containing_entity_class_path
+                               ].target_class
+                             end
+
+              containing_records = entity_class.send(method, attribute_name, containing_records).to_a
+
+              done = true unless containing_records
+            end
+
+            containing_records
+          end
         end
       end
     end
