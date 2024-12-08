@@ -1,5 +1,5 @@
 module Foobara
-  class Entity < DetachedEntity
+  class DetachedEntity < Model
     module Concerns
       module PrimaryKey
         include Concern

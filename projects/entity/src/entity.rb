@@ -8,7 +8,6 @@ module Foobara
     include Concerns::Queries
     include Concerns::Types
     include Concerns::Attributes
-    include Concerns::PrimaryKey
     include Concerns::Persistence
     include Concerns::Initialization
     include Concerns::Reflection
