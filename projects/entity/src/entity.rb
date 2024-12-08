@@ -10,7 +10,6 @@ module Foobara
     include Concerns::Attributes
     include Concerns::Persistence
     include Concerns::Initialization
-    include Concerns::Reflection
     include Concerns::AttributeHelpers
 
     class << self
