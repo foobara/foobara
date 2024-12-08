@@ -3,7 +3,6 @@ module Foobara
     class CannotConvertRecordWithoutPrimaryKeyToJsonError < StandardError; end
 
     include Concerns::Callbacks
-    include Concerns::Associations
     include Concerns::Transactions
     include Concerns::Queries
     include Concerns::Attributes
