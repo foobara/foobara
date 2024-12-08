@@ -1,5 +1,5 @@
 module Foobara
-  class Entity < Model
+  class Entity < DetachedEntity
     module NewPrepend
       # rubocop:disable Lint/UselessMethodDefinition
       def new(...)

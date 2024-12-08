@@ -1,5 +1,5 @@
 module Foobara
-  class Entity < Model
+  class Entity < DetachedEntity
     class NotFoundError < Foobara::RuntimeError
       class << self
         def not_found_error_class_name(data_path)

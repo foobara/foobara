@@ -1,5 +1,5 @@
 module Foobara
-  class Entity < Model
+  class Entity < DetachedEntity
     module Concerns
       module Persistence
         class CannotUpdateHardDeletedRecordError < StandardError; end

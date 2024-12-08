@@ -1,5 +1,5 @@
 module Foobara
-  class Entity < Model
+  class Entity < DetachedEntity
     module Concerns
       module Types
         include Concern

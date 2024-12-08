@@ -1,5 +1,5 @@
 module Foobara
-  class Entity < Model
+  class Entity < DetachedEntity
     class CannotConvertRecordWithoutPrimaryKeyToJsonError < StandardError; end
 
     include Concerns::Callbacks

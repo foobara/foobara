@@ -1,5 +1,5 @@
 module Foobara
-  class Entity < Model
+  class Entity < DetachedEntity
     class NoCurrentTransactionError < StandardError; end
 
     module Concerns

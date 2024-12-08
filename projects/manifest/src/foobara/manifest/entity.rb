@@ -2,6 +2,7 @@ require_relative "model"
 
 module Foobara
   module Manifest
+    # TODO: add a DetachedEntity class to Manifest and inherit from it
     class Entity < Model
       self.category_symbol = :type
 

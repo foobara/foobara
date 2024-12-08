@@ -29,6 +29,7 @@ module Foobara
              "type_declarations",
              "builtin_types",
              "model",
+             "detached_entity",
              "entity",
              "command",
              "persistence",
