@@ -45,6 +45,14 @@ module Foobara
         end
       end
 
+      def detached_entity_by_name(name)
+        type = type_by_name(name)
+
+        raise "#{name} is not a detached entity" unless type.detached_entity?
+
+        type
+      end
+
       def entity_by_name(name)
         type = type_by_name(name)
 

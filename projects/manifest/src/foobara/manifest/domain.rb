@@ -19,6 +19,10 @@ module Foobara
         end
       end
 
+      def detached_entities
+        @detached_entities ||= types.select(&:detached_entity?)
+      end
+
       def entities
         @entities ||= types.select(&:entity?)
       end

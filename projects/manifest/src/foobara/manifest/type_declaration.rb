@@ -91,6 +91,23 @@ module Foobara
         type
       end
 
+      def detached_entity?
+        return @detached_entity if defined?(@detached_entity)
+
+        @detached_entity = to_type.detached_entity?
+      end
+
+      def to_detached_entity
+        raise "not an detached_entity" unless detached_entity?
+        raise "detached_entity extension instead of an detached_entity" unless relevant_manifest.size == 1
+
+        type = to_type
+
+        raise "not an detached_entity" unless type.detached_entity?
+
+        type
+      end
+
       def entity?
         return @entity if defined?(@entity)
 

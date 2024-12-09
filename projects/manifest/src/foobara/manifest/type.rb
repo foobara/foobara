@@ -11,6 +11,8 @@ module Foobara
           if self == Type
             if type.entity?
               type = Entity.new(type.root_manifest, type.path)
+            elsif type.detached_entity?
+              type = DetachedEntity.new(type.root_manifest, type.path)
             elsif type.model?
               type = Model.new(type.root_manifest, type.path)
             end
@@ -36,8 +38,22 @@ module Foobara
         false
       end
 
-      def model?
+      def detached_entity?
         return false if reference == "entity"
+
+        type = base_type
+
+        while type
+          return true if type.reference.to_sym == :detached_entity
+
+          type = type.base_type
+        end
+
+        false
+      end
+
+      def model?
+        return false if reference == "entity" || reference == "detached_entity"
 
         type = base_type
 

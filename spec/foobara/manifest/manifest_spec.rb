@@ -14,10 +14,20 @@ RSpec.describe Foobara::Manifest do
       foobara_domain!
     end
 
+    stub_class "SomeOtherDomain::SomeDetachedEntity", Foobara::DetachedEntity do
+      attributes do
+        id :integer, :required
+        foo :string, :required
+        bar :string, :required
+      end
+      primary_key :id
+    end
+
     stub_class "SomeOtherDomain::SomeOtherUser", Foobara::Entity do
       attributes do
         id :integer
         first_name :string, :allow_nil
+        some_detached_entity SomeOtherDomain::SomeDetachedEntity, :required
       end
       primary_key :id
     end
@@ -130,6 +140,23 @@ RSpec.describe Foobara::Manifest do
     expect(entity.full_entity_name).to eq("SomeOrg::SomeDomain::User")
     expect(entity.primary_key_name).to eq("id")
     expect(entity).to_not have_associations
+
+    detached_entity = manifest.detached_entity_by_name("SomeOtherDomain::SomeDetachedEntity")
+    expect(detached_entity).to be_a(Foobara::Manifest::DetachedEntity)
+    expect(detached_entity.full_type_name).to eq("SomeOtherDomain::SomeDetachedEntity")
+    expect(detached_entity.full_detached_entity_name).to eq("SomeOtherDomain::SomeDetachedEntity")
+    expect(detached_entity.primary_key_name).to eq("id")
+    expect(detached_entity).to_not have_associations
+    expect(detached_entity).to be_detached_entity
+    Foobara::Manifest::TypeDeclaration.new(raw_manifest, [*detached_entity.path, :declaration_data])
+    some_other_domain = manifest.domain_by_name("SomeOtherDomain")
+    #     expect(declaration.to_type).to be_detached_entity
+    expect(some_other_domain.detached_entities).to include(detached_entity)
+    some_other_user = manifest.type_by_name("SomeOtherDomain::SomeOtherUser")
+    detached_entity_declaration = some_other_user.attributes_type.attribute_declarations[:some_detached_entity]
+    expect(detached_entity_declaration).to be_detached_entity
+    expect(detached_entity_declaration.to_detached_entity).to be_detached_entity
+    expect(detached_entity_declaration.to_type).to be_detached_entity
 
     expect(entity.primary_key_type.to_type).to eq(integer)
     expect(entity.types_depended_on).to include(integer)

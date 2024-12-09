@@ -6,6 +6,8 @@ module Foobara
       class EntitiesToPrimaryKeysSerializer < SuccessSerializer
         def serialize(object)
           case object
+          # What of DetachedEntity? I guess we should treat it as a model since we can't cast from primary key value to
+          # a record?
           when Entity
             # TODO: handle polymorphism? Would require iterating over the result type not the object!
             # Is there maybe prior art for this in the associations stuff?

@@ -1,4 +1,8 @@
-## [0.0.29] - 2024-12-07
+## [0.0.31] - 2024-12-09
+
+- Introduce a DetachedEntity concept that sits between Model and Entity
+
+## [0.0.30] - 2024-12-07
 
 - Fix problems with extending models/entities
 - Add a mutable class helper for models and improve mutable
