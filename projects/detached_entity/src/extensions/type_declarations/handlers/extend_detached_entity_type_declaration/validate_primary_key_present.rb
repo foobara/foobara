@@ -1,7 +1,7 @@
 module Foobara
   module TypeDeclarations
     module Handlers
-      class ExtendEntityTypeDeclaration < ExtendModelTypeDeclaration
+      class ExtendDetachedEntityTypeDeclaration < ExtendModelTypeDeclaration
         class ValidatePrimaryKeyPresent < TypeDeclarations::TypeDeclarationValidator
           # TODO: seems like maybe we could actually check against types now...
           # like make a type for primary_key: :symbol ??

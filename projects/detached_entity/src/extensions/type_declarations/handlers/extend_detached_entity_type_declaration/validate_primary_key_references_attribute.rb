@@ -1,7 +1,7 @@
 module Foobara
   module TypeDeclarations
     module Handlers
-      class ExtendEntityTypeDeclaration < ExtendModelTypeDeclaration
+      class ExtendDetachedEntityTypeDeclaration < ExtendModelTypeDeclaration
         class ValidatePrimaryKeyReferencesAttribute < TypeDeclarations::TypeDeclarationValidator
           class InvalidPrimaryKeyError < TypeDeclarationError
             class << self

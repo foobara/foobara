@@ -1,7 +1,7 @@
 module Foobara
   module TypeDeclarations
     module Handlers
-      class ExtendEntityTypeDeclaration < ExtendModelTypeDeclaration
+      class ExtendDetachedEntityTypeDeclaration < ExtendModelTypeDeclaration
         class HashDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(sugary_type_declaration)
             return false unless sugary_type_declaration.is_a?(::Hash)
@@ -26,7 +26,7 @@ module Foobara
           end
 
           def expected_type_symbol
-            :entity
+            :detached_entity
           end
 
           def desugarize(sugary_type_declaration)

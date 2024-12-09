@@ -1,6 +1,6 @@
 module Foobara
   module BuiltinTypes
-    module DetachedEntity
+    module Entity
     end
   end
 end

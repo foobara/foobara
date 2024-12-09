@@ -1,7 +1,7 @@
 module Foobara
   module TypeDeclarations
     module Handlers
-      class ExtendEntityTypeDeclaration < ExtendModelTypeDeclaration
+      class ExtendDetachedEntityTypeDeclaration < ExtendModelTypeDeclaration
         class PrimaryKeyDesugarizer < Desugarizer
           def applicable?(sugary_type_declaration)
             primary_key = sugary_type_declaration[:primary_key]

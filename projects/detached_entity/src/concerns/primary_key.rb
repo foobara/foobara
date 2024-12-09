@@ -28,7 +28,7 @@ module Foobara
           def primary_key_attribute
             return @primary_key_attribute if @primary_key_attribute
 
-            unless superclass == Entity
+            unless superclass == DetachedEntity
               @primary_key_attribute = superclass.primary_key_attribute
             end
           end

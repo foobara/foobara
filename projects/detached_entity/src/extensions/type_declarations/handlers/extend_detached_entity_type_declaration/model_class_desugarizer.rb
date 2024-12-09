@@ -1,14 +1,14 @@
 module Foobara
   module TypeDeclarations
     module Handlers
-      class ExtendEntityTypeDeclaration < ExtendModelTypeDeclaration
+      class ExtendDetachedEntityTypeDeclaration < ExtendModelTypeDeclaration
         class ModelClassDesugarizer < ExtendModelTypeDeclaration::ModelClassDesugarizer
           def expected_type_symbol
-            :entity
+            :detached_entity
           end
 
           def default_model_base_class
-            Foobara::Entity
+            Foobara::DetachedEntity
           end
 
           def create_model_class_args(model_module:, type_declaration:)

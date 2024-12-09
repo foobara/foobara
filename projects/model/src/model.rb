@@ -264,7 +264,7 @@ module Foobara
     end
 
     def read_attribute(attribute_name)
-      attributes[attribute_name.to_sym]
+      attributes[attribute_name&.to_sym]
     end
 
     def read_attribute!(attribute_name)

@@ -96,7 +96,7 @@ module Foobara
                   key.include?(filter)
                 end
               end
-            elsif filter.is_a?(::Class) && filter < Entity
+            elsif filter.is_a?(::Class) && filter < DetachedEntity
               association_keys.select do |key|
                 type = deep_associations[key]
                 entity_class = type.target_class
@@ -114,7 +114,7 @@ module Foobara
             path = DataPath.new,
             result = {}
           )
-            if type.extends?(BuiltinTypes[:entity])
+            if type.extends?(BuiltinTypes[:detached_entity])
               result[path.to_s] = type
             elsif type.extends?(BuiltinTypes[:tuple])
               element_types = type.element_types
@@ -150,7 +150,7 @@ module Foobara
           end
 
           def contains_associations?(type = entity_type, initial = true)
-            if type.extends?(BuiltinTypes[:entity])
+            if type.extends?(BuiltinTypes[:detached_entity])
               if initial
                 contains_associations?(type.element_types, false)
               else

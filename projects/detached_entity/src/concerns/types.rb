@@ -14,7 +14,7 @@ module Foobara
           def type_declaration(...)
             raise "No primary key set yet" unless primary_key_attribute
 
-            super.merge(type: :entity, primary_key: primary_key_attribute)
+            super.merge(type: :detached_entity, primary_key: primary_key_attribute)
           end
 
           def set_model_type

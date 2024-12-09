@@ -1,9 +1,9 @@
 module Foobara
   module TypeDeclarations
     module Handlers
-      class ExtendDetachedEntityTypeDeclaration < ExtendModelTypeDeclaration
+      class ExtendEntityTypeDeclaration < ExtendDetachedEntityTypeDeclaration
         def expected_type_symbol
-          :detached_entity
+          :entity
         end
 
         def priority

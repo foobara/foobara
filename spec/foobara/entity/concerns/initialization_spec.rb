@@ -113,6 +113,7 @@ RSpec.describe Foobara::Entity::Concerns::Initialization do
               atomic_duck
               attributes
               boolean
+              detached_entity
               duck
               duckture
               entity
