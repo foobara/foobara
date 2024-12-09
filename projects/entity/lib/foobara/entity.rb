@@ -9,8 +9,8 @@ module Foobara
       def install!
         TypeDeclarations.register_type_declaration(TypeDeclarations::Handlers::ExtendEntityTypeDeclaration.new)
 
-        model = Namespace.global.foobara_lookup_type!(:model)
-        BuiltinTypes.build_and_register!(:entity, model, nil)
+        detached_entity = Namespace.global.foobara_lookup_type!(:detached_entity)
+        BuiltinTypes.build_and_register!(:entity, detached_entity, nil)
       end
 
       def reset_all
