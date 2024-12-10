@@ -1,5 +1,5 @@
 module Foobara
-  class DomainMapper
+  module DomainMapperLookups
     class NoDomainMapperFoundError < StandardError
       attr_accessor :value, :from, :to, :has_value
 
@@ -25,30 +25,28 @@ module Foobara
       end
     end
 
-    class Registry
-      class AmbiguousDomainMapperError < StandardError
-        attr_accessor :candidates, :from, :to
+    class AmbiguousDomainMapperError < StandardError
+      attr_accessor :candidates, :from, :to
 
-        def initialize(from, to, candidates)
-          self.to = to
-          self.from = from
-          self.candidates = [*candidates].flatten
+      def initialize(from, to, candidates)
+        self.to = to
+        self.from = from
+        self.candidates = [*candidates].flatten
 
-          super("#{candidates.size} ambiguous candidates found.")
-        end
+        super("#{candidates.size} ambiguous candidates found.")
       end
+    end
 
-      def register(mapper)
-        mappers << mapper
-      end
+    include Concern
 
-      def lookup!(from: nil, to: nil, strict: false)
-        result = lookup(from:, to:, strict:)
+    module ClassMethods
+      def lookup_matching_domain_mapper!(from: nil, to: nil, strict: false)
+        result = lookup_matching_domain_mapper(from:, to:, strict:)
 
         result || raise(NoDomainMapperFoundError.new(from, to))
       end
 
-      def lookup(from: nil, to: nil, strict: false)
+      def lookup_matching_domain_mapper(from: nil, to: nil, strict: false)
         candidates = mappers.select do |mapper|
           mapper.applicable?(from, to)
         end
@@ -63,15 +61,15 @@ module Foobara
 
         unless strict
           if from
-            lookup(from: nil, to:)
+            lookup_matching_domain_mapper(from: nil, to:)
           elsif to
-            lookup(from:, to: nil)
+            lookup_matching_domain_mapper(from:, to: nil)
           end
         end
       end
 
       def mappers
-        @mappers ||= []
+        @mappers ||= foobara_all_domain_mapper
       end
     end
   end

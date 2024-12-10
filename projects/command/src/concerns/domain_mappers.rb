@@ -23,13 +23,13 @@ module Foobara
           result = run_subcommand!(subcommand_class, inputs)
 
           if has_result_type
-            result_mapper = self.class.domain.foobara_domain_mapper_registry.lookup!(
+            result_mapper = self.class.domain.lookup_matching_domain_mapper!(
               from: result,
               to: result_type,
               strict: true
             )
 
-            result = result_mapper.map(result)
+            result = result_mapper.map!(result)
           end
 
           result

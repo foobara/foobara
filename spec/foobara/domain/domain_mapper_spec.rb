@@ -25,7 +25,7 @@ RSpec.describe Foobara::DomainMapper do
       from :integer
       to SomeClass
 
-      def map(_from_value)
+      def map
         SomeClass.new
       end
     end
@@ -40,7 +40,7 @@ RSpec.describe Foobara::DomainMapper do
   describe ".to_type" do
     context "when to is a class" do
       it "returns a duck that matches that class" do
-        expect(domain_mapper.instance.to_type.declaration_data).to eq(instance_of: "SomeClass", type: :duck)
+        expect(domain_mapper.to_type.declaration_data).to eq(instance_of: "SomeClass", type: :duck)
       end
     end
   end
@@ -48,27 +48,21 @@ RSpec.describe Foobara::DomainMapper do
   describe "#applicable?" do
     context "when to matches class" do
       it "is true" do
-        expect(domain_mapper.instance.applicable?(1, SomeClass)).to be(true)
+        expect(domain_mapper.applicable?(1, SomeClass)).to be(true)
       end
     end
 
     context "when it doesn't match the class" do
       it "is false" do
-        expect(domain_mapper.instance.applicable?(1, SomeOtherClass)).to be(false)
+        expect(domain_mapper.applicable?(1, SomeOtherClass)).to be(false)
       end
     end
   end
 
-  describe "#map" do
+  describe "#map!" do
     it "maps it" do
-      mapped_value = domain_mapper.instance.map(1)
+      mapped_value = domain_mapper.map!(1)
       expect(mapped_value).to be_a(SomeClass)
-    end
-  end
-
-  describe ".call" do
-    it "calls the instance" do
-      expect(domain_mapper.call(1)).to be_a(SomeClass)
     end
   end
 end

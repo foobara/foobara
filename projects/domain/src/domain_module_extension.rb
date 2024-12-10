@@ -148,27 +148,19 @@ module Foobara
                    value
                  end
 
-          mapper = foobara_domain_mapper_registry.lookup(from:, to:, strict:)
+          mapper = lookup_matching_domain_mapper(from:, to:, strict:)
 
-          mapper&.call(value)
+          mapper&.map!(value)
         end
 
         def foobara_domain_map!(value, from: value, to: nil, strict: false)
-          mapper = foobara_domain_mapper_registry.lookup(from:, to:, strict:)
+          mapper = lookup_matching_domain_mapper(from:, to:, strict:)
+
           unless mapper
-            raise Foobara::DomainMapper::NoDomainMapperFoundError.new(from, to, value:)
+            raise Foobara::DomainMapperLookups::NoDomainMapperFoundError.new(from, to, value:)
           end
 
-          mapper.call(value)
-        end
-
-        def foobara_domain_mapper(mapper)
-          foobara_domain_mapper_registry(skip_check: true).register(mapper)
-        end
-
-        def foobara_domain_mapper_registry(skip_check: false)
-          Foobara::DomainMapper.foobara_process_domain_mappers unless skip_check
-          @foobara_domain_mapper_registry ||= DomainMapper::Registry.new
+          mapper.map!(value)
         end
 
         def foobara_domain_name
