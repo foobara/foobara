@@ -95,7 +95,7 @@ RSpec.describe "Entity inputs for commands" do
         user1 = CreateUser.run!(name: "Some User1")
         user2 = CreateUser.run!(name: "Some User2")
 
-        CreateFan.run!(attrs: { foo: :bar }, fan_of: [user1])
+        CreateFan(attrs: { foo: :bar }, fan_of: [user1])
         CreateFan.run!(attrs: { foo: :baz }, fan_of: [user1, user2])
         CreateFan.run!(attrs: { foo: :foo })
 

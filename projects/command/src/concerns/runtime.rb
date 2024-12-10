@@ -15,6 +15,44 @@ module Foobara
           def run!(...)
             new(...).run!
           end
+
+          def define_command_named_function
+            command_class = self
+            convenience_method_name = Foobara::Util.non_full_name(command_class)
+            containing_module = Foobara::Util.module_for(command_class) || Object
+
+            if containing_module.is_a?(::Class)
+              containing_module.singleton_class.define_method convenience_method_name do |*args, **opts, &block|
+                command_class.run!(*args, **opts, &block)
+              end
+
+              containing_module.define_method convenience_method_name do |*args, **opts, &block|
+                command_class.run!(*args, **opts, &block)
+              end
+            else
+              containing_module.module_eval do
+                module_function
+
+                define_method convenience_method_name do |*args, **opts, &block|
+                  command_class.run!(*args, **opts, &block)
+                end
+              end
+            end
+          end
+
+          def undefine_command_named_function
+            command_class = self
+            convenience_method_name = Foobara::Util.non_full_name(command_class)
+            containing_module = Foobara::Util.module_for(command_class) || Object
+
+            return unless containing_module.respond_to?(convenience_method_name)
+
+            containing_module.singleton_class.undef_method convenience_method_name
+
+            if containing_module.is_a?(::Class)
+              containing_module.undef_method convenience_method_name
+            end
+          end
         end
 
         attr_reader :outcome, :exception

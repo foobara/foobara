@@ -32,5 +32,6 @@ module Foobara
 
   Command.after_subclass_defined do |subclass|
     Command.all << subclass
+    subclass.define_command_named_function
   end
 end

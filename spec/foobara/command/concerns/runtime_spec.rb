@@ -35,4 +35,42 @@ RSpec.describe Foobara::Command::Concerns::Runtime do
       expect(outcome.result).to eq(4**3)
     end
   end
+
+  describe ".define_command_named_function" do
+    context "when on Object" do
+      before do
+        stub_class "SomeCommand", Foobara::Command do
+          def execute
+            100
+          end
+        end
+      end
+
+      it "defines the command named function" do
+        expect(SomeCommand()).to eq(100)
+        expect(Object.SomeCommand()).to eq(100)
+      end
+    end
+
+    context "when on a Module" do
+      before do
+        stub_module "SomeModule"
+
+        stub_class "SomeModule::SomeCommand", Foobara::Command do
+          def execute
+            100
+          end
+        end
+      end
+
+      it "defines the command named function" do
+        expect(SomeCommand()).to eq(100)
+        expect(SomeModule::SomeCommand()).to eq(100)
+        result = SomeModule.class_eval do
+          SomeCommand()
+        end
+        expect(result).to eq(100)
+      end
+    end
+  end
 end

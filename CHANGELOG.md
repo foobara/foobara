@@ -1,7 +1,8 @@
-## [0.0.32] - 2024-12-09
+## [0.0.33] - 2024-12-09
 
 - Introduce a DetachedEntity concept that sits between Model and Entity
 - Add a detached_to_primary_key flag to EntitiesToPrimaryKeysSerializer
+- Create command-named convenience functions for .run! calls
 
 ## [0.0.30] - 2024-12-07
 
