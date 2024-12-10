@@ -1037,10 +1037,7 @@ We get the answer we expected!
 
 A little bit advanced but let's look at the possible errors for Subtract:
 
-```ruby
-
-
-
+```irb
 > Subtract.possible_errors.map(&:key).map(&:to_s).sort
 ==>
 ["add>data.cannot_cast",
@@ -1057,7 +1054,6 @@ A little bit advanced but let's look at the possible errors for Subtract:
  "data.operand2.cannot_cast",
  "data.operand2.missing_required_attribute",
  "data.unexpected_attributes"]
->
 ```
 
 We can see some errors from Add here.  Note: we actually know in this case that we don't expect these errors to occur.
@@ -1237,7 +1233,51 @@ Both do the same thing.
 
 #### Runtime Errors
 
-TODO
+Often, you a command will have to fail due to an error that isn't related to a specific input.  For these situations,
+you want a runtime error.  Let's convert our DivideByZeroError to a runtime error just for demonstration purposes:
+
+```ruby
+class Divide < Foobara::Command
+  possible_error :divide_by_zero, message: "Cannot divide by zero"
+
+  def execute
+    validate_divisor
+
+    ...
+  end
+
+  def validate_divisor
+    if divisor == 0
+      add_runtime_error DivideByZeroError
+    end
+  end
+
+  ...
+```
+
+And let's try it out:
+
+```irb
+> outcome = Divide.run(dividend: 49, divisor: 0)
+==> #<Foobara::Outcome:0x00007f030fe3b8b8...
+> outcome.success?
+==> false
+> outcome.errors_sentence
+==> "Cannot divide by zero"
+> outcome.errors_hash
+==>
+{"runtime.divide_by_zero"=>
+  {:key=>"runtime.divide_by_zero",
+   :path=>[],
+   :runtime_path=>[],
+   :category=>:runtime,
+   :symbol=>:divide_by_zero,
+   :message=>"Cannot divide by zero",
+   :context=>{},
+   :is_fatal=>false}}
+```
+
+Very similar behavior to before but this time it's a runtime error.
 
 ## Advanced Foobara
 
