@@ -1283,13 +1283,191 @@ Very similar behavior to before but this time it's a runtime error.
 
 ### Domain Mappers
 
+We should really move our various commands into their proper orgs/domains now for the remaining advanced/expert
+examples.
+
+In an integer_math_server.rb file, let's put Add/Subtract/Divide and expose them via HTTP:
+
+```ruby
+#!/usr/bin/env ruby
+
+require "foobara/rack_connector"
+require "rackup/server"
+
+module FoobaraDemo
+  foobara_organization!
+
+  module IntegerMath
+    foobara_domain!
+
+    class Add < Foobara::Command
+      ...
+end
+
+
+command_connector = Foobara::CommandConnectors::Http::Rack.new
+command_connector.connect(FoobaraDemo)
+
+Rackup::Server.start(app: command_connector)
+```
+
+Note: here we have just connected the entire organization. This is just a lazy way for us to expose all commands.
+
+Let's do the same for our capybara commands.
+In a capy_cafe_server.rb file, let's put CreateCapybara/IncrementAge/FindCapybara and expose them via HTTP:
+
+```ruby
+#!/usr/bin/env ruby
+
+require "foobara/local_files_crud_driver"
+require "foobara/rack_connector"
+require "rackup/server"
+
+crud_driver = Foobara::LocalFilesCrudDriver.new
+Foobara::Persistence.default_crud_driver = crud_driver
+
+module FoobaraDemo
+  foobara_organization!
+
+  module CapyCafe
+    foobara_domain!
+
+    class Capybara < Foobara::Entity
+      ...
+
+command_connector = Foobara::CommandConnectors::Http::Rack.new
+
+command_connector.connect(FoobaraDemo)
+
+Rackup::Server.start(app: command_connector, Port: 9293)
+```
+
+We'll start this one on 9293 since it will have the same URL as our integer math server.
+
+Now, let's come up with a contrived use-case for a domain mapper. Let's say there's some information about capybaras
+in some other model in some other domain that we could import into our CapyCafe domain.
+
+Let's code up such a domain/model in yet another file called capy_cafe_import.rb,
+let's set import our other two domains:
+
+```ruby
+#!/usr/bin/env ruby
+
+require "foobara/remote_imports"
+
+[9292, 9293].each do |port|
+  Foobara::RemoteImports::ImportCommand.run!(manifest_url: "http://localhost:#{port}/manifest")
+end
+```
+
+And now let's define an Animal model that could be imported into our CapyCafe domain as a Capybara record:
+
+```ruby
+module FoobaraDemo
+  module AnimalHouse
+    foobara_domain!
+
+    class Animal < Foobara::Model
+      attributes do
+        first_name :string
+        last_name :string
+        birthday :date
+        species :symbol, one_of: %i[capybara cat tartigrade]
+      end
+    end
+  end
+end
+```
+
+And now let's define a domain mapper that knows how to map an AnimalHouse::Animal to a CapyCafe::Capybara:
+
+```ruby
+module FoobaraDemo
+  module CapyCafe
+    foobara_depends_on AnimalHouse
+
+    class AnimalToCapybara < Foobara::DomainMapper
+      from AnimalHouse::Animal
+      to CreateCapybara
+
+      def map(animal)
+        age = birthday_to_age(animal.birthday)
+
+        {
+                name: "#{animal.first_name} #{animal.last_name}",
+                age:
+        }
+      end
+
+      def birthday_to_age(birthday)
+        today = Date.today
+        age = today.year - birthday.year
+        birthday_this_year = Date.new(birthday.year + age, birthday.month, birthday.day)
+
+        today < birthday_this_year ? age - 1 : age
+      end
+    end
+  end
+end
+```
+
+Note: that we have a bit of an unusual architecture here: we are defining CapyCafe commands in two different systems.
+A point of Foobara is that regardless of how these commands are distributed calling code doesn't change as this
+distribution changes.
+
+Normally, we wouldn't make use of a domain mapper in isolation. Like everything else, it should be used in the context
+of a command. But we can play with it directly:
+
+```irb
+
+```
+
+```ruby
+    class ImportAnimal < Foobara::Command
+      class NotACapybara < Foobara::DataError
+        context species: :symbol, animal: AnimalHouse::Animal
+
+        def message
+          "Can only import a capybara not a #{species}"
+        end
+      end
+
+      inputs animal: AnimalHouse::Animal
+      result Capybara
+
+      possible_input_error :animal, NotACapybara
+
+      depends_on CreateCapybara
+
+      def execute
+        create_capybara
+
+        capybara
+      end
+
+      attr_accessor :capybara
+
+      def validate
+        species = animal.species
+
+        unless species == :capybara
+          add_input_error :animal, NotACapybara, animal: animal, species: species
+        end
+      end
+
+      def create_capybara
+        self.capybara = run_mapped_subcommand!(CreateCapybara, animal)
+      end
+    end
+```
+
 TODO
 
 ### Code Generators
 
 #### Generating a new Foobara Ruby project
 #### Generating a new Foobara Typescript/React project
-#### Geerating commands, models, entities, types, domains, organizations, etc...
+#### Generating commands, models, entities, types, domains, organizations, etc...
 
 TODO
 

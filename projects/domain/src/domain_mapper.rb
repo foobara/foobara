@@ -140,11 +140,15 @@ module Foobara
     end
 
     def call(from_value)
+      from_value = from_type.process_value!(from_value)
+
       mapped_value = map(from_value)
 
       to_type.process_value!(mapped_value)
     end
 
+    # TODO: can we make _from_value passed to #initialize instead? That way it doesn't have to be passed around
+    # between various helper methods
     def map(_from_value)
       # :nocov:
       raise "subclass repsonsibility"
