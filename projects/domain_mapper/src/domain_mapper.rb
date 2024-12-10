@@ -11,17 +11,17 @@ module Foobara
         new(from: value).run!
       end
 
-      def from(...)
-        result(...)
-      end
-
       # A bit hacky because Command only supports attributes inputs at the moment, ugg.
-      def to(...)
-        from_type = domain.type_from_declaration(...)
+      def from(...)
+        from_type = domain.foobara_type_from_declaration(...)
 
         inputs do
           from from_type, :required
         end
+      end
+
+      def to(...)
+        result(...)
       end
 
       def from_type
@@ -89,7 +89,12 @@ module Foobara
     end
 
     def execute
-      map
+      run_map_for_from_value
+    end
+
+    def run_map_for_from_value
+      from_value = inputs[:from]
+      map(from_value)
     end
 
     def map
