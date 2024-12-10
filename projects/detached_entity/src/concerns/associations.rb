@@ -114,7 +114,7 @@ module Foobara
             path = DataPath.new,
             result = {}
           )
-            if type.extends?(BuiltinTypes[:detached_entity])
+            if type.extends?(BuiltinTypes[:entity])
               result[path.to_s] = type
             elsif type.extends?(BuiltinTypes[:tuple])
               element_types = type.element_types

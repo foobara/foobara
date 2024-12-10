@@ -1,7 +1,8 @@
-## [0.0.35] - 2024-12-10
+## [0.0.36] - 2024-12-10
 
 - Fix bug with command-named convenience functions
 - Make domain mappers cast their inputs
+- Exclude detached entities from associations
 
 ## [0.0.33] - 2024-12-09
 
