@@ -1,91 +1,39 @@
 module Foobara
-  class DomainMapper
+  # TODO: would be nice to inherit from something other than Command. Can we hoist a bunch of common behavior up
+  # out of Command into some other class maybe called Service or Runnable or something?
+  class DomainMapper < Foobara::Command
     class << self
-      def call(value)
-        instance.call(value)
+      def map(value)
+        new(from: value).run
       end
 
-      def from(*args)
-        if args.empty?
-          @from
-        else
-          if args.size > 1
-            # :nocov:
-            raise ArgumentError, "only one argument allowed"
-            # :nocov:
-          end
-
-          @from = args.first
-        end
+      def map!(value)
+        new(from: value).run!
       end
 
-      def to(*args)
-        if args.empty?
-          @to
-        else
-          if args.size > 1
-            # :nocov:
-            raise ArgumentError, "only one argument allowed"
-            # :nocov:
-          end
+      def from(...)
+        result(...)
+      end
 
-          @to = args.first
+      # A bit hacky because Command only supports attributes inputs at the moment, ugg.
+      def to(...)
+        from_type = domain.type_from_declaration(...)
+
+        inputs do
+          from from_type, :required
         end
       end
 
       def from_type
-        return @from_type if defined?(@from_type)
-
-        @from_type = object_to_type(from)
+        inputs_type.element_types[:from]
       end
 
       def to_type
-        return @to_type if defined?(@to_type)
-
-        @to_type = object_to_type(to)
+        result_type
       end
 
-      def instance
-        @instance ||= new
-      end
-
-      def inherited(subclass)
-        foobara_domain_mapper_to_process(subclass.instance)
-
-        super
-      end
-
-      def foobara_domain_mapper_to_process(mapper)
-        foobara_domain_mappers_to_process << mapper
-      end
-
-      def foobara_domain_mappers_to_process
-        @foobara_domain_mappers_to_process ||= []
-      end
-
-      def foobara_process_domain_mappers
-        if defined?(@foobara_domain_mappers_to_process)
-          @foobara_domain_mappers_to_process.each do |mapper|
-            mapper.domain.foobara_domain_mapper(mapper)
-          end
-          remove_instance_variable(:@foobara_domain_mappers_to_process)
-        end
-      end
-
-      def domain
-        candidate = self
-
-        loop do
-          candidate = Util.module_for(candidate)
-
-          if candidate.nil?
-            # :nocov:
-            raise "Domain mapper must be scoped within a domain but #{self.class.name} is not in a domain"
-            # :nocov:
-          elsif candidate.foobara_domain?
-            return candidate
-          end
-        end
+      def applicable?(from_value, to_value)
+        matches?(from_type, from_value) && matches?(to_type, to_value)
       end
 
       def matches?(type_indicator, value)
@@ -109,6 +57,7 @@ module Foobara
         end
       end
 
+      # TODO: should this be somewhere more general-purpose?
       def object_to_type(object)
         if object
           if object.is_a?(::Class)
@@ -139,28 +88,14 @@ module Foobara
       self.class.to_type
     end
 
-    def call(from_value)
-      from_value = from_type.process_value!(from_value)
-
-      mapped_value = map(from_value)
-
-      to_type.process_value!(mapped_value)
+    def execute
+      map
     end
 
-    # TODO: can we make _from_value passed to #initialize instead? That way it doesn't have to be passed around
-    # between various helper methods
-    def map(_from_value)
+    def map
       # :nocov:
-      raise "subclass repsonsibility"
+      raise "subclass responsibility"
       # :nocov:
-    end
-
-    def applicable?(from_value, to_value)
-      self.class.matches?(from_type, from_value) && self.class.matches?(to_type, to_value)
-    end
-
-    def domain
-      self.class.domain
     end
   end
 end
