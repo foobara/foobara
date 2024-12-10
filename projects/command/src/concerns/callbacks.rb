@@ -4,11 +4,9 @@ module Foobara
       module Callbacks
         include Concern
 
-        module ClassMethods
-          def subclass_defined_callbacks
-            @subclass_defined_callbacks ||= Foobara::Callback::Registry::SingleAction.new
-          end
+        inherited_overridable_class_attr_accessor :subclass_defined_callbacks
 
+        module ClassMethods
           def inherited(subclass)
             super
 

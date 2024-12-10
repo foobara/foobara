@@ -1,3 +1,7 @@
+## [0.0.34] - 2024-12-10
+
+- Fix bug with command-named convenience functions
+
 ## [0.0.33] - 2024-12-09
 
 - Introduce a DetachedEntity concept that sits between Model and Entity

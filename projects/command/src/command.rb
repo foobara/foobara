@@ -22,6 +22,9 @@ module Foobara
     include Concerns::DomainMappers
     include Concerns::Reflection
 
+    # TODO: this feels like a hack and shouldn't be necessary. Let's try to fix Concern class inheritance, instead.
+    self.subclass_defined_callbacks ||= Foobara::Callback::Registry::SingleAction.new
+
     attr_reader :raw_inputs
 
     def initialize(inputs = {})

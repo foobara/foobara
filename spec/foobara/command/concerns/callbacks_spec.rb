@@ -1,4 +1,8 @@
 RSpec.describe Foobara::Command::Concerns::Callbacks do
+  after do
+    Foobara.reset_alls
+  end
+
   context "with simple command" do
     let(:command_class) {
       stub_class(:CommandClass, Foobara::Command) do
@@ -191,6 +195,17 @@ RSpec.describe Foobara::Command::Concerns::Callbacks do
           expect(to).to eq(:validated_records)
         end
       end
+    end
+  end
+
+  describe ".subclass_defined_callbacks" do
+    before do
+      stub_class "CommandA", Foobara::Command
+      stub_class "CommandB", CommandA
+    end
+
+    it "can pass them on to a subclass" do
+      expect(Foobara::Command.all).to include(CommandB)
     end
   end
 end
