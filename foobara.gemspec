@@ -6,8 +6,8 @@ Gem::Specification.new do |spec|
   spec.authors = ["Miles Georgi"]
   spec.email = ["azimux@gmail.com"]
 
-  spec.summary = "Implements command pattern for encapsulating and managing domain complexity " \
-                 "as well as many supporting libraries including entities."
+  spec.summary = "A command-centric and discoverable software framework with a focus on domain concepts " \
+                 "and abstracting away integration code"
   spec.description = spec.summary
   spec.homepage = "https://foobara.com"
   spec.license = "MPL-2.0"
