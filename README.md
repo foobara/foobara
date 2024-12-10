@@ -1419,10 +1419,60 @@ Normally, we wouldn't make use of a domain mapper in isolation. Like everything 
 of a command. But we can play with it directly:
 
 ```irb
-
+$ ./animal_house_import.rb
+> create_capybara_inputs = FoobaraDemo::CapyCafe::AnimalToCapybara.call(species: :capybara, first_name: "Barbara", last_name: "Doe", birthday: "1000-01-01")
+==> {:name=>"Barbara Doe", :age=>1024}
+> barbara = FoobaraDemo::CapyCafe::CreateCapybara.run!(create_capybara_inputs)
+==> <Capybara:2>
+> barbara.age
+==> 1024
+> barbara.id
+==> 2
 ```
 
+And we can increment Barbara's age now that she has been imported into our CapyCafe:
+
+```irb
+> FoobaraDemo::CapyCafe::IncrementAge.run!(capybara: barbara)
+==> <Capybara:2>
+> FoobaraDemo::CapyCafe::FindCapybara.run!(id: barbara)
+==> <Capybara:2>
+> FoobaraDemo::CapyCafe::FindCapybara.run!(id: barbara).age
+==> 1025
+```
+
+Now let's create a command that makes use of our domain mapper which is the typical usage pattern:
+
 ```ruby
+#!/usr/bin/env ruby
+
+require "foobara/remote_imports"
+
+[9292, 9293].each do |port|
+  Foobara::RemoteImports::ImportCommand.run!(manifest_url: "http://localhost:#{port}/manifest")
+end
+
+module FoobaraDemo
+  module AnimalHouse
+    foobara_domain!
+  end
+end
+
+module FoobaraDemo
+  module AnimalHouse
+    class Animal < Foobara::Model
+      attributes do
+        first_name :string
+        last_name :string
+        birthday :date
+        species :symbol, one_of: %i[capybara cat tartigrade]
+      end
+    end
+  end
+end
+
+module FoobaraDemo
+  module CapyCafe
     class ImportAnimal < Foobara::Command
       class NotACapybara < Foobara::DataError
         context species: :symbol, animal: AnimalHouse::Animal
@@ -1459,8 +1509,17 @@ of a command. But we can play with it directly:
         self.capybara = run_mapped_subcommand!(CreateCapybara, animal)
       end
     end
+  end
+end
 ```
 
+Note that we can automatically map `animal` to CreateCapybara inputs by calling `#run_mapped_subcommand!`
+
+Let's play with it:
+
+```irb
+
+```
 TODO
 
 ### Code Generators
