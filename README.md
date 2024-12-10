@@ -1,4 +1,3 @@
-
 <!-- TOC -->
 * [What is/Why Foobara?](#what-iswhy-foobara)
   * [Commands](#commands)
@@ -19,6 +18,7 @@
       * [Async Command Connectors](#async-command-connectors)
       * [Scheduler Command Connectors](#scheduler-command-connectors)
   * [Intermediate Foobara](#intermediate-foobara)
+    * [Metadata manifests for discoverability](#metadata-manifests-for-discoverability)
     * [Remote Commands](#remote-commands)
     * [Subcommands](#subcommands)
     * [Custom Errors](#custom-errors)
@@ -979,18 +979,261 @@ Great! We can now move commands, types, etc, around between systems without need
 errors work the same way:
 
 ```
-
+> puts FindCapybara.run(id: "asdf").errors_sentence
+At id: Cannot cast "asdf" to an integer. Expected it to be a Integer, or be a string of digits optionally with a minus sign in front
 ```
 
 ### Subcommands
 
-TODO
+Inevitably, we'll want one high-level domain operation to be able to invoke another high-level domain operation. And
+because Foobara commands are the public interfaces to our systems/subsystems, we really really want to be able to do
+this when a command needs a behavior from another domain as an implementation detail.
+
+Let's create a command that calls another. Remember our `Add` command from earlier?
+Let's implement a contrived Subtract command that is implemented using Add:
+
+```ruby
+
+class Subtract < Foobara::Command
+  inputs do
+    operand1 :integer, :required
+    operand2 :integer, :required
+  end
+
+  result :integer
+
+  depends_on Add
+
+  def execute
+    subtract_operands
+
+    difference
+  end
+
+  attr_accessor :difference
+
+  def subtract_operands
+    self.difference = run_subcommand!(Add, operand1:, operand2: -operand2)
+  end
+end
+```
+
+We call our subcommand using `#run_subcommand!`. This will run the command and return the result. If an error occurs,
+the errors from Add will be appended to our errors for Subtract, causing it to fail.
+
+Note that we declare that Subtract depends on Add. We do this using `.depends_on`. This helps in a few ways.
+For one, Subtract.possible_errors can include errors that might happen in Add.
+This allows us to see a command dependencies using graphing tools and what-not and enforce a unidirectional
+dependency graph of commands.
+
+Let's play with it:
+
+```ruby
+> Subtract.run!(operand1: 5, operand2: 2)
+==> 3
+```
+
+We get the answer we expected!
+
+A little bit advanced but let's look at the possible errors for Subtract:
+
+```ruby
+
+
+
+> Subtract.possible_errors.map(&:key).map(&:to_s).sort
+==>
+["add>data.cannot_cast",
+ "add>data.missing_required_attribute",
+ "add>data.operand1.cannot_cast",
+ "add>data.operand1.missing_required_attribute",
+ "add>data.operand2.cannot_cast",
+ "add>data.operand2.missing_required_attribute",
+ "add>data.unexpected_attributes",
+ "data.cannot_cast",
+ "data.missing_required_attribute",
+ "data.operand1.cannot_cast",
+ "data.operand1.missing_required_attribute",
+ "data.operand2.cannot_cast",
+ "data.operand2.missing_required_attribute",
+ "data.unexpected_attributes"]
+>
+```
+
+We can see some errors from Add here.  Note: we actually know in this case that we don't expect these errors to occur.
+We could filter these out to improve the information to the outside world/tooling/generators but that's beyond
+the intermediate level.
 
 ### Custom Errors
 
+Speaking of errors, an intermediate Foobara skill is defining a custom error.
+
 #### Input Errors
 
-TODO
+Let's make a DivideByZeroError as an example. First, let's make a command that would use it. Q: can you
+guess which command we're going to make next? A: Divide!
+
+```ruby
+class Divide < Foobara::Command
+  inputs do
+    dividend :integer, :required
+    divisor :integer, :required
+  end
+
+  result :integer
+
+  depends_on Subtract
+
+  def execute
+    initialize_quotient_to_zero
+    make_operands_positive_and_determine_if_result_is_negative
+
+    until dividend_less_than_divisor?
+      increment_quotient
+      subtract_divisor_from_dividend
+    end
+
+    negate_quotient if negative_result?
+
+    quotient
+  end
+
+  attr_accessor :negative_result, :quotient
+
+  def make_operands_positive_and_determine_if_result_is_negative
+    self.negative_result = false
+
+    if dividend < 0
+      self.dividend = -dividend
+      self.negative_result = !negative_result
+    end
+
+    if divisor < 0
+      self.divisor = -divisor
+      self.negative_result = !negative_result
+    end
+  end
+
+  def negate_quotient
+    self.quotient = -quotient
+  end
+
+  def dividend_less_than_divisor?
+    dividend < divisor
+  end
+
+  def negative_result?
+    negative_result
+  end
+
+  def increment_quotient
+    self.quotient += 1
+  end
+
+  def subtract_divisor_from_dividend
+    self.dividend = run_subcommand!(Subtract, operand1: dividend, operand2: divisor)
+  end
+
+  def initialize_quotient_to_zero
+    self.quotient = 0
+  end
+
+  attr_writer :dividend, :divisor
+
+  def dividend
+    @dividend || super
+  end
+
+  def divisor
+    @divisor || super
+  end
+end
+```
+
+This one is pretty long because it has a more complex algorithm. Note how the #execute method
+has a self-documenting form of the algorithm in it. That is a good best-practice when it comes to commands.
+In a real project, this would be encapsulating a high-level domain operation. Having various levels
+of abstraction of the algorithm mixed together can harm our ability to see what the domain
+operation entails at a high-level.
+
+Let's play with it:
+
+```irb
+> Divide.run!(dividend: 6, divisor: 7)
+==> 0
+> Divide.run!(dividend: 8, divisor: 7)
+==> 1
+> Divide.run!(dividend: 49, divisor: 7)
+==> 7
+```
+
+We get the expected integer division results. However, if we pass
+0 as the divisor, it will hang forever.
+
+Time for our custom error!
+
+```ruby
+class Divide < Foobara::Command
+  possible_input_error :divisor, :divide_by_zero, message: "Cannot divide by zero"
+
+  ...
+```
+
+This is one way we can express a custom error for associated with a specific input.
+
+Let's try it out!
+
+```irb
+> outcome = Divide.run(dividend: 49, divisor: 0)
+==> #<Foobara::Outcome:0x00007f504d178e38...
+        > outcome.success?
+==> false
+> outcome.errors_hash
+==>
+        {"data.divisor.divide_by_zero"=>
+                 {:key=>"data.divisor.divide_by_zero",
+                  :path=>[:divisor],
+                  :runtime_path=>[],
+                  :category=>:data,
+                  :symbol=>:divide_by_zero,
+                  :message=>"Cannot divide by zero",
+                  :context=>{},
+                  :is_fatal=>false}}
+> outcome.errors_sentence
+==> "Cannot divide by zero"
+```
+
+And we can see the error in the command's list of possible errors:
+
+```irb
+> Divide.possible_errors.map(&:key).map(&:to_s).grep /zero/
+==> ["data.divisor.divide_by_zero"]
+```
+
+And of course, as expected, tooling has access to information about this error and the command's possible error through manifest
+metadata:
+
+```irb
+> Foobara.manifest[:command][:Divide][:possible_errors]["data.divisor.divide_by_zero"][:error]
+==> "Divide::DivideByZeroError"
+> Foobara.manifest[:error][:"Divide::DivideByZeroError"][:parent]
+==> [:command, "Divide"]
+```
+
+There's an alternative way to express these custom errors:
+
+```ruby
+class Divide < Foobara::Command
+  class DivideByZeroError < Foobara::DataError
+    def message
+      "Cannot divide by zero"
+    end
+  end
+  
+  possible_input_error :divisor, DivideByZeroError
+```
+
+Both do the same thing.
 
 #### Runtime Errors
 
