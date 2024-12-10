@@ -32,59 +32,32 @@ This document is intended to document the rationale behind certain key decisions
   * [Conclusion](#conclusion)
 <!-- TOC -->
 
-# 2024-12-07 Create a RemoteEntity type?
+# 2024-12-08 Create a DetachedEntity type, import Entity as immutable DetachedEntity
+
+## Problem
+
+Importing an Entity from system A into System B results in that Entity not
+being able to:
+
+1. Participate in/open transactions
+2. Be cast to from a primary key value
+
+This means in the importing system you have to call `SomeCommand.run!(record: record.id)` whereas
+in the remote system you can call `SomeCommand.run!(record:)`.  This breaks a major design
+goal of Foobara which is that commands should be able to be moved between systems without
+refactoring calling code.
 
 ## Decision
 
-We will go back to importing remote entities as entities (instead of models) but
-we will keep them as immutable. We will stop casting inputs to remote commands
-on the client side and let them be cast on the server side (for now) and we will
-serialize records as their primary key values.
+Introduce a DetachedEntity Foobara type that sits between Model and Entity to house
+the expected behavior.  When importing an entity, convert its declaration to detached_entity.
+May as well make it immutable as well since there's no meaningful way to mutate the record.
 
-## Rationale
+## Concerns
 
-Ideally, we might want a new type called RemoteEntity which acts similar to Entity. But
-to save time and unblock tutorials, we will just go back.
-
-We really want remote entities to behave differently from models
-(and entities) in the following ways:
-
-* It is always immutable
-* It does not trigger opening a transaction and is not included in the list
-  of entities the command depends on
-* Primary keys are not cast to the Entity. They are just passed through to the command
-  on the other end.
-* Similarly, records are cast to their primary keys when issuing the remote request.
-* Should inherit from Model and not Entity.
-
-However, in the interest of time and unblocking tutorials, for now we will go
-with the simpler work-around of this decision
-
-# [MOSTLY RETRACTED] 2024-12-03 Convert Entity to an immutable Model when importing across systems
-
-## Decision
-
-When foobara concepts are imported via remote-imports across systems,
-an entity in the source system should become a model in the importing system, but
-with the primary key changed to required.
-
-## Rationale
-
-If we were to write a local command that accepted the Entity, it
-would attempt to open a transaction. This is a sign that it's not really
-an entity in a proper sense from the point of view of the importing system.
-Any modifications to the actual entity record in the other system must be
-performed through remote commands exposed by that system. So it doesn't make
-sense to import it as an entity which has behavior that can't possibly
-be supported with the current interfaces.
-
-Also, entities should only be directly created within commands. Those commands
-should live in the same domain as the entity. Normally, that domain should not be
-split across systems and the domain itself should live in one system or even be that system.
-
-Therefore any sort of advanced way of communicating CRUD operations on a record
-across systems should be avoided and enforced by remote command calls to the system
-where the entity was imported from.
+I don't like the name. I can think of some potentially better naming schemes but they would require
+renaming Entity. I do not want do the work of renaming Entity without being more certain
+that we've settled on a good naming scheme.
 
 # 2024-10-27 Release under the MPL-2.0 license
 
