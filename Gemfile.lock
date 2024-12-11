@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    foobara (0.0.36)
+    foobara (0.0.37)
       foobara-util
 
 GEM

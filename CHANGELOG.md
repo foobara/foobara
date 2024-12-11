@@ -1,3 +1,7 @@
+## [0.0.37] - 2024-12-11
+
+- Make DomainMappers extend Command so they have possible errors and statefulness/a cleaner API
+
 ## [0.0.36] - 2024-12-10
 
 - Fix bug with command-named convenience functions
