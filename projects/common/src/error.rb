@@ -67,7 +67,10 @@ module Foobara
         end
       end
 
-      def context(*args)
+      def context(*args, &block)
+        if block_given?
+          args = [*args, block]
+        end
         args_size = args.size
 
         case args_size
