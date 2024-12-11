@@ -43,6 +43,9 @@ module Foobara
         result = lookup_matching_domain_mapper(from:, to:, strict:)
 
         result || raise(NoDomainMapperFoundError.new(from, to))
+      rescue => e
+        binding.pry
+        raise
       end
 
       def lookup_matching_domain_mapper(from: nil, to: nil, strict: false)

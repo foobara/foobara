@@ -150,12 +150,12 @@ module Foobara
 
           mapper = lookup_matching_domain_mapper(from:, to:, strict:)
 
-          mapper&.call(value)
+          mapper&.map!(value)
         end
 
         def foobara_domain_map!(value, from: value, to: nil, strict: false)
           mapper = lookup_matching_domain_mapper!(from:, to:, strict:)
-          mapper.call(value)
+          mapper.map!(value)
         end
 
         def foobara_domain_name

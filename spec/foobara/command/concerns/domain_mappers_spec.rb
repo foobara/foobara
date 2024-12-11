@@ -41,7 +41,6 @@ RSpec.describe Foobara::Command::Concerns::DomainMappers do
       from :string
       to SomeDomain::SomeSubcommand
 
-      # TODO: pass from_value in instead for improved readability
       def map(from_value)
         { foo: from_value }
       end

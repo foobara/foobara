@@ -13,7 +13,7 @@ module Foobara
 
       # A bit hacky because Command only supports attributes inputs at the moment, ugg.
       def from(...)
-        from_type = domain.foobara_type_from_declaration(...)
+        from_type = args_to_type(...)
 
         inputs do
           from from_type, :required
@@ -21,7 +21,8 @@ module Foobara
       end
 
       def to(...)
-        result(...)
+        result_type = args_to_type(...)
+        result(result_type)
       end
 
       def from_type
@@ -58,6 +59,14 @@ module Foobara
       end
 
       # TODO: should this be somewhere more general-purpose?
+      def args_to_type(*args, **opts, &block)
+        if args.size == 1 && opts.empty? && block.nil?
+          object_to_type(args.first)
+        else
+          domain.foobara_type_from_declaration(*args, **opts, &block)
+        end
+      end
+
       def object_to_type(object)
         if object
           if object.is_a?(::Class)
