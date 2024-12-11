@@ -1518,8 +1518,18 @@ Note that we can automatically map `animal` to CreateCapybara inputs by calling 
 Let's play with it:
 
 ```irb
-
+> basil = FoobaraDemo::CapyCafe::ImportAnimal.run!(animal: { species: :capybara, first_name: "Basil", last_name: "Doe", birthday: "1000-01-01" })
+==> <Capybara:3>
+> basil.age
+==> 1024
+> basil.id
+==> 3
+> FoobaraDemo::CapyCafe::IncrementAge.run!(capybara: basil)
+==> <Capybara:3>
+> FoobaraDemo::CapyCafe::FindCapybara.run!(id: basil).age
+==> 1025
 ```
+
 TODO
 
 ### Code Generators
