@@ -89,14 +89,6 @@ module Foobara
       end
     end
 
-    def from_type
-      self.class.from_type
-    end
-
-    def to_type
-      self.class.to_type
-    end
-
     def execute
       run_map_for_from_value
     end

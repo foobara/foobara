@@ -38,7 +38,7 @@ RSpec.describe Foobara::Command::Concerns::DomainMappers do
     subcommand_class
     stub_module("SomeDomain::DomainMappers")
     stub_class("SomeDomain::DomainMappers::SomeDomainMapper", Foobara::DomainMapper) do
-      from :string
+      from :string, :allow_nil
       to SomeDomain::SomeSubcommand
 
       def map(from_value)
@@ -55,6 +55,8 @@ RSpec.describe Foobara::Command::Concerns::DomainMappers do
     it "maps the value" do
       domain_mapper
       mapped_value = command.domain_map("bar")
+      expect(mapped_value).to eq(foo: "bar")
+      mapped_value = domain_mapper.map("bar").result
       expect(mapped_value).to eq(foo: "bar")
     end
   end
