@@ -24,28 +24,26 @@ module Foobara
         super("No domain mapper found for #{value}. from: #{from}. to: #{to}.")
       end
     end
+
+    class AmbiguousDomainMapperError < StandardError
+      attr_accessor :candidates, :from, :to
+
+      def initialize(from, to, candidates)
+        self.to = to
+        self.from = from
+        self.candidates = [*candidates].flatten
+
+        super("#{candidates.size} ambiguous candidates found.")
+      end
+    end
+
     include Concern
 
     module ClassMethods
-      class AmbiguousDomainMapperError < StandardError
-        attr_accessor :candidates, :from, :to
-
-        def initialize(from, to, candidates)
-          self.to = to
-          self.from = from
-          self.candidates = [*candidates].flatten
-
-          super("#{candidates.size} ambiguous candidates found.")
-        end
-      end
-
       def lookup_matching_domain_mapper!(from: nil, to: nil, strict: false)
         result = lookup_matching_domain_mapper(from:, to:, strict:)
 
         result || raise(NoDomainMapperFoundError.new(from, to))
-      rescue => e
-        binding.pry
-        raise
       end
 
       def lookup_matching_domain_mapper(from: nil, to: nil, strict: false)
@@ -63,9 +61,9 @@ module Foobara
 
         unless strict
           if from
-            lookup(from: nil, to:)
+            lookup_matching_domain_mapper(from: nil, to:)
           elsif to
-            lookup(from:, to: nil)
+            lookup_matching_domain_mapper(from:, to: nil)
           end
         end
       end

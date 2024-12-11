@@ -113,7 +113,7 @@ RSpec.describe "Domain Mappers" do
         it "raises" do
           expect {
             domain_a.foobara_domain_map(from_value, from: nil)
-          }.to raise_error(Foobara::DomainMapper::Registry::AmbiguousDomainMapperError)
+          }.to raise_error(Foobara::DomainMapperLookups::AmbiguousDomainMapperError)
         end
       end
     end
@@ -133,7 +133,7 @@ RSpec.describe "Domain Mappers" do
       it "raises" do
         expect {
           domain_a.foobara_domain_map!(from_value, from: :integer, strict: true)
-        }.to raise_error(Foobara::DomainMapper::NoDomainMapperFoundError)
+        }.to raise_error(Foobara::DomainMapperLookups::NoDomainMapperFoundError)
       end
     end
   end
