@@ -40,14 +40,18 @@ module Foobara
     include Concern
 
     module ClassMethods
-      def lookup_matching_domain_mapper!(from: nil, to: nil, strict: false)
-        result = lookup_matching_domain_mapper(from:, to:, strict:)
+      def lookup_matching_domain_mapper!(from: nil, to: nil, strict: false, criteria: nil)
+        result = lookup_matching_domain_mapper(from:, to:, strict:, criteria:)
 
         result || raise(NoDomainMapperFoundError.new(from, to))
       end
 
-      def lookup_matching_domain_mapper(from: nil, to: nil, strict: false)
+      def lookup_matching_domain_mapper(from: nil, to: nil, strict: false, criteria: nil)
         candidates = mappers.select do |mapper|
+          if criteria
+            next unless criteria.call(mapper)
+          end
+
           mapper.applicable?(from, to)
         end
 

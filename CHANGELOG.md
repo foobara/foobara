@@ -1,6 +1,8 @@
 ## [0.0.37] - 2024-12-11
 
 - Make DomainMappers extend Command so they have possible errors and statefulness/a cleaner API
+- Fixup domain mapper lookups to give proper values/errors in various scenarios, particularly in the context
+  of running a subcommand
 
 ## [0.0.36] - 2024-12-10
 
