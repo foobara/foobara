@@ -19,6 +19,8 @@ build projects that are command-centric and discoverable, as well as some other 
     * [Command connectors](#command-connectors)
       * [Command-line connectors](#command-line-connectors)
       * [HTTP Command Connectors](#http-command-connectors)
+        * [Rack Connector](#rack-connector)
+        * [Rails Connector](#rails-connector)
       * [Async Command Connectors](#async-command-connectors)
       * [Scheduler Command Connectors](#scheduler-command-connectors)
   * [Intermediate Foobara](#intermediate-foobara)
@@ -696,6 +698,8 @@ Yay! Now Basil is an even more respectable 302 years old!
 
 #### HTTP Command Connectors
 
+##### Rack Connector
+
 Let's now replace our command-line connector with an HTTP connector:
 
 We'll choose a Rack connector for now:
@@ -760,6 +764,8 @@ $ curl http://localhost:9292/run/FindCapybara?id=1
 ```
 
 And now she is 101 as expected.
+
+##### Rails Connector
 
 Let's try exposing our commands through the Rails router.
 
