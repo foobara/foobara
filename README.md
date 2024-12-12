@@ -26,11 +26,13 @@
       * [Runtime Errors](#runtime-errors)
   * [Advanced Foobara](#advanced-foobara)
     * [Domain Mappers](#domain-mappers)
+    * [Types](#types-1)
+      * [Builtin types](#builtin-types)
+      * [Custom types](#custom-types)
     * [Code Generators](#code-generators)
       * [Generating a new Foobara Ruby project](#generating-a-new-foobara-ruby-project)
       * [Generating a new Foobara Typescript/React project](#generating-a-new-foobara-typescriptreact-project)
-      * [Geerating commands, models, entities, types, domains, organizations, etc...](#geerating-commands-models-entities-types-domains-organizations-etc)
-    * [Custom types](#custom-types)
+      * [Generating commands, models, entities, types, domains, organizations, etc...](#generating-commands-models-entities-types-domains-organizations-etc)
   * [Expert Foobara](#expert-foobara)
     * [Callbacks](#callbacks)
     * [Transactions in Commands](#transactions-in-commands)
@@ -458,73 +460,7 @@ Here, we added an InMemory CRUD driver and set it as the default. This lets us w
 
 An entity is like a model except it has a primary key and can be written/read to/from a data store using a CRUD driver.
 
-In fact, `entity` inherits `model`. We could look at the hierarchy of Capybara with the following hack:
-
-```ruby
-def print_type_inheritance(type)
-  types = Enumerator.produce(type, &:base_type).take_while { |t| !t.nil? }
-  Foobara::Util.print_tree(types, to_parent: :base_type, to_name: :name)
-end
-
-capybara_type = Foobara.foobara_lookup(:Capybara)
-print_type_inheritance(capybara_type)
-```
-
-Which gives us:
-
-```irb
-
-* def print_type_inheritance(type)
-*   types = Enumerator.produce(type, &:base_type).take_while { |t| !t.nil? }
-*   Foobara::Util.print_tree(types, to_parent: :base_type, to_name: :name)
-> end
-==> :print_type_inheritance
-> capybara_type = Foobara.foobara_lookup(:Capybara)
-==> #<Type:Capybara:0x88b8 {:type=>:model, :name=>"Capybara", :model_class=>"Capybara", :model_base_class=>"Foobara::Model", :attributes_declaration=>{:typ...
-> print_type_inheritance(capybara_type)
-> print_type_inheritance(capybara_type)
-╭──────╮
-│ duck │
-╰──┬───╯
-   │ ╭─────────────╮
-   └─┤ atomic_duck │
-     ╰──────┬──────╯
-            │ ╭───────╮
-            └─┤ model │
-              ╰───┬───╯
-                  │ ╭────────╮
-                  └─┤ entity │
-                    ╰───┬────╯
-                        │ ╭──────────╮
-                        └─┤ Capybara │
-                          ╰──────────╯
-```
-
-While we're in here we could look at another type, like Capybara's attributes type
-
-```irb
-> print_type_inheritance(Capybara.attributes_type)
-╭──────╮
-│ duck │
-╰──┬───╯
-   │ ╭──────────╮
-   └─┤ duckture │
-     ╰────┬─────╯
-          │ ╭───────────────────╮
-          └─┤ associative_array │
-            ╰─────────┬─────────╯
-                      │ ╭────────────╮
-                      └─┤ attributes │
-                        ╰─────┬──────╯
-                              │ ╭────────────────────────────────╮
-                              └─┤ Anonymous attributes extension │
-                                ╰────────────────────────────────╯
-
-```
-
-Whoa... this is supposed to be Foobara 101... let's get back to basics.
-
-Let's make a basic CreateCapybara command:
+Let's make a CreateCapybara command that creates a Capybara record for us:
 
 ```ruby
 class CreateCapybara < Foobara::Command
@@ -1502,17 +1438,125 @@ $ ./animal_house_import.rb
 ==> 1025
 ```
 
+Great! Notice how we have avoided putting pieces of the AnimalHouse mental model in our ImportAnimal command which
+is part of the CapyCafe mental model.  Even pieces of error-handling/validation could be moved out using domain mappers
+as we've done here.
+
+And we can even discover that an error might occur when running the command:
+
+```irb
+> FoobaraDemo::CapyCafe::ImportAnimal.possible_errors.map(&:key).map(&:to_s).grep /not_a/
+==> ["foobara_demo::capy_cafe::domain_mappers::map_animal_to_capybara>runtime.not_a_capybara"]
+```
+
+This is pretty nice because it means that tooling/external systems can discover and make use of these errors!  This
+again helps with abstracting away integration code and putting the spotlight on implementing the actual
+problem/solution domain.
+
+Let's actually go ahead and cause NotACapybara error:
+
+```irb
+> outcome = FoobaraDemo::CapyCafe::ImportAnimal.run(animal: { species: :tartigrade, first_name: "Tara", last_name: "Tigrade", birthday: "1000-01-01" })
+==>
+#<Foobara::Outcome:0x00007fc310fb2c98
+...
+> outcome.errors_sentence
+==> "Can only import a capybara not a tartigrade"
+```
+
+### Types
+
+#### Builtin types
+
+Foobara comes with a number of builtin types. Let's see what they are with this little hack:
+
+```irb
+> Foobara::Util.print_tree(Foobara::Namespace.global.foobara_all_type, to_parent: :base_type, to_name: :full_type_name)
+╭──────╮
+│ duck │
+╰──┬───╯
+   │ ╭─────────────╮
+   ├─┤ atomic_duck │
+   │ ╰──────┬──────╯
+   │        │ ╭─────────╮
+   │        ├─┤ boolean │
+   │        │ ╰─────────╯
+   │        │ ╭──────╮
+   │        ├─┤ date │
+   │        │ ╰──────╯
+   │        │ ╭──────────╮
+   │        ├─┤ datetime │
+   │        │ ╰──────────╯
+   │        │ ╭───────╮
+   │        ├─┤ model │
+   │        │ ╰───┬───╯
+   │        │     │ ╭──────────────────────────────────╮
+   │        │     ├─┤ FoobaraDemo::AnimalHouse::Animal │
+   │        │     │ ╰──────────────────────────────────╯
+   │        │     │ ╭─────────────────╮
+   │        │     └─┤ detached_entity │
+   │        │       ╰────────┬────────╯
+   │        │                │ ╭─────────────────────────────────╮
+   │        │                ├─┤ FoobaraDemo::CapyCafe::Capybara │
+   │        │                │ ╰─────────────────────────────────╯
+   │        │                │ ╭────────╮
+   │        │                └─┤ entity │
+   │        │                  ╰────────╯
+   │        │ ╭────────╮
+   │        ├─┤ number │
+   │        │ ╰───┬────╯
+   │        │     │ ╭─────────────╮
+   │        │     ├─┤ big_decimal │
+   │        │     │ ╰─────────────╯
+   │        │     │ ╭───────╮
+   │        │     ├─┤ float │
+   │        │     │ ╰───────╯
+   │        │     │ ╭─────────╮
+   │        │     └─┤ integer │
+   │        │       ╰─────────╯
+   │        │ ╭────────╮
+   │        ├─┤ string │
+   │        │ ╰───┬────╯
+   │        │     │ ╭───────╮
+   │        │     └─┤ email │
+   │        │       ╰───────╯
+   │        │ ╭────────╮
+   │        └─┤ symbol │
+   │          ╰────────╯
+   │ ╭──────────╮
+   └─┤ duckture │
+     ╰────┬─────╯
+          │ ╭───────╮
+          ├─┤ array │
+          │ ╰───┬───╯
+          │     │ ╭───────╮
+          │     └─┤ tuple │
+          │       ╰───────╯
+          │ ╭───────────────────╮
+          └─┤ associative_array │
+            ╰─────────┬─────────╯
+                      │ ╭────────────╮
+                      └─┤ attributes │
+                        ╰────────────╯
+```
+
+Obviously Capybara and Animal are not builtin types but you get the point.
+
+#### Custom types
+
 TODO
 
 ### Code Generators
 
 #### Generating a new Foobara Ruby project
-#### Generating a new Foobara Typescript/React project
-#### Generating commands, models, entities, types, domains, organizations, etc...
 
 TODO
 
-### Custom types
+#### Generating a new Foobara Typescript/React project
+
+TODO
+
+#### Generating commands, models, entities, types, domains, organizations, etc...
 
 TODO
 
