@@ -1,13 +1,17 @@
+Foobara is a software framework with a focus on projects that have
+a complicated business domain. It accomplishes this by helping to
+build projects that are command-centric and discoverable, as well as some other features that aid in the mission.
+
 <!-- TOC -->
-* [What is/Why Foobara?](#what-iswhy-foobara)
-  * [Commands](#commands)
+* [Overview of Features/Concepts/Goals](#overview-of-featuresconceptsgoals)
+  * [Command-centric](#command-centric)
   * [Discoverability](#discoverability)
   * [Implications of command-centric + discoverability](#implications-of-command-centric--discoverability)
   * [Other features for helping with Domain complexity](#other-features-for-helping-with-domain-complexity)
 * [Installation](#installation)
 * [Usage/Tutorial](#usagetutorial)
   * [Foobara 101](#foobara-101)
-    * [Commands](#commands-1)
+    * [Commands](#commands)
     * [Organizations and Domains](#organizations-and-domains)
     * [Types](#types)
     * [Models](#models)
@@ -49,13 +53,9 @@
 * [Licensing](#licensing)
 <!-- TOC -->
 
-# What is/Why Foobara?
+# Overview of Features/Concepts/Goals
 
-Foobara is a software framework meant to help with projects that have
-a complicated business domain. It accomplishes this by helping to
-build projects that are command-centric and discoverable, as well as some other features.
-
-## Commands
+## Command-centric
 
 * Foobara commands are meant to encapsulate high-level domain operations.
 * They serve as the public interface to Foobara systems/subsystems.
