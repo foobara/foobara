@@ -825,11 +825,163 @@ This has the same effect as the previous code and is just a stylistic alternativ
 
 #### Async Command Connectors
 
-TODO
+Let's connect a command to some sort of async job solution. We'll connect our IncrementAge command to Resque:
+
+```ruby
+require "foobara/resque_connector"
+
+async_connector = Foobara::CommandConnectors::ResqueConnector.new
+
+async_connector.connect(IncrementAge)
+```
+
+This gives us a new command called IncrementAgeAsync.  Let's expose this new command to our CLI connector and try
+it out on the command line:
+
+```ruby
+
+require "foobara/resque_connector"
+
+async_connector = Foobara::CommandConnectors::ResqueConnector.new
+
+async_connector.connect(IncrementAge)
+
+require "foobara/sh_cli_connector"
+
+cli_connector = Foobara::CommandConnectors::ShCliConnector.new
+
+cli_connector.connect(IncrementAge)
+cli_connector.connect(IncrementAgeAsync)
+cli_connector.connect(FindCapybara)
+
+cli_connector.run(ARGV)
+```
+
+And now let's call it:
+
+```
+$ ./part_5b_async_command_connector.rb FindCapybara --id 1 | grep age
+age: 100
+$ ./part_5a_async_command_connector.rb IncrementAgeAsync --capybara 1
+true
+$ /part_5b_async_command_connector.rb FindCapybara --id 1 | grep age
+age: 100
+```
+
+So we can see that we only got back "true" when we ran IncrementAgeAsync. But the age still hasn't gone up.
+This is because we're not running a worker. Normally, one would fire up a worker on the command line with
+`rake resque:work`, however, we will just hack something up so we can stay within one script.  We normally wouldn't
+make such a hack in a real project with multiple files.  But here's our hack:
+
+```ruby
+...
+
+require "foobara/resque_connector"
+
+async_connector = Foobara::CommandConnectors::ResqueConnector.new
+
+async_connector.connect(IncrementAge)
+
+require "foobara/sh_cli_connector"
+
+cli_connector = Foobara::CommandConnectors::ShCliConnector.new
+
+cli_connector.connect(IncrementAge)
+cli_connector.connect(IncrementAgeAsync)
+cli_connector.connect(FindCapybara)
+
+if ARGV == ["work"]
+  worker = Resque::Worker.new("*")
+  worker.verbose = true
+  worker.work(1)
+else
+  cli_connector.run(ARGV)
+end
+```
+
+So now we can run it with just "work" to fire up a worker and process our async jobs:
+
+```
+$ ./part_5b_async_command_connector.rb work
+*** got: (Job{general} | Foobara::CommandConnectors::ResqueConnector::CommandJob | [{"command_name"=>"IncrementAge", "inputs"=>{"capybara"=>"1"}}])
+*** done: (Job{general} | Foobara::CommandConnectors::ResqueConnector::CommandJob | [{"command_name"=>"IncrementAge", "inputs"=>{"capybara"=>"1"}}])
+```
+
+And now let's check Fumiko's age:
+
+```
+$ /part_5b_async_command_connector.rb FindCapybara --id 1 | grep age
+age: 101
+```
+
+Cool! We asynchronously ran our IncrementAge command and we did it without writing a Resque job!  That's cool
+because it means we can't accidentally place domain logic in our job code because there is no job code.
 
 #### Scheduler Command Connectors
 
-TODO
+Let's connect a command to a scheduler now. We will use resque-scheduler in this example:
+
+```ruby
+require "foobara/resque_scheduler_connector"
+
+cron_connector = Foobara::CommandConnectors::ResqueSchedulerConnector.new
+
+cron_connector.cron(
+  [
+    #   ╭─Second (0-59)
+    #   │ ╭─Minute (0-59)
+    #   │ │ ╭─Hour (0-23)
+    #   │ │ │ ╭─Day-of-Month (1-31)
+    #   │ │ │ │ ╭─Month (1-12)
+    #   │ │ │ │ │ ╭─Day-of-Week (0-6)
+    #   │ │ │ │ │ │ ╭─Timezone
+    #   │ │ │ │ │ │ │   ╭─Command,      ╭─Inputs
+    ["*/5 * * * * *  ", IncrementAge, { capybara: 1 }]
+  ]
+)
+```
+
+We could connect IncrementAge to our connector and that would give us a IncrementAgeAsyncAt command which takes a time
+when we want the command to be ran. But in this example we will make a recurring job. We will increment Fumiko's age
+every 5 seconds.  That's 6307200 birthdays a year for the curious (moar in leap years.)
+
+We will expand our hack to fire up a scheduler in a separate thread:
+
+```ruby
+...
+
+if ARGV == ["work"]
+  Thread.new do
+    Resque::Scheduler.verbose = true
+    Resque::Scheduler.run
+  end
+
+  worker = Resque::Worker.new("*")
+  worker.verbose = true
+  worker.work(1)
+else
+  cli_connector.run(ARGV)
+end
+```
+
+Now when we run it with just "work" we see the scheduler start:
+
+```
+$ ./part_6_scheduler_command_connector.rb work
+resque-scheduler: [INFO] 2024-12-12T14:47:41-08:00: Starting
+resque-scheduler: [DEBUG] 2024-12-12T14:47:41-08:00: Setting procline "resque-scheduler-4.10.2: Starting"
+resque-scheduler: [DEBUG] 2024-12-12T14:47:41-08:00: Setting procline "resque-scheduler-4.10.2: Schedules Loaded"
+```
+
+And every 5 seconds we see it outputting:
+
+```
+resque-scheduler: [INFO] 2024-12-12T14:47:45-08:00: queueing Foobara::CommandConnectors::ResqueConnector::CommandJob (IncrementAge)
+*** got: (Job{general} | Foobara::CommandConnectors::ResqueConnector::CommandJob | [{"command_name"=>"IncrementAge", "inputs"=>{"capybara"=>1}}])
+*** done: (Job{general} | Foobara::CommandConnectors::ResqueConnector::CommandJob | [{"command_name"=>"IncrementAge", "inputs"=>{"capybara"=>1}}])
+```
+
+And if we check Fumiko's age like before we see it going up every 5 seconds.
 
 ## Intermediate Foobara
 
@@ -935,7 +1087,6 @@ Let's create a command that calls another. Remember our `Add` command from earli
 Let's implement a contrived Subtract command that is implemented using Add:
 
 ```ruby
-
 class Subtract < Foobara::Command
   inputs do
     operand1 :integer, :required
@@ -1167,7 +1318,7 @@ class Divide < Foobara::Command
       "Cannot divide by zero"
     end
   end
-  
+
   possible_input_error :divisor, DivideByZeroError
 ```
 
