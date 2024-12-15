@@ -2,6 +2,9 @@ Foobara is a software framework with a focus on projects that have
 a complicated business domain. It accomplishes this by helping to
 build projects that are command-centric and discoverable, as well as some other features that aid in the mission.
 
+You can watch a video that gives a good overview of what Foobara is and its goals here:
+[Introduction to the Foobara software framework](https://youtu.be/SSOmQqjNSVY)
+
 <!-- TOC -->
 * [Overview of Features/Concepts/Goals](#overview-of-featuresconceptsgoals)
   * [Command-centric](#command-centric)
@@ -38,16 +41,15 @@ build projects that are command-centric and discoverable, as well as some other 
     * [Code Generators](#code-generators)
       * [Generating a new Foobara Ruby project](#generating-a-new-foobara-ruby-project)
       * [Generating a new Foobara Typescript/React project](#generating-a-new-foobara-typescriptreact-project)
-      * [Generating commands, models, entities, types, domains, organizations, etc...](#generating-commands-models-entities-types-domains-organizations-etc)
   * [Expert Foobara](#expert-foobara)
     * [Callbacks](#callbacks)
     * [Transactions in Commands](#transactions-in-commands)
     * [Transactions in tests/console](#transactions-in-testsconsole)
     * [Custom crud drivers](#custom-crud-drivers)
     * [Custom command connectors](#custom-command-connectors)
-    * [Value processors](#value-processors)
     * [Custom types from scratch](#custom-types-from-scratch)
     * [Namespaces](#namespaces)
+    * [Value processors](#value-processors)
 * [Additional learning materials/Documentation](#additional-learning-materialsdocumentation)
 * [Contributing](#contributing)
   * [Developing locally](#developing-locally)
@@ -126,6 +128,9 @@ Let's explore various Foobara concepts with some code examples!
 
 ## Foobara 101
 
+NOTE: We will create various scripts for the first parts of these tutorials but normally we'd generate a project, which
+will be covered later in the tutorial.
+
 ### Commands
 
 Foobara commands are meant to encapsulate high-level domain operations and are meant
@@ -180,7 +185,7 @@ Let's play with it!
 
 We can run our Add command several ways. First, let's create an instance of it and call the #run method:
 
-```irb
+```
 $ ./add.rb
 > command = Add.new(operand1: 2, operand2: 5)
 ==> #<Add:0xad20 @raw_inputs={:operand1=>2, :operand2=>5}, @error_collectio...
@@ -197,7 +202,7 @@ we can also get the result with #result and errors with #errors and other helper
 
 We can also just run it with .run without creating an instance:
 
-```irb
+```
 > outcome = Add.run(operand1: 2, operand2: 5)
 ==> #<Foobara::Outcome:0x00007ffbcc641318...
 > outcome.success?
@@ -208,14 +213,14 @@ We can also just run it with .run without creating an instance:
 
 And we can use .run! if we want just the result or an exception raised:
 
-```irb
+```
 > Add.run!(operand1: 2, operand2: 5)
 ==> 7
 ```
 
 Let's cause some errors!
 
-```irb
+```
 > outcome = Add.run(operand1: "foo", operand2: 5)
 ==> #<Foobara::Outcome:0x00007ffbcc60aea8...
 > outcome.success?
@@ -226,7 +231,7 @@ At operand1: Cannot cast "foo" to an integer. Expected it to be a Integer, or be
 
 Here we used something that wasn't castable to an integer.
 
-```irb
+```
 > outcome = Add.run
 ==> #<Foobara::Outcome:0x00007ffbcb9d97b0...
 > outcome.success?
@@ -280,7 +285,7 @@ The typical way of putting commands and other Foobara concepts into a domain is 
 
 We can play a bit with our new domain:
 
-```irb
+```
 > IntegerMath.foobara_command_classes
 ==> [IntegerMath::Add]
 > IntegerMath.foobara_lookup(:Add)
@@ -325,7 +330,7 @@ end
 
 And we can play with our Organization:
 
-```irb
+```
 > FoobaraExamples.foobara_domains
 ==> [FoobaraExamples::IntegerMath]
 ```
@@ -413,7 +418,7 @@ end
 
 Let's increment some ages!
 
-```irb
+```
 > barbara = Capybara.new(name: "Barbara", age: 200, nickname: "bar")
 ==> #<Capybara:0x00007f0ac121dbf8 @attributes={:name=>"Barbara", :age=>200, :nickname=>"bar"}, @mutable=true>
 > barbara.age
@@ -428,7 +433,7 @@ Here we incremented Barbara's age.
 
 Check this out though...
 
-```ruby
+```
 > basil = IncrementAge.run!(capybara: { name: "Basil", age: 300, nickname: "baz" })
 ==> #<Capybara:0x00007f0ac1295f40 @attributes={:name=>"Basil", :age=>301, :nickname=>"baz"}, @mutable=true>
 > basil.age
@@ -511,7 +516,7 @@ end
 
 And now let's create some Capybara records and manipulate them:
 
-```ruby
+```
 > fumiko = CreateCapybara.run!(name: "Fumiko", nickname: "foo", age: 100)
 ==> <Capybara:1>
 > barbara = CreateCapybara.run!(name: "Barbara", nickname: "bar", age: 200)
@@ -535,8 +540,8 @@ We were able to increment Basil's age using his primary key and we were also abl
 But there is a problem... Basil's record won't be persisted across runs of our script.  That's because it is stored in
 ephemeral memory. Let's instead persist it to a file. Let's install a file crud driver:
 
-```bash
-> gem install foobara-local-files-crud-driver
+```
+$ gem install foobara-local-files-crud-driver
 ```
 
 And now let's swap out the InMemory crud driver with our file crud driver:
@@ -550,7 +555,7 @@ Foobara::Persistence.default_crud_driver = crud_driver
 
 Now let's create our records again and look at them on disk:
 
-```irb
+```
 > CreateCapybara.run!(name: "Fumiko", nickname: "foo", age: 100)
 ==> <Capybara:1>
 > CreateCapybara.run!(name: "Barbara", nickname: "bar", age: 200)
@@ -581,7 +586,7 @@ capybara:
 
 Great! Now let's re-run our script and manipulate some data:
 
-```irb
+```
 > basil = FindCapybara.run!(id: 3)
 ==> <Capybara:3>
 > basil.age
@@ -596,7 +601,7 @@ We were able to find Basil in a fresh run of our script!
 
 Let's find Basil again in another fresh run:
 
-```irb
+```
 > basil = FindCapybara.run!(id: 3)
 ==> <Capybara:3>
 > basil.age
@@ -613,7 +618,7 @@ Command connectors allow us to expose our commands to the outside world using va
 
 Let's install a command-line connector for bash:
 
-```bash
+```
 gem install foobara-sh-cli-connector
 ```
 
@@ -636,7 +641,7 @@ And either rename the script to capy-cafe or symlink it.
 
 Now let's run our script again:
 
-```irb
+```
 $ ./capy-cafe
 Usage: capy-cafe [GLOBAL_OPTIONS] [ACTION] [COMMAND_OR_TYPE] [COMMAND_INPUTS]
 
@@ -756,7 +761,7 @@ Yay!  We found Fumiko!
 
 Let's celebrate her birthday:
 
-```ruby
+```
 $ curl http://localhost:9292/run/IncrementAge?capybara=1
 {"id":1,"name":"Fumiko","nickname":"foo","age":101}
 $ curl http://localhost:9292/run/FindCapybara?id=1
@@ -771,7 +776,7 @@ Let's try exposing our commands through the Rails router.
 
 We'll create an a test rails app with (you can just do --api if you are too lazy to skip all the other stuff):
 
-```ruby
+```
 gem install rails
 rails rails new --api --skip-docker --skip-asset-pipeline --skip-javascript --skip-hotwire --skip-jbuilder --skip-test --skip-brakeman --skip-kamal --skip-solid rails_test_app
 ```
@@ -994,7 +999,7 @@ Let's take a quick look at some metadata in our existing systems.
 
 Let's for example ask our Capybara entity for its manifest:
 
-```irb
+```
 > Capybara.foobara_manifest
 ==>
 {:attributes_type=>
@@ -1016,14 +1021,14 @@ Let's for example ask our Capybara entity for its manifest:
 
 Let's ask our Rack connector for a list of commands it exposes:
 
-```irb
+```
 > command_connector.foobara_manifest[:command].keys
 ==> [:CreateCapybara, :FindCapybara, :IncrementAge]
 ```
 
 We can see all the different categories of concepts available by looking at the top-level keys:
 
-```irb
+```
 > puts command_connector.foobara_manifest.keys.sort
 command
 domain
@@ -1121,7 +1126,7 @@ dependency graph of commands.
 
 Let's play with it:
 
-```ruby
+```
 > Subtract.run!(operand1: 5, operand2: 2)
 ==> 3
 ```
@@ -1130,7 +1135,7 @@ We get the answer we expected!
 
 A little bit advanced but let's look at the possible errors for Subtract:
 
-```irb
+```
 > Subtract.possible_errors.map(&:key).map(&:to_s).sort
 ==>
 ["add>data.cannot_cast",
@@ -1247,7 +1252,7 @@ operation entails at a high-level.
 
 Let's play with it:
 
-```irb
+```
 > Divide.run!(dividend: 6, divisor: 7)
 ==> 0
 > Divide.run!(dividend: 8, divisor: 7)
@@ -1272,29 +1277,29 @@ This is one way we can express a custom error for associated with a specific inp
 
 Let's try it out!
 
-```irb
+```
 > outcome = Divide.run(dividend: 49, divisor: 0)
 ==> #<Foobara::Outcome:0x00007f504d178e38...
         > outcome.success?
 ==> false
 > outcome.errors_hash
 ==>
-        {"data.divisor.divide_by_zero"=>
-                 {:key=>"data.divisor.divide_by_zero",
-                  :path=>[:divisor],
-                  :runtime_path=>[],
-                  :category=>:data,
-                  :symbol=>:divide_by_zero,
-                  :message=>"Cannot divide by zero",
-                  :context=>{},
-                  :is_fatal=>false}}
+{"data.divisor.divide_by_zero"=>
+  {:key=>"data.divisor.divide_by_zero",
+   :path=>[:divisor],
+   :runtime_path=>[],
+   :category=>:data,
+   :symbol=>:divide_by_zero,
+   :message=>"Cannot divide by zero",
+   :context=>{},
+   :is_fatal=>false}}
 > outcome.errors_sentence
 ==> "Cannot divide by zero"
 ```
 
 And we can see the error in the command's list of possible errors:
 
-```irb
+```
 > Divide.possible_errors.map(&:key).map(&:to_s).grep /zero/
 ==> ["data.divisor.divide_by_zero"]
 ```
@@ -1302,7 +1307,7 @@ And we can see the error in the command's list of possible errors:
 And of course, as expected, tooling has access to information about this error and the command's possible error through manifest
 metadata:
 
-```irb
+```
 > Foobara.manifest[:command][:Divide][:possible_errors]["data.divisor.divide_by_zero"][:error]
 ==> "Divide::DivideByZeroError"
 > Foobara.manifest[:error][:"Divide::DivideByZeroError"][:parent]
@@ -1350,7 +1355,7 @@ class Divide < Foobara::Command
 
 And let's try it out:
 
-```irb
+```
 > outcome = Divide.run(dividend: 49, divisor: 0)
 ==> #<Foobara::Outcome:0x00007f030fe3b8b8...
 > outcome.success?
@@ -1515,7 +1520,7 @@ distribution changes.
 Normally, we wouldn't make use of a domain mapper in isolation. Like everything else, it should be used in the context
 of a command. But we can play with it directly:
 
-```irb
+```
 $ ./animal_house_import.rb
 > create_capybara_inputs = FoobaraDemo::CapyCafe::DomainMappers::MapAnimalToCapybara.map!(species: :capybara, first_name: "Barbara", last_name: "Doe", birthday: "1000-01-01")
 ==> {:name=>"Barbara Doe", :age=>1024}
@@ -1531,15 +1536,6 @@ Now let's make use of our domain mapper in a command, which is its intended purp
 
 ```ruby
 
-```
-
-```irb
-> FoobaraDemo::CapyCafe::IncrementAge.run!(capybara: barbara)
-==> <Capybara:2>
-> FoobaraDemo::CapyCafe::FindCapybara.run!(id: barbara)
-==> <Capybara:2>
-> FoobaraDemo::CapyCafe::FindCapybara.run!(id: barbara).age
-==> 1025
 ```
 
 Now let's create a command that makes use of our domain mapper which is the typical usage pattern:
@@ -1583,8 +1579,8 @@ Note that we can automatically map `animal` to CreateCapybara inputs by calling 
 
 Let's play with it:
 
-```irb
-$ ./animal_house_import.rb 
+```
+$ ./animal_house_import.rb
 > basil = FoobaraDemo::CapyCafe::ImportAnimal.run!(animal: { species: :capybara, first_name: "Basil", last_name: "Doe", birthday: "1000-01-01" })
 ==> <Capybara:3>
 > FoobaraDemo::CapyCafe::FindCapybara.run!(id: basil).age
@@ -1601,7 +1597,7 @@ as we've done here.
 
 And we can even discover that an error might occur when running the command:
 
-```irb
+```
 > FoobaraDemo::CapyCafe::ImportAnimal.possible_errors.map(&:key).map(&:to_s).grep /not_a/
 ==> ["foobara_demo::capy_cafe::domain_mappers::map_animal_to_capybara>runtime.not_a_capybara"]
 ```
@@ -1612,7 +1608,7 @@ problem/solution domain.
 
 Let's actually go ahead and cause NotACapybara error:
 
-```irb
+```
 > outcome = FoobaraDemo::CapyCafe::ImportAnimal.run(animal: { species: :tartigrade, first_name: "Tara", last_name: "Tigrade", birthday: "1000-01-01" })
 ==>
 #<Foobara::Outcome:0x00007fc310fb2c98
@@ -1627,7 +1623,7 @@ Let's actually go ahead and cause NotACapybara error:
 
 Foobara comes with a number of builtin types. Let's see what they are with this little hack:
 
-```irb
+```
 > Foobara::Util.print_tree(Foobara::Namespace.global.foobara_all_type, to_parent: :base_type, to_name: :full_type_name)
 ╭──────╮
 │ duck │
@@ -1701,55 +1697,338 @@ Obviously Capybara and Animal are not builtin types but you get the point.
 
 #### Custom types
 
-TODO
+Let's have a capybara diving competition. Which means we need judges. So let's create a new domain,
+`CapybaraDivingCompetition`, and a new entity, `Judge`:
+
+```ruby
+module FoobaraDemo
+  module CapybaraDivingCompetition
+    foobara_domain!
+
+    depends_on CapyCafe
+
+    class Judge < Foobara::Model
+      attributes do
+        email :string
+        favorite_diver CapyCafe::Capybara, :allow_nil
+      end
+    end
+  end
+end
+```
+
+So we have an email to identify the judge and which diver is their favorite.
+But wait... there's an age-old problem... email addresses are case-insensitive. One way to solve this is to make
+sure to downcase the emails whenever we receive them anywhere in the app. If we don't want to worry about that, we
+can just make that behavior be part of the type itself:
+
+```ruby
+...
+    class Judge < Foobara::Model
+      attributes do
+        email :string, :downcase
+...
+```
+
+Here we are using a downcase transformer. This will always downcase the value everywhere.
+
+Let's go ahead and a validator while we're at it because why not?
+
+```ruby
+...
+    class Judge < Foobara::Model
+      attributes do
+        email :string, :downcase, matches: /\A[^@]+@[^@]+\.[^@]+\z/
+...
+```
+
+OK let's play with this really quickly:
+
+```
+$ ./part_1c_custom_types.rb
+> judge = FoobaraDemo::CapybaraDivingCompetition::Judge.new(email: "ASDF@asdf.com")
+==> #<FoobaraDemo::CapybaraDivingCompetition::Judge:0x00007f780b978418 @attributes={:email=>"asdf@asdf.com"}, @mutable=true>
+> judge.valid?
+==> true
+> judge.email
+==> "asdf@asdf.com"
+> judge = FoobaraDemo::CapybaraDivingCompetition::Judge.new(email: "asdf.com")
+==> #<FoobaraDemo::CapybaraDivingCompetition::Judge:0x00007f780ba3cb88 @attributes={:email=>"asdf.com"}, @mutable=true>
+> judge.valid?
+==> false
+> judge.validation_errors.first.to_h
+==>
+{:key=>"data.email.does_not_match",
+ :path=>[:email],
+ :runtime_path=>[],
+ :category=>:data,
+ :symbol=>:does_not_match,
+ :message=>"\"asdf.com\" did not match /\\A[^@]+@[^@]+\\.[^@]+\\z/",
+ :context=>{:value=>"asdf.com", :regex=>"(?-mix:\\A[^@]+@[^@]+\\.[^@]+\\z)"},
+ :is_fatal=>false}
+```
+
+So we can see that our email was automatically downcased. We can also see that if we leave out @ we get an error.
+
+But what if we want to use this type all over the place? It would be not great to copy/paste it around because,
+for example, it would be nice to improve the validation error message. Do we want to find/fix all its usages when we
+do that?
+
+Instead, we can create a custom type and use it:
+
+```ruby
+    class Judge < Foobara::Model
+      email_address_type = domain.foobara_type_from_declaration(:string, :downcase, matches: /\A[^@]+@[^@]+\.[^@]+\z/)
+
+      attributes do
+        email email_address_type, :required
+      end
+    end
+```
+
+However, it is better to register it on the domain. Then it can be used by name and will appear in the manifests
+by name. So let's do that:
+
+```ruby
+module FoobaraDemo
+  module CapybaraDivingCompetition
+    foobara_domain!
+
+    depends_on CapyCafe
+
+    foobara_register_type :email_address, :string, :downcase, matches: /\A[^@]+@[^@]+\.[^@]+\z/
+
+    class Judge < Foobara::Model
+      attributes do
+        email :email_address, :required
+        favorite_diver CapyCafe::Capybara, :allow_nil
+      end
+    end
+  end
+end
+```
 
 ### Code Generators
 
+There are a number of code generators we can use that are available through the foob CLI tool. Let's install it:
+
+```
+$ gem install foob
+```
+
 #### Generating a new Foobara Ruby project
 
-TODO
+We've been piling our code into one script so far but out in the real world we would need to organize different
+code units into different files into directories with some sort of project structure to it.
+
+We can use foob to generate a project with such a structure:
+
+```
+$ foob generate ruby-project --name foobara-demo/capybara-diving-competition
+```
+
+Let's generate a bunch of the code we've written so far in this demo. We can see all of the available generators
+by running:
+
+```
+$ foob g
+Usage: foob generate [GENERATOR_KEY] [GENERATOR_OPTIONS]
+
+Available Generators:
+
+autocrud
+command
+domain
+domain-mapper
+organization
+rack-connector
+redis-crud-driver
+remote-imports
+resque-connector
+resque-scheduler-connector
+ruby-project
+sh-cli-connector
+type
+typescript-react-command-form
+typescript-react-project
+typescript-remote-commands
+```
+
+We can get help for a specific generator with `foob help [GENERATOR_NAME]`.  For example:
+
+```
+$ foob help type
+Usage: foob [GLOBAL_OPTIONS] type [COMMAND_INPUTS]
+
+Command inputs:
+
+-n, --name NAME
+-t, --type TYPE                       One of: entity, model, type. Default: :type
+-d, --description DESCRIPTION
+--domain DOMAIN
+-o, --organization ORGANIZATION
+--output-directory OUTPUT_DIRECTORY
+```
+
+So let's use these generators to generate files for various classes/modules we've created so far in this tutorial:
+
+```
+$ cd foobara-demo/capybara-diving-competition
+$ foob g domain --name FoobaraDemo::IntegerMath
+$ foob g domain --name FoobaraDemo::CapyCafe
+$ foob g type -t entity --organization FoobaraDemo --domain CapyCafe --name Capybara
+$ foob g type --organization FoobaraDemo --domain CapybaraDivingCompetition --name email_address
+$ foob g type -t entity --organization FoobaraDemo --domain CapybaraDivingCompetition --name Judge
+$ foob g command --name FoobaraDemo::IntegerMath::Add
+$ foob g command --name FoobaraDemo::IntegerMath::Subtract
+$ foob g command --name FoobaraDemo::IntegerMath::Divide
+$ foob g command --name FoobaraDemo::CapyCafe::CreateCapybara
+$ foob g command --name FoobaraDemo::CapyCafe::FindCapybara
+$ foob g command --name FoobaraDemo::CapyCafe::IncrementAge
+$ foob g sh-cli-connector --name capy-cafe
+$ foob g local-files-crud-driver
+```
+
+This results in the following directory structure:
+
+```
+$ tree -a --dirsfirst --prune --matchdirs -I '.git'
+.
+├── bin
+│   ├── capy-cafe
+│   └── console
+├── boot
+│   ├── config.rb
+│   ├── crud.rb
+│   ├── finish.rb
+│   └── start.rb
+├── .github
+│   └── workflows
+│       └── ci.yml
+├── lib
+│   └── foobara_demo
+│       └── capybara_diving_competition.rb
+├── spec
+│   ├── foobara_demo
+│   │   ├── capy_cafe
+│   │   │   ├── create_capybara_spec.rb
+│   │   │   ├── find_capybara_spec.rb
+│   │   │   └── increment_age_spec.rb
+│   │   ├── integer_math
+│   │   │   ├── add_spec.rb
+│   │   │   ├── divide_spec.rb
+│   │   │   └── subtract_spec.rb
+│   │   └── capybara_diving_competition_spec.rb
+│   ├── support
+│   │   ├── rubyprof.rb
+│   │   ├── simplecov.rb
+│   │   ├── term_trap.rb
+│   │   └── vcr.rb
+│   └── spec_helper.rb
+├── src
+│   └── foobara_demo
+│       ├── capybara_diving_competition
+│       │   └── types
+│       │       ├── email_address.rb
+│       │       └── judge.rb
+│       ├── capy_cafe
+│       │   ├── types
+│       │   │   └── capybara.rb
+│       │   ├── create_capybara.rb
+│       │   ├── find_capybara.rb
+│       │   └── increment_age.rb
+│       ├── integer_math
+│       │   ├── add.rb
+│       │   ├── divide.rb
+│       │   └── subtract.rb
+│       ├── capybara_diving_competition.rb
+│       ├── capy_cafe.rb
+│       └── integer_math.rb
+├── boot.rb
+├── foobara-demo-capybara-diving-competition.gemspec
+├── Gemfile
+├── .gitignore
+├── Guardfile
+├── Rakefile
+├── README.md
+├── .rspec
+├── .rubocop.yml
+└── version.rb
+```
 
 #### Generating a new Foobara Typescript/React project
 
-TODO
+We can generate a Typescript React project with the following generator:
 
-#### Generating commands, models, entities, types, domains, organizations, etc...
+```
+$ foob g typescript-react-project -p foobara-demo-frontend
+```
 
-TODO
+We can import remote commands into our typescript project with:
+
+```
+$ foob g typescript-remote-commands --manifest-url http://localhost:9292/manifest
+```
+
+And we can generate UI forms automatically with:
+
+```
+$ foob g typescript-react-command-form --manifest-url http://localhost:9292/manifest --command-name CreateCapybara
+```
 
 ## Expert Foobara
 
 ### Callbacks
 
-TODO
+There are several callbacks on commands that you can hook into. Also on entities.
+
+TODO: give some code examples
 
 ### Transactions in Commands
 
-TODO
+You can rollback/commit transactions in Commands. You can do this successfully even if the underlying data storage
+doesn't support transactions.
+
+TODO: give some code examples
 
 ### Transactions in tests/console
 
-TODO
+You should normally not be creating entities outside of commands. But if you find yourself wanting to, perhaps
+in a test suite or console, you can open a transaction so that you can do it.
+
+TODO: give some code examples
 
 ### Custom crud drivers
 
-TODO
+You can write your own CRUD drivers to read/write data from/to wherever you want.
+
+TODO: give some code examples/cover the CRUD driver API
 
 ### Custom command connectors
 
-TODO
+You can write your own command connectors so that you can expose commands using whatever technology you wish.
 
-### Value processors
-
-TODO
+TODO: give some code examples/cover the command connector API
 
 ### Custom types from scratch
 
-TODO
+Instead of creating new types by extending existing types with existing processors/transformers/validators, as we did
+in this tutorial with our email_address custom type,
+you can also write your own new types from scratch.
+
+TODO: give some code examples/cover the type API
 
 ### Namespaces
 
-TODO
+Several of the concepts we've explored so far are also namespaces.
+
+TODO: give some code examples
+
+### Value processors
+
+A low-level concept upon which several things like types and serializers are built in Foobara are value processors.
+
+TODO: give some code examples
 
 # Additional learning materials/Documentation
 
@@ -1776,7 +2055,7 @@ The build will fail if test coverage is below 100%
 
 You should be able to do the typical stuff:
 
-```bash
+```
 git clone git@github.com:foobara/foobara
 cd foobara
 bundle
