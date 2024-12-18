@@ -51,4 +51,26 @@ RSpec.describe Foobara::Value::Processor do
       end
     end
   end
+
+  describe ".new_with_agnostic_args" do
+    context "when requires declaration data" do
+      let(:processor_class) do
+        stub_class "SomeProcessor", described_class do
+          class << self
+            def requires_declaration_data?
+              true
+            end
+          end
+        end
+      end
+
+      context "when no declaration data provided" do
+        let(:processor) { processor_class.new_with_agnostic_args }
+
+        it "has true as its declaration data" do
+          expect(processor.declaration_data).to be true
+        end
+      end
+    end
+  end
 end

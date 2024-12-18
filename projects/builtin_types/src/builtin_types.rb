@@ -20,29 +20,50 @@ module Foobara
 
         builtin_type_module = const_get(module_symbol, false)
 
+        processor_classes_requiring_type = []
+
         casters_module = Util.constant_value(builtin_type_module, :Casters)
         caster_classes = if casters_module
                            Util.constant_values(casters_module, extends: Value::Processor)
                          end
-        casters = caster_classes&.map do |caster_class|
-          caster_class.new_with_agnostic_args(parent_declaration_data: declaration_data)
+        casters = []
+        caster_classes&.each do |caster_class|
+          if caster_class.respond_to?(:requires_type?) && caster_class.requires_type?
+            processor_classes_requiring_type << caster_class
+          else
+            casters << caster_class.new_with_agnostic_args(parent_declaration_data: declaration_data)
+          end
         end
 
         transformers_module = Util.constant_value(builtin_type_module, :Transformers)
         transformer_classes = if transformers_module
                                 Util.constant_values(transformers_module, extends: Value::Processor)
                               end
-        transformers = transformer_classes&.map do |transformer_class|
-          transformer_class.new_with_agnostic_args(parent_declaration_data: declaration_data)
-        end || []
+        transformers = []
+        transformer_classes&.each do |transformer_class|
+          if transformer_class.respond_to?(:requires_type?) && transformer_class.requires_type?
+            # :nocov:
+            processor_classes_requiring_type << transformer_class
+            # :nocov:
+          else
+            transformers << transformer_class.new_with_agnostic_args(parent_declaration_data: declaration_data)
+          end
+        end
 
         validators_module = Util.constant_value(builtin_type_module, :Validators)
         validator_classes = if validators_module
                               Util.constant_values(validators_module, extends: Value::Processor)
                             end
-        validators = validator_classes&.map do |validator_class|
-          validator_class.new_with_agnostic_args(parent_declaration_data: declaration_data)
-        end || []
+        validators = []
+        validator_classes&.each do |validator_class|
+          if validator_class.respond_to?(:requires_type?) && validator_class.requires_type?
+            # :nocov:
+            processor_classes_requiring_type << validator_class
+            # :nocov:
+          else
+            validators << validator_class.new_with_agnostic_args(parent_declaration_data: declaration_data)
+          end
+        end
 
         type = Foobara::Types::Type.new(
           declaration_data,
@@ -54,7 +75,8 @@ module Foobara
           # TODO: this is for controlling casting or not casting but could give the wrong information from a
           # reflection point of view...
           target_classes:,
-          description:
+          description:,
+          processor_classes_requiring_type:
         )
 
         add_builtin_type(type)

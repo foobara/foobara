@@ -25,7 +25,8 @@ module Foobara
                     :raw_declaration_data,
                     :name,
                     :target_classes,
-                    :description
+                    :description,
+                    :processor_classes_requiring_type
       attr_reader :type_symbol
 
       def initialize(
@@ -41,6 +42,7 @@ module Foobara
         element_type: nil,
         element_types: nil,
         structure_count: nil,
+        processor_classes_requiring_type: nil,
         **opts
       )
         self.base_type = base_type
@@ -56,10 +58,55 @@ module Foobara
         self.element_type = element_type
         self.name = name
         self.target_classes = Util.array(target_classes)
+        self.processor_classes_requiring_type = processor_classes_requiring_type
 
         super(*, **opts.merge(processors:, prioritize: false))
 
+        apply_all_processors_needing_type!
+
         validate_processors!
+      end
+
+      def apply_all_processors_needing_type!
+        each_processor_class_requiring_type do |processor_class|
+          # TODO: is this a smell?
+          processor = processor_class.new(self)
+
+          category = case processor
+                     when Value::Caster
+                       casters
+                     when Value::Validator
+                       # :nocov:
+                       validators
+                       # :nocov:
+                     when Value::Transformer
+                       # :nocov:
+                       transformers
+                       # :nocov:
+                     when Types::ElementProcessor
+                       # :nocov:
+                       element_processors
+                       # :nocov:
+                     else
+                       # TODO: add validator that these are all fine so we don't have to bother here...
+                       # :nocov:
+                       raise "Not sure where to put #{processor}"
+                       # :nocov:
+                     end
+
+          symbol = processor.symbol
+          category.delete_if { |p| p.symbol == symbol }
+
+          category << processor
+        end
+      end
+
+      def each_processor_class_requiring_type(&block)
+        base_type&.each_processor_class_requiring_type(&block)
+
+        processor_classes_requiring_type&.each do |processor_class|
+          block.call(processor_class)
+        end
       end
 
       def validate_processors!

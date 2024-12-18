@@ -13,6 +13,7 @@ module Foobara
                 type = outcome.result
                 entity_class = type.target_class
 
+                # TODO: is this duplicated??
                 unless entity_class.primary_key_attribute
                   entity_class.primary_key(strict_declaration_type[:primary_key])
                 end

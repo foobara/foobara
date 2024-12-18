@@ -7,6 +7,10 @@ module Foobara
             def requires_parent_declaration_data?
               true
             end
+
+            def requires_declaration_data?
+              false
+            end
           end
 
           def always_applicable?

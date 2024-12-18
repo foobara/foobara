@@ -16,7 +16,7 @@ module Foobara
           # TODO: create declaration validator for name and the others
           # TODO: seems like a smell that we don't have processors for these?
           def non_processor_keys
-            [:name, :model_class, :model_base_class, :model_module, :attributes_declaration, :mutable, *super]
+            [:name, :model_class, :model_base_class, :model_module, :attributes_declaration, *super]
           end
 
           def process_value(...)
