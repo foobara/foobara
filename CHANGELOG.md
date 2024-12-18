@@ -1,4 +1,9 @@
-## [0.0.37] - 2024-12-11
+## [0.0.39] - 2024-12-18
+
+- Introduce processor .requires_type? concept and extract PrimaryKey caster to a proper location
+- Make mutable a supported processor
+
+## [0.0.38] - 2024-12-11
 
 - Make DomainMappers extend Command so they have possible errors and statefulness/a cleaner API
 - Fixup domain mapper lookups to give proper values/errors in various scenarios, particularly in the context

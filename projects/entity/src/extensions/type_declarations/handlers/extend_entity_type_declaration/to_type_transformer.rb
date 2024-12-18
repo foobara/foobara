@@ -3,35 +3,6 @@ module Foobara
     module Handlers
       class ExtendEntityTypeDeclaration < ExtendDetachedEntityTypeDeclaration
         class ToTypeTransformer < ExtendDetachedEntityTypeDeclaration::ToTypeTransformer
-          # TODO: move this to a more appropriate place
-          class EntityPrimaryKeyCaster < Value::Caster
-            class << self
-              def requires_declaration_data?
-                true
-              end
-            end
-
-            def entity_class
-              declaration_data
-            end
-
-            def primary_key_type
-              entity_class.primary_key_type
-            end
-
-            def applicable?(value)
-              primary_key_type.applicable?(value)
-            end
-
-            def transform(primary_key)
-              entity_class.thunk(primary_key)
-            end
-
-            def applies_message
-              primary_key_type.value_caster.applies_message
-            end
-          end
-
           def process_value(strict_declaration_type)
             super.tap do |outcome|
               if outcome.success?
@@ -43,8 +14,6 @@ module Foobara
                     caster.is_a?(Foobara::BuiltinTypes::Entity::Casters::Hash)
                   end
                 end
-
-                type.casters << EntityPrimaryKeyCaster.new(entity_class)
               end
             end
           end
