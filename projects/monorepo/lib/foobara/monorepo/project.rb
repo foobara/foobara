@@ -3,14 +3,13 @@ module Foobara
     # TODO: make this MonorepoProject and have a more generic Project so that other projects outside of the
     # repo can have things like reset_all called on th.
     class Project
-      attr_accessor :symbol
+      attr_accessor :symbol, :project_path
 
-      def initialize(symbol)
+      # TODO: we should move these concepts out of "Monorepo" and maybe into Foobara because we sometimes need to
+      # be able to install!/reset foobara code that's been extracted into a gem
+      def initialize(symbol, project_path: "#{__dir__}/../../../../../projects/#{symbol}")
         self.symbol = symbol
-      end
-
-      def project_path
-        "projects/#{symbol}"
+        self.project_path = project_path
       end
 
       def require_path
@@ -27,7 +26,7 @@ module Foobara
 
       def load
         require require_path
-        Util.require_directory("#{__dir__}/../../../../../#{project_path}/src")
+        Util.require_directory("#{project_path}/src")
       end
 
       def install!

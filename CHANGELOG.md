@@ -1,3 +1,7 @@
+## [0.0.40] - 2024-12-19
+
+- Allow marking a project as a project from outside of the monorepo
+
 ## [0.0.39] - 2024-12-18
 
 - Introduce processor .requires_type? concept and extract PrimaryKey caster to a proper location
