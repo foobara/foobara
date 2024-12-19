@@ -27,14 +27,14 @@ module Foobara
         end
       end
 
-      def project(symbol)
+      def project(symbol, project_path: nil)
         if all_projects.key?(symbol)
           # :nocov:
           raise ArgumentError, "Project #{symbol} already loaded"
           # :nocov:
         end
 
-        project = Project.new(symbol)
+        project = Project.new(symbol, project_path:)
         project.load
 
         all_projects[symbol] = project
