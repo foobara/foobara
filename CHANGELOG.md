@@ -1,3 +1,7 @@
+## [0.0.42] - 2024-12-23
+
+- Add a Domain.domain_through_modules helper
+
 ## [0.0.41] - 2024-12-19
 
 - Allow marking a project as a project from outside of the monorepo

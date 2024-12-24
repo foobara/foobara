@@ -8,6 +8,7 @@ module Foobara
       foobara_delegate :global_type_declaration_handler_registry, to: TypeDeclarations
 
       # TODO: break this up
+      # TODO: much of this behavior is helpful to non-builtin types as well.
       def build_and_register!(
         type_symbol,
         base_type,

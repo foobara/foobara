@@ -66,22 +66,7 @@ module Foobara
         if model_type
           model_type.foobara_domain
         else
-          mod = Util.module_for(self)
-
-          while mod
-            if mod.foobara_domain?
-              namespace = mod
-              break
-            end
-
-            mod = Util.module_for(mod)
-          end
-
-          if namespace&.foobara_domain?
-            namespace
-          else
-            GlobalDomain
-          end
+          Domain.domain_through_modules(self)
         end
       end
 

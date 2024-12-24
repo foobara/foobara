@@ -36,6 +36,25 @@ module Foobara
         end
       end
 
+      def domain_through_modules(mod)
+        mod = Util.module_for(mod)
+
+        while mod
+          if mod.foobara_domain?
+            namespace = mod
+            break
+          end
+
+          mod = Util.module_for(mod)
+        end
+
+        if namespace&.foobara_domain?
+          namespace
+        else
+          GlobalDomain
+        end
+      end
+
       def create(full_domain_name)
         if Domain.to_domain(full_domain_name)
           raise DomainAlreadyExistsError, "Domain #{full_domain_name} already exists"
