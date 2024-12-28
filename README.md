@@ -78,6 +78,8 @@ You can watch a video that gives a good overview of what Foobara is and its goal
 * Engineers can spend more time operating within a specific mental model at a time instead of
   multiple mental models all at once.
 
+![Command-centric + Discoverability](https://github.com/foobara/examples/blob/main/images/cc-plus-disc-small.jpg?raw=true)
+
 ## Other features for helping with Domain complexity
 
 * Domains and Organizations
