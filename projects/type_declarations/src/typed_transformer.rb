@@ -55,7 +55,9 @@ module Foobara
         # interpret how it goes. This might create some awkwardness or confusion at least when creating one of the
         # two types of transformer.
         def type_declaration(_from_type)
+          # :nocov:
           nil
+          # :nocov:
         end
 
         def type(from_type)
@@ -66,7 +68,6 @@ module Foobara
               dec
             else
               Domain.current.foobara_type_from_declaration(dec)
-
             end
           end
         end

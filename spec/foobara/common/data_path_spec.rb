@@ -138,6 +138,15 @@ RSpec.describe Foobara::DataPath do
         expect { described_class.value_at(path, object) }.to raise_error(described_class::TooManyValuesAtPathError)
       end
     end
+
+    context "when path is empty string" do
+      let(:path) { "" }
+      let(:object) { 1 }
+
+      it "returns the object itself" do
+        expect(described_class.value_at(path, object)).to eq(object)
+      end
+    end
   end
 
   describe "#simple_collection?" do

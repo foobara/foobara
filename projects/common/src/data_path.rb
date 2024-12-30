@@ -211,8 +211,6 @@ module Foobara
     end
 
     def normalize(key_parts)
-      return nil if key_parts.nil?
-
       case key_parts
       when Array
         key_parts.map do |key_part|
@@ -223,9 +221,7 @@ module Foobara
       when Integer
         key_parts
       when String
-        if key_parts.empty?
-          nil
-        elsif key_parts =~ INDEX_VALUE
+        if key_parts =~ INDEX_VALUE
           key_parts.to_i
         else
           key_parts.to_sym
