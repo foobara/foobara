@@ -261,7 +261,7 @@ module Foobara
     def process_delayed_connections
       delayed_connections.each_pair do |registerable_name, arg_hash|
         args = arg_hash[:args]
-        opts = arg_hash[:opts] || {}
+        opts = arg_hash[:opts]
 
         const = Object.const_get(registerable_name)
         connect(const, *args, **opts)

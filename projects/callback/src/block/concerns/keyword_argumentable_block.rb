@@ -6,8 +6,7 @@ module Foobara
           def to_proc
             @to_proc ||= if has_keyword_args?
                            proc do |*args, &block|
-                             keyword_args = args.reduce(:merge) || {}
-                             original_block.call(**keyword_args, &block)
+                             original_block.call(**args.reduce(:merge), &block)
                            end
                          else
                            original_block
