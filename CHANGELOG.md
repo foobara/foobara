@@ -1,3 +1,7 @@
+## [0.0.43] - 2025-01-03
+
+- Bumped Ruby from 3.2.2 to 3.4.1
+
 ## [0.0.42] - 2024-12-23
 
 - Add a Domain.domain_through_modules helper
