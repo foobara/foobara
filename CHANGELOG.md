@@ -1,8 +1,8 @@
-## [0.0.45] - 2025-01-03
+## [0.0.46] - 2025-01-03
 
 - Bumped Ruby from 3.2.2 to 3.4.1
 - Allow passing in a module when registering a "builtin" type
-- Fix AttributesHandlerDesugarizer bug
+- Fix AttributesHandlerDesugarizer and PrimaryKeyDesugarizer bugs
 
 ## [0.0.42] - 2024-12-23
 
