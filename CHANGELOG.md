@@ -1,6 +1,7 @@
-## [0.0.43] - 2025-01-03
+## [0.0.47] - 2025-01-03
 
 - Bumped Ruby from 3.2.2 to 3.4.1
+- Allow passing in a module when registering a "builtin" type
 
 ## [0.0.42] - 2024-12-23
 

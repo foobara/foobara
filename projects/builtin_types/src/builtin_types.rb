@@ -13,13 +13,14 @@ module Foobara
         type_symbol,
         base_type,
         target_classes = const_get("::#{Util.classify(type_symbol)}"),
-        description: "Built-in #{type_symbol} type"
+        description: "Built-in #{type_symbol} type",
+        type_module: nil
       )
         declaration_data = { type: type_symbol.to_sym }
 
         module_symbol = Util.classify(type_symbol).to_sym
 
-        builtin_type_module = const_get(module_symbol, false)
+        builtin_type_module = type_module || const_get(module_symbol, false)
 
         processor_classes_requiring_type = []
 
