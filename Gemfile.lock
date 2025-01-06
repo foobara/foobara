@@ -18,7 +18,7 @@ GEM
     foobara-rubocop-rules (0.0.5)
       rubocop
       rubocop-rspec
-    foobara-spec-helpers (0.0.3)
+    foobara-spec-helpers (0.0.4)
       foobara-util
     foobara-util (0.0.8)
     formatador (1.1.0)
@@ -129,6 +129,9 @@ DEPENDENCIES
   rubocop-rake
   rubocop-rspec
   simplecov
+
+RUBY VERSION
+   ruby 3.4.1p0
 
 BUNDLED WITH
    2.4.14

@@ -1,10 +1,10 @@
-source "https://rubygems.org"
+require_relative "version"
 
-# Specify your gem's dependencies in commands.gemspec
+source "https://rubygems.org"
+ruby Foobara::Version::MINIMUM_RUBY_VERSION
 gemspec
 
 # Development dependencies go here
-# TODO: move to .gemspec
 gem "foobara-rubocop-rules"
 # gem "foobara-rubocop-rules", path: "../rubocop-rules"
 gem "foobara-spec-helpers"
