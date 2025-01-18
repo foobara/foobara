@@ -1,3 +1,7 @@
+## [0.0.48] - 2025-01-17
+
+- Add support for foobara_attributes_type to allow ActiveRecordType gem to work
+
 ## [0.0.47] - 2025-01-03
 
 - Bumped Ruby from 3.2.2 to 3.4.1

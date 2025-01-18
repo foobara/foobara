@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    foobara (0.0.47)
+    foobara (0.0.48)
       bigdecimal
       foobara-util
 
@@ -15,12 +15,12 @@ GEM
     diff-lcs (1.5.1)
     docile (1.4.1)
     ffi (1.17.1-x86_64-linux-gnu)
-    foobara-rubocop-rules (0.0.5)
+    foobara-rubocop-rules (0.0.6)
       rubocop
       rubocop-rspec
     foobara-spec-helpers (0.0.4)
       foobara-util
-    foobara-util (0.0.8)
+    foobara-util (0.0.9)
     formatador (1.1.0)
     guard (2.19.1)
       formatador (>= 0.2.4)
@@ -43,7 +43,7 @@ GEM
     listen (3.9.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
-    logger (1.6.4)
+    logger (1.6.5)
     lumberjack (1.2.10)
     method_source (1.1.0)
     nenv (0.3.0)
@@ -52,7 +52,7 @@ GEM
       shellany (~> 0.0)
     ostruct (0.6.1)
     parallel (1.26.3)
-    parser (3.3.6.0)
+    parser (3.3.7.0)
       ast (~> 2.4.1)
       racc
     pry (0.14.2)
@@ -84,7 +84,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
     rspec-support (3.13.2)
-    rubocop (1.69.2)
+    rubocop (1.70.0)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
       parallel (~> 1.10)
@@ -109,7 +109,7 @@ GEM
     simplecov-html (0.13.1)
     simplecov_json_formatter (0.1.4)
     thor (1.3.2)
-    unicode-display_width (3.1.3)
+    unicode-display_width (3.1.4)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
 

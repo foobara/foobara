@@ -91,7 +91,7 @@ module Foobara
 
                     error_class = self.class.lookup_input_error_class(symbol, path)
                     error_class.new(**error_args, path:)
-                  elsif args.size == 2 || args.size == 3
+                  elsif [2, 3].include?(args.size)
                     input, symbol, message = args
                     context = opts
 
@@ -143,7 +143,7 @@ module Foobara
 
                     error_class = self.class.lookup_runtime_error_class(symbol)
                     error_class.new(**error_args)
-                  elsif args.is_a?(::Array) && (args.size == 1 || args.size == 2)
+                  elsif args.is_a?(::Array) && [1, 2].include?(args.size)
                     symbol, message = args
                     context = opts
 

@@ -2,6 +2,8 @@ module Foobara
   class Command
     module Concerns
       module Inputs
+        class UnexpectedInputValidationError < StandardError; end
+
         include Concern
 
         attr_reader :inputs
@@ -41,9 +43,8 @@ module Foobara
               if error.is_a?(Value::DataError)
                 add_input_error(error)
               else
-                # TODO: raise a real error
                 # :nocov:
-                raise "wtf"
+                raise UnexpectedInputValidationError, "Unexpected input validation error: #{error}"
                 # :nocov:
               end
             end

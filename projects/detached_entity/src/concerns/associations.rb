@@ -109,6 +109,8 @@ module Foobara
             end
           end
 
+          # TODO: this big switch is a problem. Hard to create new types in other projects without being able
+          # to modify this switch.  Figure out what to do.
           def construct_associations(
             type = attributes_type,
             path = DataPath.new,
@@ -135,7 +137,12 @@ module Foobara
                 construct_associations(element_type, path.append(attribute_name), result)
               end
             elsif type.extends?(BuiltinTypes[:model])
-              construct_associations(type.target_class.attributes_type, path, result)
+              target_class = type.target_class
+
+              method = target_class.respond_to?(:foobara_attributes_type) ? :foobara_attributes_type : :attributes_type
+              attributes_type = target_class.send(method)
+
+              construct_associations(attributes_type, path, result)
             elsif type.extends?(BuiltinTypes[:associative_array])
               # not going to bother testing this for now
               # :nocov:

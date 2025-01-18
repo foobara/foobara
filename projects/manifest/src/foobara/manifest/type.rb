@@ -53,7 +53,7 @@ module Foobara
       end
 
       def model?
-        return false if reference == "entity" || reference == "detached_entity"
+        return false if %w[entity detached_entity].include?(reference)
 
         type = base_type
 
