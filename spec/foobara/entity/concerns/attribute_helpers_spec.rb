@@ -1,4 +1,5 @@
-RSpec.describe Foobara::Entity::Concerns::AttributeHelpers do
+# TODO: move this spec to the right project
+RSpec.describe Foobara::ModelAttributeHelpers::Concerns::AttributeHelpers do
   after do
     Foobara.reset_alls
   end

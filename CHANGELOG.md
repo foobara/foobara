@@ -1,3 +1,7 @@
+## [0.0.49] - 2025-01-21
+
+- Fill out more foobara_ model attribute helper methods to further support the ActiveRecordType gem
+
 ## [0.0.48] - 2025-01-17
 
 - Add support for foobara_attributes_type to allow ActiveRecordType gem to work

@@ -30,6 +30,7 @@ module Foobara
              "model",
              "detached_entity",
              "entity",
+             "model_attribute_helpers",
              "command",
              "domain_mapper",
              "persistence",

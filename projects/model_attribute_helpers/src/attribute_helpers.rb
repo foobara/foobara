@@ -1,7 +1,7 @@
 # delete this file
 
 module Foobara
-  class Entity < DetachedEntity
+  module ModelAttributeHelpers
     module Concerns
       # TODO: This concern is retroactively designed to be mixed into any entity-like class that can hold an
       # entity-like foobara type.

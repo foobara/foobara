@@ -1,7 +1,7 @@
 # This is currently the working file, fix this up/move it
 
 module Foobara
-  class Entity
+  module ModelAttributeHelpers
     module Concerns
       module AttributeHelperAliases
         include Foobara::Concern
