@@ -5,9 +5,11 @@ module Foobara
         include Concern
 
         module ClassMethods
-          def associations
-            @associations ||= construct_associations
+          def foobara_associations
+            @foobara_associations ||= construct_associations
           end
+
+          alias associations foobara_associations
 
           def deep_associations
             @deep_associations ||= begin

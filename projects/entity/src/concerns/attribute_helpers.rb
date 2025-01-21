@@ -1,35 +1,54 @@
+# delete this file
+
 module Foobara
   class Entity < DetachedEntity
     module Concerns
+      # TODO: This concern is retroactively designed to be mixed into any entity-like class that can hold an
+      # entity-like foobara type.
+      # Because we want a subclass of ActiveRecord::Base to be such a target in the case of the
+      # foobara-active-record-type class, but because we can't make ActiveRecord::Base a subclass of Entity or
+      # DetachedEntity, and also because it makes sense to extend such behavior to foobara model classes,
+      # we will implement this as a Concern/mixin with a published expected interface and prefixed methods.
+      # This also means it should live in its own project, not here in the entity project.
+      # required methods:
+      #
+      # foobara_type
+      # foobara_attributes_type
+      # foobara_primary_key_attribute (nil if not an entity type)
+      # foobara_primary_key_type (nil if not an entity type)
+      # foobara_associations
       module AttributeHelpers
         include Foobara::Concern
 
         module ClassMethods
-          def attributes_for_update
-            attributes_for_aggregate_update
+          def foobara_has_primary_key?
+            respond_to?(:foobara_primary_key_attribute)
+          end
+
+          def foobara_attributes_for_update
+            foobara_attributes_for_aggregate_update
           end
 
           # TODO: we should have metadata on the entity about whether it required a primary key
           # upon creation or not instead of an option here.
-          def attributes_for_create(includes_primary_key: false)
-            return attributes_type if includes_primary_key
+          def foobara_attributes_for_create(includes_primary_key: false)
+            return foobara_attributes_type if includes_primary_key
+            return foobara_attributes_type unless foobara_has_primary_key?
+
+            primary_key_attribute = foobara_primary_key_attribute
 
             declaration = attributes_type.declaration_data
             # TODO: just slice out the element type declarations
             declaration = Util.deep_dup(declaration)
 
-            if declaration.key?(:required) && declaration[:required].include?(primary_key_attribute)
+            declaration[:element_type_declarations].delete(primary_key_attribute)
+
+            if declaration.key?(:required)
               declaration[:required].delete(primary_key_attribute)
             end
 
-            if declaration.key?(:defaults) && declaration[:defaults].include?(primary_key_attribute)
+            if declaration.key?(:defaults)
               declaration[:defaults].delete(primary_key_attribute)
-            end
-
-            if declaration.key?(:element_type_declarations)
-              if declaration[:element_type_declarations].key?(primary_key_attribute)
-                declaration[:element_type_declarations].delete(primary_key_attribute)
-              end
             end
 
             handler = Domain.global.foobara_type_builder.handler_for_class(
@@ -39,48 +58,50 @@ module Foobara
             handler.desugarize(declaration)
           end
 
-          def attributes_for_aggregate_update(initial = true)
-            declaration = attributes_type.declaration_data
+          def foobara_attributes_for_aggregate_update(initial = true)
+            declaration = foobara_attributes_type.declaration_data
             # TODO: just slice out the element type declarations
             declaration = Util.deep_dup(declaration)
 
             declaration.delete(:defaults)
             declaration.delete(:required)
 
-            if initial
-              declaration[:required] = [primary_key_attribute]
+            if initial && foobara_has_primary_key?
+              declaration[:required] = [foobara_primary_key_attribute]
             end
 
-            associations.each_pair do |data_path, type|
+            foobara_associations.each_pair do |data_path, type|
               if type.extends?(BuiltinTypes[:entity])
                 target_class = type.target_class
 
-                entry = type_declaration_value_at(declaration, DataPath.new(data_path).path)
+                entry = foobara_type_declaration_value_at(declaration, DataPath.new(data_path).path)
                 entry.clear
-                entry.merge!(target_class.attributes_for_aggregate_update(false))
+                entry.merge!(target_class.foobara_attributes_for_aggregate_update(false))
               end
             end
 
             declaration
           end
 
-          def attributes_for_atom_update
-            declaration = attributes_type.declaration_data
+          def foobara_attributes_for_atom_update
+            declaration = foobara_attributes_type.declaration_data
             # TODO: just slice out the element type declarations
             declaration = Util.deep_dup(declaration)
 
             declaration.delete(:defaults)
-            declaration[:required] = [primary_key_attribute]
+            if foobara_has_primary_key?
+              declaration[:required] = [foobara_primary_key_attribute]
+            end
 
             # expect all associations to be expressed as primary key values
             # TODO: should we have a special type for encapsulating primary keys types??
-            associations.each_pair do |data_path, type|
+            foobara_associations.each_pair do |data_path, type|
               if type.extends?(BuiltinTypes[:entity])
                 target_class = type.target_class
                 # TODO: do we really need declaration_data? Why cant we use the type directly?
                 # TODO: make this work with the type directly for performance reasons.
-                primary_key_type_declaration = target_class.primary_key_type.declaration_data
-                entry = type_declaration_value_at(declaration, DataPath.new(data_path).path)
+                primary_key_type_declaration = target_class.foobara_primary_key_type.declaration_data
+                entry = foobara_type_declaration_value_at(declaration, DataPath.new(data_path).path)
                 entry.clear
                 entry.merge!(primary_key_type_declaration)
               end
@@ -89,10 +110,10 @@ module Foobara
             declaration
           end
 
-          def attributes_for_find_by
+          def foobara_attributes_for_find_by
             element_type_declarations = {}
 
-            attributes_type.element_types.each_pair do |attribute_name, attribute_type|
+            foobara_attributes_type.element_types.each_pair do |attribute_name, attribute_type|
               element_type_declarations[attribute_name] = attribute_type.reference_or_declaration_data
             end
 
@@ -108,7 +129,7 @@ module Foobara
 
           private
 
-          def type_declaration_value_at(declaration, path_parts)
+          def foobara_type_declaration_value_at(declaration, path_parts)
             return declaration if path_parts.empty?
 
             path_part, *path_parts = path_parts
@@ -124,7 +145,7 @@ module Foobara
                             # :nocov:
                           end
 
-            type_declaration_value_at(declaration, path_parts)
+            foobara_type_declaration_value_at(declaration, path_parts)
           end
         end
       end

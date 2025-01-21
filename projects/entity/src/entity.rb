@@ -8,6 +8,7 @@ module Foobara
     include Concerns::Persistence
     include Concerns::Initialization
     include Concerns::AttributeHelpers
+    include Concerns::AttributeHelperAliases
     include Concerns::Types
 
     class << self

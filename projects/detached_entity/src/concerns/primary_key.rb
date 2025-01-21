@@ -20,18 +20,20 @@ module Foobara
               # :nocov:
             end
 
-            @primary_key_attribute = attribute_name.to_sym
+            @foobara_primary_key_attribute = attribute_name.to_sym
 
             set_model_type
           end
 
-          def primary_key_attribute
-            return @primary_key_attribute if @primary_key_attribute
+          def foobara_primary_key_attribute
+            return @foobara_primary_key_attribute if @foobara_primary_key_attribute
 
             unless superclass == DetachedEntity
-              @primary_key_attribute = superclass.primary_key_attribute
+              @foobara_primary_key_attribute = superclass.primary_key_attribute
             end
           end
+
+          alias primary_key_attribute foobara_primary_key_attribute
         end
 
         def primary_key

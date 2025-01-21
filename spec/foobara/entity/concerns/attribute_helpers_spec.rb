@@ -16,13 +16,13 @@ RSpec.describe Foobara::Entity::Concerns::AttributeHelpers do
 
   describe ".attributes_for_update" do
     it "calls attributes_for_aggregate_update" do
-      expect(SomeEntity.attributes_for_update).to be_a(Hash)
+      expect(SomeEntity.foobara_attributes_for_update).to be_a(Hash)
     end
   end
 
   describe ".attributes_for_create" do
     it "removes the primary key" do
-      expect(SomeEntity.attributes_for_create).to eq(
+      expect(SomeEntity.foobara_attributes_for_create).to eq(
         defaults: { reviews: [] },
         element_type_declarations: { name: { type: :string },
                                      reviews: { element_type_declaration: { type: :integer },
@@ -35,7 +35,7 @@ RSpec.describe Foobara::Entity::Concerns::AttributeHelpers do
 
   describe ".attributes_for_find_by" do
     it "excludes required and defaults information" do
-      expect(SomeEntity.attributes_for_find_by).to eq(
+      expect(SomeEntity.foobara_attributes_for_find_by).to eq(
         type: :attributes,
         element_type_declarations: {
           id: { type: :integer },

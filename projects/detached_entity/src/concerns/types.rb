@@ -23,9 +23,11 @@ module Foobara
             end
           end
 
-          def primary_key_type
-            @primary_key_type ||= attributes_type.element_types[primary_key_attribute]
+          def foobara_primary_key_type
+            @foobara_primary_key_type ||= attributes_type.element_types[primary_key_attribute]
           end
+
+          alias primary_key_type foobara_primary_key_type
 
           def full_entity_name
             full_model_name

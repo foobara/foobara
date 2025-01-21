@@ -102,7 +102,7 @@ module Foobara
             )
           end
 
-          def attributes_type
+          def foobara_attributes_type
             return @attributes_type if @attributes_type
 
             @attributes_type = if model_type
@@ -111,6 +111,8 @@ module Foobara
                                  superclass.attributes_type
                                end
           end
+
+          alias attributes_type foobara_attributes_type
 
           def model_type=(model_type)
             @model_type = model_type
