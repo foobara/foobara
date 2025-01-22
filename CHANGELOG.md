@@ -1,4 +1,4 @@
-## [0.0.49] - 2025-01-21
+## [0.0.50] - 2025-01-22
 
 - Fill out more foobara_ model attribute helper methods to further support the ActiveRecordType gem
 

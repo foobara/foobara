@@ -21,6 +21,12 @@ RSpec.describe Foobara::ModelAttributeHelpers::Concerns::AttributeHelpers do
     end
   end
 
+  describe ".attributes_for_atom_update" do
+    it "returns a hash" do
+      expect(SomeEntity.foobara_attributes_for_atom_update).to be_a(Hash)
+    end
+  end
+
   describe ".attributes_for_create" do
     it "removes the primary key" do
       expect(SomeEntity.foobara_attributes_for_create).to eq(

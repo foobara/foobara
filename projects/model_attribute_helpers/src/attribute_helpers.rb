@@ -25,8 +25,8 @@ module Foobara
             respond_to?(:foobara_primary_key_attribute)
           end
 
-          def foobara_attributes_for_update
-            foobara_attributes_for_aggregate_update
+          def foobara_attributes_for_update(require_primary_key: false)
+            foobara_attributes_for_aggregate_update(require_primary_key:)
           end
 
           # TODO: we should have metadata on the entity about whether it required a primary key
@@ -35,39 +35,24 @@ module Foobara
             return foobara_attributes_type if includes_primary_key
             return foobara_attributes_type unless foobara_has_primary_key?
 
-            primary_key_attribute = foobara_primary_key_attribute
+            declaration = foobara_attributes_type.declaration_data
 
-            declaration = attributes_type.declaration_data
-            # TODO: just slice out the element type declarations
-            declaration = Util.deep_dup(declaration)
-
-            declaration[:element_type_declarations].delete(primary_key_attribute)
-
-            if declaration.key?(:required)
-              declaration[:required].delete(primary_key_attribute)
-            end
-
-            if declaration.key?(:defaults)
-              declaration[:defaults].delete(primary_key_attribute)
-            end
-
-            handler = Domain.global.foobara_type_builder.handler_for_class(
-              TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
-            )
-
-            handler.desugarize(declaration)
+            Foobara::TypeDeclarations::Attributes.reject(declaration, foobara_primary_key_attribute)
           end
 
-          def foobara_attributes_for_aggregate_update(initial = true)
+          def foobara_attributes_for_aggregate_update(require_primary_key: false, initial: true)
             declaration = foobara_attributes_type.declaration_data
-            # TODO: just slice out the element type declarations
             declaration = Util.deep_dup(declaration)
 
             declaration.delete(:defaults)
             declaration.delete(:required)
 
             if initial && foobara_has_primary_key?
-              declaration[:required] = [foobara_primary_key_attribute]
+              if require_primary_key
+                declaration[:required] = [foobara_primary_key_attribute]
+              else
+                TypeDeclarations::Attributes.reject(declaration, foobara_primary_key_attribute)
+              end
             end
 
             foobara_associations.each_pair do |data_path, type|
@@ -76,21 +61,25 @@ module Foobara
 
                 entry = foobara_type_declaration_value_at(declaration, DataPath.new(data_path).path)
                 entry.clear
-                entry.merge!(target_class.foobara_attributes_for_aggregate_update(false))
+                entry.merge!(target_class.foobara_attributes_for_aggregate_update(initial: false))
               end
             end
 
             declaration
           end
 
-          def foobara_attributes_for_atom_update
+          def foobara_attributes_for_atom_update(require_primary_key: false)
             declaration = foobara_attributes_type.declaration_data
-            # TODO: just slice out the element type declarations
             declaration = Util.deep_dup(declaration)
 
             declaration.delete(:defaults)
+
             if foobara_has_primary_key?
-              declaration[:required] = [foobara_primary_key_attribute]
+              if require_primary_key
+                declaration[:required] = [foobara_primary_key_attribute]
+              else
+                declaration = TypeDeclarations::Attributes.reject(declaration, foobara_primary_key_attribute)
+              end
             end
 
             # expect all associations to be expressed as primary key values
