@@ -32,6 +32,44 @@ module Foobara
             defaults:
           )
         end
+
+        def reject(declaration, *keys)
+          declaration = Util.deep_dup(declaration)
+
+          element_type_declarations = declaration[:element_type_declarations]
+          required = declaration[:required]
+          defaults = declaration[:defaults]
+
+          changed = false
+
+          keys.flatten.each do |key|
+            key = key.to_sym
+
+            if element_type_declarations.key?(key)
+              changed = true
+              element_type_declarations.delete(key)
+            end
+
+            if required&.include?(key)
+              changed = true
+              required.delete(key)
+            end
+
+            if defaults&.key?(key)
+              changed = true
+              defaults.delete(key)
+            end
+          end
+
+          if changed
+            handler = Domain.global.foobara_type_builder.handler_for_class(
+              TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
+            )
+
+            handler.desugarize(declaration)
+          else
+            declaration
+          end
         end
       end
     end
