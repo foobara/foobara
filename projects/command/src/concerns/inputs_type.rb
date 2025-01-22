@@ -25,6 +25,16 @@ module Foobara
             @inputs_type
           end
 
+          def add_inputs(...)
+            new_type = type_for_declaration(...)
+            new_declaration = TypeDeclarations::Attributes.merge(
+              inputs_type.declaration_data,
+              new_type.declaration_data
+            )
+
+            inputs new_declaration
+          end
+
           def inputs_type
             return @inputs_type if defined?(@inputs_type)
 

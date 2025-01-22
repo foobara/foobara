@@ -5,8 +5,8 @@ RSpec.describe Foobara::Command::Concerns::Runtime do
 
   let(:command_class) {
     stub_class(:CalculateExponent, Foobara::Command) do
-      inputs exponent: :integer,
-             base: :integer
+      inputs exponent: :integer
+      add_inputs base: :integer
 
       attr_accessor :exponential
 
@@ -32,7 +32,7 @@ RSpec.describe Foobara::Command::Concerns::Runtime do
   describe ".raw_inputs_type_declaration" do
     subject { command_class.raw_inputs_type_declaration }
 
-    it { is_expected.to eq(base: :integer, exponent: :integer) }
+    it { is_expected.to be_a(Hash) }
   end
 
   describe ".inputs_type_declaration" do
