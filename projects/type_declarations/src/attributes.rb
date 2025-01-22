@@ -21,12 +21,17 @@ module Foobara
             end
           end
 
-          {
+          handler = Domain.global.foobara_type_builder.handler_for_class(
+            TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
+          )
+
+          handler.desugarize(
             type: "::attributes",
             element_type_declarations:,
             required:,
             defaults:
-          }
+          )
+        end
         end
       end
     end

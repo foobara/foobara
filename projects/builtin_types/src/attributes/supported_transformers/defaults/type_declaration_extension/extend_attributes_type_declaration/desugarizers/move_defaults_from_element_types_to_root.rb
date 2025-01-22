@@ -25,7 +25,11 @@ module Foobara
                       end
                     end
 
-                    rawish_type_declaration[:defaults] = defaults unless defaults.empty?
+                    if defaults.empty?
+                      rawish_type_declaration.delete(:defaults)
+                    else
+                      rawish_type_declaration[:defaults] = defaults
+                    end
 
                     rawish_type_declaration
                   end

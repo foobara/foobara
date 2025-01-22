@@ -47,7 +47,6 @@ module Foobara
 
         def _to_declaration(&)
           instance_eval(&)
-          _prune_type_declaration
           _type_declaration
         end
 
@@ -163,30 +162,20 @@ module Foobara
         end
 
         def _add_to_required(attribute_name)
+          _type_declaration[:required] ||= []
           _type_declaration[:required] << attribute_name.to_sym
         end
 
         def _add_to_defaults(attribute_name, value)
+          _type_declaration[:defaults] ||= {}
           _type_declaration[:defaults][attribute_name.to_sym] = value
-        end
-
-        def _prune_type_declaration
-          if _type_declaration[:required].empty?
-            _type_declaration.delete(:required)
-          end
-
-          if _type_declaration[:defaults].empty?
-            _type_declaration.delete(:defaults)
-          end
         end
 
         def _type_declaration
           @_type_declaration ||= begin
             sugar = {
               type: "::attributes",
-              element_type_declarations: {},
-              required: [],
-              defaults: {}
+              element_type_declarations: {}
             }
 
             handler = Domain.current.foobara_type_builder.handler_for_class(Handlers::ExtendAttributesTypeDeclaration)

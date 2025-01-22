@@ -40,7 +40,11 @@ module Foobara
                       end
                     end
 
-                    rawish_type_declaration[:required] = required_attributes unless required_attributes.empty?
+                    if required_attributes.empty?
+                      rawish_type_declaration.delete(:required)
+                    else
+                      rawish_type_declaration[:required] = required_attributes
+                    end
 
                     rawish_type_declaration
                   end
