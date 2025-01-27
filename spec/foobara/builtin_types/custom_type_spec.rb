@@ -248,6 +248,18 @@ RSpec.describe "custom types" do
           expect(complex.real).to eq(1)
           expect(complex.imaginary).to eq(2)
         end
+
+        describe "#remove_processor_by_symbol" do
+          it "removes all processors with the given symbol" do
+            expect(type.processors.last.processors.map(&:symbol)).to include(:element_type_declarations)
+            expect(type.element_processors.map(&:symbol)).to include(:element_type_declarations)
+
+            type.remove_processor_by_symbol(:element_type_declarations)
+
+            expect(type.processors.last.processors.map(&:symbol)).to_not include(:element_type_declarations)
+            expect(type.element_processors.map(&:symbol)).to_not include(:element_type_declarations)
+          end
+        end
       end
 
       context "when invalid" do

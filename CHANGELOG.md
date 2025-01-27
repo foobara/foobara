@@ -1,3 +1,7 @@
+## [0.0.51] - 2025-01-26
+
+- Add a Type#remove_processor_by_symbol method to help with certain situations when defining custom types
+
 ## [0.0.50] - 2025-01-22
 
 - Fill out more foobara_ model attribute helper methods to further support the ActiveRecordType gem

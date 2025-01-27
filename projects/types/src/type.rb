@@ -101,6 +101,21 @@ module Foobara
         end
       end
 
+      def remove_processor_by_symbol(symbol)
+        [
+          casters,
+          element_processors,
+          processor_classes_requiring_type,
+          processors,
+          transformers,
+          validators
+        ].each do |processor_collection|
+          processor_collection&.delete_if { |p| p.symbol == symbol }
+        end
+        supported_processor_classes&.each { |processor_hash| processor_hash.delete(symbol) }
+        processor_classes_requiring_type&.delete_if { |p| p.symbol == symbol }
+      end
+
       def each_processor_class_requiring_type(&block)
         base_type&.each_processor_class_requiring_type(&block)
 
