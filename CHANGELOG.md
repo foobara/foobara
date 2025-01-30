@@ -1,3 +1,7 @@
+## [0.0.52] - 2025-01-30
+
+- Prefix and re-organize several model methods to facilitate type extension
+
 ## [0.0.51] - 2025-01-26
 
 - Add a Type#remove_processor_by_symbol method to help with certain situations when defining custom types

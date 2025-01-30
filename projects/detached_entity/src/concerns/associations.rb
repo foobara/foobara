@@ -11,8 +11,8 @@ module Foobara
 
           alias associations foobara_associations
 
-          def deep_associations
-            @deep_associations ||= begin
+          def foobara_deep_associations
+            @foobara_deep_associations ||= begin
               deep = {}
 
               associations.each_pair do |data_path, type|
@@ -28,6 +28,8 @@ module Foobara
               deep
             end
           end
+
+          alias deep_associations foobara_deep_associations
 
           # TODO: stamp this metadata out somewhere, preferably on deep_associations hash somehow
           def association(name, *association_identifiers)

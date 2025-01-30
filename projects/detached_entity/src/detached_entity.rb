@@ -5,6 +5,8 @@ module Foobara
     include Concerns::PrimaryKey
     include Concerns::Reflection
     include Concerns::Types
+    include Concerns::Aliases
+    include Concerns::Serialize
 
     class << self
       def allowed_subclass_opts

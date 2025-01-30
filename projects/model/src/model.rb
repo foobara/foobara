@@ -8,6 +8,7 @@ module Foobara
 
     include Concerns::Types
     include Concerns::Reflection
+    include Concerns::Aliases
 
     class << self
       attr_accessor :is_abstract
@@ -84,8 +85,8 @@ module Foobara
         end
       end
 
-      def model_name
-        model_type&.scoped_name || Util.non_full_name(self)
+      def foobara_model_name
+        foobara_type&.scoped_name || Util.non_full_name(self)
       rescue Foobara::Scoped::NoScopedPathSetError
         # :nocov:
         Util.non_full_name(self)

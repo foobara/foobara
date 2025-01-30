@@ -31,6 +31,18 @@ RSpec.describe ":model" do
 
   let(:constructed_model) { type.target_class }
 
+  describe ".organization_name" do
+    subject { constructed_model.organization_name }
+
+    it { is_expected.to be_a(String) }
+  end
+
+  describe ".domain_name" do
+    subject { constructed_model.domain_name }
+
+    it { is_expected.to be_a(String) }
+  end
+
   it "creates a type that targets a Model subclass" do
     expect(type).to be_a(Foobara::Types::Type)
     expect(constructed_model.name).to eq("SomeModel")

@@ -2,29 +2,15 @@ module Foobara
   class DetachedEntity < Model
     module Concerns
       module Reflection
-        class CannotConvertRecordWithoutPrimaryKeyToJsonError < StandardError; end
-
         include Concern
 
-        def inspect
-          "<#{entity_name}:#{primary_key}>"
-        end
-
-        def to_json(*_args)
-          primary_key&.to_json || raise(
-            CannotConvertRecordWithoutPrimaryKeyToJsonError,
-            "Cannot call record.to_json on unless record has a primary key. " \
-            "Consider instead calling record.attributes.to_json instead."
-          )
-        end
-
         module ClassMethods
-          def depends_on
-            associations.values.map(&:target_class).uniq
+          def foobara_depends_on
+            foobara_associations.values.map(&:target_class).uniq
           end
 
-          def deep_depends_on
-            types = deep_associations.sort_by do |path, _type|
+          def foobara_deep_depends_on
+            types = foobara_deep_associations.sort_by do |path, _type|
               [DataPath.new(path).path.size, path]
             end.map(&:last)
 
@@ -32,29 +18,32 @@ module Foobara
           end
 
           def foobara_manifest(to_include: Set.new)
-            associations = self.associations.map do |(path, type)|
+            associations = foobara_associations.map do |(path, type)|
               entity_class = type.target_class
-              entity_name = entity_class.full_entity_name
+              entity_name = entity_class.foobara_type.scoped_full_name
 
               [path, entity_name]
             end.sort.to_h
 
-            deep_associations = self.deep_associations.map do |(path, type)|
+            deep_associations = foobara_deep_associations.map do |(path, type)|
               entity_class = type.target_class
-              entity_name = entity_class.full_entity_name
+              entity_name = entity_class.foobara_type.scoped_full_name
 
               [path, entity_name]
             end.sort.to_h
 
-            super.merge(
+            base_manifest = superclass.respond_to?(:foobara_manifest) ? super : {}
+
+            base_manifest.merge(
               Util.remove_blank(
-                depends_on: depends_on.map(&:full_entity_name),
-                deep_depends_on: deep_depends_on.map(&:full_entity_name),
+                depends_on: foobara_depends_on.map(&:full_entity_name),
+                deep_depends_on: foobara_deep_depends_on.map(&:full_entity_name),
                 associations:,
                 deep_associations:,
-                entity_name:,
-                primary_key_attribute:,
-                primary_key_type: attributes_type.declaration_data[:element_type_declarations][primary_key_attribute]
+                entity_name: foobara_model_name,
+                primary_key_attribute: foobara_primary_key_attribute,
+                primary_key_type:
+                  foobara_attributes_type.declaration_data[:element_type_declarations][foobara_primary_key_attribute]
               )
             )
           end

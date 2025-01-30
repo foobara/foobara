@@ -28,8 +28,8 @@ module Foobara
           def foobara_primary_key_attribute
             return @foobara_primary_key_attribute if @foobara_primary_key_attribute
 
-            unless superclass == DetachedEntity
-              @foobara_primary_key_attribute = superclass.primary_key_attribute
+            if superclass != DetachedEntity && superclass.respond_to?(:foobara_primary_key_attribute)
+              @foobara_primary_key_attribute = superclass.foobara_primary_key_attribute
             end
           end
 

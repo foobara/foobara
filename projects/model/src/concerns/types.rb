@@ -80,6 +80,10 @@ module Foobara
             end
           end
 
+          def foobara_type
+            model_type
+          end
+
           def type_declaration(attributes_declaration)
             if name.start_with?(closest_namespace_module.name)
               model_module_name = closest_namespace_module.name

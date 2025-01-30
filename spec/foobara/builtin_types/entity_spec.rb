@@ -38,6 +38,12 @@ RSpec.describe ":entity" do
 
   let(:constructed_model) { type.target_class }
 
+  describe ".depends_on" do
+    it "returns an array" do
+      expect(constructed_model.depends_on).to be_an(Array)
+    end
+  end
+
   context "when non-block form of transaction" do
     before do
       Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
