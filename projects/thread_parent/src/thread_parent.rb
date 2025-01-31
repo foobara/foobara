@@ -19,6 +19,10 @@ class Thread
     def foobara_var_set(...)
       Thread.current.foobara_var_set(...)
     end
+
+    def foobara_with_var(...)
+      Thread.current.foobara_with_var(...)
+    end
   end
 
   attr_reader :foobara_parent
@@ -34,5 +38,16 @@ class Thread
 
   def foobara_var_set(...)
     thread_variable_set(...)
+  end
+
+  def foobara_with_var(key, value, &block)
+    old_value = foobara_var_get(key)
+
+    begin
+      foobara_var_set(key, value)
+      block.call
+    ensure
+      foobara_var_set(key, old_value)
+    end
   end
 end
