@@ -20,6 +20,10 @@ module Foobara
               end
             end
           end
+
+          def type_class
+            Foobara::DetachedEntityType
+          end
         end
       end
     end

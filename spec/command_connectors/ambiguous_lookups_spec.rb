@@ -122,4 +122,22 @@ RSpec.describe Foobara::CommandConnector do
                                   ])
     end
   end
+
+  describe "#foobara_manifest" do
+    context "when detached" do
+      around do |example|
+        Thread.foobara_with_var("foobara_manifest_context", detached: true) do
+          example.run
+        end
+      end
+
+      it "converts entities to detached entities" do
+        manifest = command_connector.foobara_manifest
+
+        declaration_data = manifest[:type][:"DomainA::User"][:declaration_data]
+        expect(declaration_data[:type]).to eq(:detached_entity)
+        expect(declaration_data[:model_base_class]).to eq("Foobara::DetachedEntity")
+      end
+    end
+  end
 end

@@ -53,6 +53,7 @@ module Foobara
       end
 
       def model?
+        # TODO: hmmmm, should be false for :active_record
         return false if %w[entity detached_entity].include?(reference)
 
         type = base_type

@@ -45,7 +45,7 @@ module Foobara
               category << processor
             end
 
-            Types::Type.new(
+            type_class.new(
               strict_type_declaration,
               base_type:,
               # description: strict_type_declaration.is_a?(::Hash) && strict_type_declaration[:description],
@@ -58,6 +58,10 @@ module Foobara
               target_classes: target_classes(strict_type_declaration),
               name: type_name(strict_type_declaration)
             )
+          end
+
+          def type_class
+            Types::Type
           end
 
           # TODO: test that registering a custom type sets its name

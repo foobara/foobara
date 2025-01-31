@@ -1,6 +1,7 @@
-## [0.0.52] - 2025-01-30
+## [0.0.53] - 2025-01-30
 
 - Prefix and re-organize several model methods to facilitate type extension
+- Add support for generating a manifest with detached entities based on context
 
 ## [0.0.51] - 2025-01-26
 

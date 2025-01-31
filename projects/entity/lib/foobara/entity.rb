@@ -11,6 +11,9 @@ module Foobara
 
         detached_entity = Namespace.global.foobara_lookup_type!(:detached_entity)
         BuiltinTypes.build_and_register!(:entity, detached_entity, nil)
+
+        DetachedEntityType.types_requiring_conversion << :entity
+        DetachedEntityType.model_base_classes_requiring_conversion << "Foobara::Entity"
       end
 
       def reset_all

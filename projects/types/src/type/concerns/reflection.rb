@@ -15,7 +15,7 @@ module Foobara
 
             return if !start && registered?
 
-            to_process = [*base_type, *element_type, *possible_errors.map(&:error_class)]
+            to_process = types_to_add_to_manifest
 
             if element_types
               to_process += case element_types
@@ -41,6 +41,10 @@ module Foobara
             end
 
             result
+          end
+
+          def types_to_add_to_manifest
+            [*base_type, *element_type, *possible_errors.map(&:error_class)]
           end
 
           def deep_types_depended_on
