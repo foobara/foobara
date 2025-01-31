@@ -323,7 +323,7 @@ module Foobara
           declaration_data:,
           types_depended_on: types.sort,
           possible_errors: possible_errors_manifests
-        ).merge(description:, base_type: base_type_for_manifest)
+        ).merge(description:, base_type: base_type_for_manifest&.full_type_name&.to_sym)
 
         h.merge!(
           supported_processor_manifest(to_include).merge(
@@ -341,7 +341,7 @@ module Foobara
       end
 
       def base_type_for_manifest
-        base_type&.full_type_name&.to_sym
+        base_type
       end
 
       def supported_processor_manifest(to_include)

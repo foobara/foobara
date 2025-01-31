@@ -1,3 +1,7 @@
+## [0.0.54] - 2025-01-31
+
+- Change interface of base_type_for_manifest
+
 ## [0.0.53] - 2025-01-30
 
 - Prefix and re-organize several model methods to facilitate type extension

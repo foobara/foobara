@@ -141,6 +141,8 @@ RSpec.describe Foobara::Manifest do
     expect(entity.full_type_name).to eq("SomeOrg::SomeDomain::User")
     expect(entity.full_entity_name).to eq("SomeOrg::SomeDomain::User")
     expect(entity.primary_key_name).to eq("id")
+
+    expect(entity.relevant_manifest[:base_type]).to eq(:entity)
     expect(entity).to_not have_associations
 
     detached_entity = manifest.detached_entity_by_name("SomeOtherDomain::SomeDetachedEntity")
