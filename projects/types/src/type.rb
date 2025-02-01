@@ -323,7 +323,8 @@ module Foobara
           target_classes: target_classes.map(&:name).sort,
           declaration_data:,
           types_depended_on: types.sort,
-          possible_errors: possible_errors_manifests
+          possible_errors: possible_errors_manifests,
+          builtin: builtin?
         ).merge(description:, base_type: base_type_for_manifest&.full_type_name&.to_sym)
 
         h.merge!(
