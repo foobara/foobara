@@ -12,6 +12,7 @@ module Foobara
       def add_builtin_type(type)
         @builtin_references = nil
         builtin_types << type
+        type.is_builtin = true
       end
 
       def builtin_references

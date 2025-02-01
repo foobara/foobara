@@ -22,6 +22,7 @@ module Foobara
                     :structure_count,
                     :element_types,
                     :element_type,
+                    :is_builtin,
                     :raw_declaration_data,
                     :name,
                     :target_classes,
@@ -338,6 +339,10 @@ module Foobara
         end
 
         super.merge(h)
+      end
+
+      def builtin?
+        is_builtin
       end
 
       def base_type_for_manifest
