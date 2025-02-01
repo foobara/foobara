@@ -27,44 +27,15 @@ module Foobara
       end
 
       def entity?
-        type = base_type
-
-        while type
-          return true if type.reference.to_sym == :entity
-
-          type = type.base_type
-        end
-
-        false
+        extends_symbol?(:entity)
       end
 
       def detached_entity?
-        return false if reference == "entity"
-
-        type = base_type
-
-        while type
-          return true if type.reference.to_sym == :detached_entity
-
-          type = type.base_type
-        end
-
-        false
+        extends_symbol?(:detached_entity)
       end
 
       def model?
-        # TODO: hmmmm, should be false for :active_record
-        return false if %w[entity detached_entity].include?(reference)
-
-        type = base_type
-
-        while type
-          return true if type.reference.to_sym == :model
-
-          type = type.base_type
-        end
-
-        false
+        extends_symbol?(:model)
       end
 
       def base_type
@@ -101,6 +72,18 @@ module Foobara
 
       def builtin?
         BuiltinTypes.builtin_reference?(reference)
+      end
+
+      def extends_symbol?(symbol)
+        type = base_type
+
+        while type
+          return true if type.reference.to_sym == symbol
+
+          type = type.base_type
+        end
+
+        false
       end
     end
   end
