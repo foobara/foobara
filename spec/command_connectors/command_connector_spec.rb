@@ -924,6 +924,7 @@ RSpec.describe Foobara::CommandConnector do
     context "with describe path" do
       let(:action) { "describe" }
       let(:full_command_name) { "ComputeExponent" }
+      let(:inputs) { {} }
 
       it "describes the command" do
         expect(response.status).to be(0)

@@ -139,7 +139,8 @@ module Foobara
         command_class = find_builtin_command_class("Describe")
         full_command_name = command_class.full_command_name
 
-        inputs = { manifestable:, request: }
+        inputs = request.inputs.merge(manifestable:, request:)
+
         transformed_command_class = transformed_command_from_name(full_command_name) ||
                                     transform_command_class(command_class)
       when "describe_command"
@@ -154,7 +155,7 @@ module Foobara
         command_class = find_builtin_command_class("Describe")
         full_command_name = command_class.full_command_name
 
-        inputs = { manifestable: transformed_command_class, request: }
+        inputs = request.inputs.merge(manifestable: transformed_command_class, request:)
         transformed_command_class = transformed_command_from_name(full_command_name) ||
                                     transform_command_class(command_class)
       when "describe_type"
@@ -169,14 +170,14 @@ module Foobara
         command_class = find_builtin_command_class("Describe")
         full_command_name = command_class.full_command_name
 
-        inputs = { manifestable: type, request: }
+        inputs = request.inputs.merge(manifestable: type, request:)
         transformed_command_class = transformed_command_from_name(full_command_name) ||
                                     transform_command_class(command_class)
       when "manifest"
         command_class = find_builtin_command_class("Describe")
         full_command_name = command_class.full_command_name
 
-        inputs = { manifestable: self, request: }
+        inputs = request.inputs.merge(manifestable: self, request:)
         transformed_command_class = transformed_command_from_name(full_command_name) ||
                                     transform_command_class(command_class)
       when "ping"
