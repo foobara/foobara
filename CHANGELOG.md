@@ -1,3 +1,9 @@
+## [0.0.55] - 2025-02-01
+
+- Mark types as builtin directly and add builtin flag to manifest
+- Pass Request#inputs through to Describe and other commands
+- Fix bugs around what is considered a manifest entity/model
+
 ## [0.0.54] - 2025-01-31
 
 - Change interface of base_type_for_manifest

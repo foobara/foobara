@@ -27,15 +27,15 @@ module Foobara
       end
 
       def entity?
-        extends_symbol?(:entity)
+        !builtin? && extends_symbol?(:entity)
       end
 
       def detached_entity?
-        extends_symbol?(:detached_entity)
+        !builtin? && extends_symbol?(:detached_entity)
       end
 
       def model?
-        extends_symbol?(:model)
+        !builtin? && extends_symbol?(:model)
       end
 
       def base_type

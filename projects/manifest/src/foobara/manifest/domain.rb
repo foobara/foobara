@@ -20,15 +20,15 @@ module Foobara
       end
 
       def detached_entities
-        @detached_entities ||= types.select(&:detached_entity?)
+        @detached_entities ||= models.select(&:detached_entity?)
       end
 
       def entities
-        @entities ||= types.select(&:entity?)
+        @entities ||= detached_entities.select(&:entity?)
       end
 
       def models
-        @models ||= types.select(&:model?)
+        @models ||= types.select(&:model?).reject(&:builtin?)
       end
 
       def global?
