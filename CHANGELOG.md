@@ -1,3 +1,8 @@
+## [0.0.56] - 2025-02-16
+
+- Bump Ruby to 3.4.2
+- Add a ignore_unexpected_attributes option to Model#initialize
+
 ## [0.0.55] - 2025-02-01
 
 - Mark types as builtin directly and add builtin flag to manifest

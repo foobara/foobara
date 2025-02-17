@@ -171,13 +171,19 @@ module Foobara
     attr_accessor :mutable
 
     def initialize(attributes = nil, options = {})
-      allowed_options = %i[validate mutable]
+      allowed_options = %i[validate mutable ignore_unexpected_attributes]
       invalid_options = options.keys - allowed_options
 
       unless invalid_options.empty?
         # :nocov:
         raise ArgumentError, "Invalid options #{invalid_options} expected only #{allowed_options}"
         # :nocov:
+      end
+
+      if options[:ignore_unexpected_attributes]
+        Thread.foobara_with_var(:foobara_ignore_unexpected_attributes, true) do
+          return initialize(attributes, options.except(:ignore_unexpected_attributes))
+        end
       end
 
       validate = options[:validate]
@@ -189,6 +195,14 @@ module Foobara
           # :nocov:
         end
       else
+        if Thread.foobara_var_get(:foobara_ignore_unexpected_attributes)
+          outcome = attributes_type.process_value(attributes)
+
+          if outcome.success?
+            attributes = outcome.result
+          end
+        end
+
         self.mutable = true
         attributes.each_pair do |attribute_name, value|
           write_attribute(attribute_name, value)
