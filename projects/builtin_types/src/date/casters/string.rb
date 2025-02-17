@@ -15,10 +15,10 @@ module Foobara
             parse(string)
           end
 
-          private
-
           NOT_DELIMITED_REGEX = /\A(?<year>\d{4})(?<month>\d{2})(?<day>\d{2})\z/
           DELIMITED_REGEX = /\A(?<year>\d{4,})(?<delimiter>[\/\\.|_:;-])(?<month>\d{1,2})\k<delimiter>(?<day>\d{1,2})\z/
+
+          private
 
           def parse(string)
             match = NOT_DELIMITED_REGEX.match(string) || DELIMITED_REGEX.match(string)
