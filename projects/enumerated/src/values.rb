@@ -116,6 +116,23 @@ module Foobara
       def respond_to_missing?(name, _include_private = false)
         @symbol_map.key?(name)
       end
+
+      def make_module
+        mod = Module.new
+        enumerated = self
+
+        %i[all all_names all_values].each do |method_name|
+          mod.singleton_class.define_method method_name do |*args, **opts, &block|
+            enumerated.send(method_name, *args, **opts, &block)
+          end
+        end
+
+        @symbol_map.each_pair do |name, value|
+          mod.const_set(name, value)
+        end
+
+        mod
+      end
     end
   end
 end

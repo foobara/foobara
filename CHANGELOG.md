@@ -1,7 +1,11 @@
+## [0.0.57] - 2025-02-18
+
+- Add Enumerated.make_module helper
+
 ## [0.0.56] - 2025-02-16
 
 - Bump Ruby to 3.4.2
-- Add a ignore_unexpected_attributes option to Model#initialize
+- Add an ignore_unexpected_attributes option to Model#initialize
 
 ## [0.0.55] - 2025-02-01
 
