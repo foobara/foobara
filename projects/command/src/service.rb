@@ -1,11 +1,18 @@
-# TODO: move this to its own project
 module Foobara
-  # This is not a primary/secondary/tertiary concept in Foobara at the moment. Mostly an implementation detail
-  # to share behavior between Command and DomainMapper without DomainMapper being a Command.
-  # If someday we wish to consider this a primary/secondary/tertiary concept, then
-  # it would serve as a type of private command which cannot be called from commands outside of its domain.
-  # TODO: Consider making this a mixin called Runnable instead
-  class Service
+  # We distinguish between "Foobara Command" and the "command pattern".
+  #
+  # A "Foobara Command" encapsulates a high-level business operation and serves as the public interface to its domain.
+  #
+  # The "command pattern" encapsulates an operation behind an interface that supports .new(inputs), #run which returns
+  # an outcome which implements #success?, #result, and #errors.
+  #
+  # All "Foobara Command"s implement the "command pattern" but not all implementations of the "command pattern"
+  # are "Foobara Command"s.  An example is DomainMappers.  They happen to use the "command pattern" since it is a good
+  # fit but has nothing to do with a public interface high-level business operation encapsulation like a
+  # "Foobara Command" does.
+  module CommandPatternImplementation
+    include Concern
+
     include TruncatedInspect
 
     # TODO: move these to Service

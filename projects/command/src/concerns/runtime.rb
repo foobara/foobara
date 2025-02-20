@@ -1,5 +1,5 @@
 module Foobara
-  class Command < Service
+  class Command
     module Concerns
       module Runtime
         include Concern

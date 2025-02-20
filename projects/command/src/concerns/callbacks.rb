@@ -1,5 +1,5 @@
 module Foobara
-  class Command < Service
+  class Command
     module Concerns
       module Callbacks
         include Concern

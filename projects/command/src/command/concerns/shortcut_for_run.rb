@@ -1,5 +1,5 @@
 module Foobara
-  class Command < Service
+  class Command
     module Concerns
       module ShortcutForRun
         include Concern
@@ -9,10 +9,10 @@ module Foobara
             Command.all << subclass
             # This results in being able to use the command class name instead of .run! if you want.
             # So instead of DoIt.run!(inputs) you can just do DoIt(inputs)
-            # TODO: can we kill this? I don't think anything uses this nor would really need to.  Calling code could define such
-            # helper methods if desired but could be a bad idea since it is nice for command calls to stick out as command
-            # calls which would be less obvious if they just looked like random method calls (except that they are class case
-            # instead of underscore case)
+            # TODO: can we kill this? I don't think anything uses this nor would really need to.
+            # Calling code could define such helper methods if desired but could be a bad idea since it is nice for
+            # command calls to stick out as command calls which would be less obvious if they just looked like random
+            # method calls (except that they are class case instead of underscore case)
             subclass.define_command_named_function
           end
         end
