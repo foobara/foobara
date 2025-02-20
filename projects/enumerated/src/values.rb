@@ -117,6 +117,10 @@ module Foobara
         @symbol_map.key?(name)
       end
 
+      def value?(value)
+        @symbol_map.values.include?(value.to_sym)
+      end
+
       def make_module
         mod = Module.new
         enumerated = self

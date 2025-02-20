@@ -30,6 +30,13 @@ RSpec.describe Foobara::Enumerated::Values do
       expect(values.all_names).to match_array(%i[FOO BAR BAZ])
       expect(values.all).to eq(enum_declaration)
     end
+
+    describe "#value?" do
+      it "is answers if it is a value" do
+        expect(values.value?(:foo)).to be true
+        expect(values.value?(:asdf)).to be false
+      end
+    end
   end
 
   context "when array" do
