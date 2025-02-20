@@ -1,4 +1,4 @@
-RSpec.describe Foobara::Command::Concerns::DomainMappers do
+RSpec.describe Foobara::CommandPatternImplementation::Concerns::DomainMappers do
   after do
     Foobara.reset_alls
   end
@@ -108,7 +108,9 @@ RSpec.describe Foobara::Command::Concerns::DomainMappers do
         it "raises" do
           expect {
             command.run
-          }.to raise_error(Foobara::Command::Concerns::DomainMappers::ForgotToDependOnDomainMapperError)
+          }.to raise_error(
+            Foobara::CommandPatternImplementation::Concerns::DomainMappers::ForgotToDependOnDomainMapperError
+          )
         end
       end
     end
@@ -173,7 +175,9 @@ RSpec.describe Foobara::Command::Concerns::DomainMappers do
           result_domain_mapper
           expect {
             command.run
-          }.to raise_error(Foobara::Command::Concerns::DomainMappers::ForgotToDependOnDomainMapperError)
+          }.to raise_error(
+            Foobara::CommandPatternImplementation::Concerns::DomainMappers::ForgotToDependOnDomainMapperError
+          )
         end
       end
     end
@@ -232,7 +236,9 @@ RSpec.describe Foobara::Command::Concerns::DomainMappers do
           result_domain_mapper
           expect {
             command.run
-          }.to raise_error(Foobara::Command::Concerns::DomainMappers::ForgotToDependOnDomainMapperError)
+          }.to raise_error(
+            Foobara::CommandPatternImplementation::Concerns::DomainMappers::ForgotToDependOnDomainMapperError
+          )
         end
       end
 
@@ -258,7 +264,7 @@ RSpec.describe Foobara::Command::Concerns::DomainMappers do
         it "raises" do
           expect {
             command.run
-          }.to raise_error(Foobara::Command::Concerns::DomainMappers::NoDomainMapperFoundError)
+          }.to raise_error(Foobara::CommandPatternImplementation::Concerns::DomainMappers::NoDomainMapperFoundError)
         end
       end
     end

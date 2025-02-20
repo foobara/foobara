@@ -1,4 +1,4 @@
-RSpec.describe Foobara::Command::Concerns::Runtime do
+RSpec.describe Foobara::CommandPatternImplementation::Concerns::Runtime do
   let(:command_class) {
     stub_class(:CalculateExponent, Foobara::Command) do
       inputs exponent: :integer,

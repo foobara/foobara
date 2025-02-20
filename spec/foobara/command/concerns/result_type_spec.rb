@@ -1,4 +1,4 @@
-RSpec.describe Foobara::Command::Concerns::ResultType do
+RSpec.describe Foobara::CommandPatternImplementation::Concerns::ResultType do
   context "with simple command" do
     let(:command_class) {
       stub_class(:CommandClass, Foobara::Command) do
@@ -48,7 +48,9 @@ RSpec.describe Foobara::Command::Concerns::ResultType do
         let(:to_be_result) { "not an integer" }
 
         it "raises" do
-          expect { command.run }.to raise_error(Foobara::Command::Concerns::Result::CouldNotProcessResult)
+          expect {
+            command.run
+          }.to raise_error(Foobara::CommandPatternImplementation::Concerns::Result::CouldNotProcessResult)
           expect(command.outcome).to be_nil
           expect(command).to_not be_success
         end

@@ -116,7 +116,9 @@ RSpec.describe Foobara::Command do
 
       it "is not allowed to run the subcommand" do
         expect(command_class1.full_command_symbol).to eq(:"some_domain1::some_command1")
-        expect { outcome }.to raise_error(Foobara::Command::Concerns::Subcommands::CannotAccessDomain)
+        expect {
+          outcome
+        }.to raise_error(Foobara::CommandPatternImplementation::Concerns::Subcommands::CannotAccessDomain)
       end
 
       describe "#command_clases" do
@@ -135,7 +137,9 @@ RSpec.describe Foobara::Command do
       end
 
       it "is not allowed to run the subcommand" do
-        expect { outcome }.to raise_error(Foobara::Command::Concerns::Subcommands::CannotAccessDomain)
+        expect { outcome }.to raise_error(
+          Foobara::CommandPatternImplementation::Concerns::Subcommands::CannotAccessDomain
+        )
       end
     end
 

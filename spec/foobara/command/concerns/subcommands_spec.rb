@@ -1,4 +1,4 @@
-RSpec.describe Foobara::Command::Concerns::Subcommands do
+RSpec.describe Foobara::CommandPatternImplementation::Concerns::Subcommands do
   let(:command_class) {
     dep = subcommand_class
 
