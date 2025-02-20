@@ -28,8 +28,5 @@ module Foobara
     include Command::Concerns::Subcommands
     include Command::Concerns::DomainMappers
     include Command::Concerns::Reflection
-
-    # TODO: this feels like a hack and shouldn't be necessary. Let's try to fix Concern class inheritance, instead.
-    self.subclass_defined_callbacks ||= Foobara::Callback::Registry::SingleAction.new
   end
 end

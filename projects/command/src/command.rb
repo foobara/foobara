@@ -1,9 +1,4 @@
 module Foobara
-  class Command < Service
-    # TODO: this feels like a hack and shouldn't be necessary. Let's try to fix Concern class inheritance, instead.
-    self.subclass_defined_callbacks ||= Foobara::Callback::Registry::SingleAction.new
-  end
-
   Command.after_subclass_defined do |subclass|
     Command.all << subclass
     # TODO: can we kill this? I don't think anything uses this nor would need to.  Calling code could define such

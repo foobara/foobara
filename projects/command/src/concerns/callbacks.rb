@@ -25,6 +25,8 @@ module Foobara
         end
 
         on_include do
+          self.subclass_defined_callbacks ||= Foobara::Callback::Registry::SingleAction.new
+
           [self, singleton_class].each do |target|
             %i[before after].each do |type|
               target.define_method "#{type}_any_transition" do |&block|
