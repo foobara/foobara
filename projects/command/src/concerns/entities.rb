@@ -1,5 +1,5 @@
 module Foobara
-  class Command
+  class Command < Service
     module Concerns
       module Entities
         include Concern

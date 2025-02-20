@@ -1,5 +1,5 @@
 module Foobara
-  class Command
+  class Command < Service
     module Concerns
       module Runtime
         include Concern
@@ -16,6 +16,7 @@ module Foobara
             new(...).run!
           end
 
+          # TODO: what is this used for? Can we eliminate this concept?
           def define_command_named_function
             command_class = self
             convenience_method_name = Foobara::Util.non_full_name(command_class)

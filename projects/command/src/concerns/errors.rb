@@ -1,5 +1,5 @@
 module Foobara
-  class Command
+  class Command < Service
     module Concerns
       module Errors
         include Concern
@@ -48,6 +48,7 @@ module Foobara
 
         def initialize
           @error_collection = ErrorCollection.new
+          super
         end
 
         foobara_delegate :has_errors?, to: :error_collection

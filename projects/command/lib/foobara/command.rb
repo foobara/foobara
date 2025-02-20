@@ -1,5 +1,8 @@
 module Foobara
-  class Command
+  # TODO: Make some kind of module to house these methods instead of the Command class
+  class Service; end
+
+  class Command < Service
     class << self
       def install!
         Namespace.global.foobara_add_category_for_subclass_of(:command, self)
