@@ -46,7 +46,7 @@ module Foobara
 
         attr_reader :error_collection
 
-        def initialize
+        def initialize(...)
           @error_collection = ErrorCollection.new
           super
         end

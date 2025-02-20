@@ -31,12 +31,5 @@ module Foobara
 
     # TODO: this feels like a hack and shouldn't be necessary. Let's try to fix Concern class inheritance, instead.
     self.subclass_defined_callbacks ||= Foobara::Callback::Registry::SingleAction.new
-
-    attr_reader :raw_inputs
-
-    def initialize(inputs = {})
-      @raw_inputs = inputs
-      super()
-    end
   end
 end

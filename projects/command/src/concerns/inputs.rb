@@ -6,7 +6,12 @@ module Foobara
 
         include Concern
 
-        attr_reader :inputs
+        attr_reader :inputs, :raw_inputs
+
+        def initialize(inputs = {})
+          @raw_inputs = inputs
+          super()
+        end
 
         def method_missing(method_name, *args, &)
           if respond_to_missing_for_inputs?(method_name)
