@@ -1,5 +1,5 @@
 module Foobara
-  class Command
+  module CommandPatternImplementation
     module Concerns
       module Runtime
         include Concern

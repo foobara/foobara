@@ -1,4 +1,4 @@
-RSpec.describe Foobara::Command::Concerns::Entities do
+RSpec.describe Foobara::CommandPatternImplementation::Concerns::Entities do
   describe "#run" do
     after do
       Foobara.reset_alls

@@ -1,4 +1,4 @@
-RSpec.describe Foobara::Command::Concerns::Errors do
+RSpec.describe Foobara::CommandPatternImplementation::Concerns::Errors do
   after do
     Foobara.reset_alls
   end

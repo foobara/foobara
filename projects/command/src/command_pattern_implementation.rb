@@ -15,25 +15,24 @@ module Foobara
 
     include TruncatedInspect
 
-    # TODO: move these to Service
-    include Command::Concerns::Description
-    include Command::Concerns::Namespace
+    include CommandPatternImplementation::Concerns::Description
+    include CommandPatternImplementation::Concerns::Namespace
 
-    include Command::Concerns::InputsType
-    include Command::Concerns::ErrorsType
-    include Command::Concerns::ResultType
+    include CommandPatternImplementation::Concerns::InputsType
+    include CommandPatternImplementation::Concerns::ErrorsType
+    include CommandPatternImplementation::Concerns::ResultType
 
-    include Command::Concerns::Inputs
-    include Command::Concerns::Errors
-    include Command::Concerns::Result
+    include CommandPatternImplementation::Concerns::Inputs
+    include CommandPatternImplementation::Concerns::Errors
+    include CommandPatternImplementation::Concerns::Result
 
-    include Command::Concerns::Runtime
-    include Command::Concerns::Callbacks
-    include Command::Concerns::StateMachine
-    include Command::Concerns::Transactions
-    include Command::Concerns::Entities
-    include Command::Concerns::Subcommands
-    include Command::Concerns::DomainMappers
-    include Command::Concerns::Reflection
+    include CommandPatternImplementation::Concerns::Runtime
+    include CommandPatternImplementation::Concerns::Callbacks
+    include CommandPatternImplementation::Concerns::StateMachine
+    include CommandPatternImplementation::Concerns::Transactions
+    include CommandPatternImplementation::Concerns::Entities
+    include CommandPatternImplementation::Concerns::Subcommands
+    include CommandPatternImplementation::Concerns::DomainMappers
+    include CommandPatternImplementation::Concerns::Reflection
   end
 end

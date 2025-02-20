@@ -1,4 +1,4 @@
-RSpec.describe Foobara::Command::Concerns::Callbacks do
+RSpec.describe Foobara::CommandPatternImplementation::Concerns::Callbacks do
   after do
     Foobara.reset_alls
   end

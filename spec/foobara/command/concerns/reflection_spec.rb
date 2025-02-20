@@ -1,4 +1,4 @@
-RSpec.describe Foobara::Command::Concerns::Reflection do
+RSpec.describe Foobara::CommandPatternImplementation::Concerns::Reflection do
   describe "#types_depended_on" do
     context "when command has no types at all" do
       subject { stub_class(:CommandClass, Foobara::Command).types_depended_on }

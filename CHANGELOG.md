@@ -1,3 +1,7 @@
+## [0.0.58] - 2025-02-20
+
+- DomainMapper no longer inherits from Command. Instead, both include CommandPatternImplementation mixin
+
 ## [0.0.57] - 2025-02-18
 
 - Add Enumerated.make_module helper
