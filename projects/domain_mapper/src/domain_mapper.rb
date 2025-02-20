@@ -1,7 +1,7 @@
 module Foobara
-  # TODO: would be nice to inherit from something other than Command. Can we hoist a bunch of common behavior up
-  # out of Command into some other class maybe called Service or Runnable or something?
-  class DomainMapper < Foobara::Command
+  class DomainMapper
+    include CommandPatternImplementation
+
     class << self
       def map(value)
         new(from: value).run
