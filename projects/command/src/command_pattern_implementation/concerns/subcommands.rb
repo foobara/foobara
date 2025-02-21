@@ -79,6 +79,10 @@ module Foobara
           end
 
           def verify_depends_on!(subcommand_class)
+            unless domain_map_criteria
+              return if subcommand_class < DomainMapper
+            end
+
             unless depends_on?(subcommand_class)
               # :nocov:
               raise SubcommandNotRegistered, "Need to declare #{subcommand_class} on #{self} with .depends_on"

@@ -1,4 +1,7 @@
 module Foobara
+  # NOTE: If you depend_on a domain mapper in a command, then you need to depend on all domain mappers
+  # that that command uses. Or you can just exclude all of them in which case Foobara won't enforce
+  # explicit depends_on of domain mappers.
   class DomainMapper
     include CommandPatternImplementation
 
@@ -38,22 +41,37 @@ module Foobara
       end
 
       def matches?(type_indicator, value)
-        return true if type_indicator.nil? || value.nil? || type_indicator == value
+        match_score(type_indicator, value)&.>(0)
+      end
+
+      def applicable_score(from_value, to_value)
+        [*match_score(from_type, from_value), *match_score(to_type, to_value)].sum
+      end
+
+      def match_score(type_indicator, value)
+        return 1 if type_indicator.nil? || value.nil?
+        return 20 if type_indicator == value
 
         type = object_to_type(type_indicator)
 
-        return true if type.nil? || type == value
-        return true if type.applicable?(value) && type.process_value(value).success?
+        return 1 if type.nil?
+        return 9 if type == value
+
+        return 5 if type.applicable?(value) && type.process_value(value).success?
 
         if value.is_a?(Types::Type)
           if !value.registered? && !type.registered?
-            value.declaration_data == type.declaration_data
+            if value.declaration_data == type.declaration_data
+              8
+            end
           end
         else
           value_type = object_to_type(value)
 
           if value_type
-            matches?(type, value_type)
+            if matches?(type, value_type)
+              6
+            end
           end
         end
       end

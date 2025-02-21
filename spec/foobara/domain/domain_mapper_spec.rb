@@ -54,7 +54,7 @@ RSpec.describe Foobara::DomainMapper do
 
     context "when it doesn't match the class" do
       it "is false" do
-        expect(domain_mapper.applicable?(1, SomeOtherClass)).to be(false)
+        expect(domain_mapper).to_not be_applicable(1, SomeOtherClass)
       end
     end
   end

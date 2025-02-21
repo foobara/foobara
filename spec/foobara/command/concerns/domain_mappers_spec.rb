@@ -61,6 +61,16 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::DomainMappers do
     end
   end
 
+  let(:irrelevant_domain_mapper) do
+    subcommand_class
+    domain_mapper
+    stub_module("SomeDomain::DomainMappers")
+    stub_class("SomeDomain::DomainMappers::IrrelevantDomainMapper", Foobara::DomainMapper) do
+      from :integer
+      to :integer
+    end
+  end
+
   let(:command) { command_class.new }
   let(:outcome) { command.run }
   let(:result) { outcome.result }
@@ -103,7 +113,7 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::DomainMappers do
       end
 
       context "when forgetting to depend on the mapper" do
-        let(:domain_mappers) { [] }
+        let(:domain_mappers) { [irrelevant_domain_mapper] }
 
         it "raises" do
           expect {
@@ -169,7 +179,7 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::DomainMappers do
       end
 
       context "when forgetting to depend on the mapper" do
-        let(:domain_mappers) { [] }
+        let(:domain_mappers) { [irrelevant_domain_mapper] }
 
         it "raises" do
           result_domain_mapper
@@ -221,16 +231,15 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::DomainMappers do
 
       let(:result_type) { :string }
 
-      it "maps the inputs and the results" do
+      it "maps the results" do
         mapper = command_class.foobara_domain.lookup_matching_domain_mapper! to: :string
         expect(mapper).to be(SomeDomain::DomainMappers::SomeResultDomainMapper)
-        expect(command.domain_map!("bar")).to eq(foo: "bar")
         expect(outcome).to be_success
         expect(result).to eq("{\"foo\":\"bar\"}")
       end
 
       context "when forgetting to depend on the mapper" do
-        let(:domain_mappers) { [] }
+        let(:domain_mappers) { [irrelevant_domain_mapper] }
 
         it "raises" do
           result_domain_mapper
@@ -266,6 +275,36 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::DomainMappers do
             command.run
           }.to raise_error(Foobara::CommandPatternImplementation::Concerns::DomainMappers::NoDomainMapperFoundError)
         end
+      end
+    end
+
+    context "when domain mappers are ambiguous" do
+      let(:domain_mapper_more_specific) do
+        subcommand_class
+        stub_module("SomeDomain::DomainMappers")
+        stub_class("SomeDomain::DomainMappers::MoreSpecific", Foobara::DomainMapper) do
+          from :integer
+          to :integer
+
+          def map
+            100
+          end
+        end
+      end
+
+      let(:domain_mapper_less_specific) do
+        subcommand_class
+        stub_module("SomeDomain::DomainMappers")
+        stub_class("SomeDomain::DomainMappers::LessSpecific", Foobara::DomainMapper) do
+          from :string
+          to :integer
+        end
+      end
+
+      let(:domain_mappers) { [domain_mapper_more_specific, domain_mapper_less_specific] }
+
+      it "chooses the more specific one" do
+        expect(command.domain_map!(-1, from: :integer)).to eq(100)
       end
     end
   end

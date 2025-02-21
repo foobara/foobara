@@ -133,7 +133,7 @@ module Foobara
           super
         end
 
-        def foobara_domain_map(value, to: nil, strict: false, **opts)
+        def foobara_domain_map(value, to: nil, strict: false, criteria: nil, should_raise: false, **opts)
           invalid_keys = opts.keys - [:from]
 
           if invalid_keys.any?
@@ -144,23 +144,27 @@ module Foobara
 
           from = if opts.key?(:from)
                    opts[:from]
-                 elsif !strict
+                 else
+                   try_nil = true
                    value
                  end
 
-          mapper = lookup_matching_domain_mapper(from:, to:, strict:)
+          mapper = lookup_matching_domain_mapper(from:, to:, criteria:, strict:)
 
-          mapper&.map!(value)
-        end
-
-        def foobara_domain_map!(value, from: value, to: nil, strict: false)
-          mapper = lookup_matching_domain_mapper(from:, to:, strict:)
-
-          unless mapper
-            raise Foobara::DomainMapperLookups::NoDomainMapperFoundError.new(from, to, value:)
+          if try_nil
+            from = nil
+            mapper = lookup_matching_domain_mapper(from:, to:, criteria:, strict:)
           end
 
-          mapper.map!(value)
+          if mapper
+            mapper.map!(value)
+          elsif should_raise
+            raise Foobara::DomainMapperLookups::NoDomainMapperFoundError.new(from, to, value:)
+          end
+        end
+
+        def foobara_domain_map!(value, from: nil, to: nil, criteria: nil, strict: false)
+          foobara_domain_map(value, from:, to:, criteria:, strict:, should_raise: true)
         end
 
         def foobara_domain_name

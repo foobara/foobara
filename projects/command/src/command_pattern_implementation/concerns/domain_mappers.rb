@@ -45,13 +45,33 @@ module Foobara
           end
         end
 
+        module ClassMethods
+          def domain_map_criteria
+            return @domain_map_criteria if @domain_map_criteria
+
+            has_explicit_mapper_deps = depends_on.any? do |c|
+              foobara_lookup_domain_mapper(c)
+            end
+
+            @domain_map_criteria = if has_explicit_mapper_deps
+                                     ->(mapper) { depends_on?(mapper) }
+                                   end
+          end
+        end
+
         include Concern
 
         def run_mapped_subcommand!(subcommand_class, unmapped_inputs = {}, to = nil)
+          unless subcommand_class
+            # :nocov:
+            raise ArgumentError, "subcommand_class is required"
+            # :nocov:
+          end
+
           mapped_something = false
           no_mapper_found = nil
 
-          criteria = ->(mapper) { self.class.depends_on?(mapper) }
+          criteria = self.class.domain_map_criteria
 
           inputs_mapper = self.class.domain.lookup_matching_domain_mapper(
             from: unmapped_inputs,
@@ -88,7 +108,7 @@ module Foobara
             result_mapper = self.class.domain.lookup_matching_domain_mapper(
               from: result,
               to:,
-              criteria: ->(domain_mapper) { self.class.depends_on?(domain_mapper) },
+              criteria:,
               strict: true
             )
           end
@@ -99,24 +119,26 @@ module Foobara
           end
 
           unless mapped_something
-            mapper = self.class.domain.lookup_matching_domain_mapper(
-              from: unmapped_inputs,
-              to: subcommand_class,
-              strict: true
-            )
+            if criteria
+              mapper = self.class.domain.lookup_matching_domain_mapper(
+                from: unmapped_inputs,
+                to: subcommand_class,
+                strict: true
+              )
 
-            if mapper
-              raise ForgotToDependOnDomainMapperError, mapper
-            end
+              if mapper
+                raise ForgotToDependOnDomainMapperError, mapper
+              end
 
-            mapper = self.class.domain.lookup_matching_domain_mapper(
-              from: subcommand_class.result_type,
-              to:,
-              strict: true
-            )
+              mapper = self.class.domain.lookup_matching_domain_mapper(
+                from: subcommand_class.result_type,
+                to:,
+                strict: true
+              )
 
-            if mapper
-              raise ForgotToDependOnDomainMapperError, mapper
+              if mapper
+                raise ForgotToDependOnDomainMapperError, mapper
+              end
             end
 
             raise NoDomainMapperFoundError.new(subcommand_class, to)
@@ -125,12 +147,12 @@ module Foobara
           result
         end
 
-        def domain_map(...)
-          self.class.domain.foobara_domain_map(...)
+        def domain_map(*, **, &)
+          self.class.domain.foobara_domain_map(*, criteria: self.class.domain_map_criteria, strict: true, **, &)
         end
 
-        def domain_map!(...)
-          self.class.domain.foobara_domain_map!(...)
+        def domain_map!(*, **, &)
+          self.class.domain.foobara_domain_map!(*, criteria: self.class.domain_map_criteria, strict: true, **, &)
         end
       end
     end

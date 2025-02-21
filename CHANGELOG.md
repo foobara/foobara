@@ -1,4 +1,10 @@
-## [0.0.58] - 2025-02-20
+## [0.0.60] - 2025-02-22
+
+- Now including domain mappers in the .depends_on call is optional. If you include any of them, you must include all
+  of them. Otherwise, you can include none of them and then no verification of them will be performed.
+- Introduce a ranking/scoring system of domain mapper matches to help with certain ambiguous situations
+
+## [0.0.59] - 2025-02-20
 
 - DomainMapper no longer inherits from Command. Instead, both include CommandPatternImplementation mixin
 

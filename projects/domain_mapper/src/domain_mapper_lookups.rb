@@ -56,7 +56,25 @@ module Foobara
         end
 
         if candidates.size > 1
-          raise AmbiguousDomainMapperError.new(from, to, candidates)
+          best = []
+          best_score = 0
+
+          candidates.each do |mapper|
+            score = mapper.applicable_score(from, to)
+
+            if score > best_score
+              best = [mapper]
+              best_score = score
+            elsif score == best_score
+              best << mapper
+            end
+          end
+
+          if best.size > 1
+            raise AmbiguousDomainMapperError.new(from, to, candidates)
+          else
+            candidates = best
+          end
         end
 
         value = candidates.first
