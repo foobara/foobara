@@ -177,6 +177,7 @@ RSpec.describe Foobara::Manifest do
     expect(entity.organization.types).to include(entity)
 
     attributes = entity.attributes_type
+    expect(attributes).to_not be_custom
     expect(attributes.scoped_category).to be_nil
     expect(attributes.parent).to be_nil
     expect(attributes).to be_a(Foobara::Manifest::Attributes)

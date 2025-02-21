@@ -80,6 +80,12 @@ module Foobara
         @model = to_type.model?
       end
 
+      def custom?
+        return @custom if defined?(@custom)
+
+        @custom = to_type.custom?
+      end
+
       def to_model
         raise "not an model" unless model?
         raise "model extension instead of an model" unless relevant_manifest.size == 1

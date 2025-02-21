@@ -1,3 +1,7 @@
+## [0.0.61] - 2025-02-22
+
+- Add Manifest::Type#custom?
+
 ## [0.0.60] - 2025-02-22
 
 - Now including domain mappers in the .depends_on call is optional. If you include any of them, you must include all

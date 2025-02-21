@@ -74,6 +74,11 @@ module Foobara
         BuiltinTypes.builtin_reference?(reference)
       end
 
+      # Not sure the best way to define this...
+      def custom?
+        !builtin? && !model?
+      end
+
       def extends_symbol?(symbol)
         type = base_type
 
