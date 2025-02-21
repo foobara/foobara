@@ -90,6 +90,10 @@ module Foobara
 
         false
       end
+
+      def to_type_declaration_from_declaration_data
+        TypeDeclaration.new(root_manifest, [*path, :declaration_data])
+      end
     end
   end
 end

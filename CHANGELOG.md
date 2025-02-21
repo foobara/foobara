@@ -1,8 +1,12 @@
-## [0.0.61] - 2025-02-22
+## [0.0.62] - 2025-02-21
+
+- Add Manifest::Type#to_type_declaration_from_declaration_data
+
+## [0.0.61] - 2025-02-21
 
 - Add Manifest::Type#custom?
 
-## [0.0.60] - 2025-02-22
+## [0.0.60] - 2025-02-21
 
 - Now including domain mappers in the .depends_on call is optional. If you include any of them, you must include all
   of them. Otherwise, you can include none of them and then no verification of them will be performed.

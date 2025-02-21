@@ -175,6 +175,7 @@ RSpec.describe Foobara::Manifest do
 
     expect(manifest.types).to include(entity)
     expect(entity.organization.types).to include(entity)
+    expect(entity.to_type_declaration_from_declaration_data.name).to eq("User")
 
     attributes = entity.attributes_type
     expect(attributes).to_not be_custom
