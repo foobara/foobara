@@ -1,3 +1,8 @@
+## [0.0.64] - 2025-02-25
+
+- Fix bug where DomainMappers created after commands have ran wouldn't be detected
+- Expose Enumerated::Values#value?
+
 ## [0.0.63] - 2025-02-25
 
 - Allow creating an Enumerated from a list of value strings that contain colons

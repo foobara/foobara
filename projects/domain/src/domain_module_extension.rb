@@ -133,7 +133,21 @@ module Foobara
           super
         end
 
-        def foobara_domain_map(value, to: nil, strict: false, criteria: nil, should_raise: false, **opts)
+        def foobara_domain_map(*args, to: nil, strict: false, criteria: nil, should_raise: false, **opts)
+          case args.size
+          when 1
+            value = args.first
+          when 0
+            if opts.empty?
+              raise ArgumentError, "Expected at least one argument"
+            else
+              value = opts
+              opts = {}
+            end
+          else
+            raise ArgumentError, "Expected 1 argument but got #{args.size}"
+          end
+
           invalid_keys = opts.keys - [:from]
 
           if invalid_keys.any?
