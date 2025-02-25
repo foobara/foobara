@@ -1,3 +1,7 @@
+## [0.0.63] - 2025-02-25
+
+- Allow creating an Enumerated from a list of value strings that contain colons
+
 ## [0.0.62] - 2025-02-21
 
 - Add Manifest::Type#to_type_declaration_from_declaration_data
