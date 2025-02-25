@@ -6,6 +6,10 @@ module Foobara
     include CommandPatternImplementation
 
     class << self
+      def foobara_on_register
+        foobara_domain.new_mapper_registered!
+      end
+
       def map(value)
         new(from: value).run
       end

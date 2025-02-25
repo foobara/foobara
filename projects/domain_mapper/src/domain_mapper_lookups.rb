@@ -40,6 +40,12 @@ module Foobara
     include Concern
 
     module ClassMethods
+      def new_mapper_registered!
+        if defined?(@mappers) && !@mappers.empty?
+          remove_instance_variable("@mappers")
+        end
+      end
+
       def lookup_matching_domain_mapper!(from: nil, to: nil, strict: false, criteria: nil)
         result = lookup_matching_domain_mapper(from:, to:, strict:, criteria:)
 

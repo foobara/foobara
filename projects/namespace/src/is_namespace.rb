@@ -78,6 +78,10 @@ module Foobara
         foobara_registry.register(scoped)
         # awkward??
         scoped.scoped_namespace = self
+
+        if scoped.respond_to?(:foobara_on_register)
+          scoped.foobara_on_register
+        end
       rescue PrefixlessRegistry::RegisteringScopedWithPrefixError,
              BaseRegistry::WouldMakeRegistryAmbiguousError => e
         _upgrade_registry(e)
