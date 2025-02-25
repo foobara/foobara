@@ -149,11 +149,14 @@ module Foobara
                    value
                  end
 
-          mapper = lookup_matching_domain_mapper(from:, to:, criteria:, strict:)
-
-          if try_nil
-            from = nil
-            mapper = lookup_matching_domain_mapper(from:, to:, criteria:, strict:)
+          mapper = begin
+            lookup_matching_domain_mapper(from:, to:, criteria:, strict:)
+          rescue DomainMapperLookups::AmbiguousDomainMapperError
+            if try_nil
+              lookup_matching_domain_mapper(from: nil, to:, criteria:, strict:)
+            else
+              raise
+            end
           end
 
           if mapper
@@ -163,8 +166,8 @@ module Foobara
           end
         end
 
-        def foobara_domain_map!(value, from: nil, to: nil, criteria: nil, strict: false)
-          foobara_domain_map(value, from:, to:, criteria:, strict:, should_raise: true)
+        def foobara_domain_map!(*, **, &)
+          foobara_domain_map(*, should_raise: true, **, &)
         end
 
         def foobara_domain_name
