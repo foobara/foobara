@@ -2,6 +2,7 @@
 
 - Fix bug where DomainMappers created after commands have ran wouldn't be detected
 - Expose Enumerated::Values#value?
+- Allow passing a hash to DomainMapper#new
 
 ## [0.0.63] - 2025-02-25
 

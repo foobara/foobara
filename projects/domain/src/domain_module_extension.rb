@@ -139,13 +139,17 @@ module Foobara
             value = args.first
           when 0
             if opts.empty?
+              # :nocov:
               raise ArgumentError, "Expected at least one argument"
+              # :nocov:
             else
               value = opts
               opts = {}
             end
           else
+            # :nocov:
             raise ArgumentError, "Expected 1 argument but got #{args.size}"
+            # :nocov:
           end
 
           invalid_keys = opts.keys - [:from]
@@ -159,19 +163,10 @@ module Foobara
           from = if opts.key?(:from)
                    opts[:from]
                  else
-                   try_nil = true
                    value
                  end
 
-          mapper = begin
-            lookup_matching_domain_mapper(from:, to:, criteria:, strict:)
-          rescue DomainMapperLookups::AmbiguousDomainMapperError
-            if try_nil
-              lookup_matching_domain_mapper(from: nil, to:, criteria:, strict:)
-            else
-              raise
-            end
-          end
+          mapper = lookup_matching_domain_mapper(from:, to:, criteria:, strict:)
 
           if mapper
             mapper.map!(value)

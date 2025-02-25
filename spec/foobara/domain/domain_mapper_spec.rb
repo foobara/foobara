@@ -22,7 +22,10 @@ RSpec.describe Foobara::DomainMapper do
     stub_module("DomainA::DomainMappers")
     stub_module("DomainA::DomainMappers::DomainB")
     stub_class("DomainA::DomainMappers::DomainB::UserB", described_class) do
-      from :integer
+      from do
+        foo :integer
+        bar :string
+      end
       to SomeClass
 
       def map
@@ -48,7 +51,7 @@ RSpec.describe Foobara::DomainMapper do
   describe "#applicable?" do
     context "when to matches class" do
       it "is true" do
-        expect(domain_mapper.applicable?(1, SomeClass)).to be(true)
+        expect(domain_mapper.applicable?({ foo: 1, bar: "baz" }, SomeClass)).to be(true)
       end
     end
 
@@ -61,7 +64,14 @@ RSpec.describe Foobara::DomainMapper do
 
   describe "#map!" do
     it "maps it" do
-      mapped_value = domain_mapper.map!(1)
+      mapped_value = domain_mapper.map!(foo: 1, bar: "baz")
+      expect(mapped_value).to be_a(SomeClass)
+    end
+  end
+
+  describe "#foobara_domain_map!" do
+    it "maps it" do
+      mapped_value = domain_a.foobara_domain_map!(foo: 1, bar: "baz")
       expect(mapped_value).to be_a(SomeClass)
     end
   end

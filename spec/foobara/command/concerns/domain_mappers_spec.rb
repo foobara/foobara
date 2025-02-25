@@ -64,6 +64,8 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::DomainMappers do
   let(:irrelevant_domain_mapper) do
     subcommand_class
     domain_mapper
+    # This is here to hit a code path involving cache busting in Domain#mappers
+    expect(domain_mapper.domain.mappers).to be_an(Array)
     stub_module("SomeDomain::DomainMappers")
     stub_class("SomeDomain::DomainMappers::IrrelevantDomainMapper", Foobara::DomainMapper) do
       from :integer
