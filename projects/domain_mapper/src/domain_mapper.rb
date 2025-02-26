@@ -58,7 +58,7 @@ module Foobara
 
         type = object_to_type(type_indicator)
 
-        return 1 if type.nil?
+        return 0 if type.nil?
         return 9 if type == value
 
         return 5 if type.applicable?(value) && type.process_value(value).success?
@@ -104,7 +104,7 @@ module Foobara
             when Types::Type
               object
             when ::Symbol
-              domain.foobara_lookup_type!(object)
+              domain.foobara_lookup_type(object)
             end
           end
         end

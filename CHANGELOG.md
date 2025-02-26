@@ -1,3 +1,7 @@
+## [0.0.65] - 2025-02-26
+
+- Fix a problem when looking up domain mappers with a symbol value that doesn't represent a type
+
 ## [0.0.64] - 2025-02-25
 
 - Fix bug where DomainMappers created after commands have ran wouldn't be detected

@@ -154,6 +154,10 @@ module Foobara
       def target_class
         if target_classes.empty?
           # :nocov:
+          # TODO: We really need a better error message when we hit this point in the code path.
+          # One thing that can cause this is if you create a custom type called :model but it isn't loaded
+          # yet and we accidentally are referring to the builtin :model type.  This error message doesn't reveal
+          # that you need to require the custom :model.
           raise "No target classes"
           # :nocov:
         elsif target_classes.size > 1
