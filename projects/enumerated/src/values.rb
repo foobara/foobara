@@ -57,7 +57,7 @@ module Foobara
           normalized = {}
 
           symbol_map.each_pair do |name, value|
-            normalized[Util.constantify(name).gsub(":", "_").to_sym] = value&.to_sym
+            normalized[Util.constantify(name).gsub(/[:\/]/, "_").to_sym] = value&.to_sym
           end
 
           normalized.freeze

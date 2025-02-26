@@ -1,3 +1,7 @@
+## [0.0.67] - 2025-02-26
+
+- Convert / to _ when building constant names in Enumerated::Values
+
 ## [0.0.66] - 2025-02-26
 
 - Make sure methods like Command::Manifest#inputs_types_depended_on return [] instead of nil when missing

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    foobara (0.0.66)
+    foobara (0.0.67)
       bigdecimal
       foobara-util
 
