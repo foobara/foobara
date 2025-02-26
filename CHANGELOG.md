@@ -1,3 +1,7 @@
+## [0.0.66] - 2025-02-26
+
+- Make sure methods like Command::Manifest#inputs_types_depended_on return [] instead of nil when missing
+
 ## [0.0.65] - 2025-02-26
 
 - Fix a problem when looking up domain mappers with a symbol value that doesn't represent a type

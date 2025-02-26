@@ -32,27 +32,27 @@ module Foobara
       end
 
       def types_depended_on
-        @types_depended_on ||= self[:types_depended_on].map do |type_reference|
+        @types_depended_on ||= self[:types_depended_on]&.map do |type_reference|
           Type.new(root_manifest, [:type, type_reference])
-        end
+        end || []
       end
 
       def inputs_types_depended_on
-        @inputs_types_depended_on ||= self[:inputs_types_depended_on].map do |type_reference|
+        @inputs_types_depended_on ||= self[:inputs_types_depended_on]&.map do |type_reference|
           Type.new(root_manifest, [:type, type_reference])
-        end
+        end || []
       end
 
       def result_types_depended_on
-        @result_types_depended_on ||= self[:result_types_depended_on].to_set do |type_reference|
+        @result_types_depended_on ||= self[:result_types_depended_on]&.to_set do |type_reference|
           Type.new(root_manifest, [:type, type_reference])
-        end
+        end || Set.new
       end
 
       def errors_types_depended_on
-        @errors_types_depended_on ||= self[:errors_types_depended_on].to_set do |type_reference|
+        @errors_types_depended_on ||= self[:errors_types_depended_on]&.to_set do |type_reference|
           Type.new(root_manifest, [:type, type_reference])
-        end
+        end || Set.new
       end
     end
   end
