@@ -61,6 +61,7 @@ module Foobara
         return 0 if type.nil?
         return 9 if type == value
 
+        # TODO: This .process_value call is slow
         return 5 if type.applicable?(value) && type.process_value(value).success?
 
         if value.is_a?(Types::Type)

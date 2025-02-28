@@ -1,3 +1,7 @@
+## [0.0.68] - 2025-02-28
+
+- Make use of LruCache for performance boost when converting type declarations to types
+
 ## [0.0.67] - 2025-02-26
 
 - Convert / to _ when building constant names in Enumerated::Values

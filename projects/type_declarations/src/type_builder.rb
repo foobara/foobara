@@ -1,3 +1,5 @@
+require "foobara/lru_cache"
+
 module Foobara
   module TypeDeclarations
     class TypeBuilder
@@ -63,6 +65,12 @@ module Foobara
       end
 
       def type_for_declaration(*type_declaration_bits, &block)
+        lru_cache.cached([type_declaration_bits, block]) do
+          type_for_declaration_without_cache(*type_declaration_bits, &block)
+        end
+      end
+
+      def type_for_declaration_without_cache(*type_declaration_bits, &block)
         type_declaration = if block
                              unless type_declaration_bits.empty?
                                # :nocov:
@@ -88,7 +96,17 @@ module Foobara
         handler.process_value!(type_declaration)
       end
 
+      def clear_cache
+        if @lru_cache
+          lru_cache.reset!
+        end
+      end
+
       private
+
+      def lru_cache
+        @lru_cache ||= Foobara::LruCache.new(100)
+      end
 
       def type_declaration_bits_to_type_declaration(type_declaration_bits)
         type, *symbolic_processors, processor_data = type_declaration_bits
