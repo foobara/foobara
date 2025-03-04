@@ -1,6 +1,6 @@
 module Foobara
   module Version
-    VERSION = "0.0.68".freeze
+    VERSION = "0.0.69".freeze
 
     local_ruby_version = File.read("#{__dir__}/.ruby-version").chomp
     local_ruby_version_minor = local_ruby_version[/\A(\d+\.\d+)\.\d+\z/, 1]

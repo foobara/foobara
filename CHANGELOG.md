@@ -1,3 +1,7 @@
+## [0.0.69] - 2025-03-03
+
+- Allow StateMachine to use an attribute on another object as its current state for convenience
+
 ## [0.0.68] - 2025-02-28
 
 - Make use of LruCache for performance boost when converting type declarations to types

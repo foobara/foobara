@@ -5,7 +5,7 @@ module Foobara
 
       attr_accessor :log
 
-      def initialize(*args, **options)
+      def initialize(...)
         super
 
         self.log = []

@@ -34,12 +34,36 @@ module Foobara
       end
     end
 
-    attr_accessor :current_state
+    attr_accessor :target_attribute, :owner
 
-    def initialize(*args, **options)
+    # owner is optional.  It can help with certain callbacks. It's also required if planning to use the target_attribute
+    # feature
+    def initialize(*args, owner: nil, target_attribute: nil, **options)
+      self.owner = owner
+
       super
 
-      self.current_state = self.class.initial_state
+      if target_attribute
+        self.target_attribute = target_attribute
+      else
+        self.current_state = self.class.initial_state
+      end
+    end
+
+    def current_state
+      if target_attribute
+        owner.send(target_attribute) || self.class.initial_state
+      else
+        @current_state
+      end
+    end
+
+    def current_state=(state)
+      if target_attribute
+        owner.send("#{target_attribute}=", state)
+      else
+        @current_state = state
+      end
     end
 
     def perform_transition!(transition, &block)

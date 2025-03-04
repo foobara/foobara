@@ -3,11 +3,9 @@ module Foobara
     module Callbacks
       include Concern
 
-      # owner helps with determining the relevant object when running class-registered state transition callbacks
-      attr_accessor :callback_registry, :owner
+      attr_accessor :callback_registry
 
-      def initialize(owner: nil)
-        self.owner = owner
+      def initialize(...)
         self.callback_registry = Callback::Registry::ChainedConditioned.new(self.class.class_callback_registry)
       end
 
