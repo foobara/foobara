@@ -111,8 +111,6 @@ module Foobara
         capture_current_namespaces
       end
 
-      private
-
       def capture_current_namespaces
         # TODO: this feels like the wrong place to do this but doing it here for now to make sure it's done when
         # most important
