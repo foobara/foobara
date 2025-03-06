@@ -56,7 +56,15 @@ module Foobara
           end
 
           def depends_on(*subcommand_classes)
-            return @depends_on ||= Set.new if subcommand_classes.empty?
+            if subcommand_classes.empty?
+              return @depends_on if defined?(@depends_on)
+
+              @depends_on = if self == Foobara::Command
+                              Set.new
+                            else
+                              superclass.depends_on.dup
+                            end
+            end
 
             if subcommand_classes.length == 1
               subcommand_classes = Util.array(subcommand_classes.first)
