@@ -1,3 +1,7 @@
+# [0.0.71] - 2025-03-06
+
+- Make require_primary_key: the default in AttributesHelpers
+
 # [0.0.70] - 2025-03-06
 
 - Make sure Foobara::Command.depends_on is inherited

@@ -25,7 +25,7 @@ module Foobara
             respond_to?(:foobara_primary_key_attribute)
           end
 
-          def foobara_attributes_for_update(require_primary_key: false)
+          def foobara_attributes_for_update(require_primary_key: true)
             foobara_attributes_for_aggregate_update(require_primary_key:)
           end
 
@@ -40,7 +40,7 @@ module Foobara
             Foobara::TypeDeclarations::Attributes.reject(declaration, foobara_primary_key_attribute)
           end
 
-          def foobara_attributes_for_aggregate_update(require_primary_key: false, initial: true)
+          def foobara_attributes_for_aggregate_update(require_primary_key: true, initial: true)
             declaration = foobara_attributes_type.declaration_data
             declaration = Util.deep_dup(declaration)
 
@@ -51,7 +51,7 @@ module Foobara
               if require_primary_key
                 declaration[:required] = [foobara_primary_key_attribute]
               else
-                TypeDeclarations::Attributes.reject(declaration, foobara_primary_key_attribute)
+                declaration = TypeDeclarations::Attributes.reject(declaration, foobara_primary_key_attribute)
               end
             end
 
@@ -68,7 +68,7 @@ module Foobara
             declaration
           end
 
-          def foobara_attributes_for_atom_update(require_primary_key: false)
+          def foobara_attributes_for_atom_update(require_primary_key: true)
             declaration = foobara_attributes_type.declaration_data
             declaration = Util.deep_dup(declaration)
 

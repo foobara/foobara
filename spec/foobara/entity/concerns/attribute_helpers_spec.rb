@@ -17,13 +17,13 @@ RSpec.describe Foobara::ModelAttributeHelpers::Concerns::AttributeHelpers do
 
   describe ".attributes_for_update" do
     it "calls attributes_for_aggregate_update" do
-      expect(SomeEntity.foobara_attributes_for_update).to be_a(Hash)
+      expect(SomeEntity.foobara_attributes_for_update(require_primary_key: false)).to be_a(Hash)
     end
   end
 
   describe ".attributes_for_atom_update" do
     it "returns a hash" do
-      expect(SomeEntity.foobara_attributes_for_atom_update).to be_a(Hash)
+      expect(SomeEntity.foobara_attributes_for_atom_update(require_primary_key: false)).to be_a(Hash)
     end
   end
 
