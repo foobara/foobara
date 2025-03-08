@@ -282,7 +282,8 @@ module Foobara
         end
 
         def find_many_by(attributes_filter)
-          attributes_filter = entity_class.attributes_type.process_value!(attributes_filter)
+          find_by_type = entity_class.domain.foobara_type_from_declaration(entity_class.attributes_for_find_by)
+          attributes_filter = find_by_type.process_value!(attributes_filter)
 
           yielded_ids = Set.new
 

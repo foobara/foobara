@@ -1,3 +1,7 @@
+# [0.0.72] - 2025-03-07
+
+- Fix bug in find_many_by when there are required attributes not present in the filter
+
 # [0.0.71] - 2025-03-06
 
 - Make require_primary_key: the default in AttributesHelpers
