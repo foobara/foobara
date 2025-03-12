@@ -208,7 +208,7 @@ module Foobara
         always_applicable?
       end
 
-      # This means its applicable regardless of value to transform. Override if different behavior is needed.
+      # This means it's applicable regardless of value to transform. Override if different behavior is needed.
       def always_applicable?
         !!declaration_data
       end

@@ -1,3 +1,7 @@
+# [0.0.73] - 2025-03-11
+
+- Fix bug preventing false from being used as a default in the Attributes::Dsl
+
 # [0.0.72] - 2025-03-07
 
 - Fix bug in find_many_by when there are required attributes not present in the filter

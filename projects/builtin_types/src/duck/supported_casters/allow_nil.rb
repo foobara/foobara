@@ -12,6 +12,7 @@ module Foobara
               false
             end
           end
+
           def applicable?(value)
             value.nil? && allow_nil?
           end

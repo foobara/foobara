@@ -107,9 +107,9 @@ module Foobara
               _add_to_required(attribute_name)
             end
 
-            default = declaration.delete(:default)
+            if declaration.key?(:default)
+              default = declaration.delete(:default)
 
-            if default
               _add_to_defaults(attribute_name, default)
             end
 
