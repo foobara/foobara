@@ -354,8 +354,6 @@ module Foobara
 
       # Drive all of this off of the list of exposed commands...
       to_include = Set.new
-      to_include << command_registry.exposed_global_organization
-      to_include << command_registry.exposed_global_domain
 
       command_registry.foobara_each do |exposed_whatever|
         to_include << exposed_whatever

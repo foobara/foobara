@@ -100,16 +100,6 @@ module Foobara
       exposed_organization
     end
 
-    def exposed_global_domain
-      exposed_global_organization.foobara_lookup_domain("") ||
-        build_and_register_exposed_domain("")
-    end
-
-    def exposed_global_organization
-      foobara_lookup_organization("") ||
-        build_and_register_exposed_organization("")
-    end
-
     def [](name)
       if name.is_a?(Class)
         name.full_command_name

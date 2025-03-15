@@ -182,7 +182,8 @@ module Foobara
 
       if options[:ignore_unexpected_attributes]
         Thread.foobara_with_var(:foobara_ignore_unexpected_attributes, true) do
-          return initialize(attributes, options.except(:ignore_unexpected_attributes))
+          initialize(attributes, options.except(:ignore_unexpected_attributes))
+          return
         end
       end
 

@@ -1,3 +1,8 @@
+# [0.0.74] - 2025-03-15
+
+- fix bug where a command connector won't expose the non-global domain of a type if the command it depends on
+  is in the global domain
+
 # [0.0.73] - 2025-03-11
 
 - Fix bug preventing false from being used as a default in the Attributes::Dsl

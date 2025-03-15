@@ -1052,7 +1052,7 @@ Let's install foobara-remote-imports:
 $ gem install foobara-remote-imports
 ```
 
-And lLet's create a new script and import our various Capybara commands over HTTP:
+And let's create a new script and import our various Capybara commands over HTTP:
 
 ```ruby
 #!/usr/bin/env ruby
