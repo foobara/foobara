@@ -311,6 +311,38 @@ RSpec.describe ":entity" do
             expect(value.foo).to eq(10)
             expect(value.bar).to eq("baz")
           end
+
+          context "when that attributes hash contains a primary key for a record that exists" do
+            let(:value_to_process) do
+              constructed_model.transaction(mode: :open_nested) do
+                record = constructed_model.create(foo: 10, bar: :baz)
+                record.attributes
+              end
+            end
+
+            it "constructs a built value" do
+              expect(value).to be_a(constructed_model)
+              expect(value).to be_built
+              expect(value.foo).to eq(10)
+              expect(value.bar).to eq("baz")
+            end
+          end
+
+          context "when that attributes hash contains a primary key for a record that does not exist" do
+            let(:value_to_process) do
+              record = constructed_model.transaction(mode: :open_nested) do
+                constructed_model.create(foo: 10, bar: :baz)
+              end
+              record.attributes.merge(pk: record.pk + 1)
+            end
+
+            it "constructs a created value" do
+              expect(value).to be_a(constructed_model)
+              expect(value).to be_created
+              expect(value.foo).to eq(10)
+              expect(value.bar).to eq("baz")
+            end
+          end
         end
       end
 

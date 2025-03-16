@@ -1,3 +1,9 @@
+# [0.0.75] - 2025-03-15
+
+- Maybe a bad idea, but... add some convenience behavior to casting attributes to records:
+  build the record if it has an id that exists, otherwise create it
+- When serializing unloaded records, load them instead of raising an error
+
 # [0.0.74] - 2025-03-15
 
 - fix bug where a command connector won't expose the non-global domain of a type if the command it depends on
