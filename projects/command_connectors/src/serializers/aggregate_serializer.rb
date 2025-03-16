@@ -8,9 +8,7 @@ module Foobara
             # TODO: handle polymorphism? Would require iterating over the result type not the object!
             # Is there maybe prior art for this in the associations stuff?
             unless object.loaded?
-              # :nocov:
-              raise "#{object} is not loaded so cannot serialize it"
-              # :nocov:
+              object.class.load(object)
             end
 
             transform(object.attributes)

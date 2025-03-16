@@ -4,10 +4,8 @@ module Foobara
       class AtomicSerializer < SuccessSerializer
         def serialize(object)
           if object.is_a?(Model)
-            if object.is_a?(Entity) && !object.loaded?
-              # :nocov:
-              raise "#{object} is not loaded so cannot serialize it"
-              # :nocov:
+            if object.is_a?(Entity) && !object.built? && !object.loaded?
+              object.class.load(object)
             end
 
             object = object.attributes
