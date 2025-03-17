@@ -1,3 +1,7 @@
+# [0.0.78] - 2025-03-17
+
+- Include types that possible errors depend on in TransformedCommand#types_depdended_on
+
 # [0.0.77] - 2025-03-17
 
 - Patch up command connector manifest errors to have their domain be their parent if they're scoped

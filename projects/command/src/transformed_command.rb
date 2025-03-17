@@ -153,6 +153,11 @@ module Foobara
                    end
         end
 
+        possible_errors.each do |possible_error|
+          error_class = possible_error.error_class
+          types |= error_class.types_depended_on
+        end
+
         types
       end
 
