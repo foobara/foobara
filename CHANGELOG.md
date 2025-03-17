@@ -1,3 +1,7 @@
+# [0.0.76] - 2025-03-17
+
+- Add ErrorCollection#clear
+
 # [0.0.75] - 2025-03-15
 
 - Maybe a bad idea, but... add some convenience behavior to casting attributes to records:
