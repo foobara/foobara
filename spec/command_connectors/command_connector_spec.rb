@@ -1155,4 +1155,33 @@ RSpec.describe Foobara::CommandConnector do
       end
     end
   end
+
+  describe "#patch_up_broken_parents_for_errors_with_missing_command_parents" do
+    let(:fixture_path) do
+      "#{__dir__}/../fixtures/command_connectors/manifest_with_errors_with_missing_command_parents.yaml"
+    end
+    let(:manifest_hash) do
+      YAML.load_file(fixture_path, aliases: true)
+    end
+
+    it "fixes busted parents by leapfrogging them and patching up scoped paths/names" do
+      error_manifest = manifest_hash[:error][:"Foobara::Auth::FindUser::UserNotFoundError"]
+
+      expect(error_manifest[:scoped_path]).to eq(["UserNotFoundError"])
+      expect(error_manifest[:parent]).to eq([:command, "Foobara::Auth::FindUser"])
+      expect(error_manifest[:scoped_prefix]).to be_nil
+      expect(error_manifest[:scoped_name]).to eq("UserNotFoundError")
+
+      patched_up_manifest = command_connector.patch_up_broken_parents_for_errors_with_missing_command_parents(
+        manifest_hash
+      )
+
+      patched_up_error_manifest = patched_up_manifest[:error][:"Foobara::Auth::FindUser::UserNotFoundError"]
+
+      expect(patched_up_error_manifest[:scoped_path]).to eq(%w[FindUser UserNotFoundError])
+      expect(patched_up_error_manifest[:parent]).to eq([:domain, "Foobara::Auth"])
+      expect(patched_up_error_manifest[:scoped_prefix]).to eq(["FindUser"])
+      expect(patched_up_error_manifest[:scoped_name]).to eq("FindUser::UserNotFoundError")
+    end
+  end
 end

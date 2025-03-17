@@ -425,13 +425,47 @@ module Foobara
         end
       end
 
-      normalize_manifest(h)
+      h = normalize_manifest(h)
+
+      patch_up_broken_parents_for_errors_with_missing_command_parents(h)
     end
 
     def normalize_manifest(manifest_hash)
       manifest_hash.map do |key, entries|
         [key, entries.sort.to_h]
       end.sort.to_h
+    end
+
+    def patch_up_broken_parents_for_errors_with_missing_command_parents(manifest_hash)
+      root_manifest = Manifest::RootManifest.new(manifest_hash)
+
+      error_category = {}
+
+      root_manifest.errors.each do |error|
+        error_manifest = if error.parent_category == :command &&
+                            !root_manifest.contains?(error.parent_name, error.parent_category)
+                           domain = error.domain
+                           index = domain.scoped_full_path.size
+
+                           fixed_scoped_path = error.scoped_full_path[index..]
+                           fixed_scoped_name = fixed_scoped_path.join("::")
+                           fixed_scoped_prefix = fixed_scoped_path[..-2]
+                           fixed_parent = [:domain, domain.full_domain_name]
+
+                           error.relevant_manifest.merge(
+                             parent: fixed_parent,
+                             scoped_path: fixed_scoped_path,
+                             scoped_name: fixed_scoped_name,
+                             scoped_prefix: fixed_scoped_prefix
+                           )
+                         else
+                           error.relevant_manifest
+                         end
+
+        error_category[error.scoped_full_name.to_sym] = error_manifest
+      end
+
+      manifest_hash.merge(error: error_category)
     end
 
     def all_exposed_commands

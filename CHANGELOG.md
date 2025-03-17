@@ -1,3 +1,8 @@
+# [0.0.77] - 2025-03-17
+
+- Patch up command connector manifest errors to have their domain be their parent if they're scoped
+  to a command that wasn't connected
+
 # [0.0.76] - 2025-03-17
 
 - Add ErrorCollection#clear

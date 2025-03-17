@@ -1,0 +1,1719 @@
+---
+:command:
+  :Foobara::Auth::Login:
+    :scoped_path:
+    - Login
+    :scoped_name: Login
+    :scoped_short_name: Login
+    :scoped_prefix:
+    :scoped_full_path:
+    - Foobara
+    - Auth
+    - Login
+    :scoped_full_name: Foobara::Auth::Login
+    :scoped_category: :command
+    :reference: Foobara::Auth::Login
+    :domain: Foobara::Auth
+    :organization: Foobara
+    :parent:
+    - :domain
+    - Foobara::Auth
+    :types_depended_on:
+    - Foobara::Auth::Types::Role
+    - Foobara::Auth::Types::Secret
+    - Foobara::Auth::Types::Token
+    - Foobara::Auth::Types::User
+    - array
+    - attributes
+    - duck
+    - email
+    - integer
+    - string
+    - symbol
+    :inputs_types_depended_on:
+    - Foobara::Auth::Types::User
+    - array
+    - attributes
+    - duck
+    - integer
+    - string
+    - symbol
+    :result_types_depended_on:
+    - array
+    - attributes
+    - duck
+    - string
+    - symbol
+    :errors_types_depended_on:
+    - Foobara::Auth::Types::Role
+    - Foobara::Auth::Types::Secret
+    - Foobara::Auth::Types::Token
+    - array
+    - attributes
+    - duck
+    - email
+    - integer
+    - string
+    - symbol
+    :possible_errors:
+      data.cannot_cast:
+        :category: :data
+        :symbol: :cannot_cast
+        :key: data.cannot_cast
+        :error: Foobara::Value::Processor::Casting::CannotCastError
+        :processor_class: Foobara::Value::Processor::Casting
+        :processor_manifest_data:
+          :casting:
+            :cast_to: &5
+              :type: :attributes
+              :element_type_declarations: &3
+                :user:
+                  :allow_nil: true
+                  :type: :Foobara::Auth::Types::User
+                :username:
+                  :allow_nil: true
+                  :type: :string
+                :email:
+                  :allow_nil: true
+                  :type: :string
+                :username_or_email:
+                  :allow_nil: true
+                  :type: :string
+                :plaintext_password:
+                  :type: :string
+                :token_ttl:
+                  :type: :integer
+                :refresh_token_ttl:
+                  :type: :integer
+              :required: &1
+              - :plaintext_password
+              :defaults:
+                :token_ttl: 1800
+                :refresh_token_ttl: 604800
+      data.email.cannot_cast:
+        :path:
+        - :email
+        :category: :data
+        :symbol: :cannot_cast
+        :key: data.email.cannot_cast
+        :error: Foobara::Value::Processor::Casting::CannotCastError
+        :processor_manifest_data: &4
+          :casting:
+            :cast_to:
+              :allow_nil: true
+              :type: :string
+      data.missing_required_attribute:
+        :category: :data
+        :symbol: :missing_required_attribute
+        :key: data.missing_required_attribute
+        :error: attributes::SupportedValidators::Required::MissingRequiredAttributeError
+        :processor_class: Foobara::Value::Processor::Pipeline
+        :processor_manifest_data:
+          :pipeline:
+      data.plaintext_password.cannot_cast:
+        :path:
+        - :plaintext_password
+        :category: :data
+        :symbol: :cannot_cast
+        :key: data.plaintext_password.cannot_cast
+        :error: Foobara::Value::Processor::Casting::CannotCastError
+        :processor_manifest_data: &6
+          :casting:
+            :cast_to: &44
+              :type: :string
+      data.plaintext_password.missing_required_attribute:
+        :path:
+        - :plaintext_password
+        :category: :data
+        :symbol: :missing_required_attribute
+        :key: data.plaintext_password.missing_required_attribute
+        :error: attributes::SupportedValidators::Required::MissingRequiredAttributeError
+        :processor_class: attributes::SupportedValidators::Required
+        :processor_manifest_data:
+          :required: *1
+      data.refresh_token_ttl.cannot_cast:
+        :path:
+        - :refresh_token_ttl
+        :category: :data
+        :symbol: :cannot_cast
+        :key: data.refresh_token_ttl.cannot_cast
+        :error: Foobara::Value::Processor::Casting::CannotCastError
+        :processor_manifest_data: &2
+          :casting:
+            :cast_to: &41
+              :type: :integer
+      data.token_ttl.cannot_cast:
+        :path:
+        - :token_ttl
+        :category: :data
+        :symbol: :cannot_cast
+        :key: data.token_ttl.cannot_cast
+        :error: Foobara::Value::Processor::Casting::CannotCastError
+        :processor_manifest_data: *2
+      data.unexpected_attributes:
+        :category: :data
+        :symbol: :unexpected_attributes
+        :key: data.unexpected_attributes
+        :error: attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError
+        :processor_class: attributes::SupportedProcessors::ElementTypeDeclarations
+        :processor_manifest_data:
+          :element_type_declarations: *3
+      data.user.cannot_cast:
+        :path:
+        - :user
+        :category: :data
+        :symbol: :cannot_cast
+        :key: data.user.cannot_cast
+        :error: Foobara::Value::Processor::Casting::CannotCastError
+        :processor_manifest_data:
+          :casting:
+            :cast_to:
+              :allow_nil: true
+              :type: :Foobara::Auth::Types::User
+      data.username.cannot_cast:
+        :path:
+        - :username
+        :category: :data
+        :symbol: :cannot_cast
+        :key: data.username.cannot_cast
+        :error: Foobara::Value::Processor::Casting::CannotCastError
+        :processor_manifest_data: *4
+      data.username_or_email.cannot_cast:
+        :path:
+        - :username_or_email
+        :category: :data
+        :symbol: :cannot_cast
+        :key: data.username_or_email.cannot_cast
+        :error: Foobara::Value::Processor::Casting::CannotCastError
+        :processor_manifest_data: *4
+      foobara::auth::find_user>runtime.user_not_found:
+        :runtime_path:
+        - :foobara::auth::find_user
+        :category: :runtime
+        :symbol: :user_not_found
+        :key: foobara::auth::find_user>runtime.user_not_found
+        :error: Foobara::Auth::FindUser::UserNotFoundError
+      runtime.invalid_password:
+        :category: :runtime
+        :symbol: :invalid_password
+        :key: runtime.invalid_password
+        :error: Foobara::Auth::Login::InvalidPasswordError
+      runtime.no_user_id_email_or_username_given:
+        :category: :runtime
+        :symbol: :no_user_id_email_or_username_given
+        :key: runtime.no_user_id_email_or_username_given
+        :error: Foobara::Auth::Login::NoUserIdEmailOrUsernameGivenError
+    :depends_on:
+    - Foobara::Auth::CreateToken
+    - Foobara::Auth::FindUser
+    - Foobara::Auth::VerifyPassword
+    :inputs_type: *5
+    :description:
+    :result_type:
+      :type: :attributes
+      :element_type_declarations:
+        :access_token:
+          :type: :string
+        :refresh_token:
+          :type: :string
+      :required:
+      - :access_token
+      - :refresh_token
+    :serializers:
+    - Foobara::CommandConnectors::Serializers::ErrorsSerializer
+    - Foobara::CommandConnectors::Serializers::AtomicSerializer
+    - Foobara::CommandConnectors::Serializers::JsonSerializer
+  :Foobara::Auth::RefreshLogin:
+    :scoped_path:
+    - RefreshLogin
+    :scoped_name: RefreshLogin
+    :scoped_short_name: RefreshLogin
+    :scoped_prefix:
+    :scoped_full_path:
+    - Foobara
+    - Auth
+    - RefreshLogin
+    :scoped_full_name: Foobara::Auth::RefreshLogin
+    :scoped_category: :command
+    :reference: Foobara::Auth::RefreshLogin
+    :domain: Foobara::Auth
+    :organization: Foobara
+    :parent:
+    - :domain
+    - Foobara::Auth
+    :types_depended_on:
+    - Foobara::Auth::Types::User
+    - Foobara::Auth::token_state
+    - array
+    - attributes
+    - duck
+    - integer
+    - string
+    - symbol
+    :inputs_types_depended_on:
+    - Foobara::Auth::Types::User
+    - array
+    - attributes
+    - duck
+    - integer
+    - string
+    - symbol
+    :result_types_depended_on:
+    - array
+    - attributes
+    - duck
+    - string
+    - symbol
+    :errors_types_depended_on:
+    - Foobara::Auth::token_state
+    - array
+    - attributes
+    - duck
+    - string
+    - symbol
+    :possible_errors:
+      data.cannot_cast:
+        :category: :data
+        :symbol: :cannot_cast
+        :key: data.cannot_cast
+        :error: Foobara::Value::Processor::Casting::CannotCastError
+        :processor_class: Foobara::Value::Processor::Casting
+        :processor_manifest_data:
+          :casting:
+            :cast_to: &9
+              :type: :attributes
+              :element_type_declarations: &8
+                :user:
+                  :type: :Foobara::Auth::Types::User
+                :refresh_token_text:
+                  :type: :string
+                :token_ttl:
+                  :type: :integer
+                :refresh_token_ttl:
+                  :type: :integer
+              :required: &7
+              - :user
+              - :refresh_token_text
+              :defaults:
+                :token_ttl: 1800
+                :refresh_token_ttl: 604800
+      data.missing_required_attribute:
+        :category: :data
+        :symbol: :missing_required_attribute
+        :key: data.missing_required_attribute
+        :error: attributes::SupportedValidators::Required::MissingRequiredAttributeError
+        :processor_class: Foobara::Value::Processor::Pipeline
+        :processor_manifest_data:
+          :pipeline:
+      data.refresh_token_text.cannot_cast:
+        :path:
+        - :refresh_token_text
+        :category: :data
+        :symbol: :cannot_cast
+        :key: data.refresh_token_text.cannot_cast
+        :error: Foobara::Value::Processor::Casting::CannotCastError
+        :processor_manifest_data: *6
+      data.refresh_token_text.missing_required_attribute:
+        :path:
+        - :refresh_token_text
+        :category: :data
+        :symbol: :missing_required_attribute
+        :key: data.refresh_token_text.missing_required_attribute
+        :error: attributes::SupportedValidators::Required::MissingRequiredAttributeError
+        :processor_class: attributes::SupportedValidators::Required
+        :processor_manifest_data:
+          :required: *7
+      data.refresh_token_ttl.cannot_cast:
+        :path:
+        - :refresh_token_ttl
+        :category: :data
+        :symbol: :cannot_cast
+        :key: data.refresh_token_ttl.cannot_cast
+        :error: Foobara::Value::Processor::Casting::CannotCastError
+        :processor_manifest_data: *2
+      data.token_ttl.cannot_cast:
+        :path:
+        - :token_ttl
+        :category: :data
+        :symbol: :cannot_cast
+        :key: data.token_ttl.cannot_cast
+        :error: Foobara::Value::Processor::Casting::CannotCastError
+        :processor_manifest_data: *2
+      data.unexpected_attributes:
+        :category: :data
+        :symbol: :unexpected_attributes
+        :key: data.unexpected_attributes
+        :error: attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError
+        :processor_class: attributes::SupportedProcessors::ElementTypeDeclarations
+        :processor_manifest_data:
+          :element_type_declarations: *8
+      data.user.cannot_cast:
+        :path:
+        - :user
+        :category: :data
+        :symbol: :cannot_cast
+        :key: data.user.cannot_cast
+        :error: Foobara::Value::Processor::Casting::CannotCastError
+        :processor_manifest_data: &24
+          :casting:
+            :cast_to:
+              :type: :entity
+              :name: Types::User
+              :model_module: Foobara::Auth
+              :model_class: Foobara::Auth::Types::User
+              :model_base_class: Foobara::Entity
+              :attributes_declaration: &23
+                :type: :attributes
+                :element_type_declarations:
+                  :id:
+                    :type: :integer
+                  :username:
+                    :type: :string
+                  :email:
+                    :type: :email
+                  :roles:
+                    :type: :array
+                    :element_type_declaration:
+                      :type: :Foobara::Auth::Types::Role
+                  :api_keys:
+                    :type: :array
+                    :element_type_declaration:
+                      :type: :Foobara::Auth::Types::Token
+                  :refresh_tokens:
+                    :type: :array
+                    :element_type_declaration:
+                      :type: :Foobara::Auth::Types::Token
+                  :password_secret:
+                    :allow_nil: true
+                    :type: :Foobara::Auth::Types::Secret
+                :required:
+                - :username
+                - :email
+                :defaults:
+                  :roles: []
+                  :api_keys: []
+                  :refresh_tokens: []
+              :primary_key: :id
+      data.user.missing_required_attribute:
+        :path:
+        - :user
+        :category: :data
+        :symbol: :missing_required_attribute
+        :key: data.user.missing_required_attribute
+        :error: attributes::SupportedValidators::Required::MissingRequiredAttributeError
+        :processor_class: attributes::SupportedValidators::Required
+        :processor_manifest_data:
+          :required: *7
+      foobara::auth::verify_token>runtime.expired_token:
+        :runtime_path:
+        - :foobara::auth::verify_token
+        :category: :runtime
+        :symbol: :expired_token
+        :key: foobara::auth::verify_token>runtime.expired_token
+        :error: Foobara::Auth::VerifyToken::ExpiredTokenError
+      foobara::auth::verify_token>runtime.inactive_token:
+        :runtime_path:
+        - :foobara::auth::verify_token
+        :category: :runtime
+        :symbol: :inactive_token
+        :key: foobara::auth::verify_token>runtime.inactive_token
+        :error: Foobara::Auth::VerifyToken::InactiveTokenError
+      runtime.invalid_refresh_token:
+        :category: :runtime
+        :symbol: :invalid_refresh_token
+        :key: runtime.invalid_refresh_token
+        :error: Foobara::Auth::RefreshLogin::InvalidRefreshTokenError
+      runtime.refresh_token_not_owned_by_user:
+        :category: :runtime
+        :symbol: :refresh_token_not_owned_by_user
+        :key: runtime.refresh_token_not_owned_by_user
+        :error: Foobara::Auth::RefreshLogin::RefreshTokenNotOwnedByUser
+    :depends_on:
+    - Foobara::Auth::CreateToken
+    - Foobara::Auth::VerifyToken
+    :inputs_type: *9
+    :description:
+    :result_type:
+      :type: :attributes
+      :element_type_declarations:
+        :access_token:
+          :type: :string
+        :refresh_token:
+          :type: :string
+      :required:
+      - :access_token
+      - :refresh_token
+    :serializers:
+    - Foobara::CommandConnectors::Serializers::ErrorsSerializer
+    - Foobara::CommandConnectors::Serializers::AtomicSerializer
+    - Foobara::CommandConnectors::Serializers::JsonSerializer
+  :Foobara::Auth::Register:
+    :scoped_path:
+    - Register
+    :scoped_name: Register
+    :scoped_short_name: Register
+    :scoped_prefix:
+    :scoped_full_path:
+    - Foobara
+    - Auth
+    - Register
+    :scoped_full_name: Foobara::Auth::Register
+    :scoped_category: :command
+    :reference: Foobara::Auth::Register
+    :domain: Foobara::Auth
+    :organization: Foobara
+    :parent:
+    - :domain
+    - Foobara::Auth
+    :types_depended_on:
+    - Foobara::Auth::Types::User
+    - array
+    - attributes
+    - duck
+    - email
+    - string
+    - symbol
+    :inputs_types_depended_on:
+    - array
+    - attributes
+    - duck
+    - email
+    - string
+    - symbol
+    :result_types_depended_on:
+    - Foobara::Auth::Types::User
+    :errors_types_depended_on:
+    - array
+    - attributes
+    - duck
+    - symbol
+    :possible_errors:
+      data.cannot_cast:
+        :category: :data
+        :symbol: :cannot_cast
+        :key: data.cannot_cast
+        :error: Foobara::Value::Processor::Casting::CannotCastError
+        :processor_class: Foobara::Value::Processor::Casting
+        :processor_manifest_data:
+          :casting:
+            :cast_to: &12
+              :type: :attributes
+              :element_type_declarations: &11
+                :username:
+                  :type: :string
+                :email:
+                  :type: :email
+                :plaintext_password:
+                  :allow_nil: true
+                  :type: :string
+              :required: &10
+              - :username
+              - :email
+      data.email.cannot_cast:
+        :path:
+        - :email
+        :category: :data
+        :symbol: :cannot_cast
+        :key: data.email.cannot_cast
+        :error: Foobara::Value::Processor::Casting::CannotCastError
+        :processor_manifest_data: &39
+          :casting:
+            :cast_to: &38
+              :type: :email
+      data.email.cannot_exceed64_characters:
+        :path:
+        - :email
+        :category: :data
+        :symbol: :cannot_exceed64_characters
+        :key: data.email.cannot_exceed64_characters
+        :error: email::Validators::CannotExceed64Characters::CannotExceed64CharactersError
+        :processor_manifest_data:
+          :cannot_exceed64_characters: true
+      data.email.cannot_have_multiple_at_signs:
+        :path:
+        - :email
+        :category: :data
+        :symbol: :cannot_have_multiple_at_signs
+        :key: data.email.cannot_have_multiple_at_signs
+        :error: email::Validators::CannotHaveMultipleAtSigns::CannotHaveMultipleAtSignsError
+        :processor_manifest_data:
+          :cannot_have_multiple_at_signs: true
+      data.email.domain_cannot_start_with_or_end_with_a_hyphen:
+        :path:
+        - :email
+        :category: :data
+        :symbol: :domain_cannot_start_with_or_end_with_a_hyphen
+        :key: data.email.domain_cannot_start_with_or_end_with_a_hyphen
+        :error: email::Validators::DomainCannotStartWithOrEndWithAHyphen::DomainCannotStartWithOrEndWithAHyphenError
+        :processor_manifest_data:
+          :domain_cannot_start_with_or_end_with_a_hyphen: true
+      data.email.first_part_cannot_be_empty:
+        :path:
+        - :email
+        :category: :data
+        :symbol: :first_part_cannot_be_empty
+        :key: data.email.first_part_cannot_be_empty
+        :error: email::Validators::FirstPartCannotBeEmpty::FirstPartCannotBeEmptyError
+        :processor_manifest_data:
+          :first_part_cannot_be_empty: true
+      data.email.first_part_cannot_start_with_or_end_with_a_dot_or_have_two_dots_in_a_row:
+        :path:
+        - :email
+        :category: :data
+        :symbol: :first_part_cannot_start_with_or_end_with_a_dot_or_have_two_dots_in_a_row
+        :key: data.email.first_part_cannot_start_with_or_end_with_a_dot_or_have_two_dots_in_a_row
+        :error: email::Validators::FirstPartCannotStartWithOrEndWithADotOrHaveTwoDotsInARow::FirstPartCannotStartWithOrEndWithADotOrHaveTwoDotsInARowError
+        :processor_manifest_data:
+          :first_part_cannot_start_with_or_end_with_a_dot_or_have_two_dots_in_a_row: true
+      data.email.first_part_has_bad_characters:
+        :path:
+        - :email
+        :category: :data
+        :symbol: :first_part_has_bad_characters
+        :key: data.email.first_part_has_bad_characters
+        :error: email::Validators::FirstPartHasBadCharacters::FirstPartHasBadCharactersError
+        :processor_manifest_data:
+          :first_part_has_bad_characters: true
+      data.email.missing_required_attribute:
+        :path:
+        - :email
+        :category: :data
+        :symbol: :missing_required_attribute
+        :key: data.email.missing_required_attribute
+        :error: attributes::SupportedValidators::Required::MissingRequiredAttributeError
+        :processor_class: attributes::SupportedValidators::Required
+        :processor_manifest_data:
+          :required: *10
+      data.email.must_have_an_at_sign:
+        :path:
+        - :email
+        :category: :data
+        :symbol: :must_have_an_at_sign
+        :key: data.email.must_have_an_at_sign
+        :error: email::Validators::MustHaveAnAtSign::MustHaveAnAtSignError
+        :processor_manifest_data:
+          :must_have_an_at_sign: true
+      data.email.second_part_cannot_be_empty:
+        :path:
+        - :email
+        :category: :data
+        :symbol: :second_part_cannot_be_empty
+        :key: data.email.second_part_cannot_be_empty
+        :error: email::Validators::SecondPartCannotBeEmpty::SecondPartCannotBeEmptyError
+        :processor_manifest_data:
+          :second_part_cannot_be_empty: true
+      data.email.second_part_has_bad_characters:
+        :path:
+        - :email
+        :category: :data
+        :symbol: :second_part_has_bad_characters
+        :key: data.email.second_part_has_bad_characters
+        :error: email::Validators::SecondPartHasBadCharacters::SecondPartHasBadCharactersError
+        :processor_manifest_data:
+          :second_part_has_bad_characters: true
+      data.missing_required_attribute:
+        :category: :data
+        :symbol: :missing_required_attribute
+        :key: data.missing_required_attribute
+        :error: attributes::SupportedValidators::Required::MissingRequiredAttributeError
+        :processor_class: Foobara::Value::Processor::Pipeline
+        :processor_manifest_data:
+          :pipeline:
+      data.plaintext_password.cannot_cast:
+        :path:
+        - :plaintext_password
+        :category: :data
+        :symbol: :cannot_cast
+        :key: data.plaintext_password.cannot_cast
+        :error: Foobara::Value::Processor::Casting::CannotCastError
+        :processor_manifest_data: *4
+      data.unexpected_attributes:
+        :category: :data
+        :symbol: :unexpected_attributes
+        :key: data.unexpected_attributes
+        :error: attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError
+        :processor_class: attributes::SupportedProcessors::ElementTypeDeclarations
+        :processor_manifest_data:
+          :element_type_declarations: *11
+      data.username.cannot_cast:
+        :path:
+        - :username
+        :category: :data
+        :symbol: :cannot_cast
+        :key: data.username.cannot_cast
+        :error: Foobara::Value::Processor::Casting::CannotCastError
+        :processor_manifest_data: *6
+      data.username.missing_required_attribute:
+        :path:
+        - :username
+        :category: :data
+        :symbol: :missing_required_attribute
+        :key: data.username.missing_required_attribute
+        :error: attributes::SupportedValidators::Required::MissingRequiredAttributeError
+        :processor_class: attributes::SupportedValidators::Required
+        :processor_manifest_data:
+          :required: *10
+    :depends_on:
+    - Foobara::Auth::CreateUser
+    - Foobara::Auth::SetPassword
+    :inputs_type: *12
+    :description:
+    :result_type:
+      :type: :Foobara::Auth::Types::User
+    :serializers:
+    - Foobara::CommandConnectors::Serializers::ErrorsSerializer
+    - Foobara::CommandConnectors::Serializers::AtomicSerializer
+    - Foobara::CommandConnectors::Serializers::JsonSerializer
+:domain:
+  :Foobara::Auth:
+    :scoped_path:
+    - Auth
+    :scoped_name: Auth
+    :scoped_short_name: Auth
+    :scoped_prefix:
+    :scoped_full_path:
+    - Foobara
+    - Auth
+    :scoped_full_name: Foobara::Auth
+    :scoped_category: :domain
+    :reference: Foobara::Auth
+    :domain: Foobara::Auth
+    :organization: Foobara
+    :parent:
+    - :organization
+    - Foobara
+    :commands:
+    - Foobara::Auth::Login
+    - Foobara::Auth::RefreshLogin
+    - Foobara::Auth::Register
+    :types:
+    - Foobara::Auth::Types::Role
+    - Foobara::Auth::Types::Secret
+    - Foobara::Auth::Types::Token
+    - Foobara::Auth::Types::User
+    - Foobara::Auth::token_state
+  :global_organization::global_domain:
+    :scoped_path: []
+    :scoped_name:
+    :scoped_short_name:
+    :scoped_prefix: []
+    :scoped_full_path: []
+    :scoped_full_name: ''
+    :scoped_category: :domain
+    :reference: global_organization::global_domain
+    :domain: global_organization::global_domain
+    :organization: global_organization
+    :parent:
+    - :organization
+    - global_organization
+    :commands: []
+    :types:
+    - array
+    - associative_array
+    - atomic_duck
+    - attributes
+    - datetime
+    - detached_entity
+    - duck
+    - duckture
+    - email
+    - entity
+    - integer
+    - model
+    - number
+    - string
+    - symbol
+:error:
+  :Foobara::Auth::FindUser::UserNotFoundError:
+    :scoped_path:
+    - UserNotFoundError
+    :scoped_name: UserNotFoundError
+    :scoped_short_name: UserNotFoundError
+    :scoped_prefix:
+    :scoped_full_path:
+    - Foobara
+    - Auth
+    - FindUser
+    - UserNotFoundError
+    :scoped_full_name: Foobara::Auth::FindUser::UserNotFoundError
+    :scoped_category: :error
+    :reference: Foobara::Auth::FindUser::UserNotFoundError
+    :domain: Foobara::Auth
+    :organization: Foobara
+    :parent:
+    - :command
+    - Foobara::Auth::FindUser
+    :types_depended_on:
+    - Foobara::Auth::Types::Role
+    - Foobara::Auth::Types::Secret
+    - Foobara::Auth::Types::Token
+    - array
+    - attributes
+    - duck
+    - email
+    - integer
+    - string
+    - symbol
+    :category: :runtime
+    :symbol: :user_not_found
+    :context_type_declaration:
+      :type: :attributes
+      :element_type_declarations:
+        :id:
+          :type: :integer
+        :username:
+          :type: :string
+        :email:
+          :type: :email
+        :roles:
+          :type: :array
+          :element_type_declaration:
+            :type: :Foobara::Auth::Types::Role
+        :api_keys:
+          :type: :array
+          :element_type_declaration:
+            :type: :Foobara::Auth::Types::Token
+        :refresh_tokens:
+          :type: :array
+          :element_type_declaration:
+            :type: :Foobara::Auth::Types::Token
+        :password_secret:
+          :allow_nil: true
+          :type: :Foobara::Auth::Types::Secret
+    :is_fatal: true
+    :error_class: Foobara::Auth::FindUser::UserNotFoundError
+    :base_error: Foobara::RuntimeError
+  :Foobara::Auth::Login::InvalidPasswordError:
+    :scoped_path:
+    - InvalidPasswordError
+    :scoped_name: InvalidPasswordError
+    :scoped_short_name: InvalidPasswordError
+    :scoped_prefix:
+    :scoped_full_path:
+    - Foobara
+    - Auth
+    - Login
+    - InvalidPasswordError
+    :scoped_full_name: Foobara::Auth::Login::InvalidPasswordError
+    :scoped_category: :error
+    :reference: Foobara::Auth::Login::InvalidPasswordError
+    :domain: Foobara::Auth
+    :organization: Foobara
+    :parent:
+    - :command
+    - Foobara::Auth::Login
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - symbol
+    :category: :runtime
+    :symbol: :invalid_password
+    :context_type_declaration: &13
+      :type: :attributes
+      :element_type_declarations: {}
+    :is_fatal: true
+    :error_class: Foobara::Auth::Login::InvalidPasswordError
+    :base_error: Foobara::RuntimeError
+  :Foobara::Auth::Login::NoUserIdEmailOrUsernameGivenError:
+    :scoped_path:
+    - NoUserIdEmailOrUsernameGivenError
+    :scoped_name: NoUserIdEmailOrUsernameGivenError
+    :scoped_short_name: NoUserIdEmailOrUsernameGivenError
+    :scoped_prefix:
+    :scoped_full_path:
+    - Foobara
+    - Auth
+    - Login
+    - NoUserIdEmailOrUsernameGivenError
+    :scoped_full_name: Foobara::Auth::Login::NoUserIdEmailOrUsernameGivenError
+    :scoped_category: :error
+    :reference: Foobara::Auth::Login::NoUserIdEmailOrUsernameGivenError
+    :domain: Foobara::Auth
+    :organization: Foobara
+    :parent:
+    - :command
+    - Foobara::Auth::Login
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - symbol
+    :category: :runtime
+    :symbol: :no_user_id_email_or_username_given
+    :context_type_declaration: *13
+    :is_fatal: true
+    :error_class: Foobara::Auth::Login::NoUserIdEmailOrUsernameGivenError
+    :base_error: Foobara::RuntimeError
+  :Foobara::Auth::RefreshLogin::InvalidRefreshTokenError:
+    :scoped_path:
+    - InvalidRefreshTokenError
+    :scoped_name: InvalidRefreshTokenError
+    :scoped_short_name: InvalidRefreshTokenError
+    :scoped_prefix:
+    :scoped_full_path:
+    - Foobara
+    - Auth
+    - RefreshLogin
+    - InvalidRefreshTokenError
+    :scoped_full_name: Foobara::Auth::RefreshLogin::InvalidRefreshTokenError
+    :scoped_category: :error
+    :reference: Foobara::Auth::RefreshLogin::InvalidRefreshTokenError
+    :domain: Foobara::Auth
+    :organization: Foobara
+    :parent:
+    - :command
+    - Foobara::Auth::RefreshLogin
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - string
+    - symbol
+    :category: :runtime
+    :symbol: :invalid_refresh_token
+    :context_type_declaration: &14
+      :type: :attributes
+      :element_type_declarations:
+        :refresh_token_id:
+          :type: :string
+    :is_fatal: true
+    :error_class: Foobara::Auth::RefreshLogin::InvalidRefreshTokenError
+    :base_error: Foobara::RuntimeError
+  :Foobara::Auth::RefreshLogin::RefreshTokenNotOwnedByUser:
+    :scoped_path:
+    - RefreshTokenNotOwnedByUser
+    :scoped_name: RefreshTokenNotOwnedByUser
+    :scoped_short_name: RefreshTokenNotOwnedByUser
+    :scoped_prefix:
+    :scoped_full_path:
+    - Foobara
+    - Auth
+    - RefreshLogin
+    - RefreshTokenNotOwnedByUser
+    :scoped_full_name: Foobara::Auth::RefreshLogin::RefreshTokenNotOwnedByUser
+    :scoped_category: :error
+    :reference: Foobara::Auth::RefreshLogin::RefreshTokenNotOwnedByUser
+    :domain: Foobara::Auth
+    :organization: Foobara
+    :parent:
+    - :command
+    - Foobara::Auth::RefreshLogin
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - string
+    - symbol
+    :category: :runtime
+    :symbol: :refresh_token_not_owned_by_user
+    :context_type_declaration: *14
+    :is_fatal: true
+    :error_class: Foobara::Auth::RefreshLogin::RefreshTokenNotOwnedByUser
+    :base_error: Foobara::RuntimeError
+  :Foobara::Auth::VerifyToken::ExpiredTokenError:
+    :scoped_path:
+    - ExpiredTokenError
+    :scoped_name: ExpiredTokenError
+    :scoped_short_name: ExpiredTokenError
+    :scoped_prefix:
+    :scoped_full_path:
+    - Foobara
+    - Auth
+    - VerifyToken
+    - ExpiredTokenError
+    :scoped_full_name: Foobara::Auth::VerifyToken::ExpiredTokenError
+    :scoped_category: :error
+    :reference: Foobara::Auth::VerifyToken::ExpiredTokenError
+    :domain: Foobara::Auth
+    :organization: Foobara
+    :parent:
+    - :command
+    - Foobara::Auth::VerifyToken
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - symbol
+    :category: :runtime
+    :symbol: :expired_token
+    :context_type_declaration: *13
+    :is_fatal: true
+    :error_class: Foobara::Auth::VerifyToken::ExpiredTokenError
+    :base_error: Foobara::RuntimeError
+  :Foobara::Auth::VerifyToken::InactiveTokenError:
+    :scoped_path:
+    - InactiveTokenError
+    :scoped_name: InactiveTokenError
+    :scoped_short_name: InactiveTokenError
+    :scoped_prefix:
+    :scoped_full_path:
+    - Foobara
+    - Auth
+    - VerifyToken
+    - InactiveTokenError
+    :scoped_full_name: Foobara::Auth::VerifyToken::InactiveTokenError
+    :scoped_category: :error
+    :reference: Foobara::Auth::VerifyToken::InactiveTokenError
+    :domain: Foobara::Auth
+    :organization: Foobara
+    :parent:
+    - :command
+    - Foobara::Auth::VerifyToken
+    :types_depended_on:
+    - Foobara::Auth::token_state
+    - array
+    - attributes
+    - duck
+    - symbol
+    :category: :runtime
+    :symbol: :inactive_token
+    :context_type_declaration:
+      :type: :attributes
+      :element_type_declarations:
+        :state:
+          :type: :Foobara::Auth::token_state
+      :required:
+      - :state
+    :is_fatal: true
+    :error_class: Foobara::Auth::VerifyToken::InactiveTokenError
+    :base_error: Foobara::RuntimeError
+  :Foobara::RuntimeError:
+    :scoped_path:
+    - RuntimeError
+    :scoped_name: RuntimeError
+    :scoped_short_name: RuntimeError
+    :scoped_prefix:
+    :scoped_full_path:
+    - Foobara
+    - RuntimeError
+    :scoped_full_name: Foobara::RuntimeError
+    :scoped_category: :error
+    :reference: Foobara::RuntimeError
+    :domain: global_organization::global_domain
+    :organization: global_organization
+    :parent:
+    - :organization
+    - Foobara
+    :category: :runtime
+    :symbol: :runtime
+    :is_fatal: true
+    :error_class: Foobara::RuntimeError
+    :abstract: true
+  :Foobara::Value::DataError:
+    :scoped_path:
+    - DataError
+    :scoped_name: DataError
+    :scoped_short_name: DataError
+    :scoped_prefix:
+    :scoped_full_path:
+    - Foobara
+    - Value
+    - DataError
+    :scoped_full_name: Foobara::Value::DataError
+    :scoped_category: :error
+    :reference: Foobara::Value::DataError
+    :domain: Foobara::Value
+    :organization: Foobara
+    :parent:
+    - :domain
+    - Foobara::Value
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - symbol
+    :category: :data
+    :symbol: :data
+    :context_type_declaration:
+      :type: :attributes
+      :element_type_declarations:
+        :attribute_name:
+          :type: :symbol
+        :value:
+          :type: :duck
+    :is_fatal: false
+    :error_class: Foobara::Value::DataError
+  :Foobara::Value::Processor::Casting::CannotCastError:
+    :scoped_path:
+    - CannotCastError
+    :scoped_name: CannotCastError
+    :scoped_short_name: CannotCastError
+    :scoped_prefix:
+    :scoped_full_path:
+    - Foobara
+    - Value
+    - Processor
+    - Casting
+    - CannotCastError
+    :scoped_full_name: Foobara::Value::Processor::Casting::CannotCastError
+    :scoped_category: :error
+    :reference: Foobara::Value::Processor::Casting::CannotCastError
+    :domain: Foobara::Value
+    :organization: Foobara
+    :parent:
+    - :processor_class
+    - Foobara::Value::Processor::Casting
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - symbol
+    :category: :data
+    :symbol: :cannot_cast
+    :context_type_declaration:
+      :type: :attributes
+      :element_type_declarations:
+        :cast_to:
+          :type: :duck
+        :value:
+          :type: :duck
+        :attribute_name:
+          :type: :symbol
+    :is_fatal: true
+    :error_class: Foobara::Value::Processor::Casting::CannotCastError
+    :base_error: Foobara::Value::DataError
+  :array::SupportedValidators::Size::IncorrectTupleSizeError:
+    :scoped_path:
+    - IncorrectTupleSizeError
+    :scoped_name: IncorrectTupleSizeError
+    :scoped_short_name: IncorrectTupleSizeError
+    :scoped_prefix:
+    :scoped_full_path:
+    - array
+    - SupportedValidators
+    - Size
+    - IncorrectTupleSizeError
+    :scoped_full_name: array::SupportedValidators::Size::IncorrectTupleSizeError
+    :scoped_category: :error
+    :reference: array::SupportedValidators::Size::IncorrectTupleSizeError
+    :domain: global_organization::global_domain
+    :organization: global_organization
+    :parent:
+    - :processor_class
+    - array::SupportedValidators::Size
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - integer
+    - symbol
+    :category: :data
+    :symbol: :incorrect_tuple_size
+    :context_type_declaration:
+      :type: :attributes
+      :element_type_declarations:
+        :expected_size:
+          :type: :integer
+        :actual_size:
+          :type: :integer
+        :value:
+          :type: :array
+    :is_fatal: false
+    :error_class: Foobara::BuiltinTypes::Array::SupportedValidators::Size::IncorrectTupleSizeError
+    :base_error: Foobara::Value::DataError
+  :attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError:
+    :scoped_path:
+    - UnexpectedAttributesError
+    :scoped_name: UnexpectedAttributesError
+    :scoped_short_name: UnexpectedAttributesError
+    :scoped_prefix:
+    :scoped_full_path:
+    - attributes
+    - SupportedProcessors
+    - ElementTypeDeclarations
+    - UnexpectedAttributesError
+    :scoped_full_name: attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError
+    :scoped_category: :error
+    :reference: attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError
+    :domain: global_organization::global_domain
+    :organization: global_organization
+    :parent:
+    - :processor_class
+    - attributes::SupportedProcessors::ElementTypeDeclarations
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - symbol
+    :category: :data
+    :symbol: :unexpected_attributes
+    :context_type_declaration:
+      :type: :attributes
+      :element_type_declarations:
+        :unexpected_attributes:
+          :type: :array
+          :element_type_declaration:
+            :type: :symbol
+        :allowed_attributes:
+          :type: :array
+          :element_type_declaration:
+            :type: :symbol
+    :is_fatal: true
+    :error_class: Foobara::BuiltinTypes::Attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError
+    :base_error: Foobara::Value::DataError
+  :attributes::SupportedValidators::Required::MissingRequiredAttributeError:
+    :scoped_path:
+    - MissingRequiredAttributeError
+    :scoped_name: MissingRequiredAttributeError
+    :scoped_short_name: MissingRequiredAttributeError
+    :scoped_prefix:
+    :scoped_full_path:
+    - attributes
+    - SupportedValidators
+    - Required
+    - MissingRequiredAttributeError
+    :scoped_full_name: attributes::SupportedValidators::Required::MissingRequiredAttributeError
+    :scoped_category: :error
+    :reference: attributes::SupportedValidators::Required::MissingRequiredAttributeError
+    :domain: global_organization::global_domain
+    :organization: global_organization
+    :parent:
+    - :processor_class
+    - attributes::SupportedValidators::Required
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - symbol
+    :category: :data
+    :symbol: :missing_required_attribute
+    :context_type_declaration:
+      :type: :attributes
+      :element_type_declarations:
+        :attribute_name:
+          :type: :symbol
+    :is_fatal: true
+    :error_class: Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::MissingRequiredAttributeError
+    :base_error: Foobara::Value::DataError
+  :duck::SupportedValidators::InstanceOf::NotInstanceOfError:
+    :scoped_path:
+    - NotInstanceOfError
+    :scoped_name: NotInstanceOfError
+    :scoped_short_name: NotInstanceOfError
+    :scoped_prefix:
+    :scoped_full_path:
+    - duck
+    - SupportedValidators
+    - InstanceOf
+    - NotInstanceOfError
+    :scoped_full_name: duck::SupportedValidators::InstanceOf::NotInstanceOfError
+    :scoped_category: :error
+    :reference: duck::SupportedValidators::InstanceOf::NotInstanceOfError
+    :domain: global_organization::global_domain
+    :organization: global_organization
+    :parent:
+    - :processor_class
+    - duck::SupportedValidators::InstanceOf
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - string
+    - symbol
+    :category: :data
+    :symbol: :not_instance_of
+    :context_type_declaration:
+      :type: :attributes
+      :element_type_declarations:
+        :value:
+          :type: :duck
+        :expected_class_name:
+          :type: :string
+    :is_fatal: false
+    :error_class: Foobara::BuiltinTypes::Duck::SupportedValidators::InstanceOf::NotInstanceOfError
+    :base_error: Foobara::Value::DataError
+  :duck::SupportedValidators::OneOf::ValueNotValidError:
+    :scoped_path:
+    - ValueNotValidError
+    :scoped_name: ValueNotValidError
+    :scoped_short_name: ValueNotValidError
+    :scoped_prefix:
+    :scoped_full_path:
+    - duck
+    - SupportedValidators
+    - OneOf
+    - ValueNotValidError
+    :scoped_full_name: duck::SupportedValidators::OneOf::ValueNotValidError
+    :scoped_category: :error
+    :reference: duck::SupportedValidators::OneOf::ValueNotValidError
+    :domain: global_organization::global_domain
+    :organization: global_organization
+    :parent:
+    - :processor_class
+    - duck::SupportedValidators::OneOf
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - symbol
+    :category: :data
+    :symbol: :value_not_valid
+    :context_type_declaration:
+      :type: :attributes
+      :element_type_declarations:
+        :value:
+          :type: :duck
+        :valid_values:
+          :type: :array
+          :element_type_declaration:
+            :type: :duck
+    :is_fatal: false
+    :error_class: Foobara::BuiltinTypes::Duck::SupportedValidators::OneOf::ValueNotValidError
+    :base_error: Foobara::Value::DataError
+  :email::Validators::CannotExceed64Characters::CannotExceed64CharactersError:
+    :scoped_path:
+    - CannotExceed64CharactersError
+    :scoped_name: CannotExceed64CharactersError
+    :scoped_short_name: CannotExceed64CharactersError
+    :scoped_prefix:
+    :scoped_full_path:
+    - email
+    - Validators
+    - CannotExceed64Characters
+    - CannotExceed64CharactersError
+    :scoped_full_name: email::Validators::CannotExceed64Characters::CannotExceed64CharactersError
+    :scoped_category: :error
+    :reference: email::Validators::CannotExceed64Characters::CannotExceed64CharactersError
+    :domain: global_organization::global_domain
+    :organization: global_organization
+    :parent:
+    - :processor_class
+    - email::Validators::CannotExceed64Characters
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - symbol
+    :category: :data
+    :symbol: :cannot_exceed64_characters
+    :context_type_declaration: &15
+      :type: :attributes
+      :element_type_declarations:
+        :value:
+          :type: :duck
+        :regex:
+          :type: :duck
+        :negate_regex:
+          :type: :duck
+    :is_fatal: false
+    :error_class: Foobara::BuiltinTypes::Email::Validators::CannotExceed64Characters::CannotExceed64CharactersError
+    :base_error: Foobara::Value::DataError
+  :email::Validators::CannotHaveMultipleAtSigns::CannotHaveMultipleAtSignsError:
+    :scoped_path:
+    - CannotHaveMultipleAtSignsError
+    :scoped_name: CannotHaveMultipleAtSignsError
+    :scoped_short_name: CannotHaveMultipleAtSignsError
+    :scoped_prefix:
+    :scoped_full_path:
+    - email
+    - Validators
+    - CannotHaveMultipleAtSigns
+    - CannotHaveMultipleAtSignsError
+    :scoped_full_name: email::Validators::CannotHaveMultipleAtSigns::CannotHaveMultipleAtSignsError
+    :scoped_category: :error
+    :reference: email::Validators::CannotHaveMultipleAtSigns::CannotHaveMultipleAtSignsError
+    :domain: global_organization::global_domain
+    :organization: global_organization
+    :parent:
+    - :processor_class
+    - email::Validators::CannotHaveMultipleAtSigns
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - symbol
+    :category: :data
+    :symbol: :cannot_have_multiple_at_signs
+    :context_type_declaration: *15
+    :is_fatal: false
+    :error_class: Foobara::BuiltinTypes::Email::Validators::CannotHaveMultipleAtSigns::CannotHaveMultipleAtSignsError
+    :base_error: Foobara::Value::DataError
+  :email::Validators::DomainCannotStartWithOrEndWithAHyphen::DomainCannotStartWithOrEndWithAHyphenError:
+    :scoped_path:
+    - DomainCannotStartWithOrEndWithAHyphenError
+    :scoped_name: DomainCannotStartWithOrEndWithAHyphenError
+    :scoped_short_name: DomainCannotStartWithOrEndWithAHyphenError
+    :scoped_prefix:
+    :scoped_full_path:
+    - email
+    - Validators
+    - DomainCannotStartWithOrEndWithAHyphen
+    - DomainCannotStartWithOrEndWithAHyphenError
+    :scoped_full_name: email::Validators::DomainCannotStartWithOrEndWithAHyphen::DomainCannotStartWithOrEndWithAHyphenError
+    :scoped_category: :error
+    :reference: email::Validators::DomainCannotStartWithOrEndWithAHyphen::DomainCannotStartWithOrEndWithAHyphenError
+    :domain: global_organization::global_domain
+    :organization: global_organization
+    :parent:
+    - :processor_class
+    - email::Validators::DomainCannotStartWithOrEndWithAHyphen
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - symbol
+    :category: :data
+    :symbol: :domain_cannot_start_with_or_end_with_a_hyphen
+    :context_type_declaration: *15
+    :is_fatal: false
+    :error_class: Foobara::BuiltinTypes::Email::Validators::DomainCannotStartWithOrEndWithAHyphen::DomainCannotStartWithOrEndWithAHyphenError
+    :base_error: Foobara::Value::DataError
+  :email::Validators::FirstPartCannotBeEmpty::FirstPartCannotBeEmptyError:
+    :scoped_path:
+    - FirstPartCannotBeEmptyError
+    :scoped_name: FirstPartCannotBeEmptyError
+    :scoped_short_name: FirstPartCannotBeEmptyError
+    :scoped_prefix:
+    :scoped_full_path:
+    - email
+    - Validators
+    - FirstPartCannotBeEmpty
+    - FirstPartCannotBeEmptyError
+    :scoped_full_name: email::Validators::FirstPartCannotBeEmpty::FirstPartCannotBeEmptyError
+    :scoped_category: :error
+    :reference: email::Validators::FirstPartCannotBeEmpty::FirstPartCannotBeEmptyError
+    :domain: global_organization::global_domain
+    :organization: global_organization
+    :parent:
+    - :processor_class
+    - email::Validators::FirstPartCannotBeEmpty
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - symbol
+    :category: :data
+    :symbol: :first_part_cannot_be_empty
+    :context_type_declaration: *15
+    :is_fatal: false
+    :error_class: Foobara::BuiltinTypes::Email::Validators::FirstPartCannotBeEmpty::FirstPartCannotBeEmptyError
+    :base_error: Foobara::Value::DataError
+  ? :email::Validators::FirstPartCannotStartWithOrEndWithADotOrHaveTwoDotsInARow::FirstPartCannotStartWithOrEndWithADotOrHaveTwoDotsInARowError
+  : :scoped_path:
+    - FirstPartCannotStartWithOrEndWithADotOrHaveTwoDotsInARowError
+    :scoped_name: FirstPartCannotStartWithOrEndWithADotOrHaveTwoDotsInARowError
+    :scoped_short_name: FirstPartCannotStartWithOrEndWithADotOrHaveTwoDotsInARowError
+    :scoped_prefix:
+    :scoped_full_path:
+    - email
+    - Validators
+    - FirstPartCannotStartWithOrEndWithADotOrHaveTwoDotsInARow
+    - FirstPartCannotStartWithOrEndWithADotOrHaveTwoDotsInARowError
+    :scoped_full_name: email::Validators::FirstPartCannotStartWithOrEndWithADotOrHaveTwoDotsInARow::FirstPartCannotStartWithOrEndWithADotOrHaveTwoDotsInARowError
+    :scoped_category: :error
+    :reference: email::Validators::FirstPartCannotStartWithOrEndWithADotOrHaveTwoDotsInARow::FirstPartCannotStartWithOrEndWithADotOrHaveTwoDotsInARowError
+    :domain: global_organization::global_domain
+    :organization: global_organization
+    :parent:
+    - :processor_class
+    - email::Validators::FirstPartCannotStartWithOrEndWithADotOrHaveTwoDotsInARow
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - symbol
+    :category: :data
+    :symbol: :first_part_cannot_start_with_or_end_with_a_dot_or_have_two_dots_in_a_row
+    :context_type_declaration: *15
+    :is_fatal: false
+    :error_class: Foobara::BuiltinTypes::Email::Validators::FirstPartCannotStartWithOrEndWithADotOrHaveTwoDotsInARow::FirstPartCannotStartWithOrEndWithADotOrHaveTwoDotsInARowError
+    :base_error: Foobara::Value::DataError
+  :email::Validators::FirstPartHasBadCharacters::FirstPartHasBadCharactersError:
+    :scoped_path:
+    - FirstPartHasBadCharactersError
+    :scoped_name: FirstPartHasBadCharactersError
+    :scoped_short_name: FirstPartHasBadCharactersError
+    :scoped_prefix:
+    :scoped_full_path:
+    - email
+    - Validators
+    - FirstPartHasBadCharacters
+    - FirstPartHasBadCharactersError
+    :scoped_full_name: email::Validators::FirstPartHasBadCharacters::FirstPartHasBadCharactersError
+    :scoped_category: :error
+    :reference: email::Validators::FirstPartHasBadCharacters::FirstPartHasBadCharactersError
+    :domain: global_organization::global_domain
+    :organization: global_organization
+    :parent:
+    - :processor_class
+    - email::Validators::FirstPartHasBadCharacters
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - symbol
+    :category: :data
+    :symbol: :first_part_has_bad_characters
+    :context_type_declaration: *15
+    :is_fatal: false
+    :error_class: Foobara::BuiltinTypes::Email::Validators::FirstPartHasBadCharacters::FirstPartHasBadCharactersError
+    :base_error: Foobara::Value::DataError
+  :email::Validators::MustHaveAnAtSign::MustHaveAnAtSignError:
+    :scoped_path:
+    - MustHaveAnAtSignError
+    :scoped_name: MustHaveAnAtSignError
+    :scoped_short_name: MustHaveAnAtSignError
+    :scoped_prefix:
+    :scoped_full_path:
+    - email
+    - Validators
+    - MustHaveAnAtSign
+    - MustHaveAnAtSignError
+    :scoped_full_name: email::Validators::MustHaveAnAtSign::MustHaveAnAtSignError
+    :scoped_category: :error
+    :reference: email::Validators::MustHaveAnAtSign::MustHaveAnAtSignError
+    :domain: global_organization::global_domain
+    :organization: global_organization
+    :parent:
+    - :processor_class
+    - email::Validators::MustHaveAnAtSign
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - symbol
+    :category: :data
+    :symbol: :must_have_an_at_sign
+    :context_type_declaration: *15
+    :is_fatal: false
+    :error_class: Foobara::BuiltinTypes::Email::Validators::MustHaveAnAtSign::MustHaveAnAtSignError
+    :base_error: Foobara::Value::DataError
+  :email::Validators::SecondPartCannotBeEmpty::SecondPartCannotBeEmptyError:
+    :scoped_path:
+    - SecondPartCannotBeEmptyError
+    :scoped_name: SecondPartCannotBeEmptyError
+    :scoped_short_name: SecondPartCannotBeEmptyError
+    :scoped_prefix:
+    :scoped_full_path:
+    - email
+    - Validators
+    - SecondPartCannotBeEmpty
+    - SecondPartCannotBeEmptyError
+    :scoped_full_name: email::Validators::SecondPartCannotBeEmpty::SecondPartCannotBeEmptyError
+    :scoped_category: :error
+    :reference: email::Validators::SecondPartCannotBeEmpty::SecondPartCannotBeEmptyError
+    :domain: global_organization::global_domain
+    :organization: global_organization
+    :parent:
+    - :processor_class
+    - email::Validators::SecondPartCannotBeEmpty
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - symbol
+    :category: :data
+    :symbol: :second_part_cannot_be_empty
+    :context_type_declaration: *15
+    :is_fatal: false
+    :error_class: Foobara::BuiltinTypes::Email::Validators::SecondPartCannotBeEmpty::SecondPartCannotBeEmptyError
+    :base_error: Foobara::Value::DataError
+  :email::Validators::SecondPartHasBadCharacters::SecondPartHasBadCharactersError:
+    :scoped_path:
+    - SecondPartHasBadCharactersError
+    :scoped_name: SecondPartHasBadCharactersError
+    :scoped_short_name: SecondPartHasBadCharactersError
+    :scoped_prefix:
+    :scoped_full_path:
+    - email
+    - Validators
+    - SecondPartHasBadCharacters
+    - SecondPartHasBadCharactersError
+    :scoped_full_name: email::Validators::SecondPartHasBadCharacters::SecondPartHasBadCharactersError
+    :scoped_category: :error
+    :reference: email::Validators::SecondPartHasBadCharacters::SecondPartHasBadCharactersError
+    :domain: global_organization::global_domain
+    :organization: global_organization
+    :parent:
+    - :processor_class
+    - email::Validators::SecondPartHasBadCharacters
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - symbol
+    :category: :data
+    :symbol: :second_part_has_bad_characters
+    :context_type_declaration: *15
+    :is_fatal: false
+    :error_class: Foobara::BuiltinTypes::Email::Validators::SecondPartHasBadCharacters::SecondPartHasBadCharactersError
+    :base_error: Foobara::Value::DataError
+  :number::SupportedValidators::Max::MaxExceededError:
+    :scoped_path:
+    - MaxExceededError
+    :scoped_name: MaxExceededError
+    :scoped_short_name: MaxExceededError
+    :scoped_prefix:
+    :scoped_full_path:
+    - number
+    - SupportedValidators
+    - Max
+    - MaxExceededError
+    :scoped_full_name: number::SupportedValidators::Max::MaxExceededError
+    :scoped_category: :error
+    :reference: number::SupportedValidators::Max::MaxExceededError
+    :domain: global_organization::global_domain
+    :organization: global_organization
+    :parent:
+    - :processor_class
+    - number::SupportedValidators::Max
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - number
+    - symbol
+    :category: :data
+    :symbol: :max_exceeded
+    :context_type_declaration:
+      :type: :attributes
+      :element_type_declarations:
+        :value:
+          :type: :number
+        :max:
+          :type: :number
+    :is_fatal: false
+    :error_class: Foobara::BuiltinTypes::Number::SupportedValidators::Max::MaxExceededError
+    :base_error: Foobara::Value::DataError
+  :number::SupportedValidators::Min::BelowMinimumError:
+    :scoped_path:
+    - BelowMinimumError
+    :scoped_name: BelowMinimumError
+    :scoped_short_name: BelowMinimumError
+    :scoped_prefix:
+    :scoped_full_path:
+    - number
+    - SupportedValidators
+    - Min
+    - BelowMinimumError
+    :scoped_full_name: number::SupportedValidators::Min::BelowMinimumError
+    :scoped_category: :error
+    :reference: number::SupportedValidators::Min::BelowMinimumError
+    :domain: global_organization::global_domain
+    :organization: global_organization
+    :parent:
+    - :processor_class
+    - number::SupportedValidators::Min
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - number
+    - symbol
+    :category: :data
+    :symbol: :below_minimum
+    :context_type_declaration:
+      :type: :attributes
+      :element_type_declarations:
+        :value:
+          :type: :number
+        :min:
+          :type: :number
+    :is_fatal: false
+    :error_class: Foobara::BuiltinTypes::Number::SupportedValidators::Min::BelowMinimumError
+    :base_error: Foobara::Value::DataError
+  :string::SupportedValidators::Matches::DoesNotMatchError:
+    :scoped_path:
+    - DoesNotMatchError
+    :scoped_name: DoesNotMatchError
+    :scoped_short_name: DoesNotMatchError
+    :scoped_prefix:
+    :scoped_full_path:
+    - string
+    - SupportedValidators
+    - Matches
+    - DoesNotMatchError
+    :scoped_full_name: string::SupportedValidators::Matches::DoesNotMatchError
+    :scoped_category: :error
+    :reference: string::SupportedValidators::Matches::DoesNotMatchError
+    :domain: global_organization::global_domain
+    :organization: global_organization
+    :parent:
+    - :processor_class
+    - string::SupportedValidators::Matches
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - string
+    - symbol
+    :category: :data
+    :symbol: :does_not_match
+    :context_type_declaration:
+      :type: :attributes
+      :element_type_declarations:
+        :value:
+          :type: :string
+        :regex:
+          :type: :duck
+    :is_fatal: false
+    :error_class: Foobara::BuiltinTypes::String::SupportedValidators::Matches::DoesNotMatchError
+    :base_error: Foobara::Value::DataError
+  :string::SupportedValidators::MaxLength::MaxLengthExceededError:
+    :scoped_path:
+    - MaxLengthExceededError
+    :scoped_name: MaxLengthExceededError
+    :scoped_short_name: MaxLengthExceededError
+    :scoped_prefix:
+    :scoped_full_path:
+    - string
+    - SupportedValidators
+    - MaxLength
+    - MaxLengthExceededError
+    :scoped_full_name: string::SupportedValidators::MaxLength::MaxLengthExceededError
+    :scoped_category: :error
+    :reference: string::SupportedValidators::MaxLength::MaxLengthExceededError
+    :domain: global_organization::global_domain
+    :organization: global_organization
+    :parent:
+    - :processor_class
+    - string::SupportedValidators::MaxLength
+    :types_depended_on:
+    - array
+    - attributes
+    - duck
+    - integer
+    - string
+    - symbol
+    :category: :data
+    :symbol: :max_length_exceeded
+    :context_type_declaration:
+      :type: :attributes
+      :element_type_declarations:
+        :value:
+          :type: :string
+        :max_length:
+          :type: :integer
+    :is_fatal: false
+    :error_class: Foobara::BuiltinTypes::String::SupportedValidators::MaxLength::MaxLengthExceededError
+    :base_error: Foobara::Value::DataError
+:organization:
+  :Foobara:
+    :scoped_path:
+    - Foobara
+    :scoped_name: Foobara
+    :scoped_short_name: Foobara
+    :scoped_prefix:
+    :scoped_full_path:
+    - Foobara
+    :scoped_full_name: Foobara
+    :scoped_category: :organization
+    :reference: Foobara
+    :domain: global_organization::global_domain
+    :organization: Foobara
+    :domains:
+    - Foobara::Auth
+  :global_organization:
+    :scoped_path: []
+    :scoped_name:
+    :scoped_short_name:
+    :scoped_prefix: []
+    :scoped_full_path: []
+    :scoped_full_name: ''
+    :scoped_category: :organization
+    :reference: global_organization
+    :domain: global_organization::global_domain
+    :organization: global_organization
+    :domains:
+    - global_organization::global_domain
