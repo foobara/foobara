@@ -287,6 +287,7 @@ RSpec.describe Foobara::Manifest do
     foobara_error = foobara_possible_error.error
     expect(foobara_error).to be_a(Foobara::Manifest::Error)
     expect(foobara_error.full_error_name).to eq("Foobara::Value::Processor::Casting::CannotCastError")
+    expect(foobara_error.short_error_name).to eq("CannotCastError")
     expect(foobara_error.scoped_category).to eq(:error)
     expect(foobara_error.parent).to eq(
       Foobara::Manifest::ProcessorClass.new(
