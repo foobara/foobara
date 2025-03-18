@@ -54,13 +54,12 @@ RSpec.describe Foobara::Command do
       it "is gives relevant errors" do
         expect(outcome).to_not be_success
         # TODO: let's make this input instead of attribute_name somehow...
-        expect(errors.map { |e| [e.attribute_name, e.symbol] }).to eq([
-                                                                        %i[
-                                                                          exponent missing_required_attribute
-                                                                        ],
-                                                                        %i[base
-                                                                           missing_required_attribute]
-                                                                      ])
+        expect(errors.map { |e| [e.attribute_name, e.symbol] }).to eq(
+          [
+            %i[base missing_required_attribute],
+            %i[exponent missing_required_attribute]
+          ]
+        )
       end
     end
 

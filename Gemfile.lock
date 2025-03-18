@@ -17,7 +17,7 @@ GEM
     docile (1.4.1)
     ffi (1.17.1-x86_64-linux-gnu)
     foobara-lru-cache (0.0.2)
-    foobara-rubocop-rules (0.0.7)
+    foobara-rubocop-rules (0.0.8)
       rubocop
       rubocop-rspec
     foobara-spec-helpers (0.0.4)
