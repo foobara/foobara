@@ -79,14 +79,21 @@ module Foobara
           end
 
           def types_depended_on(remove_sensitive: false)
-            # TODO: is there a simpler way to wrap these methods in this namespace?
-            # something aspect-oriented-ish?
-            @types_depended_on ||= begin
+            if defined?(@types_depended_on) && @types_depended_on.key?(remove_sensitive)
+              return @types_depended_on[remove_sensitive]
+            end
+
+            @types_depended_on ||= {}
+            @types_depended_on[remove_sensitive] = begin
               types = inputs_types_depended_on(remove_sensitive:) | result_types_depended_on(remove_sensitive:) |
                       errors_types_depended_on(remove_sensitive:)
 
               unless depends_on_entities.empty?
                 entity_types = depends_on_entities.map(&:entity_type)
+
+                if remove_sensitive
+                  entity_types = entity_types.reject(&:sensitive?)
+                end
 
                 types |= entity_types
                 types |= entity_types.map { |t| t.types_depended_on(remove_sensitive:) }.inject(:|)
@@ -97,35 +104,54 @@ module Foobara
           end
 
           def inputs_types_depended_on(remove_sensitive: false)
-            @inputs_types_depended_on ||= if inputs_type
-                                            if inputs_type.registered?
-                                              # TODO: if we ever change from attributes-only inputs type
-                                              # then this will be handy
-                                              # :nocov:
-                                              Set[inputs_type]
-                                              # :nocov:
-                                            else
-                                              inputs_type.types_depended_on
-                                            end
-                                          else
-                                            Set.new
-                                          end
+            if defined?(@inputs_types_depended_on) && @inputs_types_depended_on.key?(remove_sensitive)
+              return @inputs_types_depended_on[remove_sensitive]
+            end
+
+            @inputs_types_depended_on ||= {}
+            @inputs_types_depended_on[remove_sensitive] = if inputs_type
+                                                            if inputs_type.registered?
+                                                              # TODO: if we ever change from attributes-only inputs type
+                                                              # then this will be handy
+                                                              # :nocov:
+                                                              if !remove_sensitive || !inputs_type.sensitive?
+                                                                Set[inputs_type]
+                                                              else
+                                                                Set.new
+                                                              end
+                                                              # :nocov:
+                                                            else
+                                                              inputs_type.types_depended_on(remove_sensitive:)
+                                                            end
+                                                          else
+                                                            Set.new
+                                                          end
           end
 
           def result_types_depended_on(remove_sensitive: false)
-            @result_types_depended_on ||= if result_type
-                                            if result_type.registered?
-                                              Set[result_type]
-                                            else
-                                              result_type.types_depended_on
-                                            end
-                                          else
-                                            Set.new
-                                          end
+            if defined?(@result_types_depended_on) && @result_types_depended_on.key?(remove_sensitive)
+              return @result_types_depended_on[remove_sensitive]
+            end
+
+            @result_types_depended_on ||= {}
+            @result_types_depended_on[remove_sensitive] = if result_type
+                                                            if result_type.registered?
+                                                              Set[result_type]
+                                                            else
+                                                              result_type.types_depended_on(remove_sensitive:)
+                                                            end
+                                                          else
+                                                            Set.new
+                                                          end
           end
 
           def errors_types_depended_on(remove_sensitive: false)
-            @errors_types_depended_on ||= begin
+            if defined?(@errors_types_depended_on) && @errors_types_depended_on.key?(remove_sensitive)
+              return @errors_types_depended_on[remove_sensitive]
+            end
+
+            @errors_types_depended_on ||= {}
+            @errors_types_depended_on[remove_sensitive] = begin
               error_classes = possible_errors.map(&:error_class)
               error_classes.map { |e| e.types_depended_on(remove_sensitive:) }.inject(:|) || Set.new
             end
