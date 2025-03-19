@@ -28,7 +28,9 @@ module Foobara
                     :target_classes,
                     :description,
                     :sensitive,
+                    :sensitive_exposed,
                     :processor_classes_requiring_type
+
       attr_reader :type_symbol
 
       def initialize(
@@ -46,9 +48,11 @@ module Foobara
         structure_count: nil,
         processor_classes_requiring_type: nil,
         sensitive: nil,
+        sensitive_exposed: nil,
         **opts
       )
         self.sensitive = sensitive
+        self.sensitive_exposed = sensitive_exposed
         self.base_type = base_type
         self.description = description
         self.casters = [*casters, *base_type&.casters]
@@ -73,6 +77,10 @@ module Foobara
 
       def sensitive?
         sensitive
+      end
+
+      def sensitive_exposed?
+        sensitive_exposed
       end
 
       def apply_all_processors_needing_type!
@@ -348,6 +356,10 @@ module Foobara
 
         if sensitive?
           h[:sensitive] = true
+        end
+
+        if sensitive_exposed?
+          h[:sensitive_exposed] = true
         end
 
         h.merge!(

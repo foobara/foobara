@@ -46,6 +46,7 @@ module Foobara
             end
 
             sensitive = strict_type_declaration[:sensitive]
+            sensitive_exposed = strict_type_declaration[:sensitive_exposed]
 
             type_class.new(
               strict_type_declaration,
@@ -59,7 +60,8 @@ module Foobara
               # TODO: can't we just set this to [] here??
               target_classes: target_classes(strict_type_declaration),
               name: type_name(strict_type_declaration),
-              sensitive:
+              sensitive:,
+              sensitive_exposed:
             )
           end
 
@@ -73,7 +75,7 @@ module Foobara
           end
 
           def non_processor_keys
-            %i[type _desugarized description sensitive]
+            %i[type _desugarized description sensitive sensitive_exposed]
           end
         end
       end
