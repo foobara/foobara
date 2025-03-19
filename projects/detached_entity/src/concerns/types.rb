@@ -8,7 +8,13 @@ module Foobara
 
         module ClassMethods
           def entity_type
-            model_type
+            return @model_type if defined?(@model_type)
+
+            if attributes_type
+              set_model_type
+            end
+
+            @model_type
           end
 
           def type_declaration(...)
