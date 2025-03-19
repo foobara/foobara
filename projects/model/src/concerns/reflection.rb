@@ -6,8 +6,14 @@ module Foobara
 
         module ClassMethods
           def foobara_manifest(to_include: Set.new, remove_sensitive: false)
+            attributes_declaration = foobara_attributes_type.declaration_data
+
+            if remove_sensitive
+              attributes_declaration = TypeDeclarations.remove_sensitive_types(attributes_declaration)
+            end
+
             Util.remove_blank(
-              attributes_type: foobara_attributes_type.declaration_data,
+              attributes_type: attributes_declaration,
               organization_name: foobara_type.foobara_domain.foobara_organization_name,
               domain_name: foobara_type.foobara_domain.foobara_domain_name,
               model_name: foobara_model_name,
