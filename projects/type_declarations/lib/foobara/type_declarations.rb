@@ -44,6 +44,7 @@ module Foobara
             :@foobara_lowercase_constants,
             @original_foobara_lowercase_constants || []
           )
+          GlobalDomain.send(:remove_const, :Types)
         end
 
         @original_scoped.each do |scoped|

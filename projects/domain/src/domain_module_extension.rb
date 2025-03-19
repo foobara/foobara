@@ -109,10 +109,14 @@ module Foobara
 
                   # TODO: unclear why we need this check, hmmm, figure it out and document it (or delete if not needed)
                   break if child.constants(false).any? do |constant|
+                    # TODO: a clue: this stopped being entered by the test suite after deleting GlobalDomain::Types
+                    # in .reset_alls hmmmmmm...
+                    # :nocov:
                     value = child.const_get(constant)
 
                     # TODO: can we make this not coupled to model project??
                     value.is_a?(Types::Type) || (value.is_a?(::Class) && value < Foobara::Model)
+                    # :nocov:
                   end
 
                   lower_case_constants = child.instance_variable_get(:@foobara_lowercase_constants)
