@@ -20,11 +20,26 @@ module Foobara
             if element_types
               to_process += case element_types
                             when Type
-                              [element_types]
+                              if remove_sensitive && element_types.sensitive?
+                                # TODO: test this code path
+                                # :nocov:
+                                []
+                                # :nocov:
+                              else
+                                [element_types]
+                              end
                             when ::Hash
-                              element_types.values.select { |value| value.is_a?(Type) }
+                              element_types.values.select do |value|
+                                if !remove_sensitive || !value.sensitive?
+                                  value.is_a?(Type)
+                                end
+                              end
                             when ::Array
-                              element_types
+                              if remove_sensitive
+                                element_types.reject(&:sensitive?)
+                              else
+                                element_types
+                              end
                             else
                               # :nocov:
                               raise "Not sure how to find dependent types for #{element_types}"
@@ -44,7 +59,13 @@ module Foobara
           end
 
           def types_to_add_to_manifest(remove_sensitive: false)
-            [*base_type, *element_type, *possible_errors.map(&:error_class)]
+            types = [*base_type, *possible_errors.map(&:error_class)]
+
+            if element_type && (!remove_sensitive || !element_type.sensitive?)
+              types << element_type
+            end
+
+            types
           end
 
           def deep_types_depended_on
