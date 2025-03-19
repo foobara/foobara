@@ -92,7 +92,7 @@ RSpec.describe ":array" do
 
   context "when extending with an array literal and a description" do
     let(:type_declaration) do
-      { type: [:string], description: "An array of strings" }
+      { type: [:string], description: "An array of strings", sensitive: true, sensitive_exposed: true }
     end
 
     let(:type) do
@@ -102,6 +102,8 @@ RSpec.describe ":array" do
     it "has the description and is an array type as expected" do
       expect(type.extends?(:array)).to be(true)
       expect(type.description).to eq("An array of strings")
+      expect(type).to be_sensitive
+      expect(type).to be_sensitive_exposed
       expect(type.process_value!([:foo, 1])).to eq(%w[foo 1])
     end
   end

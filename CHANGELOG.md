@@ -1,3 +1,7 @@
+# [0.0.80] - 2025-03-19
+
+- Fix bug preventing combining array type sugar with sensitive flag in type declarations
+
 # [0.0.79] - 2025-03-19
 
 - Make foobara manifest output more deterministic (alphabetize required fields array)

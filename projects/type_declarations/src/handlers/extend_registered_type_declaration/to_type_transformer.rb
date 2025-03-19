@@ -51,7 +51,6 @@ module Foobara
             type_class.new(
               strict_type_declaration,
               base_type:,
-              # description: strict_type_declaration.is_a?(::Hash) && strict_type_declaration[:description],
               description: strict_type_declaration[:description],
               casters:,
               transformers:,
