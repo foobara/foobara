@@ -161,7 +161,7 @@ module Foobara
         types
       end
 
-      def foobara_manifest(to_include: Set.new)
+      def foobara_manifest(to_include: Set.new, remove_sensitive: true)
         types = types_depended_on.select(&:registered?).map do |t|
           to_include << t
           t.foobara_manifest_reference

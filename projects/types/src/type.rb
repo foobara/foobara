@@ -315,7 +315,7 @@ module Foobara
         scoped_full_name
       end
 
-      def foobara_manifest(to_include: Set.new)
+      def foobara_manifest(to_include: Set.new, remove_sensitive: false)
         types = []
 
         types_depended_on.each do |dependent_type|

@@ -100,7 +100,7 @@ module Foobara
         parent
       end
 
-      def foobara_manifest(to_include: Set.new)
+      def foobara_manifest(to_include: Set.new, remove_sensitive: true)
         # A bit of a hack here. We don't have an exposed type class to encapsulate including exposed domains/orgs
         # which leads to a bug when a global command is exposed that depends on a type in a non-global domain
         # but there being no other reason to include that non-global domain.

@@ -393,7 +393,7 @@ module Foobara
         end
 
         # TODO: can we kill this skip concept?
-        def foobara_manifest(to_include: Set.new)
+        def foobara_manifest(to_include: Set.new, remove_sensitive: false)
           depends_on = foobara_depends_on.map do |name|
             domain = Domain.to_domain(name)
             to_include << domain

@@ -25,7 +25,7 @@ module Foobara
           true
         end
 
-        def foobara_manifest(to_include: Set.new)
+        def foobara_manifest(to_include: Set.new, remove_sensitive: false)
           errors = error_classes.map do |error_class|
             to_include << error_class
             error_class.foobara_manifest_reference
@@ -317,7 +317,7 @@ module Foobara
 
       # TODO: is this in the wrong place? Should this be an extension?
 
-      def foobara_manifest(to_include: Set.new)
+      def foobara_manifest(to_include: Set.new, remove_sensitive: false)
         possible_errors = self.possible_errors.map do |possible_error|
           [possible_error.key.to_s, possible_error.foobara_manifest(to_include:)]
         end

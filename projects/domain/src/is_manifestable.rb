@@ -37,7 +37,7 @@ module Foobara
       end
     end
 
-    def foobara_manifest(to_include: Set.new)
+    def foobara_manifest(to_include: Set.new, remove_sensitive: false)
       h = {
         scoped_path:,
         scoped_name:,

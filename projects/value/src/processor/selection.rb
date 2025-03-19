@@ -9,7 +9,7 @@ module Foobara
         class MoreThanOneApplicableProcessorError < DataError; end
 
         class << self
-          def foobara_manifest(to_include: Set.new)
+          def foobara_manifest(to_include: Set.new, remove_sensitive: false)
             # :nocov:
             super.merge(processor_type: :selection)
             # :nocov:

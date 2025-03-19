@@ -349,7 +349,7 @@ module Foobara
       Foobara.foobara_lookup_type(name, mode: Namespace::LookupMode::RELAXED)
     end
 
-    def foobara_manifest
+    def foobara_manifest(remove_sensitive: true)
       process_delayed_connections
 
       # Drive all of this off of the list of exposed commands...

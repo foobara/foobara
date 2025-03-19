@@ -14,7 +14,7 @@ module Foobara
       end
 
       # TODO: unable to address types here so it is handled as a hack higher up...
-      def foobara_manifest(to_include: Set.new)
+      def foobara_manifest(to_include: Set.new, remove_sensitive: true)
         to_include << foobara_organization
 
         domain_manifest = domain_module.foobara_manifest(to_include: Set.new)

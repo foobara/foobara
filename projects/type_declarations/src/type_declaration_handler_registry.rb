@@ -2,7 +2,7 @@ module Foobara
   module TypeDeclarations
     class TypeDeclarationHandlerRegistry < Value::Processor::Selection
       class << self
-        def foobara_manifest(to_include: Set.new)
+        def foobara_manifest(to_include: Set.new, remove_sensitive: false)
           # :nocov:
           super.merge(processor_type: :type_declaration_handler_registry)
           # :nocov:
