@@ -1,5 +1,7 @@
 module Foobara
   class CommandConnector
+    class UnexpectedSensitiveTypeInManifestError < StandardError; end
+
     class CommandConnectorError < Foobara::RuntimeError
       class << self
         def context_type_declaration
@@ -384,6 +386,11 @@ module Foobara
               if o.foobara_domain? || o.foobara_organization? || (o.is_a?(::Class) && o < Foobara::Command)
                 next
               end
+            elsif o.is_a?(Types::Type) && remove_sensitive && o.sensitive?
+              # :nocov:
+              raise UnexpectedSensitiveTypeInManifestError,
+                    "Unexpected sensitive type in manifest: #{o.scoped_full_path}. Make sure these are not included."
+              # :nocov:
             end
 
             object = o
