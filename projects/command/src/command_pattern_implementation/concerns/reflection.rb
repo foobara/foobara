@@ -27,7 +27,7 @@ module Foobara
               other_command.foobara_manifest_reference
             end.sort
 
-            types = types_depended_on.map do |t|
+            types = types_depended_on(remove_sensitive:).map do |t|
               to_include << t
               t.foobara_manifest_reference
             end.sort
@@ -78,23 +78,25 @@ module Foobara
             Util.non_full_name(self)
           end
 
-          def types_depended_on
+          def types_depended_on(remove_sensitive: false)
             # TODO: is there a simpler way to wrap these methods in this namespace?
             # something aspect-oriented-ish?
             @types_depended_on ||= begin
-              types = inputs_types_depended_on | result_types_depended_on | errors_types_depended_on
+              types = inputs_types_depended_on(remove_sensitive:) | result_types_depended_on(remove_sensitive:) |
+                      errors_types_depended_on(remove_sensitive:)
 
               unless depends_on_entities.empty?
                 entity_types = depends_on_entities.map(&:entity_type)
+
                 types |= entity_types
-                types |= entity_types.map(&:types_depended_on).inject(:|)
+                types |= entity_types.map { |t| t.types_depended_on(remove_sensitive:) }.inject(:|)
               end
 
               types
             end
           end
 
-          def inputs_types_depended_on
+          def inputs_types_depended_on(remove_sensitive: false)
             @inputs_types_depended_on ||= if inputs_type
                                             if inputs_type.registered?
                                               # TODO: if we ever change from attributes-only inputs type
@@ -110,7 +112,7 @@ module Foobara
                                           end
           end
 
-          def result_types_depended_on
+          def result_types_depended_on(remove_sensitive: false)
             @result_types_depended_on ||= if result_type
                                             if result_type.registered?
                                               Set[result_type]
@@ -122,10 +124,10 @@ module Foobara
                                           end
           end
 
-          def errors_types_depended_on
+          def errors_types_depended_on(remove_sensitive: false)
             @errors_types_depended_on ||= begin
               error_classes = possible_errors.map(&:error_class)
-              error_classes.map(&:types_depended_on).inject(:|) || Set.new
+              error_classes.map { |e| e.types_depended_on(remove_sensitive:) }.inject(:|) || Set.new
             end
           end
         end

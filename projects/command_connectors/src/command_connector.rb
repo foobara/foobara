@@ -412,7 +412,7 @@ module Foobara
         cat = h[category_symbol] ||= {}
         # TODO: do we really need to enter the namespace here for this?
         cat[manifest_reference] = Foobara::Namespace.use namespace do
-          object.foobara_manifest(to_include: additional_to_include)
+          object.foobara_manifest(to_include: additional_to_include, remove_sensitive:)
         end
 
         included << object

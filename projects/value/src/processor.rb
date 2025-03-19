@@ -319,7 +319,7 @@ module Foobara
 
       def foobara_manifest(to_include: Set.new, remove_sensitive: false)
         possible_errors = self.possible_errors.map do |possible_error|
-          [possible_error.key.to_s, possible_error.foobara_manifest(to_include:)]
+          [possible_error.key.to_s, possible_error.foobara_manifest(to_include:, remove_sensitive:)]
         end
 
         manifest = super.dup

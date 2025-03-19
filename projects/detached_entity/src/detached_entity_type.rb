@@ -37,7 +37,7 @@ module Foobara
       manifest
     end
 
-    def types_to_add_to_manifest
+    def types_to_add_to_manifest(remove_sensitive: false)
       types = super
 
       if detached_context?

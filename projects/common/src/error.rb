@@ -103,7 +103,7 @@ module Foobara
       end
 
       def foobara_manifest(to_include: Set.new, remove_sensitive: false)
-        types = types_depended_on.map do |t|
+        types = types_depended_on(remove_sensitive:).map do |t|
           to_include << t
           t.foobara_manifest_reference
         end

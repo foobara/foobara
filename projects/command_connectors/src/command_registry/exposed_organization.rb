@@ -15,7 +15,7 @@ module Foobara
 
       # TODO: unable to address types here so it is handled as a hack higher up...
       def foobara_manifest(to_include: Set.new, remove_sensitive: true)
-        organization_manifest = organization_module.foobara_manifest(to_include: Set.new)
+        organization_manifest = organization_module.foobara_manifest(to_include: Set.new, remove_sensitive:)
         mode = Foobara::Namespace::LookupMode::DIRECT
         domains = foobara_all_domain(mode:).map(&:foobara_manifest_reference).sort
 

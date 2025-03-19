@@ -17,7 +17,7 @@ module Foobara
       def foobara_manifest(to_include: Set.new, remove_sensitive: true)
         to_include << foobara_organization
 
-        domain_manifest = domain_module.foobara_manifest(to_include: Set.new)
+        domain_manifest = domain_module.foobara_manifest(to_include: Set.new, remove_sensitive:)
         mode = Foobara::Namespace::LookupMode::DIRECT
         commands = foobara_all_command(mode:).map(&:foobara_manifest_reference).sort
 

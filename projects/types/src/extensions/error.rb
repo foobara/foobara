@@ -1,13 +1,13 @@
 module Foobara
   class Error
     class << self
-      def types_depended_on(*args)
+      def types_depended_on(*args, remove_sensitive: false)
         if args.size == 1
-          context_type.types_depended_on(args.first)
+          context_type.types_depended_on(args.first, remove_sensitive:)
         elsif args.empty?
           begin
             if context_type
-              context_type.types_depended_on
+              context_type.types_depended_on(remove_sensitive:)
             else
               raise Foobara::TypeDeclarations::ErrorExtension::NoContextTypeSetError
             end

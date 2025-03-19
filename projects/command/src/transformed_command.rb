@@ -114,16 +114,16 @@ module Foobara
         @possible_errors ||= error_context_type_map.values
       end
 
-      def possible_errors_manifest(to_include:)
+      def possible_errors_manifest(to_include:, remove_sensitive: true)
         possible_errors.map do |possible_error|
-          [possible_error.key.to_s, possible_error.foobara_manifest(to_include:)]
+          [possible_error.key.to_s, possible_error.foobara_manifest(to_include:, remove_sensitive:)]
         end.sort.to_h
       end
 
-      def types_depended_on
+      def types_depended_on(remove_sensitive: true)
         # TODO: memoize this
         # TODO: this should not delegate to command since transformers are in play
-        types = command_class.types_depended_on
+        types = command_class.types_depended_on(remove_sensitive:)
 
         type = inputs_type
 
@@ -135,7 +135,7 @@ module Foobara
                      [type]
                      # :nocov:
                    else
-                     type.types_depended_on
+                     type.types_depended_on(remove_sensitive:)
                    end
         end
 
@@ -149,13 +149,13 @@ module Foobara
                      [type]
                      # :nocov:
                    else
-                     type.types_depended_on
+                     type.types_depended_on(remove_sensitive:)
                    end
         end
 
         possible_errors.each do |possible_error|
           error_class = possible_error.error_class
-          types |= error_class.types_depended_on
+          types |= error_class.types_depended_on(remove_sensitive:)
         end
 
         types
@@ -180,12 +180,13 @@ module Foobara
           end
         end
 
-        command_class.foobara_manifest(to_include:).merge(
+        command_class.foobara_manifest(to_include:, remove_sensitive:).merge(
           Util.remove_blank(
             types_depended_on: types,
             inputs_type: inputs_type&.reference_or_declaration_data,
-            result_type: result_type&.reference_or_declaration_data,
-            possible_errors: possible_errors_manifest(to_include:),
+            # TODO: we need a way to unmask values in the result type that we want to expose
+            result_type: result_type&.reference_or_declaration_data(remove_sensitive:),
+            possible_errors: possible_errors_manifest(to_include:, remove_sensitive:),
             capture_unknown_error:,
             inputs_transformers:,
             result_transformers:,

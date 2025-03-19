@@ -104,7 +104,7 @@ module Foobara
         # A bit of a hack here. We don't have an exposed type class to encapsulate including exposed domains/orgs
         # which leads to a bug when a global command is exposed that depends on a type in a non-global domain
         # but there being no other reason to include that non-global domain.
-        transformed_command_class.types_depended_on.select(&:registered?).each do |type|
+        transformed_command_class.types_depended_on(remove_sensitive:).select(&:registered?).each do |type|
           full_domain_name = type.foobara_domain.scoped_full_name
 
           unless root_registry.foobara_lookup_domain(full_domain_name)
@@ -114,7 +114,7 @@ module Foobara
           end
         end
 
-        transformed_command_class.foobara_manifest(to_include:).merge(super).merge(
+        transformed_command_class.foobara_manifest(to_include:, remove_sensitive:).merge(super).merge(
           Util.remove_blank(
             scoped_category: :command,
             domain: command_class.domain.foobara_manifest_reference,

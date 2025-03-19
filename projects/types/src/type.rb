@@ -301,7 +301,7 @@ module Foobara
         scoped_full_name
       end
 
-      def reference_or_declaration_data(declaration_data = self.declaration_data)
+      def reference_or_declaration_data(declaration_data = self.declaration_data, remove_sensitive: false)
         if registered?
           # TODO: we should just use the symbol and nothing else in this context instead of a hash with 1 element.
           { type: foobara_manifest_reference.to_sym }
@@ -318,7 +318,7 @@ module Foobara
       def foobara_manifest(to_include: Set.new, remove_sensitive: false)
         types = []
 
-        types_depended_on.each do |dependent_type|
+        types_depended_on(remove_sensitive:).each do |dependent_type|
           if dependent_type.registered?
             types << dependent_type.foobara_manifest_reference
             to_include << dependent_type
@@ -326,7 +326,7 @@ module Foobara
         end
 
         possible_errors_manifests = possible_errors.map do |possible_error|
-          [possible_error.key.to_s, possible_error.foobara_manifest(to_include:)]
+          [possible_error.key.to_s, possible_error.foobara_manifest(to_include:, remove_sensitive:)]
         end.sort.to_h
 
         h = Util.remove_blank(
@@ -343,14 +343,14 @@ module Foobara
         end
 
         h.merge!(
-          supported_processor_manifest(to_include).merge(
-            Util.remove_blank(processors: processor_manifest(to_include))
+          supported_processor_manifest(to_include, remove_sensitive:).merge(
+            Util.remove_blank(processors: processor_manifest(to_include, remove_sensitive:))
           )
         )
 
         target_classes.sort_by(&:name).each do |target_class|
           if target_class.respond_to?(:foobara_manifest)
-            h.merge!(target_class.foobara_manifest(to_include:))
+            h.merge!(target_class.foobara_manifest(to_include:, remove_sensitive:))
           end
         end
 
@@ -365,7 +365,7 @@ module Foobara
         base_type
       end
 
-      def supported_processor_manifest(to_include)
+      def supported_processor_manifest(to_include, remove_sensitive: false)
         supported_casters = []
         supported_transformers = []
         supported_validators = []
@@ -395,7 +395,7 @@ module Foobara
         )
       end
 
-      def processor_manifest(to_include)
+      def processor_manifest(to_include, remove_sensitive: false)
         casters_manifest = []
         transformers_manifest = []
         validators_manifest = []

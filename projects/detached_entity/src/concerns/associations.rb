@@ -5,13 +5,13 @@ module Foobara
         include Concern
 
         module ClassMethods
-          def foobara_associations
+          def foobara_associations(remove_sensitive: false)
             @foobara_associations ||= construct_associations
           end
 
           alias associations foobara_associations
 
-          def foobara_deep_associations
+          def foobara_deep_associations(remove_sensitive: false)
             @foobara_deep_associations ||= begin
               deep = {}
 
@@ -20,7 +20,7 @@ module Foobara
 
                 entity_class = type.target_class
 
-                entity_class.deep_associations.each_pair do |sub_data_path, sub_type|
+                entity_class.deep_associations(remove_sensitive:).each_pair do |sub_data_path, sub_type|
                   deep["#{data_path}.#{sub_data_path}"] = sub_type
                 end
               end
@@ -118,7 +118,8 @@ module Foobara
           def construct_associations(
             type = attributes_type,
             path = DataPath.new,
-            result = {}
+            result = {},
+            remove_sensitive: false
           )
             if type.extends?(BuiltinTypes[:entity])
               result[path.to_s] = type
@@ -126,7 +127,7 @@ module Foobara
               element_types = type.element_types
 
               element_types&.each&.with_index do |element_type, index|
-                construct_associations(element_type, path.append(index), result)
+                construct_associations(element_type, path.append(index), result, remove_sensitive:)
               end
             elsif type.extends?(BuiltinTypes[:array])
               # TODO: what to do about an associative array type?? Unclear how to make a key from that...
@@ -134,11 +135,11 @@ module Foobara
               element_type = type.element_type
 
               if element_type
-                construct_associations(element_type, path.append(:"#"), result)
+                construct_associations(element_type, path.append(:"#"), result, remove_sensitive:)
               end
             elsif type.extends?(BuiltinTypes[:attributes]) # TODO: matches attributes itself instead of only subtypes
               type.element_types.each_pair do |attribute_name, element_type|
-                construct_associations(element_type, path.append(attribute_name), result)
+                construct_associations(element_type, path.append(attribute_name), result, remove_sensitive:)
               end
             elsif type.extends?(BuiltinTypes[:model])
               target_class = type.target_class
@@ -150,7 +151,7 @@ module Foobara
             elsif type.extends?(BuiltinTypes[:associative_array])
               # not going to bother testing this for now
               # :nocov:
-              if contains_associations?(type)
+              if contains_associations?(type, remove_sensitive:)
                 raise "Associative array types with associations in them are not currently supported. " \
                       "Use attributes type if you can or set the key_type and/or value_type to duck type"
               end
@@ -160,10 +161,10 @@ module Foobara
             result
           end
 
-          def contains_associations?(type = entity_type, initial = true)
+          def contains_associations?(type = entity_type, initial = true, remove_sensitive: false)
             if type.extends?(BuiltinTypes[:detached_entity])
               if initial
-                contains_associations?(type.element_types, false)
+                contains_associations?(element_types, false, remove_sensitive:)
               else
                 true
               end
@@ -173,11 +174,11 @@ module Foobara
               element_type = type.element_type
 
               if element_type
-                contains_associations?(element_type, false)
+                contains_associations?(element_type, false, remove_sensitive:)
               end
             elsif type.extends?(BuiltinTypes[:attributes])
               type.element_types.values.any? do |element_type|
-                contains_associations?(element_type, false)
+                  contains_associations?(element_type, false, remove_sensitive:)
               end
             elsif type.extends?(BuiltinTypes[:associative_array])
               element_types = type.element_types
@@ -186,7 +187,7 @@ module Foobara
                 key_type, value_type = element_types
 
                 contains_associations?(key_type, false) ||
-                  contains_associations?(value_type, false)
+                  contains_associations?(type, false, remove_sensitive:)
               end
             end
           end
