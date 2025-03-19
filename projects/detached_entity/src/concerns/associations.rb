@@ -6,13 +6,23 @@ module Foobara
 
         module ClassMethods
           def foobara_associations(remove_sensitive: false)
-            @foobara_associations ||= construct_associations
+            if defined?(@foobara_associations) && @foobara_associations.key?(remove_sensitive)
+              return @foobara_associations[remove_sensitive]
+            end
+
+            @foobara_associations ||= {}
+            @foobara_associations[remove_sensitive] = construct_associations(remove_sensitive:)
           end
 
           alias associations foobara_associations
 
           def foobara_deep_associations(remove_sensitive: false)
-            @foobara_deep_associations ||= begin
+            if defined?(@foobara_deep_associations) && @foobara_deep_associations.key?(remove_sensitive)
+              return @foobara_deep_associations[remove_sensitive]
+            end
+
+            @foobara_deep_associations ||= {}
+            @foobara_deep_associations[remove_sensitive] = begin
               deep = {}
 
               associations.each_pair do |data_path, type|
@@ -126,6 +136,13 @@ module Foobara
             elsif type.extends?(BuiltinTypes[:tuple])
               element_types = type.element_types
 
+              if remove_sensitive
+                # TODO: test this code path
+                # :nocov:
+                element_types = element_types&.reject(&:sensitive?)
+                # :nocov:
+              end
+
               element_types&.each&.with_index do |element_type, index|
                 construct_associations(element_type, path.append(index), result, remove_sensitive:)
               end
@@ -134,11 +151,15 @@ module Foobara
               # TODO: raise if associative array contains a non-persisted record to handle this edge case for now.
               element_type = type.element_type
 
-              if element_type
+              if element_type && (!remove_sensitive || !element_type.sensitive?)
                 construct_associations(element_type, path.append(:"#"), result, remove_sensitive:)
               end
             elsif type.extends?(BuiltinTypes[:attributes]) # TODO: matches attributes itself instead of only subtypes
               type.element_types.each_pair do |attribute_name, element_type|
+                if remove_sensitive && element_type.sensitive?
+                  next
+                end
+
                 construct_associations(element_type, path.append(attribute_name), result, remove_sensitive:)
               end
             elsif type.extends?(BuiltinTypes[:model])
@@ -147,7 +168,9 @@ module Foobara
               method = target_class.respond_to?(:foobara_attributes_type) ? :foobara_attributes_type : :attributes_type
               attributes_type = target_class.send(method)
 
-              construct_associations(attributes_type, path, result)
+              if !remove_sensitive || !attributes_type.sensitive?
+                construct_associations(attributes_type, path, result, remove_sensitive:)
+              end
             elsif type.extends?(BuiltinTypes[:associative_array])
               # not going to bother testing this for now
               # :nocov:
@@ -164,6 +187,15 @@ module Foobara
           def contains_associations?(type = entity_type, initial = true, remove_sensitive: false)
             if type.extends?(BuiltinTypes[:detached_entity])
               if initial
+                element_types = type.element_types
+
+                if remove_sensitive
+                  # TODO: test this code path
+                  # :nocov:
+                  element_types = element_types&.reject(&:sensitive?)
+                  # :nocov:
+                end
+
                 contains_associations?(element_types, false, remove_sensitive:)
               else
                 true
@@ -173,21 +205,28 @@ module Foobara
               # TODO: raise if associative array contains a non-persisted record to handle this edge case for now.
               element_type = type.element_type
 
-              if element_type
+              if element_type && (!remove_sensitive || !element_type.sensitive?)
                 contains_associations?(element_type, false, remove_sensitive:)
               end
             elsif type.extends?(BuiltinTypes[:attributes])
               type.element_types.values.any? do |element_type|
+                if !remove_sensitive || !element_type.sensitive?
                   contains_associations?(element_type, false, remove_sensitive:)
+                end
               end
             elsif type.extends?(BuiltinTypes[:associative_array])
               element_types = type.element_types
 
               if element_types
-                key_type, value_type = element_types
+                types = element_types
 
-                contains_associations?(key_type, false) ||
+                if remove_sensitive
+                  types = types&.reject(&:sensitive?)
+                end
+
+                types.any? do |type|
                   contains_associations?(type, false, remove_sensitive:)
+                end
               end
             end
           end
