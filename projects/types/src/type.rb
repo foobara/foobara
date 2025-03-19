@@ -27,6 +27,7 @@ module Foobara
                     :name,
                     :target_classes,
                     :description,
+                    :sensitive,
                     :processor_classes_requiring_type
       attr_reader :type_symbol
 
@@ -44,8 +45,10 @@ module Foobara
         element_types: nil,
         structure_count: nil,
         processor_classes_requiring_type: nil,
+        sensitive: nil,
         **opts
       )
+        self.sensitive = sensitive
         self.base_type = base_type
         self.description = description
         self.casters = [*casters, *base_type&.casters]
@@ -66,6 +69,10 @@ module Foobara
         apply_all_processors_needing_type!
 
         validate_processors!
+      end
+
+      def sensitive?
+        sensitive
       end
 
       def apply_all_processors_needing_type!
@@ -330,6 +337,10 @@ module Foobara
           possible_errors: possible_errors_manifests,
           builtin: builtin?
         ).merge(description:, base_type: base_type_for_manifest&.full_type_name&.to_sym)
+
+        if sensitive?
+          h[:sensitive] = true
+        end
 
         h.merge!(
           supported_processor_manifest(to_include).merge(

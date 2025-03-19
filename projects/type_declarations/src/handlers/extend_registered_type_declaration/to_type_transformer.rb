@@ -45,6 +45,8 @@ module Foobara
               category << processor
             end
 
+            sensitive = strict_type_declaration[:sensitive]
+
             type_class.new(
               strict_type_declaration,
               base_type:,
@@ -56,7 +58,8 @@ module Foobara
               element_processors:,
               # TODO: can't we just set this to [] here??
               target_classes: target_classes(strict_type_declaration),
-              name: type_name(strict_type_declaration)
+              name: type_name(strict_type_declaration),
+              sensitive:
             )
           end
 
@@ -70,7 +73,7 @@ module Foobara
           end
 
           def non_processor_keys
-            %i[type _desugarized description]
+            %i[type _desugarized description sensitive]
           end
         end
       end
