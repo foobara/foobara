@@ -34,6 +34,7 @@ module Foobara
         end
 
         def reject(declaration, *keys)
+          # TODO: do we really need a deep dup?
           declaration = Util.deep_dup(declaration)
 
           element_type_declarations = declaration[:element_type_declarations]

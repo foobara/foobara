@@ -59,10 +59,17 @@ module Foobara
 
         register_type_declaration(Handlers::RegisteredTypeDeclaration.new)
         register_type_declaration(Handlers::ExtendRegisteredTypeDeclaration.new)
-        register_type_declaration(Handlers::ExtendArrayTypeDeclaration.new)
+        array_handler = Handlers::ExtendArrayTypeDeclaration.new
+        register_type_declaration(array_handler)
         register_type_declaration(Handlers::ExtendAssociativeArrayTypeDeclaration.new)
-        register_type_declaration(Handlers::ExtendAttributesTypeDeclaration.new)
+        attributes_handler = Handlers::ExtendAttributesTypeDeclaration.new
+        register_type_declaration(attributes_handler)
         register_type_declaration(Handlers::ExtendTupleTypeDeclaration.new)
+
+        @sensitive_type_removers = nil
+
+        register_sensitive_type_remover(SensitiveTypeRemovers::Attributes.new(attributes_handler))
+        register_sensitive_type_remover(SensitiveTypeRemovers::Array.new(array_handler))
       end
 
       def install!

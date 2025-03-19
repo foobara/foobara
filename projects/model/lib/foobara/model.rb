@@ -6,8 +6,15 @@ module Foobara
   class Model
     class << self
       def install!
-        TypeDeclarations.register_type_declaration(TypeDeclarations::Handlers::ExtendModelTypeDeclaration.new)
-        TypeDeclarations.register_type_declaration(TypeDeclarations::Handlers::ExtendRegisteredModelTypeDeclaration.new)
+        model_handler = TypeDeclarations::Handlers::ExtendModelTypeDeclaration.new
+        TypeDeclarations.register_type_declaration(model_handler)
+        extended_model_handler = TypeDeclarations::Handlers::ExtendRegisteredModelTypeDeclaration.new
+        TypeDeclarations.register_type_declaration(extended_model_handler)
+
+        TypeDeclarations.register_sensitive_type_remover(SensitiveTypeRemovers::Model.new(model_handler))
+        TypeDeclarations.register_sensitive_type_remover(
+          SensitiveTypeRemovers::ExtendedModel.new(extended_model_handler)
+        )
 
         atomic_duck = Namespace.global.foobara_lookup_type!(:atomic_duck)
         BuiltinTypes.build_and_register!(:model, atomic_duck, nil)

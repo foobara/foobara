@@ -7,7 +7,10 @@ module Foobara
 
     class << self
       def install!
-        TypeDeclarations.register_type_declaration(TypeDeclarations::Handlers::ExtendEntityTypeDeclaration.new)
+        handler = TypeDeclarations::Handlers::ExtendEntityTypeDeclaration.new
+        TypeDeclarations.register_type_declaration(handler)
+
+        TypeDeclarations.register_sensitive_type_remover(SensitiveTypeRemovers::Entity.new(handler))
 
         detached_entity = Namespace.global.foobara_lookup_type!(:detached_entity)
         BuiltinTypes.build_and_register!(:entity, detached_entity, nil)

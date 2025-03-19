@@ -17,6 +17,27 @@ module Foobara
         global_type_declaration_handler_registry.register(type_declaration_handler)
       end
 
+      def register_sensitive_type_remover(sensitive_type_remover)
+        handler = sensitive_type_remover.handler
+        sensitive_type_removers[handler.class.name] = sensitive_type_remover
+      end
+
+      def sensitive_type_removers
+        @sensitive_type_removers ||= {}
+      end
+
+      def remove_sensitive_types(strict_type_declaration)
+        handler = GlobalDomain.foobara_type_builder.type_declaration_handler_for(strict_type_declaration)
+
+        sensitive_type_remover = sensitive_type_removers[handler.class.name]
+
+        if sensitive_type_remover
+          sensitive_type_remover.process_value!(strict_type_declaration)
+        else
+          strict_type_declaration
+        end
+      end
+
       def strict(&)
         using_mode(Mode::STRICT, &)
       end

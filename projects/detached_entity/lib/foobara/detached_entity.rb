@@ -5,7 +5,10 @@ module Foobara
     class << self
       # Need to override this otherwise we install Model twice
       def install!
-        TypeDeclarations.register_type_declaration(TypeDeclarations::Handlers::ExtendDetachedEntityTypeDeclaration.new)
+        handler = TypeDeclarations::Handlers::ExtendDetachedEntityTypeDeclaration.new
+        TypeDeclarations.register_type_declaration(handler)
+
+        TypeDeclarations.register_sensitive_type_remover(SensitiveTypeRemovers::DetachedEntity.new(handler))
 
         model = Namespace.global.foobara_lookup_type!(:model)
         BuiltinTypes.build_and_register!(:detached_entity, model, nil)
