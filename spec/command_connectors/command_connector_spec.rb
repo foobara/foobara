@@ -183,6 +183,60 @@ RSpec.describe Foobara::CommandConnector do
         end
       end
     end
+
+    context "when connecting a command that returns sensitive data" do
+      before do
+        stub_module :SomeOrg do
+          foobara_organization!
+        end
+
+        stub_module("SomeOrg::SomeDomain") do
+          foobara_domain!
+        end
+
+        stub_class "SomeOrg::SomeDomain::User", Foobara::Entity do
+          attributes do
+            id :integer
+            password :string, :required, :sensitive
+            username :string, :required
+          end
+
+          primary_key :id
+        end
+
+        stub_class "SomeOrg::SomeDomain::CreateUser", Foobara::Command do
+          inputs do
+            username :string, :required
+            password :string, :required, :sensitive
+          end
+
+          result SomeOrg::SomeDomain::User
+        end
+
+        stub_class "SomeOrg::SomeDomain::Login", Foobara::Command do
+          inputs do
+            username :string, :required
+            password :string, :required, :sensitive
+          end
+
+          result :string, :sensitive
+        end
+      end
+
+      it "does not include sensitive types in the manifest" do
+        command_connector.connect(SomeOrg::SomeDomain::CreateUser)
+        command_connector.connect(SomeOrg::SomeDomain::Login)
+
+        manifest = command_connector.foobara_manifest
+
+        user_manifest = manifest[:type][:"SomeOrg::SomeDomain::User"]
+        declaration_data = user_manifest[:declaration_data]
+
+        expect(
+          declaration_data[:attributes_declaration][:element_type_declarations].keys
+        ).to match_array(%i[username id])
+      end
+    end
   end
 
   describe "#run_command" do

@@ -1,3 +1,10 @@
+# [0.0.79] - 2025-03-19
+
+- Make foobara manifest output more deterministic (alphabetize required fields array)
+- Add sensitive/sensitive_exposed type declaration flags
+- Add sensitive-type removing feature and default to removing all sensitive (but not sensitive_exposed types)
+  from the command connector manifest
+
 # [0.0.78] - 2025-03-17
 
 - Include types that possible errors depend on in TransformedCommand#types_depdended_on
