@@ -305,6 +305,8 @@ module Foobara
         if registered?
           # TODO: we should just use the symbol and nothing else in this context instead of a hash with 1 element.
           { type: foobara_manifest_reference.to_sym }
+        elsif remove_sensitive
+          TypeDeclarations.remove_sensitive_types(declaration_data)
         else
           declaration_data
         end
@@ -328,6 +330,12 @@ module Foobara
         possible_errors_manifests = possible_errors.map do |possible_error|
           [possible_error.key.to_s, possible_error.foobara_manifest(to_include:, remove_sensitive:)]
         end.sort.to_h
+
+        declaration_data = self.declaration_data
+
+        if remove_sensitive
+          declaration_data = TypeDeclarations.remove_sensitive_types(declaration_data)
+        end
 
         h = Util.remove_blank(
           name:,
