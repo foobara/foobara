@@ -1,3 +1,7 @@
+# [0.0.81] - 2025-03-21
+
+- No longer automatically creates Foobara::Model classes when creating a foobara model type via type declaration
+
 # [0.0.80] - 2025-03-19
 
 - Fix bug preventing combining array type sugar with sensitive flag in type declarations

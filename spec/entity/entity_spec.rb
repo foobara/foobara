@@ -10,7 +10,7 @@ RSpec.describe Foobara::Entity do
       {
         type: :entity,
         name: "User",
-        model_class: "User",
+        model_class: "Foo::Bar::Baz::User",
         model_base_class: "Foobara::Entity",
         attributes_declaration: {
           type: :attributes,
@@ -20,15 +20,15 @@ RSpec.describe Foobara::Entity do
           }
         },
         primary_key: :id,
-        model_module: nil,
+        model_module: "Foo::Bar::Baz",
         mutable: false
       }
     end
 
     it "creates a model class" do
-      expect(defined?(User)).to be_falsey
+      expect(Foobara::GlobalDomain).to_not be_foobara_type_registered("User")
       Foobara::GlobalDomain.foobara_type_from_strict_stringified_declaration(declaration_data)
-      expect(defined?(User)).to be_truthy
+      expect(Foobara::GlobalDomain.foobara_type_registered?("User")).to be true
     end
   end
 end

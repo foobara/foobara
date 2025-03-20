@@ -230,6 +230,7 @@ RSpec.describe Foobara::Domain do
       it "upgrades the outer type from a module to a model class" do
         inner_model = Foobara::GlobalDomain.foobara_register_type(%w[SomeOtherDomain SomeOuterModel SomeInnerModel],
                                                                   inner_model_declaration)
+        Foobara::Model.deanonymize_class(inner_model.target_class)
         inner_type = Foobara::GlobalDomain.foobara_register_type(%w[SomeOtherDomain SomeOuterModel some_inner_type],
                                                                  inner_type_declaration)
 
@@ -250,6 +251,7 @@ RSpec.describe Foobara::Domain do
 
         outer_model = Foobara::GlobalDomain.foobara_register_type(%w[SomeOtherDomain SomeOuterModel],
                                                                   outer_model_declaration)
+        Foobara::Model.deanonymize_class(outer_model.target_class)
 
         expect(SomeOtherDomain::SomeOuterModel).to be_a(Class)
         expect(SomeOtherDomain::SomeOuterModel.model_type).to be(outer_model)
@@ -302,7 +304,7 @@ RSpec.describe Foobara::Domain do
     end
   end
 
-  describe ".foobara_register_entity" do
+  describe ".foobara_register_entities" do
     let(:entity_name) { :SomeEntity }
     let(:primary_key) { :id }
     let(:attributes_declaration) do
@@ -310,7 +312,7 @@ RSpec.describe Foobara::Domain do
         first_name: :string
       }
     end
-    let(:entity_class) { domain::SomeEntity }
+    let(:entity_class) { domain.foobara_lookup!(:SomeEntity).target_class }
 
     it "creates an entity class" do
       domain.foobara_register_entities(entity_name => attributes_declaration)
@@ -319,17 +321,17 @@ RSpec.describe Foobara::Domain do
 
       entity_class.transaction do
         record = entity_class.create(first_name: "fn")
-        expect(record).to be_a(domain::SomeEntity)
+        expect(record).to be_a(entity_class)
       end
     end
 
     context "when passing a block" do
       it "creates an entity class" do
-        domain.foobara_register_entity(:Base, "some base entity") do
+        base_entity_class = domain.foobara_register_entity(:Base, "some base entity") do
           id :integer
         end
 
-        domain.foobara_register_entity(entity_name, domain::Base, "Some description") do
+        domain.foobara_register_entity(entity_name, base_entity_class, "Some description") do
           first_name :string
         end
 
@@ -338,7 +340,49 @@ RSpec.describe Foobara::Domain do
 
         entity_class.transaction do
           record = entity_class.create(first_name: "fn")
-          expect(record).to be_a(domain::SomeEntity)
+          expect(record).to be_a(entity_class)
+        end
+      end
+    end
+  end
+
+  describe ".foobara_register_and_deanonymize_entities" do
+    let(:entity_name) { :SomeEntity }
+    let(:primary_key) { :id }
+    let(:attributes_declaration) do
+      {
+        first_name: :string
+      }
+    end
+    let(:entity_class) { domain.foobara_lookup!(:SomeEntity).target_class }
+
+    it "creates an entity class" do
+      domain.foobara_register_and_deanonymize_entities(entity_name => attributes_declaration)
+
+      expect(entity_class).to be < Foobara::Entity
+
+      entity_class.transaction do
+        record = entity_class.create(first_name: "fn")
+        expect(record).to be_a(entity_class)
+      end
+    end
+
+    context "when passing a block" do
+      it "creates an entity class" do
+        base_entity_class = domain.foobara_register_entity(:Base, "some base entity") do
+          id :integer
+        end
+
+        domain.foobara_register_entity(entity_name, base_entity_class, "Some description") do
+          first_name :string
+        end
+
+        expect(entity_class).to be < Foobara::Entity
+        expect(entity_class.description).to eq("Some description")
+
+        entity_class.transaction do
+          record = entity_class.create(first_name: "fn")
+          expect(record).to be_a(entity_class)
         end
       end
     end

@@ -9,6 +9,7 @@ module Foobara
     include Concerns::Types
     include Concerns::Reflection
     include Concerns::Aliases
+    include Concerns::Classes
 
     class << self
       attr_accessor :is_abstract
@@ -65,7 +66,29 @@ module Foobara
 
       def domain
         if model_type
-          model_type.foobara_domain
+          domain = model_type.foobara_domain
+
+          if domain == GlobalDomain
+            module_name = model_type.declaration_data[:model_module]
+
+            begin
+              Domain.to_domain(module_name)
+            rescue Domain::NoSuchDomain
+              module_to_check = module_name
+
+              loop do
+                domain = if Object.const_defined?(module_to_check)
+                           return Domain.domain_through_modules(Object.const_get(module_to_check))
+                         elsif module_to_check.include?("::")
+                           module_to_check = module_to_check.split("::")[..-2].join("::")
+                         else
+                           return GlobalDomain
+                         end
+              end
+            end
+          else
+            domain
+          end
         else
           Domain.domain_through_modules(self)
         end
@@ -86,15 +109,19 @@ module Foobara
       end
 
       def foobara_model_name
-        foobara_type&.scoped_name || Util.non_full_name(self)
-      rescue Foobara::Scoped::NoScopedPathSetError
-        # :nocov:
-        Util.non_full_name(self)
-        # :nocov:
+        if foobara_type&.scoped_path_set?
+          foobara_type.scoped_name
+        else
+          Util.non_full_name(self) || model_name&.split("::")&.last
+        end
+      end
+
+      def foobara_name
+        foobara_model_name
       end
 
       def full_model_name
-        model_type&.scoped_full_name
+        [*model_type&.scoped_full_name, model_name].max_by(&:size)
       end
 
       def possible_errors(mutable: true)
@@ -123,46 +150,17 @@ module Foobara
         end
       end
 
-      def allowed_subclass_opts
-        %i[name model_module]
-      end
-
-      def subclass(**opts)
-        invalid_opts = opts.keys - allowed_subclass_opts
-
-        unless invalid_opts.empty?
-          # :nocov:
-          raise ArgumentError, "Invalid opts #{invalid_opts} expected only #{allowed_subclass_opts}"
-          # :nocov:
-        end
-
-        model_name = opts[:name]
-
-        if model_name.is_a?(::Symbol)
-          model_name = model_name.to_s
-        end
+      # will create an anonymous subclass
+      # TODO: change to a normal parameter since it's just name
+      def subclass(name:)
+        name = name.to_s if name.is_a?(::Symbol)
 
         # TODO: How are we going to set the domain and organization?
-        model_class = Class.new(self) do
+        Class.new(self) do
           singleton_class.define_method :model_name do
-            model_name
+            name
           end
         end
-
-        if opts.key?(:model_module)
-          model_module = opts[:model_module]
-
-          if model_name.include?("::")
-            model_module_name = "#{model_module.name}::#{model_name.split("::")[..-2].join("::")}"
-            model_module = Util.make_module_p(model_module_name, tag: true)
-          end
-
-          const_name = model_name.split("::").last
-
-          model_module.const_set(const_name, model_class)
-        end
-
-        model_class
       end
     end
 

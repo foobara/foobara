@@ -61,7 +61,20 @@ module Foobara
         def does_not_need_cast_processor
           return @does_not_need_cast_processor if defined?(@does_not_need_cast_processor)
 
-          class_name = "NoCastNeededIfIsA#{target_classes.map { |c| c.name.gsub("::", "") }.sort.join("Or")}"
+          errorified_name = target_classes.map do |c|
+            if c.name
+              c.name
+            elsif c.respond_to?(:foobara_name)
+              c.foobara_name
+            else
+              # TODO: test this code path
+              # :nocov:
+              "Anon"
+              # :nocov:
+            end
+          end.map { |name| name.split("::").last }.sort.join("Or")
+
+          class_name = "NoCastNeededIfIsA#{errorified_name}"
 
           @does_not_need_cast_processor = if target_classes && !target_classes.empty?
                                             Caster.subclass(

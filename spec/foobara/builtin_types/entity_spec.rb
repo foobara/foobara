@@ -54,7 +54,7 @@ RSpec.describe ":entity" do
       tx.open!
 
       expect(type).to be_a(Foobara::Types::Type)
-      expect(constructed_model.name).to eq("SomeEntity")
+      expect(constructed_model.model_name).to eq("SomeEntity")
 
       value = tx.create(constructed_model)
 
@@ -151,7 +151,7 @@ RSpec.describe ":entity" do
 
     it "creates a type that targets a Model subclass" do
       expect(type).to be_a(Foobara::Types::Type)
-      expect(constructed_model.name).to eq("SomeEntity")
+      expect(constructed_model.model_name).to eq("SomeEntity")
 
       value = constructed_model.create
 
@@ -395,6 +395,7 @@ RSpec.describe ":entity" do
       end
 
       it "can be used by symbol" do
+        Foobara::Model.deanonymize_class(type.target_class)
         expect(type.target_class).to eq(SomeEntity)
         expect(domain.foobara_lookup_type!(:SomeEntity).target_class).to eq(SomeEntity)
       end

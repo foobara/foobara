@@ -1,10 +1,12 @@
 RSpec.describe Foobara::Model do
-  describe "extending an entity with mutability" do
-    after do
-      Foobara.reset_alls
+  after do
+    Foobara.reset_alls
+    if Object.const_defined?(:User)
       Object.send(:remove_const, :User)
     end
+  end
 
+  describe "extending an entity with mutability" do
     before do
       Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
     end
@@ -33,6 +35,8 @@ RSpec.describe Foobara::Model do
 
     it "handles an extension properly" do
       expect(entity_type).to be_a(Foobara::Types::Type)
+
+      described_class.deanonymize_class(entity_type.target_class)
 
       User.transaction do
         user = entity_type.process_value!(name: "Fumiko", age: 100)
@@ -72,11 +76,6 @@ RSpec.describe Foobara::Model do
   end
 
   describe "extending a model with mutability" do
-    after do
-      Foobara.reset_alls
-      Object.send(:remove_const, :User)
-    end
-
     let(:model_declaration_data) do
       {
         type: :model,
@@ -99,6 +98,7 @@ RSpec.describe Foobara::Model do
 
     it "handles an extension properly" do
       expect(model_type).to be_a(Foobara::Types::Type)
+      described_class.deanonymize_class(model_type.target_class)
 
       user = model_type.process_value!(name: "Fumiko", age: 100)
       expect(user).to be_a(User)

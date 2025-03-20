@@ -85,20 +85,30 @@ module Foobara
           end
 
           def type_declaration(attributes_declaration)
-            if name.start_with?(closest_namespace_module.name)
-              model_module_name = closest_namespace_module.name
-              model_name = name.gsub(/^#{closest_namespace_module.name}::/, "")
+            if name
+              model_base_class = superclass.name
+              model_class = name
+
+              if name.start_with?(closest_namespace_module.name)
+                model_module_name = closest_namespace_module.name
+                model_name = name.gsub(/^#{closest_namespace_module.name}::/, "")
+              else
+                model_module_name = nil
+                model_name = name
+              end
             else
-              model_module_name = nil
-              model_name = name
+              model_module_name = model_type.declaration_data[:model_module]
+              model_class = model_type.declaration_data[:model_class]
+              model_name = model_type.scoped_name
+              model_base_class = superclass.name || superclass.model_type.scoped_full_name
             end
 
             Util.remove_blank(
               type: :model,
               name: model_name,
               model_module: model_module_name,
-              model_class: name,
-              model_base_class: superclass.name,
+              model_class:,
+              model_base_class:,
               attributes_declaration:,
               description:,
               _desugarized: { type_absolutified: true },

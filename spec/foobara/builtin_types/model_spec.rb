@@ -45,7 +45,7 @@ RSpec.describe ":model" do
 
   it "creates a type that targets a Model subclass" do
     expect(type).to be_a(Foobara::Types::Type)
-    expect(constructed_model.name).to eq("SomeModel")
+    expect(constructed_model.model_name).to eq("SomeModel")
 
     value = constructed_model.new
 
@@ -171,8 +171,7 @@ RSpec.describe ":model" do
       {
         type: :model,
         name: model_name,
-        attributes_declaration:,
-        model_module: "Foobara::GlobalDomain"
+        attributes_declaration:
       }
     end
 
@@ -205,6 +204,7 @@ RSpec.describe ":model" do
     end
 
     it "creates the model class" do
+      Foobara::Model.deanonymize_class(type.target_class)
       expect(type.target_class).to be(SomeModel)
     end
   end
@@ -236,6 +236,7 @@ RSpec.describe ":model" do
     let(:model_name) { "SomePrefix::SomeModel" }
 
     it "creates the model class" do
+      Foobara::Model.deanonymize_class(type.target_class)
       expect(type.target_class).to be(SomeOrg::SomeDomain::SomePrefix::SomeModel)
       expect(type.scoped_full_path).to eq(%w[SomeOrg SomeDomain SomePrefix SomeModel])
       expect(type.scoped_prefix).to eq(["SomePrefix"])

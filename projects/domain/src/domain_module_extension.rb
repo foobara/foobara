@@ -281,7 +281,14 @@ module Foobara
         def foobara_register_model(model_class)
           type = model_class.model_type
 
-          if type.scoped_path_set? && foobara_registered?(type.scoped_full_name, mode: Namespace::LookupMode::DIRECT)
+          full_name = type.scoped_full_name
+
+          if model_class.full_model_name.size > full_name.size
+            # TODO: why does this happen exactly??
+            full_name = model_class.full_model_name
+          end
+
+          if type.scoped_path_set? && foobara_registered?(full_name, mode: Namespace::LookupMode::DIRECT)
             # :nocov:
             raise AlreadyRegisteredError, "Already registered: #{type.inspect}"
             # :nocov:
@@ -291,6 +298,11 @@ module Foobara
           type.foobara_parent_namespace = self
 
           type.target_class
+        end
+
+        def foobara_register_and_deanonymize_entity(name, *, &)
+          entity_class = foobara_register_entity(name, *, &)
+          Foobara::Model.deanonymize_class(entity_class)
         end
 
         # TODO: kill this off
@@ -336,27 +348,41 @@ module Foobara
             # TODO: reuse the model_base_class primary key if it has one...
             primary_key = attributes_type.element_types.keys.first
 
-            foobara_type_builder.type_for_declaration(
+            entity_type = foobara_type_builder.type_for_declaration(
               Util.remove_blank(
                 type: :entity,
                 name:,
                 model_base_class:,
-                attributes_declaration: attributes_type_declaration,
                 model_module: self,
+                attributes_declaration: attributes_type_declaration,
                 primary_key:,
                 description:,
                 _desugarized: { type_absolutified: true }
               )
-            ).target_class
+            )
+
+            entity_type.target_class
           end
         end
 
-        def foobara_register_entities(entity_names_to_attributes)
-          entity_names_to_attributes.each_pair do |entity_name, attributes_type_declaration|
-            foobara_register_entity(entity_name, attributes_type_declaration)
+        def foobara_register_and_deanonymize_entities(entity_names_to_attributes)
+          entities = []
+
+          entity_names_to_attributes.each_pair do |entity_name, attributes_declaration|
+            entities << foobara_register_and_deanonymize_entity(entity_name, attributes_declaration)
           end
 
-          nil
+          entities
+        end
+
+        def foobara_register_entities(entity_names_to_attributes)
+          entities = []
+
+          entity_names_to_attributes.each_pair do |entity_name, attributes_type_declaration|
+            entities << foobara_register_entity(entity_name, attributes_type_declaration)
+          end
+
+          entities
         end
 
         def foobara_can_call_subcommands_from?(other_domain)

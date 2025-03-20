@@ -195,6 +195,7 @@ RSpec.describe ":detached_entity" do
     end
 
     it "can be used by symbol" do
+      Foobara::Model.deanonymize_class(type.target_class)
       expect(type.target_class).to eq(SomeEntity)
       expect(domain.foobara_lookup_type!(:SomeEntity).target_class).to eq(SomeEntity)
     end

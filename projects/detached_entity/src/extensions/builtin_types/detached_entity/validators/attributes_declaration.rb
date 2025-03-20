@@ -15,7 +15,13 @@ module Foobara
 
           def entity_class
             if parent_declaration_data.key?(:model_class)
-              Object.const_get(parent_declaration_data[:model_class])
+              model_class_name = parent_declaration_data[:model_class]
+
+              if Object.const_defined?(model_class_name)
+                Object.const_get(parent_declaration_data[:model_class])
+              else
+                Namespace.current.foobara_lookup_type!(model_class_name).target_class
+              end
             elsif parent_declaration_data[:type] != expected_type_symbol
               model_type = type_for_declaration(parent_declaration_data[:type])
               model_type.target_class

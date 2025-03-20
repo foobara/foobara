@@ -15,98 +15,76 @@ module Foobara
             Foobara::Model
           end
 
+          # TODO: considerg splitting this up into multiple desugarizers
           def desugarize(strictish_type_declaration)
-            klass = strictish_type_declaration[:model_class]
+            if strictish_type_declaration.key?(:model_module)
+              model_module = strictish_type_declaration[:model_module]
 
-            model_module = if strictish_type_declaration.key?(:model_module)
-                             mod = strictish_type_declaration[:model_module]
+              strictish_type_declaration[:model_module] =
+                case model_module
+                when ::Module
+                  model_module.name
+                when ::String, nil
+                  model_module
+                else
+                  # :nocov:
+                  raise ArgumentError, "expected #{model_module} to be a module or module name"
+                  # :nocov:
+                end
+            end
 
-                             mod = case mod
-                                   when ::Module
-                                     mod
-                                   when ::String, ::Symbol
-                                     Object.const_get(mod)
-                                   when nil
-                                     Object
-                                   else
-                                     # :nocov:
-                                     raise ArgumentError,
-                                           "expected #{mod} to be a module or module name"
-                                     # :nocov:
+            if strictish_type_declaration.key?(:model_class)
+              klass = strictish_type_declaration[:model_class]
+
+              model_class_name = if klass && Object.const_defined?(klass) && Object.const_get(klass).is_a?(::Class)
+                                   model_class = Object.const_get(klass)
+
+                                   unless strictish_type_declaration[:model_module]
+                                     model_module = Util.module_for(model_class)
+
+                                     unless model_module == Object
+                                       strictish_type_declaration[:model_module] = model_module&.name
+                                     end
                                    end
 
-                             if mod == GlobalDomain
-                               Object
-                             else
-                               mod
-                             end
-                           else
-                             Object
-                           end
+                                   strictish_type_declaration[:model_base_class] = model_class.superclass.name
 
-            model_class = if klass && Object.const_defined?(klass) && Object.const_get(klass).is_a?(::Class)
-                            Object.const_get(klass)
-                          else
-                            model_base_class = strictish_type_declaration[:model_base_class] || default_model_base_class
+                                   model_class.name
+                                 elsif klass.is_a?(::String)
+                                   klass
+                                 else
+                                   # :nocov:
+                                   raise ArgumentError, "expected #{klass} to be a class or class name"
+                                   # :nocov:
+                                 end
 
-                            if model_base_class.is_a?(::String) || model_base_class.is_a?(::Symbol)
-                              model_base_class = Object.const_get(model_base_class)
-                            end
+              strictish_type_declaration[:model_class] = model_class_name
+            end
 
-                            # TODO: why not call this domain_module instead????
+            model_base_class = strictish_type_declaration[:model_base_class] || default_model_base_class
 
-                            model_name = strictish_type_declaration[:name]
+            strictish_type_declaration[:model_base_class] =
+              case model_base_class
+              when ::Class
+                model_base_class.name || model_base_class.model_name
+              when ::String
+                model_base_class
+              else
+                # :nocov:
+                raise ArgumentError, "expected #{model_base_class} to be a class or class name"
+                # :nocov:
+              end
 
-                            existing_class = if model_module.const_defined?(model_name)
-                                               model_module.const_get(model_name)
-                                             end
+            if strictish_type_declaration[:name].is_a?(::Symbol)
+              strictish_type_declaration[:name] = strictish_type_declaration[:name].to_s
+            end
 
-                            # TODO: This is a pretty crazy situation and hacky. Should come up with a better solution.
-                            # Here's the situation: if models are nested, like A::B and A and A::B are modules, then
-                            # if A::B is imported first, A will be created as a module via make_module_p.
-                            # But then when we are here creating A, A is already in use incorrectly as a module.
-                            # We need to move A out of the way but set all of its constants on the newly created model
-                            # A.
-                            if existing_class.is_a?(::Module) && !existing_class.is_a?(::Class)
-                              if existing_class.instance_variable_get(
-                                :@foobara_created_via_make_class
-                              )
-                                existing_module_to_copy_over = existing_class
-                                parent_mod = Util.module_for(existing_class)
-                                parent_mod.send(:remove_const, Util.non_full_name(existing_class))
-                                existing_class = nil
-                              end
-                            end
-
-                            # TODO: feels too destructive to be in a desugarizer. Technically probably should be in the
-                            # to type transformer instead.
-                            existing_class || model_base_class.subclass(
-                              **create_model_class_args(model_module:, type_declaration: strictish_type_declaration)
-                            ).tap do |model_class|
-                              if existing_module_to_copy_over
-                                Foobara::Domain::DomainModuleExtension._copy_constants(
-                                  existing_module_to_copy_over, model_class
-                                )
-                              end
-                            end
-                          end
-
-            strictish_type_declaration[:model_class] = model_class.name
-            model_module ||= Util.module_for(model_class)
-
-            model_module = nil if model_module == Object
-
-            strictish_type_declaration[:model_module] = model_module&.name
-            strictish_type_declaration[:model_base_class] = model_class.superclass.name
+            strictish_type_declaration[:model_class] ||= [
+              *strictish_type_declaration[:model_module],
+              strictish_type_declaration[:name]
+            ].join("::")
 
             strictish_type_declaration
-          end
-
-          def create_model_class_args(model_module:, type_declaration:)
-            {
-              name: type_declaration[:name],
-              model_module:
-            }
           end
 
           def priority

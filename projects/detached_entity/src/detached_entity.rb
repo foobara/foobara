@@ -7,11 +7,5 @@ module Foobara
     include Concerns::Types
     include Concerns::Aliases
     include Concerns::Serialize
-
-    class << self
-      def allowed_subclass_opts
-        [:primary_key, *super]
-      end
-    end
   end
 end
