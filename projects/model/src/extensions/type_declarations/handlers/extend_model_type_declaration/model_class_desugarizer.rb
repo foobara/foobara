@@ -15,7 +15,7 @@ module Foobara
             Foobara::Model
           end
 
-          # TODO: considerg splitting this up into multiple desugarizers
+          # TODO: consider splitting this up into multiple desugarizers
           def desugarize(strictish_type_declaration)
             if strictish_type_declaration.key?(:model_module)
               model_module = strictish_type_declaration[:model_module]

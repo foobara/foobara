@@ -1,3 +1,7 @@
+# [0.0.82] - 2025-03-21
+
+- Fix bug incorrectly creating model classes in Foobara::GlobalDomain module
+
 # [0.0.81] - 2025-03-21
 
 - No longer automatically creates Foobara::Model classes when creating a foobara model type via type declaration

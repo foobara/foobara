@@ -348,12 +348,16 @@ module Foobara
             # TODO: reuse the model_base_class primary key if it has one...
             primary_key = attributes_type.element_types.keys.first
 
+            model_module = unless scoped_full_path.empty?
+                             scoped_full_name
+                           end
+
             entity_type = foobara_type_builder.type_for_declaration(
               Util.remove_blank(
                 type: :entity,
                 name:,
                 model_base_class:,
-                model_module: self,
+                model_module:,
                 attributes_declaration: attributes_type_declaration,
                 primary_key:,
                 description:,
