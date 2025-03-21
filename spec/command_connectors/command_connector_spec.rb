@@ -1093,6 +1093,86 @@ RSpec.describe Foobara::CommandConnector do
       end
     end
 
+    context "when command returns a model that has sensitive attributes nested within it" do
+      before do
+        Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
+      end
+
+      let(:default_serializers) do
+        [
+          Foobara::CommandConnectors::Serializers::AggregateSerializer,
+          Foobara::CommandConnectors::Serializers::ErrorsSerializer,
+          Foobara::CommandConnectors::Serializers::JsonSerializer
+        ]
+      end
+      # TODO: make this automatic if AggregateSerializer is being used
+      let(:pre_commit_transformers) { Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer }
+
+      let(:command_class) do
+        user_class
+
+        stub_class(:QueryUser, Foobara::Command) do
+          inputs user: User
+          result :User
+
+          load_all
+
+          def execute
+            user
+          end
+        end
+      end
+
+      let(:full_command_name) { "QueryUser" }
+      let(:inputs) { { user: user_id } }
+
+      let(:user_class) do
+        rating_class
+        stub_class(:User, Foobara::Entity) do
+          attributes do
+            id :integer
+            name :string
+            ssn :string, :sensitive
+            ratings [:Rating]
+          end
+
+          primary_key :id
+        end
+      end
+
+      let(:rating_class) do
+        stub_class(:Rating, Foobara::Entity) do
+          attributes do
+            id :integer
+            rating :integer
+            secret :string, :sensitive
+          end
+
+          primary_key :id
+        end
+      end
+
+      context "when user exists with a rating" do
+        let(:user_id) do
+          User.transaction do
+            User.create(name: :whatever, ssn: "ssn", ratings: [Rating.create(rating: 1, secret: "secret")])
+          end.id
+        end
+
+        it "finds the user", :focus do
+          expect(response.status).to be(0)
+          expect(JSON.parse(response.body)).to eq(
+            "id" => 1,
+            "name" => "whatever",
+            "ratings" => [{
+              "id" => 1,
+              "rating" => 1
+            }]
+          )
+        end
+      end
+    end
+
     describe "connector manifest" do
       describe "#manifest" do
         let(:manifest) { command_connector.foobara_manifest }
