@@ -7,7 +7,7 @@ module Foobara
           when Entity
             # TODO: handle polymorphism? Would require iterating over the result type not the object!
             # Is there maybe prior art for this in the associations stuff?
-            unless object.loaded?
+            unless object.loaded? || object.built?
               object.class.load(object)
             end
 
