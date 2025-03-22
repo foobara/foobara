@@ -83,6 +83,24 @@ module Foobara
         sensitive_exposed
       end
 
+      def has_sensitive_types?
+        return true if sensitive?
+
+        if element_type
+          return true if element_type.has_sensitive_types?
+        end
+
+        if element_types
+          types = if element_types.is_a?(::Hash)
+                    element_types.values
+                  else
+                    [*element_types]
+                  end
+
+          types.any?(&:has_sensitive_types?)
+        end
+      end
+
       def apply_all_processors_needing_type!
         each_processor_class_requiring_type do |processor_class|
           # TODO: is this a smell?
