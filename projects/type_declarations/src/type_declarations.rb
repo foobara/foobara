@@ -51,6 +51,7 @@ module Foobara
         handler = GlobalDomain.foobara_type_builder.type_declaration_handler_for(type.declaration_data)
         remover_class = sensitive_value_removers[handler.class.name]
 
+        binding.pry if handler.name =~ /\bEntity\b/
         unless remover_class
           raise "No sensitive value remover found for #{type.declaration_data}"
         end

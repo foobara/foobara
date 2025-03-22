@@ -37,6 +37,7 @@ module Foobara
 
         if result_type.has_sensitive_types?
           remover_class = Foobara::TypeDeclarations.sensitive_value_remover_class_for_type(result_type)
+
           if remover_class
             remover = Namespace.use scoped_namespace do
               remover_class.new(result_type_from_transformers(result_type, result_transformers))
