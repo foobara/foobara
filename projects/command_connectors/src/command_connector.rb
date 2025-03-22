@@ -361,6 +361,9 @@ module Foobara
         to_include << exposed_whatever
       end
 
+      to_include << command_registry.global_organization
+      to_include << command_registry.global_domain
+
       included = Set.new
       additional_to_include = Set.new
 

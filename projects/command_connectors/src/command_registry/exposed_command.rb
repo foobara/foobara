@@ -94,26 +94,7 @@ module Foobara
         @full_command_symbol ||= Util.underscore_sym(full_command_name)
       end
 
-      def root_registry
-        parent = scoped_namespace
-        parent = parent.scoped_namespace while parent.scoped_namespace
-        parent
-      end
-
       def foobara_manifest(to_include: Set.new, remove_sensitive: true)
-        # A bit of a hack here. We don't have an exposed type class to encapsulate including exposed domains/orgs
-        # which leads to a bug when a global command is exposed that depends on a type in a non-global domain
-        # but there being no other reason to include that non-global domain.
-        transformed_command_class.types_depended_on(remove_sensitive:).select(&:registered?).each do |type|
-          full_domain_name = type.foobara_domain.scoped_full_name
-
-          unless root_registry.foobara_lookup_domain(full_domain_name)
-            exposed_domain = root_registry.build_and_register_exposed_domain(full_domain_name)
-            to_include << exposed_domain
-            to_include << exposed_domain.foobara_organization
-          end
-        end
-
         transformed_command_class.foobara_manifest(to_include:, remove_sensitive:).merge(super).merge(
           Util.remove_blank(
             scoped_category: :command,

@@ -1,21 +1,16 @@
 module Foobara
   class CommandRegistry
-    class ExposedOrganization
-      foobara_instances_are_namespaces!
+    module ExposedOrganization
+      attr_reader :unexposed_organization
 
-      include TruncatedInspect
-      include IsManifestable
-
-      attr_accessor :organization_module
-
-      def initialize(organization_module)
-        self.organization_module = organization_module
-        self.scoped_path = organization_module.scoped_path
+      def unexposed_organization=(unexposed_organization)
+        @unexposed_organization = unexposed_organization
+        self.scoped_path = unexposed_organization.scoped_path
       end
 
       # TODO: unable to address types here so it is handled as a hack higher up...
       def foobara_manifest(to_include: Set.new, remove_sensitive: true)
-        organization_manifest = organization_module.foobara_manifest(to_include: Set.new, remove_sensitive:)
+        organization_manifest = unexposed_organization.foobara_manifest(to_include: Set.new, remove_sensitive:)
         mode = Foobara::Namespace::LookupMode::DIRECT
         domains = foobara_all_domain(mode:).map(&:foobara_manifest_reference).sort
 
@@ -23,7 +18,7 @@ module Foobara
       end
 
       def foobara_manifest_reference
-        organization_module.foobara_manifest_reference
+        unexposed_organization.foobara_manifest_reference
       end
     end
   end
