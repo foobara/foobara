@@ -1,43 +1,17 @@
 module Foobara
   class Entity < DetachedEntity
     module SensitiveValueRemovers
-      class Entity < TypeDeclarations::RemoveSensitiveValuesTransformer
-        class << self
-          def handles_type?(type)
-            type.extends?(:entity)
+      class Entity < DetachedEntity::SensitiveValueRemovers::DetachedEntity
+        def transform(record)
+          if record.loaded?
+            super
+          else
+            type.target_class.thunk(record.id)
           end
         end
 
-        def transform(record)
-          return type.thunk(record) unless record.loaded?
-
-          sanitized_attributes = {}
-
-          element_types = from_type.element_types.element_types
-          changed = false
-
-          record.attributes.each_pair do |attribute_name, value|
-            element_type = element_types[attribute_name]
-
-            if element_type.sensitive?
-              changed = true
-              next
-            else
-              value, changed = sanitize_value(element_type, value)
-              sanitized_attributes[attribute_name] = value
-            end
-          end
-
-          if changed
-            begin
-              type.target_class.build(sanitized_attributes)
-            rescue => e
-              binding.pry
-              raise
-            end
-          else
-            record
-          end
+        def build_method
+          :build
         end
       end
     end
