@@ -214,14 +214,16 @@ module Foobara
 
         return if mode == Namespace::LookupMode::DIRECT
 
-        if mode == Namespace::LookupMode::GENERAL
+        if [Namespace::LookupMode::GENERAL, Namespace::LookupMode::ABSOLUTE].include?(mode)
           foobara_children.each do |child|
             child.foobara_each(filter:, mode:, &)
           end
         end
 
-        foobara_depends_on_namespaces.each do |dependent|
-          dependent.foobara_each(filter:, mode:, &)
+        if mode == Namespace::LookupMode::GENERAL
+          foobara_depends_on_namespaces.each do |dependent|
+            dependent.foobara_each(filter:, mode:, &)
+          end
         end
       end
 
