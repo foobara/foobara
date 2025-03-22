@@ -357,12 +357,10 @@ module Foobara
       # Drive all of this off of the list of exposed commands...
       to_include = Set.new
 
-      command_registry.foobara_each do |exposed_whatever|
+      # ABSOLUTE lets us get all of the children but not include dependent domains (GlobalDomain)
+      command_registry.foobara_each(mode: Namespace::LookupMode::ABSOLUTE) do |exposed_whatever|
         to_include << exposed_whatever
       end
-
-      to_include << command_registry.global_organization
-      to_include << command_registry.global_domain
 
       included = Set.new
       additional_to_include = Set.new
@@ -411,7 +409,11 @@ module Foobara
 
         category_symbol = command_registry.foobara_category_symbol_for(object)
 
-        raise "no category symbol for #{object}" unless category_symbol
+        unless category_symbol
+          # :nocov:
+          raise "no category symbol for #{object}"
+          # :nocov:
+        end
 
         namespace = if object.is_a?(Types::Type)
                       object.created_in_namespace

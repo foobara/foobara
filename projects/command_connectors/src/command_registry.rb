@@ -21,6 +21,8 @@ module Foobara
       end
 
       foobara_add_category_for_instance_of(:command, ExposedCommand)
+
+      global_domain.foobara_depends_on Foobara::GlobalDomain
     end
 
     def register(command_class, **)
@@ -92,7 +94,10 @@ module Foobara
     end
 
     def global_organization
+      # TODO: test this
+      # :nocov:
       foobara_lookup_organization("") || build_and_register_exposed_organization("")
+      # :nocov:
     end
 
     def build_and_register_exposed_organization(full_organization_name)

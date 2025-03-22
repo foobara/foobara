@@ -121,6 +121,7 @@ module Foobara
                                        else
                                          Foobara::TransformedCommand.subclass(
                                            command_class,
+                                           scoped_namespace:,
                                            full_command_name:,
                                            command_name:,
                                            capture_unknown_error:,
