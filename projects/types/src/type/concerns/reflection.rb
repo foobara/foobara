@@ -97,14 +97,6 @@ module Foobara
             "#<Type:#{name}:0x#{object_id.to_s(16)} #{declaration_data}>"
             # :nocov:
           end
-
-          def full_path_even_if_not_registered
-            if scoped_path_set?
-              scoped_full_path
-            else
-              binding.pry
-            end
-          end
         end
       end
     end

@@ -52,7 +52,9 @@ module Foobara
         remover_class = sensitive_value_removers[handler.class.name]
 
         unless remover_class
+          # :nocov:
           raise "No sensitive value remover found for #{type.declaration_data}"
+          # :nocov:
         end
 
         remover_class

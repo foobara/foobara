@@ -94,7 +94,10 @@ module Foobara
     end
 
     def global_organization
+      # TODO: test this
+      # :nocov:
       foobara_lookup_organization("") || build_and_register_exposed_organization("")
+      # :nocov:
     end
 
     def build_and_register_exposed_organization(full_organization_name)

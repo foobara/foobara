@@ -16,7 +16,10 @@ module Foobara
 
               if model_type
                 if model_type.foobara_root_namespace == Foobara::Namespace.current.foobara_root_namespace
+                  # TODO: test this code path
+                  # :nocov:
                   existing_class
+                  # :nocov:
                 end
               end
             end

@@ -2,12 +2,6 @@ module Foobara
   class DetachedEntity < Model
     module SensitiveValueRemovers
       class DetachedEntity < TypeDeclarations::RemoveSensitiveValuesTransformer
-        class << self
-          def handles_type?(type)
-            type.extends?(:detached_entity)
-          end
-        end
-
         def transform(record)
           sanitized_attributes = {}
 

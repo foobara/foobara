@@ -413,7 +413,9 @@ module Foobara
         category_symbol = command_registry.foobara_category_symbol_for(object)
 
         unless category_symbol
+          # :nocov:
           raise "no category symbol for #{object}"
+          # :nocov:
         end
 
         namespace = if object.is_a?(Types::Type)

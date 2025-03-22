@@ -24,7 +24,9 @@ module Foobara
       end
 
       def transform(_value)
+        # :nocov:
         raise "subclass responsibility"
+        # :nocov:
       end
 
       def sanitize_value(type, value)
