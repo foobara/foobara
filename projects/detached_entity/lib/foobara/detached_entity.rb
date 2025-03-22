@@ -9,6 +9,7 @@ module Foobara
         TypeDeclarations.register_type_declaration(handler)
 
         TypeDeclarations.register_sensitive_type_remover(SensitiveTypeRemovers::DetachedEntity.new(handler))
+        TypeDeclarations.register_sensitive_value_remover(handler, SensitiveValueRemovers::DetachedEntity)
 
         model = Namespace.global.foobara_lookup_type!(:model)
         BuiltinTypes.build_and_register!(:detached_entity, model, nil)

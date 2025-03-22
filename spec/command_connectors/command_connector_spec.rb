@@ -197,8 +197,12 @@ RSpec.describe Foobara::CommandConnector do
         stub_class "SomeOrg::SomeDomain::User", Foobara::Entity do
           attributes do
             id :integer
-            password :string, :required, :sensitive
+            password :string, :allow_nil, :sensitive
             username :string, :required
+            foo :array do
+              bar :string, :sensitive, :allow_nil
+              baz :string
+            end
           end
 
           primary_key :id
@@ -207,10 +211,18 @@ RSpec.describe Foobara::CommandConnector do
         stub_class "SomeOrg::SomeDomain::CreateUser", Foobara::Command do
           inputs do
             username :string, :required
-            password :string, :required, :sensitive
+            password :string, :sensitive
+            foo :array do
+              bar :string, :sensitive, :allow_nil
+              baz :string
+            end
           end
 
           result SomeOrg::SomeDomain::User
+
+          def execute
+            SomeOrg::SomeDomain::User.create(inputs)
+          end
         end
 
         stub_class "SomeOrg::SomeDomain::Login", Foobara::Command do
@@ -219,11 +231,11 @@ RSpec.describe Foobara::CommandConnector do
             password :string, :required, :sensitive
           end
 
-          result :string, :sensitive
+          result :string
         end
       end
 
-      it "does not include sensitive types in the manifest" do
+      it "does not include sensitive input types in the manifest" do
         command_connector.connect(SomeOrg::SomeDomain::CreateUser)
         command_connector.connect(SomeOrg::SomeDomain::Login)
 
@@ -234,7 +246,177 @@ RSpec.describe Foobara::CommandConnector do
 
         expect(
           declaration_data[:attributes_declaration][:element_type_declarations].keys
-        ).to match_array(%i[username id])
+        ).to match_array(%i[username id foo])
+      end
+
+      context "when running a command that returns sensitive values" do
+        let(:full_command_name) { "SomeOrg::SomeDomain::CreateUser" }
+        let(:inputs) do
+          {
+            username: "foo",
+            password: "bar",
+            foo: [{ bar: "bar", baz: "baz" }, { baz: "baz2" }]
+          }
+        end
+
+        let(:serializers) { Foobara::CommandConnectors::Serializers::AggregateSerializer }
+        let(:pre_commit_transformers) { Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer }
+
+        before do
+          Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
+          command_connector.connect(SomeOrg::SomeDomain::CreateUser, serializers:, pre_commit_transformers:)
+        end
+
+        it "does not include sensitive output values in the result" do
+          expect(response.status).to be(0)
+          expect(JSON.parse(response.body)).to eq(
+            "id" => 1,
+            "username" => "foo",
+            "foo" => [
+              { "baz" => "baz" },
+              { "baz" => "baz2" }
+            ]
+          )
+        end
+
+        context "when command can return a thunk" do
+          let(:serializers) { [] }
+          let(:full_command_name) { "SomeOrg::SomeDomain::FindUser" }
+          let(:user_id) do
+            user = SomeOrg::SomeDomain::CreateUser.run!(
+              username: "foo",
+              password: "bar",
+              foo: [{ bar: "bar", baz: "baz" }, { baz: "baz2" }]
+            )
+
+            user.id
+          end
+          let(:inputs) do
+            { user: user_id }
+          end
+          let(:pre_commit_transformers) { [] }
+
+          before do
+            stub_class "SomeOrg::SomeDomain::FindUser", Foobara::Command do
+              inputs do
+                user SomeOrg::SomeDomain::User
+              end
+
+              result SomeOrg::SomeDomain::User
+
+              def execute
+                SomeOrg::SomeDomain::User.thunk(user.id)
+              end
+            end
+
+            command_connector.connect(SomeOrg::SomeDomain::FindUser)
+          end
+
+          it "returns a thunk but in the command connector's namespace" do
+            expect(response.status).to be(0)
+            expect(JSON.parse(response.body)).to eq(user_id)
+          end
+        end
+
+        context "when nothing in the array needs to be changed" do
+          let(:inputs) do
+            {
+              username: "foo",
+              password: "bar",
+              foo: [{ baz: "baz" }, { baz: "baz2" }]
+            }
+          end
+
+          it "does not include sensitive output values in the result" do
+            expect(response.status).to be(0)
+            expect(JSON.parse(response.body)).to eq(
+              "id" => 1,
+              "username" => "foo",
+              "foo" => [
+                { "baz" => "baz" },
+                { "baz" => "baz2" }
+              ]
+            )
+          end
+        end
+
+        context "when nothing in the record needs to be changed" do
+          let(:inputs) do
+            {
+              username: "foo",
+              foo: []
+            }
+          end
+
+          it "does not include sensitive output values in the result" do
+            expect(response.status).to be(0)
+            expect(JSON.parse(response.body)).to eq(
+              "id" => 1,
+              "username" => "foo",
+              "foo" => []
+            )
+          end
+        end
+
+        context "when entity is a detached entity" do
+          let(:full_command_name) { "BuildSomeDetachedEntity" }
+          let(:inputs) do
+            {
+              id: 1,
+              username: "foo",
+              password: "bar",
+              foo: [{ bar: "bar", baz: "baz" }, { baz: "baz2" }]
+            }
+          end
+
+          before do
+            stub_class "SomeDetachedEntity", Foobara::DetachedEntity do
+              attributes do
+                id :integer
+                password :string, :allow_nil, :sensitive
+                username :string, :required
+                foo :array do
+                  bar :string, :sensitive, :allow_nil
+                  baz :string
+                end
+              end
+
+              primary_key :id
+            end
+
+            stub_class "BuildSomeDetachedEntity", Foobara::Command do
+              inputs do
+                id :integer, :required
+                username :string, :required
+                password :string, :sensitive
+                foo :array do
+                  bar :string, :sensitive, :allow_nil
+                  baz :string
+                end
+              end
+
+              result SomeDetachedEntity
+
+              def execute
+                SomeDetachedEntity.new(inputs)
+              end
+            end
+
+            command_connector.connect(BuildSomeDetachedEntity, serializers:, pre_commit_transformers:)
+          end
+
+          it "does not include sensitive output values in the result" do
+            expect(response.status).to be(0)
+            expect(JSON.parse(response.body)).to eq(
+              "id" => 1,
+              "username" => "foo",
+              "foo" => [
+                { "baz" => "baz" },
+                { "baz" => "baz2" }
+              ]
+            )
+          end
+        end
       end
     end
   end
@@ -1089,6 +1271,86 @@ RSpec.describe Foobara::CommandConnector do
             expect(response.status).to be(0)
             expect(response.body).to match("HELP!!!")
           end
+        end
+      end
+    end
+
+    context "when command returns a model that has sensitive attributes nested within it" do
+      before do
+        Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
+      end
+
+      let(:default_serializers) do
+        [
+          Foobara::CommandConnectors::Serializers::AggregateSerializer,
+          Foobara::CommandConnectors::Serializers::ErrorsSerializer,
+          Foobara::CommandConnectors::Serializers::JsonSerializer
+        ]
+      end
+      # TODO: make this automatic if AggregateSerializer is being used
+      let(:pre_commit_transformers) { Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer }
+
+      let(:command_class) do
+        user_class
+
+        stub_class(:QueryUser, Foobara::Command) do
+          inputs user: User
+          result :User
+
+          load_all
+
+          def execute
+            user
+          end
+        end
+      end
+
+      let(:full_command_name) { "QueryUser" }
+      let(:inputs) { { user: user_id } }
+
+      let(:user_class) do
+        rating_class
+        stub_class(:User, Foobara::Entity) do
+          attributes do
+            id :integer
+            name :string
+            ssn :string, :sensitive
+            ratings [:Rating]
+          end
+
+          primary_key :id
+        end
+      end
+
+      let(:rating_class) do
+        stub_class(:Rating, Foobara::Entity) do
+          attributes do
+            id :integer
+            rating :integer
+            secret :string, :sensitive
+          end
+
+          primary_key :id
+        end
+      end
+
+      context "when user exists with a rating" do
+        let(:user_id) do
+          User.transaction do
+            User.create(name: :whatever, ssn: "ssn", ratings: [Rating.create(rating: 1, secret: "secret")])
+          end.id
+        end
+
+        it "finds the user" do
+          expect(response.status).to be(0)
+          expect(JSON.parse(response.body)).to eq(
+            "id" => 1,
+            "name" => "whatever",
+            "ratings" => [{
+              "id" => 1,
+              "rating" => 1
+            }]
+          )
         end
       end
     end

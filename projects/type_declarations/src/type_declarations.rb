@@ -38,6 +38,28 @@ module Foobara
         end
       end
 
+      # TODO: since these are dealing with values instead of declarations maybe this should live somewhere else?
+      def register_sensitive_value_remover(handler, sensitive_value_remover)
+        sensitive_value_removers[handler.class.name] = sensitive_value_remover
+      end
+
+      def sensitive_value_removers
+        @sensitive_value_removers ||= {}
+      end
+
+      def sensitive_value_remover_class_for_type(type)
+        handler = GlobalDomain.foobara_type_builder.type_declaration_handler_for(type.declaration_data)
+        remover_class = sensitive_value_removers[handler.class.name]
+
+        unless remover_class
+          # :nocov:
+          raise "No sensitive value remover found for #{type.declaration_data}"
+          # :nocov:
+        end
+
+        remover_class
+      end
+
       def strict(&)
         using_mode(Mode::STRICT, &)
       end
