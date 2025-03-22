@@ -111,7 +111,7 @@ module Foobara
           to_load = Set.new
 
           to_load_records.group_by(&:class).each_pair do |entity_class, records|
-            unloaded = records.reject(&:loaded?)
+            unloaded = records.select { |record| record.persisted? && !record.loaded? }
             entity_class.current_transaction_table.load_many(unloaded)
 
             associations = entity_class.associations
