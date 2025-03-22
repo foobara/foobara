@@ -219,11 +219,11 @@ RSpec.describe Foobara::CommandConnector do
             password :string, :required, :sensitive
           end
 
-          result :string, :sensitive
+          result :string
         end
       end
 
-      it "does not include sensitive types in the manifest" do
+      it "does not include sensitive input types in the manifest" do
         command_connector.connect(SomeOrg::SomeDomain::CreateUser)
         command_connector.connect(SomeOrg::SomeDomain::Login)
 

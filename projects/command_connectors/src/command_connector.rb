@@ -413,7 +413,6 @@ module Foobara
         category_symbol = command_registry.foobara_category_symbol_for(object)
 
         unless category_symbol
-          binding.pry
           raise "no category symbol for #{object}"
         end
 

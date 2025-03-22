@@ -42,12 +42,11 @@ module Foobara
             remover = Namespace.use scoped_namespace do
               transformed_result_type = result_type_from_transformers(result_type, result_transformers)
 
-              binding.pry
               remover_class.new(transformed_result_type).tap do |r|
                 r.scoped_path = transformed_result_type.full_path_even_if_not_registered
               end
             end
-            binding.pry
+
             result_transformers = [*result_transformers, remover]
           else
             puts "TODO: remove this"

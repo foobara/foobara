@@ -5,7 +5,6 @@ module Foobara
     module SensitiveValueRemovers
       class Attributes < RemoveSensitiveValuesTransformer
         def transform(attributes)
-          binding.pry
           attributes
         end
       end
