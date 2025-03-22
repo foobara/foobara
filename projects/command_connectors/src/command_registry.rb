@@ -68,7 +68,7 @@ module Foobara
       domain_module = if domain_full_name.to_s == ""
                         GlobalDomain
                       else
-                        Namespace.global.foobara_lookup_domain!(domain_full_name)
+                        Namespace.global.foobara_lookup_domain!(domain_full_name)``
                       end
 
       full_organization_name = domain_module.foobara_full_organization_name

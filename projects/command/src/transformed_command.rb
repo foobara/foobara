@@ -19,6 +19,7 @@ module Foobara
 
       def subclass(
         command_class,
+        scoped_namespace:,
         full_command_name:,
         command_name:,
         inputs_transformers:,
@@ -32,6 +33,19 @@ module Foobara
         suffix: nil,
         capture_unknown_error: false
       )
+        result_type = command_class.result_type
+
+        if result_type.has_sensitive_types?
+          remover_class = Foobara::TypeDeclarations.sensitive_value_remover_class_for_type(result_type)
+          if remover_class
+            remover = remover_class.new(result_type_from_transformers(result_type, result_transformers))
+            binding.pry
+            result_transformers = [*result_transformers, *remover]
+          else
+            puts "TODO: remove this"
+          end
+        end
+
         Class.new(self).tap do |klass|
           klass.command_class = command_class
           klass.command_name = command_name
@@ -67,18 +81,20 @@ module Foobara
         type
       end
 
-      def result_type
-        type = command_class.result_type
-
-        result_transformers.each do |transformer|
+      def result_type_from_transformers(result_type, transformers)
+        Util.array(transformers).each do |transformer|
           if transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer
-            new_type = transformer.type(type)
+            new_type = transformer.type(result_type)
 
-            type = new_type if new_type
+            result_type = new_type if new_type
           end
         end
 
-        type
+        result_type
+      end
+
+      def result_type
+        result_type_from_transformers(command_class.result_type, result_transformers)
       end
 
       def error_context_type_map

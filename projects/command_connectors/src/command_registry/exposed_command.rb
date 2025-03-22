@@ -18,6 +18,8 @@ module Foobara
                     :scoped_path,
                     :scoped_namespace
 
+      attr_writer :scoped_namespace
+
       def initialize(
         command_class,
         scoped_path: nil,
@@ -114,13 +116,15 @@ module Foobara
             serializers,
             allowed_rule,
             requires_authentication,
-            authenticator
+            authenticator,
+            result_has_sensitive_types?
           ]
         ) && scoped_path == command_class.scoped_path
                                          command_class
                                        else
                                          Foobara::TransformedCommand.subclass(
                                            command_class,
+                                           scoped_namespace:,
                                            full_command_name:,
                                            command_name:,
                                            capture_unknown_error:,
@@ -134,6 +138,19 @@ module Foobara
                                            authenticator:
                                          )
                                        end
+      end
+
+      # TODO: what to do if the whole return type is sensitive? return nil?
+      def result_has_sensitive_types?
+        result_type = command_class.result_type
+
+        if result_type.nil?
+          false
+        elsif result_type.sensitive?
+          raise "Not sure yet how to handle a sensitive result type hmmmm..."
+        else
+          command_class.result_type.has_sensitive_types?
+        end
       end
     end
   end
