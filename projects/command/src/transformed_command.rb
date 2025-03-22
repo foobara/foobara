@@ -35,14 +35,19 @@ module Foobara
       )
         result_type = command_class.result_type
 
-        if result_type.has_sensitive_types?
+        if result_type&.has_sensitive_types?
           remover_class = Foobara::TypeDeclarations.sensitive_value_remover_class_for_type(result_type)
 
           if remover_class
             remover = Namespace.use scoped_namespace do
-              remover_class.new(result_type_from_transformers(result_type, result_transformers))
-            end
+              transformed_result_type = result_type_from_transformers(result_type, result_transformers)
 
+              binding.pry
+              remover_class.new(transformed_result_type).tap do |r|
+                r.scoped_path = transformed_result_type.full_path_even_if_not_registered
+              end
+            end
+            binding.pry
             result_transformers = [*result_transformers, remover]
           else
             puts "TODO: remove this"
