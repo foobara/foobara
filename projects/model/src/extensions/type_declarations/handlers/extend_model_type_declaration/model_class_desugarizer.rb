@@ -79,6 +79,10 @@ module Foobara
               strictish_type_declaration[:name] = strictish_type_declaration[:name].to_s
             end
 
+            if strictish_type_declaration[:model_module].nil?
+              strictish_type_declaration.delete(:model_module)
+            end
+
             strictish_type_declaration[:model_class] ||= [
               *strictish_type_declaration[:model_module],
               strictish_type_declaration[:name]
