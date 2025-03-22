@@ -6,6 +6,12 @@ module Foobara
           def existing_class_from_same_namespace_root(model_class_name)
             if Object.const_defined?(model_class_name) && Object.const_get(model_class_name).is_a?(::Class)
               existing_class = Object.const_get(model_class_name)
+
+              # If we are operating in some other namespace tree then we don't want to use the non-anonymous class
+              if Domain.current == GlobalDomain || Domain.current.foobara_root_namespace == Foobara::Namespace.global
+                return existing_class
+              end
+
               model_type = existing_class.model_type
 
               if model_type
@@ -66,7 +72,15 @@ module Foobara
                   # :nocov:
                 else
                   model_class.model_type = type
+
+                  # this is a fairly complex way of making sure that we are getting the domain from the
+                  # current namespace tree which might not be the case if we're in a command connector
+                  # namespace
                   domain = model_class.domain
+                  domain_name = domain.scoped_full_name
+                  root_namespace = Namespace.current.foobara_root_namespace
+                  domain = root_namespace.foobara_lookup_domain(domain_name)
+
                   type.type_symbol = type.declaration_data[:name]
                   model_class.description type.declaration_data[:description]
                   domain.foobara_register_model(model_class)

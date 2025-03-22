@@ -49,7 +49,13 @@ module Foobara
 
       def sensitive_value_remover_class_for_type(type)
         handler = GlobalDomain.foobara_type_builder.type_declaration_handler_for(type.declaration_data)
-        sensitive_value_removers[handler.class.name]
+        remover_class = sensitive_value_removers[handler.class.name]
+
+        unless remover_class
+          raise "No sensitive value remover found for #{type.declaration_data}"
+        end
+
+        remover_class
       end
 
       def strict(&)

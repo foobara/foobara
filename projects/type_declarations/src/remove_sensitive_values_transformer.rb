@@ -13,8 +13,30 @@ module Foobara
         end
       end
 
+      attr_accessor :namespace
+
+      def initialize(...)
+        super
+
+        self.namespace = Namespace.current
+
+        type
+      end
+
       def transform(_value)
         raise "subclass responsibility"
+      end
+
+      def sanitize_value(type, value)
+        if type.has_sensitive_types?
+          remover_class = TypeDeclarations.sensitive_value_remover_class_for_type(type)
+          remover = Namespace.use(namespace) { remover_class.new(type) }
+          sanitized_value = remover.process_value!(value)
+
+          [sanitized_value, sanitized_value != value]
+        else
+          [value, false]
+        end
       end
     end
   end

@@ -38,11 +38,11 @@ module Foobara
         if result_type.has_sensitive_types?
           remover_class = Foobara::TypeDeclarations.sensitive_value_remover_class_for_type(result_type)
           if remover_class
-            remover = remover_class.new(result_type_from_transformers(result_type, result_transformers))
-            declaration = Foobara::TypeDeclarations.remove_sensitive_types(result_type.declaration_data)
-            new_type = scoped_namespace.foobara_type_from_declaration(declaration)
-            remover.type = new_type
-            result_transformers = [*result_transformers, *remover]
+            remover = Namespace.use scoped_namespace do
+              remover_class.new(result_type_from_transformers(result_type, result_transformers))
+            end
+
+            result_transformers = [*result_transformers, remover]
           else
             puts "TODO: remove this"
           end

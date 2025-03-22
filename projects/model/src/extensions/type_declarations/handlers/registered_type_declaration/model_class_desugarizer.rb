@@ -11,6 +11,9 @@ module Foobara
             {
               type: model_class.model_type.foobara_manifest_reference.to_sym
             }
+          rescue => e
+            binding.pry
+            raise
           end
 
           def priority

@@ -289,6 +289,7 @@ module Foobara
           end
 
           if type.scoped_path_set? && foobara_registered?(full_name, mode: Namespace::LookupMode::DIRECT)
+            binding.pry
             # :nocov:
             raise AlreadyRegisteredError, "Already registered: #{type.inspect}"
             # :nocov:

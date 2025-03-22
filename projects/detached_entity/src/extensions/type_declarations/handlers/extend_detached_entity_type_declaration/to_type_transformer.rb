@@ -15,9 +15,6 @@ module Foobara
 
                 # TODO: is this duplicated??
                 unless entity_class.primary_key_attribute
-                  $i ||= 0
-                  $i += 1
-                  binding.pry if $i > 100
                   entity_class.primary_key(strict_declaration_type[:primary_key])
                 end
               end
