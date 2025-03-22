@@ -114,7 +114,8 @@ module Foobara
             serializers,
             allowed_rule,
             requires_authentication,
-            authenticator
+            authenticator,
+            result_has_sensitive_types?
           ]
         ) && scoped_path == command_class.scoped_path
                                          command_class
@@ -135,6 +136,22 @@ module Foobara
                                            authenticator:
                                          )
                                        end
+      end
+
+      # TODO: what to do if the whole return type is sensitive? return nil?
+      def result_has_sensitive_types?
+        result_type = command_class.result_type
+
+        if result_type.nil?
+          false
+        elsif result_type.sensitive?
+          # :nocov:
+          # TODO: we should convert it to nil I suppose
+          raise "Not sure yet how to handle a sensitive result type hmmmm..."
+          # :nocov:
+        else
+          command_class.result_type.has_sensitive_types?
+        end
       end
     end
   end

@@ -70,7 +70,9 @@ module Foobara
         @sensitive_type_removers = nil
 
         register_sensitive_type_remover(SensitiveTypeRemovers::Attributes.new(attributes_handler))
+        register_sensitive_value_remover(attributes_handler, SensitiveValueRemovers::Attributes)
         register_sensitive_type_remover(SensitiveTypeRemovers::Array.new(array_handler))
+        register_sensitive_value_remover(array_handler, SensitiveValueRemovers::Array)
       end
 
       def install!

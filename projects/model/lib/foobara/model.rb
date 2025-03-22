@@ -12,9 +12,14 @@ module Foobara
         TypeDeclarations.register_type_declaration(extended_model_handler)
 
         TypeDeclarations.register_sensitive_type_remover(SensitiveTypeRemovers::Model.new(model_handler))
+        TypeDeclarations.register_sensitive_value_remover(model_handler, SensitiveValueRemovers::Model)
         TypeDeclarations.register_sensitive_type_remover(
           SensitiveTypeRemovers::ExtendedModel.new(extended_model_handler)
         )
+        # TypeDeclarations.register_sensitive_value_remover(
+        #   extended_model_handler,
+        #   SensitiveValueRemovers::ExtendedModel
+        # )
 
         atomic_duck = Namespace.global.foobara_lookup_type!(:atomic_duck)
         BuiltinTypes.build_and_register!(:model, atomic_duck, nil)
