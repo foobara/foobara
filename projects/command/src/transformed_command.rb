@@ -39,7 +39,9 @@ module Foobara
           remover_class = Foobara::TypeDeclarations.sensitive_value_remover_class_for_type(result_type)
           if remover_class
             remover = remover_class.new(result_type_from_transformers(result_type, result_transformers))
-            binding.pry
+            declaration = Foobara::TypeDeclarations.remove_sensitive_types(result_type.declaration_data)
+            new_type = scoped_namespace.foobara_type_from_declaration(declaration)
+            remover.type = new_type
             result_transformers = [*result_transformers, *remover]
           else
             puts "TODO: remove this"

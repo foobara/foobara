@@ -21,6 +21,8 @@ module Foobara
       end
 
       foobara_add_category_for_instance_of(:command, ExposedCommand)
+
+      global_domain.foobara_depends_on Foobara::GlobalDomain
     end
 
     def register(command_class, **)
@@ -68,7 +70,7 @@ module Foobara
       domain_module = if domain_full_name.to_s == ""
                         GlobalDomain
                       else
-                        Namespace.global.foobara_lookup_domain!(domain_full_name)``
+                        Namespace.global.foobara_lookup_domain!(domain_full_name)
                       end
 
       full_organization_name = domain_module.foobara_full_organization_name

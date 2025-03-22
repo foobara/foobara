@@ -43,6 +43,7 @@ module Foobara
                                      model_module = Util.module_for(model_class)
 
                                      unless model_module == Object
+                                       binding.pry if model_module.nil?
                                        strictish_type_declaration[:model_module] = model_module&.name
                                      end
                                    end
