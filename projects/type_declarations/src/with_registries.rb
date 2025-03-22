@@ -20,6 +20,10 @@ module Foobara
           Foobara::Namespace.current.foobara_lookup_type!(...)
         end
 
+        def lookup_type(...)
+          Foobara::Namespace.current.foobara_lookup_type(...)
+        end
+
         def type_registered?(...)
           Foobara::Namespace.current.foobara_type_registered?(...)
         end
@@ -31,6 +35,7 @@ module Foobara
 
       foobara_delegate :type_for_declaration,
                        :type_declaration_handler_for,
+                       :lookup_type,
                        :lookup_type!,
                        :lookup_absolute_type!,
                        :type_registered?,
