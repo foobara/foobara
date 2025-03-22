@@ -10,7 +10,7 @@ module Foobara
       self.scoped_path = []
       self.authenticator = authenticator
 
-      customized = %i[command domain organization]
+      customized = %i[command organization]
 
       Namespace.global.foobara_categories.keys.reverse.each do |symbol|
         next if customized.include?(symbol)
@@ -21,7 +21,6 @@ module Foobara
       end
 
       foobara_add_category_for_instance_of(:command, ExposedCommand)
-      foobara_add_category_for_instance_of(:domain, ExposedDomain)
       foobara_add_category_for_instance_of(:organization, ExposedOrganization)
     end
 
@@ -67,7 +66,6 @@ module Foobara
     end
 
     def build_and_register_exposed_domain(domain_full_name)
-      # TODO: would be nice to not have to do this...
       domain_module = if domain_full_name.to_s == ""
                         GlobalDomain
                       else
@@ -78,7 +76,11 @@ module Foobara
       exposed_organization = foobara_lookup_organization(full_organization_name) ||
                              build_and_register_exposed_organization(full_organization_name)
 
-      exposed_domain = ExposedDomain.new(domain_module)
+      exposed_domain = Module.new
+      exposed_domain.foobara_namespace!
+      exposed_domain.foobara_domain!
+      exposed_domain.extend(ExposedDomain)
+      exposed_domain.unexposed_domain = domain_module
 
       exposed_organization.foobara_register(exposed_domain)
       exposed_domain.foobara_parent_namespace = exposed_organization
