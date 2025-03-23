@@ -42,7 +42,7 @@ module Foobara
             transformed_result_type = result_type_from_transformers(result_type, result_transformers)
 
             remover_class.new(transformed_result_type).tap do |r|
-              r.scoped_path = transformed_result_type.scoped_full_path
+              r.scoped_path = ["SensitiveValueRemover", *transformed_result_type.scoped_full_path]
             end
           end
 
