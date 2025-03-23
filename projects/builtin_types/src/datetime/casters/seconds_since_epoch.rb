@@ -4,11 +4,11 @@ module Foobara
       module Casters
         class SecondsSinceEpoch < Value::Caster
           def applicable?(value)
-            value.is_a?(::Integer)
+            value.is_a?(::Integer) || value.is_a?(::Float)
           end
 
           def applies_message
-            "be a an integer representing seconds since epoch"
+            "be a an integer or float representing seconds since epoch"
           end
 
           def cast(seconds_since_epoch)
