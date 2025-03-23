@@ -92,7 +92,6 @@ module Foobara
 
       def to_model
         raise "not an model" unless model?
-        raise "model extension instead of an model" unless relevant_manifest.size == 1
 
         type = to_type
 
