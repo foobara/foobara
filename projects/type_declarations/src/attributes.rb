@@ -33,6 +33,22 @@ module Foobara
           )
         end
 
+        def only(declaration, *keys)
+          valid_keys = declaration[:element_type_declarations].keys
+          keys_to_keep = keys.map(&:to_sym)
+          invalid_keys = keys_to_keep - valid_keys
+
+          if invalid_keys.any?
+            # :nocov:
+            raise ArgumentError, "Invalid keys: #{invalid_keys} expected only #{valid_keys}"
+            # :nocov:
+          end
+
+          keys_to_reject = valid_keys - keys_to_keep
+
+          reject(declaration, keys_to_reject)
+        end
+
         def reject(declaration, *keys)
           # TODO: do we really need a deep dup?
           declaration = Util.deep_dup(declaration)

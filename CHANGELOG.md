@@ -1,3 +1,7 @@
+# [0.0.86] - 2025-03-23
+
+- Add an AttributesTransformer.only method to quickly get a TypedTransformer (helpful with inputs_transformers)
+
 # [0.0.85] - 2025-03-22
 
 - Add Manifest::TypeDeclaration#sensitive?

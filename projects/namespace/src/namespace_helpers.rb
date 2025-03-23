@@ -164,7 +164,20 @@ module Foobara
         def foobara_autoset_scoped_path(mod, make_top_level: false)
           return if mod.scoped_path_set?
 
-          scoped_path = mod.name.split("::")
+          mod_name = mod.name
+
+          if mod_name.nil?
+            parent = mod.superclass
+            super_name = nil
+
+            begin
+              super_name = parent.scoped_path_set? ? parent.scoped_full_name : parent.name
+            end until super_name
+
+            mod_name = [super_name, mod.object_id.to_s(16)].join("::")
+          end
+
+          scoped_path = mod_name.split("::")
 
           adjusted_scoped_path = []
 
