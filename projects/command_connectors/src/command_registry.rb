@@ -21,8 +21,6 @@ module Foobara
       end
 
       foobara_add_category_for_instance_of(:command, ExposedCommand)
-
-      global_domain.foobara_depends_on Foobara::GlobalDomain
     end
 
     def register(command_class, **)
@@ -82,6 +80,8 @@ module Foobara
       exposed_domain.foobara_domain!
       exposed_domain.extend(ExposedDomain)
       exposed_domain.unexposed_domain = domain_module
+
+      exposed_domain.foobara_depends_on domain_module
 
       exposed_organization.foobara_register(exposed_domain)
       exposed_domain.foobara_parent_namespace = exposed_organization

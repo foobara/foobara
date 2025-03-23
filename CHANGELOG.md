@@ -1,8 +1,9 @@
-# [0.0.83] - 2025-03-22
+# [0.0.84] - 2025-03-22
 
 - Remove sensitive values from command connector results
 - Allow creating models in two different namespace trees and use this is the command connector
 - Use real domains/orgs in command connectors, eliminating ExposedDomain/Org concept
+- Allow Datetime to be cast from a float
 
 # [0.0.82] - 2025-03-21
 

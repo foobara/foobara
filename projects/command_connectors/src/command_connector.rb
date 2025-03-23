@@ -357,6 +357,9 @@ module Foobara
       # Drive all of this off of the list of exposed commands...
       to_include = Set.new
 
+      to_include << command_registry.global_organization
+      to_include << command_registry.global_domain
+
       # ABSOLUTE lets us get all of the children but not include dependent domains (GlobalDomain)
       command_registry.foobara_each(mode: Namespace::LookupMode::ABSOLUTE) do |exposed_whatever|
         to_include << exposed_whatever
