@@ -262,6 +262,7 @@ RSpec.describe Foobara::Manifest do
     expect(type_declaration.to_entity).to be_a(Foobara::Manifest::Entity)
     expect(type_declaration.scoped_category).to be_nil
     expect(type_declaration.parent).to be_nil
+    expect(type_declaration).to_not be_sensitive
 
     global_domain = Foobara::Manifest::Domain.new(raw_manifest, [:domain, "global_organization::global_domain"])
 

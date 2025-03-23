@@ -3,7 +3,7 @@ require_relative "base_manifest"
 module Foobara
   module Manifest
     class TypeDeclaration < BaseManifest
-      optional_keys(:allow_nil, :one_of)
+      optional_keys(:allow_nil, :one_of, :sensitive, :sensitive_exposed)
 
       class << self
         def new(root_manifest, path)
@@ -22,6 +22,10 @@ module Foobara
             type_declaration
           end
         end
+      end
+
+      def sensitive?
+        sensitive || sensitive_exposed
       end
 
       # rubocop:disable Naming/MemoizedInstanceVariableName

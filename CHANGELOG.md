@@ -1,3 +1,7 @@
+# [0.0.85] - 2025-03-22
+
+- Add Manifest::TypeDeclaration#sensitive?
+
 # [0.0.84] - 2025-03-22
 
 - Remove sensitive values from command connector results

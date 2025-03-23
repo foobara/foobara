@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    foobara (0.0.84)
+    foobara (0.0.85)
       bigdecimal
       foobara-lru-cache
       foobara-util
