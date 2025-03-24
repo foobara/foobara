@@ -123,6 +123,29 @@ module Foobara
             end
           end
 
+          def construct_deep_associations(
+            type = attributes_type,
+            path = DataPath.new,
+            result = {},
+            remove_sensitive: false
+          )
+            associations = construct_associations(type, path, result, remove_sensitive:)
+
+            deep = {}
+
+            associations.each_pair do |data_path, association_type|
+              deep[data_path] = association_type
+
+              entity_class = association_type.target_class
+
+              entity_class.deep_associations(remove_sensitive:).each_pair do |sub_data_path, sub_type|
+                deep["#{data_path}.#{sub_data_path}"] = sub_type
+              end
+            end
+
+            deep
+          end
+
           # TODO: this big switch is a problem. Hard to create new types in other projects without being able
           # to modify this switch.  Figure out what to do.
           def construct_associations(
