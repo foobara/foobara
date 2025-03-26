@@ -12,10 +12,6 @@ module Foobara
           Domain.current.foobara_type_builder.type_declaration_handler_for(...)
         end
 
-        def lookup_absolute_type!(*, **opts, &)
-          Foobara::Namespace.global.foobara_lookup_type!(*, **opts.merge(mode: Namespace::LookupMode::ABSOLUTE), &)
-        end
-
         def lookup_type!(...)
           Foobara::Namespace.current.foobara_lookup_type!(...)
         end
