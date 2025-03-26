@@ -231,9 +231,13 @@ module Foobara
           end
         end
 
-        def foobara_type_from_declaration(...)
+        def foobara_type_from_declaration(*args, **opts, &block)
+          if opts.empty? && block.nil? && args.size == 1 && args.first.is_a?(Types::Type)
+            return args.first
+          end
+
           Foobara::Namespace.use self do
-            foobara_type_builder.type_for_declaration(...)
+            foobara_type_builder.type_for_declaration(*args, **opts, &block)
           end
         end
 
