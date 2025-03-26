@@ -387,14 +387,28 @@ module Foobara
             additional_to_include.delete(o)
 
             if o.is_a?(::Module)
-              if o.foobara_domain? || o.foobara_organization? || (o.is_a?(::Class) && o < Foobara::Command)
+              if o.foobara_domain? || o.foobara_organization?
+                unless o.foobara_root_namespace == command_registry
+                  next
+                end
+              elsif o.is_a?(::Class) && o < Foobara::Command
                 next
               end
-            elsif o.is_a?(Types::Type) && remove_sensitive && o.sensitive?
+            elsif o.is_a?(Types::Type)
+              if remove_sensitive && o.sensitive?
+                # :nocov:
+                raise UnexpectedSensitiveTypeInManifestError,
+                      "Unexpected sensitive type in manifest: #{o.scoped_full_path}. Make sure these are not included."
               # :nocov:
-              raise UnexpectedSensitiveTypeInManifestError,
-                    "Unexpected sensitive type in manifest: #{o.scoped_full_path}. Make sure these are not included."
-              # :nocov:
+              else
+                domain_name = o.foobara_domain.scoped_full_name
+
+                unless command_registry.foobara_registered?(domain_name)
+                  domain = command_registry.build_and_register_exposed_domain(domain_name)
+                  additional_to_include << domain
+                  additional_to_include << domain.foobara_organization
+                end
+              end
             end
 
             object = o

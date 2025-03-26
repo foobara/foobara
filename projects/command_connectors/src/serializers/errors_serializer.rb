@@ -4,7 +4,6 @@ module Foobara
   module CommandConnectors
     module Serializers
       class ErrorsSerializer < Serializer
-        # TODO: always_applicable? instead?
         def always_applicable?
           !request.outcome.success?
         end

@@ -36,12 +36,12 @@ module Foobara
         result_type = command_class.result_type
 
         if result_type&.has_sensitive_types?
+
           remover_class = Foobara::TypeDeclarations.sensitive_value_remover_class_for_type(result_type)
 
           remover = Namespace.use scoped_namespace do
             transformed_result_type = result_type_from_transformers(result_type, result_transformers)
-
-            remover_class.new(transformed_result_type).tap do |r|
+            remover_class.new(from: transformed_result_type).tap do |r|
               r.scoped_path = ["SensitiveValueRemover", *transformed_result_type.scoped_full_path]
             end
           end
@@ -71,25 +71,34 @@ module Foobara
                        to: :command_class
 
       def inputs_type
-        type = command_class.inputs_type
+        return @inputs_type if defined?(@inputs_type)
 
-        inputs_transformers.reverse.each do |transformer|
-          if transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer
-            new_type = transformer.type(type)
+        @inputs_type = if inputs_transformer
+                         if inputs_transformer.is_a?(Value::Processor::Pipeline)
+                           inputs_transformer.processors.each do |transformer|
+                             if transformer.is_a?(TypeDeclarations::TypedTransformer)
+                               from_type = transformer.from_type
+                               if from_type
+                                 @inputs_type = from_type
+                                 return from_type
+                               end
+                             end
+                           end
 
-            type = new_type if new_type
-          end
-        end
-
-        type
+                           command_class.inputs_type
+                         else
+                           inputs_transformer.from_type || command_class.inputs_type
+                         end
+                       else
+                         command_class.inputs_type
+                       end
       end
 
       def result_type_from_transformers(result_type, transformers)
-        Util.array(transformers).each do |transformer|
+        transformers.reverse.each do |transformer|
           if transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer
-            new_type = transformer.type(result_type)
-
-            result_type = new_type if new_type
+            new_type = transformer.to_type
+            return new_type if new_type
           end
         end
 
@@ -217,6 +226,69 @@ module Foobara
           )
         )
       end
+
+      def inputs_transformer
+        return @inputs_transformer if defined?(@inputs_transformer)
+
+        if inputs_transformers.empty?
+          @inputs_transformer = nil
+          return
+        end
+
+        @inputs_transformer = begin
+          transformers = transformers_to_processors(inputs_transformers,
+                                                    command_class.inputs_type, direction: :to)
+
+          if transformers.size == 1
+            transformers.first
+          else
+            Value::Processor::Pipeline.new(processors: transformers)
+          end
+        end
+      end
+
+      def result_transformer
+        return @result_transformer if defined?(@result_transformer)
+
+        if result_transformers.empty?
+          @result_transformer = nil
+          return
+        end
+
+        @result_transformer = begin
+          transformers = transformers_to_processors(result_transformers, command_class.result_type, direction: :from)
+
+          if transformers.size == 1
+            transformers.first
+          else
+            Value::Processor::Pipeline.new(processors: transformers)
+          end
+        end
+      end
+
+      # TODO: this is pretty messy with smells.
+      def transformers_to_processors(transformers, target_type, direction: :from, declaration_data: self)
+        transformers.map do |transformer|
+          if transformer.is_a?(Class)
+            if transformer < TypeDeclarations::TypedTransformer
+              transformer.new(direction => target_type).tap do |tx|
+                new_type = direction == :from ? tx.to_type : tx.from_type
+                target_type = new_type if new_type
+              end
+            else
+              transformer.new(declaration_data)
+            end
+          elsif transformer.is_a?(Value::Processor)
+            transformer
+          elsif transformer.respond_to?(:call)
+            Value::Transformer.create(transform: transformer)
+          else
+            # :nocov:
+            raise "Not sure how to apply #{inputs_transformer}"
+            # :nocov:
+          end
+        end
+      end
     end
 
     attr_accessor :command, :untransformed_inputs, :transformed_inputs, :outcome, :authenticated_user
@@ -259,46 +331,22 @@ module Foobara
     end
 
     def transform_inputs
-      self.transformed_inputs = if inputs_transformer
-                                  inputs_transformer.process_value!(untransformed_inputs)
+      self.transformed_inputs = if self.class.inputs_transformer
+                                  self.class.inputs_transformer.process_value!(untransformed_inputs)
                                 else
                                   untransformed_inputs
                                 end
     end
 
     def transform_result
-      if result_transformer
-        self.outcome = Outcome.success(result_transformer.process_value!(result))
+      if self.class.result_transformer
+        self.outcome = Outcome.success(self.class.result_transformer.process_value!(result))
       end
     end
 
     def transform_errors
       if errors_transformer
         self.outcome = Outcome.errors(errors_transformer.process_value!(errors))
-      end
-    end
-
-    def inputs_transformer
-      return nil if inputs_transformers.empty?
-
-      transformers = transformers_to_processors(inputs_transformers, command_class.inputs_type)
-
-      if transformers.size == 1
-        transformers.first
-      else
-        Value::Processor::Pipeline.new(processors: transformers)
-      end
-    end
-
-    def result_transformer
-      return nil if result_transformers.empty?
-
-      transformers = transformers_to_processors(result_transformers, command_class.result_type)
-
-      if transformers.size == 1
-        transformers.first
-      else
-        Value::Processor::Pipeline.new(processors: transformers)
       end
     end
 
@@ -309,7 +357,7 @@ module Foobara
     def serializer
       return nil if serializers.empty?
 
-      transformers = transformers_to_processors(serializers, nil)
+      transformers = self.class.transformers_to_processors(serializers, nil, declaration_data: self)
 
       if transformers.size == 1
         transformers.first
@@ -321,7 +369,8 @@ module Foobara
     def errors_transformer
       return nil if errors_transformers.empty?
 
-      transformers = transformers_to_processors(errors_transformers, nil)
+      transformers = self.class.transformers_to_processors(errors_transformers, nil, direction: :from,
+                                                                                     declaration_data: self)
 
       if transformers.size == 1
         transformers.first
@@ -334,35 +383,16 @@ module Foobara
     def pre_commit_transformer
       return nil if pre_commit_transformers.empty?
 
-      transformers = transformers_to_processors(pre_commit_transformers, nil)
+      transformers = self.class.transformers_to_processors(
+        pre_commit_transformers,
+        nil,
+        declaration_data: self
+      )
 
       if transformers.size == 1
         transformers.first
       else
         Value::Processor::Pipeline.new(processors: transformers)
-      end
-    end
-
-    def transformers_to_processors(transformers, from_type)
-      transformers.map do |transformer|
-        if transformer.is_a?(Class)
-          if transformer < TypeDeclarations::TypedTransformer
-            transformer.new(from_type).tap do |tx|
-              new_type = tx.type
-              from_type = new_type if new_type
-            end
-          else
-            transformer.new(self)
-          end
-        elsif transformer.is_a?(Value::Processor)
-          transformer
-        elsif transformer.respond_to?(:call)
-          Value::Transformer.create(transform: transformer)
-        else
-          # :nocov:
-          raise "Not sure how to apply #{inputs_transformer}"
-          # :nocov:
-        end
       end
     end
 

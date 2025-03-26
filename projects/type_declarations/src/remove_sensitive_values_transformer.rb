@@ -3,24 +3,21 @@ require_relative "typed_transformer"
 module Foobara
   module TypeDeclarations
     class RemoveSensitiveValuesTransformer < TypedTransformer
-      class << self
-        def type_declaration(type_declaration)
-          if type_declaration.is_a?(Types::Type)
-            type_declaration = type_declaration.declaration_data
-          end
+      def from(...)
+        super.tap do
+          associations = Foobara::DetachedEntity.construct_deep_associations(from_type)
 
-          TypeDeclarations.remove_sensitive_types(type_declaration)
+          associations&.values&.reverse&.each do |entity_type|
+            declaration = entity_type.declaration_data
+            sanitized_type_declaration = TypeDeclarations.remove_sensitive_types(declaration)
+
+            Domain.current.foobara_type_from_declaration(sanitized_type_declaration)
+          end
         end
       end
 
-      attr_accessor :namespace
-
-      def initialize(...)
-        super
-
-        self.namespace = Namespace.current
-
-        type
+      def to_type_declaration
+        TypeDeclarations.remove_sensitive_types(from_type.declaration_data)
       end
 
       def transform(_value)
@@ -31,9 +28,11 @@ module Foobara
 
       def sanitize_value(type, value)
         if type.has_sensitive_types?
-          remover_class = TypeDeclarations.sensitive_value_remover_class_for_type(type)
-          remover = Namespace.use(namespace) { remover_class.new(type) }
-          sanitized_value = remover.process_value!(value)
+          sanitized_value = Namespace.use to_type.created_in_namespace do
+            remover_class = TypeDeclarations.sensitive_value_remover_class_for_type(type)
+            remover = remover_class.new(from: type)
+            remover.process_value!(value)
+          end
 
           [sanitized_value, sanitized_value != value]
         else

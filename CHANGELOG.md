@@ -1,3 +1,7 @@
+# [0.0.87] - 2025-03-26
+
+- TypedTransformer refactor to reduce confusion and bugs
+
 # [0.0.86] - 2025-03-23
 
 - Add an AttributesTransformer.only method to quickly get a TypedTransformer (helpful with inputs_transformers)

@@ -8,12 +8,8 @@ RSpec.describe Foobara::AttributesTransformer do
       }
     end
 
-    let(:from_type) do
-      Foobara::Domain.current.foobara_type_from_declaration(from_type_declaration)
-    end
-
     let(:attributes_transformer_class) { described_class.only(*only) }
-    let(:attributes_transformer) { attributes_transformer_class.new(from_type) }
+    let(:attributes_transformer) { attributes_transformer_class.new(from: from_type_declaration) }
     let(:only) { %i[foo bar] }
 
     let(:from_value) do

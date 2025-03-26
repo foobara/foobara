@@ -573,9 +573,42 @@ RSpec.describe Foobara::CommandConnector do
         let(:errors_transformers) { [identity, identity] }
         let(:pre_commit_transformers) { [identity, identity] }
 
-        it "runs the command" do
+        it "runs the command and has the expected inputs type" do
           expect(response.status).to be(0)
           expect(response.body).to eq("16")
+
+          transformed_command = command_connector.transformed_command_from_name("ComputeExponent")
+          expect(transformed_command.inputs_type.declaration_data).to eq(
+            type: :attributes,
+            element_type_declarations: {
+              base: { type: :integer },
+              exponent: { type: :integer }
+            }
+          )
+        end
+
+        context "with a typed transformer" do
+          let(:identity) do
+            stub_class "IdentityTransformer", Foobara::TypeDeclarations::TypedTransformer do
+              def from_type_declaration
+                to_type
+              end
+            end
+          end
+
+          it "runs the command and has the expected inputs type" do
+            expect(response.status).to be(0)
+            expect(response.body).to eq("16")
+
+            transformed_command = command_connector.transformed_command_from_name("ComputeExponent")
+            expect(transformed_command.inputs_type.declaration_data).to eq(
+              type: :attributes,
+              element_type_declarations: {
+                base: { type: :integer },
+                exponent: { type: :integer }
+              }
+            )
+          end
         end
 
         context "when error" do
@@ -1023,13 +1056,11 @@ RSpec.describe Foobara::CommandConnector do
         let(:inputs_transformers) { [inputs_transformer] }
         let(:inputs_transformer) do
           stub_class "SomeTransformer", Foobara::TypeDeclarations::TypedTransformer do
-            class << self
-              def type_declaration(_from_type)
-                {
-                  bbaassee: :string,
-                  exponent: :string
-                }
-              end
+            def from_type_declaration
+              {
+                bbaassee: :string,
+                exponent: :string
+              }
             end
 
             def transform(inputs)
@@ -1044,11 +1075,7 @@ RSpec.describe Foobara::CommandConnector do
         let(:result_transformers) { [result_transformer] }
         let(:result_transformer) do
           stub_class :SomeOtherTransformer, Foobara::TypeDeclarations::TypedTransformer do
-            class << self
-              def type_declaration(_from_type)
-                { answer: :string }
-              end
-            end
+            to(answer: :string)
 
             def transform(result)
               { answer: result.to_s }
@@ -1272,6 +1299,38 @@ RSpec.describe Foobara::CommandConnector do
             expect(response.body).to match("HELP!!!")
           end
         end
+      end
+    end
+
+    context "when the command returns a model from a domain it depends on (bad form but let's support it for now)" do
+      let(:command_class) do
+        user_class
+
+        stub_module("DomainA") do
+          foobara_domain!
+        end
+        stub_class("DomainA::MakeUser", Foobara::Command) do
+          result DomainB::User
+        end
+      end
+
+      let(:full_command_name) { "DomainA::MakeUser" }
+
+      let(:user_class) do
+        stub_module("DomainB") do
+          foobara_domain!
+        end
+
+        stub_class("DomainB::User", Foobara::Model) do
+          attributes name: :string
+        end
+      end
+
+      it "includes the model and its domain in the manifest" do
+        manifest = command_connector.foobara_manifest
+
+        expect(manifest[:domain].keys).to include(:DomainB)
+        expect(manifest[:type].keys).to include(:"DomainB::User")
       end
     end
 

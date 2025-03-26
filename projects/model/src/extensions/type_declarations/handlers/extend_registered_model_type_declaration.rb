@@ -12,7 +12,7 @@ module Foobara
             return false if type_symbol == expected_type_symbol
 
             if type_registered?(type_symbol)
-              type = type_for_declaration(type_symbol)
+              type = lookup_type!(type_symbol)
               type.extends?(BuiltinTypes[expected_type_symbol])
             end
           end
