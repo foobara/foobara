@@ -95,6 +95,7 @@ module Foobara
                      :add_default_errors_transformer,
                      :add_default_pre_commit_transformer,
                      :add_default_serializer,
+                     :add_default_response_mutator,
                      :allowed_rule,
                      :allowed_rules,
                      :transform_command_class,
@@ -232,16 +233,27 @@ module Foobara
     end
 
     def request_to_response(request)
-      command = request.command
-      outcome = command.outcome
+      self.class::Response.new(request:)
+    end
 
-      status = outcome.success? ? 0 : 1
+    def set_response_status(response)
+      outcome = response.request.outcome
+      response.status = outcome.success? ? 0 : 1
+    end
 
-      # TODO: feels awkward to call this here... Maybe use result/errors transformers instead??
-      # Or call the serializer here??
-      body = command.respond_to?(:serialize_result) ? command.serialize_result : request.response_body
+    def set_response_body(response)
+      outcome = response.request.outcome
+      # response.body = outcome.success? ? outcome.result : outcome.error_collection
+      response.body = outcome.success? ? outcome.result : outcome.error_collection
+    end
 
-      self.class::Response.new(request:, status:, body:)
+
+    def serialize_response_body(response)
+      command = response.command
+
+      if command.respond_to?(:serialize_result)
+        response.body = command.serialize_result(response.body)
+      end
     end
 
     def initialize(authenticator: nil, default_serializers: nil)
@@ -343,7 +355,11 @@ module Foobara
 
     def build_response(request)
       response = request_to_response(request)
-      response.request = request
+
+      set_response_status(response)
+      set_response_body(response)
+      serialize_response_body(response)
+
       response
     end
 

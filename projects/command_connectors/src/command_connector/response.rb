@@ -1,14 +1,14 @@
 module Foobara
   class CommandConnector
     class Response
-      attr_accessor :status,
-                    :body,
-                    :request
+      attr_accessor :request,
+                    :status,
+                    :body
 
-      def initialize(status:, body:, request:)
+      def initialize(request:, status: nil, body: nil)
+        self.request = request
         self.status = status
         self.body = body
-        self.request = request
       end
 
       foobara_delegate :command, :error, to: :request
