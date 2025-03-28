@@ -27,10 +27,6 @@ module Foobara
           end
         end
 
-        def always_applicable?
-          true
-        end
-
         def regex
           # :nocov:
           raise "subclass responsibility"
@@ -76,6 +72,11 @@ module Foobara
             class_name = "#{name}::#{Util.classify(symbol)}"
 
             Util.make_class(class_name, ValidatorBase) do
+              define_method :applicable? do |value|
+                # TODO: hmmm, I wonder how we can short-circuit these checks if :allows_nil matches??
+                value.is_a?(::String)
+              end
+
               define_method :regex do
                 regex
               end
