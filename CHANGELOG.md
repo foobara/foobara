@@ -1,3 +1,10 @@
+# [0.0.88] - 2025-03-28
+
+- Implement response mutator concept
+- Break up #request_to_response for easier overriding/extension
+- Add AttributesTransformers::Reject
+- Fix problem causing downcase/regex processors to explode on allows_nil types
+
 # [0.0.87] - 2025-03-26
 
 - TypedTransformer refactor to reduce confusion and bugs

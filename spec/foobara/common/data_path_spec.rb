@@ -1,3 +1,5 @@
+require "ostruct"
+
 RSpec.describe Foobara::DataPath do
   let(:key) { described_class.new(path) }
 

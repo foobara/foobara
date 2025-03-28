@@ -13,6 +13,10 @@ module Foobara
                     :pre_commit_transformers,
                     # TODO: get at least these serializers out of here...
                     :serializers,
+                    # TODO: probably should also get these mutators out of here. But where should they live?
+                    # On exposed command? On the command registry? On the command connector?
+                    # This is the easiest place to implement them but feels awkward.
+                    :response_mutators,
                     :allowed_rule,
                     :requires_authentication,
                     :authenticator
@@ -27,6 +31,7 @@ module Foobara
         errors_transformers:,
         pre_commit_transformers:,
         serializers:,
+        response_mutators:,
         allowed_rule:,
         requires_authentication:,
         authenticator:,
@@ -36,7 +41,6 @@ module Foobara
         result_type = command_class.result_type
 
         if result_type&.has_sensitive_types?
-
           remover_class = Foobara::TypeDeclarations.sensitive_value_remover_class_for_type(result_type)
 
           remover = Namespace.use scoped_namespace do
@@ -59,6 +63,7 @@ module Foobara
           klass.errors_transformers = Util.array(errors_transformers)
           klass.pre_commit_transformers = Util.array(pre_commit_transformers)
           klass.serializers = Util.array(serializers)
+          klass.response_mutators = Util.array(response_mutators)
           klass.allowed_rule = allowed_rule
           klass.requires_authentication = requires_authentication
           klass.authenticator = authenticator
@@ -107,6 +112,18 @@ module Foobara
 
       def result_type
         result_type_from_transformers(command_class.result_type, result_transformers)
+      end
+
+      def result_type_for_manifest
+        return @result_type_for_manifest if defined?(@result_type_for_manifest)
+
+        mutated_result_type = result_type
+
+        response_mutators&.reverse&.each do |mutator|
+          mutated_result_type = mutator.instance.result_type_from(mutated_result_type)
+        end
+
+        @result_type_for_manifest = mutated_result_type
       end
 
       def error_context_type_map
@@ -208,12 +225,13 @@ module Foobara
           end
         end
 
+        response_mutators = self.response_mutators.map { |t| t.foobara_manifest(to_include:) }
+
         command_class.foobara_manifest(to_include:, remove_sensitive:).merge(
           Util.remove_blank(
             types_depended_on: types,
             inputs_type: inputs_type&.reference_or_declaration_data,
-            # TODO: we need a way to unmask values in the result type that we want to expose
-            result_type: result_type&.reference_or_declaration_data(remove_sensitive:),
+            result_type: result_type_for_manifest&.reference_or_declaration_data(remove_sensitive:),
             possible_errors: possible_errors_manifest(to_include:, remove_sensitive:),
             capture_unknown_error:,
             inputs_transformers:,
@@ -221,6 +239,7 @@ module Foobara
             errors_transformers:,
             pre_commit_transformers:,
             serializers:,
+            response_mutators:,
             requires_authentication:,
             authenticator: authenticator&.manifest
           )
@@ -238,6 +257,25 @@ module Foobara
         @inputs_transformer = begin
           transformers = transformers_to_processors(inputs_transformers,
                                                     command_class.inputs_type, direction: :to)
+
+          if transformers.size == 1
+            transformers.first
+          else
+            Value::Processor::Pipeline.new(processors: transformers)
+          end
+        end
+      end
+
+      def response_mutator
+        return @response_mutator if defined?(@response_mutator)
+
+        if response_mutators.empty?
+          @response_mutator = nil
+          return
+        end
+
+        @response_mutator = begin
+          transformers = transformers_to_processors(response_mutators, result_type, direction: :from)
 
           if transformers.size == 1
             transformers.first
@@ -342,6 +380,10 @@ module Foobara
       if self.class.result_transformer
         self.outcome = Outcome.success(self.class.result_transformer.process_value!(result))
       end
+    end
+
+    def mutate_response(response)
+      self.class.response_mutator&.process_value!(response)
     end
 
     def transform_errors
@@ -483,13 +525,7 @@ module Foobara
     end
 
     # TODO: kill this
-    def serialize_result
-      body = if outcome.success?
-               outcome.result
-             else
-               outcome.errors
-             end
-
+    def serialize_result(body)
       if serializer
         serializer.process_value!(body)
       else

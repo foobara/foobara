@@ -28,8 +28,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = Dir.glob("./projects/*/lib", base: __dir__)
 
   spec.add_dependency "bigdecimal"
-  spec.add_dependency "foobara-lru-cache"
-  spec.add_dependency "foobara-util"
+  spec.add_dependency "foobara-lru-cache", "~> 0.0.2"
+  spec.add_dependency "foobara-util", "~> 0.0.11"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html

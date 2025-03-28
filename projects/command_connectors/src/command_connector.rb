@@ -247,6 +247,13 @@ module Foobara
       response.body = outcome.success? ? outcome.result : outcome.error_collection
     end
 
+    def mutate_response(response)
+      command = response.command
+
+      if command.respond_to?(:mutate_response)
+        command.mutate_response(response)
+      end
+    end
 
     def serialize_response_body(response)
       command = response.command
@@ -358,6 +365,7 @@ module Foobara
 
       set_response_status(response)
       set_response_body(response)
+      mutate_response(response)
       serialize_response_body(response)
 
       response
