@@ -8,7 +8,8 @@ module Foobara
           !request.outcome.success?
         end
 
-        def serialize(errors)
+        def serialize(error_collection)
+          errors = error_collection.errors
           errors.map(&:to_h)
         end
       end
