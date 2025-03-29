@@ -15,8 +15,17 @@ module Foobara
       end
 
       def to_type_declaration
-        from_declaration = from_type.declaration_data
-        TypeDeclarations::Attributes.reject(from_declaration, *self.class.reject_attributes)
+        if from_type
+          from_declaration = from_type.declaration_data
+          TypeDeclarations::Attributes.reject(from_declaration, *self.class.reject_attributes)
+        end
+      end
+
+      def from_type_declaration
+        if to_type
+          to_declaration = to_type.declaration_data
+          TypeDeclarations::Attributes.reject(to_declaration, *self.class.reject_attributes)
+        end
       end
 
       def transform(inputs)

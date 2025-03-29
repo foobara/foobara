@@ -1,3 +1,7 @@
+# [0.0.89] - 2025-03-29
+
+- Make attributes transformers work with either a from type or a to type
+
 # [0.0.88] - 2025-03-28
 
 - Implement response mutator concept
