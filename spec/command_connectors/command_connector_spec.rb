@@ -75,6 +75,7 @@ RSpec.describe Foobara::CommandConnector do
   let(:pre_commit_transformers) { nil }
   let(:serializers) { nil }
   let(:response_mutators) { nil }
+  let(:request_mutators) { nil }
   let(:allowed_rule) { nil }
   let(:allowed_rules) { nil }
   let(:requires_authentication) { nil }
@@ -439,6 +440,7 @@ RSpec.describe Foobara::CommandConnector do
         errors_transformers:,
         serializers:,
         response_mutators:,
+        request_mutators:,
         allowed_rule:,
         requires_authentication:,
         pre_commit_transformers:,
@@ -610,6 +612,93 @@ RSpec.describe Foobara::CommandConnector do
             }
           )
           expect(JSON.parse(response.body)).to eq("baz" => "bar some value")
+        end
+      end
+    end
+
+    context "with a request mutator" do
+      let(:full_command_name) { "SomeCommand" }
+      let(:request_mutators) { [request_mutator_class] }
+
+      let(:command_class) do
+        stub_class(:SomeCommand, Foobara::Command) do
+          inputs foo: :string, baz: :string
+          result :duck
+
+          def execute
+            inputs
+          end
+        end
+      end
+
+      let(:inputs) { { foo: "foo some value", bar: "bar some value" } }
+
+      let(:request_mutator_class) do
+        stub_class("ChangeBarToBazMutator", Foobara::CommandConnectors::RequestMutator) do
+          def inputs_type_declaration_from(inputs_type)
+            new_declaration = Foobara::Util.deep_dup(inputs_type.declaration_data)
+            element_type_declarations = new_declaration[:element_type_declarations]
+
+            old_bar = element_type_declarations.delete(:baz)
+
+            element_type_declarations[:bar] = old_bar
+
+            new_declaration
+          end
+
+          def mutate(request)
+            inputs = Foobara::Util.deep_dup(request.inputs)
+            bar = inputs.delete(:bar)
+            request.inputs = inputs.merge(baz: bar)
+          end
+        end
+      end
+
+      it "mutates the response and gives an expected mutated inputs type in the manifest" do
+        manifest = command_connector.foobara_manifest
+
+        expect(manifest[:command][:SomeCommand][:inputs_type]).to eq(
+          type: :attributes,
+          element_type_declarations: {
+            bar: { type: :string },
+            foo: { type: :string }
+          }
+        )
+
+        expect(JSON.parse(response.body)).to eq("foo" => "foo some value", "baz" => "bar some value")
+      end
+
+      context "with two mutators" do
+        let(:request_mutators) { [request_mutator_class, another_mutator] }
+
+        let(:another_mutator) do
+          stub_class("RemoveFoo2Mutator", Foobara::CommandConnectors::RequestMutator) do
+            def inputs_type_declaration_from(inputs_type)
+              with_foo2 = Foobara::Domain.current.foobara_type_from_declaration(foo2: :integer)
+              Foobara::TypeDeclarations::Attributes.merge(inputs_type.declaration_data, with_foo2.declaration_data)
+            end
+
+            def mutate(response)
+              inputs = response.inputs.dup
+              inputs.delete(:foo2)
+              response.inputs = inputs
+            end
+          end
+        end
+
+        it "mutates the request and gives an expected mutated inputs type in the manifest" do
+          manifest = command_connector.foobara_manifest
+
+          expect(manifest[:command][:SomeCommand][:inputs_type]).to eq(
+            type: :attributes,
+            element_type_declarations: {
+              foo2: { type: :integer },
+              foo: { type: :string },
+              bar: { type: :string }
+            }
+          )
+
+          expect(JSON.parse(response.body)).to eq("baz" => "bar some value", "foo" => "foo some value")
         end
       end
     end

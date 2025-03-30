@@ -17,6 +17,7 @@ module Foobara
                     # On exposed command? On the command registry? On the command connector?
                     # This is the easiest place to implement them but feels awkward.
                     :response_mutators,
+                    :request_mutators,
                     :allowed_rule,
                     :requires_authentication,
                     :authenticator
@@ -32,6 +33,7 @@ module Foobara
         pre_commit_transformers:,
         serializers:,
         response_mutators:,
+        request_mutators:,
         allowed_rule:,
         requires_authentication:,
         authenticator:,
@@ -64,6 +66,7 @@ module Foobara
           klass.pre_commit_transformers = Util.array(pre_commit_transformers)
           klass.serializers = Util.array(serializers)
           klass.response_mutators = Util.array(response_mutators)
+          klass.request_mutators = Util.array(request_mutators)
           klass.allowed_rule = allowed_rule
           klass.requires_authentication = requires_authentication
           klass.authenticator = authenticator
@@ -124,6 +127,18 @@ module Foobara
         end
 
         @result_type_for_manifest = mutated_result_type
+      end
+
+      def inputs_type_for_manifest
+        return @inputs_type_for_manifest if defined?(@inputs_type_for_manifest)
+
+        mutated_inputs_type = inputs_type
+
+        request_mutators&.each do |mutator|
+          mutated_inputs_type = mutator.instance.inputs_type_from(mutated_inputs_type)
+        end
+
+        @inputs_type_for_manifest = mutated_inputs_type
       end
 
       def error_context_type_map
@@ -226,11 +241,12 @@ module Foobara
         end
 
         response_mutators = self.response_mutators.map { |t| t.foobara_manifest(to_include:) }
+        request_mutators = self.request_mutators.map { |t| t.foobara_manifest(to_include:) }
 
         command_class.foobara_manifest(to_include:, remove_sensitive:).merge(
           Util.remove_blank(
             types_depended_on: types,
-            inputs_type: inputs_type&.reference_or_declaration_data,
+            inputs_type: inputs_type_for_manifest&.reference_or_declaration_data,
             result_type: result_type_for_manifest&.reference_or_declaration_data(remove_sensitive:),
             possible_errors: possible_errors_manifest(to_include:, remove_sensitive:),
             capture_unknown_error:,
@@ -240,6 +256,7 @@ module Foobara
             pre_commit_transformers:,
             serializers:,
             response_mutators:,
+            request_mutators:,
             requires_authentication:,
             authenticator: authenticator&.manifest
           )
@@ -283,6 +300,29 @@ module Foobara
             Value::Processor::Pipeline.new(processors: transformers)
           end
         end
+      end
+
+      def request_mutator
+        return @request_mutator if defined?(@request_mutator)
+
+        if request_mutators.empty?
+          @request_mutator = nil
+          return
+        end
+
+        @request_mutator = begin
+          transformers = transformers_to_processors(request_mutators, result_type, direction: :to)
+
+          if transformers.size == 1
+            transformers.first
+          else
+            Value::Processor::Pipeline.new(processors: transformers)
+          end
+        end
+      end
+
+      def mutate_request(request)
+        request_mutator&.process_value!(request)
       end
 
       def result_transformer

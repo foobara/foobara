@@ -12,6 +12,7 @@ module Foobara
                     :errors_transformers,
                     :pre_commit_transformers,
                     :serializers,
+                    :request_mutators,
                     :response_mutators,
                     :allowed_rule,
                     :requires_authentication,
@@ -29,6 +30,7 @@ module Foobara
         errors_transformers: nil,
         pre_commit_transformers: nil,
         response_mutators: nil,
+        request_mutators: nil,
         serializers: nil,
         allowed_rule: nil,
         requires_authentication: nil,
@@ -79,6 +81,7 @@ module Foobara
         self.errors_transformers = errors_transformers
         self.pre_commit_transformers = pre_commit_transformers
         self.response_mutators = response_mutators
+        self.request_mutators = request_mutators
         self.serializers = serializers
         self.allowed_rule = allowed_rule
         self.requires_authentication = requires_authentication
@@ -115,6 +118,7 @@ module Foobara
             errors_transformers,
             pre_commit_transformers,
             response_mutators,
+            request_mutators,
             serializers,
             allowed_rule,
             requires_authentication,
@@ -135,6 +139,7 @@ module Foobara
                                            errors_transformers:,
                                            pre_commit_transformers:,
                                            response_mutators:,
+                                           request_mutators:,
                                            serializers:,
                                            allowed_rule:,
                                            requires_authentication:,

@@ -4,14 +4,15 @@ module Foobara
       include TruncatedInspect
 
       # TODO: this feels like a smell of some sort...
-      attr_accessor :command_class,
-                    :command,
+      attr_accessor :command,
                     :error,
                     :command_connector,
                     :serializers,
                     :inputs,
                     :full_command_name,
                     :action
+
+      attr_reader :command_class
 
       def initialize(**opts)
         valid_keys = %i[inputs full_command_name action]
@@ -27,6 +28,15 @@ module Foobara
         self.inputs = opts[:inputs] if opts.key?(:inputs)
         self.action = opts[:action] if opts.key?(:action)
         self.full_command_name = opts[:full_command_name] if opts.key?(:full_command_name)
+      end
+
+      def command_class=(klass)
+        @command_class = klass
+
+        # TODO: we really need to revisit these interfaces. Something is wrong.
+        if command_class.respond_to?(:mutate_request)
+          command_class.mutate_request(self)
+        end
       end
 
       def serializer

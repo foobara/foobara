@@ -1,3 +1,7 @@
+# [0.0.90] - 2025-03-29
+
+- Implement request mutator concept
+
 # [0.0.89] - 2025-03-29
 
 - Make attributes transformers work with either a from type or a to type
