@@ -3,6 +3,10 @@ module Foobara
     class Command < BaseManifest
       self.category_symbol = :command
 
+      def requires_authentication?
+        !!self[:requires_authentication]
+      end
+
       def command_manifest
         relevant_manifest
       end

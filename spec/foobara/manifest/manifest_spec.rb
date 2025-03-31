@@ -240,6 +240,7 @@ RSpec.describe Foobara::Manifest do
     expect(command.parent_category).to eq(:domain)
     expect(command.parent_name).to eq("SomeOrg::SomeDomain")
     expect(command.parent).to eq(domain)
+    expect(command.requires_authentication?).to be false
     expect(command.command_name).to eq("QueryUser")
     expect(manifest.commands).to include(command)
     expect(command.command_manifest).to be_a(Hash)
