@@ -243,6 +243,17 @@ module Foobara
         response_mutators = self.response_mutators.map { |t| t.foobara_manifest(to_include:) }
         request_mutators = self.request_mutators.map { |t| t.foobara_manifest(to_include:) }
 
+        authenticator_manifest = if authenticator
+                                   if authenticator.respond_to?(:foobara_manifest)
+                                     # TODO: test this path
+                                     # :nocov:
+                                     authenticator.foobara_manifest(to_include:)
+                                     # :nocov:
+                                   else
+                                     true
+                                   end
+                                 end
+
         command_class.foobara_manifest(to_include:, remove_sensitive:).merge(
           Util.remove_blank(
             types_depended_on: types,
@@ -258,7 +269,7 @@ module Foobara
             response_mutators:,
             request_mutators:,
             requires_authentication:,
-            authenticator: authenticator&.manifest
+            authenticator: authenticator_manifest
           )
         )
       end
@@ -394,7 +405,6 @@ module Foobara
                      to: :class
 
     def run
-      authenticate if requires_authentication?
       apply_allowed_rule
       apply_pre_commit_transformers
       run_command
@@ -480,19 +490,6 @@ module Foobara
 
     def construct_command
       self.command = command_class.new(transformed_inputs)
-    end
-
-    def authenticate
-      command.after_load_records do |command:, **|
-        self.authenticated_user = instance_eval(&:authenticator)
-
-        unless authenticated_user
-          self.outcome = Outcome.error(CommandConnector::UnauthenticatedError.new)
-
-          command.state_machine.error!
-          command.halt!
-        end
-      end
     end
 
     def apply_allowed_rule

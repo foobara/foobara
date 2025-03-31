@@ -912,6 +912,9 @@ RSpec.describe Foobara::CommandConnector do
 
     context "when authentication required" do
       let(:requires_authentication) { true }
+      let(:authenticator) do
+        proc {}
+      end
 
       describe "#manifest" do
         it "contains the errors for not allowed" do
@@ -932,7 +935,7 @@ RSpec.describe Foobara::CommandConnector do
         let(:authenticator) do
           # normally we would return a user but we'll just generate a pointless integer
           # to test proxying to the request
-          proc { path.length }
+          proc { full_command_name.length }
         end
 
         let(:default_serializers) do

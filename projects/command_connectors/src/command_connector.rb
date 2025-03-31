@@ -338,6 +338,10 @@ module Foobara
       # TODO: feels like a smell
       request.command_connector = self
 
+      if command.respond_to?(:requires_authentication?) && command.requires_authentication?
+        authenticate(request)
+      end
+
       if command
         command.run
         # :nocov:
@@ -347,6 +351,23 @@ module Foobara
       end
 
       build_response(request)
+    end
+
+    def authenticate(request)
+      request_command = request.command
+
+      request_command.after_load_records do |command:, **|
+        authenticated_user = request.instance_eval(&authenticator)
+
+        request_command.authenticated_user = authenticated_user
+
+        unless authenticated_user
+          request_command.outcome = Outcome.error(CommandConnector::UnauthenticatedError.new)
+
+          command.state_machine.error!
+          command.halt!
+        end
+      end
     end
 
     def build_request_and_command(...)
