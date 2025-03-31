@@ -180,6 +180,14 @@ module Foobara
         end.sort.to_h
       end
 
+      def inputs_types_depended_on
+        inputs_type&.types_depended_on || []
+      end
+
+      def result_types_depended_on(remove_sensitive: true)
+        result_type&.types_depended_on(remove_sensitive:) || []
+      end
+
       def types_depended_on(remove_sensitive: true)
         # TODO: memoize this
         # TODO: this should not delegate to command since transformers are in play
@@ -188,29 +196,29 @@ module Foobara
         type = inputs_type
 
         if type != command_class.inputs_type
-          types |= if type.registered?
-                     # TODO: if we ever change from attributes-only inputs type
-                     # then this will be handy
-                     # :nocov:
-                     [type]
-                     # :nocov:
-                   else
-                     type.types_depended_on(remove_sensitive:)
-                   end
+          if type.registered?
+            # TODO: if we ever change from attributes-only inputs type
+            # then this will be handy
+            # :nocov:
+            types |= [type]
+            # :nocov:
+          end
+
+          types |= type.types_depended_on
         end
 
         type = result_type
 
         if type != command_class.result_type
-          types |= if type.registered?
-                     # TODO: if we ever change from attributes-only inputs type
-                     # then this will be handy
-                     # :nocov:
-                     [type]
-                     # :nocov:
-                   else
-                     type.types_depended_on(remove_sensitive:)
-                   end
+          if type.registered?
+            # TODO: if we ever change from attributes-only inputs type
+            # then this will be handy
+            # :nocov:
+            types |= [type]
+            # :nocov:
+          end
+
+          types |= type.types_depended_on(remove_sensitive:)
         end
 
         possible_errors.each do |possible_error|
@@ -254,8 +262,14 @@ module Foobara
                                    end
                                  end
 
+        inputs_types_depended_on = self.inputs_types_depended_on.map(&:foobara_manifest_reference).sort
+        result_types_depended_on = self.result_types_depended_on(remove_sensitive:).map(&:foobara_manifest_reference)
+        result_types_depended_on = result_types_depended_on.sort
+
         command_class.foobara_manifest(to_include:, remove_sensitive:).merge(
           Util.remove_blank(
+            inputs_types_depended_on:,
+            result_types_depended_on:,
             types_depended_on: types,
             inputs_type: inputs_type_for_manifest&.reference_or_declaration_data,
             result_type: result_type_for_manifest&.reference_or_declaration_data(remove_sensitive:),

@@ -1,3 +1,8 @@
+# [0.0.91] - 2025-03-31
+
+- Fix bug that was including removed types in command manifest's inputs_types_depended_on
+- Hoist authentication check up into command connector further from transformed command
+
 # [0.0.90] - 2025-03-29
 
 - Implement request mutator concept

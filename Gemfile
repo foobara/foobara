@@ -5,9 +5,9 @@ ruby Foobara::Version::MINIMUM_RUBY_VERSION
 gemspec
 
 # Development dependencies go here
-gem "foobara-rubocop-rules"
+gem "foobara-rubocop-rules", "~> 0.0.1"
 # gem "foobara-rubocop-rules", path: "../rubocop-rules"
-gem "foobara-spec-helpers"
+gem "foobara-spec-helpers", "~> 0.0.1"
 # gem "foobara-util", path: "../util"
 gem "guard-rspec"
 gem "pry"
