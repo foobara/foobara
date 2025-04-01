@@ -5,7 +5,7 @@ module Foobara
     include Manifestable
 
     # TODO: rename :path to data_path
-    attr_accessor :error_key, :message, :context, :is_fatal
+    attr_accessor :error_key, :message, :context, :is_fatal, :backtrace_when_initialized, :backtrace_when_raised
 
     # Need to do this early so doing it here... not sure if this is OK as it couples namespaces and errors
 
@@ -218,6 +218,30 @@ module Foobara
         raise "Bad error message, expected a string"
         # :nocov:
       end
+
+      backtrace_when_initialized = caller[1..]
+      index = 1
+
+      has_build_error = false
+
+      1.upto(10) do |i|
+        if backtrace_when_initialized[i].end_with?("#build_error'")
+          index = i + 1
+          has_build_error = true
+          break
+        end
+      end
+
+      if has_build_error
+        index.upto(10) do |i|
+          unless backtrace_when_initialized[i].end_with?("#build_error'")
+            index = i
+            break
+          end
+        end
+      end
+
+      self.backtrace_when_initialized = backtrace_when_initialized[index..]
 
       super(message)
     end

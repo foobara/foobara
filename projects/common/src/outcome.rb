@@ -1,7 +1,7 @@
 module Foobara
   class Outcome
     class UnsuccessfulOutcomeError < StandardError
-      attr_accessor :errors
+      attr_accessor :errors, :backtrace_when_raised
 
       def initialize(errors)
         self.errors = errors
@@ -74,11 +74,17 @@ module Foobara
     def raise!
       return if success?
 
-      if errors.size == 1
-        raise errors.first
-      else
-        raise UnsuccessfulOutcomeError, errors
+      error = errors.first
+      original_backtrace = error.backtrace_when_initialized
+
+      if errors.size > 1
+        error = UnsuccessfulOutcomeError.new(errors)
       end
+
+      error.set_backtrace(original_backtrace)
+      error.backtrace_when_raised = caller
+
+      raise error
     end
 
     def result!
