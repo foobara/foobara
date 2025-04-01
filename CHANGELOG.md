@@ -1,3 +1,8 @@
+# [0.0.92] - 2025-04-01
+
+- Improve error call stacks in calls like #run!
+- Fix bug preventing first call to CommandConnector#foobara_manifest from returning all its domains
+
 # [0.0.91] - 2025-03-31
 
 - Fix bug that was including removed types in command manifest's inputs_types_depended_on

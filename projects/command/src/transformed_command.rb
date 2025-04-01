@@ -181,11 +181,11 @@ module Foobara
       end
 
       def inputs_types_depended_on
-        inputs_type&.types_depended_on || []
+        inputs_type_for_manifest&.types_depended_on || []
       end
 
       def result_types_depended_on(remove_sensitive: true)
-        result_type&.types_depended_on(remove_sensitive:) || []
+        result_type_for_manifest&.types_depended_on(remove_sensitive:) || []
       end
 
       def types_depended_on(remove_sensitive: true)
@@ -266,6 +266,8 @@ module Foobara
         result_types_depended_on = self.result_types_depended_on(remove_sensitive:).map(&:foobara_manifest_reference)
         result_types_depended_on = result_types_depended_on.sort
 
+        # TODO: Do NOT defer to command_class.foobara_manifest because it might process types that
+        # might not have an exposed command and might not need one due to transformers/mutators/remove_sensitive flag
         command_class.foobara_manifest(to_include:, remove_sensitive:).merge(
           Util.remove_blank(
             inputs_types_depended_on:,

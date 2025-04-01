@@ -449,9 +449,17 @@ module Foobara
                 domain_name = o.foobara_domain.scoped_full_name
 
                 unless command_registry.foobara_registered?(domain_name)
-                  domain = command_registry.build_and_register_exposed_domain(domain_name)
-                  additional_to_include << domain
-                  additional_to_include << domain.foobara_organization
+                  command_registry.build_and_register_exposed_domain(domain_name)
+
+                  # Since we don't know which other domains/orgs creating this domain might have created,
+                  # we will just add them all to be included just in case
+                  command_registry.foobara_all_domain.each do |exposed_domain|
+                    additional_to_include << exposed_domain
+                  end
+
+                  command_registry.foobara_all_organization.each do |exposed_organization|
+                    additional_to_include << exposed_organization
+                  end
                 end
               end
             end
