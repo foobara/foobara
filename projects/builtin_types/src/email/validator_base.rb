@@ -73,7 +73,7 @@ module Foobara
 
             Util.make_class(class_name, ValidatorBase) do
               define_method :applicable? do |value|
-                # TODO: hmmm, I wonder how we can short-circuit these checks if :allows_nil matches??
+                # TODO: hmmm, I wonder how we can short-circuit these checks if :allow_nil matches??
                 value.is_a?(::String)
               end
 

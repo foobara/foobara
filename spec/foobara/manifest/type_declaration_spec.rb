@@ -27,7 +27,7 @@ RSpec.describe Foobara::Manifest do
   end
 
   describe "#to_model" do
-    context "when an allows_nil type declaration of a model" do
+    context "when an allow_nil type declaration of a model" do
       let(:type_declaration) { Foobara::Manifest::TypeDeclaration.new(root_manifest, path) }
       let(:path) { [:command, "SomeCommand", :inputs_type, :element_type_declarations, :some_model] }
 

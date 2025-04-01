@@ -16,7 +16,7 @@
 - Implement response mutator concept
 - Break up #request_to_response for easier overriding/extension
 - Add AttributesTransformers::Reject
-- Fix problem causing downcase/regex processors to explode on allows_nil types
+- Fix problem causing downcase/regex processors to explode on allow_nil types
 
 # [0.0.87] - 2025-03-26
 
@@ -271,7 +271,7 @@
 
 ## [0.0.13] - 2024-11-13
 
-- Do not fail :one_of if it is nil and :allows_nil
+- Do not fail :one_of if it is nil and :allow_nil
 
 ## [0.0.12] - 2024-10-30
 
