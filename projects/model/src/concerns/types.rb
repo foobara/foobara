@@ -142,6 +142,26 @@ module Foobara
               end
             end
           end
+
+          def delegates
+            @delegates ||= []
+          end
+
+          def delegate_attribute(attribute_name, data_path, writer: false)
+            data_path = DataPath.new(data_path)
+
+            delegates << [attribute_name, data_path, writer]
+
+            define_method attribute_name do
+              data_path.value_at(self)
+            end
+
+            if writer
+              define_method "#{attribute_name}=" do |value|
+                data_path.set_value_at(self, value)
+              end
+            end
+          end
         end
       end
     end

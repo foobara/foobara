@@ -12,13 +12,22 @@ module Foobara
               attributes_declaration = TypeDeclarations.remove_sensitive_types(attributes_declaration)
             end
 
+            delegates = self.delegates.map do |attribute_name, data_path, writer|
+              {
+                attribute_name:,
+                data_path: data_path.to_s,
+                writer:
+              }
+            end
+
             Util.remove_blank(
               attributes_type: attributes_declaration,
               organization_name: foobara_type.foobara_domain.foobara_organization_name,
               domain_name: foobara_type.foobara_domain.foobara_domain_name,
               model_name: foobara_model_name,
               model_base_class: foobara_type.declaration_data[:model_base_class],
-              model_class: foobara_type.declaration_data[:model_class]
+              model_class: foobara_type.declaration_data[:model_class],
+              delegates:
             )
           end
         end
