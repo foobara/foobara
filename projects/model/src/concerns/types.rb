@@ -76,7 +76,6 @@ module Foobara
               else
                 domain.foobara_type_from_declaration(declaration)
               end
-
             end
           end
 
@@ -112,7 +111,8 @@ module Foobara
               attributes_declaration:,
               description:,
               _desugarized: { type_absolutified: true },
-              mutable:
+              mutable:,
+              delegates:
             )
           end
 
@@ -144,13 +144,25 @@ module Foobara
           end
 
           def delegates
-            @delegates ||= []
+            @delegates ||= {}
+          end
+
+          def delegate_attributes(delegates)
+            delegates.each_pair do |attribute_name, delegate_info|
+              delegate_attribute(attribute_name, delegate_info[:data_path], writer: delegate_info[:writer])
+            end
           end
 
           def delegate_attribute(attribute_name, data_path, writer: false)
             data_path = DataPath.new(data_path)
 
-            delegates << [attribute_name, data_path, writer]
+            delegate_manifest = { data_path: data_path.to_s }
+
+            if writer
+              delegate_manifest[:writer] = true
+            end
+
+            delegates[attribute_name] = delegate_manifest
 
             define_method attribute_name do
               data_path.value_at(self)
@@ -161,6 +173,8 @@ module Foobara
                 data_path.set_value_at(self, value)
               end
             end
+
+            set_model_type
           end
         end
       end
