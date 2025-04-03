@@ -1,3 +1,9 @@
+# [0.0.93] - 2025-04-02
+
+- Add delegated attributes to models
+- Pass manifest construction context through thread_parent instead of passing it everywhere
+- Various namespace lookup bugfixes
+
 # [0.0.92] - 2025-04-01
 
 - Improve error call stacks in calls like #run!

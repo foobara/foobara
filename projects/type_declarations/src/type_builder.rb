@@ -107,24 +107,6 @@ module Foobara
       def lru_cache
         @lru_cache ||= Foobara::LruCache.new(100)
       end
-
-      def type_declaration_bits_to_type_declaration(type_declaration_bits)
-        type, *symbolic_processors, processor_data = type_declaration_bits
-
-        if !symbolic_processors.empty?
-          symbolic_processors = symbolic_processors.to_h { |symbol| [symbol, true] }
-
-          if processor_data.is_a?(::Hash) && !processor_data.empty?
-            processor_data.merge(symbolic_processors)
-          else
-            symbolic_processors
-          end
-        elsif processor_data.is_a?(::Hash)
-          processor_data
-        else
-          { processor_data.to_sym => true }
-        end.merge(type:)
-      end
     end
   end
 end
