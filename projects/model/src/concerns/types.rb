@@ -35,16 +35,10 @@ module Foobara
             end
           end
 
-          def attributes(*args, **opts, &)
-            new_type = domain.foobara_type_from_declaration(*args, **opts, &)
+          def attributes(...)
+            private, attributes_type_declaration = extract_private_from_attributes_declaration(...)
 
-            unless new_type.extends?(BuiltinTypes[:attributes])
-              # :nocov:
-              raise ArgumentError, "Expected #{args} #{opts} to extend :attributes " \
-                                   "but instead it resulted in: #{new_type.declaration_data}"
-              # :nocov:
-            end
-
+            new_type = domain.foobara_type_from_declaration(attributes_type_declaration)
             existing_type = attributes_type
 
             if existing_type
@@ -57,6 +51,7 @@ module Foobara
             end
 
             self.attributes_type = new_type
+            private_attributes(private)
 
             set_model_type
           end
@@ -111,7 +106,8 @@ module Foobara
               description:,
               _desugarized: { type_absolutified: true },
               mutable:,
-              delegates:
+              delegates:,
+              private: private_attribute_names
             )
           end
 
@@ -130,6 +126,10 @@ module Foobara
           def model_type=(model_type)
             @model_type = model_type
 
+            return if model_type.nil?
+
+            private = model_type.declaration_data[:private]
+
             attributes_type.element_types.each_key do |attribute_name|
               if delegates.key?(attribute_name)
                 next
@@ -143,11 +143,42 @@ module Foobara
               define_method "#{attribute_name}=" do |value|
                 write_attribute(attribute_name, value)
               end
+
+              if private&.include?(attribute_name)
+                private attribute_name
+                private "#{attribute_name}="
+              end
             end
           end
 
           def delegates
             @delegates ||= {}
+          end
+
+          def private_attribute_names
+            @private_attribute_names ||= []
+          end
+
+          def private_attributes(attribute_names)
+            attribute_names.each do |attribute_name|
+              private_attribute attribute_name
+            end
+          end
+
+          def private_attribute(attribute_name)
+            if respond_to?(attribute_name)
+              private attribute_name
+            end
+
+            writer = :"#{attribute_name}="
+
+            if respond_to?(writer)
+              private writer
+            end
+
+            @private_attribute_names = private_attribute_names | [attribute_name]
+
+            set_model_type
           end
 
           def delegate_attributes(delegates)
@@ -191,6 +222,32 @@ module Foobara
             end
 
             set_model_type
+          end
+
+          private
+
+          def extract_private_from_attributes_declaration(...)
+            private = []
+            attributes_type_declaration = TypeDeclarations.args_to_type_declaration(...)
+
+            if attributes_type_declaration.is_a?(::Hash) || attributes_type_declaration.is_a?(Proc)
+              handler = Domain.current.foobara_type_builder.handler_for_class(
+                TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
+              )
+              attributes_type_declaration = handler.desugarize(attributes_type_declaration)
+
+              element_type_declarations = attributes_type_declaration[:element_type_declarations]
+
+              element_type_declarations.each_pair do |attribute_name, attribute_type_declaration|
+                is_private = attribute_type_declaration.delete(:private)
+
+                if is_private
+                  private |= [attribute_name]
+                end
+              end
+            end
+
+            [private, attributes_type_declaration]
           end
         end
       end

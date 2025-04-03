@@ -14,6 +14,8 @@ module Foobara
               attributes_declaration = TypeDeclarations.remove_sensitive_types(attributes_declaration)
             end
 
+            # TODO: do we really need all this stuff? Can't it be grabbed off of the declaration data to save
+            # space?
             Util.remove_blank(
               attributes_type: attributes_declaration,
               organization_name: foobara_type.foobara_domain.foobara_organization_name,
@@ -21,7 +23,8 @@ module Foobara
               model_name: foobara_model_name,
               model_base_class: foobara_type.declaration_data[:model_base_class],
               model_class: foobara_type.declaration_data[:model_class],
-              delegates:
+              delegates:,
+              private: private_attribute_names
             )
           end
         end
