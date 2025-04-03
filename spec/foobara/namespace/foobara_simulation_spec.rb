@@ -146,6 +146,9 @@ RSpec.describe Foobara::Namespace do
 
   describe "#lookup_*" do
     it "finds the expected objects given certain paths" do
+      attributes = FoobaraSimulation::OrgA::DomainA.foobara_lookup("::attributes")
+      expect(attributes).to be(Foobara::BuiltinTypes[:attributes])
+
       expect(FoobaraSimulation::OrgA.foobara_parent_namespace).to eq(FoobaraSimulation::Foobara)
       expect(FoobaraSimulation::OrgA.scoped_path).to eq(%w[OrgA])
       expect(FoobaraSimulation::OrgA.scoped_full_path).to eq(%w[OrgA])
