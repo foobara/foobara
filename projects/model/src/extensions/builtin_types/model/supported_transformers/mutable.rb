@@ -1,8 +1,7 @@
 module Foobara
   module BuiltinTypes
     module Model
-      # TODO: Create Mutations/SupportedMutations concept
-      class SupportedTransformers
+      module SupportedTransformers
         class Mutable < TypeDeclarations::Transformer
           class << self
             def requires_declaration_data?

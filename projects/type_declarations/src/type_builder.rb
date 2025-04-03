@@ -2,6 +2,46 @@ require "foobara/lru_cache"
 
 module Foobara
   module TypeDeclarations
+    class << self
+      # TODO: relocate these to a different file
+      def args_to_type_declaration(*args, &block)
+        if block
+          unless args.empty?
+            # :nocov:
+            raise ArgumentError, "Cannot provide both block and declaration"
+            # :nocov:
+          end
+
+          block
+        else
+          case args.size
+          when 0
+            # :nocov:
+            raise ArgumentError, "expected 1 argument or a block but got 0 arguments and no block"
+            # :nocov:
+          when 1
+            args.first
+          else
+            type, *symbolic_processors, processor_data = args
+
+            if !symbolic_processors.empty?
+              symbolic_processors = symbolic_processors.to_h { |symbol| [symbol, true] }
+
+              if processor_data.is_a?(::Hash) && !processor_data.empty?
+                processor_data.merge(symbolic_processors)
+              else
+                symbolic_processors
+              end
+            elsif processor_data.is_a?(::Hash)
+              processor_data
+            else
+              { processor_data.to_sym => true }
+            end.merge(type:)
+          end
+        end
+      end
+    end
+
     class TypeBuilder
       class NoTypeDeclarationHandlerFoundError < StandardError; end
 
@@ -70,27 +110,8 @@ module Foobara
         end
       end
 
-      def type_for_declaration_without_cache(*type_declaration_bits, &block)
-        type_declaration = if block
-                             unless type_declaration_bits.empty?
-                               # :nocov:
-                               raise ArgumentError, "Cannot provide both block and declaration"
-                               # :nocov:
-                             end
-
-                             block
-                           else
-                             case type_declaration_bits.size
-                             when 0
-                               # :nocov:
-                               raise ArgumentError, "expected 1 argument or a block but got 0 arguments and no block"
-                               # :nocov:
-                             when 1
-                               type_declaration_bits.first
-                             else
-                               type_declaration_bits_to_type_declaration(type_declaration_bits)
-                             end
-                           end
+      def type_for_declaration_without_cache(*type_declaration_bits, &)
+        type_declaration = TypeDeclarations.args_to_type_declaration(*type_declaration_bits, &)
 
         handler = type_declaration_handler_for(type_declaration)
         handler.process_value!(type_declaration)
