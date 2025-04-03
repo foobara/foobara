@@ -22,6 +22,13 @@ module Foobara
                   # :nocov:
                 end
               end
+            else
+              existing_type = Domain.current.foobara_lookup_type(
+                model_class_name,
+                mode: Namespace::LookupMode::ABSOLUTE
+              )
+
+              existing_type&.target_class
             end
           end
 
@@ -84,12 +91,21 @@ module Foobara
                   root_namespace = Namespace.current.foobara_root_namespace
                   domain = root_namespace.foobara_lookup_domain(domain_name)
 
-                  type.type_symbol = type.declaration_data[:name]
+                  type_symbol = type.declaration_data[:name]
+                  type.type_symbol = type_symbol.to_sym
+
                   model_class.description type.declaration_data[:description]
+
+                  if domain.foobara_type_registered?(type_symbol, mode: Namespace::LookupMode::ABSOLUTE)
+                    existing_type = domain.foobara_lookup_type(type_symbol, mode: Namespace::LookupMode::ABSOLUTE)
+                    domain.foobara_unregister(existing_type)
+                  end
+
+                  domain.foobara_register_model(model_class)
+
                   if type.declaration_data[:delegates]
                     model_class.delegate_attributes type.declaration_data[:delegates]
                   end
-                  domain.foobara_register_model(model_class)
                 end
               end
             end

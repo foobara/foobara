@@ -170,8 +170,10 @@ module Foobara
           return scoped if scoped
         end
 
-        scoped = _lookup_in(path, foobara_depends_on_namespaces, filter:, visited:)
-        return scoped if scoped
+        if mode == LookupMode::GENERAL
+          scoped = _lookup_in(path, foobara_depends_on_namespaces, filter:, visited:)
+          return scoped if scoped
+        end
 
         to_consider = case mode
                       when LookupMode::GENERAL

@@ -86,6 +86,64 @@ module Foobara
             result.select(&:registered?)
           end
 
+          def type_at_path(data_path)
+            path_parts = DataPath.for(data_path).path
+
+            path_part, *path_parts = path_parts
+
+            next_type = case path_part
+                        when :"#"
+                          # TODO: test this code path
+                          # :nocov:
+                          unless element_type
+                            raise "Expected element_type to be set but is not"
+                          end
+
+                          element_type
+                          # :nocov:
+                        when Symbol, Integer
+                          case element_types
+                          when ::Hash
+                            unless element_types.key?(path_part)
+                              # :nocov:
+                              raise "Expected element type to have key #{path_part} but does not"
+                              # :nocov:
+                            end
+
+                            element_types[path_part]
+                          when ::Array
+                            # TODO: test this code path
+                            # :nocov:
+                            element_types[path_part]
+                            # :nocov:
+                          when nil
+                            # :nocov:
+                            raise "Expected element_types to be set but is not"
+                            # :nocov:
+                          else
+                            # we will just assume it's an attributes here and delegate to it
+                            path_parts = [path_part, *path_parts]
+                            element_types
+                          end
+                        else
+                          # :nocov:
+                          raise "Bad path part #{path_part}"
+                          # :nocov:
+                        end
+
+            unless next_type
+              # :nocov:
+              raise "Expected to find a type at #{path_part}"
+              # :nocov:
+            end
+
+            if path_parts.empty?
+              next_type
+            else
+              next_type.type_at_path(path_parts)
+            end
+          end
+
           def inspect
             # :nocov:
             name = if scoped_path_set?

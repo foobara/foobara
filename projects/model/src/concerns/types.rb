@@ -69,7 +69,6 @@ module Foobara
 
               if model_type
                 unless Foobara::TypeDeclarations.declarations_equal?(declaration, model_type.declaration_data)
-                  domain.foobara_unregister(model_type)
                   self.model_type = nil
                   domain.foobara_type_from_declaration(declaration)
                 end
@@ -84,22 +83,22 @@ module Foobara
           end
 
           def type_declaration(attributes_declaration)
-            if name
-              model_base_class = superclass.name
-              model_class = name
-
-              if name.start_with?(closest_namespace_module.name)
-                model_module_name = closest_namespace_module.name
-                model_name = name.gsub(/^#{closest_namespace_module.name}::/, "")
-              else
-                model_module_name = nil
-                model_name = name
-              end
-            else
+            if model_type
               model_module_name = model_type.declaration_data[:model_module]
               model_class = model_type.declaration_data[:model_class]
               model_name = model_type.scoped_name
               model_base_class = superclass.name || superclass.model_type.scoped_full_name
+            else
+              model_base_class = superclass.name || superclass.full_model_name
+              model_class = name || full_model_name
+
+              if model_class.start_with?(closest_namespace_module.name)
+                model_module_name = closest_namespace_module.name
+                model_name = model_class.gsub(/^#{closest_namespace_module.name}::/, "")
+              else
+                model_module_name = nil
+                model_name = model_class
+              end
             end
 
             Util.remove_blank(
@@ -132,6 +131,10 @@ module Foobara
             @model_type = model_type
 
             attributes_type.element_types.each_key do |attribute_name|
+              if delegates.key?(attribute_name)
+                next
+              end
+
               define_method attribute_name do
                 read_attribute(attribute_name)
               end
@@ -154,7 +157,9 @@ module Foobara
           end
 
           def delegate_attribute(attribute_name, data_path, writer: false)
-            data_path = DataPath.new(data_path)
+            data_path = DataPath.for(data_path)
+
+            delegated_type_declaration = model_type.type_at_path(data_path).reference_or_declaration_data
 
             delegate_manifest = { data_path: data_path.to_s }
 
@@ -164,6 +169,8 @@ module Foobara
 
             delegates[attribute_name] = delegate_manifest
 
+            attributes attribute_name => delegated_type_declaration
+
             define_method attribute_name do
               data_path.value_at(self)
             end
@@ -171,6 +178,15 @@ module Foobara
             if writer
               define_method "#{attribute_name}=" do |value|
                 data_path.set_value_at(self, value)
+              end
+            else
+              method = :"#{attribute_name}="
+
+              if instance_methods.include?(method)
+                # TODO: test this code path
+                # :nocov:
+                remove_method method
+                # :nocov:
               end
             end
 

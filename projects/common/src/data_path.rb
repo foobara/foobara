@@ -76,6 +76,14 @@ module Foobara
       def parse(key_string)
         new(key_string)
       end
+
+      def for(object)
+        if object.is_a?(DataPath)
+          object
+        else
+          new(object)
+        end
+      end
     end
 
     attr_reader :path

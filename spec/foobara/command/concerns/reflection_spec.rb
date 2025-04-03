@@ -26,6 +26,7 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Reflection do
       stub_class(:User, Foobara::Model) do
         attributes do
           auth_user AuthUser, :required
+          some_attribute :integer
         end
       end.tap do |klass|
         klass.delegate_attribute(:username, %i[auth_user username], writer:)
@@ -46,6 +47,12 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Reflection do
         expect(user.username).to eq(username)
         expect(user).to_not respond_to("username=")
         expect(user).to_not respond_to(email)
+      end
+
+      it "contains the delegated attribute in the attributes_type" do
+        expect(manifest[:attributes_type][:element_type_declarations][:username]).to eq(
+          type: :string
+        )
       end
 
       it "includes the delegate info in the manifest" do
