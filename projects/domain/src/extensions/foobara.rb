@@ -8,46 +8,49 @@ module Foobara
     # in the http connector.
     def manifest
       to_include = Namespace.global.foobara_all_organization.to_set
-      included = {}
 
-      h = {}
+      TypeDeclarations.with_manifest_context(to_include:) do
+        included = {}
 
-      until to_include.empty?
-        object = to_include.first
-        to_include.delete(object)
+        h = {}
 
-        unless object.scoped_path_set?
-          # :nocov:
-          raise "no scoped path set for #{object}"
-          # :nocov:
-        end
+        until to_include.empty?
+          object = to_include.first
+          to_include.delete(object)
 
-        manifest_reference = object.foobara_manifest_reference.to_sym
-        category_symbol = Namespace.global.foobara_category_symbol_for(object)
-
-        unless category_symbol
-          # :nocov:
-          raise "no category symbol for #{object}"
-          # :nocov:
-        end
-
-        if included.key?(manifest_reference)
-          if included[manifest_reference] == category_symbol
-            next
-          else
+          unless object.scoped_path_set?
             # :nocov:
-            raise "Collision for #{manifest_reference}: #{included[manifest_reference]} and #{category_symbol}"
+            raise "no scoped path set for #{object}"
             # :nocov:
           end
+
+          manifest_reference = object.foobara_manifest_reference.to_sym
+          category_symbol = Namespace.global.foobara_category_symbol_for(object)
+
+          unless category_symbol
+            # :nocov:
+            raise "no category symbol for #{object}"
+            # :nocov:
+          end
+
+          if included.key?(manifest_reference)
+            if included[manifest_reference] == category_symbol
+              next
+            else
+              # :nocov:
+              raise "Collision for #{manifest_reference}: #{included[manifest_reference]} and #{category_symbol}"
+              # :nocov:
+            end
+          end
+
+          cat = h[category_symbol] ||= {}
+          cat[manifest_reference] = object.foobara_manifest
+
+          included[manifest_reference] = category_symbol
         end
 
-        cat = h[category_symbol] ||= {}
-        cat[manifest_reference] = object.foobara_manifest(to_include:)
-
-        included[manifest_reference] = category_symbol
+        h.sort.to_h
       end
-
-      h.sort.to_h
     end
 
     def all_organizations

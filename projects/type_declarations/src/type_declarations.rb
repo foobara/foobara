@@ -94,12 +94,12 @@ module Foobara
         Thread.foobara_var_get("foobara_manifest_context")
       end
 
-      allowed_context_keys = %i[detached to_include mode remove_sensitive_types]
-      booleans = %i[detached remove_sensitive_types]
+      allowed_context_keys = %i[detached to_include mode remove_sensitive]
+      booleans = %i[detached remove_sensitive]
 
       booleans.each do |context_item|
         define_method "foobara_manifest_context_#{context_item}?" do
-          foobara_manifest_context&.[](context_item)
+          !!foobara_manifest_context&.[](context_item)
         end
       end
 
@@ -107,6 +107,10 @@ module Foobara
         define_method "foobara_manifest_context_#{context_item}" do
           foobara_manifest_context&.[](context_item)
         end
+      end
+
+      def manifest_context_set?(context_item)
+        foobara_manifest_context&.key?(context_item)
       end
 
       def with_manifest_context(context)

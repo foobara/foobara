@@ -46,12 +46,18 @@ module Foobara
     end
 
     # TODO: technically does not belong in this project but maybe it should
-    def foobara_manifest(to_include: Set.new, remove_sensitive: false)
-      to_include << error_class
+    def foobara_manifest
+      to_include = TypeDeclarations.foobara_manifest_context_to_include
+
+      if to_include
+        to_include << error_class
+      end
 
       if processor
         processor_class = processor.class
-        to_include << processor_class
+        if to_include
+          to_include << processor_class
+        end
 
         if processor.scoped_path_set?
           # Unclear why nothing in the test suite passes through here.

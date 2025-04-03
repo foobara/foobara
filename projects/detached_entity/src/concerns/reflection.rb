@@ -17,15 +17,15 @@ module Foobara
             types.map(&:target_class).uniq
           end
 
-          def foobara_manifest(to_include: Set.new, remove_sensitive: false)
-            associations = foobara_associations(remove_sensitive:).map do |(path, type)|
+          def foobara_manifest
+            associations = foobara_associations.map do |(path, type)|
               entity_class = type.target_class
               entity_name = entity_class.foobara_type.scoped_full_name
 
               [path, entity_name]
             end.sort.to_h
 
-            deep_associations = foobara_deep_associations(remove_sensitive:).map do |(path, type)|
+            deep_associations = foobara_deep_associations.map do |(path, type)|
               entity_class = type.target_class
               entity_name = entity_class.foobara_type.scoped_full_name
 

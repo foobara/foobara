@@ -174,28 +174,48 @@ module Foobara
         @possible_errors ||= error_context_type_map.values
       end
 
-      def possible_errors_manifest(to_include:, remove_sensitive: true)
-        possible_errors.map do |possible_error|
-          [possible_error.key.to_s, possible_error.foobara_manifest(to_include:, remove_sensitive:)]
-        end.sort.to_h
+      def possible_errors_manifest
+        errors_proc = -> do
+          possible_errors.map do |possible_error|
+            [possible_error.key.to_s, possible_error.foobara_manifest]
+          end.sort.to_h
+        end
+
+        if TypeDeclarations.manifest_context_set?(:remove_sensitive)
+          errors_proc.call
+        else
+          TypeDeclarations.with_manifest_context(remove_sensitive: true, &errors_proc)
+        end
       end
 
       def inputs_types_depended_on
-        inputs_type_for_manifest&.types_depended_on || []
+        TypeDeclarations.with_manifest_context(remove_sensitive: false) do
+          inputs_type_for_manifest&.types_depended_on || []
+        end
       end
 
-      def result_types_depended_on(remove_sensitive: true)
-        result_type_for_manifest&.types_depended_on(remove_sensitive:) || []
+      def result_types_depended_on
+        type_proc = -> { result_type_for_manifest&.types_depended_on || [] }
+
+        if TypeDeclarations.manifest_context_set?(:remove_sensitive)
+          type_proc.call
+        else
+          TypeDeclarations.with_manifest_context(remove_sensitive: true, &type_proc)
+        end
       end
 
-      def types_depended_on(remove_sensitive: true)
+      def types_depended_on
+        # Seems to be not necessary?
+        # types = command_class.types_depended_on
+
+        types = Set.new
+
         # TODO: memoize this
         # TODO: this should not delegate to command since transformers are in play
-        types = command_class.types_depended_on(remove_sensitive:)
 
         type = inputs_type
 
-        if type != command_class.inputs_type
+        if type
           if type.registered?
             # TODO: if we ever change from attributes-only inputs type
             # then this will be handy
@@ -207,75 +227,98 @@ module Foobara
           types |= type.types_depended_on
         end
 
-        type = result_type
+        types_proc = proc do
+          type = result_type
 
-        if type != command_class.result_type
-          if type.registered?
-            # TODO: if we ever change from attributes-only inputs type
-            # then this will be handy
-            # :nocov:
-            types |= [type]
-            # :nocov:
+          if type
+            if type.registered?
+              # TODO: if we ever change from attributes-only inputs type
+              # then this will be handy
+              # :nocov:
+              types |= [type]
+              # :nocov:
+            end
+
+            types |= type.types_depended_on
           end
 
-          types |= type.types_depended_on(remove_sensitive:)
+          possible_errors.each do |possible_error|
+            error_class = possible_error.error_class
+            types |= error_class.types_depended_on
+          end
+
+          types
         end
 
-        possible_errors.each do |possible_error|
-          error_class = possible_error.error_class
-          types |= error_class.types_depended_on(remove_sensitive:)
+        if TypeDeclarations.manifest_context_set?(:remove_sensitive)
+          types_proc.call
+        else
+          TypeDeclarations.with_manifest_context(remove_sensitive: true, &types_proc)
         end
-
-        types
       end
 
-      def foobara_manifest(to_include: Set.new, remove_sensitive: true)
+      def foobara_manifest
+        to_include = TypeDeclarations.foobara_manifest_context_to_include
+
         types = types_depended_on.select(&:registered?).map do |t|
-          to_include << t
+          if to_include
+            to_include << t
+          end
           t.foobara_manifest_reference
         end.sort
 
-        inputs_transformers = self.inputs_transformers.map { |t| t.foobara_manifest(to_include:) }
-        result_transformers = self.result_transformers.map { |t| t.foobara_manifest(to_include:) }
-        errors_transformers = self.errors_transformers.map { |t| t.foobara_manifest(to_include:) }
-        pre_commit_transformers = self.pre_commit_transformers.map { |t| t.foobara_manifest(to_include:) }
+        inputs_transformers = TypeDeclarations.with_manifest_context(remove_sensitive: false) do
+          self.inputs_transformers.map(&:foobara_manifest)
+        end
+        result_transformers = self.result_transformers.map(&:foobara_manifest)
+        errors_transformers = self.errors_transformers.map(&:foobara_manifest)
+        pre_commit_transformers = self.pre_commit_transformers.map(&:foobara_manifest)
         serializers = self.serializers.map do |s|
           if s.respond_to?(:foobara_manifest)
-            to_include << s
+            if to_include
+              to_include << s
+            end
             s.foobara_manifest_reference
           else
             { proc: s.to_s }
           end
         end
 
-        response_mutators = self.response_mutators.map { |t| t.foobara_manifest(to_include:) }
-        request_mutators = self.request_mutators.map { |t| t.foobara_manifest(to_include:) }
+        response_mutators = self.response_mutators.map(&:foobara_manifest)
+        request_mutators = TypeDeclarations.with_manifest_context(remove_sensitive: false) do
+          self.request_mutators.map(&:foobara_manifest)
+        end
 
         authenticator_manifest = if authenticator
                                    if authenticator.respond_to?(:foobara_manifest)
                                      # TODO: test this path
                                      # :nocov:
-                                     authenticator.foobara_manifest(to_include:)
+                                     authenticator.foobara_manifest
                                      # :nocov:
                                    else
                                      true
                                    end
                                  end
 
-        inputs_types_depended_on = self.inputs_types_depended_on.map(&:foobara_manifest_reference).sort
-        result_types_depended_on = self.result_types_depended_on(remove_sensitive:).map(&:foobara_manifest_reference)
+        inputs_types_depended_on =  TypeDeclarations.with_manifest_context(remove_sensitive: false) do
+          self.inputs_types_depended_on.map(&:foobara_manifest_reference).sort
+        end
+
+        result_types_depended_on = self.result_types_depended_on.map(&:foobara_manifest_reference)
         result_types_depended_on = result_types_depended_on.sort
 
         # TODO: Do NOT defer to command_class.foobara_manifest because it might process types that
         # might not have an exposed command and might not need one due to transformers/mutators/remove_sensitive flag
-        command_class.foobara_manifest(to_include:, remove_sensitive:).merge(
+        command_class.foobara_manifest.merge(
           Util.remove_blank(
             inputs_types_depended_on:,
             result_types_depended_on:,
             types_depended_on: types,
-            inputs_type: inputs_type_for_manifest&.reference_or_declaration_data,
-            result_type: result_type_for_manifest&.reference_or_declaration_data(remove_sensitive:),
-            possible_errors: possible_errors_manifest(to_include:, remove_sensitive:),
+            inputs_type: TypeDeclarations.with_manifest_context(remove_sensitive: false) do
+              inputs_type_for_manifest&.reference_or_declaration_data
+            end,
+            result_type: result_type_for_manifest&.reference_or_declaration_data,
+            possible_errors: possible_errors_manifest,
             capture_unknown_error:,
             inputs_transformers:,
             result_transformers:,

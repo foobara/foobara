@@ -16,11 +16,7 @@ module Foobara
         attr_accessor :manifest
 
         def build_manifest
-          self.manifest = if manifestable.is_a?(CommandConnector)
-                            manifestable.foobara_manifest
-                          else
-                            manifestable.foobara_manifest(to_include: Set.new)
-                          end
+          self.manifest = manifestable.foobara_manifest
         end
 
         def stamp_request_metadata

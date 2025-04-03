@@ -18,7 +18,7 @@ module Foobara
       end
     end
 
-    def foobara_manifest(to_include: Set.new, remove_sensitive: false)
+    def foobara_manifest
       manifest = super
 
       if detached_context?
@@ -37,7 +37,7 @@ module Foobara
       manifest
     end
 
-    def types_to_add_to_manifest(remove_sensitive: false)
+    def types_to_add_to_manifest
       types = super
 
       if detached_context?

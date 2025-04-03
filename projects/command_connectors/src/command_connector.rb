@@ -396,10 +396,9 @@ module Foobara
       Foobara.foobara_lookup_type(name, mode: Namespace::LookupMode::RELAXED)
     end
 
-    def foobara_manifest(remove_sensitive: true)
+    def foobara_manifest
       process_delayed_connections
 
-      # Drive all of this off of the list of exposed commands...
       to_include = Set.new
 
       to_include << command_registry.global_organization
@@ -423,81 +422,84 @@ module Foobara
         processor_class: {}
       }
 
-      until to_include.empty? && additional_to_include.empty?
-        object = nil
+      TypeDeclarations.with_manifest_context(to_include: additional_to_include, remove_sensitive: true) do
+        until to_include.empty? && additional_to_include.empty?
+          object = nil
 
-        if to_include.empty?
-          until additional_to_include.empty?
-            o = additional_to_include.first
-            additional_to_include.delete(o)
+          if to_include.empty?
+            until additional_to_include.empty?
+              o = additional_to_include.first
+              additional_to_include.delete(o)
 
-            if o.is_a?(::Module)
-              if o.foobara_domain? || o.foobara_organization?
-                unless o.foobara_root_namespace == command_registry
+              if o.is_a?(::Module)
+                if o.foobara_domain? || o.foobara_organization?
+                  unless o.foobara_root_namespace == command_registry
+                    next
+                  end
+                elsif o.is_a?(::Class) && o < Foobara::Command
                   next
                 end
-              elsif o.is_a?(::Class) && o < Foobara::Command
-                next
-              end
-            elsif o.is_a?(Types::Type)
-              if remove_sensitive && o.sensitive?
+              elsif o.is_a?(Types::Type)
+                if o.sensitive?
+                  # :nocov:
+                  raise UnexpectedSensitiveTypeInManifestError,
+                        "Unexpected sensitive type in manifest: #{o.scoped_full_path}. " \
+                        "Make sure these are not included."
                 # :nocov:
-                raise UnexpectedSensitiveTypeInManifestError,
-                      "Unexpected sensitive type in manifest: #{o.scoped_full_path}. Make sure these are not included."
-              # :nocov:
-              else
-                domain_name = o.foobara_domain.scoped_full_name
+                else
+                  domain_name = o.foobara_domain.scoped_full_name
 
-                unless command_registry.foobara_registered?(domain_name)
-                  command_registry.build_and_register_exposed_domain(domain_name)
+                  unless command_registry.foobara_registered?(domain_name)
+                    command_registry.build_and_register_exposed_domain(domain_name)
 
-                  # Since we don't know which other domains/orgs creating this domain might have created,
-                  # we will just add them all to be included just in case
-                  command_registry.foobara_all_domain.each do |exposed_domain|
-                    additional_to_include << exposed_domain
-                  end
+                    # Since we don't know which other domains/orgs creating this domain might have created,
+                    # we will just add them all to be included just in case
+                    command_registry.foobara_all_domain.each do |exposed_domain|
+                      additional_to_include << exposed_domain
+                    end
 
-                  command_registry.foobara_all_organization.each do |exposed_organization|
-                    additional_to_include << exposed_organization
+                    command_registry.foobara_all_organization.each do |exposed_organization|
+                      additional_to_include << exposed_organization
+                    end
                   end
                 end
               end
+
+              object = o
+              break
             end
-
-            object = o
-            break
+          else
+            object = to_include.first
+            to_include.delete(object)
           end
-        else
-          object = to_include.first
-          to_include.delete(object)
+
+          break unless object
+          next if included.include?(object)
+
+          manifest_reference = object.foobara_manifest_reference.to_sym
+
+          category_symbol = command_registry.foobara_category_symbol_for(object)
+
+          unless category_symbol
+            # :nocov:
+            raise "no category symbol for #{object}"
+            # :nocov:
+          end
+
+          namespace = if object.is_a?(Types::Type)
+                        object.created_in_namespace
+                      else
+                        Foobara::Namespace.current
+                      end
+
+          cat = h[category_symbol] ||= {}
+          # TODO: do we really need to enter the namespace here for this?
+          cat[manifest_reference] = Foobara::Namespace.use namespace do
+            object.foobara_manifest
+          end
+
+          included << object
         end
-
-        break unless object
-        next if included.include?(object)
-
-        manifest_reference = object.foobara_manifest_reference.to_sym
-
-        category_symbol = command_registry.foobara_category_symbol_for(object)
-
-        unless category_symbol
-          # :nocov:
-          raise "no category symbol for #{object}"
-          # :nocov:
-        end
-
-        namespace = if object.is_a?(Types::Type)
-                      object.created_in_namespace
-                    else
-                      Foobara::Namespace.current
-                    end
-
-        cat = h[category_symbol] ||= {}
-        # TODO: do we really need to enter the namespace here for this?
-        cat[manifest_reference] = Foobara::Namespace.use namespace do
-          object.foobara_manifest(to_include: additional_to_include, remove_sensitive:)
-        end
-
-        included << object
       end
 
       h[:domain].each_value do |domain_manifest|

@@ -37,7 +37,9 @@ module Foobara
       end
     end
 
-    def foobara_manifest(to_include: Set.new, remove_sensitive: false)
+    def foobara_manifest
+      to_include = TypeDeclarations.foobara_manifest_context_to_include
+
       h = {
         scoped_path:,
         scoped_name:,
@@ -57,7 +59,9 @@ module Foobara
         parent_category = Namespace.global.foobara_category_symbol_for(parent)
 
         if parent_category
-          to_include << parent
+          if to_include
+            to_include << parent
+          end
           h[:parent] = [parent_category, parent.foobara_manifest_reference]
         end
       end

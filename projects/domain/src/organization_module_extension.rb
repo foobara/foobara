@@ -36,9 +36,13 @@ module Foobara
           foobara_all_domain(mode: Namespace::LookupMode::DIRECT)
         end
 
-        def foobara_manifest(to_include: Set.new, remove_sensitive: false)
+        def foobara_manifest
+          to_include = TypeDeclarations.foobara_manifest_context_to_include
+
           domains = foobara_domains.map do |domain|
-            to_include << domain
+            if to_include
+              to_include << domain
+            end
             domain.foobara_manifest_reference
           end.sort
 

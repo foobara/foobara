@@ -6,7 +6,9 @@ module Foobara
           include Concern
 
           # as soon as we hit a registered type, don't go further down that path
-          def types_depended_on(result = nil, remove_sensitive: false)
+          def types_depended_on(result = nil)
+            remove_sensitive = TypeDeclarations.foobara_manifest_context_remove_sensitive?
+
             start = result.nil?
             result ||= Set.new
             return if result.include?(self)
@@ -15,7 +17,7 @@ module Foobara
 
             return if !start && registered?
 
-            to_process = types_to_add_to_manifest(remove_sensitive:)
+            to_process = types_to_add_to_manifest
 
             if element_types
               to_process += case element_types
@@ -48,7 +50,7 @@ module Foobara
             end
 
             to_process.each do |type|
-              type.types_depended_on(result, remove_sensitive:)
+              type.types_depended_on(result)
             end
 
             if start
@@ -58,7 +60,9 @@ module Foobara
             result
           end
 
-          def types_to_add_to_manifest(remove_sensitive: false)
+          def types_to_add_to_manifest
+            remove_sensitive = TypeDeclarations.foobara_manifest_context_remove_sensitive?
+
             types = [*base_type, *possible_errors.map(&:error_class)]
 
             if element_type && (!remove_sensitive || !element_type.sensitive?)

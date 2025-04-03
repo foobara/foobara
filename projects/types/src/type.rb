@@ -327,7 +327,9 @@ module Foobara
         scoped_full_name
       end
 
-      def reference_or_declaration_data(declaration_data = self.declaration_data, remove_sensitive: false)
+      def reference_or_declaration_data(declaration_data = self.declaration_data)
+        remove_sensitive = TypeDeclarations.foobara_manifest_context_remove_sensitive?
+
         if registered?
           # TODO: we should just use the symbol and nothing else in this context instead of a hash with 1 element.
           { type: foobara_manifest_reference.to_sym }
@@ -343,18 +345,23 @@ module Foobara
         scoped_full_name
       end
 
-      def foobara_manifest(to_include: Set.new, remove_sensitive: false)
+      def foobara_manifest
+        to_include = TypeDeclarations.foobara_manifest_context_to_include
+        remove_sensitive = TypeDeclarations.foobara_manifest_context_remove_sensitive?
+
         types = []
 
-        types_depended_on(remove_sensitive:).each do |dependent_type|
+        types_depended_on.each do |dependent_type|
           if dependent_type.registered?
             types << dependent_type.foobara_manifest_reference
-            to_include << dependent_type
+            if to_include
+              to_include << dependent_type
+            end
           end
         end
 
         possible_errors_manifests = possible_errors.map do |possible_error|
-          [possible_error.key.to_s, possible_error.foobara_manifest(to_include:, remove_sensitive:)]
+          [possible_error.key.to_s, possible_error.foobara_manifest]
         end.sort.to_h
 
         declaration_data = self.declaration_data
@@ -381,14 +388,14 @@ module Foobara
         end
 
         h.merge!(
-          supported_processor_manifest(to_include, remove_sensitive:).merge(
-            Util.remove_blank(processors: processor_manifest(to_include, remove_sensitive:))
+          supported_processor_manifest.merge(
+            Util.remove_blank(processors: processor_manifest)
           )
         )
 
         target_classes.sort_by(&:name).each do |target_class|
           if target_class.respond_to?(:foobara_manifest)
-            h.merge!(target_class.foobara_manifest(to_include:, remove_sensitive:))
+            h.merge!(target_class.foobara_manifest)
           end
         end
 
@@ -403,14 +410,18 @@ module Foobara
         base_type
       end
 
-      def supported_processor_manifest(to_include, remove_sensitive: false)
+      def supported_processor_manifest
+        to_include = TypeDeclarations.foobara_manifest_context_to_include
+
         supported_casters = []
         supported_transformers = []
         supported_validators = []
         supported_processors = []
 
         all_supported_processor_classes.each do |processor_class|
-          to_include << processor_class
+          if to_include
+            to_include << processor_class
+          end
 
           target = if processor_class < Value::Caster
                      supported_casters
@@ -433,7 +444,9 @@ module Foobara
         )
       end
 
-      def processor_manifest(to_include, remove_sensitive: false)
+      def processor_manifest
+        to_include = TypeDeclarations.foobara_manifest_context_to_include
+
         casters_manifest = []
         transformers_manifest = []
         validators_manifest = []
@@ -443,33 +456,45 @@ module Foobara
 
         casters.each do |caster|
           klass = caster.class
-          to_include << klass
+          if to_include
+            to_include << klass
+          end
           caster_classes_manifest << klass.foobara_manifest_reference
 
           if caster.scoped_path_set?
-            to_include << caster
+            if to_include
+              to_include << caster
+            end
             casters_manifest << caster.foobara_manifest_reference
           end
         end
 
         transformers.each do |transformer|
           klass = transformer.class
-          to_include << klass
+          if to_include
+            to_include << klass
+          end
           transformer_classes_manifest << klass.foobara_manifest_reference
 
           if transformer.scoped_path_set?
-            to_include << transformer
+            if to_include
+              to_include << transformer
+            end
             transformers_manifest << transformer.foobara_manifest_reference
           end
         end
 
         validators.each do |validator|
           klass = validator.class
-          to_include << klass
+          if to_include
+            to_include << klass
+          end
           validator_classes_manifest << klass.foobara_manifest_reference
 
           if validator.scoped_path_set?
-            to_include << validator
+            if to_include
+              to_include << validator
+            end
             validators_manifest << validator.foobara_manifest_reference
           end
         end

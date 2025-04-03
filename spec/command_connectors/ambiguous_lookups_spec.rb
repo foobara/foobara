@@ -91,7 +91,7 @@ RSpec.describe Foobara::CommandConnector do
       expect(some_command_again.command_name).to eq("SomeCommandAgain")
       expect(some_command_again.command_class.command_name).to eq("SomeCommand")
 
-      manifest = some_command_again.foobara_manifest(to_include: Set.new)
+      manifest = some_command_again.foobara_manifest
 
       expect(manifest[:scoped_path]).to eq(["SomeCommandAgain"])
       expect(manifest[:scoped_name]).to eq("SomeCommandAgain")

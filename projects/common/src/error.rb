@@ -102,9 +102,13 @@ module Foobara
         }
       end
 
-      def foobara_manifest(to_include: Set.new, remove_sensitive: false)
-        types = types_depended_on(remove_sensitive:).map do |t|
-          to_include << t
+      def foobara_manifest
+        to_include = TypeDeclarations.foobara_manifest_context_to_include
+
+        types = types_depended_on.map do |t|
+          if to_include
+            to_include << t
+          end
           t.foobara_manifest_reference
         end
 
@@ -112,7 +116,9 @@ module Foobara
         # don't bother including these core errors
         unless superclass == Foobara::Error
           base = superclass
-          to_include << base
+          if to_include
+            to_include << base
+          end
         end
 
         manifest = super

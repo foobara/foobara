@@ -9,10 +9,17 @@ module Foobara
       end
 
       # TODO: unable to address types here so it is handled as a hack higher up...
-      def foobara_manifest(to_include: Set.new, remove_sensitive: true)
-        to_include << foobara_organization
+      def foobara_manifest
+        to_include = TypeDeclarations.foobara_manifest_context_to_include
 
-        domain_manifest = unexposed_domain.foobara_manifest(to_include: Set.new, remove_sensitive:)
+        if to_include
+          to_include << foobara_organization
+        end
+
+        domain_manifest = TypeDeclarations.with_manifest_context(to_include: Set.new) do
+          unexposed_domain.foobara_manifest
+        end
+
         mode = Foobara::Namespace::LookupMode::DIRECT
         commands = foobara_all_command(mode:).map(&:foobara_manifest_reference).sort
 

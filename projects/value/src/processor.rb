@@ -25,9 +25,13 @@ module Foobara
           true
         end
 
-        def foobara_manifest(to_include: Set.new, remove_sensitive: false)
+        def foobara_manifest
+          to_include = TypeDeclarations.foobara_manifest_context_to_include
+
           errors = error_classes.map do |error_class|
-            to_include << error_class
+            if to_include
+              to_include << error_class
+            end
             error_class.foobara_manifest_reference
           end
 
@@ -317,15 +321,19 @@ module Foobara
 
       # TODO: is this in the wrong place? Should this be an extension?
 
-      def foobara_manifest(to_include: Set.new, remove_sensitive: false)
+      def foobara_manifest
+        to_include = TypeDeclarations.foobara_manifest_context_to_include
+
         possible_errors = self.possible_errors.map do |possible_error|
-          [possible_error.key.to_s, possible_error.foobara_manifest(to_include:, remove_sensitive:)]
+          [possible_error.key.to_s, possible_error.foobara_manifest]
         end
 
         manifest = super.dup
 
         if scoped_category == :processor
-          to_include << self.class
+          if to_include
+            to_include << self.class
+          end
           manifest[:processor_class] = self.class.foobara_manifest_reference
         end
 

@@ -5,18 +5,22 @@ module Foobara
         include Concern
 
         module ClassMethods
-          def foobara_associations(remove_sensitive: false)
+          def foobara_associations
+            remove_sensitive = TypeDeclarations.foobara_manifest_context_remove_sensitive?
+
             if defined?(@foobara_associations) && @foobara_associations.key?(remove_sensitive)
               return @foobara_associations[remove_sensitive]
             end
 
             @foobara_associations ||= {}
-            @foobara_associations[remove_sensitive] = construct_associations(remove_sensitive:)
+            @foobara_associations[remove_sensitive] = construct_associations
           end
 
           alias associations foobara_associations
 
-          def foobara_deep_associations(remove_sensitive: false)
+          def foobara_deep_associations
+            remove_sensitive = TypeDeclarations.foobara_manifest_context_remove_sensitive?
+
             if defined?(@foobara_deep_associations) && @foobara_deep_associations.key?(remove_sensitive)
               return @foobara_deep_associations[remove_sensitive]
             end
@@ -30,7 +34,7 @@ module Foobara
 
                 entity_class = type.target_class
 
-                entity_class.deep_associations(remove_sensitive:).each_pair do |sub_data_path, sub_type|
+                entity_class.deep_associations.each_pair do |sub_data_path, sub_type|
                   deep["#{data_path}.#{sub_data_path}"] = sub_type
                 end
               end
@@ -126,10 +130,9 @@ module Foobara
           def construct_deep_associations(
             type = attributes_type,
             path = DataPath.new,
-            result = {},
-            remove_sensitive: false
+            result = {}
           )
-            associations = construct_associations(type, path, result, remove_sensitive:)
+            associations = construct_associations(type, path, result)
 
             deep = {}
 
@@ -138,7 +141,7 @@ module Foobara
 
               entity_class = association_type.target_class
 
-              entity_class.deep_associations(remove_sensitive:).each_pair do |sub_data_path, sub_type|
+              entity_class.deep_associations.each_pair do |sub_data_path, sub_type|
                 deep["#{data_path}.#{sub_data_path}"] = sub_type
               end
             end
@@ -151,9 +154,10 @@ module Foobara
           def construct_associations(
             type = attributes_type,
             path = DataPath.new,
-            result = {},
-            remove_sensitive: false
+            result = {}
           )
+            remove_sensitive = TypeDeclarations.foobara_manifest_context_remove_sensitive?
+
             if type.extends?(BuiltinTypes[:entity])
               result[path.to_s] = type
             elsif type.extends?(BuiltinTypes[:tuple])
@@ -167,7 +171,7 @@ module Foobara
               end
 
               element_types&.each&.with_index do |element_type, index|
-                construct_associations(element_type, path.append(index), result, remove_sensitive:)
+                construct_associations(element_type, path.append(index), result)
               end
             elsif type.extends?(BuiltinTypes[:array])
               # TODO: what to do about an associative array type?? Unclear how to make a key from that...
@@ -175,7 +179,7 @@ module Foobara
               element_type = type.element_type
 
               if element_type && (!remove_sensitive || !element_type.sensitive?)
-                construct_associations(element_type, path.append(:"#"), result, remove_sensitive:)
+                construct_associations(element_type, path.append(:"#"), result)
               end
             elsif type.extends?(BuiltinTypes[:attributes]) # TODO: matches attributes itself instead of only subtypes
               type.element_types.each_pair do |attribute_name, element_type|
@@ -183,7 +187,7 @@ module Foobara
                   next
                 end
 
-                construct_associations(element_type, path.append(attribute_name), result, remove_sensitive:)
+                construct_associations(element_type, path.append(attribute_name), result)
               end
             elsif type.extends?(BuiltinTypes[:model])
               target_class = type.target_class
@@ -192,12 +196,12 @@ module Foobara
               attributes_type = target_class.send(method)
 
               if !remove_sensitive || !attributes_type.sensitive?
-                construct_associations(attributes_type, path, result, remove_sensitive:)
+                construct_associations(attributes_type, path, result)
               end
             elsif type.extends?(BuiltinTypes[:associative_array])
               # not going to bother testing this for now
               # :nocov:
-              if contains_associations?(type, remove_sensitive:)
+              if contains_associations?(type)
                 raise "Associative array types with associations in them are not currently supported. " \
                       "Use attributes type if you can or set the key_type and/or value_type to duck type"
               end
@@ -207,7 +211,9 @@ module Foobara
             result
           end
 
-          def contains_associations?(type = entity_type, initial = true, remove_sensitive: false)
+          def contains_associations?(type = entity_type, initial = true)
+            remove_sensitive = TypeDeclarations.foobara_manifest_context_remove_sensitive?
+
             if type.extends?(BuiltinTypes[:detached_entity])
               if initial
                 element_types = type.element_types
@@ -219,7 +225,7 @@ module Foobara
                   # :nocov:
                 end
 
-                contains_associations?(element_types, false, remove_sensitive:)
+                contains_associations?(element_types, false)
               else
                 true
               end
@@ -229,12 +235,12 @@ module Foobara
               element_type = type.element_type
 
               if element_type && (!remove_sensitive || !element_type.sensitive?)
-                contains_associations?(element_type, false, remove_sensitive:)
+                contains_associations?(element_type, false)
               end
             elsif type.extends?(BuiltinTypes[:attributes])
               type.element_types.values.any? do |element_type|
                 if !remove_sensitive || !element_type.sensitive?
-                  contains_associations?(element_type, false, remove_sensitive:)
+                  contains_associations?(element_type, false)
                 end
               end
             elsif type.extends?(BuiltinTypes[:associative_array])
@@ -248,7 +254,7 @@ module Foobara
                 end
 
                 types.any? do |key_or_value_type|
-                  contains_associations?(key_or_value_type, false, remove_sensitive:)
+                  contains_associations?(key_or_value_type, false)
                 end
               end
             end

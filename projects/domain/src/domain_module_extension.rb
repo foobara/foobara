@@ -431,20 +431,28 @@ module Foobara
         end
 
         # TODO: can we kill this skip concept?
-        def foobara_manifest(to_include: Set.new, remove_sensitive: false)
+        def foobara_manifest
+          to_include = TypeDeclarations.foobara_manifest_context_to_include
+
           depends_on = foobara_depends_on.map do |name|
             domain = Domain.to_domain(name)
-            to_include << domain
+            if to_include
+              to_include << domain
+            end
             domain.foobara_manifest_reference
           end.sort
 
           commands = foobara_all_command(mode: Namespace::LookupMode::DIRECT).map do |command_class|
-            to_include << command_class
+            if to_include
+              to_include << command_class
+            end
             command_class.foobara_manifest_reference
           end.sort
 
           types = foobara_all_type(mode: Namespace::LookupMode::DIRECT).map do |type|
-            to_include << type
+            if to_include
+              to_include << type
+            end
             type.foobara_manifest_reference
           end.sort
 

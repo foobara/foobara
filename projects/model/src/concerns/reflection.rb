@@ -5,7 +5,9 @@ module Foobara
         include Concern
 
         module ClassMethods
-          def foobara_manifest(to_include: Set.new, remove_sensitive: false)
+          def foobara_manifest
+            remove_sensitive = TypeDeclarations.foobara_manifest_context_remove_sensitive?
+
             attributes_declaration = foobara_attributes_type.declaration_data
 
             if remove_sensitive

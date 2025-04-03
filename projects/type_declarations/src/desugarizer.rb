@@ -10,7 +10,7 @@ module Foobara
           false
         end
 
-        def foobara_manifest(to_include: Set.new, remove_sensitive: false)
+        def foobara_manifest
           # :nocov:
           super.merge(processor_type: :desugarizer)
           # :nocov:
