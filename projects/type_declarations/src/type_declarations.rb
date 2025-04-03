@@ -68,22 +68,17 @@ module Foobara
         using_mode(Mode::STRICT_STRINGIFIED, &)
       end
 
-      def using_mode(new_mode)
-        old_mode = Thread.foobara_var_get(:foobara_type_declarations_mode)
-        begin
-          Thread.foobara_var_set(:foobara_type_declarations_mode, new_mode)
-          yield
-        ensure
-          Thread.foobara_var_set(:foobara_type_declarations_mode, old_mode)
-        end
+      # TODO: use manifest context instead
+      def using_mode(new_mode, &)
+        with_manifest_context(mode: new_mode, &)
       end
 
       def strict?
-        Thread.foobara_var_get(:foobara_type_declarations_mode) == Mode::STRICT
+        foobara_manifest_context_mode == Mode::STRICT
       end
 
       def strict_stringified?
-        Thread.foobara_var_get(:foobara_type_declarations_mode) == Mode::STRICT_STRINGIFIED
+        foobara_manifest_context_mode == Mode::STRICT_STRINGIFIED
       end
 
       # TODO: we should desugarize these but can't because of a bug where desugarizing entities results in creating the
@@ -93,6 +88,36 @@ module Foobara
         declaration2 = declaration2.reject { |(k, _v)| k.to_s.start_with?("_") }.to_h
 
         declaration1 == declaration2
+      end
+
+      def foobara_manifest_context
+        Thread.foobara_var_get("foobara_manifest_context")
+      end
+
+      allowed_context_keys = %i[detached to_include mode remove_sensitive_types]
+      booleans = %i[detached remove_sensitive_types]
+
+      booleans.each do |context_item|
+        define_method "foobara_manifest_context_#{context_item}?" do
+          foobara_manifest_context&.[](context_item)
+        end
+      end
+
+      (allowed_context_keys - booleans).each do |context_item|
+        define_method "foobara_manifest_context_#{context_item}" do
+          foobara_manifest_context&.[](context_item)
+        end
+      end
+
+      def with_manifest_context(context)
+        old_context = foobara_manifest_context
+        begin
+          new_context = (old_context || {}).merge(context)
+          Thread.foobara_var_set("foobara_manifest_context", new_context)
+          yield
+        ensure
+          Thread.foobara_var_set("foobara_manifest_context", old_context)
+        end
       end
     end
   end

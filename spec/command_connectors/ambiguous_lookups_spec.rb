@@ -126,7 +126,7 @@ RSpec.describe Foobara::CommandConnector do
   describe "#foobara_manifest" do
     context "when detached" do
       around do |example|
-        Thread.foobara_with_var("foobara_manifest_context", detached: true) do
+        Foobara::TypeDeclarations.with_manifest_context(detached: true) do
           example.run
         end
       end

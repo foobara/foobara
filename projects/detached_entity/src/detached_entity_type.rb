@@ -57,7 +57,7 @@ module Foobara
     end
 
     def detached_context?
-      Thread.foobara_var_get("foobara_manifest_context")&.[](:detached)
+      TypeDeclarations.foobara_manifest_context_detached?
     end
   end
 end
