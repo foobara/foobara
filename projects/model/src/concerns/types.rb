@@ -198,8 +198,8 @@ module Foobara
 
             delegates[attribute_name] = delegate_manifest
 
-            # Do we want this? It seems problematic, otherwise. We would need to find
-            # attributes attribute_name => delegated_type_declaration
+            delegated_type_declaration = model_type.type_at_path(data_path).reference_or_declaration_data
+            attributes attribute_name => delegated_type_declaration
 
             define_method attribute_name do
               data_path.value_at(self)

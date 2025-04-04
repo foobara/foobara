@@ -39,7 +39,7 @@ module Foobara
             return
           end
 
-          inputs_type.runner(raw_inputs).process_value
+          outcome = inputs_type.runner(raw_inputs).process_value
 
           if outcome.success?
             @inputs = outcome.result
