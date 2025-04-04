@@ -190,6 +190,7 @@ module Foobara
           def delegate_attribute(attribute_name, data_path, writer: false)
             data_path = DataPath.for(data_path)
 
+            # TODO: make use of this somewhere
             delegated_type_declaration = model_type.type_at_path(data_path).reference_or_declaration_data
 
             delegate_manifest = { data_path: data_path.to_s }
@@ -200,7 +201,8 @@ module Foobara
 
             delegates[attribute_name] = delegate_manifest
 
-            attributes attribute_name => delegated_type_declaration
+            # Do we want this?
+            # attributes attribute_name => delegated_type_declaration
 
             define_method attribute_name do
               data_path.value_at(self)

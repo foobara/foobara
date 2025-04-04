@@ -23,6 +23,7 @@ module Foobara
 
       if detached_context?
         declaration_data = manifest[:declaration_data]
+
         if self.class.type_requires_conversion?(declaration_data[:type])
           declaration_data = declaration_data.merge(type: :detached_entity)
         end
@@ -31,6 +32,10 @@ module Foobara
           declaration_data = declaration_data.merge(model_base_class: "Foobara::DetachedEntity")
         end
 
+        # TODO: remove private attributes, add delegated attributes
+        # re: delegated attribute type... it can be required if required entire way, can be
+        # allow_nil if allow_nil anywhere along the way.
+        # remove private and delegated from the manifest hash.
         manifest = manifest.merge(declaration_data:)
       end
 
