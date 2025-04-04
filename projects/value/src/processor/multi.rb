@@ -32,10 +32,12 @@ module Foobara
           return @possible_errors if @possible_errors
 
           h = super.to_h do |possible_error|
+            binding.pry if possible_error.key.to_s =~ /fan_count/
             [possible_error.key.to_s, possible_error]
           end
 
           processors.map(&:possible_errors).flatten.each do |possible_error|
+            binding.pry if possible_error.key.to_s =~ /fan_count/
             h[possible_error.key.to_s] = possible_error
           end
 

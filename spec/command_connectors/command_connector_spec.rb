@@ -1668,7 +1668,7 @@ RSpec.describe Foobara::CommandConnector do
           end.id
         end
 
-        it "finds the user", :focus do
+        it "finds the user" do
           expect(response.status).to be(0)
           expect(JSON.parse(response.body)).to eq(
             "id" => user_id,

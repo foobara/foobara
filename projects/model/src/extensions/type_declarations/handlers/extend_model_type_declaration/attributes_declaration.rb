@@ -61,6 +61,7 @@ module Foobara
           end
 
           def possible_errors
+            binding.pry
             possibilities = [*super]
 
             element_type_declarations.each_pair do |attribute_name, attribute_declaration|

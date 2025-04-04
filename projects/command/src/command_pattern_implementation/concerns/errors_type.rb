@@ -104,6 +104,7 @@ module Foobara
               manually_added_possible_input_errors << possible_error
             end
 
+            binding.pry if name =~ /Fan/
             error_context_type_map[possible_error.key.to_s] = possible_error
           end
 

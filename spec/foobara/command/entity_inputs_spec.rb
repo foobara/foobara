@@ -90,7 +90,7 @@ RSpec.describe "Entity inputs for commands" do
   end
 
   describe ".possible_errors" do
-    it "does not include creation errors for nested entities" do
+    it "does not include creation errors for nested entities", :focus do
       User.transaction do
         user1 = CreateUser.run!(name: "Some User1")
         user2 = CreateUser.run!(name: "Some User2")
@@ -116,6 +116,9 @@ RSpec.describe "Entity inputs for commands" do
         "data.fan_count.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
         "data.fan_count.max_exceeded": Foobara::BuiltinTypes::Number::SupportedValidators::Max::MaxExceededError
       )
+
+      binding.pry
+      CreateFan.possible_errors
 
       expect(CreateFan.possible_errors.to_h { |p| [p.key.to_sym, p.error_class] }).to eq(
         "data.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
