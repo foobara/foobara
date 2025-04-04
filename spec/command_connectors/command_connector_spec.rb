@@ -1587,6 +1587,99 @@ RSpec.describe Foobara::CommandConnector do
       end
     end
 
+    context "when command returns an entity that has delegated attributes" do
+      before do
+        Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
+      end
+
+      let(:default_serializers) do
+        [
+          Foobara::CommandConnectors::Serializers::ErrorsSerializer,
+          Foobara::CommandConnectors::Serializers::AtomicSerializer,
+          Foobara::CommandConnectors::Serializers::JsonSerializer
+        ]
+      end
+
+      # TODO: make this a default based on a flag
+      let(:pre_commit_transformers) do
+        Foobara::CommandConnectors::Transformers::LoadDelegatedAttributesEntitiesPreCommitTransformer
+      end
+
+      let(:command_class) do
+        user_class
+
+        stub_class(:CreateUser, Foobara::Command) do
+          inputs User.attributes_for_create
+          result :User
+
+          def execute
+            User.create(inputs)
+          end
+        end
+
+        stub_class(:QueryUser, Foobara::Command) do
+          inputs user: User
+          result :User
+
+          load_all
+
+          def execute
+            user
+          end
+        end
+      end
+
+      let(:full_command_name) { "QueryUser" }
+      let(:inputs) { { user: user_id } }
+
+      let(:user_class) do
+        auth_user_class
+        stub_class(:User, Foobara::Entity) do
+          attributes do
+            id :integer
+            name :string
+            auth_user AuthUser, :required, :private
+          end
+
+          primary_key :id
+          delegate_attribute :username, %i[auth_user username]
+        end
+      end
+
+      let(:auth_user_class) do
+        stub_class(:AuthUser, Foobara::Entity) do
+          attributes do
+            id :integer
+            username :string
+          end
+
+          primary_key :id
+        end
+      end
+
+      context "when user exists" do
+        let(:user_id) do
+          CreateUser.run!(name: :whatever, auth_user: auth_user_id).id
+        end
+        let(:username) { "some_username" }
+        let(:auth_user_id) do
+          AuthUser.transaction do
+            AuthUser.create(username:)
+          end.id
+        end
+
+        it "finds the user", :focus do
+          expect(response.status).to be(0)
+          expect(JSON.parse(response.body)).to eq(
+            "id" => user_id,
+            "name" => "whatever",
+            "username" => username,
+            "auth_user" => auth_user_id
+          )
+        end
+      end
+    end
+
     describe "connector manifest" do
       describe "#manifest" do
         let(:manifest) { command_connector.foobara_manifest }

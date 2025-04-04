@@ -1,14 +1,16 @@
+require_relative "success_serializer"
+
 module Foobara
   module CommandConnectors
     module Serializers
-      class AtomicSerializer < SuccessSerializer
+      class AtomicSerializerWithoutDelegatedAttributes < SuccessSerializer
         def serialize(object)
           if object.is_a?(Model)
             if object.is_a?(Entity) && !object.built? && !object.loaded?
               object.class.load(object)
             end
 
-            object = object.attributes_with_delegates
+            object = object.attributes
           end
 
           entities_to_primary_keys_serializer.serialize(object)

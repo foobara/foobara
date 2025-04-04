@@ -31,13 +31,64 @@ module Foobara
 
           # TODO: we should have metadata on the entity about whether it required a primary key
           # upon creation or not instead of an option here.
-          def foobara_attributes_for_create(includes_primary_key: false)
-            return foobara_attributes_type if includes_primary_key
-            return foobara_attributes_type unless foobara_has_primary_key?
+          def foobara_attributes_for_create(
+            includes_primary_key: false, # usually the underlying data store creates this
+            include_private: true, # we usually need to initialize these values to something but not always
+            include_delegates: false # usually these are already set on the passed-in objects it delegates to
+          )
+            delegated_attribute_writers = {}
+
+            delegates.each_pair do |attribute_name, delegate_info|
+              if delegate_info[:writer]
+                delegated_attribute_writers[attribute_name] = delegate_info[:data_path]
+              end
+            end
+
+            if includes_primary_key && includes_private
+              if includes_delegates
+                unless delegated_attribute_writers.any?
+                  return foobara_attributes_type
+                end
+              else
+                return foobara_attributes_type
+              end
+            end
 
             declaration = foobara_attributes_type.declaration_data
 
-            Foobara::TypeDeclarations::Attributes.reject(declaration, foobara_primary_key_attribute)
+            unless includes_primary_key
+              declaration = Foobara::TypeDeclarations::Attributes.reject(declaration, foobara_primary_key_attribute)
+            end
+
+            unless include_private
+              declaration = Foobara::TypeDeclarations::Attributes.reject(declaration, *private_attribute_names)
+            end
+
+            if delegated_attribute_writers.any?
+              handler = Foobara::Domain.global.foobara_type_builder.handler_for_class(
+                Foobara::TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
+              )
+
+              delegated_attribute_writers.each_pair do |attribute_name, data_path|
+                data_path = DataPath.for(data_path)
+
+                delegated_type_declaration = model_type.type_at_path(data_path).reference_or_declaration_data
+                # TODO: I think if it's required the whole way we should make it required and if it is allow_nil
+                # anywhere along the way we should make it allow_nil. We should also detect defaults in the parent
+                # if the parent is attributes and use it here.
+                delegated_attributes_declaration = handler.desugarize(
+                  type: "::attributes",
+                  element_type_declarations: { attribute_name => delegated_type_declaration }
+                )
+
+                declaration = TypeDeclarations::Attributes.merge(
+                  declaration,
+                  delegated_attributes_declaration
+                )
+              end
+            end
+
+            declaration
           end
 
           def foobara_attributes_for_aggregate_update(require_primary_key: true, initial: true)

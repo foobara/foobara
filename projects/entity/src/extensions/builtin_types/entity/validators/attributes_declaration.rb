@@ -2,7 +2,7 @@ module Foobara
   module BuiltinTypes
     module Entity
       module Validators
-        class AttributesDeclaration < DetachedEntity::Validators::AttributesDeclaration
+        class ModelInstanceIsValid < DetachedEntity::Validators::ModelInstanceIsValid
           def applicable?(record)
             record.created? || record.built?
           end

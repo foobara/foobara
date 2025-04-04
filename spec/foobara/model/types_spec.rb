@@ -5,7 +5,7 @@ RSpec.describe Foobara::Model do
 
   describe ".delegate_attribute" do
     let(:auth_user_class) do
-      stub_class(:AuthUser, Foobara::Model) do
+      stub_class(:AuthUser, described_class) do
         attributes do
           username :string, :required
           email :string
@@ -15,7 +15,7 @@ RSpec.describe Foobara::Model do
     let(:user_class) do
       auth_user
 
-      stub_class(:User, Foobara::Model) do
+      stub_class(:User, described_class) do
         attributes do
           auth_user AuthUser, :required
           some_attribute :integer
@@ -224,7 +224,7 @@ RSpec.describe Foobara::Model do
 
   describe ".private_attribute" do
     let(:auth_user_class) do
-      stub_class(:AuthUser, Foobara::Model) do
+      stub_class(:AuthUser, described_class) do
         attributes do
           username :string, :required
           email :string
@@ -234,7 +234,7 @@ RSpec.describe Foobara::Model do
     let(:user_class) do
       auth_user
 
-      stub_class(:User, Foobara::Model) do
+      stub_class(:User, described_class) do
         attributes do
           auth_user AuthUser, :required, :private
           some_attribute :integer

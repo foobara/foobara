@@ -2,7 +2,7 @@ module Foobara
   module BuiltinTypes
     module Model
       module Validators
-        class AttributesDeclaration < TypeDeclarations::Processor
+        class ModelInstanceIsValid < TypeDeclarations::Processor
           class << self
             def requires_parent_declaration_data?
               true

@@ -65,7 +65,6 @@ module Foobara
               :model_class,
               :model_base_class,
               :model_module,
-              :attributes_declaration,
               :delegates,
               :private,
               *super
