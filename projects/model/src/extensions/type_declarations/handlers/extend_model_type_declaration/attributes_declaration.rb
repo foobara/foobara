@@ -60,22 +60,22 @@ module Foobara
             Outcome.new(result: attributes_hash, errors:)
           end
 
-          def possible_errors
-            binding.pry
-            possibilities = [*super]
-
-            element_type_declarations.each_pair do |attribute_name, attribute_declaration|
-              attribute_type = type_for_declaration(attribute_declaration)
-
-              attribute_type.possible_errors.each do |possible_error|
-                possible_error = possible_error.dup
-                possible_error.prepend_path!(attribute_name)
-                possibilities << possible_error
-              end
-            end
-
-            possibilities
-          end
+          # def possible_errors
+          #   binding.pry
+          #   possibilities = [*super]
+          #
+          #   element_type_declarations.each_pair do |attribute_name, attribute_declaration|
+          #     attribute_type = type_for_declaration(attribute_declaration)
+          #
+          #     attribute_type.possible_errors.each do |possible_error|
+          #       possible_error = possible_error.dup
+          #       possible_error.prepend_path!(attribute_name)
+          #       possibilities << possible_error
+          #     end
+          #   end
+          #
+          #   possibilities
+          # end
 
           def element_type_declarations
             declaration_data[:element_type_declarations]
