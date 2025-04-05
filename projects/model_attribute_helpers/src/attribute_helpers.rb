@@ -36,59 +36,29 @@ module Foobara
             include_private: true, # we usually need to initialize these values to something but not always
             include_delegates: false # usually these are already set on the passed-in objects it delegates to
           )
-            delegated_attribute_writers = {}
-
-            delegates.each_pair do |attribute_name, delegate_info|
-              if delegate_info[:writer]
-                delegated_attribute_writers[attribute_name] = delegate_info[:data_path]
-              end
-            end
-
-            if includes_primary_key && includes_private
-              if includes_delegates
-                unless delegated_attribute_writers.any?
-                  return foobara_attributes_type
-                end
-              else
+            if includes_primary_key && include_private
+              if include_delegates || delegates.empty?
                 return foobara_attributes_type
               end
             end
 
             declaration = foobara_attributes_type.declaration_data
 
-            unless includes_primary_key
-              declaration = Foobara::TypeDeclarations::Attributes.reject(declaration, foobara_primary_key_attribute)
-            end
-
-            unless include_private
-              declaration = Foobara::TypeDeclarations::Attributes.reject(declaration, *private_attribute_names)
-            end
-
-            if delegated_attribute_writers.any?
-              handler = Foobara::Domain.global.foobara_type_builder.handler_for_class(
-                Foobara::TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
-              )
-
-              delegated_attribute_writers.each_pair do |attribute_name, data_path|
-                data_path = DataPath.for(data_path)
-
-                delegated_type_declaration = model_type.type_at_path(data_path).reference_or_declaration_data
-                # TODO: I think if it's required the whole way we should make it required and if it is allow_nil
-                # anywhere along the way we should make it allow_nil. We should also detect defaults in the parent
-                # if the parent is attributes and use it here.
-                delegated_attributes_declaration = handler.desugarize(
-                  type: "::attributes",
-                  element_type_declarations: { attribute_name => delegated_type_declaration }
-                )
-
-                declaration = TypeDeclarations::Attributes.merge(
-                  declaration,
-                  delegated_attributes_declaration
-                )
+            Namespace.use foobara_attributes_type.created_in_namespace do
+              unless includes_primary_key
+                declaration = Foobara::TypeDeclarations::Attributes.reject(declaration, foobara_primary_key_attribute)
               end
-            end
 
-            declaration
+              unless include_private
+                declaration = Foobara::TypeDeclarations::Attributes.reject(declaration, *private_attribute_names)
+              end
+
+              unless include_delegates
+                declaration = Foobara::TypeDeclarations::Attributes.reject(declaration, *delegates.keys)
+              end
+
+              Domain.current.foobara_type_from_declaration(declaration)
+            end
           end
 
           def foobara_attributes_for_aggregate_update(require_primary_key: true, initial: true)

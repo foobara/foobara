@@ -166,16 +166,6 @@ module Foobara
           end
 
           def private_attribute(attribute_name)
-            if respond_to?(attribute_name)
-              private attribute_name
-            end
-
-            writer = :"#{attribute_name}="
-
-            if respond_to?(writer)
-              private writer
-            end
-
             @private_attribute_names = private_attribute_names | [attribute_name]
 
             set_model_type
