@@ -50,8 +50,6 @@ RSpec.describe "Entity inputs for commands" do
       element_type_declarations[:fan_of][:element_type_declaration] = { type: :User, mutable: ["fan_count"] }
       element_type_declarations[:owner][:mutable] = false
 
-      $stop = true
-
       inputs inputs_type_declaration
       result Fan
 

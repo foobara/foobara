@@ -76,7 +76,6 @@ module Foobara
               attribute_type.possible_errors.each do |possible_error|
                 possible_error = possible_error.dup
                 possible_error.prepend_path!(attribute_name)
-                binding.pry if possible_error.key.to_s =~ /fan_count/ && $stop = true
                 possibilities << possible_error
               end
             end

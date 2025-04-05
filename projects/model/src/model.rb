@@ -125,7 +125,6 @@ module Foobara
       end
 
       def possible_errors(mutable: true)
-        binding.pry if name =~ /Fan/
         if mutable == true
           attributes_type.possible_errors
         elsif mutable
