@@ -91,7 +91,7 @@ module Foobara
           end
 
           def that_owns(record, filters = [])
-            containing_records = that_own(record, filters)
+            containing_records = that_own(record, filters).to_a
 
             unless containing_records.empty?
               if containing_records.size == 1
@@ -107,42 +107,40 @@ module Foobara
           def that_own(record, filters = [])
             association_key = association_for([record.class, *filters])
 
-            data_path = DataPath.new(association_key)
+            possible_direct_owner_path = DataPath.new(association_key)
 
-            done = false
+            # We need to find the second-to-last entity in the association path
+            attribute_path = []
+            owning_entity_class = nil
 
-            containing_records = Util.array(record)
+            begin
+              attribute_path.unshift(possible_direct_owner_path.last)
+              possible_direct_owner_path = DataPath.new(possible_direct_owner_path.path[0..-2])
 
-            until done
-              last = data_path.path.last
+              owning_entity_class = if possible_direct_owner_path.empty?
+                                      self
+                                    else
+                                      deep_associations[possible_direct_owner_path.to_s]&.target_class
+                                    end
+            end until owning_entity_class
 
-              if last == :"#"
-                method = :find_all_by_attribute_containing_any_of
-                attribute_name = data_path.path[-2]
-                data_path = DataPath.new(data_path.path[0..-3])
-              else
-                method = :find_all_by_attribute_any_of
-                attribute_name = last
-                data_path = DataPath.new(data_path.path[0..-2])
-              end
-
-              containing_entity_class_path = data_path.to_s
-
-              entity_class = if containing_entity_class_path.empty?
-                               done = true
-                               self
-                             else
-                               deep_associations[
-                                 containing_entity_class_path
-                               ].target_class
-                             end
-
-              containing_records = entity_class.send(method, attribute_name, containing_records).to_a
-
-              done = true unless containing_records
+            if attribute_path.size == 1
+              attribute_path = attribute_path.first
             end
 
-            containing_records
+            if owning_entity_class == self
+              owning_entity_class.find_all_by_attribute(attribute_path, record)
+            else
+              Enumerator.new do |yielder|
+                owners = owning_entity_class.find_all_by_attribute(attribute_path, record)
+
+                owners.each do |owner|
+                  that_own(owner, filters).each do |r|
+                    yielder.yield(r)
+                  end
+                end
+              end
+            end
           end
         end
       end

@@ -31,13 +31,34 @@ module Foobara
 
           # TODO: we should have metadata on the entity about whether it required a primary key
           # upon creation or not instead of an option here.
-          def foobara_attributes_for_create(includes_primary_key: false)
-            return foobara_attributes_type if includes_primary_key
-            return foobara_attributes_type unless foobara_has_primary_key?
+          def foobara_attributes_for_create(
+            includes_primary_key: false, # usually the underlying data store creates this
+            include_private: true, # we usually need to initialize these values to something but not always
+            include_delegates: false # usually these are already set on the passed-in objects it delegates to
+          )
+            if includes_primary_key && include_private
+              if include_delegates || delegates.empty?
+                return foobara_attributes_type
+              end
+            end
 
             declaration = foobara_attributes_type.declaration_data
 
-            Foobara::TypeDeclarations::Attributes.reject(declaration, foobara_primary_key_attribute)
+            Namespace.use foobara_attributes_type.created_in_namespace do
+              unless includes_primary_key
+                declaration = Foobara::TypeDeclarations::Attributes.reject(declaration, foobara_primary_key_attribute)
+              end
+
+              unless include_private
+                declaration = Foobara::TypeDeclarations::Attributes.reject(declaration, *private_attribute_names)
+              end
+
+              unless include_delegates
+                declaration = Foobara::TypeDeclarations::Attributes.reject(declaration, *delegates.keys)
+              end
+
+              Domain.current.foobara_type_from_declaration(declaration)
+            end
           end
 
           def foobara_attributes_for_aggregate_update(require_primary_key: true, initial: true)

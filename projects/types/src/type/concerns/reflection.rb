@@ -97,15 +97,14 @@ module Foobara
 
             next_type = case path_part
                         when :"#"
-                          # TODO: test this code path
-                          # :nocov:
                           unless element_type
+                            # :nocov:
                             raise "Expected element_type to be set but is not"
+                            # :nocov:
                           end
 
                           element_type
-                          # :nocov:
-                        when Symbol, Integer
+                        when Symbol
                           case element_types
                           when ::Hash
                             unless element_types.key?(path_part)
@@ -115,19 +114,33 @@ module Foobara
                             end
 
                             element_types[path_part]
-                          when ::Array
-                            # TODO: test this code path
-                            # :nocov:
-                            element_types[path_part]
-                            # :nocov:
+                          when Types::Type
+                            unless element_types.extends?(BuiltinTypes[:attributes])
+                              # :nocov:
+                              raise "Expected element type to be a Type but is not"
+                              # :nocov:
+                            end
+
+                            # TODO: We assume it's attributes here but maybe we should assert that
+                            element_types.element_types[path_part]
                           when nil
                             # :nocov:
                             raise "Expected element_types to be set but is not"
                             # :nocov:
                           else
-                            # we will just assume it's an attributes here and delegate to it
-                            path_parts = [path_part, *path_parts]
-                            element_types
+                            # :nocov:
+                            raise "Unsure how to handle path part #{path_part}"
+                            # :nocov:
+                          end
+                        when Integer
+                          if extends?(BuiltinTypes[:tuple])
+                            element_types[path_part]
+                          elsif extends?(BuiltinTypes[:array])
+                            element_type
+                          else
+                            # :nocov:
+                            raise "Unsure how to handle path part #{path_part}"
+                            # :nocov:
                           end
                         else
                           # :nocov:

@@ -190,6 +190,8 @@ RSpec.describe Foobara::Entity do
         [a.id, a.user.id]
       end
 
+      user = nil
+
       User.transaction do
         expect(Employee.all[1].past_users).to eq([])
         # TODO: create .first query
@@ -213,8 +215,11 @@ RSpec.describe Foobara::Entity do
       end
 
       User.transaction do
-        # This tests the situation where the records have to be fetch from the database to answer the question
+        # This tests the situation where the records have to be fetched from the database to answer the question
         # which covers a few lines of code that might not be hit by the above transaction
+        expect(Applicant.find_all_by_attribute_any_of(:user, user).first.id).to eq(applicant_id)
+      end
+      User.transaction do
         expect(Applicant.that_owns(User.thunk(user_id))).to eq(Applicant.thunk(applicant_id))
       end
 

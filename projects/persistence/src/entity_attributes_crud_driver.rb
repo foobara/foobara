@@ -155,7 +155,31 @@ module Foobara
         end
 
         def matches_attributes_filter?(attributes, attributes_filter)
-          attributes_filter.all? { |attribute_name, value| attributes[attribute_name] == value }
+          attributes_filter.all? do |attribute_name_or_path, value|
+            type = nil
+
+            if attribute_name_or_path.is_a?(::Array)
+              values = DataPath.values_at(attribute_name_or_path, attributes)
+
+              if values.include?(value)
+                true
+              else
+                type ||= entity_class.model_type.type_at_path(attribute_name_or_path)
+                if type.extends?(:detached_entity)
+                  values.any? do |v|
+                    value.primary_key == v
+                  end
+                end
+              end
+            elsif attributes[attribute_name_or_path] == value
+              true
+            else
+              type ||= entity_class.model_type.type_at_path(attribute_name_or_path)
+              if type.extends?(:detached_entity)
+                value.primary_key == attributes[attribute_name_or_path]
+              end
+            end
+          end
         end
 
         def insert(_attributes)

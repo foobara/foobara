@@ -225,8 +225,8 @@ module Foobara
           find_by(attribute_name => value)
         end
 
-        def find_all_by_attribute(attribute_name, value)
-          find_many_by(attribute_name => value)
+        def find_all_by_attribute(attribute_name_or_path, value)
+          find_many_by(attribute_name_or_path => value)
         end
 
         def find_by_attribute_containing(attribute_name, value)
@@ -283,13 +283,38 @@ module Foobara
 
         def find_many_by(attributes_filter)
           find_by_type = entity_class.domain.foobara_type_from_declaration(entity_class.attributes_for_find_by)
-          attributes_filter = find_by_type.process_value!(attributes_filter)
+
+          path_filters = {}
+          regular_filters = {}
+
+          attributes_filter.each_pair do |attribute_name_or_path, value|
+            case attribute_name_or_path
+            when ::Symbol, ::String
+              regular_filters[attribute_name_or_path] = value
+            when ::Array, Value::DataPath
+              path_filters[attribute_name_or_path] = value
+            else
+              # :nocov:
+              raise "Unexpected filter type: #{attribute_name_or_path.class}"
+              # :nocov:
+            end
+          end
+
+          regular_filters = find_by_type.process_value!(regular_filters)
+
+          path_filters.keys.each do |path|
+            type = entity_class.deep_associations[DataPath.for(path).to_s]
+            path_filters[path] = type.process_value!(path_filters[path])
+          end
+
+          attributes_filter = regular_filters.merge(path_filters)
 
           yielded_ids = Set.new
 
           Enumerator.new do |yielder|
             tracked_records.each do |record|
               next if hard_deleted?(record)
+              next unless record.loaded? || record.built? || record.created?
 
               if entity_attributes_crud_driver_table.matches_attributes_filter?(record.attributes, attributes_filter)
                 yielded_ids << record.primary_key

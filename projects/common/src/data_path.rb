@@ -212,6 +212,14 @@ module Foobara
       self.class == other.class && path == other.path
     end
 
+    def last
+      path.last
+    end
+
+    def empty?
+      path.empty?
+    end
+
     private
 
     def normalize_all(key_parts)
