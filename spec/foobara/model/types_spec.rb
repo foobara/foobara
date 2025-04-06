@@ -5,7 +5,7 @@ RSpec.describe Foobara::Model do
 
   describe ".delegate_attribute" do
     let(:auth_user_class) do
-      stub_class(:AuthUser, Foobara::Model) do
+      stub_class(:AuthUser, described_class) do
         attributes do
           username :string, :required
           email :string
@@ -15,7 +15,7 @@ RSpec.describe Foobara::Model do
     let(:user_class) do
       auth_user
 
-      stub_class(:User, Foobara::Model) do
+      stub_class(:User, described_class) do
         attributes do
           auth_user AuthUser, :required
           some_attribute :integer
@@ -224,17 +224,20 @@ RSpec.describe Foobara::Model do
 
   describe ".private_attribute" do
     let(:auth_user_class) do
-      stub_class(:AuthUser, Foobara::Model) do
+      stub_class(:AuthUser, described_class) do
         attributes do
           username :string, :required
           email :string
+          ssn :string
         end
+
+        private_attribute(:ssn)
       end
     end
     let(:user_class) do
       auth_user
 
-      stub_class(:User, Foobara::Model) do
+      stub_class(:User, described_class) do
         attributes do
           auth_user AuthUser, :required, :private
           some_attribute :integer
@@ -260,10 +263,67 @@ RSpec.describe Foobara::Model do
         expect(user).to_not respond_to("username=")
         expect(user).to_not respond_to(:auth_user)
         expect(user_class.private_attribute_names).to eq(%i[auth_user])
+        expect(auth_user).to_not respond_to(:ssn)
       end
 
       it "contains the private attribute in the manifest" do
         expect(manifest[:private]).to eq([:auth_user])
+      end
+    end
+
+    context "with bad private attribute" do
+      context "with a non-existent attribute name" do
+        let(:user_declaration) do
+          {
+            type: :model,
+            name: "User",
+            attributes_declaration: {
+              type: :attributes,
+              element_type_declarations: {
+                name: :string,
+                password: :string
+              },
+              required: %i[name password]
+            },
+            private: [:some_invalid_attribute]
+          }
+        end
+
+        it "cannot create the type" do
+          expect {
+            Foobara::Domain.current.foobara_type_from_declaration(user_declaration)
+          }.to raise_error(
+            Foobara::TypeDeclarations::Handlers::ExtendModelTypeDeclaration::
+                ValidAttributeNames::InvalidPrivateValueGivenError
+          )
+        end
+      end
+
+      context "with a non-string/symbol" do
+        let(:user_declaration) do
+          {
+            type: :model,
+            name: "User",
+            attributes_declaration: {
+              type: :attributes,
+              element_type_declarations: {
+                name: :string,
+                password: :string
+              },
+              required: %i[name password]
+            },
+            private: [Object.new]
+          }
+        end
+
+        it "cannot create the type" do
+          expect {
+            Foobara::Domain.current.foobara_type_from_declaration(user_declaration)
+          }.to raise_error(
+            Foobara::TypeDeclarations::Handlers::ExtendModelTypeDeclaration::
+                ArrayWithSymbolicElements::InvalidPrivateValuesGivenError
+          )
+        end
       end
     end
 
@@ -276,7 +336,8 @@ RSpec.describe Foobara::Model do
             type: :attributes,
             element_type_declarations: {
               username: { type: :string },
-              email: { type: :string }
+              email: { type: :string },
+              ssn: { type: :string, private: true }
             },
             required: [:username]
           },
@@ -297,7 +358,7 @@ RSpec.describe Foobara::Model do
             required: [:auth_user]
           },
           delegates:,
-          private: [:auth_user]
+          private: ["auth_user"]
         }
       end
 

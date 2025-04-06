@@ -146,6 +146,7 @@ module Foobara
 
           p
         else
+          # Hmmm, can't there still be errors even if it's immutable?
           []
         end
       end
@@ -230,6 +231,14 @@ module Foobara
 
     def attributes
       @attributes ||= {}
+    end
+
+    def attributes_with_delegates
+      h = self.class.delegates.keys.to_h do |delegated_attribute_name|
+        [delegated_attribute_name, send(delegated_attribute_name)]
+      end
+
+      attributes.merge(h)
     end
 
     def write_attribute(attribute_name, value)

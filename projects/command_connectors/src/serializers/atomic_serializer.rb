@@ -8,7 +8,7 @@ module Foobara
               object.class.load(object)
             end
 
-            object = object.attributes
+            object = object.attributes_with_delegates
           end
 
           entities_to_primary_keys_serializer.serialize(object)

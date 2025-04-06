@@ -166,16 +166,6 @@ module Foobara
           end
 
           def private_attribute(attribute_name)
-            if respond_to?(attribute_name)
-              private attribute_name
-            end
-
-            writer = :"#{attribute_name}="
-
-            if respond_to?(writer)
-              private writer
-            end
-
             @private_attribute_names = private_attribute_names | [attribute_name]
 
             set_model_type
@@ -190,8 +180,6 @@ module Foobara
           def delegate_attribute(attribute_name, data_path, writer: false)
             data_path = DataPath.for(data_path)
 
-            delegated_type_declaration = model_type.type_at_path(data_path).reference_or_declaration_data
-
             delegate_manifest = { data_path: data_path.to_s }
 
             if writer
@@ -200,6 +188,7 @@ module Foobara
 
             delegates[attribute_name] = delegate_manifest
 
+            delegated_type_declaration = model_type.type_at_path(data_path).reference_or_declaration_data
             attributes attribute_name => delegated_type_declaration
 
             define_method attribute_name do

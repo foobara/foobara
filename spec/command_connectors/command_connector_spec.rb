@@ -1587,6 +1587,168 @@ RSpec.describe Foobara::CommandConnector do
       end
     end
 
+    context "when command returns an entity that has delegated attributes" do
+      before do
+        Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
+      end
+
+      let(:default_serializers) do
+        [
+          Foobara::CommandConnectors::Serializers::ErrorsSerializer,
+          Foobara::CommandConnectors::Serializers::AtomicSerializer,
+          Foobara::CommandConnectors::Serializers::JsonSerializer
+        ]
+      end
+
+      # TODO: make this a default based on a flag
+      let(:pre_commit_transformers) do
+        Foobara::CommandConnectors::Transformers::LoadDelegatedAttributesEntitiesPreCommitTransformer
+      end
+
+      let(:command_class) do
+        user_class
+
+        stub_class(:CreateUser, Foobara::Command) do
+          inputs User.attributes_for_create
+          result :User
+
+          def execute
+            User.create(inputs)
+          end
+        end
+
+        stub_class(:QueryUser, Foobara::Command) do
+          inputs do
+            stuff do
+              things :array do
+                auth_user AuthUser, :required
+              end
+            end
+          end
+
+          result do
+            stuff2 do
+              things2 :array do
+                user User, :required
+              end
+            end
+          end
+
+          load_all
+
+          def execute
+            user = User.that_owns(stuff[:things][0][:auth_user])
+            { stuff2: { things2: [{ user: }] } }
+          end
+        end
+      end
+
+      let(:full_command_name) { "QueryUser" }
+      let(:inputs) do
+        {
+          stuff: {
+            things: [{ auth_user: auth_user_id }]
+          }
+        }
+      end
+
+      let(:user_class) do
+        auth_user_class
+        stub_class(:User, Foobara::Entity) do
+          attributes do
+            id :integer
+            name :string
+            stuff do
+              things :array do
+                auth_user AuthUser, :required
+              end
+            end
+          end
+
+          primary_key :id
+          delegate_attribute :username, %i[stuff things 0 auth_user username]
+        end
+      end
+
+      let(:auth_user_class) do
+        stub_class(:AuthUser, Foobara::Entity) do
+          attributes do
+            id :integer
+            username :string
+          end
+
+          primary_key :id
+        end
+      end
+
+      context "when user exists" do
+        let(:user_id) do
+          CreateUser.run!(name: :whatever, stuff: { things: [{ auth_user: auth_user_id }] }).id
+        end
+
+        let(:username) { "some_username" }
+        let(:auth_user_id) do
+          AuthUser.transaction do
+            AuthUser.create(username:)
+          end.id
+        end
+
+        before do
+          user_id
+        end
+
+        it "finds the user" do
+          expect(response.status).to be(0)
+          expect(JSON.parse(response.body)).to eq(
+            "stuff2" => { "things2" => ["user" => 1] }
+          )
+        end
+
+        context "with a simple entity return type" do
+          let(:command_class) do
+            user_class
+
+            stub_class(:CreateUser, Foobara::Command) do
+              inputs User.attributes_for_create
+              result :User
+
+              def execute
+                User.create(inputs)
+              end
+            end
+
+            stub_class(:QueryUser, Foobara::Command) do
+              inputs do
+                stuff do
+                  things :array do
+                    auth_user AuthUser, :required
+                  end
+                end
+              end
+
+              result User
+
+              load_all
+
+              def execute
+                User.that_owns(stuff[:things][0][:auth_user])
+              end
+            end
+          end
+
+          it "responds with attributes that include the delegated attributes" do
+            expect(response.status).to be(0)
+            expect(JSON.parse(response.body)).to eq(
+              "id" => 1,
+              "name" => "whatever",
+              "stuff" => { "things" => [{ "auth_user" => 1 }] },
+              "username" => "some_username"
+            )
+          end
+        end
+      end
+    end
+
     describe "connector manifest" do
       describe "#manifest" do
         let(:manifest) { command_connector.foobara_manifest }
