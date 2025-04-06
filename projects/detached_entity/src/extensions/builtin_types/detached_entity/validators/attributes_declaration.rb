@@ -2,7 +2,7 @@ module Foobara
   module BuiltinTypes
     module DetachedEntity
       module Validators
-        class AttributesDeclaration < Model::Validators::AttributesDeclaration
+        class ModelInstanceIsValid < Model::Validators::ModelInstanceIsValid
           # Why is this here in entity/ instead of in model/?
           def possible_errors
             return [] if parent_declaration_data == { type: expected_type_symbol }
