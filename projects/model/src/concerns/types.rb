@@ -220,10 +220,12 @@ module Foobara
             attributes_type_declaration = TypeDeclarations.args_to_type_declaration(...)
 
             if attributes_type_declaration.is_a?(::Hash) || attributes_type_declaration.is_a?(Proc)
-              handler = Domain.current.foobara_type_builder.handler_for_class(
+              handler = domain.foobara_type_builder.handler_for_class(
                 TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
               )
-              attributes_type_declaration = handler.desugarize(attributes_type_declaration)
+              attributes_type_declaration = Namespace.use domain do
+                handler.desugarize(attributes_type_declaration)
+              end
 
               element_type_declarations = attributes_type_declaration[:element_type_declarations]
 
