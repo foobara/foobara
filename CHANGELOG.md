@@ -1,8 +1,10 @@
-# [0.0.93] - 2025-04-02
+# [0.0.93] - 2025-04-06
 
 - Add delegated attributes to models
+- Add private attributes to models
 - Pass manifest construction context through thread_parent instead of passing it everywhere
 - Various namespace lookup bugfixes
+- Various bugfixes for .find_all/many type of methods in both Model and crud drivers
 
 # [0.0.92] - 2025-04-01
 
