@@ -535,6 +535,29 @@ RSpec.describe Foobara::CommandConnector do
         expect(error["message"]).to eq("kaboom!")
         expect(error["is_fatal"]).to be(true)
       end
+
+      context "when not capturing unknown errors when connecting the command" do
+        let(:capture_unknown_error) { false }
+
+        it "explodes" do
+          expect { response }.to raise_error("kaboom!")
+        end
+
+        context "when capturing all unknown errors" do
+          let(:command_connector) do
+            described_class.new(authenticator:, default_serializers:, capture_unknown_error: true)
+          end
+
+          it "fails" do
+            expect(response.status).to be(1)
+
+            error = JSON.parse(response.body).find { |e| e["key"] == "runtime.unknown" }
+
+            expect(error["message"]).to eq("kaboom!")
+            expect(error["is_fatal"]).to be(true)
+          end
+        end
+      end
     end
 
     context "with a response mutator" do

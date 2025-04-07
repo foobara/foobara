@@ -4,8 +4,10 @@ module Foobara
   module CommandConnectors
     module Serializers
       class ErrorsSerializer < Serializer
-        def always_applicable?
-          !request.outcome.success?
+        def applicable?(error_collection)
+          if request.outcome.nil? || !request.outcome.success?
+            error_collection.has_errors?
+          end
         end
 
         def serialize(error_collection)
