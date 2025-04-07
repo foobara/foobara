@@ -1,3 +1,7 @@
+# [0.0.94] - 2025-04-07
+
+- Support capture_unknown_errors at the command connector level
+
 # [0.0.93] - 2025-04-06
 
 - Add delegated attributes to models

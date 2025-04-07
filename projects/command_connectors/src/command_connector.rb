@@ -86,6 +86,18 @@ module Foobara
       end
     end
 
+    attr_accessor :command_registry, :authenticator, :capture_unknown_error
+
+    def initialize(authenticator: nil, capture_unknown_error: nil, default_serializers: nil)
+      self.command_registry = CommandRegistry.new(authenticator:)
+      self.authenticator = authenticator
+      self.capture_unknown_error = capture_unknown_error
+
+      Util.array(default_serializers).each do |serializer|
+        add_default_serializer(serializer)
+      end
+    end
+
     def find_builtin_command_class(command_class_name)
       self.class.find_builtin_command_class(command_class_name)
     end
@@ -103,8 +115,6 @@ module Foobara
                      :each_transformed_command_class,
                      :all_transformed_command_classes,
                      to: :command_registry
-
-    attr_accessor :command_registry, :authenticator
 
     def lookup_command(name)
       command_registry.foobara_lookup_command(name)
@@ -237,13 +247,11 @@ module Foobara
     end
 
     def set_response_status(response)
-      outcome = response.request.outcome
-      response.status = outcome.success? ? 0 : 1
+      response.status = response.success? ? 0 : 1
     end
 
     def set_response_body(response)
       outcome = response.request.outcome
-      # response.body = outcome.success? ? outcome.result : outcome.error_collection
       response.body = outcome.success? ? outcome.result : outcome.error_collection
     end
 
@@ -260,15 +268,6 @@ module Foobara
 
       if command.respond_to?(:serialize_result)
         response.body = command.serialize_result(response.body)
-      end
-    end
-
-    def initialize(authenticator: nil, default_serializers: nil)
-      self.command_registry = CommandRegistry.new(authenticator:)
-      self.authenticator = authenticator
-
-      Util.array(default_serializers).each do |serializer|
-        add_default_serializer(serializer)
       end
     end
 
@@ -343,7 +342,7 @@ module Foobara
       end
 
       if command
-        command.run
+        run_command(request)
         # :nocov:
       elsif !request.error
         raise "No command returned from #request_to_command"
@@ -351,6 +350,16 @@ module Foobara
       end
 
       build_response(request)
+    end
+
+    def run_command(request)
+      request.command.run
+    rescue => e
+      if capture_unknown_error
+        request.error = CommandConnector::UnknownError.new(e)
+      else
+        raise
+      end
     end
 
     def authenticate(request)

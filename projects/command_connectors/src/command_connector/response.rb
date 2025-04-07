@@ -11,7 +11,13 @@ module Foobara
         self.body = body
       end
 
-      foobara_delegate :command, :error, to: :request
+      def command
+        request.command
+      end
+
+      def success?
+        request.success?
+      end
     end
   end
 end

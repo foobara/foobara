@@ -74,7 +74,13 @@ module Foobara
       end
 
       def outcome
-        command.outcome
+        outcome = command&.outcome
+
+        if outcome
+          outcome
+        elsif error
+          Outcome.error(error)
+        end
       end
 
       def result
