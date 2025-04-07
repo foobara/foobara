@@ -343,7 +343,7 @@ module Foobara
       end
 
       if command
-        command.run
+        run_command(request)
         # :nocov:
       elsif !request.error
         raise "No command returned from #request_to_command"
@@ -351,6 +351,10 @@ module Foobara
       end
 
       build_response(request)
+    end
+
+    def run_command(command)
+      request.command.run
     end
 
     def authenticate(request)

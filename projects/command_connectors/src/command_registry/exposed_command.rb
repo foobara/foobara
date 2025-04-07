@@ -113,6 +113,7 @@ module Foobara
       def transformed_command_class
         @transformed_command_class ||= if Util.all_blank_or_false?(
           [
+            capture_unknown_error,
             inputs_transformers,
             result_transformers,
             errors_transformers,
