@@ -7,6 +7,7 @@ module Foobara
       attr_accessor :command,
                     :error,
                     :command_connector,
+                    # Why aren't there serializers on the response?
                     :serializers,
                     :inputs,
                     :full_command_name,
@@ -15,7 +16,7 @@ module Foobara
       attr_reader :command_class
 
       def initialize(**opts)
-        valid_keys = %i[inputs full_command_name action]
+        valid_keys = %i[inputs full_command_name action serializers]
 
         invalid_keys = opts.keys - valid_keys
 
@@ -28,6 +29,7 @@ module Foobara
         self.inputs = opts[:inputs] if opts.key?(:inputs)
         self.action = opts[:action] if opts.key?(:action)
         self.full_command_name = opts[:full_command_name] if opts.key?(:full_command_name)
+        self.serializers = Util.array(opts[:serializers]) if opts.key?(:serializers)
       end
 
       def command_class=(klass)

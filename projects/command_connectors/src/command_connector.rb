@@ -325,17 +325,23 @@ module Foobara
     end
 
     def build_request(...)
-      self.class::Request.new(...)
+      self.class::Request.new(...).tap do |request|
+        # TODO: feels like a smell
+        request.command_connector = self
+      end
     end
 
     # TODO: maybe introduce a Runner interface?
-    def run(*, **)
+    def run(...)
       process_delayed_connections
 
-      request, command = build_request_and_command(*, **)
+      request = build_request(...)
 
-      # TODO: feels like a smell
-      request.command_connector = self
+      run_request(request)
+    end
+
+    def run_request(request)
+      command = build_command(request)
 
       if command.respond_to?(:requires_authentication?) && command.requires_authentication?
         authenticate(request)
@@ -379,15 +385,13 @@ module Foobara
       end
     end
 
-    def build_request_and_command(...)
-      request = build_request(...)
-
+    def build_command(request)
       unless request.error
         command = request_to_command(request)
         request.command = command
       end
 
-      [request, command]
+      command
     end
 
     def build_response(request)

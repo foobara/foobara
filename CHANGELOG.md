@@ -1,3 +1,7 @@
+# [0.0.95] - 2025-04-07
+
+- Split up #run and #build_request_and_command in CommandConnector to help subclasses
+
 # [0.0.94] - 2025-04-07
 
 - Support capture_unknown_errors at the command connector level
