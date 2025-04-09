@@ -1,3 +1,7 @@
+# [0.0.96] - 2025-04-08
+
+- Do not attempt to remove sensitive types from non-model extension declarations
+
 # [0.0.95] - 2025-04-07
 
 - Split up #run and #build_request_and_command in CommandConnector to help subclasses

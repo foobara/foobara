@@ -2,6 +2,10 @@ module Foobara
   class Model
     module SensitiveTypeRemovers
       class Model < TypeDeclarations::SensitiveTypeRemover
+        def applicable?(strict_type_declaration)
+          strict_type_declaration.is_a?(::Hash) && strict_type_declaration.key?(:attributes_declaration)
+        end
+
         def transform(strict_type_declaration)
           old_attributes_declaration = strict_type_declaration[:attributes_declaration]
 
