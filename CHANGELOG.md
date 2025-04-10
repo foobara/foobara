@@ -1,3 +1,7 @@
+# [0.0.97] - 2025-04-10
+
+- Make atomic serializer dig into first entity instead of staying at the top
+
 # [0.0.96] - 2025-04-08
 
 - Do not attempt to remove sensitive types from non-model extension declarations

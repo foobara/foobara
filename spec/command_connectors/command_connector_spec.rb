@@ -1723,7 +1723,16 @@ RSpec.describe Foobara::CommandConnector do
         it "finds the user" do
           expect(response.status).to be(0)
           expect(JSON.parse(response.body)).to eq(
-            "stuff2" => { "things2" => ["user" => 1] }
+            "stuff2" => {
+              "things2" => [
+                "user" => {
+                  "id" => user_id,
+                  "name" => "whatever",
+                  "stuff" => { "things" => [{ "auth_user" => auth_user_id }] },
+                  "username" => "some_username"
+                }
+              ]
+            }
           )
         end
 
