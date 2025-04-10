@@ -243,7 +243,9 @@ module Foobara
     end
 
     def request_to_response(request)
-      self.class::Response.new(request:)
+      response = self.class::Response.new(request:)
+      request.response = response
+      response
     end
 
     def set_response_status(response)

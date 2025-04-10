@@ -1,6 +1,7 @@
-# [0.0.97] - 2025-04-10
+# [0.0.98] - 2025-04-10
 
 - Make atomic serializer dig into first entity instead of staying at the top
+- Add Request#response
 
 # [0.0.96] - 2025-04-08
 

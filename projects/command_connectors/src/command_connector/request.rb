@@ -11,7 +11,8 @@ module Foobara
                     :serializers,
                     :inputs,
                     :full_command_name,
-                    :action
+                    :action,
+                    :response
 
       attr_reader :command_class
 
