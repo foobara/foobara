@@ -1,3 +1,7 @@
+# [0.0.99] - 2025-04-11
+
+- Just testing publishing gem to rubygems with new bundler to see if it resolves issue
+
 # [0.0.98] - 2025-04-10
 
 - Make atomic serializer dig into first entity instead of staying at the top
