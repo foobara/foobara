@@ -63,8 +63,8 @@ module Foobara
                 end
               else
                 # :nocov:
-                raise ArgumentError, "Not sure how to convert #{args.inspect} into an error. " \
-                                     "Can handle a hash of error " \
+                raise ArgumentError, "Not sure how to convert #{error_or_collection_or_error_hash.inspect} " \
+                                     "into an error. Can handle a hash of error " \
                                      "args or 3 arguments for symbol, message, and context, or, of course, an Error"
                 # :nocov:
               end
