@@ -5,7 +5,7 @@ module Foobara
     module Serializers
       class SuccessSerializer < Serializer
         def always_applicable?
-          request.outcome.success?
+          request.outcome&.success?
         end
       end
     end
