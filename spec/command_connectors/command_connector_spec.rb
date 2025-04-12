@@ -271,6 +271,7 @@ RSpec.describe Foobara::CommandConnector do
 
         it "does not include sensitive output values in the result" do
           expect(response.status).to be(0)
+          expect(response.error).to be_nil
           expect(JSON.parse(response.body)).to eq(
             "id" => 1,
             "username" => "foo",

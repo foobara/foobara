@@ -15,6 +15,10 @@ module Foobara
         request.command
       end
 
+      def error
+        request.error
+      end
+
       def success?
         request.success?
       end

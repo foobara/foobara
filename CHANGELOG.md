@@ -1,3 +1,7 @@
+# [0.0.100] - 2025-04-11
+
+- Restore missing Response#error
+
 # [0.0.99] - 2025-04-11
 
 - Just testing publishing gem to rubygems with new bundler to see if it resolves issue
