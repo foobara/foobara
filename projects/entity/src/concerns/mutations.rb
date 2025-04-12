@@ -9,6 +9,12 @@ module Foobara
           self.class.update_aggregate(self, value, type)
         end
 
+        def update(new_attributes)
+          new_attributes.each_pair do |attribute_name, value|
+            write_attribute(attribute_name, value)
+          end
+        end
+
         module ClassMethods
           def update_aggregate(object, value, type = object.class.model_type)
             return value if object.nil?

@@ -1,3 +1,7 @@
+# [0.0.101] - 2025-04-12
+
+- Add Entity#update
+
 # [0.0.100] - 2025-04-11
 
 - Restore missing Response#error
