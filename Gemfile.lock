@@ -4,6 +4,7 @@ PATH
     foobara (0.0.101)
       bigdecimal
       foobara-lru-cache (~> 0.0.2)
+      foobara-thread-parent (~> 0.0.1)
       foobara-util (~> 0.0.11)
 
 GEM
@@ -22,6 +23,7 @@ GEM
       rubocop-rspec
     foobara-spec-helpers (0.0.4)
       foobara-util
+    foobara-thread-parent (0.0.1)
     foobara-util (0.0.11)
     formatador (1.1.0)
     guard (2.19.1)

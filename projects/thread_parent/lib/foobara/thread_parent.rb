@@ -1,1 +1,0 @@
-module Foobara::ThreadParent; end

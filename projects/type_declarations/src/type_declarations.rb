@@ -1,3 +1,5 @@
+require "foobara/thread_parent"
+
 module Foobara
   require_project_file("type_declarations", "type_builder")
   require_project_file("type_declarations", "error_extension")

@@ -1,3 +1,7 @@
+# [0.0.102] - unreleased
+
+- Extract ThreadParent to its own repository/gem
+
 # [0.0.101] - 2025-04-12
 
 - Add Entity#update

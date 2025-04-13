@@ -1,3 +1,5 @@
+require "foobara/thread_parent"
+
 module Foobara
   module BuiltinTypes
     module Attributes

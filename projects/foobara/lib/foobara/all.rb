@@ -11,7 +11,6 @@ module Foobara
     # could be independent projects
     projects "delegate",
              "concerns",
-             "thread_parent",
              "weak_object_set",
              "enumerated",
              "callback",

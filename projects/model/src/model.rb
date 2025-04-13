@@ -1,3 +1,5 @@
+require "foobara/thread_parent"
+
 module Foobara
   # TODO: either make this an abstract base class of ValueModel and Entity or rename it to ValueModel
   # and have Entity inherit from it...
