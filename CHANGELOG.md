@@ -1,4 +1,4 @@
-# [0.0.102] - unreleased
+# [0.0.102] - 2025-04-13
 
 - Extract ThreadParent to its own repository/gem
 

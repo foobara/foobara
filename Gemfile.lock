@@ -1,11 +1,11 @@
 PATH
   remote: .
   specs:
-    foobara (0.0.101)
+    foobara (0.0.102)
       bigdecimal
       foobara-lru-cache (~> 0.0.2)
-      foobara-thread-parent (~> 0.0.1)
       foobara-util (~> 0.0.11)
+      inheritable-thread-vars (~> 0.0.1)
 
 GEM
   remote: https://rubygems.org/
@@ -23,7 +23,6 @@ GEM
       rubocop-rspec
     foobara-spec-helpers (0.0.4)
       foobara-util
-    foobara-thread-parent (0.0.1)
     foobara-util (0.0.11)
     formatador (1.1.0)
     guard (2.19.1)
@@ -42,6 +41,7 @@ GEM
       guard (~> 2.1)
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
+    inheritable-thread-vars (0.0.1)
     json (2.10.2)
     language_server-protocol (3.17.0.4)
     lint_roller (1.1.0)

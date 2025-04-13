@@ -1,4 +1,4 @@
-require "foobara/thread_parent"
+require "inheritable_thread_vars"
 
 module Foobara
   # TODO: either make this an abstract base class of ValueModel and Entity or rename it to ValueModel
@@ -182,7 +182,7 @@ module Foobara
       end
 
       if options[:ignore_unexpected_attributes]
-        Thread.foobara_with_var(:foobara_ignore_unexpected_attributes, true) do
+        Thread.with_inheritable_thread_local_var(:foobara_ignore_unexpected_attributes, true) do
           initialize(attributes, options.except(:ignore_unexpected_attributes))
           return
         end
@@ -197,7 +197,7 @@ module Foobara
           # :nocov:
         end
       else
-        if Thread.foobara_var_get(:foobara_ignore_unexpected_attributes)
+        if Thread.inheritable_thread_local_var_get(:foobara_ignore_unexpected_attributes)
           outcome = attributes_type.process_value(attributes)
 
           if outcome.success?

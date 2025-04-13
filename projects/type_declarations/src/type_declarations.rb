@@ -1,4 +1,4 @@
-require "foobara/thread_parent"
+require "inheritable_thread_vars"
 
 module Foobara
   require_project_file("type_declarations", "type_builder")
@@ -93,7 +93,7 @@ module Foobara
       end
 
       def foobara_manifest_context
-        Thread.foobara_var_get("foobara_manifest_context")
+        Thread.inheritable_thread_local_var_get("foobara_manifest_context")
       end
 
       allowed_context_keys = %i[detached to_include mode remove_sensitive]
@@ -119,10 +119,10 @@ module Foobara
         old_context = foobara_manifest_context
         begin
           new_context = (old_context || {}).merge(context)
-          Thread.foobara_var_set("foobara_manifest_context", new_context)
+          Thread.inheritable_thread_local_var_set("foobara_manifest_context", new_context)
           yield
         ensure
-          Thread.foobara_var_set("foobara_manifest_context", old_context)
+          Thread.inheritable_thread_local_var_set("foobara_manifest_context", old_context)
         end
       end
     end

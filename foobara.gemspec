@@ -29,8 +29,8 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "bigdecimal"
   spec.add_dependency "foobara-lru-cache", "~> 0.0.2"
-  spec.add_dependency "foobara-thread-parent", "~> 0.0.1"
   spec.add_dependency "foobara-util", "~> 0.0.11"
+  spec.add_dependency "inheritable-thread-vars", "~> 0.0.1"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html

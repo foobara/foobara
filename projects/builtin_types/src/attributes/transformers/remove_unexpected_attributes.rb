@@ -1,4 +1,4 @@
-require "foobara/thread_parent"
+require "inheritable_thread_vars"
 
 module Foobara
   module BuiltinTypes
@@ -12,7 +12,8 @@ module Foobara
           end
 
           def applicable?(hash)
-            Thread.foobara_var_get(:foobara_ignore_unexpected_attributes) && unexpected_attributes(hash).any?
+            Thread.inheritable_thread_local_var_get(:foobara_ignore_unexpected_attributes) &&
+              unexpected_attributes(hash).any?
           end
 
           def transform(hash)

@@ -1,4 +1,4 @@
-require "foobara/thread_parent"
+require "inheritable_thread_vars"
 
 module Foobara
   module Persistence
@@ -45,11 +45,11 @@ module Foobara
       end
 
       def current_transaction
-        Thread.foobara_var_get(transaction_key)
+        Thread.inheritable_thread_local_var_get(transaction_key)
       end
 
       def set_current_transaction(transaction)
-        Thread.foobara_var_set(transaction_key, transaction)
+        Thread.inheritable_thread_local_var_set(transaction_key, transaction)
       end
 
       VALID_MODES = [:use_existing, :open_nested, :open_new, nil].freeze
