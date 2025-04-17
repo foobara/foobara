@@ -9,7 +9,7 @@ module Foobara
 
   module Monorepo
     # could be independent projects
-    projects "delegate",
+    projects "delegate", # Let's just kill delegate
              "concerns",
              "weak_object_set",
              "enumerated",

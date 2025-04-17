@@ -243,7 +243,7 @@ RSpec.describe Foobara::Model do
           some_attribute :integer
         end
 
-        delegate_attribute(:username, %i[auth_user username])
+        delegate_attribute(:username, :auth_user)
       end
     end
 

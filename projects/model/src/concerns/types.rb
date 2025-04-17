@@ -173,11 +173,16 @@ module Foobara
 
           def delegate_attributes(delegates)
             delegates.each_pair do |attribute_name, delegate_info|
-              delegate_attribute(attribute_name, delegate_info[:data_path], writer: delegate_info[:writer])
+              data_path = DataPath.for(delegate_info[:data_path])
+              delegate_attribute(attribute_name, data_path, writer: delegate_info[:writer])
             end
           end
 
           def delegate_attribute(attribute_name, data_path, writer: false)
+            if data_path.is_a?(::Symbol) || data_path.is_a?(::String)
+              data_path = [data_path, attribute_name]
+            end
+
             data_path = DataPath.for(data_path)
 
             delegate_manifest = { data_path: data_path.to_s }
