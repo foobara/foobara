@@ -35,6 +35,10 @@ module Foobara
               entity_classes += Entity.construct_associations(
                 result_type
               ).values.uniq.map(&:target_class)
+
+              if result_type.extends?(BuiltinTypes[:entity])
+                entity_classes << result_type.target_class
+              end
             end
 
             entity_classes += entity_classes.uniq.map do |entity_class|

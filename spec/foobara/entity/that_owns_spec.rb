@@ -19,9 +19,7 @@ RSpec.describe Foobara::Entity do
   #
   # otherwise an exception will be thrown from .that_own
   describe ".that_owns" do
-    after do
-      Foobara.reset_alls
-    end
+    after { Foobara.reset_alls }
 
     before do
       Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new

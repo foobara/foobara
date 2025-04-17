@@ -154,8 +154,13 @@ module Foobara
           def construct_associations(
             type = attributes_type,
             path = DataPath.new,
-            result = {}
+            result = {},
+            initial: true
           )
+            if initial && type.extends?(BuiltinTypes[:detached_entity])
+              return construct_associations(type.element_types, path, result, initial: false)
+            end
+
             remove_sensitive = TypeDeclarations.foobara_manifest_context_remove_sensitive?
 
             if type.extends?(BuiltinTypes[:entity])
@@ -171,7 +176,7 @@ module Foobara
               end
 
               element_types&.each&.with_index do |element_type, index|
-                construct_associations(element_type, path.append(index), result)
+                construct_associations(element_type, path.append(index), result, initial: false)
               end
             elsif type.extends?(BuiltinTypes[:array])
               # TODO: what to do about an associative array type?? Unclear how to make a key from that...
@@ -179,7 +184,7 @@ module Foobara
               element_type = type.element_type
 
               if element_type && (!remove_sensitive || !element_type.sensitive?)
-                construct_associations(element_type, path.append(:"#"), result)
+                construct_associations(element_type, path.append(:"#"), result, initial: false)
               end
             elsif type.extends?(BuiltinTypes[:attributes]) # TODO: matches attributes itself instead of only subtypes
               type.element_types.each_pair do |attribute_name, element_type|
@@ -187,7 +192,7 @@ module Foobara
                   next
                 end
 
-                construct_associations(element_type, path.append(attribute_name), result)
+                construct_associations(element_type, path.append(attribute_name), result, initial: false)
               end
             elsif type.extends?(BuiltinTypes[:model])
               target_class = type.target_class
@@ -196,7 +201,7 @@ module Foobara
               attributes_type = target_class.send(method)
 
               if !remove_sensitive || !attributes_type.sensitive?
-                construct_associations(attributes_type, path, result)
+                construct_associations(attributes_type, path, result, initial: false)
               end
             elsif type.extends?(BuiltinTypes[:associative_array])
               # not going to bother testing this for now

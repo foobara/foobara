@@ -20,8 +20,6 @@ module Foobara
                     :validators,
                     :element_processors,
                     :structure_count,
-                    :element_types,
-                    :element_type,
                     :is_builtin,
                     :raw_declaration_data,
                     :name,
@@ -32,6 +30,9 @@ module Foobara
                     :processor_classes_requiring_type
 
       attr_reader :type_symbol
+
+      attr_writer :element_types,
+                  :element_type
 
       def initialize(
         *,
@@ -81,6 +82,14 @@ module Foobara
 
       def sensitive_exposed?
         sensitive_exposed
+      end
+
+      def element_type
+        @element_type || base_type&.element_type
+      end
+
+      def element_types
+        @element_types || base_type&.element_types
       end
 
       def has_sensitive_types?
