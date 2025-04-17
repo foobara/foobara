@@ -258,8 +258,6 @@ module Foobara
             [attribute_name,  element_types[attribute_name].process_value!(value)]
           end
 
-          attributes_filter = to_persistable(attributes_filter, false)
-
           tracked_records.each do |record|
             next if hard_deleted?(record)
 

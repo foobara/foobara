@@ -8,20 +8,30 @@ RSpec.describe Foobara::Persistence::CrudDrivers::InMemoryMinimal do
   end
 
   let(:entity_class) do
-    stub_class = ->(klass) { stub_const(klass.name, klass) }
+    stub_class "Details", Foobara::Model do
+      attributes do
+        name :string, :required
+      end
+    end
 
-    Class.new(Foobara::Entity) do
-      class << self
-        def name
-          "SomeEntity"
-        end
+    stub_class "Item", Foobara::Entity do
+      attributes do
+        id :integer
+        details Details, :required
       end
 
-      stub_class.call(self)
+      primary_key :id
+    end
 
-      attributes pk: :integer,
-                 foo: :integer,
-                 bar: :symbol
+    stub_class "SomeEntity", Foobara::Entity do
+      attributes do
+        pk :integer
+        foo :integer
+        bar :symbol
+        stuff do
+          items [Item]
+        end
+      end
 
       primary_key :pk
     end
@@ -43,6 +53,8 @@ RSpec.describe Foobara::Persistence::CrudDrivers::InMemoryMinimal do
         expect(entity_class.find_many_by(bar: "basil").to_a).to eq([entity3, entity4])
       end
 
+      entity8 = nil
+
       entity_class.transaction do
         entity5 = entity_class.create(foo: 55, bar: :baz)
         entity6 = entity_class.create(foo: 66, bar: :baz)
@@ -56,6 +68,22 @@ RSpec.describe Foobara::Persistence::CrudDrivers::InMemoryMinimal do
         expect(entity_class.find_many_by(foo: "11").to_a).to eq([entity1])
         expect(entity_class.find_many_by(foo: "66").to_a).to eq([entity6])
         expect(entity_class.find_many_by(bar: "basil").to_a).to eq([entity7, entity8, entity3, entity4])
+      end
+
+      item = nil
+
+      entity_class.transaction do
+        item = Item.create(details: { name: "foo" })
+        entity8 = entity_class.load(entity8.pk)
+        entity8.stuff = { items: [item] }
+
+        expect(entity_class.find_by(stuff: { items: [item] })).to eq(entity8)
+        expect(Item.find_by(details: Details.new(name: "foo"))).to eq(item)
+      end
+
+      entity_class.transaction do
+        expect(entity_class.find_by(stuff: { items: [item] })).to eq(entity8)
+        expect(Item.find_by(details: Details.new(name: "foo"))).to eq(item)
       end
     end
   end

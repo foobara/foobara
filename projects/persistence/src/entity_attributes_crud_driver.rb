@@ -1,4 +1,5 @@
 module Foobara
+  # Might be best to rename this to CrudDrivers or CrudDriver instead of Persistence?
   module Persistence
     class EntityAttributesCrudDriver
       attr_accessor :raw_connection, :tables
@@ -156,29 +157,39 @@ module Foobara
 
         def matches_attributes_filter?(attributes, attributes_filter)
           attributes_filter.all? do |attribute_name_or_path, value|
-            type = nil
+            value = normalize_attribute_filter_value(value)
 
             if attribute_name_or_path.is_a?(::Array)
               values = DataPath.values_at(attribute_name_or_path, attributes)
 
-              if values.include?(value)
-                true
-              else
-                type ||= entity_class.model_type.type_at_path(attribute_name_or_path)
-                if type.extends?(:detached_entity)
-                  values.any? do |v|
-                    value.primary_key == v
-                  end
-                end
+              values.any? do |attribute_value|
+                normalize_attribute_filter_value(attribute_value) == value
               end
-            elsif attributes[attribute_name_or_path] == value
-              true
             else
-              type ||= entity_class.model_type.type_at_path(attribute_name_or_path)
-              if type.extends?(:detached_entity)
-                value.primary_key == attributes[attribute_name_or_path]
-              end
+              attribute_value = attributes[attribute_name_or_path]
+              normalize_attribute_filter_value(attribute_value) == value
             end
+          end
+        end
+
+        def normalize_attribute_filter_value(value)
+          case value
+          when ::Array
+            value.map { |v| normalize_attribute_filter_value(v) }
+          when ::Hash
+            value.to_h do |k, v|
+              [normalize_attribute_filter_value(k), normalize_attribute_filter_value(v)]
+            end
+          when DetachedEntity
+            if value.persisted?
+              normalize_attribute_filter_value(value.primary_key)
+            else
+              value
+            end
+          when Model
+            normalize_attribute_filter_value(value.attributes)
+          else
+            value
           end
         end
 
