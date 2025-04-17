@@ -374,7 +374,7 @@ module Foobara
       request_command = request.command
 
       request_command.after_load_records do |command:, **|
-        authenticated_user = request.instance_eval(&authenticator)
+        authenticated_user = request.instance_exec(&authenticator)
 
         request_command.authenticated_user = authenticated_user
 

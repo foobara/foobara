@@ -556,9 +556,7 @@ module Foobara
 
       if rule
         command.after_load_records do |command:, **|
-          # NOTE: apparently no way to convert a lambda to a proc but lambda's won't work here...
-          # TODO: raise exception here if rule.lambda? is true, if this starts becoming a common error
-          is_allowed = instance_eval(&rule)
+          is_allowed = instance_exec(&rule)
 
           unless is_allowed
             explanation = allowed_rule.explanation
@@ -568,7 +566,18 @@ module Foobara
             end
 
             if explanation.nil?
-              explanation = allowed_rule.block.source || "No explanation."
+              source = begin
+                allowed_rule.block.source
+              rescue MethodSource::SourceNotFoundError
+                # This path is hit if the way the source code is extracted
+                # doesn't result in valid Ruby, for example, as part of a hash such as:
+                # allowed_rule: -> () { whatever?(something) },
+                # :nocov:
+                allowed_rule.block.source_location.join(":")
+                # :nocov:
+              end
+
+              explanation = source || "No explanation."
             end
 
             error = CommandConnector::NotAllowedError.new(rule_symbol: rule.symbol, explanation:)
