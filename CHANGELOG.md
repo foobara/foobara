@@ -1,3 +1,7 @@
+# [0.0.104] - 2025-04-17
+
+- Fix manifest bug when command has no possible errors
+
 # [0.0.103] - 2025-04-17
 
 - Fix bugs in complicated entity query calls involving mixtures of models/records/primary keys/attributes

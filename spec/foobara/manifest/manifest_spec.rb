@@ -106,6 +106,11 @@ RSpec.describe Foobara::Manifest do
     stub_class "GlobalCommand", Foobara::Command do
       possible_error GlobalError
     end
+
+    stub_class "CommandWithNoPossibleErrors", Foobara::Command do
+      def execute
+      end
+    end
   end
 
   let(:manifest) { Foobara::Manifest::RootManifest.new(raw_manifest) }
@@ -346,5 +351,8 @@ RSpec.describe Foobara::Manifest do
     expect(org.parent).to be_nil
     expect(manifest.organizations).to include(org)
     expect(org.organization_name).to eq("SomeOrg")
+
+    command = manifest.command_by_name("CommandWithNoPossibleErrors")
+    expect(command.possible_errors).to eq({})
   end
 end

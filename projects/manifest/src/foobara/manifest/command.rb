@@ -3,6 +3,8 @@ module Foobara
     class Command < BaseManifest
       self.category_symbol = :command
 
+      optional_key :possible_errors
+
       def requires_authentication?
         !!self[:requires_authentication]
       end
@@ -30,7 +32,7 @@ module Foobara
       end
 
       def possible_errors
-        super.keys.to_h do |key|
+        (super || {}).keys.to_h do |key|
           [key, PossibleError.new(root_manifest, [*path, :possible_errors, key])]
         end
       end
