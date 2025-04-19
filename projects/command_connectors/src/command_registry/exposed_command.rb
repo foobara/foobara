@@ -38,6 +38,10 @@ module Foobara
         aggregate_entities: nil,
         atomic_entities: nil
       )
+        if allowed_rule && authenticator && requires_authentication.nil?
+          requires_authentication = true
+        end
+
         if requires_authentication || allowed_rule
           errors_transformers = [
             *errors_transformers,

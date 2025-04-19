@@ -923,6 +923,10 @@ RSpec.describe Foobara::CommandConnector do
           let(:allowed_rule) do
             proc { base == 1900 }
           end
+          let(:authenticator) do
+            # normally we would return a user but we'll just use junk
+            proc { Object.new }
+          end
 
           it "fails with 401 and relevant error" do
             expect(response.status).to be(1)

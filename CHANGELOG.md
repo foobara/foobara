@@ -1,3 +1,7 @@
+# [unreleased] - 2025-04-19
+
+- Automatically set requires_authentication if there's an authenticator+allowed_rule for convenience.
+
 # [0.0.104] - 2025-04-17
 
 - Fix manifest bug when command has no possible errors
