@@ -1,5 +1,6 @@
-# [unreleased] - 2025-04-19
+# [0.0.105] - 2025-04-20
 
+- Support registering allowed_rule and authenticator on connectors and using them by symbol
 - Automatically set requires_authentication if there's an authenticator+allowed_rule for convenience.
 
 # [0.0.104] - 2025-04-17

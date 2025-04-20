@@ -6,6 +6,9 @@ module Foobara
 
     attr_accessor :authenticator, :default_allowed_rule
 
+    # Should we support different authenticators for different commands?
+    # Might be a smell of two domains co-habitating in one? Or maybe one is just
+    # passing another through and we should support that?
     def initialize(authenticator: nil)
       self.scoped_path = []
       self.authenticator = authenticator
@@ -50,7 +53,7 @@ module Foobara
       pre_commit_transformers: nil,
       serializers: nil,
       allowed_rule: default_allowed_rule,
-      authenticator: self.authenticator,
+      authenticator: nil,
       **opts
     )
       opts.merge(
@@ -60,7 +63,7 @@ module Foobara
         pre_commit_transformers: [*pre_commit_transformers, *default_pre_commit_transformers],
         serializers: [*serializers, *default_serializers],
         allowed_rule: allowed_rule && to_allowed_rule(allowed_rule),
-        authenticator:
+        authenticator: authenticator || self.authenticator
       )
     end
 
@@ -140,8 +143,8 @@ module Foobara
       @allowed_rule_registry ||= {}
     end
 
-    def allowed_rule(ruleish)
-      allowed_rule = to_allowed_rule(ruleish)
+    def allowed_rule(*)
+      allowed_rule = to_allowed_rule(*)
 
       unless allowed_rule.symbol
         # :nocov:
@@ -201,11 +204,28 @@ module Foobara
       default_serializers << serializer
     end
 
-    def to_allowed_rule(object)
+    def to_allowed_rule(*args)
+      symbol, object = case args.size
+                       when 1
+                         [nil, args.first]
+                       when 2
+                         args
+                       else
+                         # :nocov:
+                         raise ArgumentError, "Expected 1 or 2 arguments, got #{args.size}"
+                         # :nocov:
+                       end
+
       case object
       when AllowedRule, nil
         object
       when ::String
+        if symbol
+          # :nocov:
+          raise ArgumentError, "Was not expecting a symbol and a string"
+          # :nocov:
+        end
+
         to_allowed_rule(object.to_sym)
       when ::Symbol
         allowed_rule = allowed_rule_registry[object]
@@ -251,12 +271,14 @@ module Foobara
         allowed_rule
       else
         if object.respond_to?(:call)
-          AllowedRule.new(&object)
+          AllowedRule.new(symbol:, &object)
         else
           # :nocov:
           raise "Not sure how to convert #{object} into an AllowedRule object"
           # :nocov:
         end
+      end.tap do |rule|
+        rule.symbol ||= symbol
       end
     end
 

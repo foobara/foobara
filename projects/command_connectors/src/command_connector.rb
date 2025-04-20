@@ -84,17 +84,115 @@ module Foobara
       def find_builtin_command_class(command_class_name)
         Util.find_constant_through_class_hierarchy(self, "Commands::#{command_class_name}")
       end
+
+      def allowed_rules_to_register
+        return @allowed_rules_to_register if defined?(@allowed_rules_to_register)
+
+        @allowed_rules_to_register = if superclass == Object
+                                       []
+                                     else
+                                       superclass.allowed_rules_to_register.dup
+                                     end
+      end
+
+      def register_allowed_rule(*rule_args)
+        allowed_rules_to_register << rule_args
+      end
+
+      def authenticator_registry
+        return @authenticator_registry if defined?(@authenticator_registry)
+
+        @authenticator_registry = if superclass == Object
+                                    {}
+                                  else
+                                    superclass.authenticator_registry.dup
+                                  end
+      end
+
+      def register_authenticator(*authenticatorish_args)
+        authenticator = to_authenticator(*authenticatorish_args)
+
+        unless authenticator.symbol
+          # :nocov:
+          raise ArgumentError, "Expected an authenticator to have a symbol"
+          # :nocov:
+        end
+
+        authenticator_registry[authenticator.symbol] = authenticator
+      end
+
+      def to_authenticator(*args)
+        symbol, object = case args.size
+                         when 1
+                           [nil, args.first]
+                         when 2
+                           args
+                         else
+                           # :nocov:
+                           raise ArgumentError, "Expected 1 or 2 arguments, got #{args.size}"
+                           # :nocov:
+                         end
+
+        case object
+        when Class
+          if object < Authenticator
+            object.new
+          else
+            # :nocov:
+            raise ArgumentError, "Expected a class that inherits from Authenticator"
+            # :nocov:
+          end
+        when Authenticator, nil
+          object
+        when ::String
+          if symbol
+            # :nocov:
+            raise ArgumentError, "Was not expecting a symbol and a string"
+            # :nocov:
+          end
+
+          to_authenticator(object.to_sym)
+        when ::Symbol
+          authenticator = authenticator_registry[object]
+
+          unless authenticator
+            # :nocov:
+            raise "No authenticator found for #{object}"
+            # :nocov:
+          end
+
+          authenticator
+        else
+          if object.respond_to?(:call)
+            Authenticator.new(symbol:, &object)
+          else
+            # :nocov:
+            raise "Not sure how to convert #{object} into an AllowedRule object"
+            # :nocov:
+          end
+        end.tap do |resolved_authenticator|
+          if resolved_authenticator
+            resolved_authenticator.symbol ||= symbol
+          end
+        end
+      end
     end
 
     attr_accessor :command_registry, :authenticator, :capture_unknown_error
 
     def initialize(authenticator: nil, capture_unknown_error: nil, default_serializers: nil)
-      self.command_registry = CommandRegistry.new(authenticator:)
+      authenticator = self.class.to_authenticator(authenticator)
+
       self.authenticator = authenticator
+      self.command_registry = CommandRegistry.new(authenticator:)
       self.capture_unknown_error = capture_unknown_error
 
       Util.array(default_serializers).each do |serializer|
         add_default_serializer(serializer)
+      end
+
+      self.class.allowed_rules_to_register.each do |ruleish_args|
+        command_registry.allowed_rule(*ruleish_args)
       end
     end
 
@@ -293,7 +391,11 @@ module Foobara
       delayed_connections.clear
     end
 
-    def connect(registerable, *, **)
+    def connect(registerable, *, authenticator: nil, **)
+      if authenticator
+        authenticator = self.class.to_authenticator(authenticator)
+      end
+
       case registerable
       when Class
         unless registerable < Command
@@ -302,15 +404,15 @@ module Foobara
           # :nocov:
         end
 
-        command_registry.register(registerable, *, **)
+        command_registry.register(registerable, *, authenticator:, **)
       when Module
         if registerable.foobara_organization?
           registerable.foobara_domains.map do |domain|
-            connect(domain, *, **)
+            connect(domain, *, authenticator:, **)
           end.flatten
         elsif registerable.foobara_domain?
           registerable.foobara_all_command(mode: Namespace::LookupMode::DIRECT).map do |command_class|
-            Util.array(connect(command_class, *, **))
+            Util.array(connect(command_class, *, authenticator:, **))
           end.flatten
         else
           # :nocov:
@@ -318,7 +420,7 @@ module Foobara
           # :nocov:
         end
       when Symbol, String
-        connect_delayed(registerable, *, **)
+        connect_delayed(registerable, *, authenticator:, **)
       else
         # :nocov:
         raise "Don't know how to register #{registerable} (#{registerable.class})"
@@ -372,9 +474,10 @@ module Foobara
 
     def authenticate(request)
       request_command = request.command
+      auth_block = request_command.authenticator || authenticator
 
       request_command.after_load_records do |command:, **|
-        authenticated_user = request.instance_exec(&authenticator)
+        authenticated_user = request.instance_exec(&auth_block)
 
         request_command.authenticated_user = authenticated_user
 

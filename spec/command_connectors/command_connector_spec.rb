@@ -936,250 +936,223 @@ RSpec.describe Foobara::CommandConnector do
           end
         end
       end
-    end
 
-    context "when authentication required" do
-      let(:requires_authentication) { true }
-      let(:authenticator) do
-        proc {}
-      end
-
-      describe "#manifest" do
-        it "contains the errors for not allowed" do
-          error_manifest = command_connector.foobara_manifest[:command][:ComputeExponent][:possible_errors]
-
-          expect(error_manifest.keys).to include("runtime.unauthenticated")
-        end
-      end
-
-      context "when unauthenticated" do
-        it "is 1" do
-          expect(response.status).to be(1)
-          expect(JSON.parse(response.body).map { |e| e["key"] }).to include("runtime.unauthenticated")
-        end
-      end
-
-      context "when authenticated" do
+      context "when authentication required" do
+        let(:requires_authentication) { true }
         let(:authenticator) do
-          # normally we would return a user but we'll just generate a pointless integer
-          # to test proxying to the request
-          proc { full_command_name.length }
+          proc {}
         end
 
-        let(:default_serializers) do
-          [Foobara::CommandConnectors::Serializers::JsonSerializer]
+        describe "#manifest" do
+          it "contains the errors for not allowed" do
+            error_manifest = command_connector.foobara_manifest[:command][:ComputeExponent][:possible_errors]
+
+            expect(error_manifest.keys).to include("runtime.unauthenticated")
+          end
         end
 
-        it "is 200" do
-          expect(response.status).to be(0)
-          expect(JSON.parse(response.body)).to eq(8)
+        context "when unauthenticated" do
+          it "is 1" do
+            expect(response.status).to be(1)
+            expect(JSON.parse(response.body).map { |e| e["key"] }).to include("runtime.unauthenticated")
+          end
         end
-      end
-    end
 
-    context "with an entity input" do
-      before do
-        Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
-      end
+        context "when authenticated" do
+          let(:authenticator) do
+            # normally we would return a user but we'll just generate a pointless integer
+            # to test proxying to the request
+            proc { full_command_name.length }
+          end
 
-      let(:command_class) do
-        user_class
+          let(:default_serializers) do
+            [Foobara::CommandConnectors::Serializers::JsonSerializer]
+          end
 
-        stub_class(:QueryUser, Foobara::Command) do
-          inputs user: User
-          result :User
-
-          load_all
-
-          def execute
-            user
+          it "is 200" do
+            expect(response.status).to be(0)
+            expect(JSON.parse(response.body)).to eq(8)
           end
         end
       end
 
-      let(:full_command_name) { "QueryUser" }
-      let(:inputs) { { user: user_id } }
-
-      let(:user_class) do
-        stub_class(:User, Foobara::Entity) do
-          attributes id: :integer,
-                     name: :string,
-                     ratings: [:integer],
-                     junk: { type: :associative_array, value_type_declaration: :array }
-          primary_key :id
-        end
-      end
-
-      context "when user exists" do
-        let(:user_id) do
-          User.transaction do
-            User.create(name: :whatever)
-          end.id
+      context "with an entity input" do
+        before do
+          Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
         end
 
-        let(:result_transformers) { [proc(&:attributes)] }
+        let(:command_class) do
+          user_class
 
-        it "finds the user" do
-          expect(response.status).to be(0)
-          expect(JSON.parse(response.body)).to eq("id" => user_id, "name" => "whatever")
-        end
-      end
+          stub_class(:QueryUser, Foobara::Command) do
+            inputs user: User
+            result :User
 
-      context "when not found error" do
-        let(:user_id) { 100 }
+            load_all
 
-        it "fails" do
-          expect(response.status).to be(1)
-
-          errors = JSON.parse(response.body)
-
-          expect(errors.size).to eq(1)
-          expect(errors.map { |e| e["key"] }).to include("runtime.user_not_found")
-        end
-      end
-
-      context "with an association" do
-        let(:point_class) do
-          stub_class :Point, Foobara::Model do
-            attributes x: :integer, y: :integer
+            def execute
+              user
+            end
           end
         end
 
-        let(:referral_class) do
-          stub_class(:Referral, Foobara::Entity) do
-            attributes id: :integer, email: :email
+        let(:full_command_name) { "QueryUser" }
+        let(:inputs) { { user: user_id } }
+
+        let(:user_class) do
+          stub_class(:User, Foobara::Entity) do
+            attributes id: :integer,
+                       name: :string,
+                       ratings: [:integer],
+                       junk: { type: :associative_array, value_type_declaration: :array }
             primary_key :id
           end
         end
 
-        before do
-          User.attributes referral: referral_class, point: point_class
-        end
+        context "when user exists" do
+          let(:user_id) do
+            User.transaction do
+              User.create(name: :whatever)
+            end.id
+          end
 
-        context "with atomic_entities: true" do
-          let(:atomic_entities) { true }
+          let(:result_transformers) { [proc(&:attributes)] }
 
-          it "includes the AtomicSerializer" do
-            command_manifest = command_connector.foobara_manifest[:command][:QueryUser]
-            expect(
-              command_manifest[:serializers]
-            ).to include("Foobara::CommandConnectors::Serializers::AtomicSerializer")
+          it "finds the user" do
+            expect(response.status).to be(0)
+            expect(JSON.parse(response.body)).to eq("id" => user_id, "name" => "whatever")
           end
         end
 
-        context "with AtomicSerializer" do
-          let(:serializers) { Foobara::CommandConnectors::Serializers::AtomicSerializer }
+        context "when not found error" do
+          let(:user_id) { 100 }
 
-          context "when user exists with a referral" do
-            let(:user) do
-              User.transaction do
-                referral = referral_class.create(email: "Some@email.com")
-                User.create(name: "Some Name", referral:, ratings: [1, 2, 3], point: { x: 1, y: 2 })
-              end
-            end
+          it "fails" do
+            expect(response.status).to be(1)
 
-            let(:user_id) { user.id }
+            errors = JSON.parse(response.body)
 
-            let(:referral_id) {  user.referral.id }
-
-            it "serializes as an atom" do
-              expect(response.status).to be(0)
-              expect(JSON.parse(response.body)).to eq(
-                "id" => user_id,
-                "name" => "Some Name",
-                "referral" => referral_id,
-                "ratings" => [1, 2, 3],
-                "point" => { "x" => 1, "y" => 2 }
-              )
-            end
+            expect(errors.size).to eq(1)
+            expect(errors.map { |e| e["key"] }).to include("runtime.user_not_found")
           end
         end
 
-        context "with AggregateSerializer" do
-          let(:serializers) { Foobara::CommandConnectors::Serializers::AggregateSerializer }
-          let(:pre_commit_transformers) { Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer }
+        context "with an association" do
+          let(:point_class) do
+            stub_class :Point, Foobara::Model do
+              attributes x: :integer, y: :integer
+            end
+          end
 
-          context "when user exists with a referral" do
-            let(:command_class) do
-              user_class
-              referral_class
+          let(:referral_class) do
+            stub_class(:Referral, Foobara::Entity) do
+              attributes id: :integer, email: :email
+              primary_key :id
+            end
+          end
 
-              stub_class :QueryUser, Foobara::Command do
-                inputs user: User
-                result stuff: [User, Referral]
+          before do
+            User.attributes referral: referral_class, point: point_class
+          end
 
-                load_all
+          context "with atomic_entities: true" do
+            let(:atomic_entities) { true }
 
-                def execute
-                  {
-                    stuff: [user, user.referral]
-                  }
+            it "includes the AtomicSerializer" do
+              command_manifest = command_connector.foobara_manifest[:command][:QueryUser]
+              expect(
+                command_manifest[:serializers]
+              ).to include("Foobara::CommandConnectors::Serializers::AtomicSerializer")
+            end
+          end
+
+          context "with AtomicSerializer" do
+            let(:serializers) { Foobara::CommandConnectors::Serializers::AtomicSerializer }
+
+            context "when user exists with a referral" do
+              let(:user) do
+                User.transaction do
+                  referral = referral_class.create(email: "Some@email.com")
+                  User.create(name: "Some Name", referral:, ratings: [1, 2, 3], point: { x: 1, y: 2 })
                 end
               end
-            end
 
-            let(:user) do
-              User.transaction do
-                referral = referral_class.create(email: "Some@email.com")
-                User.create(
-                  name: "Some Name",
-                  referral:,
-                  ratings: [1, 2, 3],
-                  point: { x: 1, y: 2 },
-                  junk: { [1, 2, 3] => [1, 2, 3] }
+              let(:user_id) { user.id }
+
+              let(:referral_id) {  user.referral.id }
+
+              it "serializes as an atom" do
+                expect(response.status).to be(0)
+                expect(JSON.parse(response.body)).to eq(
+                  "id" => user_id,
+                  "name" => "Some Name",
+                  "referral" => referral_id,
+                  "ratings" => [1, 2, 3],
+                  "point" => { "x" => 1, "y" => 2 }
                 )
               end
             end
+          end
 
-            let(:user_id) { user.id }
-            let(:referral_id) {  user.referral.id }
+          context "with AggregateSerializer" do
+            let(:serializers) { Foobara::CommandConnectors::Serializers::AggregateSerializer }
+            let(:pre_commit_transformers) {
+              Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer
+            }
 
-            it "serializes as an aggregate" do
-              expect(response.status).to be(0)
-              expect(JSON.parse(response.body)).to eq(
-                "stuff" => [
-                  {
-                    "id" => 1,
-                    # TODO: This is kind of crazy that we can only have strings as keys. Should raise exception.
-                    "junk" => { "[1, 2, 3]" => [1, 2, 3] },
-                    "name" => "Some Name",
-                    "point" => { "x" => 1, "y" => 2 },
-                    "ratings" => [1, 2, 3],
-                    "referral" => { "email" => "some@email.com", "id" => 1 }
-                  },
-                  {
-                    "email" => "some@email.com", "id" => 1
-                  }
-                ]
-              )
-            end
+            context "when user exists with a referral" do
+              let(:command_class) do
+                user_class
+                referral_class
 
-            it "contains pre_commit_transformers in its manifest" do
-              command_manifest = command_connector.foobara_manifest[:command][:QueryUser]
-              manifest = command_manifest[:pre_commit_transformers].find { |h|
-                h[:name] == "Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer"
-              }
-              expect(manifest).to be_a(Hash)
-              expect(command_manifest[:serializers]).to include(
-                "Foobara::CommandConnectors::Serializers::AggregateSerializer"
-              )
-            end
+                stub_class :QueryUser, Foobara::Command do
+                  inputs user: User
+                  result stuff: [User, Referral]
 
-            context "with aggregate serializer as default serializer" do
-              let(:aggregate_entities) { nil }
-              let(:pre_commit_transformers) { nil }
-              let(:serializers) { nil }
+                  load_all
 
-              let(:default_serializers) do
-                [
-                  Foobara::CommandConnectors::Serializers::AggregateSerializer,
-                  Foobara::CommandConnectors::Serializers::ErrorsSerializer,
-                  Foobara::CommandConnectors::Serializers::JsonSerializer
-                ]
+                  def execute
+                    {
+                      stuff: [user, user.referral]
+                    }
+                  end
+                end
               end
 
-              let(:default_pre_commit_transformer) do
-                Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer
+              let(:user) do
+                User.transaction do
+                  referral = referral_class.create(email: "Some@email.com")
+                  User.create(
+                    name: "Some Name",
+                    referral:,
+                    ratings: [1, 2, 3],
+                    point: { x: 1, y: 2 },
+                    junk: { [1, 2, 3] => [1, 2, 3] }
+                  )
+                end
+              end
+
+              let(:user_id) { user.id }
+              let(:referral_id) {  user.referral.id }
+
+              it "serializes as an aggregate" do
+                expect(response.status).to be(0)
+                expect(JSON.parse(response.body)).to eq(
+                  "stuff" => [
+                    {
+                      "id" => 1,
+                      # TODO: This is kind of crazy that we can only have strings as keys. Should raise exception.
+                      "junk" => { "[1, 2, 3]" => [1, 2, 3] },
+                      "name" => "Some Name",
+                      "point" => { "x" => 1, "y" => 2 },
+                      "ratings" => [1, 2, 3],
+                      "referral" => { "email" => "some@email.com", "id" => 1 }
+                    },
+                    {
+                      "email" => "some@email.com", "id" => 1
+                    }
+                  ]
+                )
               end
 
               it "contains pre_commit_transformers in its manifest" do
@@ -1193,284 +1166,283 @@ RSpec.describe Foobara::CommandConnector do
                 )
               end
 
-              context "when disabled via aggregate_entities: false" do
-                let(:aggregate_entities) { false }
+              context "with aggregate serializer as default serializer" do
+                let(:aggregate_entities) { nil }
+                let(:pre_commit_transformers) { nil }
+                let(:serializers) { nil }
 
-                it "does not contain pre_commit_transformers in its manifest" do
+                let(:default_serializers) do
+                  [
+                    Foobara::CommandConnectors::Serializers::AggregateSerializer,
+                    Foobara::CommandConnectors::Serializers::ErrorsSerializer,
+                    Foobara::CommandConnectors::Serializers::JsonSerializer
+                  ]
+                end
+
+                let(:default_pre_commit_transformer) do
+                  Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer
+                end
+
+                it "contains pre_commit_transformers in its manifest" do
                   command_manifest = command_connector.foobara_manifest[:command][:QueryUser]
-                  expect(command_manifest[:pre_commit_transformers]).to be_nil
+                  manifest = command_manifest[:pre_commit_transformers].find { |h|
+                    h[:name] == "Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer"
+                  }
+                  expect(manifest).to be_a(Hash)
+                  expect(command_manifest[:serializers]).to include(
+                    "Foobara::CommandConnectors::Serializers::AggregateSerializer"
+                  )
+                end
 
-                  expect(
-                    command_manifest[:serializers]
-                  ).to_not include("CommandConnectors::Serializers::AggregateSerializer")
+                context "when disabled via aggregate_entities: false" do
+                  let(:aggregate_entities) { false }
+
+                  it "does not contain pre_commit_transformers in its manifest" do
+                    command_manifest = command_connector.foobara_manifest[:command][:QueryUser]
+                    expect(command_manifest[:pre_commit_transformers]).to be_nil
+
+                    expect(
+                      command_manifest[:serializers]
+                    ).to_not include("CommandConnectors::Serializers::AggregateSerializer")
+                  end
                 end
               end
             end
           end
-        end
 
-        context "with RecordStoreSerializer" do
-          let(:serializers) { Foobara::CommandConnectors::Serializers::RecordStoreSerializer }
-          let(:aggregate_entities) { true }
+          context "with RecordStoreSerializer" do
+            let(:serializers) { Foobara::CommandConnectors::Serializers::RecordStoreSerializer }
+            let(:aggregate_entities) { true }
 
-          context "when user exists with a referral" do
-            let(:user) do
-              User.transaction do
-                referral = referral_class.create(email: "Some@email.com")
-                User.create(name: "Some Name", referral:, ratings: [1, 2, 3], point: { x: 1, y: 2 })
+            context "when user exists with a referral" do
+              let(:user) do
+                User.transaction do
+                  referral = referral_class.create(email: "Some@email.com")
+                  User.create(name: "Some Name", referral:, ratings: [1, 2, 3], point: { x: 1, y: 2 })
+                end
+              end
+
+              let(:user_id) { user.id }
+
+              let(:referral_id) { user.referral.id }
+
+              it "serializes as a record store" do
+                expect(response.status).to be(0)
+                expect(JSON.parse(response.body)).to eq(
+                  "User" => {
+                    "1" => {
+                      "id" => 1,
+                      "name" => "Some Name",
+                      "referral" => 1,
+                      "ratings" => [1, 2, 3],
+                      "point" => { "x" => 1, "y" => 2 }
+                    }
+                  },
+                  "Referral" => {
+                    "1" => {
+                      "id" => 1,
+                      "email" => "some@email.com"
+                    }
+                  }
+                )
               end
             end
+          end
+        end
+      end
 
-            let(:user_id) { user.id }
+      describe "#manifest" do
+        context "when various transformers" do
+          let(:inputs) { { bbaassee: base, exponent: } }
 
-            let(:referral_id) { user.referral.id }
+          let(:inputs_transformers) { [inputs_transformer] }
+          let(:inputs_transformer) do
+            stub_class "SomeTransformer", Foobara::TypeDeclarations::TypedTransformer do
+              def from_type_declaration
+                {
+                  bbaassee: :string,
+                  exponent: :string
+                }
+              end
 
-            it "serializes as a record store" do
-              expect(response.status).to be(0)
-              expect(JSON.parse(response.body)).to eq(
-                "User" => {
-                  "1" => {
-                    "id" => 1,
-                    "name" => "Some Name",
-                    "referral" => 1,
-                    "ratings" => [1, 2, 3],
-                    "point" => { "x" => 1, "y" => 2 }
+              def transform(inputs)
+                {
+                  base: inputs[:bbaassee],
+                  exponent: inputs[:exponent]
+                }
+              end
+            end
+          end
+
+          let(:result_transformers) { [result_transformer] }
+          let(:result_transformer) do
+            stub_class :SomeOtherTransformer, Foobara::TypeDeclarations::TypedTransformer do
+              to(answer: :string)
+
+              def transform(result)
+                { answer: result.to_s }
+              end
+            end
+          end
+
+          it "runs the command" do
+            expect(response.status).to be(0)
+            expect(JSON.parse(response.body)).to eq("answer" => "8")
+          end
+
+          describe "#manifest" do
+            let(:manifest) { command_connector.foobara_manifest }
+
+            it "uses types from the transformers" do
+              h = manifest[:command][:ComputeExponent]
+
+              inputs_type = h[:inputs_type]
+              result_type = h[:result_type]
+              error_types = h[:possible_errors]
+
+              expect(inputs_type).to eq(
+                type: :attributes,
+                element_type_declarations: {
+                  exponent: { type: :string },
+                  bbaassee: { type: :string }
+                }
+              )
+              expect(result_type).to eq(
+                type: :attributes,
+                element_type_declarations: {
+                  answer: { type: :string }
+                }
+              )
+              expect(error_types).to eq(
+                "runtime.some_runtime" => {
+                  category: :runtime,
+                  symbol: :some_runtime,
+                  key: "runtime.some_runtime",
+                  error: "SomeRuntimeError"
+                },
+                "data.base.some_input" => {
+                  path: [:base],
+                  category: :data,
+                  symbol: :some_input,
+                  key: "data.base.some_input",
+                  error: "SomeInputError",
+                  manually_added: true
+                },
+                "data.cannot_cast" => {
+                  category: :data,
+                  symbol: :cannot_cast,
+                  key: "data.cannot_cast",
+                  error: "Foobara::Value::Processor::Casting::CannotCastError",
+                  processor_class: "Foobara::Value::Processor::Casting",
+                  processor_manifest_data: {
+                    casting: { cast_to: { type: :attributes,
+                                          element_type_declarations: {
+                                            bbaassee: { type: :string }, exponent: { type: :string }
+                                          } } }
                   }
                 },
-                "Referral" => {
-                  "1" => {
-                    "id" => 1,
-                    "email" => "some@email.com"
-                  }
+                "data.unexpected_attributes" => {
+                  category: :data,
+                  symbol: :unexpected_attributes,
+                  key: "data.unexpected_attributes",
+                  error: "attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError",
+                  processor_class: "attributes::SupportedProcessors::ElementTypeDeclarations",
+                  processor_manifest_data: { element_type_declarations: { bbaassee: { type: :string },
+                                                                          exponent: { type: :string } } }
+                },
+                "data.bbaassee.cannot_cast" => {
+                  path: [:bbaassee],
+                  category: :data,
+                  symbol: :cannot_cast,
+                  key: "data.bbaassee.cannot_cast",
+                  error: "Foobara::Value::Processor::Casting::CannotCastError",
+                  processor_manifest_data: { casting: { cast_to: { type: :string } } }
+                },
+                "data.exponent.cannot_cast" => {
+                  path: [:exponent],
+                  category: :data,
+                  symbol: :cannot_cast,
+                  key: "data.exponent.cannot_cast",
+                  error: "Foobara::Value::Processor::Casting::CannotCastError",
+                  processor_manifest_data: { casting: { cast_to: { type: :string } } }
                 }
+              )
+            end
+          end
+
+          describe "#possible_errors" do
+            it "contains paths matching the transformed inputs" do
+              transformed_command = command_connector.transformed_command_from_name("ComputeExponent")
+              expect(transformed_command.possible_errors.map(&:key).map(&:to_s)).to contain_exactly(
+                "runtime.some_runtime",
+                "data.base.some_input",
+                "data.cannot_cast",
+                "data.unexpected_attributes",
+                "data.bbaassee.cannot_cast",
+                "data.exponent.cannot_cast"
               )
             end
           end
         end
       end
-    end
-
-    describe "#manifest" do
-      context "when various transformers" do
-        let(:inputs) { { bbaassee: base, exponent: } }
-
-        let(:inputs_transformers) { [inputs_transformer] }
-        let(:inputs_transformer) do
-          stub_class "SomeTransformer", Foobara::TypeDeclarations::TypedTransformer do
-            def from_type_declaration
-              {
-                bbaassee: :string,
-                exponent: :string
-              }
-            end
-
-            def transform(inputs)
-              {
-                base: inputs[:bbaassee],
-                exponent: inputs[:exponent]
-              }
-            end
-          end
-        end
-
-        let(:result_transformers) { [result_transformer] }
-        let(:result_transformer) do
-          stub_class :SomeOtherTransformer, Foobara::TypeDeclarations::TypedTransformer do
-            to(answer: :string)
-
-            def transform(result)
-              { answer: result.to_s }
-            end
-          end
-        end
-
-        it "runs the command" do
-          expect(response.status).to be(0)
-          expect(JSON.parse(response.body)).to eq("answer" => "8")
-        end
-
-        describe "#manifest" do
-          let(:manifest) { command_connector.foobara_manifest }
-
-          it "uses types from the transformers" do
-            h = manifest[:command][:ComputeExponent]
-
-            inputs_type = h[:inputs_type]
-            result_type = h[:result_type]
-            error_types = h[:possible_errors]
-
-            expect(inputs_type).to eq(
-              type: :attributes,
-              element_type_declarations: {
-                exponent: { type: :string },
-                bbaassee: { type: :string }
-              }
-            )
-            expect(result_type).to eq(
-              type: :attributes,
-              element_type_declarations: {
-                answer: { type: :string }
-              }
-            )
-            expect(error_types).to eq(
-              "runtime.some_runtime" => {
-                category: :runtime,
-                symbol: :some_runtime,
-                key: "runtime.some_runtime",
-                error: "SomeRuntimeError"
-              },
-              "data.base.some_input" => {
-                path: [:base],
-                category: :data,
-                symbol: :some_input,
-                key: "data.base.some_input",
-                error: "SomeInputError",
-                manually_added: true
-              },
-              "data.cannot_cast" => {
-                category: :data,
-                symbol: :cannot_cast,
-                key: "data.cannot_cast",
-                error: "Foobara::Value::Processor::Casting::CannotCastError",
-                processor_class: "Foobara::Value::Processor::Casting",
-                processor_manifest_data: {
-                  casting: { cast_to: { type: :attributes,
-                                        element_type_declarations: {
-                                          bbaassee: { type: :string }, exponent: { type: :string }
-                                        } } }
-                }
-              },
-              "data.unexpected_attributes" => {
-                category: :data,
-                symbol: :unexpected_attributes,
-                key: "data.unexpected_attributes",
-                error: "attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError",
-                processor_class: "attributes::SupportedProcessors::ElementTypeDeclarations",
-                processor_manifest_data: { element_type_declarations: { bbaassee: { type: :string },
-                                                                        exponent: { type: :string } } }
-              },
-              "data.bbaassee.cannot_cast" => {
-                path: [:bbaassee],
-                category: :data,
-                symbol: :cannot_cast,
-                key: "data.bbaassee.cannot_cast",
-                error: "Foobara::Value::Processor::Casting::CannotCastError",
-                processor_manifest_data: { casting: { cast_to: { type: :string } } }
-              },
-              "data.exponent.cannot_cast" => {
-                path: [:exponent],
-                category: :data,
-                symbol: :cannot_cast,
-                key: "data.exponent.cannot_cast",
-                error: "Foobara::Value::Processor::Casting::CannotCastError",
-                processor_manifest_data: { casting: { cast_to: { type: :string } } }
-              }
-            )
-          end
-        end
-
-        describe "#possible_errors" do
-          it "contains paths matching the transformed inputs" do
-            transformed_command = command_connector.transformed_command_from_name("ComputeExponent")
-            expect(transformed_command.possible_errors.map(&:key).map(&:to_s)).to contain_exactly(
-              "runtime.some_runtime",
-              "data.base.some_input",
-              "data.cannot_cast",
-              "data.unexpected_attributes",
-              "data.bbaassee.cannot_cast",
-              "data.exponent.cannot_cast"
-            )
-          end
-        end
-      end
-    end
-
-    context "with describe path" do
-      let(:action) { "describe" }
-      let(:full_command_name) { "ComputeExponent" }
-      let(:inputs) { {} }
-
-      it "describes the command" do
-        expect(response.status).to be(0)
-        json = JSON.parse(response.body)
-        expect(json["inputs_type"]["element_type_declarations"]["base"]["type"]).to eq("integer")
-      end
 
       context "with describe path" do
-        let(:action) { "describe_command" }
+        let(:action) { "describe" }
         let(:full_command_name) { "ComputeExponent" }
+        let(:inputs) { {} }
 
         it "describes the command" do
           expect(response.status).to be(0)
           json = JSON.parse(response.body)
           expect(json["inputs_type"]["element_type_declarations"]["base"]["type"]).to eq("integer")
         end
-      end
-    end
 
-    context "with help path" do
-      let(:org_module) do
-        stub_module :SomeOrg do
-          foobara_organization!
-        end
-      end
-      let(:action) { "help" }
+        context "with describe path" do
+          let(:action) { "describe_command" }
+          let(:full_command_name) { "ComputeExponent" }
 
-      let(:domain_module) do
-        org_module
-        stub_module("SomeOrg::SomeDomain") do
-          foobara_domain!
-        end
-      end
-
-      let(:another_command_class) do
-        domain_module
-        stub_module "SomeOtherOrg" do
-          foobara_organization!
-        end
-        stub_module "SomeOtherOrg::SomeOtherDomain" do
-          foobara_domain!
-        end
-        stub_class "SomeOtherOrg::SomeOtherDomain::SomeOtherCommand", Foobara::Command do
-          inputs email: :email
-        end
-        stub_class "SomeOrg::SomeDomain::SomeCommand", Foobara::Command do
-          description "just some command"
-          depends_on SomeOtherOrg::SomeOtherDomain::SomeOtherCommand
-        end
-      end
-
-      before do
-        command_connector.connect(another_command_class)
-
-        stub_class("Foobara::CommandConnector::Commands::Help", Foobara::Command) do
-          inputs request: Foobara::CommandConnector::Request
-          result :string
-
-          def execute
-            "HELP!!!"
+          it "describes the command" do
+            expect(response.status).to be(0)
+            json = JSON.parse(response.body)
+            expect(json["inputs_type"]["element_type_declarations"]["base"]["type"]).to eq("integer")
           end
         end
       end
 
-      it "gives some help" do
-        expect(response.status).to be(0)
-        expect(response.body).to match(/HELP!!!/)
-      end
-
-      context "when asking for help with a specific element" do
-        let(:action) { "help" }
-        let(:full_command_name) { "ComputeExponent" }
-
-        it "gives some help" do
-          expect(response.status).to be(0)
-          expect(response.body).to match(/HELP!!!/)
+      context "with help path" do
+        let(:org_module) do
+          stub_module :SomeOrg do
+            foobara_organization!
+          end
         end
-      end
+        let(:action) { "help" }
 
-      context "when it is something accessible through GlobalOrganization but not the connector" do
+        let(:domain_module) do
+          org_module
+          stub_module("SomeOrg::SomeDomain") do
+            foobara_domain!
+          end
+        end
+
+        let(:another_command_class) do
+          domain_module
+          stub_module "SomeOtherOrg" do
+            foobara_organization!
+          end
+          stub_module "SomeOtherOrg::SomeOtherDomain" do
+            foobara_domain!
+          end
+          stub_class "SomeOtherOrg::SomeOtherDomain::SomeOtherCommand", Foobara::Command do
+            inputs email: :email
+          end
+          stub_class "SomeOrg::SomeDomain::SomeCommand", Foobara::Command do
+            description "just some command"
+            depends_on SomeOtherOrg::SomeOtherDomain::SomeOtherCommand
+          end
+        end
+
         before do
-          command_connector.connect(new_command)
+          command_connector.connect(another_command_class)
 
           stub_class("Foobara::CommandConnector::Commands::Help", Foobara::Command) do
             inputs request: Foobara::CommandConnector::Request
@@ -1482,453 +1454,633 @@ RSpec.describe Foobara::CommandConnector do
           end
         end
 
-        let(:new_command) do
-          stub_class(:NewCommand, Foobara::Command) do
-            inputs do
-              count :integer, min: 0
-              log [:string]
-            end
-          end
+        it "gives some help" do
+          expect(response.status).to be(0)
+          expect(response.body).to match(/HELP!!!/)
         end
 
-        context "when command" do
+        context "when asking for help with a specific element" do
           let(:action) { "help" }
-          let(:full_command_name) { "NewCommand" }
+          let(:full_command_name) { "ComputeExponent" }
 
           it "gives some help" do
             expect(response.status).to be(0)
-            expect(response.body).to match("HELP!!!")
-          end
-        end
-      end
-    end
-
-    context "when the command returns a model from a domain it depends on (bad form but let's support it for now)" do
-      let(:command_class) do
-        user_class
-
-        stub_module("DomainA") do
-          foobara_domain!
-        end
-        stub_class("DomainA::MakeUser", Foobara::Command) do
-          result DomainB::User
-        end
-      end
-
-      let(:full_command_name) { "DomainA::MakeUser" }
-
-      let(:user_class) do
-        stub_module("DomainB") do
-          foobara_domain!
-        end
-
-        stub_class("DomainB::User", Foobara::Model) do
-          attributes name: :string
-        end
-      end
-
-      it "includes the model and its domain in the manifest" do
-        manifest = command_connector.foobara_manifest
-
-        expect(manifest[:domain].keys).to include(:DomainB)
-        expect(manifest[:type].keys).to include(:"DomainB::User")
-      end
-    end
-
-    context "when command returns a model that has sensitive attributes nested within it" do
-      before do
-        Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
-      end
-
-      let(:default_serializers) do
-        [
-          Foobara::CommandConnectors::Serializers::AggregateSerializer,
-          Foobara::CommandConnectors::Serializers::ErrorsSerializer,
-          Foobara::CommandConnectors::Serializers::JsonSerializer
-        ]
-      end
-      # TODO: make this automatic if AggregateSerializer is being used
-      let(:pre_commit_transformers) { Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer }
-
-      let(:command_class) do
-        user_class
-
-        stub_class(:QueryUser, Foobara::Command) do
-          inputs user: User
-          result :User
-
-          load_all
-
-          def execute
-            user
-          end
-        end
-      end
-
-      let(:full_command_name) { "QueryUser" }
-      let(:inputs) { { user: user_id } }
-
-      let(:user_class) do
-        rating_class
-        stub_class(:User, Foobara::Entity) do
-          attributes do
-            id :integer
-            name :string
-            ssn :string, :sensitive
-            ratings [:Rating]
-          end
-
-          primary_key :id
-        end
-      end
-
-      let(:rating_class) do
-        stub_class(:Rating, Foobara::Entity) do
-          attributes do
-            id :integer
-            rating :integer
-            secret :string, :sensitive
-          end
-
-          primary_key :id
-        end
-      end
-
-      context "when user exists with a rating" do
-        let(:user_id) do
-          User.transaction do
-            User.create(name: :whatever, ssn: "ssn", ratings: [Rating.create(rating: 1, secret: "secret")])
-          end.id
-        end
-
-        it "finds the user" do
-          expect(response.status).to be(0)
-          expect(JSON.parse(response.body)).to eq(
-            "id" => 1,
-            "name" => "whatever",
-            "ratings" => [{
-              "id" => 1,
-              "rating" => 1
-            }]
-          )
-        end
-      end
-    end
-
-    context "when command returns an entity that has delegated attributes" do
-      before do
-        Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
-      end
-
-      let(:default_serializers) do
-        [
-          Foobara::CommandConnectors::Serializers::ErrorsSerializer,
-          Foobara::CommandConnectors::Serializers::AtomicSerializer,
-          Foobara::CommandConnectors::Serializers::JsonSerializer
-        ]
-      end
-
-      # TODO: make this a default based on a flag
-      let(:pre_commit_transformers) do
-        Foobara::CommandConnectors::Transformers::LoadDelegatedAttributesEntitiesPreCommitTransformer
-      end
-
-      let(:command_class) do
-        user_class
-
-        stub_class(:CreateUser, Foobara::Command) do
-          inputs User.attributes_for_create
-          result :User
-
-          def execute
-            User.create(inputs)
+            expect(response.body).to match(/HELP!!!/)
           end
         end
 
-        stub_class(:QueryUser, Foobara::Command) do
-          inputs do
-            stuff do
-              things :array do
-                auth_user AuthUser, :required
-              end
-            end
-          end
+        context "when it is something accessible through GlobalOrganization but not the connector" do
+          before do
+            command_connector.connect(new_command)
 
-          result do
-            stuff2 do
-              things2 :array do
-                user User, :required
-              end
-            end
-          end
-
-          load_all
-
-          def execute
-            user = User.that_owns(stuff[:things][0][:auth_user])
-            { stuff2: { things2: [{ user: }] } }
-          end
-        end
-      end
-
-      let(:full_command_name) { "QueryUser" }
-      let(:inputs) do
-        {
-          stuff: {
-            things: [{ auth_user: auth_user_id }]
-          }
-        }
-      end
-
-      let(:user_class) do
-        auth_user_class
-        stub_class(:User, Foobara::Entity) do
-          attributes do
-            id :integer
-            name :string
-            stuff do
-              things :array do
-                auth_user AuthUser, :required
-              end
-            end
-          end
-
-          primary_key :id
-          delegate_attribute :username, %i[stuff things 0 auth_user username]
-        end
-      end
-
-      let(:auth_user_class) do
-        stub_class(:AuthUser, Foobara::Entity) do
-          attributes do
-            id :integer
-            username :string
-          end
-
-          primary_key :id
-        end
-      end
-
-      context "when user exists" do
-        let(:user_id) do
-          CreateUser.run!(name: :whatever, stuff: { things: [{ auth_user: auth_user_id }] }).id
-        end
-
-        let(:username) { "some_username" }
-        let(:auth_user_id) do
-          AuthUser.transaction do
-            AuthUser.create(username:)
-          end.id
-        end
-
-        before do
-          user_id
-        end
-
-        it "finds the user" do
-          expect(response.status).to be(0)
-          expect(JSON.parse(response.body)).to eq(
-            "stuff2" => {
-              "things2" => [
-                "user" => {
-                  "id" => user_id,
-                  "name" => "whatever",
-                  "stuff" => { "things" => [{ "auth_user" => auth_user_id }] },
-                  "username" => "some_username"
-                }
-              ]
-            }
-          )
-        end
-
-        context "with a simple entity return type" do
-          let(:command_class) do
-            user_class
-
-            stub_class(:CreateUser, Foobara::Command) do
-              inputs User.attributes_for_create
-              result :User
+            stub_class("Foobara::CommandConnector::Commands::Help", Foobara::Command) do
+              inputs request: Foobara::CommandConnector::Request
+              result :string
 
               def execute
-                User.create(inputs)
+                "HELP!!!"
               end
             end
+          end
 
-            stub_class(:QueryUser, Foobara::Command) do
+          let(:new_command) do
+            stub_class(:NewCommand, Foobara::Command) do
               inputs do
-                stuff do
-                  things :array do
-                    auth_user AuthUser, :required
-                  end
-                end
-              end
-
-              result User
-
-              load_all
-
-              def execute
-                User.that_owns(stuff[:things][0][:auth_user])
+                count :integer, min: 0
+                log [:string]
               end
             end
           end
 
-          it "responds with attributes that include the delegated attributes" do
+          context "when command" do
+            let(:action) { "help" }
+            let(:full_command_name) { "NewCommand" }
+
+            it "gives some help" do
+              expect(response.status).to be(0)
+              expect(response.body).to match("HELP!!!")
+            end
+          end
+        end
+      end
+
+      context "when the command returns a model from a domain it depends on (bad form but let's support it for now)" do
+        let(:command_class) do
+          user_class
+
+          stub_module("DomainA") do
+            foobara_domain!
+          end
+          stub_class("DomainA::MakeUser", Foobara::Command) do
+            result DomainB::User
+          end
+        end
+
+        let(:full_command_name) { "DomainA::MakeUser" }
+
+        let(:user_class) do
+          stub_module("DomainB") do
+            foobara_domain!
+          end
+
+          stub_class("DomainB::User", Foobara::Model) do
+            attributes name: :string
+          end
+        end
+
+        it "includes the model and its domain in the manifest" do
+          manifest = command_connector.foobara_manifest
+
+          expect(manifest[:domain].keys).to include(:DomainB)
+          expect(manifest[:type].keys).to include(:"DomainB::User")
+        end
+      end
+
+      context "when command returns a model that has sensitive attributes nested within it" do
+        before do
+          Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
+        end
+
+        let(:default_serializers) do
+          [
+            Foobara::CommandConnectors::Serializers::AggregateSerializer,
+            Foobara::CommandConnectors::Serializers::ErrorsSerializer,
+            Foobara::CommandConnectors::Serializers::JsonSerializer
+          ]
+        end
+        # TODO: make this automatic if AggregateSerializer is being used
+        let(:pre_commit_transformers) { Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer }
+
+        let(:command_class) do
+          user_class
+
+          stub_class(:QueryUser, Foobara::Command) do
+            inputs user: User
+            result :User
+
+            load_all
+
+            def execute
+              user
+            end
+          end
+        end
+
+        let(:full_command_name) { "QueryUser" }
+        let(:inputs) { { user: user_id } }
+
+        let(:user_class) do
+          rating_class
+          stub_class(:User, Foobara::Entity) do
+            attributes do
+              id :integer
+              name :string
+              ssn :string, :sensitive
+              ratings [:Rating]
+            end
+
+            primary_key :id
+          end
+        end
+
+        let(:rating_class) do
+          stub_class(:Rating, Foobara::Entity) do
+            attributes do
+              id :integer
+              rating :integer
+              secret :string, :sensitive
+            end
+
+            primary_key :id
+          end
+        end
+
+        context "when user exists with a rating" do
+          let(:user_id) do
+            User.transaction do
+              User.create(name: :whatever, ssn: "ssn", ratings: [Rating.create(rating: 1, secret: "secret")])
+            end.id
+          end
+
+          it "finds the user" do
             expect(response.status).to be(0)
             expect(JSON.parse(response.body)).to eq(
               "id" => 1,
               "name" => "whatever",
-              "stuff" => { "things" => [{ "auth_user" => 1 }] },
-              "username" => "some_username"
+              "ratings" => [{
+                "id" => 1,
+                "rating" => 1
+              }]
             )
           end
         end
       end
-    end
 
-    describe "connector manifest" do
-      describe "#manifest" do
-        let(:manifest) { command_connector.foobara_manifest }
-
-        it "returns metadata about the commands" do
-          expect(
-            manifest[:command][:ComputeExponent][:result_type]
-          ).to eq(type: :integer)
+      context "when command returns an entity that has delegated attributes" do
+        before do
+          Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
         end
 
-        context "with an entity input" do
-          before do
-            Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
-          end
+        let(:default_serializers) do
+          [
+            Foobara::CommandConnectors::Serializers::ErrorsSerializer,
+            Foobara::CommandConnectors::Serializers::AtomicSerializer,
+            Foobara::CommandConnectors::Serializers::JsonSerializer
+          ]
+        end
 
-          after do
-            Foobara.reset_alls
-          end
+        # TODO: make this a default based on a flag
+        let(:pre_commit_transformers) do
+          Foobara::CommandConnectors::Transformers::LoadDelegatedAttributesEntitiesPreCommitTransformer
+        end
 
-          let(:command_class) do
-            user_class
+        let(:command_class) do
+          user_class
 
-            stub_class :QueryUser, Foobara::Command do
-              description "Queries a user"
-              inputs user: User.entity_type
-              result :User
+          stub_class(:CreateUser, Foobara::Command) do
+            inputs User.attributes_for_create
+            result :User
+
+            def execute
+              User.create(inputs)
             end
           end
 
-          let(:full_command_name) { "QueryUser" }
-          let(:inputs) { { user: user_id } }
+          stub_class(:QueryUser, Foobara::Command) do
+            inputs do
+              stuff do
+                things :array do
+                  auth_user AuthUser, :required
+                end
+              end
+            end
 
-          let(:serializers) {
-            [proc(&:attributes)]
+            result do
+              stuff2 do
+                things2 :array do
+                  user User, :required
+                end
+              end
+            end
+
+            load_all
+
+            def execute
+              user = User.that_owns(stuff[:things][0][:auth_user])
+              { stuff2: { things2: [{ user: }] } }
+            end
+          end
+        end
+
+        let(:full_command_name) { "QueryUser" }
+        let(:inputs) do
+          {
+            stuff: {
+              things: [{ auth_user: auth_user_id }]
+            }
           }
+        end
 
-          let(:user_class) do
-            stub_class :User, Foobara::Entity do
-              attributes id: :integer, name: :string
-              primary_key :id
+        let(:user_class) do
+          auth_user_class
+          stub_class(:User, Foobara::Entity) do
+            attributes do
+              id :integer
+              name :string
+              stuff do
+                things :array do
+                  auth_user AuthUser, :required
+                end
+              end
             end
+
+            primary_key :id
+            delegate_attribute :username, %i[stuff things 0 auth_user username]
+          end
+        end
+
+        let(:auth_user_class) do
+          stub_class(:AuthUser, Foobara::Entity) do
+            attributes do
+              id :integer
+              username :string
+            end
+
+            primary_key :id
+          end
+        end
+
+        context "when user exists" do
+          let(:user_id) do
+            CreateUser.run!(name: :whatever, stuff: { things: [{ auth_user: auth_user_id }] }).id
           end
 
-          it "returns metadata about the types referenced in the commands" do
-            expect(
-              manifest[:type].keys
-            ).to match_array(
-              %i[
-                User
-                array
-                associative_array
-                atomic_duck
-                attributes
-                detached_entity
-                duck
-                duckture
-                entity
-                integer
-                model
-                number
-                string
-                symbol
-              ]
+          let(:username) { "some_username" }
+          let(:auth_user_id) do
+            AuthUser.transaction do
+              AuthUser.create(username:)
+            end.id
+          end
+
+          before do
+            user_id
+          end
+
+          it "finds the user" do
+            expect(response.status).to be(0)
+            expect(JSON.parse(response.body)).to eq(
+              "stuff2" => {
+                "things2" => [
+                  "user" => {
+                    "id" => user_id,
+                    "name" => "whatever",
+                    "stuff" => { "things" => [{ "auth_user" => auth_user_id }] },
+                    "username" => "some_username"
+                  }
+                ]
+              }
             )
           end
 
-          context "with manifest path" do
-            let(:inputs) { {} }
-            let(:action) { "manifest" }
+          context "with a simple entity return type" do
+            let(:command_class) do
+              user_class
 
-            it "includes types" do
+              stub_class(:CreateUser, Foobara::Command) do
+                inputs User.attributes_for_create
+                result :User
+
+                def execute
+                  User.create(inputs)
+                end
+              end
+
+              stub_class(:QueryUser, Foobara::Command) do
+                inputs do
+                  stuff do
+                    things :array do
+                      auth_user AuthUser, :required
+                    end
+                  end
+                end
+
+                result User
+
+                load_all
+
+                def execute
+                  User.that_owns(stuff[:things][0][:auth_user])
+                end
+              end
+            end
+
+            it "responds with attributes that include the delegated attributes" do
               expect(response.status).to be(0)
-              json = JSON.parse(response.body)
-              expect(json["type"].keys).to include("User")
+              expect(JSON.parse(response.body)).to eq(
+                "id" => 1,
+                "name" => "whatever",
+                "stuff" => { "things" => [{ "auth_user" => 1 }] },
+                "username" => "some_username"
+              )
             end
           end
+        end
+      end
 
-          context "with list path" do
-            let(:inputs) { {} }
-            let(:action) { "list" }
+      describe "connector manifest" do
+        describe "#manifest" do
+          let(:manifest) { command_connector.foobara_manifest }
 
-            it "lists commands" do
-              expect(response.status).to be(0)
-              json = JSON.parse(response.body)
+          it "returns metadata about the commands" do
+            expect(
+              manifest[:command][:ComputeExponent][:result_type]
+            ).to eq(type: :integer)
+          end
 
-              expect(json).to eq([["QueryUser", nil]])
+          context "with an entity input" do
+            before do
+              Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
             end
 
-            context "when verbose" do
-              # TODO: would be nice to not have to do =true here...
-              let(:inputs) { { verbose: true } }
+            after do
+              Foobara.reset_alls
+            end
+
+            let(:command_class) do
+              user_class
+
+              stub_class :QueryUser, Foobara::Command do
+                description "Queries a user"
+                inputs user: User.entity_type
+                result :User
+              end
+            end
+
+            let(:full_command_name) { "QueryUser" }
+            let(:inputs) { { user: user_id } }
+
+            let(:serializers) {
+              [proc(&:attributes)]
+            }
+
+            let(:user_class) do
+              stub_class :User, Foobara::Entity do
+                attributes id: :integer, name: :string
+                primary_key :id
+              end
+            end
+
+            it "returns metadata about the types referenced in the commands" do
+              expect(
+                manifest[:type].keys
+              ).to match_array(
+                %i[
+                  User
+                  array
+                  associative_array
+                  atomic_duck
+                  attributes
+                  detached_entity
+                  duck
+                  duckture
+                  entity
+                  integer
+                  model
+                  number
+                  string
+                  symbol
+                ]
+              )
+            end
+
+            context "with manifest path" do
+              let(:inputs) { {} }
+              let(:action) { "manifest" }
+
+              it "includes types" do
+                expect(response.status).to be(0)
+                json = JSON.parse(response.body)
+                expect(json["type"].keys).to include("User")
+              end
+            end
+
+            context "with list path" do
+              let(:inputs) { {} }
+              let(:action) { "list" }
 
               it "lists commands" do
                 expect(response.status).to be(0)
                 json = JSON.parse(response.body)
 
-                expect(json).to eq([["QueryUser", "Queries a user"]])
+                expect(json).to eq([["QueryUser", nil]])
+              end
+
+              context "when verbose" do
+                # TODO: would be nice to not have to do =true here...
+                let(:inputs) { { verbose: true } }
+
+                it "lists commands" do
+                  expect(response.status).to be(0)
+                  json = JSON.parse(response.body)
+
+                  expect(json).to eq([["QueryUser", "Queries a user"]])
+                end
               end
             end
-          end
 
-          context "with describe_type path" do
-            let(:inputs) { {} }
-            let(:full_command_name) { "User" }
-            let(:action) { "describe_type" }
+            context "with describe_type path" do
+              let(:inputs) { {} }
+              let(:full_command_name) { "User" }
+              let(:action) { "describe_type" }
 
-            it "includes types" do
-              expect(response.status).to be(0)
-              json = JSON.parse(response.body)
-              expect(json["declaration_data"]["name"]).to eq("User")
+              it "includes types" do
+                expect(response.status).to be(0)
+                json = JSON.parse(response.body)
+                expect(json["declaration_data"]["name"]).to eq("User")
+              end
             end
           end
         end
       end
     end
-  end
 
-  describe "#patch_up_broken_parents_for_errors_with_missing_command_parents" do
-    let(:fixture_path) do
-      "#{__dir__}/../fixtures/command_connectors/manifest_with_errors_with_missing_command_parents.yaml"
+    describe "#patch_up_broken_parents_for_errors_with_missing_command_parents" do
+      let(:fixture_path) do
+        "#{__dir__}/../fixtures/command_connectors/manifest_with_errors_with_missing_command_parents.yaml"
+      end
+      let(:manifest_hash) do
+        YAML.load_file(fixture_path, aliases: true)
+      end
+
+      it "fixes busted parents by leapfrogging them and patching up scoped paths/names" do
+        error_manifest = manifest_hash[:error][:"Foobara::Auth::FindUser::UserNotFoundError"]
+
+        expect(error_manifest[:scoped_path]).to eq(["UserNotFoundError"])
+        expect(error_manifest[:parent]).to eq([:command, "Foobara::Auth::FindUser"])
+        expect(error_manifest[:scoped_prefix]).to be_nil
+        expect(error_manifest[:scoped_name]).to eq("UserNotFoundError")
+
+        patched_up_manifest = command_connector.patch_up_broken_parents_for_errors_with_missing_command_parents(
+          manifest_hash
+        )
+
+        patched_up_error_manifest = patched_up_manifest[:error][:"Foobara::Auth::FindUser::UserNotFoundError"]
+
+        expect(patched_up_error_manifest[:scoped_path]).to eq(%w[FindUser UserNotFoundError])
+        expect(patched_up_error_manifest[:parent]).to eq([:domain, "Foobara::Auth"])
+        expect(patched_up_error_manifest[:scoped_prefix]).to eq(["FindUser"])
+        expect(patched_up_error_manifest[:scoped_name]).to eq("FindUser::UserNotFoundError")
+      end
     end
-    let(:manifest_hash) do
-      YAML.load_file(fixture_path, aliases: true)
+
+    context "with multiple layers of inheritance with allowed_rule entries" do
+      let(:allowed_rule_a) do
+        proc { "a" }
+      end
+      # intentionally skipping b
+      let(:allowed_rule_c) do
+        proc {} # will not be allowed
+      end
+      let(:allowed_rule_d) do
+        proc { "d" }
+      end
+
+      let(:command_connector_class_a) do
+        rule = allowed_rule_a
+        stub_class "CommandConnectorA", described_class do
+          register_allowed_rule :a, rule
+        end
+      end
+
+      let(:command_connector_class_b) do
+        stub_class "CommandConnectorB", command_connector_class_a
+      end
+
+      let(:command_connector_class_c) do
+        rule = allowed_rule_c
+        stub_class "CommandConnectorC", command_connector_class_b do
+          register_allowed_rule :c, rule
+        end
+      end
+
+      let(:command_connector_class_d) do
+        rule = allowed_rule_d
+        stub_class "CommandConnectorD", command_connector_class_c do
+          register_allowed_rule :d, rule
+        end
+      end
+      let(:command_connector) { command_connector_class_d.new }
+
+      it "puts the expected allowed rules on the command connector" do
+        command_connector.connect(command_class, suffix: "A", allowed_rule: :a)
+        command_connector.connect(command_class, suffix: "B")
+        command_connector.connect(command_class, suffix: "C", allowed_rule: :c)
+        command_connector.connect(command_class, suffix: "D", allowed_rule: :d)
+
+        response = command_connector.run(full_command_name: "ComputeExponentA", action:, inputs:)
+        expect(response.status).to be(0)
+        expect(response.command.allowed_rule.symbol).to be(:a)
+
+        response = command_connector.run(full_command_name: "ComputeExponentB", action:, inputs:)
+        expect(response.status).to be(0)
+        expect(response.command.allowed_rule).to be_nil
+
+        response = command_connector.run(full_command_name: "ComputeExponentC", action:, inputs:)
+        expect(response.status).to be(1)
+        expect(response.command.allowed_rule.symbol).to be(:c)
+
+        response = command_connector.run(full_command_name: "ComputeExponentD", action:, inputs:)
+        expect(response.status).to be(0)
+        expect(response.command.allowed_rule.symbol).to be(:d)
+      end
     end
 
-    it "fixes busted parents by leapfrogging them and patching up scoped paths/names" do
-      error_manifest = manifest_hash[:error][:"Foobara::Auth::FindUser::UserNotFoundError"]
+    context "with multiple layers of inheritance with authenticator entries" do
+      let(:authenticator_a) do
+        stub_class("SomeAuthenticator", Foobara::CommandConnector::Authenticator) do
+          def initialize
+            super(symbol: :a, &proc { "a" })
+          end
+        end
+      end
+      # intentionally skipping b
+      let(:authenticator_c) do
+        proc {} # will not be allowed
+      end
+      let(:authenticator_d) do
+        proc { "d" }
+      end
+      let(:authenticator_e) do
+        proc { "e" }
+      end
 
-      expect(error_manifest[:scoped_path]).to eq(["UserNotFoundError"])
-      expect(error_manifest[:parent]).to eq([:command, "Foobara::Auth::FindUser"])
-      expect(error_manifest[:scoped_prefix]).to be_nil
-      expect(error_manifest[:scoped_name]).to eq("UserNotFoundError")
+      let(:command_connector_class_a) do
+        authenticator = authenticator_a
+        stub_class "CommandConnectorA", described_class do
+          register_authenticator :a, authenticator
+        end
+      end
 
-      patched_up_manifest = command_connector.patch_up_broken_parents_for_errors_with_missing_command_parents(
-        manifest_hash
-      )
+      let(:command_connector_class_b) do
+        stub_class "CommandConnectorB", command_connector_class_a
+      end
 
-      patched_up_error_manifest = patched_up_manifest[:error][:"Foobara::Auth::FindUser::UserNotFoundError"]
+      let(:command_connector_class_c) do
+        authenticator = authenticator_c
+        stub_class "CommandConnectorC", command_connector_class_b do
+          register_authenticator :c, authenticator
+        end
+      end
 
-      expect(patched_up_error_manifest[:scoped_path]).to eq(%w[FindUser UserNotFoundError])
-      expect(patched_up_error_manifest[:parent]).to eq([:domain, "Foobara::Auth"])
-      expect(patched_up_error_manifest[:scoped_prefix]).to eq(["FindUser"])
-      expect(patched_up_error_manifest[:scoped_name]).to eq("FindUser::UserNotFoundError")
+      let(:command_connector_class_d) do
+        authenticator = authenticator_d
+        stub_class "CommandConnectorD", command_connector_class_c do
+          register_authenticator :d, authenticator
+        end
+      end
+
+      let(:command_connector_class_e) do
+        stub_class "CommandConnectorE", command_connector_class_d
+      end
+
+      let(:command_connector_a) { command_connector_class_a.new(authenticator: authenticator_a) }
+      let(:command_connector_b) { command_connector_class_b.new(authenticator: "a") }
+      let(:command_connector_c) { command_connector_class_c.new(authenticator: :a) }
+      let(:command_connector_d) { command_connector_class_d.new(authenticator: :c) }
+      let(:command_connector_e) { command_connector_class_e.new(authenticator: :d) }
+
+      it "puts the expected allowed rules on the command connector" do
+        command_connector_a.connect(command_class, requires_authentication: true)
+        command_connector_b.connect(command_class, requires_authentication: true)
+        command_connector_c.connect(command_class, requires_authentication: true)
+        command_connector_d.connect(command_class, requires_authentication: true)
+        command_connector_e.connect(command_class, requires_authentication: true, authenticator: authenticator_e)
+
+        response = command_connector_a.run(full_command_name:, action:, inputs:)
+        expect(response.status).to be(0)
+        expect(response.command.authenticated_user).to eq("a")
+        expect(response.command.authenticator.symbol).to be(:a)
+
+        response = command_connector_b.run(full_command_name:, action:, inputs:)
+        expect(response.status).to be(0)
+        expect(response.command.authenticated_user).to eq("a")
+        expect(response.command.authenticator.symbol).to be(:a)
+
+        response = command_connector_c.run(full_command_name:, action:, inputs:)
+        expect(response.status).to be(0)
+        expect(response.command.authenticated_user).to eq("a")
+        expect(response.command.authenticator.symbol).to be(:a)
+
+        response = command_connector_d.run(full_command_name:, action:, inputs:)
+        expect(response.status).to be(1)
+        expect(response.command.outcome.errors_hash.keys).to include("runtime.unauthenticated")
+        expect(response.command.authenticated_user).to be_nil
+        expect(response.command.authenticator.symbol).to be(:c)
+
+        response = command_connector_e.run(full_command_name:, action:, inputs:)
+        expect(response.status).to be(0)
+        expect(response.command.authenticated_user).to eq("e")
+      end
     end
   end
 end
