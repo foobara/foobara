@@ -566,17 +566,18 @@ module Foobara
             end
 
             if explanation.nil?
-              source = begin
-                allowed_rule.block.source
-              rescue MethodSource::SourceNotFoundError
-                # This path is hit if the way the source code is extracted
-                # doesn't result in valid Ruby, for example, as part of a hash such as:
-                # allowed_rule: -> () { whatever?(something) },
-                # :nocov:
-                allowed_rule.block.source_location.join(":")
-                # :nocov:
-              end
+              source = if allowed_rule.block.respond_to?("source") && defined?(MethodSource)
+                         begin
+                           # This only works when pry is loaded
+                           allowed_rule.block.source
+                         rescue MethodSource::SourceNotFoundError
+                           # This path is hit if the way the source code is extracted
+                           # doesn't result in valid Ruby, for example, as part of a hash such as:
+                           # allowed_rule: -> () { whatever?(something) },
+                         end
+                       end
 
+              source ||= allowed_rule.block.source_location.join(":")
               explanation = source || "No explanation."
             end
 

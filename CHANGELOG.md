@@ -1,3 +1,7 @@
+# [0.0.106] - 2025-04-20
+
+- Fix authenticator explanation that was coupled to pry
+
 # [0.0.105] - 2025-04-20
 
 - Support registering allowed_rule and authenticator on connectors and using them by symbol
