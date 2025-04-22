@@ -1,3 +1,7 @@
+# [0.0.108] - 2025-04-22
+
+- Fix bug in CommandConnector::NotFoundError constructor
+
 # [0.0.107] - 2025-04-22
 
 - Make sure various Foobara::Error subclasses have consistent interfaces
