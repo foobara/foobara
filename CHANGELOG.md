@@ -1,3 +1,7 @@
+# [0.0.107] - 2025-04-22
+
+- Make sure various Foobara::Error subclasses have consistent interfaces
+
 # [0.0.106] - 2025-04-20
 
 - Fix authenticator explanation that was coupled to pry
