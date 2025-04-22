@@ -31,41 +31,40 @@ module Foobara
           end
         end
 
+        def for(criteria, entity_class: self.entity_class, data_path: self.data_path || "")
+          message = "Could not find #{entity_class} for #{criteria}"
+          context = {
+            entity_class: entity_class.full_entity_name,
+            criteria:,
+            data_path: data_path.to_s
+          }
+
+          new(context:, message:)
+        end
+
         def data_path
           nil
         end
-
-        def context_type_declaration
-          {
-            entity_class: :string, # TODO: we don't have a way to specify an exact value for a type
-            criteria: :duck, # TODO: probably should be integer or string but no union types yet
-            data_path: :string # TODO: we don't have a way to specify an exact value for a type
-          }
-        end
       end
 
-      attr_accessor :data_path, :entity_class, :criteria
+      context do
+        entity_class :string # TODO: we don't have a way to specify an exact value for a type
+        criteria :duck # TODO: probably should be integer or string but no union types yet
+        data_path :string # TODO: we don't have a way to specify an exact value for a type
+      end
 
       foobara_delegate :primary_key_attribute, :full_entity_name, to: :entity_class
 
-      def initialize(criteria, entity_class: self.class.entity_class, data_path: self.class.data_path)
-        self.criteria = criteria
-        self.entity_class = entity_class
-        self.data_path = data_path || ""
-
-        super(context:, message:)
+      def criteria
+        context[:criteria]
       end
 
-      def context
-        {
-          entity_class: full_entity_name,
-          criteria:,
-          data_path: data_path.to_s
-        }
+      def data_path
+        context[:data_path]
       end
 
-      def message
-        "Could not find #{entity_class} for #{criteria}"
+      def entity_class
+        context[:entity_class]
       end
     end
   end

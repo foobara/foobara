@@ -1,14 +1,15 @@
 module Foobara
   class CommandConnector
     class UnknownError < CommandConnectorError
-      attr_accessor :error
-
-      def initialize(error)
-        # TODO: can we just use #cause for this?
-        self.error = error
-
-        super(error.message)
+      class << self
+        def for(error)
+          new(message: error.message).tap do |unknown_error|
+            unknown_error.error = error
+          end
+        end
       end
+
+      attr_accessor :error
     end
   end
 end

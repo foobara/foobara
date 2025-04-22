@@ -195,6 +195,10 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Entities do
         expect(context[:entity_class]).to eq("Employee")
         expect(context[:criteria]).to eq(100)
         expect(context[:data_path]).to eq("employee")
+
+        expect(error.entity_class).to eq("Employee")
+        expect(error.criteria).to eq(100)
+        expect(error.data_path).to eq("employee")
       end
     end
 

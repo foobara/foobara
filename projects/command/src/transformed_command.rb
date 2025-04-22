@@ -581,7 +581,7 @@ module Foobara
               explanation = source || "No explanation."
             end
 
-            error = CommandConnector::NotAllowedError.new(rule_symbol: rule.symbol, explanation:)
+            error = CommandConnector::NotAllowedError.for(rule_symbol: rule.symbol, explanation:)
             self.outcome = Outcome.error(error)
 
             command.state_machine.error!
@@ -605,7 +605,7 @@ module Foobara
     rescue => e
       if capture_unknown_error
         # TODO: move to superclass?
-        self.outcome = Outcome.error(CommandConnector::UnknownError.new(e))
+        self.outcome = Outcome.error(CommandConnector::UnknownError.for(e))
       else
         # :nocov:
         raise

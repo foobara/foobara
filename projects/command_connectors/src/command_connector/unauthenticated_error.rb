@@ -1,8 +1,8 @@
 module Foobara
   class CommandConnector
     class UnauthenticatedError < CommandConnectorError
-      def initialize
-        super("Unauthenticated")
+      def initialize(message: "Unauthenticated", **)
+        super
       end
     end
   end

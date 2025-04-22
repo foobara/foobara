@@ -1,14 +1,10 @@
 module Foobara
   class CommandConnector
     class CommandConnectorError < Foobara::RuntimeError
-      class << self
-        def context_type_declaration
-          {}
-        end
-      end
+      context({})
 
-      def initialize(message, context: {})
-        super(message:, context:)
+      def initialize(message:, context: {})
+        super
       end
     end
   end

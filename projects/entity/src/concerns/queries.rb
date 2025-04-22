@@ -55,7 +55,7 @@ module Foobara
                             record
                           end
 
-            raise NotFoundError.new(primary_key, entity_class: self)
+            raise NotFoundError.for(primary_key, entity_class: self)
           end
 
           def load_aggregate(record_or_record_id)

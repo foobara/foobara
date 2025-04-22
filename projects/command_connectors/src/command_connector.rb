@@ -153,7 +153,7 @@ module Foobara
 
         unless transformed_command_class
           # :nocov:
-          raise NoCommandFoundError, "Could not find command registered for #{full_command_name}"
+          raise NoCommandFoundError.new(message: "Could not find command registered for #{full_command_name}")
           # :nocov:
         end
 
@@ -165,7 +165,9 @@ module Foobara
 
         unless manifestable
           # :nocov:
-          raise NoCommandOrTypeFoundError, "Could not find command or type registered for #{full_command_name}"
+          raise NoCommandOrTypeFoundError.new(
+            message: "Could not find command or type registered for #{full_command_name}"
+          )
           # :nocov:
         end
 
@@ -181,7 +183,7 @@ module Foobara
 
         unless transformed_command_class
           # :nocov:
-          raise NoCommandFoundError, "Could not find command registered for #{full_command_name}"
+          raise NoCommandFoundError.new(message: "Could not find command registered for #{full_command_name}")
           # :nocov:
         end
 
@@ -196,7 +198,7 @@ module Foobara
 
         unless type
           # :nocov:
-          raise NoTypeFoundError, "Could not find type registered for #{full_command_name}"
+          raise NoTypeFoundError.new(message: "Could not find type registered for #{full_command_name}")
           # :nocov:
         end
 
@@ -245,7 +247,7 @@ module Foobara
                                     transform_command_class(command_class)
       else
         # :nocov:
-        raise InvalidContextError, "Not sure what to do with #{action}"
+        raise InvalidContextError.new(message: "Not sure what to do with #{action}")
         # :nocov:
       end
 
@@ -388,7 +390,7 @@ module Foobara
       request.command.run
     rescue => e
       if capture_unknown_error
-        request.error = CommandConnector::UnknownError.new(e)
+        request.error = CommandConnector::UnknownError.for(e)
       else
         raise
       end

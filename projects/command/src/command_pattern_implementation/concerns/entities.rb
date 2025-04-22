@@ -72,7 +72,7 @@ module Foobara
 
             thunks_to_load
           rescue Entity::NotFoundError => e
-            add_runtime_error(error_class.new(e.criteria))
+            add_runtime_error(error_class.for(e.criteria))
           end
         end
 
