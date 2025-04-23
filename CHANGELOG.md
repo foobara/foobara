@@ -1,3 +1,7 @@
+# [0.0.109] - 2025-04-22
+
+- Support CommandConnector transformers that don't take declaration_data
+
 # [0.0.108] - 2025-04-22
 
 - Fix bug in CommandConnector::NotFoundError constructor

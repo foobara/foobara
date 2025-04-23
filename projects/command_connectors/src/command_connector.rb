@@ -43,6 +43,7 @@ module Foobara
         authenticator_registry[authenticator.symbol] = authenticator
       end
 
+      # TODO: relocate to Authenticator
       def to_authenticator(*args)
         symbol, object = case args.size
                          when 1

@@ -424,7 +424,8 @@ module Foobara
                 target_type = new_type if new_type
               end
             else
-              transformer.new(declaration_data)
+              # TODO: perhaps pass in the command connector as the parent declaration data?
+              transformer.new_with_agnostic_args(declaration_data:)
             end
           elsif transformer.is_a?(Value::Processor)
             transformer
