@@ -1,3 +1,8 @@
+# [0.0.110] - 2025-04-23
+
+- Automatically load associations needed for delegated attributes for
+  result of commands exposed via command connectors
+
 # [0.0.109] - 2025-04-22
 
 - Support CommandConnector transformers that don't take declaration_data
