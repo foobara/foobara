@@ -36,7 +36,7 @@ module Foobara
 
         unless authenticator.symbol
           # :nocov:
-          raise ArgumentError, "Expected an authenticator to have a symbol"
+          raise ArgumentError, "Expected authenticator to have a symbol"
           # :nocov:
         end
 

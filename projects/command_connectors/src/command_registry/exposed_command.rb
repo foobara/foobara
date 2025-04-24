@@ -90,6 +90,22 @@ module Foobara
         self.allowed_rule = allowed_rule
         self.requires_authentication = requires_authentication
         self.authenticator = authenticator
+
+        # A bit hacky... we should check if we need to shim in a LoadDelegatedAttributesEntitiesPreCommitTransformer
+        unless aggregate_entities
+          # It's possible delegates have been added or removed via the result transformers...
+          # We should figure out a way to check the transformed result type instead.
+          if _has_delegated_attributes?(command_class.result_type)
+            self.pre_commit_transformers = [
+              *self.pre_commit_transformers,
+              CommandConnectors::Transformers::LoadDelegatedAttributesEntitiesPreCommitTransformer
+            ].uniq
+          end
+        end
+      end
+
+      def _has_delegated_attributes?(type)
+        type&.extends?(BuiltinTypes[:model]) && type.target_class&.has_delegated_attributes?
       end
 
       def full_command_name

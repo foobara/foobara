@@ -155,6 +155,10 @@ module Foobara
             @delegates ||= {}
           end
 
+          def has_delegated_attributes?
+            !delegates.empty?
+          end
+
           def private_attribute_names
             @private_attribute_names ||= []
           end
