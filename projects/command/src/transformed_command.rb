@@ -351,10 +351,17 @@ module Foobara
             to_include << mutator
             mutator.foobara_manifest_reference
           elsif mutator.is_a?(Value::Mutator)
-            if mutator.symbol
+            klass = mutator.class
+
+            if klass.scoped_path_set?
+              to_include << klass
+              klass.foobara_manifest_reference
+              # TODO: Delete this nocov block
+              # TODO: make anonymous scoped path's have better names instead of random hexadecimal
+              # :nocov:
+            elsif mutator.symbol
               mutator.symbol
             else
-              klass = mutator.class
 
               to_include << klass if klass.scoped_path_set?
 
@@ -366,6 +373,7 @@ module Foobara
               end
 
               "Anonymous#{Util.non_full_name(name)}"
+              # :nocov:
             end
           end
         end

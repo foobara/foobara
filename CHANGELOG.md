@@ -1,3 +1,7 @@
+# [0.0.112] - 2025-04-25
+
+- Fix bugs preventing generating manifest for connector with mutator instances instead of classes
+
 # [0.0.111] - 2025-04-25
 
 - Fix bug in DomainMapper.depends_on

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    foobara (0.0.111)
+    foobara (0.0.112)
       bigdecimal
       foobara-lru-cache (~> 0.0.2)
       foobara-util (~> 0.0.11)
@@ -42,7 +42,7 @@ GEM
       guard-compat (~> 1.1)
       rspec (>= 2.99.0, < 4.0)
     inheritable-thread-vars (0.0.2)
-    json (2.10.2)
+    json (2.11.3)
     language_server-protocol (3.17.0.4)
     lint_roller (1.1.0)
     listen (3.9.0)

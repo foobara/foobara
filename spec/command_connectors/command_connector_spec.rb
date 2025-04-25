@@ -620,7 +620,7 @@ RSpec.describe Foobara::CommandConnector do
 
           it "mutates the response and gives an expected mutated result type in the manifest" do
             manifest = command_connector.foobara_manifest
-            expect(manifest[:command][:SomeCommand][:response_mutators]).to eq([:change_bar_to_baz_mutator])
+            expect(manifest[:command][:SomeCommand][:response_mutators]).to eq(["ChangeBarToBazMutator"])
           end
 
           context "when mutator is an anonymous instance" do
@@ -634,7 +634,7 @@ RSpec.describe Foobara::CommandConnector do
 
             it "mutates the response and gives an expected mutated result type in the manifest" do
               manifest = command_connector.foobara_manifest
-              expect(manifest[:command][:SomeCommand][:response_mutators]).to eq(["AnonymousResponseMutator"])
+              expect(manifest[:command][:SomeCommand][:response_mutators].first).to be_a(String)
             end
           end
         end
