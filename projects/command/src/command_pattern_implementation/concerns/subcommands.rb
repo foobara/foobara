@@ -59,7 +59,8 @@ module Foobara
             if subcommand_classes.empty?
               return @depends_on if defined?(@depends_on)
 
-              @depends_on = if self == Foobara::Command
+              # TODO: get Command and DomainMapper out of here!
+              @depends_on = if self == Foobara::Command || self == Foobara::DomainMapper
                               Set.new
                             else
                               superclass.depends_on.dup

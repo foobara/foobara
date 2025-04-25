@@ -1,3 +1,9 @@
+# [0.0.111] - 2025-04-25
+
+- Fix bug in DomainMapper.depends_on
+- Allow mutator instances to be used by connectors not just classes
+- Some WeakObjectSet tweaks
+
 # [0.0.110] - 2025-04-23
 
 - Automatically load associations needed for delegated attributes for
