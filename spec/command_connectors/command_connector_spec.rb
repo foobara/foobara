@@ -563,7 +563,8 @@ RSpec.describe Foobara::CommandConnector do
 
     context "with a response mutator" do
       let(:full_command_name) { "SomeCommand" }
-      let(:response_mutators) { [response_mutator_class] }
+      let(:response_mutators) { [response_mutator] }
+      let(:response_mutator) { response_mutator_class }
 
       let(:command_class) do
         stub_class(:SomeCommand, Foobara::Command) do
@@ -601,6 +602,8 @@ RSpec.describe Foobara::CommandConnector do
       it "mutates the response and gives an expected mutated result type in the manifest" do
         manifest = command_connector.foobara_manifest
 
+        expect(manifest[:command][:SomeCommand][:response_mutators]).to eq(["ChangeBarToBazMutator"])
+
         expect(manifest[:command][:SomeCommand][:result_type]).to eq(
           type: :attributes,
           element_type_declarations: {
@@ -609,6 +612,32 @@ RSpec.describe Foobara::CommandConnector do
           }
         )
         expect(JSON.parse(response.body)).to eq("foo" => "foo some value", "baz" => "bar some value")
+      end
+
+      describe "#foobara_manifest" do
+        context "when mutator is an instance" do
+          let(:response_mutator) { response_mutator_class.new(true) }
+
+          it "mutates the response and gives an expected mutated result type in the manifest" do
+            manifest = command_connector.foobara_manifest
+            expect(manifest[:command][:SomeCommand][:response_mutators]).to eq([:change_bar_to_baz_mutator])
+          end
+
+          context "when mutator is an anonymous instance" do
+            let(:response_mutator_class) do
+              Class.new(Foobara::CommandConnectors::ResponseMutator) do
+                def result_type_declaration_from(result_type)
+                  result_type
+                end
+              end
+            end
+
+            it "mutates the response and gives an expected mutated result type in the manifest" do
+              manifest = command_connector.foobara_manifest
+              expect(manifest[:command][:SomeCommand][:response_mutators]).to eq(["AnonymousResponseMutator"])
+            end
+          end
+        end
       end
 
       context "with two mutators" do

@@ -296,10 +296,8 @@ module Foobara
           end
         end
 
-        response_mutators = self.response_mutators.map(&:foobara_manifest)
-        request_mutators = TypeDeclarations.with_manifest_context(remove_sensitive: false) do
-          self.request_mutators.map(&:foobara_manifest)
-        end
+        response_mutators = mutators_to_manifest_symbols(self.response_mutators, to_include:)
+        request_mutators = mutators_to_manifest_symbols(self.request_mutators, to_include:)
 
         authenticator_manifest = if authenticator
                                    if authenticator.respond_to?(:foobara_manifest)
@@ -343,6 +341,34 @@ module Foobara
             authenticator: authenticator_manifest
           )
         )
+      end
+
+      def mutators_to_manifest_symbols(mutators, to_include:)
+        return nil if mutators.nil? || mutators.empty?
+
+        mutators.map do |mutator|
+          if mutator.scoped_path_set?
+            to_include << mutator
+            mutator.foobara_manifest_reference
+          elsif mutator.is_a?(Value::Mutator)
+            if mutator.symbol
+              mutator.symbol
+            else
+              klass = mutator.class
+
+              to_include << klass if klass.scoped_path_set?
+
+              name = klass.name
+
+              while name.nil?
+                klass = klass.superclass
+                name = klass.name
+              end
+
+              "Anonymous#{Util.non_full_name(name)}"
+            end
+          end
+        end
       end
 
       def inputs_transformer
