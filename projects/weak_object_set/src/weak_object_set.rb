@@ -97,22 +97,40 @@ module Foobara
     end
 
     def <<(object)
-      garbage_cleaner.track(object)
-
       object_id = object.object_id
 
-      objects[object_id] = WeakRef.new(object)
+      if include?(object)
+        if @key_method
+          key = object.send(@key_method)
+          old_key = object_id_to_key[object_id]
 
-      if @key_method
-        key = object.send(@key_method)
+          if key != old_key
+            key_to_object_id.delete(old_key)
 
-        if key
-          key_to_object_id[key] = object_id
-          object_id_to_key[object_id] = key
+            if key
+              key_to_object_id[key] = object_id
+              object_id_to_key[object_id] = key
+            else
+              object_id_to_key.delete(object_id)
+            end
+          end
         end
-      end
+      else
+        garbage_cleaner.track(object)
 
-      object
+        objects[object_id] = WeakRef.new(object)
+
+        if @key_method
+          key = object.send(@key_method)
+
+          if key
+            key_to_object_id[key] = object_id
+            object_id_to_key[object_id] = key
+          end
+        end
+
+        object
+      end
     end
 
     def include?(object_or_object_id)

@@ -519,8 +519,6 @@ module Foobara
 
         def flush_created!
           marked_created.each do |record|
-            tracked_records.delete(record)
-
             flush_created_associations!(record)
 
             # TODO: do this in bulk
@@ -540,8 +538,6 @@ module Foobara
         end
 
         def flush_created_record!(record)
-          tracked_records.delete(record)
-
           flush_created_associations!(record)
 
           unmark_created(record)

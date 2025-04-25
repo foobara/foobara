@@ -64,9 +64,6 @@ module Foobara
             end
 
             def updated(record)
-              # Hacky way to handle situation where the primary key might have changed.
-              # TODO: make a better way of handling this.
-              tracked_records.delete(record)
               tracked_records << record
 
               # TODO: is this check redundant? Maybe have the entity explode directly instead?
