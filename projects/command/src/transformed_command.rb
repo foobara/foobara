@@ -122,8 +122,14 @@ module Foobara
 
         mutated_result_type = result_type
 
-        response_mutators&.reverse&.each do |mutator|
-          mutated_result_type = mutator.instance.result_type_from(mutated_result_type)
+        mutators = if response_mutators.size == 1
+                     [response_mutator]
+                   else
+                     response_mutator&.processors&.reverse
+                   end
+
+        mutators&.each do |mutator|
+          mutated_result_type = mutator.result_type_from(mutated_result_type)
         end
 
         @result_type_for_manifest = mutated_result_type
@@ -134,8 +140,14 @@ module Foobara
 
         mutated_inputs_type = inputs_type
 
-        request_mutators&.each do |mutator|
-          mutated_inputs_type = mutator.instance.inputs_type_from(mutated_inputs_type)
+        mutators = if request_mutators.size == 1
+                     [request_mutator]
+                   else
+                     request_mutator&.processors&.reverse
+                   end
+
+        mutators&.each do |mutator|
+          mutated_inputs_type = mutator.inputs_type_from(mutated_inputs_type)
         end
 
         @inputs_type_for_manifest = mutated_inputs_type
