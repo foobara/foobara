@@ -1,3 +1,7 @@
+# [0.0.113] - 2025-04-25
+
+- If an inputs transformer fails give relevant error/outcome not an unknown error
+
 # [0.0.112] - 2025-04-25
 
 - Fix bugs preventing generating manifest for connector with mutator instances instead of classes

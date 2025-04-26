@@ -1319,6 +1319,25 @@ RSpec.describe Foobara::CommandConnector do
             expect(JSON.parse(response.body)).to eq("answer" => "8")
           end
 
+          context "with bad inputs" do
+            let(:inputs_transformer) do
+              stub_class "SomeTransformer", Foobara::TypeDeclarations::TypedTransformer do
+                def from_type_declaration
+                  Foobara::Domain.current.foobara_type_from_declaration do
+                    bbaassee :string, :required
+                    exponent :string, :required
+                  end
+                end
+              end
+            end
+
+            let(:inputs) { { exponent: } }
+
+            it "is not success" do
+              expect(response.status).to be(1)
+            end
+          end
+
           describe "#manifest" do
             let(:manifest) { command_connector.foobara_manifest }
 

@@ -388,7 +388,11 @@ module Foobara
     end
 
     def run_command(request)
-      request.command.run
+      command = request.command
+
+      unless command.outcome
+        command.run
+      end
     rescue => e
       if capture_unknown_error
         request.error = CommandConnector::UnknownError.for(e)

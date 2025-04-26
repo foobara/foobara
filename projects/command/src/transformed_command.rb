@@ -526,7 +526,14 @@ module Foobara
 
     def transform_inputs
       self.transformed_inputs = if self.class.inputs_transformer
-                                  self.class.inputs_transformer.process_value!(untransformed_inputs)
+                                  outcome = self.class.inputs_transformer.process_value(untransformed_inputs)
+
+                                  if outcome.success?
+                                    outcome.result
+                                  else
+                                    self.outcome = outcome
+                                    untransformed_inputs
+                                  end
                                 else
                                   untransformed_inputs
                                 end
