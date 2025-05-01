@@ -963,6 +963,16 @@ RSpec.describe Foobara::CommandConnector do
               JSON.parse(response.body).find { |e| e["key"] == "runtime.not_allowed" }["message"]
             ).to match(/base == 1900/)
           end
+
+          describe "#foobara_manifest" do
+            it "contains info about the authenticator" do
+              manifest = command_connector.foobara_manifest
+              expect(manifest[:command][:ComputeExponent][:authenticator]).to eq(
+                symbol: :authenticator,
+                explanation: :authenticator
+              )
+            end
+          end
         end
       end
 
@@ -2043,6 +2053,47 @@ RSpec.describe Foobara::CommandConnector do
       end
     end
 
+    context "with multiple authenticators to choose from" do
+      let(:authenticator_a) do
+        stub_class("NotApplicableAuthenticator", Foobara::CommandConnector::Authenticator) do
+          def initialize
+            super(symbol: :a, &proc { "a" })
+          end
+
+          def applicable?(_request)
+            false
+          end
+        end
+      end
+
+      let(:authenticator_b) do
+        stub_class("ApplicableAuthenticator", Foobara::CommandConnector::Authenticator) do
+          def initialize
+            super(symbol: :b, &proc { "b" })
+          end
+        end
+      end
+
+      let(:authenticator) { [authenticator_a, authenticator_b] }
+      let(:requires_authentication) { true }
+
+      it "chooses the applicable authenticator" do
+        expect(response.status).to be(0)
+        expect(response.command.authenticated_user).to eq("b")
+      end
+
+      describe "#foobara_manifest" do
+        it "contains combined info about the authenticator" do
+          manifest = command_connector.foobara_manifest
+
+          expect(manifest[:command][:ComputeExponent][:authenticator]).to eq(
+            symbol: :a_or_b,
+            explanation: "a, or b"
+          )
+        end
+      end
+    end
+
     context "with multiple layers of inheritance with authenticator entries" do
       let(:authenticator_a) do
         stub_class("SomeAuthenticator", Foobara::CommandConnector::Authenticator) do
@@ -2102,7 +2153,7 @@ RSpec.describe Foobara::CommandConnector do
         command_connector_b.connect(command_class, requires_authentication: true)
         command_connector_c.connect(command_class, requires_authentication: true)
         command_connector_d.connect(command_class, requires_authentication: true)
-        command_connector_e.connect(command_class, requires_authentication: true, authenticator: authenticator_e)
+        command_connector_e.connect(command_class, requires_authentication: true, authenticator: [authenticator_e])
 
         response = command_connector_a.run(full_command_name:, action:, inputs:)
         expect(response.status).to be(0)
@@ -2128,6 +2179,17 @@ RSpec.describe Foobara::CommandConnector do
         response = command_connector_e.run(full_command_name:, action:, inputs:)
         expect(response.status).to be(0)
         expect(response.command.authenticated_user).to eq("e")
+      end
+
+      describe "#foobara_manifest" do
+        it "contains info about the authenticator" do
+          command_connector_a.connect(command_class, requires_authentication: true)
+          manifest = command_connector_a.foobara_manifest
+          expect(manifest[:command][:ComputeExponent][:authenticator]).to eq(
+            symbol: :a,
+            explanation: :a
+          )
+        end
       end
     end
   end

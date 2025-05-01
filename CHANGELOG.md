@@ -1,3 +1,9 @@
+# [0.0.114] - 2025-05-01
+
+- Support choosing among multiple processors
+- Make Authenticator a Processor
+- Give a way for Processor::Selection to give nil when nothing matches
+
 # [0.0.113] - 2025-04-25
 
 - If an inputs transformer fails give relevant error/outcome not an unknown error
