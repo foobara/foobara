@@ -449,15 +449,17 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Entities do
           applicant_id = Applicant.transaction { applicant }.id
           user_id = User.transaction { user }.id
 
-          Applicant.transaction do
-            expect {
-              update_command.run!(id: applicant_id, is_active: false)
-            }.to change { Applicant.load(applicant_id).is_active }.from(true).to(false)
+          expect {
+            update_command.run!(id: applicant_id, is_active: false)
+          }.to change {
+            Applicant.transaction { Applicant.load(applicant_id).is_active }
+          }.from(true).to(false)
 
-            expect {
-              update_command.run!(id: applicant_id, is_active: true)
-            }.to change { Applicant.load(applicant_id).is_active }.from(false).to(true)
-          end
+          expect {
+            update_command.run!(id: applicant_id, is_active: true)
+          }.to change {
+            Applicant.transaction { Applicant.load(applicant_id).is_active }
+          }.from(false).to(true)
 
           Applicant.transaction do
             update_command.run!(
