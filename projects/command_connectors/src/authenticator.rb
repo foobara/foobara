@@ -26,7 +26,7 @@ module Foobara
       end
 
       def authenticate(request)
-        transform(request)
+        process_value!(request)
       end
 
       def to_proc

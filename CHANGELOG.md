@@ -1,3 +1,7 @@
+# [0.0.115] - 2025-05-01
+
+- Make sure Authenticator#authenticate hits #applicable?
+
 # [0.0.114] - 2025-05-01
 
 - Support choosing among multiple processors
