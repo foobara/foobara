@@ -16,10 +16,12 @@ module Foobara
           end
         end
 
-        attr_accessor :enforce_unique
+        attr_accessor :enforce_unique, :error_if_none_applicable
 
-        def initialize(*, enforce_unique: true, **)
+        def initialize(*, enforce_unique: true, error_if_none_applicable: true, **)
           self.enforce_unique = enforce_unique
+          self.error_if_none_applicable = error_if_none_applicable
+
           super(*, **)
         end
 
@@ -29,10 +31,17 @@ module Foobara
 
           if outcome.success?
             processor = outcome.result
-            outcome = processor.process_value(value)
+
+            unless processor.nil?
+              outcome = processor.process_value(value)
+            end
           end
 
           outcome
+        end
+
+        def process_value!(value)
+          process_value(value).result!
         end
 
         def processor_for(value)
@@ -59,8 +68,10 @@ module Foobara
 
           if processor
             Outcome.success(processor)
-          else
+          elsif error_if_none_applicable
             Outcome.error(build_error(value, error_class: NoApplicableProcessorError))
+          else
+            Outcome.success(nil)
           end
         end
 

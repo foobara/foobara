@@ -28,6 +28,20 @@ RSpec.describe Foobara::Value::Processor::Selection do
     let(:selection) do
       described_class.new(processors:, enforce_unique:)
     end
+    let(:enforce_unique) { false }
+
+    context "when wanting nil when no processor matches" do
+      let(:error_if_none_applicable) { false }
+      let(:selection) do
+        described_class.new(processors:, enforce_unique:, error_if_none_applicable:)
+      end
+
+      context "when it does not match a processor" do
+        let(:value) { :c }
+
+        it { is_expected.to be_nil }
+      end
+    end
 
     context "when unique enforced" do
       let(:enforce_unique) { true }
@@ -41,8 +55,6 @@ RSpec.describe Foobara::Value::Processor::Selection do
     end
 
     context "when unique not enforced" do
-      let(:enforce_unique) { false }
-
       context "when it matches a processor" do
         let(:value) { :a }
 
