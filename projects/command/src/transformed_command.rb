@@ -217,9 +217,6 @@ module Foobara
       end
 
       def types_depended_on
-        # Seems to be not necessary?
-        # types = command_class.types_depended_on
-
         types = Set.new
 
         # TODO: memoize this
@@ -299,18 +296,14 @@ module Foobara
         response_mutators = mutators_to_manifest_symbols(self.response_mutators, to_include:)
         request_mutators = mutators_to_manifest_symbols(self.request_mutators, to_include:)
 
-        authenticator_manifest = if authenticator
-                                   if authenticator.respond_to?(:foobara_manifest)
-                                     # TODO: test this path
-                                     # :nocov:
-                                     authenticator.foobara_manifest
-                                     # :nocov:
-                                   else
-                                     true
-                                   end
-                                 end
+        authenticator_details = if authenticator
+                                  {
+                                    symbol: authenticator.symbol,
+                                    explanation: authenticator.explanation
+                                  }
+                                end
 
-        inputs_types_depended_on =  TypeDeclarations.with_manifest_context(remove_sensitive: false) do
+        inputs_types_depended_on = TypeDeclarations.with_manifest_context(remove_sensitive: false) do
           self.inputs_types_depended_on.map(&:foobara_manifest_reference).sort
         end
 
@@ -338,7 +331,7 @@ module Foobara
             response_mutators:,
             request_mutators:,
             requires_authentication:,
-            authenticator: authenticator_manifest
+            authenticator: authenticator_details
           )
         )
       end
@@ -486,7 +479,8 @@ module Foobara
       end
     end
 
-    attr_accessor :command, :untransformed_inputs, :transformed_inputs, :outcome, :authenticated_user
+    attr_accessor :command, :untransformed_inputs, :transformed_inputs, :outcome, :authenticated_user,
+                  :authenticated_credential
 
     def initialize(untransformed_inputs = {})
       self.untransformed_inputs = untransformed_inputs || {}

@@ -85,6 +85,19 @@ module Foobara
           end
 
           authenticator
+        when ::Array
+          case object.size
+          when 0
+            # TODO: test this
+            # :nocov:
+            nil
+            # :nocov:
+          when 1
+            to_authenticator(object.first)
+          else
+            authenticators = object.map { |authenticatorish| to_authenticator(authenticatorish) }
+            AuthenticatorSelector.new(authenticators:, symbol:)
+          end
         else
           if object.respond_to?(:call)
             Authenticator.new(symbol:, &object)
@@ -403,12 +416,14 @@ module Foobara
 
     def authenticate(request)
       request_command = request.command
-      auth_block = request_command.authenticator || authenticator
+      authenticator = request_command.authenticator || self.authenticator
 
       request_command.after_load_records do |command:, **|
-        authenticated_user = request.instance_exec(&auth_block)
+        authenticated_user, authenticated_credential = authenticator.authenticate(request)
 
+        # TODO: why are these on the command instead of the request??
         request_command.authenticated_user = authenticated_user
+        request_command.authenticated_credential = authenticated_credential
 
         unless authenticated_user
           request_command.outcome = Outcome.error(CommandConnector::UnauthenticatedError.new)
