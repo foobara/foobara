@@ -1,14 +1,32 @@
 module Foobara
   class CommandConnector
-    class Authenticator
-      attr_reader :block, :explanation, :symbol
+    # TODO: should switch to a processor and give errors if the authenticator header is malformed
+    class Authenticator < Value::Transformer
+      attr_reader :block
 
       def initialize(symbol: nil, explanation: nil, &block)
         symbol ||= Util.non_full_name_underscore(self.class).to_sym
+        explanation ||= symbol
 
-        @symbol = symbol
+        super(symbol:, explanation:)
+
         @block = block
-        @explanation = explanation || symbol
+      end
+
+      def symbol
+        declaration_data[:symbol]
+      end
+
+      def explanation
+        declaration_data[:explanation]
+      end
+
+      def transform(request)
+        request.instance_exec(&to_proc)
+      end
+
+      def authenticate(request)
+        transform(request)
       end
 
       def to_proc
