@@ -13,6 +13,10 @@ module Foobara
         @block = block
       end
 
+      def relevant_entity_classes
+        nil
+      end
+
       def symbol
         declaration_data[:symbol]
       end

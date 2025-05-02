@@ -154,15 +154,11 @@ module Foobara
       command_registry.foobara_lookup_command(name)
     end
 
-    # TODO: maybe instead connect commands with a shortcut_only: "describe" option
-    # in order to make this easier to extend and manage.
-    def request_to_command(request)
+    def request_to_command_class(request)
       action = request.action
-      inputs = nil
       full_command_name = request.full_command_name
 
-      case action
-      when "run"
+      if action == "run"
         transformed_command_class = transformed_command_from_name(full_command_name)
 
         unless transformed_command_class
@@ -171,9 +167,36 @@ module Foobara
           # :nocov:
         end
 
-        request.command_class = transformed_command_class
+        transformed_command_class
+      else
+        action = case action
+                 when "describe_type", "manifest", "describe_command"
+                   "describe"
+                 when "describe", "ping", "query_git_commit_info", "help"
+                   action
+                 when "list"
+                   "list_commands"
+                 else
+                   # :nocov:
+                   raise InvalidContextError.new(message: "Not sure what to do with #{action}")
+                   # :nocov:
+                 end
 
-        inputs = request.inputs
+        command_name = Util.classify(action)
+        command_class = find_builtin_command_class(command_name)
+        full_command_name = command_class.full_command_name
+
+        transformed_command_from_name(full_command_name) || transform_command_class(command_class)
+      end
+    end
+
+    def request_to_command_inputs(request)
+      action = request.action
+      full_command_name = request.full_command_name
+
+      case action
+      when "run"
+        request.inputs
       when "describe"
         manifestable = transformed_command_from_name(full_command_name) || type_from_name(full_command_name)
 
@@ -185,13 +208,7 @@ module Foobara
           # :nocov:
         end
 
-        command_class = find_builtin_command_class("Describe")
-        full_command_name = command_class.full_command_name
-
-        inputs = request.inputs.merge(manifestable:, request:)
-
-        transformed_command_class = transformed_command_from_name(full_command_name) ||
-                                    transform_command_class(command_class)
+        request.inputs.merge(manifestable:, request:)
       when "describe_command"
         transformed_command_class = transformed_command_from_name(full_command_name)
 
@@ -201,12 +218,7 @@ module Foobara
           # :nocov:
         end
 
-        command_class = find_builtin_command_class("Describe")
-        full_command_name = command_class.full_command_name
-
-        inputs = request.inputs.merge(manifestable: transformed_command_class, request:)
-        transformed_command_class = transformed_command_from_name(full_command_name) ||
-                                    transform_command_class(command_class)
+        request.inputs.merge(manifestable: transformed_command_class, request:)
       when "describe_type"
         type = type_from_name(full_command_name)
 
@@ -216,59 +228,30 @@ module Foobara
           # :nocov:
         end
 
-        command_class = find_builtin_command_class("Describe")
-        full_command_name = command_class.full_command_name
-
-        inputs = request.inputs.merge(manifestable: type, request:)
-        transformed_command_class = transformed_command_from_name(full_command_name) ||
-                                    transform_command_class(command_class)
+        request.inputs.merge(manifestable: type, request:)
       when "manifest"
-        command_class = find_builtin_command_class("Describe")
-        full_command_name = command_class.full_command_name
-
-        inputs = request.inputs.merge(manifestable: self, request:)
-        transformed_command_class = transformed_command_from_name(full_command_name) ||
-                                    transform_command_class(command_class)
-      when "ping"
-        command_class = find_builtin_command_class("Ping")
-        full_command_name = command_class.full_command_name
-
-        transformed_command_class = transformed_command_from_name(full_command_name) ||
-                                    transform_command_class(command_class)
-      when "query_git_commit_info"
-        # TODO: this feels out of control... should just accomplish this through run I think instead. Same with ping.
-        command_class = find_builtin_command_class("QueryGitCommitInfo")
-        full_command_name = command_class.full_command_name
-
-        transformed_command_class = transformed_command_from_name(full_command_name) ||
-                                    transform_command_class(command_class)
+        request.inputs.merge(manifestable: self, request:)
+      when "ping", "query_git_commit_info"
+        nil
       when "help"
-        command_class = find_builtin_command_class("Help")
-        full_command_name = command_class.full_command_name
-
-        inputs = { request: }
-        transformed_command_class = transformed_command_from_name(full_command_name) ||
-                                    transform_command_class(command_class)
+        { request: }
       when "list"
-        command_class = find_builtin_command_class("ListCommands")
-
-        full_command_name = command_class.full_command_name
-
-        request.command_class = command_class
-        inputs = request.inputs.merge(request:)
-
-        transformed_command_class = transformed_command_from_name(full_command_name) ||
-                                    transform_command_class(command_class)
+        request.inputs.merge(request:)
       else
         # :nocov:
         raise InvalidContextError.new(message: "Not sure what to do with #{action}")
         # :nocov:
       end
+    end
+
+    def request_to_command_instance(request)
+      command_class = request.command_class
+      inputs = request.inputs
 
       if inputs && !inputs.empty?
-        transformed_command_class.new(inputs)
+        command_class.new(inputs)
       else
-        transformed_command_class.new
+        command_class.new
       end
     end
 
@@ -305,6 +288,7 @@ module Foobara
       command = response.command
 
       if command.respond_to?(:serialize_result)
+        # TODO: Get serialization off of the command instance!!
         response.body = command.serialize_result(response.body)
       end
     end
@@ -383,21 +367,39 @@ module Foobara
     end
 
     def run_request(request)
-      command = build_command(request)
+      command_class = determine_command_class(request)
+      request.command_class = command_class
 
-      if command.respond_to?(:requires_authentication?) && command.requires_authentication?
-        authenticate(request)
+      return build_response(request) unless command_class
+
+      begin
+        request.open_transaction
+        request.authenticate
+        request.mutate_request
+
+        inputs = request_to_command_inputs(request)
+        request.inputs = inputs
+        command = build_command_instance(request)
+        request.command = command
+
+        unless request.error
+          if command
+            run_command(request)
+            # :nocov:
+          else
+            raise "No command returned from #request_to_command"
+            # :nocov:
+          end
+        end
+
+        build_response(request)
+      ensure
+        if (request.response || request).outcome&.success?
+          request.commit_transaction
+        else
+          request.rollback_transaction
+        end
       end
-
-      if command
-        run_command(request)
-        # :nocov:
-      elsif !request.error
-        raise "No command returned from #request_to_command"
-        # :nocov:
-      end
-
-      build_response(request)
     end
 
     def run_command(request)
@@ -414,33 +416,22 @@ module Foobara
       end
     end
 
-    def authenticate(request)
-      request_command = request.command
-      authenticator = request_command.authenticator || self.authenticator
-
-      request_command.after_load_records do |command:, **|
-        authenticated_user, authenticated_credential = authenticator.authenticate(request)
-
-        # TODO: why are these on the command instead of the request??
-        request_command.authenticated_user = authenticated_user
-        request_command.authenticated_credential = authenticated_credential
-
-        unless authenticated_user
-          request_command.outcome = Outcome.error(CommandConnector::UnauthenticatedError.new)
-
-          command.state_machine.error!
-          command.halt!
-        end
-      end
-    end
-
-    def build_command(request)
-      unless request.error
-        command = request_to_command(request)
-        request.command = command
+    def build_command_instance(request)
+      command = request_to_command_instance(request)
+      request.command = command
+      if command.is_a?(TransformedCommand)
+        # This allows the command to access the authenticated_user
+        command.request = request
       end
 
       command
+    end
+
+    def determine_command_class(request)
+      unless request.error
+        command_class = request_to_command_class(request)
+        request.command_class = command_class
+      end
     end
 
     def build_response(request)

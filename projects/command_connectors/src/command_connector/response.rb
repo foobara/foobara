@@ -22,6 +22,10 @@ module Foobara
       def success?
         request.success?
       end
+
+      def outcome
+        request.outcome
+      end
     end
   end
 end

@@ -2,9 +2,11 @@ module Foobara
   class CommandConnector
     class Request
       include TruncatedInspect
+      include NestedTransactionable
 
       # TODO: this feels like a smell of some sort...
       attr_accessor :command,
+                    :command_class,
                     :error,
                     :command_connector,
                     # Why aren't there serializers on the response?
@@ -12,9 +14,9 @@ module Foobara
                     :inputs,
                     :full_command_name,
                     :action,
-                    :response
-
-      attr_reader :command_class
+                    :response,
+                    :authenticated_user,
+                    :authenticated_credential
 
       def initialize(**opts)
         valid_keys = %i[inputs full_command_name action serializers]
@@ -33,13 +35,32 @@ module Foobara
         self.serializers = Util.array(opts[:serializers]) if opts.key?(:serializers)
       end
 
-      def command_class=(klass)
-        @command_class = klass
+      def mutate_request
+        return if error
 
         # TODO: we really need to revisit these interfaces. Something is wrong.
         if command_class.respond_to?(:mutate_request)
           command_class.mutate_request(self)
         end
+      end
+
+      def authenticate
+        return if error
+        return unless command_class.respond_to?(:requires_authentication) && command_class.requires_authentication
+
+        authenticated_user, authenticated_credential = authenticator.authenticate(self)
+
+        # TODO: why are these on the command instead of the request??
+        self.authenticated_user = authenticated_user
+        self.authenticated_credential = authenticated_credential
+
+        unless authenticated_user
+          self.error = CommandConnector::UnauthenticatedError.new
+        end
+      end
+
+      def authenticator
+        command_class.authenticator
       end
 
       def serializer
@@ -92,6 +113,12 @@ module Foobara
 
       def error_collection
         outcome.error_collection
+      end
+
+      def relevant_entity_classes
+        if command_class.is_a?(::Class) && command_class < TransformedCommand
+          authenticator&.relevant_entity_classes
+        end || []
       end
 
       private
