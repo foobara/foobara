@@ -2,6 +2,27 @@ module Foobara
   module NestedTransactionable
     include Concern
 
+    class << self
+      def relevant_entity_classes_for_type(type)
+        entity_classes = []
+        entity_classes += Entity.construct_associations(type).values.map(&:target_class)
+
+        if type.extends?(BuiltinTypes[:entity])
+          entity_classes << type.target_class
+        end
+
+        entity_classes.uniq.each do |entity_class|
+          entity_classes += entity_class.deep_associations.values.map(&:target_class)
+        end
+
+        entity_classes.uniq
+      end
+    end
+
+    def relevant_entity_classes_for_type(type)
+      NestedTransactionable.relevant_entity_classes_for_type(type)
+    end
+
     def relevant_entity_classes
       # :nocov:
       raise "subclass responsibility"
