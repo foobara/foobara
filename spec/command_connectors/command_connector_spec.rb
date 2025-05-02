@@ -2098,7 +2098,7 @@ RSpec.describe Foobara::CommandConnector do
       let(:authenticator_a) do
         stub_class("SomeAuthenticator", Foobara::CommandConnector::Authenticator) do
           def initialize
-            super(symbol: :a, &proc { "a" })
+            super(symbol: :a, &proc { %w[a acred] })
           end
         end
       end
@@ -2163,6 +2163,7 @@ RSpec.describe Foobara::CommandConnector do
         response = command_connector_b.run(full_command_name:, action:, inputs:)
         expect(response.status).to be(0)
         expect(response.command.authenticated_user).to eq("a")
+        expect(response.command.authenticated_credential).to eq("acred")
         expect(response.command.authenticator.symbol).to be(:a)
 
         response = command_connector_c.run(full_command_name:, action:, inputs:)
@@ -2172,7 +2173,7 @@ RSpec.describe Foobara::CommandConnector do
 
         response = command_connector_d.run(full_command_name:, action:, inputs:)
         expect(response.status).to be(1)
-        expect(response.command.outcome.errors_hash.keys).to include("runtime.unauthenticated")
+        expect(response.error.key).to eq("runtime.unauthenticated")
         expect(response.command.authenticated_user).to be_nil
         expect(response.command.authenticator.symbol).to be(:c)
 

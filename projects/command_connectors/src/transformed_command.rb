@@ -479,8 +479,7 @@ module Foobara
       end
     end
 
-    attr_accessor :command, :untransformed_inputs, :transformed_inputs, :outcome, :authenticated_user,
-                  :authenticated_credential
+    attr_accessor :command, :untransformed_inputs, :transformed_inputs, :outcome, :request
 
     def initialize(untransformed_inputs = {})
       self.untransformed_inputs = untransformed_inputs || {}
@@ -499,7 +498,6 @@ module Foobara
                      :errors_transformers,
                      :pre_commit_transformers,
                      :serializers,
-                     :requires_authentication,
                      :allowed_rule,
                      :authenticator,
                      to: :class
@@ -514,8 +512,12 @@ module Foobara
       outcome
     end
 
-    def requires_authentication?
-      !!requires_authentication
+    def authenticated_user
+      request.authenticated_user
+    end
+
+    def authenticated_credential
+      request.authenticated_credential
     end
 
     def transform_inputs
