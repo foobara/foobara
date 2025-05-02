@@ -26,7 +26,10 @@ module Foobara
 
       def load
         require require_path
-        Util.require_directory("#{project_path}/src")
+        src_dir = "#{project_path}/src"
+        if Dir.exist?(src_dir)
+          Util.require_directory(src_dir)
+        end
       end
 
       def install!
