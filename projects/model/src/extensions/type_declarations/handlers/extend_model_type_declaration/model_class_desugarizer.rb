@@ -17,6 +17,8 @@ module Foobara
 
           # TODO: consider splitting this up into multiple desugarizers
           def desugarize(strictish_type_declaration)
+            strictish_type_declaration = strictish_type_declaration.dup
+
             if strictish_type_declaration.key?(:model_module)
               model_module = strictish_type_declaration[:model_module]
 
@@ -47,7 +49,7 @@ module Foobara
                                      end
                                    end
 
-                                   strictish_type_declaration[:model_base_class] = model_class.superclass.name
+                                   strictish_type_declaration[:model_base_class] ||= model_class.superclass.name
 
                                    model_class.name
                                  elsif klass.is_a?(::String)
