@@ -13,7 +13,7 @@ module Foobara
         @block = block
       end
 
-      def relevant_entity_classes
+      def relevant_entity_classes(_request)
         nil
       end
 

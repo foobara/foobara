@@ -95,7 +95,9 @@ module Foobara
 
                            command_class.inputs_type
                          else
-                           inputs_transformer.from_type || command_class.inputs_type
+                           if inputs_transformer.is_a?(TypeDeclarations::TypedTransformer)
+                             inputs_transformer.from_type
+                           end || command_class.inputs_type
                          end
                        else
                          command_class.inputs_type
