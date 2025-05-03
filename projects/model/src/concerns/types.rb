@@ -64,8 +64,9 @@ module Foobara
 
               if model_type
                 unless Foobara::TypeDeclarations.declarations_equal?(declaration, model_type.declaration_data)
+                  type_domain = domain
                   self.model_type = nil
-                  domain.foobara_type_from_declaration(declaration)
+                  type_domain.foobara_type_from_declaration(declaration)
                 end
               else
                 domain.foobara_type_from_declaration(declaration)
