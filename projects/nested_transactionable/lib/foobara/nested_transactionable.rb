@@ -79,5 +79,17 @@ module Foobara
     def commit_transaction
       opened_transactions.reverse.each(&:commit!)
     end
+
+    def commit_transaction_if_open
+      opened_transactions.reverse.each do |tx|
+        if tx.currently_open?
+          tx.commit!
+        end
+      end
+    end
+
+    def use_transaction(&)
+      Persistence::EntityBase.using_transactions(transactions, &)
+    end
   end
 end

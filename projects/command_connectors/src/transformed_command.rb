@@ -508,7 +508,8 @@ module Foobara
       apply_allowed_rule
       apply_pre_commit_transformers
       run_command
-      # TODO: do this within the transaction!!!
+      # this gives us primary keys
+      flush_transactions
       transform_outcome
 
       outcome
@@ -671,6 +672,10 @@ module Foobara
 
     def errors
       outcome.errors
+    end
+
+    def flush_transactions
+      request.opened_transactions&.reverse&.each(&:flush!)
     end
 
     def transform_outcome

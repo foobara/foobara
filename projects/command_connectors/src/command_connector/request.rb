@@ -98,12 +98,10 @@ module Foobara
       end
 
       def outcome
-        outcome = command&.outcome
-
-        if outcome
-          outcome
-        elsif error
+        if error
           Outcome.error(error)
+        else
+          command&.outcome
         end
       end
 

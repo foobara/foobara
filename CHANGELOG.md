@@ -1,3 +1,15 @@
+# [0.0.116] - 2025-05-03
+
+- Add automatic transaction support to requests, cover in/out mutators/transformers
+  - This makes it so that authenticators and allowed rules can more cleanly be
+    expressed when they have the same entity bases needed by the transformed command
+- Move #authenticated_user from TransformedCommand to Request
+- Add a Request#authenticated_credential
+- Provide a way to skip validations for models
+- A type without sensitive types derived from an entity type will now be registered as a
+  detached entity
+- Fix model type re-registering bug
+
 # [0.0.115] - 2025-05-01
 
 - Make sure Authenticator#authenticate hits #applicable?

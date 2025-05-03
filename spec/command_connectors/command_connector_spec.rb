@@ -959,6 +959,7 @@ RSpec.describe Foobara::CommandConnector do
 
           it "fails with 401 and relevant error" do
             expect(response.status).to be(1)
+            expect(response.outcome).to_not be_success
             expect(
               JSON.parse(response.body).find { |e| e["key"] == "runtime.not_allowed" }["message"]
             ).to match(/base == 1900/)

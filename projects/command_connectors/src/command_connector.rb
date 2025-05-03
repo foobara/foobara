@@ -374,32 +374,36 @@ module Foobara
 
       begin
         request.open_transaction
-        request.authenticate
-        request.mutate_request
+        request.use_transaction do
+          request.authenticate
+          request.mutate_request
 
-        inputs = request_to_command_inputs(request)
-        request.inputs = inputs
-        command = build_command_instance(request)
-        request.command = command
+          inputs = request_to_command_inputs(request)
+          request.inputs = inputs
+          command = build_command_instance(request)
+          request.command = command
 
-        unless request.error
-          if command
-            run_command(request)
-            # :nocov:
-          else
-            raise "No command returned from #request_to_command"
-            # :nocov:
+          unless request.error
+            if command
+              run_command(request)
+              # :nocov:
+            else
+              raise "No command returned from #request_to_command"
+              # :nocov:
+            end
           end
         end
-
-        build_response(request)
       ensure
-        if (request.response || request).outcome&.success?
-          request.commit_transaction
-        else
-          request.rollback_transaction
+        request.use_transaction do
+          if (request.response || request).outcome&.success?
+            request.commit_transaction_if_open
+          else
+            request.rollback_transaction
+          end
         end
       end
+
+      build_response(request)
     end
 
     def run_command(request)
