@@ -11,7 +11,7 @@ module Foobara
             # Is there maybe prior art for this in the associations stuff?
             object.primary_key
           when DetachedEntity
-            if declaration_data[:detached_to_primary_key]
+            if detached_to_primary_key?
               object.primary_key
             else
               object.attributes
@@ -27,6 +27,13 @@ module Foobara
           else
             object
           end
+        end
+
+        def detached_to_primary_key?
+          return true unless declaration_data.is_a?(::Hash)
+          return true unless declaration_data.key?(:detached_to_primary_key)
+
+          declaration_data[:detached_to_primary_key]
         end
       end
     end
