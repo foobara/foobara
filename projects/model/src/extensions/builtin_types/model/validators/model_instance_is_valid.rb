@@ -13,8 +13,8 @@ module Foobara
             end
           end
 
-          def always_applicable?
-            true
+          def applicable?(model_instance)
+            !model_instance.skip_validations
           end
 
           def process_value(model_instance)

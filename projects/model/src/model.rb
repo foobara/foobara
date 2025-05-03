@@ -169,10 +169,10 @@ module Foobara
 
     abstract
 
-    attr_accessor :mutable
+    attr_accessor :mutable, :skip_validations
 
     def initialize(attributes = nil, options = {})
-      allowed_options = %i[validate mutable ignore_unexpected_attributes]
+      allowed_options = %i[validate mutable ignore_unexpected_attributes skip_validations]
       invalid_options = options.keys - allowed_options
 
       unless invalid_options.empty?
@@ -180,6 +180,8 @@ module Foobara
         raise ArgumentError, "Invalid options #{invalid_options} expected only #{allowed_options}"
         # :nocov:
       end
+
+      self.skip_validations = options[:skip_validations]
 
       if options[:ignore_unexpected_attributes]
         Thread.with_inheritable_thread_local_var(:foobara_ignore_unexpected_attributes, true) do
@@ -226,7 +228,7 @@ module Foobara
                        mutable
                      end
 
-      validate! if validate
+      validate! if validate # TODO: test this code path
     end
 
     foobara_delegate :model_name, :valid_attribute_name?, :validate_attribute_name!, to: :class
