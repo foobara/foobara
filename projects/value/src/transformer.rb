@@ -24,8 +24,8 @@ module Foobara
 
         # TODO: make transform the first argument for convenience
         def subclass(name: nil, **options)
-          arity_zero = %i[always_applicable? priority]
-          arity_one = %i[applicable? transform]
+          arity_zero = [:always_applicable?, :priority]
+          arity_one = [:applicable?, :transform]
           allowed = arity_zero + arity_one
 
           invalid_options = options.keys - allowed

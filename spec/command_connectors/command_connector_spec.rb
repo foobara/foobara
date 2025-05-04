@@ -179,7 +179,7 @@ RSpec.describe Foobara::CommandConnector do
           it "includes the organization" do
             manifest = command_connector.foobara_manifest
 
-            expect(manifest[:organization].keys).to match_array(%i[SomeOrg global_organization])
+            expect(manifest[:organization].keys).to contain_exactly(:SomeOrg, :global_organization)
             expect(manifest[:command][:"SomeOrg::SomeDomain::SomeCommand"][:description]).to eq("just some command")
           end
         end
@@ -248,7 +248,7 @@ RSpec.describe Foobara::CommandConnector do
 
         expect(
           declaration_data[:attributes_declaration][:element_type_declarations].keys
-        ).to match_array(%i[username id foo])
+        ).to contain_exactly(:username, :id, :foo)
       end
 
       context "when running a command that returns sensitive values" do
@@ -1754,7 +1754,7 @@ RSpec.describe Foobara::CommandConnector do
             end
 
             primary_key :id
-            delegate_attribute :username, %i[stuff things 0 auth_user username]
+            delegate_attribute :username, [:stuff, :things, :"0", :auth_user, :username]
           end
         end
 
@@ -1892,24 +1892,8 @@ RSpec.describe Foobara::CommandConnector do
             it "returns metadata about the types referenced in the commands" do
               expect(
                 manifest[:type].keys
-              ).to match_array(
-                %i[
-                  User
-                  array
-                  associative_array
-                  atomic_duck
-                  attributes
-                  detached_entity
-                  duck
-                  duckture
-                  entity
-                  integer
-                  model
-                  number
-                  string
-                  symbol
-                ]
-              )
+              ).to contain_exactly(:User, :array, :associative_array, :atomic_duck, :attributes, :detached_entity,
+                                   :duck, :duckture, :entity, :integer, :model, :number, :string, :symbol)
             end
 
             context "with manifest path" do
@@ -1985,7 +1969,7 @@ RSpec.describe Foobara::CommandConnector do
 
         patched_up_error_manifest = patched_up_manifest[:error][:"Foobara::Auth::FindUser::UserNotFoundError"]
 
-        expect(patched_up_error_manifest[:scoped_path]).to eq(%w[FindUser UserNotFoundError])
+        expect(patched_up_error_manifest[:scoped_path]).to eq(["FindUser", "UserNotFoundError"])
         expect(patched_up_error_manifest[:parent]).to eq([:domain, "Foobara::Auth"])
         expect(patched_up_error_manifest[:scoped_prefix]).to eq(["FindUser"])
         expect(patched_up_error_manifest[:scoped_name]).to eq("FindUser::UserNotFoundError")
@@ -2099,7 +2083,7 @@ RSpec.describe Foobara::CommandConnector do
       let(:authenticator_a) do
         stub_class("SomeAuthenticator", Foobara::CommandConnector::Authenticator) do
           def initialize
-            super(symbol: :a, &proc { %w[a acred] })
+            super(symbol: :a, &proc { ["a", "acred"] })
           end
         end
       end

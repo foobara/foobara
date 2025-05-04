@@ -59,7 +59,7 @@ RSpec.describe Foobara::Namespace::NamespaceHelpers do
         expect {
           parent_module.foobara_namespace!
           parent_module.foobara_autoset_scoped_path!
-        }.to change(child_module, :scoped_path).from(%w[ParentModule ChildModule]).to(["ChildModule"])
+        }.to change(child_module, :scoped_path).from(["ParentModule", "ChildModule"]).to(["ChildModule"])
       end
     end
   end

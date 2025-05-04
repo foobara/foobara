@@ -19,7 +19,7 @@ module Foobara
                     :authenticated_credential
 
       def initialize(**opts)
-        valid_keys = %i[inputs full_command_name action serializers]
+        valid_keys = [:inputs, :full_command_name, :action, :serializers]
 
         invalid_keys = opts.keys - valid_keys
 

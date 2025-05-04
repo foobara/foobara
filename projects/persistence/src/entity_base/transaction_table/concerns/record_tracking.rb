@@ -95,11 +95,11 @@ module Foobara
               marked_created.clear
             end
 
-            interesting_record_states = %i[
-              updated
-              hard_deleted
-              created
-              loading
+            interesting_record_states = [
+              :updated,
+              :hard_deleted,
+              :created,
+              :loading
             ]
 
             interesting_record_states.each do |state|

@@ -21,7 +21,7 @@ RSpec.describe Foobara::Model do
           some_attribute :integer
         end
       end.tap do |klass|
-        klass.delegate_attribute(:username, %i[auth_user username], writer:)
+        klass.delegate_attribute(:username, [:auth_user, :username], writer:)
       end
     end
 
@@ -262,7 +262,7 @@ RSpec.describe Foobara::Model do
         expect(user.some_attribute).to eq(100)
         expect(user).to_not respond_to("username=")
         expect(user).to_not respond_to(:auth_user)
-        expect(user_class.private_attribute_names).to eq(%i[auth_user])
+        expect(user_class.private_attribute_names).to eq([:auth_user])
         expect(auth_user).to_not respond_to(:ssn)
       end
 
@@ -283,7 +283,7 @@ RSpec.describe Foobara::Model do
                 name: :string,
                 password: :string
               },
-              required: %i[name password]
+              required: [:name, :password]
             },
             private: [:some_invalid_attribute]
           }
@@ -310,7 +310,7 @@ RSpec.describe Foobara::Model do
                 name: :string,
                 password: :string
               },
-              required: %i[name password]
+              required: [:name, :password]
             },
             private: [Object.new]
           }
@@ -384,7 +384,7 @@ RSpec.describe Foobara::Model do
         expect(user.username).to eq(username)
         expect(user.some_attribute).to eq(100)
         expect(user).to_not respond_to(:auth_user)
-        expect(user_class.private_attribute_names).to eq(%i[auth_user])
+        expect(user_class.private_attribute_names).to eq([:auth_user])
       end
 
       it "includes the private attribute name in the manifest" do

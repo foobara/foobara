@@ -57,7 +57,7 @@ RSpec.describe Foobara::BuiltinTypes::Duck::SupportedValidators::OneOf do
 
     context "when not valid" do
       it "is not success" do
-        expect(type.declaration_data[:one_of]).to match_array(%w[foo bar baz])
+        expect(type.declaration_data[:one_of]).to contain_exactly("foo", "bar", "baz")
 
         outcome = type.process_value(:not_valid)
 
@@ -65,7 +65,8 @@ RSpec.describe Foobara::BuiltinTypes::Duck::SupportedValidators::OneOf do
 
         expect(outcome.errors.size).to eq(1)
 
-        expect(outcome.errors_hash["data.value_not_valid"][:context][:valid_values]).to match_array(%w[baz foo bar])
+        expect(outcome.errors_hash["data.value_not_valid"][:context][:valid_values]).to contain_exactly("baz", "foo",
+                                                                                                        "bar")
       end
     end
   end

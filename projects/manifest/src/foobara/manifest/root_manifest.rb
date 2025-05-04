@@ -102,7 +102,7 @@ module Foobara
       end
 
       def lookup(reference)
-        prioritized_categories = %i[command type error domain organization processor processor_class]
+        prioritized_categories = [:command, :type, :error, :domain, :organization, :processor, :processor_class]
 
         prioritized_categories.each do |category|
           path = [category, reference]

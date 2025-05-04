@@ -3,9 +3,9 @@ RSpec.describe Foobara::Enumerated do
     let(:mod) { described_class.make_module(*values) }
 
     let(:values) do
-      %i[
-        foo-bar
-        bar-baz
+      [
+        :"foo-bar",
+        :"bar-baz"
       ]
     end
 

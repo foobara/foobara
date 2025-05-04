@@ -11,7 +11,7 @@ RSpec.describe Foobara::Callback do
     end
 
     before do
-      %i[walk jump].each do |action|
+      [:walk, :jump].each do |action|
         Foobara::Callback::Block.types.each do |type|
           basic_block = ->(foo) {
             called(action, type, foo)
@@ -93,7 +93,7 @@ RSpec.describe Foobara::Callback do
             expect(calls).to eq(
               {
                 nil => {
-                  before: %i[any_called any_called]
+                  before: [:any_called, :any_called]
                 },
                 walk: {
                   before: [{ foo: :w }],
@@ -122,7 +122,7 @@ RSpec.describe Foobara::Callback do
 
             expect(calls.keys).to eq([:walk])
             walk = calls[:walk]
-            expect(walk.keys).to eq(%i[before around error])
+            expect(walk.keys).to eq([:before, :around, :error])
 
             expect(walk[:before]).to eq([{ foo: :bar }])
             expect(walk[:around]).to eq([{ foo: :bar }])

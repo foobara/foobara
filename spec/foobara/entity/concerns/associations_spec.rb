@@ -33,7 +33,7 @@ RSpec.describe Foobara::Entity do
       primary_key :id
       # TODO: test using an invalid path! Should blow up upon declaring the delegated
       # attribute not upon accessing it!
-      delegate_attribute :inner_name, %i[inner_entities1 0 inner_most_entity name]
+      delegate_attribute :inner_name, [:inner_entities1, :"0", :inner_most_entity, :name]
     end
   end
 

@@ -9,7 +9,7 @@ RSpec.describe Foobara::ErrorKey do
   describe ".prepend_path" do
     subject { described_class.prepend_path(key, new_parts) }
 
-    let(:new_parts) { %i[path1 path2] }
+    let(:new_parts) { [:path1, :path2] }
 
     context "when ErrorKey" do
       it { is_expected.to eq("some_runtime_path>some_category.path1.path2.some_path.some_symbol") }
@@ -25,7 +25,7 @@ RSpec.describe Foobara::ErrorKey do
   describe ".prepend_runtime_path" do
     subject { described_class.prepend_runtime_path(key, new_parts) }
 
-    let(:new_parts) { %i[path1 path2] }
+    let(:new_parts) { [:path1, :path2] }
 
     context "when ErrorKey" do
       it { is_expected.to eq("path1>path2>some_runtime_path>some_category.some_path.some_symbol") }
@@ -45,7 +45,7 @@ RSpec.describe Foobara::ErrorKey do
     let(:expected_hash) do
       {
         category: :some_category,
-        runtime_path: %i[path1 path2],
+        runtime_path: [:path1, :path2],
         path: [:some_path],
         symbol: :some_symbol
       }

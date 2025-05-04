@@ -36,11 +36,11 @@ RSpec.describe Foobara::StateMachine do
     end
 
     context "with only the transition map" do
-      its(:states) { is_expected.to eq(%i[unexecuted running failed succeeded]) }
-      its(:non_terminal_states) { is_expected.to eq(%i[unexecuted running]) }
-      its(:terminal_states) { is_expected.to eq(%i[failed succeeded]) }
+      its(:states) { is_expected.to eq([:unexecuted, :running, :failed, :succeeded]) }
+      its(:non_terminal_states) { is_expected.to eq([:unexecuted, :running]) }
+      its(:terminal_states) { is_expected.to eq([:failed, :succeeded]) }
       its(:initial_state) { is_expected.to eq(:unexecuted) }
-      its(:transitions) { is_expected.to eq(%i[start fail succeed]) }
+      its(:transitions) { is_expected.to eq([:start, :fail, :succeed]) }
 
       its(:transition_map) {
         is_expected.to eq(
@@ -58,17 +58,17 @@ RSpec.describe Foobara::StateMachine do
             running: {
               succeed: :succeeded
             },
-            %i[unexecuted running] => {
+            [:unexecuted, :running] => {
               fail: :failed
             }
           }
         end
 
-        its(:states) { is_expected.to eq(%i[unexecuted running failed succeeded]) }
-        its(:non_terminal_states) { is_expected.to eq(%i[unexecuted running]) }
-        its(:terminal_states) { is_expected.to eq(%i[failed succeeded]) }
+        its(:states) { is_expected.to eq([:unexecuted, :running, :failed, :succeeded]) }
+        its(:non_terminal_states) { is_expected.to eq([:unexecuted, :running]) }
+        its(:terminal_states) { is_expected.to eq([:failed, :succeeded]) }
         its(:initial_state) { is_expected.to eq(:unexecuted) }
-        its(:transitions) { is_expected.to eq(%i[start fail succeed]) }
+        its(:transitions) { is_expected.to eq([:start, :fail, :succeed]) }
 
         describe "#state" do
           it "is the expected enum" do
@@ -128,7 +128,7 @@ RSpec.describe Foobara::StateMachine do
 
         describe "#allowed_transitions" do
           it "is the expected allowed transitions" do
-            expect(state_machine.allowed_transitions).to eq(%i[start fail])
+            expect(state_machine.allowed_transitions).to eq([:start, :fail])
           end
         end
 
@@ -143,19 +143,19 @@ RSpec.describe Foobara::StateMachine do
 
     context "with states" do
       context "with valid states" do
-        let(:states) { %i[unexecuted running failed succeeded] }
+        let(:states) { [:unexecuted, :running, :failed, :succeeded] }
 
-        its(:states) { is_expected.to eq(%i[unexecuted running failed succeeded]) }
+        its(:states) { is_expected.to eq([:unexecuted, :running, :failed, :succeeded]) }
       end
 
       context "with extra states" do
-        let(:states) { %i[running failed succeeded] }
+        let(:states) { [:running, :failed, :succeeded] }
 
         it { is_expected_to_raise(Foobara::StateMachine::ExtraStates) }
       end
 
       context "with missing states" do
-        let(:states) { %i[unexecuted running failed succeeded extra] }
+        let(:states) { [:unexecuted, :running, :failed, :succeeded, :extra] }
 
         it { is_expected_to_raise(Foobara::StateMachine::MissingStates) }
       end
@@ -163,19 +163,19 @@ RSpec.describe Foobara::StateMachine do
 
     context "with terminal states" do
       context "with valid states that counts a state with as transition (running)" do
-        let(:terminal_states) { %i[running failed succeeded] }
+        let(:terminal_states) { [:running, :failed, :succeeded] }
 
-        its(:terminal_states) { is_expected.to eq(%i[running failed succeeded]) }
+        its(:terminal_states) { is_expected.to eq([:running, :failed, :succeeded]) }
       end
 
       context "with extra terminal_states" do
-        let(:terminal_states) { %i[succeeded] }
+        let(:terminal_states) { [:succeeded] }
 
         it { is_expected_to_raise(Foobara::StateMachine::UnexpectedTerminalStates) }
       end
 
       context "with missing terminal_states" do
-        let(:terminal_states) { %i[unexecuted running failed succeeded extra] }
+        let(:terminal_states) { [:unexecuted, :running, :failed, :succeeded, :extra] }
 
         it { is_expected_to_raise(Foobara::StateMachine::MissingTerminalStates) }
       end
@@ -197,19 +197,19 @@ RSpec.describe Foobara::StateMachine do
 
     context "with transitions" do
       context "with valid transitions" do
-        let(:transitions) { %i[start fail succeed] }
+        let(:transitions) { [:start, :fail, :succeed] }
 
-        its(:transitions) { is_expected.to eq(%i[start fail succeed]) }
+        its(:transitions) { is_expected.to eq([:start, :fail, :succeed]) }
       end
 
       context "with extra transitions" do
-        let(:transitions) { %i[start succeed] }
+        let(:transitions) { [:start, :succeed] }
 
         it { is_expected_to_raise(Foobara::StateMachine::ExtraTransitions) }
       end
 
       context "with missing transitions" do
-        let(:transitions) { %i[start fail succeed extra] }
+        let(:transitions) { [:start, :fail, :succeed, :extra] }
 
         it { is_expected_to_raise(Foobara::StateMachine::MissingTransitions) }
       end

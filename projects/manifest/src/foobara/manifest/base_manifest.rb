@@ -103,11 +103,11 @@ module Foobara
       end
 
       def global_domain
-        Domain.new(root_manifest, %i[domain global_organization::global_domain])
+        Domain.new(root_manifest, [:domain, :"global_organization::global_domain"])
       end
 
       def global_organization
-        Organization.new(root_manifest, %i[organization global_organization])
+        Organization.new(root_manifest, [:organization, :global_organization])
       end
 
       def method_missing(method_name, *, &)

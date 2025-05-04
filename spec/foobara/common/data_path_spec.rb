@@ -9,7 +9,7 @@ RSpec.describe Foobara::DataPath do
   let(:symbol) { "some_symbol" }
 
   describe ".prepend_path" do
-    let(:new_parts) { %i[path1 path2] }
+    let(:new_parts) { [:path1, :path2] }
 
     context "when DataPath" do
       subject { described_class.prepend_path(key, new_parts) }
@@ -25,7 +25,7 @@ RSpec.describe Foobara::DataPath do
   end
 
   describe ".append_path" do
-    let(:new_parts) { %i[path1 path2] }
+    let(:new_parts) { [:path1, :path2] }
 
     context "when DataPath" do
       subject { described_class.append_path(key, new_parts) }
@@ -48,7 +48,7 @@ RSpec.describe Foobara::DataPath do
 
   describe "#to_sym" do
     it "just calls #to_sym on the string path" do
-      expect(described_class.new(%i[a b]).to_sym).to eq(:"a.b")
+      expect(described_class.new([:a, :b]).to_sym).to eq(:"a.b")
     end
   end
 
@@ -74,7 +74,7 @@ RSpec.describe Foobara::DataPath do
         end
       end
 
-      it { is_expected.to eq(%w[r z]) }
+      it { is_expected.to eq(["r", "z"]) }
 
       context "when object has strings instead of symbols" do
         before do
@@ -84,7 +84,7 @@ RSpec.describe Foobara::DataPath do
           object.foo["bar"] = bar
         end
 
-        it { is_expected.to eq(%w[r z]) }
+        it { is_expected.to eq(["r", "z"]) }
       end
     end
   end
@@ -155,19 +155,19 @@ RSpec.describe Foobara::DataPath do
     subject { described_class.new(path).simple_collection? }
 
     context "when not a collection" do
-      let(:path) { %i[foo bar] }
+      let(:path) { [:foo, :bar] }
 
       it { is_expected.to be(false) }
     end
 
     context "when not simple" do
-      let(:path) { %i[foo # bar #] }
+      let(:path) { [:foo, :"#", :bar, :"#"] }
 
       it { is_expected.to be(false) }
     end
 
     context "when simple and a collection" do
-      let(:path) { %i[foo bar baz #] }
+      let(:path) { [:foo, :bar, :baz, :"#"] }
 
       it { is_expected.to be(true) }
     end
@@ -215,7 +215,7 @@ RSpec.describe Foobara::DataPath do
           }
         }
       end
-      let(:path) { %w[a b] }
+      let(:path) { ["a", "b"] }
 
       it "can dig through the structure and set the value" do
         described_class.set_value_at(object, 100, path)

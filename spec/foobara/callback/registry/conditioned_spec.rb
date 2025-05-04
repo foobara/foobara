@@ -1,5 +1,5 @@
 RSpec.describe Foobara::Callback::Registry::Conditioned do
-  let(:registry) { described_class.new(charge: %i[positive negative], mass: %i[high low]) }
+  let(:registry) { described_class.new(charge: [:positive, :negative], mass: [:high, :low]) }
 
   describe "#register_callback" do
     let(:condition_key) { :charge }
@@ -136,14 +136,14 @@ RSpec.describe Foobara::Callback::Registry::Conditioned do
           it "calls expected callbacks in order" do
             runner.run { "noop" }
 
-            expect(callbacks_ran).to eq(%i[before around_start around_end after])
+            expect(callbacks_ran).to eq([:before, :around_start, :around_end, :after])
             callbacks_ran.clear
 
             expect {
               runner.run { raise "kaboom!" }
             }.to raise_error(RuntimeError)
 
-            expect(callbacks_ran).to eq(%i[before around_start error])
+            expect(callbacks_ran).to eq([:before, :around_start, :error])
           end
         end
       end

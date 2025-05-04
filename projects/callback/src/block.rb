@@ -56,7 +56,7 @@ module Foobara
       end
 
       def has_keyword_args?
-        @has_keyword_args ||= param_types.any? { |type| %i[keyreq keyrest].include?(type) }
+        @has_keyword_args ||= param_types.any? { |type| [:keyreq, :keyrest].include?(type) }
       end
 
       def has_positional_args?

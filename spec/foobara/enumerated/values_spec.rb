@@ -13,7 +13,7 @@ RSpec.describe Foobara::Enumerated::Values do
     end
 
     it "constructs the values" do
-      expect(values.all_names).to match_array(%i[FOO BAR BAZ])
+      expect(values.all_names).to contain_exactly(:FOO, :BAR, :BAZ)
     end
   end
 
@@ -27,7 +27,7 @@ RSpec.describe Foobara::Enumerated::Values do
     end
 
     it "constructs the values" do
-      expect(values.all_names).to match_array(%i[FOO BAR BAZ])
+      expect(values.all_names).to contain_exactly(:FOO, :BAR, :BAZ)
       expect(values.all).to eq(enum_declaration)
     end
 
@@ -41,15 +41,15 @@ RSpec.describe Foobara::Enumerated::Values do
 
   context "when array" do
     let(:enum_declaration) do
-      %i[
-        FOO
-        BAR
-        BAZ
+      [
+        :FOO,
+        :BAR,
+        :BAZ
       ]
     end
 
     it "constructs the values" do
-      expect(values.all_names).to match_array(%i[FOO BAR BAZ])
+      expect(values.all_names).to contain_exactly(:FOO, :BAR, :BAZ)
       expect(values.all).to eq(enum_declaration.to_h { |key| [key, key] })
     end
 
@@ -59,7 +59,7 @@ RSpec.describe Foobara::Enumerated::Values do
       end
 
       it "constructs the values" do
-        expect(values.all_names).to match_array(%i[FOO BAR BAZ])
+        expect(values.all_names).to contain_exactly(:FOO, :BAR, :BAZ)
         expect(values.all).to eq(enum_declaration.to_h { |key| [key, key] })
       end
     end

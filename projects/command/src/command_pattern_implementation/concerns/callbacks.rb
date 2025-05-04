@@ -28,7 +28,7 @@ module Foobara
           self.subclass_defined_callbacks ||= Foobara::Callback::Registry::SingleAction.new
 
           [self, singleton_class].each do |target|
-            %i[before after].each do |type|
+            [:before, :after].each do |type|
               target.define_method "#{type}_any_transition" do |&block|
                 callback_state_machine_target.register_transition_callback(type) do |state_machine:, **args|
                   block.call(command: state_machine.owner, **args)
@@ -61,7 +61,7 @@ module Foobara
 
           Foobara::Command::StateMachine.transitions.each do |transition|
             [self, singleton_class].each do |target|
-              %i[before after].each do |type|
+              [:before, :after].each do |type|
                 target.define_method "#{type}_#{transition}" do |&block|
                   callback_state_machine_target.register_transition_callback(
                     type, transition:

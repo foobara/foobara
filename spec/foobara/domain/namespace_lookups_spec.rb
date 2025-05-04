@@ -85,14 +85,14 @@ RSpec.describe "Foobara namespace lookup" do
       expect(Foobara::Namespace.global.foobara_lookup_organization("::OrgA")).to eq(OrgA)
 
       expect(OrgA.foobara_parent_namespace).to eq(Foobara::Namespace.global)
-      expect(OrgA.scoped_path).to eq(%w[OrgA])
-      expect(OrgA.scoped_full_path).to eq(%w[OrgA])
+      expect(OrgA.scoped_path).to eq(["OrgA"])
+      expect(OrgA.scoped_full_path).to eq(["OrgA"])
       expect(Foobara::Namespace.global.foobara_lookup_organization("OrgA")).to eq(OrgA)
       expect(Foobara::Namespace.global.foobara_lookup_organization("::OrgA")).to eq(OrgA)
 
       expect(OrgA::DomainA.foobara_parent_namespace).to eq(OrgA)
-      expect(OrgA::DomainA.scoped_path).to eq(%w[DomainA])
-      expect(OrgA::DomainA.scoped_full_path).to eq(%w[OrgA DomainA])
+      expect(OrgA::DomainA.scoped_path).to eq(["DomainA"])
+      expect(OrgA::DomainA.scoped_full_path).to eq(["OrgA", "DomainA"])
       expect(OrgA::DomainA.scoped_full_name).to eq("OrgA::DomainA")
       expect(OrgA::DomainA.scoped_absolute_name).to eq("::OrgA::DomainA")
       expect(
@@ -108,8 +108,8 @@ RSpec.describe "Foobara namespace lookup" do
       expect(
         OrgA::DomainA::CommandA.foobara_parent_namespace
       ).to eq(OrgA::DomainA)
-      expect(OrgA::DomainA::CommandA.scoped_path).to eq(%w[CommandA])
-      expect(OrgA::DomainA::CommandA.scoped_full_path).to eq(%w[OrgA DomainA CommandA])
+      expect(OrgA::DomainA::CommandA.scoped_path).to eq(["CommandA"])
+      expect(OrgA::DomainA::CommandA.scoped_full_path).to eq(["OrgA", "DomainA", "CommandA"])
       expect(OrgA::DomainA::CommandA.scoped_absolute_name).to eq("::OrgA::DomainA::CommandA")
       expect(OrgA::DomainA::CommandA.scoped_full_name).to eq("OrgA::DomainA::CommandA")
       expect(Foobara::Namespace.global.foobara_lookup_command("OrgA::DomainA::CommandA")).to eq(OrgA::DomainA::CommandA)
@@ -118,8 +118,8 @@ RSpec.describe "Foobara namespace lookup" do
       )
 
       expect(GlobalError.scoped_namespace).to eq(Foobara::GlobalDomain)
-      expect(GlobalError.scoped_path).to eq(%w[GlobalError])
-      expect(GlobalError.scoped_full_path).to eq(%w[GlobalError])
+      expect(GlobalError.scoped_path).to eq(["GlobalError"])
+      expect(GlobalError.scoped_full_path).to eq(["GlobalError"])
       expect(Foobara::Namespace.global.foobara_lookup_error("GlobalError")).to eq(GlobalError)
       expect(Foobara::Namespace.global.foobara_lookup_error("::GlobalError")).to eq(GlobalError)
 

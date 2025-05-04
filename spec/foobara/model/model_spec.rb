@@ -39,7 +39,7 @@ RSpec.describe Foobara::Model do
       value = outer_model_class.new(attributes, ignore_unexpected_attributes: true)
       expect(value).to be_valid
 
-      expect(value.inner_model.attributes.keys).to match_array(%i[age name])
+      expect(value.inner_model.attributes.keys).to contain_exactly(:age, :name)
     end
   end
 

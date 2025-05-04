@@ -17,10 +17,10 @@ module Foobara
           end
         end
 
-        %w[
-          foobara_children
-          foobara_registry
-          foobara_type_builder
+        [
+          "foobara_children",
+          "foobara_registry",
+          "foobara_type_builder"
         ].each do |var_name|
           var_name = "@#{var_name}"
 

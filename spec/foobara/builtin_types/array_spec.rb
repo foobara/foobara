@@ -104,7 +104,7 @@ RSpec.describe ":array" do
       expect(type.description).to eq("An array of strings")
       expect(type).to be_sensitive
       expect(type).to be_sensitive_exposed
-      expect(type.process_value!([:foo, 1])).to eq(%w[foo 1])
+      expect(type.process_value!([:foo, 1])).to eq(["foo", "1"])
     end
   end
 end

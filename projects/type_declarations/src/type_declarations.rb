@@ -96,8 +96,8 @@ module Foobara
         Thread.inheritable_thread_local_var_get("foobara_manifest_context")
       end
 
-      allowed_context_keys = %i[detached to_include mode remove_sensitive]
-      booleans = %i[detached remove_sensitive]
+      allowed_context_keys = [:detached, :to_include, :mode, :remove_sensitive]
+      booleans = [:detached, :remove_sensitive]
 
       booleans.each do |context_item|
         define_method "foobara_manifest_context_#{context_item}?" do

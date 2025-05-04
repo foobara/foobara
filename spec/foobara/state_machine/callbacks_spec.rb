@@ -57,7 +57,7 @@ RSpec.describe Foobara::StateMachine::Callbacks do
     end
 
     it "calls them all" do
-      %i[before around after error].each do |type|
+      [:before, :around, :after, :error].each do |type|
         [
           "#{type}_any_transition",
           "#{type}_transition_from_#{from}",
@@ -77,31 +77,31 @@ RSpec.describe Foobara::StateMachine::Callbacks do
       # 8 for each type but error type won't be called here
       expect(calls.size).to eq(24)
 
-      expect(calls).to match_array(
-        %w[before_start_from_unexecuted_to_running
-           before_transition_from_unexecuted_to_running
-           before_start_from_unexecuted
-           before_transition_from_unexecuted
-           before_start_to_running
-           before_transition_to_running
-           before_start
-           before_any_transition
-           around_any_transition
-           around_start
-           around_transition_to_running
-           around_start_to_running
-           around_transition_from_unexecuted
-           around_start_from_unexecuted
-           around_transition_from_unexecuted_to_running
-           around_start_from_unexecuted_to_running
-           after_start_from_unexecuted_to_running
-           after_transition_from_unexecuted_to_running
-           after_start_from_unexecuted
-           after_transition_from_unexecuted
-           after_start_to_running
-           after_transition_to_running
-           after_start
-           after_any_transition]
+      expect(calls).to contain_exactly(
+        "before_start_from_unexecuted_to_running",
+        "before_transition_from_unexecuted_to_running",
+        "before_start_from_unexecuted",
+        "before_transition_from_unexecuted",
+        "before_start_to_running",
+        "before_transition_to_running",
+        "before_start",
+        "before_any_transition",
+        "around_any_transition",
+        "around_start",
+        "around_transition_to_running",
+        "around_start_to_running",
+        "around_transition_from_unexecuted",
+        "around_start_from_unexecuted",
+        "around_transition_from_unexecuted_to_running",
+        "around_start_from_unexecuted_to_running",
+        "after_start_from_unexecuted_to_running",
+        "after_transition_from_unexecuted_to_running",
+        "after_start_from_unexecuted",
+        "after_transition_from_unexecuted",
+        "after_start_to_running",
+        "after_transition_to_running",
+        "after_start",
+        "after_any_transition"
       )
 
       state_machine.reset!
@@ -119,33 +119,31 @@ RSpec.describe Foobara::StateMachine::Callbacks do
 
       # 8 before, 8 around, and 8 error callbacks (we never make it to after because of the raise)
       expect(calls.size).to eq(24)
-      expect(calls).to match_array(
-        %w[
-          before_start_from_unexecuted_to_running
-          before_transition_from_unexecuted_to_running
-          before_start_from_unexecuted
-          before_transition_from_unexecuted
-          before_start_to_running
-          before_transition_to_running
-          before_start
-          before_any_transition
-          around_any_transition
-          around_start
-          around_transition_to_running
-          around_start_to_running
-          around_transition_from_unexecuted
-          around_start_from_unexecuted
-          around_transition_from_unexecuted_to_running
-          around_start_from_unexecuted_to_running
-          error_start_from_unexecuted_to_running
-          error_transition_from_unexecuted_to_running
-          error_start_from_unexecuted
-          error_transition_from_unexecuted
-          error_start_to_running
-          error_transition_to_running
-          error_start
-          error_any_transition
-        ]
+      expect(calls).to contain_exactly(
+        "before_start_from_unexecuted_to_running",
+        "before_transition_from_unexecuted_to_running",
+        "before_start_from_unexecuted",
+        "before_transition_from_unexecuted",
+        "before_start_to_running",
+        "before_transition_to_running",
+        "before_start",
+        "before_any_transition",
+        "around_any_transition",
+        "around_start",
+        "around_transition_to_running",
+        "around_start_to_running",
+        "around_transition_from_unexecuted",
+        "around_start_from_unexecuted",
+        "around_transition_from_unexecuted_to_running",
+        "around_start_from_unexecuted_to_running",
+        "error_start_from_unexecuted_to_running",
+        "error_transition_from_unexecuted_to_running",
+        "error_start_from_unexecuted",
+        "error_transition_from_unexecuted",
+        "error_start_to_running",
+        "error_transition_to_running",
+        "error_start",
+        "error_any_transition"
       )
     end
   end

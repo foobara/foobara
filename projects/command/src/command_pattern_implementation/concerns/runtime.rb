@@ -27,13 +27,13 @@ module Foobara
           Foobara::Namespace.use self.class do
             invoke_with_callbacks_and_transition(:open_transaction)
 
-            invoke_with_callbacks_and_transition_in_transaction(%i[
-                                                                  cast_and_validate_inputs
-                                                                  load_records
-                                                                  validate_records
-                                                                  validate
-                                                                  run_execute
-                                                                  commit_transaction
+            invoke_with_callbacks_and_transition_in_transaction([
+                                                                  :cast_and_validate_inputs,
+                                                                  :load_records,
+                                                                  :validate_records,
+                                                                  :validate,
+                                                                  :run_execute,
+                                                                  :commit_transaction
                                                                 ])
 
             invoke_with_callbacks_and_transition(:succeed)

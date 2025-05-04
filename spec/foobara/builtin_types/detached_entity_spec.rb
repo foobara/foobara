@@ -1,11 +1,11 @@
 RSpec.describe ":detached_entity" do
   after do
     Foobara.reset_alls
-    %i[
-      SomeModel
-      SomeEntity
-      SomeOrg
-      SomeDomain
+    [
+      :SomeModel,
+      :SomeEntity,
+      :SomeOrg,
+      :SomeDomain
     ].each do |const|
       Object.send(:remove_const, const) if Object.const_defined?(const)
     end

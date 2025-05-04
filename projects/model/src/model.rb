@@ -172,7 +172,7 @@ module Foobara
     attr_accessor :mutable, :skip_validations
 
     def initialize(attributes = nil, options = {})
-      allowed_options = %i[validate mutable ignore_unexpected_attributes skip_validations]
+      allowed_options = [:validate, :mutable, :ignore_unexpected_attributes, :skip_validations]
       invalid_options = options.keys - allowed_options
 
       unless invalid_options.empty?

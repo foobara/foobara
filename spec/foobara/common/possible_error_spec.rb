@@ -7,7 +7,7 @@ RSpec.describe Foobara::PossibleError do
       let(:error_class) { Foobara::RuntimeError }
 
       it "creates an instance" do
-        expect(possible_error.key.path).to eq(%i[foo bar])
+        expect(possible_error.key.path).to eq([:foo, :bar])
         expect(possible_error.key.symbol).to eq(:baz)
         expect(possible_error.key.category).to eq(:data)
         expect(possible_error.error_class).to eq(Foobara::RuntimeError)

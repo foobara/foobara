@@ -4,7 +4,7 @@ module Foobara
       module Casters
         class Hash < Value::Caster
           def applicable?(hash)
-            hash.is_a?(::Hash) && hash.keys.size == 3 && (hash.keys.map(&:to_s).sort == %w[day month year])
+            hash.is_a?(::Hash) && hash.keys.size == 3 && (hash.keys.map(&:to_s).sort == ["day", "month", "year"])
           end
 
           def applies_message

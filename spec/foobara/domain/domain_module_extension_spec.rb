@@ -6,7 +6,7 @@ RSpec.describe Foobara::Domain::DomainModuleExtension do
   describe ".foobara_register_type" do
     context "when a custom type has been added to the global domain and then removed" do
       before do
-        Foobara::GlobalDomain.foobara_register_type(%w[Foo Bar whatever], :string, :downcase)
+        Foobara::GlobalDomain.foobara_register_type(["Foo", "Bar", "whatever"], :string, :downcase)
         Foobara.reset_alls
       end
 
@@ -15,7 +15,7 @@ RSpec.describe Foobara::Domain::DomainModuleExtension do
         stub_module("SomeOtherDomain")
 
         Foobara::GlobalDomain.foobara_register_type(
-          %w[SomeOtherDomain SomeOuterModel SomeInnerModel],
+          ["SomeOtherDomain", "SomeOuterModel", "SomeInnerModel"],
           type: :model,
           name: "SomeOuterModel::SomeInnerModel",
           model_module: "SomeOtherDomain",

@@ -20,7 +20,7 @@ RSpec.describe Foobara::AttributesTransformers do
   describe ".only" do
     let(:attributes_transformer_class) { described_class.only(*only) }
     let(:attributes_transformer) { attributes_transformer_class.new(direction => from_type_declaration) }
-    let(:only) { %i[foo bar] }
+    let(:only) { [:foo, :bar] }
     let(:to_value) { attributes_transformer.process_value!(from_value) }
 
     it "removes attributes other than what is passed to only" do
@@ -42,7 +42,7 @@ RSpec.describe Foobara::AttributesTransformers do
     end
 
     context "when only matches all attributes" do
-      let(:only) { %i[foo bar baz] }
+      let(:only) { [:foo, :bar, :baz] }
 
       it "is a no-op" do
         expect(to_value).to eq(from_value)
@@ -53,7 +53,7 @@ RSpec.describe Foobara::AttributesTransformers do
   describe ".reject" do
     let(:attributes_transformer_class) { described_class.reject(*reject) }
     let(:attributes_transformer) { attributes_transformer_class.new(direction => from_type_declaration) }
-    let(:reject) { %i[baz] }
+    let(:reject) { [:baz] }
     let(:to_value) { attributes_transformer.process_value!(from_value) }
 
     it "removes attributes that are specified in reject" do
@@ -75,7 +75,7 @@ RSpec.describe Foobara::AttributesTransformers do
     end
 
     context "when rejecting multiple attributes" do
-      let(:reject) { %i[bar baz] }
+      let(:reject) { [:bar, :baz] }
 
       it "removes all specified attributes" do
         expect(to_value).to eq(foo: "foo")
@@ -83,7 +83,7 @@ RSpec.describe Foobara::AttributesTransformers do
     end
 
     context "when rejecting all attributes" do
-      let(:reject) { %i[foo bar baz] }
+      let(:reject) { [:foo, :bar, :baz] }
 
       it "returns an empty hash" do
         expect(to_value).to eq({})

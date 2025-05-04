@@ -42,7 +42,7 @@ RSpec.describe Foobara::Namespace do
         keys = [
           "some::prefix::scoped_name",
           "scoped_name",
-          %w[some prefix scoped_name],
+          ["some", "prefix", "scoped_name"],
           ["scoped_name"],
           "::some::prefix::scoped_name"
         ]
@@ -81,7 +81,7 @@ RSpec.describe Foobara::Namespace do
 
           keys = [
             "some::prefix::scoped_name",
-            %w[some prefix scoped_name],
+            ["some", "prefix", "scoped_name"],
             "::some::prefix::scoped_name"
           ]
 
@@ -92,7 +92,7 @@ RSpec.describe Foobara::Namespace do
 
           keys = [
             "some::prefix2::scoped_name",
-            %w[some prefix2 scoped_name],
+            ["some", "prefix2", "scoped_name"],
             "::some::prefix2::scoped_name"
           ]
 
@@ -105,7 +105,7 @@ RSpec.describe Foobara::Namespace do
 
       context "with parent namespaces" do
         let(:grandparent_namespace) do
-          described_class.new(%w[GrandparentPrefix1 GrandParentPrefix2 GrandparentNamespace])
+          described_class.new(["GrandparentPrefix1", "GrandParentPrefix2", "GrandparentNamespace"])
         end
 
         let(:parent_namespace) do
@@ -122,10 +122,10 @@ RSpec.describe Foobara::Namespace do
             "scoped_name",
             "GrandparentPrefix1::GrandParentPrefix2::GrandparentNamespace::ParentNamespace::SomeNamespace::some::" \
             "prefix::scoped_name",
-            %w[some prefix scoped_name],
+            ["some", "prefix", "scoped_name"],
             ["scoped_name"],
-            %w[GrandparentPrefix1 GrandParentPrefix2 GrandparentNamespace ParentNamespace SomeNamespace
-               some prefix scoped_name]
+            ["GrandparentPrefix1", "GrandParentPrefix2", "GrandparentNamespace", "ParentNamespace", "SomeNamespace",
+             "some", "prefix", "scoped_name"]
           ]
 
           keys.each do |key|

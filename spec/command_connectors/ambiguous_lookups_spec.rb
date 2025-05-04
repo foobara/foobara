@@ -97,7 +97,7 @@ RSpec.describe Foobara::CommandConnector do
       expect(manifest[:scoped_name]).to eq("SomeCommandAgain")
       expect(manifest[:scoped_short_name]).to eq("SomeCommandAgain")
       expect(manifest[:scoped_prefix]).to be_nil
-      expect(manifest[:scoped_full_path]).to eq(%w[DomainA SomeCommandAgain])
+      expect(manifest[:scoped_full_path]).to eq(["DomainA", "SomeCommandAgain"])
       expect(manifest[:scoped_full_name]).to eq("DomainA::SomeCommandAgain")
       expect(manifest[:scoped_category]).to eq(:command)
       expect(manifest[:reference]).to eq("DomainA::SomeCommandAgain")

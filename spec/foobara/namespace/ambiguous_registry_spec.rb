@@ -39,21 +39,21 @@ RSpec.describe Foobara::Namespace::AmbiguousRegistry do
 
     context "when looking up by unambiguous key" do
       it "returns the expected users" do
-        expect(registry.lookup(%w[d User])).to eq(user6)
+        expect(registry.lookup(["d", "User"])).to eq(user6)
       end
     end
 
     context "when looking up by very ambiguous key" do
       it "raises" do
         expect {
-          registry.lookup(%w[z User])
+          registry.lookup(["z", "User"])
         }.to raise_error(Foobara::Namespace::AmbiguousLookupError)
       end
     end
 
     context "when looking up by kind-of ambiguous key" do
       it "returns the best guess" do
-        expect(registry.lookup(%w[a User])).to eq(user2)
+        expect(registry.lookup(["a", "User"])).to eq(user2)
       end
     end
   end

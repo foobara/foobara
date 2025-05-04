@@ -99,15 +99,15 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Callbacks do
 
           it "runs callbacks" do
             expect(called).to eq(
-              %i[
-                open_transaction
-                cast_and_validate_inputs
-                load_records
-                validate_records
-                validate
-                run_execute
-                commit_transaction
-                succeed
+              [
+                :open_transaction,
+                :cast_and_validate_inputs,
+                :load_records,
+                :validate_records,
+                :validate,
+                :run_execute,
+                :commit_transaction,
+                :succeed
               ]
             )
           end
@@ -125,15 +125,15 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Callbacks do
           expect(outcome).to be_success
 
           expect(called).to eq(
-            %i[
-              open_transaction
-              cast_and_validate_inputs
-              load_records
-              validate_records
-              validate
-              run_execute
-              commit_transaction
-              succeed
+            [
+              :open_transaction,
+              :cast_and_validate_inputs,
+              :load_records,
+              :validate_records,
+              :validate,
+              :run_execute,
+              :commit_transaction,
+              :succeed
             ]
           )
         end

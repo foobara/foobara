@@ -127,7 +127,7 @@ RSpec.describe Foobara::Domain do
 
   describe ".foobara_register_type" do
     let(:type_symbol) { :some_type }
-    let(:type_declaration) { %i[string downcase] }
+    let(:type_declaration) { [:string, :downcase] }
 
     it "creates and registers a type and puts it on the Types module" do
       domain.foobara_register_type(type_symbol, *type_declaration)
@@ -228,11 +228,15 @@ RSpec.describe Foobara::Domain do
       end
 
       it "upgrades the outer type from a module to a model class" do
-        inner_model = Foobara::GlobalDomain.foobara_register_type(%w[SomeOtherDomain SomeOuterModel SomeInnerModel],
-                                                                  inner_model_declaration)
+        inner_model = Foobara::GlobalDomain.foobara_register_type(
+          ["SomeOtherDomain", "SomeOuterModel", "SomeInnerModel"],
+          inner_model_declaration
+        )
         Foobara::Model.deanonymize_class(inner_model.target_class)
-        inner_type = Foobara::GlobalDomain.foobara_register_type(%w[SomeOtherDomain SomeOuterModel some_inner_type],
-                                                                 inner_type_declaration)
+        inner_type = Foobara::GlobalDomain.foobara_register_type(
+          ["SomeOtherDomain", "SomeOuterModel", "some_inner_type"],
+          inner_type_declaration
+        )
 
         expect(SomeOtherDomain::SomeOuterModel).to be_a(Module)
         expect(SomeOtherDomain::SomeOuterModel).to_not be_a(Class)
@@ -249,7 +253,7 @@ RSpec.describe Foobara::Domain do
         expect(SomeOtherDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
         expect(SomeOtherDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_model)
 
-        outer_model = Foobara::GlobalDomain.foobara_register_type(%w[SomeOtherDomain SomeOuterModel],
+        outer_model = Foobara::GlobalDomain.foobara_register_type(["SomeOtherDomain", "SomeOuterModel"],
                                                                   outer_model_declaration)
         Foobara::Model.deanonymize_class(outer_model.target_class)
 
@@ -276,7 +280,7 @@ RSpec.describe Foobara::Domain do
     end
 
     context "when it already has a Types prefix" do
-      let(:type_symbol) { %i[Types Foo Bar some_type] }
+      let(:type_symbol) { [:Types, :Foo, :Bar, :some_type] }
 
       it "creates and registers the type and puts it on the existing Types module" do
         domain.foobara_register_type(type_symbol, *type_declaration)

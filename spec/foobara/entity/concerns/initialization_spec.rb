@@ -94,35 +94,27 @@ RSpec.describe Foobara::Entity::Concerns::Initialization do
 
       it "can create the record and nested associations, too" do
         applicant_class.transaction do
-          expect(type.types_depended_on.map(&:type_symbol)).to match_array(
-            %i[
-              Applicant
-              array
-              attributes
-              duck
-              symbol
-            ]
+          expect(type.types_depended_on.map(&:type_symbol)).to contain_exactly(
+            :Applicant, :array, :attributes, :duck, :symbol
           )
 
-          expect(type.deep_types_depended_on.map(&:type_symbol)).to match_array(
-            %i[
-              Applicant
-              User
-              array
-              associative_array
-              atomic_duck
-              attributes
-              boolean
-              detached_entity
-              duck
-              duckture
-              entity
-              integer
-              model
-              number
-              string
-              symbol
-            ]
+          expect(type.deep_types_depended_on.map(&:type_symbol)).to contain_exactly(
+            :Applicant,
+            :User,
+            :array,
+            :associative_array,
+            :atomic_duck,
+            :attributes,
+            :boolean,
+            :detached_entity,
+            :duck,
+            :duckture,
+            :entity,
+            :integer,
+            :model,
+            :number,
+            :string,
+            :symbol
           )
 
           applicants = type.process_value!([

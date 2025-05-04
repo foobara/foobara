@@ -61,7 +61,7 @@ RSpec.describe Foobara::Model do
       it "adds the attributes to the existing type" do
         type = Foobara.foobara_lookup_type(:User)
         attributes_type = type.element_types
-        expect(attributes_type.element_types.keys).to match_array(%i[id name age email])
+        expect(attributes_type.element_types.keys).to contain_exactly(:id, :name, :age, :email)
       end
     end
 
@@ -121,7 +121,7 @@ RSpec.describe Foobara::Model do
       it "adds the attributes to the existing type" do
         type = Foobara.foobara_lookup_type(:User)
         attributes_type = type.element_types
-        expect(attributes_type.element_types.keys).to match_array(%i[name age email])
+        expect(attributes_type.element_types.keys).to contain_exactly(:name, :age, :email)
       end
     end
 

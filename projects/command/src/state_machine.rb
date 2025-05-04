@@ -1,31 +1,31 @@
 module Foobara
   class Command
     class StateMachine < Foobara::StateMachine
-      transitions = %i[
-        open_transaction
-        cast_and_validate_inputs
-        load_records
-        validate_records
-        validate
-        run_execute
-        commit_transaction
-        succeed
-        error
-        fail
-        reset
+      transitions = [
+        :open_transaction,
+        :cast_and_validate_inputs,
+        :load_records,
+        :validate_records,
+        :validate,
+        :run_execute,
+        :commit_transaction,
+        :succeed,
+        :error,
+        :fail,
+        :reset
       ]
 
-      terminal_states = %i[succeeded errored failed]
+      terminal_states = [:succeeded, :errored, :failed]
 
-      states = %i[
-        initialized
-        transaction_opened
-        inputs_casted_and_validated
-        loaded_records
-        validated_records
-        validated_execution
-        executing
-        transaction_committed
+      states = [
+        :initialized,
+        :transaction_opened,
+        :inputs_casted_and_validated,
+        :loaded_records,
+        :validated_records,
+        :validated_execution,
+        :executing,
+        :transaction_committed
       ] + terminal_states
 
       can_fail_states = states - terminal_states

@@ -28,7 +28,7 @@ RSpec.describe Foobara::TypeDeclarations do
             bar: { type: :string },
             foo: { type: :string }
           },
-          required: %i[bar foo],
+          required: [:bar, :foo],
           defaults: { foo: "foo", bar: "bar" }
         )
       end
@@ -97,7 +97,7 @@ RSpec.describe Foobara::TypeDeclarations do
               bar: { type: :string },
               foo: { type: :string }
             },
-            required: %i[bar foo],
+            required: [:bar, :foo],
             defaults: { foo: "foo", bar: "bar" }
           )
         end
@@ -145,7 +145,7 @@ RSpec.describe Foobara::TypeDeclarations do
                         sensitive: true, type: :string
                       }, baz: { type: :string }
                     },
-                    required: %i[foo bar],
+                    required: [:foo, :bar],
                     defaults: { foo: "foo", bar: "bar" } },
                  baz2: {
                    type: :array,
@@ -157,7 +157,7 @@ RSpec.describe Foobara::TypeDeclarations do
                      }
                    }
                  } },
-              required: %i[foo bar],
+              required: [:foo, :bar],
               defaults: { foo: "foo", bar: "bar" } }
 
           ]
@@ -180,7 +180,7 @@ RSpec.describe Foobara::TypeDeclarations do
                   bar: { type: :string },
                   baz: { type: :string }
                 },
-                required: %i[bar foo], defaults: { foo: "foo", bar: "bar" }
+                required: [:bar, :foo], defaults: { foo: "foo", bar: "bar" }
               },
               baz2: {
                 type: :array,
@@ -190,7 +190,7 @@ RSpec.describe Foobara::TypeDeclarations do
                 }
               }
             },
-            required: %i[bar foo],
+            required: [:bar, :foo],
             defaults: { foo: "foo", bar: "bar" }
           }
         )

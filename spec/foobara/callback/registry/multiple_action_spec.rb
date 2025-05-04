@@ -1,6 +1,6 @@
 RSpec.describe Foobara::Callback::Registry::MultipleAction do
   let(:registry) { described_class.new(possible_actions) }
-  let(:possible_actions) { %i[run walk] }
+  let(:possible_actions) { [:run, :walk] }
 
   describe "#register_callback" do
     let(:action) { :run }
@@ -128,14 +128,14 @@ RSpec.describe Foobara::Callback::Registry::MultipleAction do
           it "calls expected callbacks in order" do
             runner.run { "noop" }
 
-            expect(callbacks_ran).to eq(%i[before around_start around_end after])
+            expect(callbacks_ran).to eq([:before, :around_start, :around_end, :after])
             callbacks_ran.clear
 
             expect {
               runner.run { raise "kaboom!" }
             }.to raise_error(RuntimeError)
 
-            expect(callbacks_ran).to eq(%i[before around_start error])
+            expect(callbacks_ran).to eq([:before, :around_start, :error])
           end
         end
       end

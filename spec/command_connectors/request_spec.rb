@@ -49,7 +49,7 @@ RSpec.describe Foobara::CommandConnector::Request do
     end
 
     context "when there are multiple serializers" do
-      let(:serializers) { %i[yaml json] }
+      let(:serializers) { [:yaml, :json] }
 
       it "returns the serializer" do
         expect(request.serializer.processors.size).to eq(2)

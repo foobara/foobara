@@ -48,7 +48,7 @@ module Foobara
         end
 
         def new_with_agnostic_args(**rest)
-          allowed_keys = %i[declaration_data parent_declaration_data]
+          allowed_keys = [:declaration_data, :parent_declaration_data]
 
           invalid_keys = rest.keys - allowed_keys
 
@@ -283,7 +283,7 @@ module Foobara
       end
 
       def dup_processor(**opts)
-        valid_opts = %i[declaration_data parent_declaration_data]
+        valid_opts = [:declaration_data, :parent_declaration_data]
 
         invalid_opts = opts.keys - valid_opts
 

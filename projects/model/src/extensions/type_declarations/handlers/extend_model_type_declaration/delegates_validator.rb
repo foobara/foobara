@@ -21,7 +21,7 @@ module Foobara
               )
             end
 
-            allowed_keys = %i[data_path writer]
+            allowed_keys = [:data_path, :writer]
 
             delegates.each_pair do |attribute_name, delegate_hash|
               invalid_keys = delegate_hash.keys - allowed_keys

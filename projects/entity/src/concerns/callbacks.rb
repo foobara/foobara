@@ -39,22 +39,22 @@ module Foobara
         module ClassMethods
           def class_callback_registry
             @class_callback_registry ||= begin
-              actions = %i[
-                initialized
-                initialized_built
-                initialized_thunk
-                initialized_loaded
-                initialized_created
-                dirtied
-                undirtied
-                attribute_changed
-                reverted
-                loaded
-                persisted
-                hard_deleted
-                unhard_deleted
-                invalidated
-                uninvalidated
+              actions = [
+                :initialized,
+                :initialized_built,
+                :initialized_thunk,
+                :initialized_loaded,
+                :initialized_created,
+                :dirtied,
+                :undirtied,
+                :attribute_changed,
+                :reverted,
+                :loaded,
+                :persisted,
+                :hard_deleted,
+                :unhard_deleted,
+                :invalidated,
+                :uninvalidated
               ]
 
               if self == Entity

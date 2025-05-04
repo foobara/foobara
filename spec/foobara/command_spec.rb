@@ -42,7 +42,7 @@ RSpec.describe Foobara::Command do
         expect(state_machine).to be_currently_succeeded
         expect(state_machine).to be_ever_succeeded
         expect(state_machine).to be_ever_initialized
-        non_happy_path_transitions = %i[error fail reset]
+        non_happy_path_transitions = [:error, :fail, :reset]
         happy_path_transitions = state_machine.class.transitions - non_happy_path_transitions
         expect(state_machine.log.map(&:transition)).to match_array(happy_path_transitions)
       end
@@ -56,8 +56,8 @@ RSpec.describe Foobara::Command do
         # TODO: let's make this input instead of attribute_name somehow...
         expect(errors.map { |e| [e.attribute_name, e.symbol] }).to eq(
           [
-            %i[base missing_required_attribute],
-            %i[exponent missing_required_attribute]
+            [:base, :missing_required_attribute],
+            [:exponent, :missing_required_attribute]
           ]
         )
       end
@@ -70,7 +70,7 @@ RSpec.describe Foobara::Command do
         expect(outcome).to_not be_success
         expect(errors.size).to be(1)
         expect(error.symbol).to eq(:unexpected_attributes)
-        expect(error.context).to eq(allowed_attributes: %i[exponent base], unexpected_attributes: [:extra_junk])
+        expect(error.context).to eq(allowed_attributes: [:exponent, :base], unexpected_attributes: [:extra_junk])
       end
     end
 
@@ -101,7 +101,7 @@ RSpec.describe Foobara::Command do
         expect(outcome).to_not be_success
         expect(errors.size).to be(1)
         expect(error.attribute_name).to eq(:bar)
-        expect(error.path).to eq(%i[foo bar])
+        expect(error.path).to eq([:foo, :bar])
         expect(error.symbol).to eq(:cannot_cast)
       end
     end

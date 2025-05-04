@@ -169,7 +169,7 @@ RSpec.describe Foobara::Command do
         it "contains the depends_on information for the commands" do
           depends_on = Foobara.manifest[:domain][:SomeDomain1][:depends_on]
 
-          expect(depends_on).to match_array(%w[SomeDomain2 SomeDomain3])
+          expect(depends_on).to contain_exactly("SomeDomain2", "SomeDomain3")
         end
       end
     end

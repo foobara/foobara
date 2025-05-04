@@ -54,7 +54,7 @@ RSpec.describe Foobara::Enumerated::Accessors do
     it "gives the reflection information" do
       meta = klass.enumerated_type_metadata[:some_enum]
 
-      expect(meta.keys).to match_array(%i[values original_values_source values_source])
+      expect(meta.keys).to contain_exactly(:values, :original_values_source, :values_source)
       expect(meta[:original_values_source]).to be(EnumModule)
       expect(meta[:values_source]).to be(EnumModule)
 
@@ -87,7 +87,7 @@ RSpec.describe Foobara::Enumerated::Accessors do
         it "has the right module" do
           meta = klass.enumerated_type_metadata[:some_enum]
 
-          expect(meta.keys).to match_array(%i[values original_values_source values_source])
+          expect(meta.keys).to contain_exactly(:values, :original_values_source, :values_source)
           expect(meta[:original_values_source]).to be_nil
           expect(meta[:values_source]).to be(EnumModule)
 
@@ -118,7 +118,7 @@ RSpec.describe Foobara::Enumerated::Accessors do
         it "has the right module" do
           meta = klass.enumerated_type_metadata[:some_enum]
 
-          expect(meta.keys).to match_array(%i[values original_values_source values_source])
+          expect(meta.keys).to contain_exactly(:values, :original_values_source, :values_source)
           expect(meta[:original_values_source]).to be_nil
           expect(meta[:values_source]).to be(EnumModule)
 
@@ -163,7 +163,7 @@ RSpec.describe Foobara::Enumerated::Accessors do
         it "has the right module" do
           meta = klass.enumerated_type_metadata[:some_enum]
 
-          expect(meta.keys).to match_array(%i[values original_values_source values_source])
+          expect(meta.keys).to contain_exactly(:values, :original_values_source, :values_source)
           expect(meta[:original_values_source]).to be_nil
           expect(meta[:values_source]).to be(EnumModule)
 

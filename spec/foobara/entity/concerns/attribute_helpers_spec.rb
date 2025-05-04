@@ -56,7 +56,7 @@ RSpec.describe Foobara::ModelAttributeHelpers::Concerns::AttributeHelpers do
           ssn :string, :private
         end
         primary_key :id
-        delegate_attribute :username, %i[stuff things 1 username], writer: w
+        delegate_attribute :username, [:stuff, :things, :"1", :username], writer: w
       end
     end
     let(:writer) { true }

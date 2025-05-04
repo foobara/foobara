@@ -13,7 +13,7 @@ module Foobara
       self.scoped_path = []
       self.authenticator = authenticator
 
-      customized = %i[command]
+      customized = [:command]
 
       Namespace.global.foobara_categories.keys.reverse.each do |symbol|
         next if customized.include?(symbol)

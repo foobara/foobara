@@ -1,10 +1,10 @@
 RSpec.describe ":model" do
   after do
     Foobara.reset_alls
-    %i[
-      SomeModel
-      SomeOrg
-      SomeDomain
+    [
+      :SomeModel,
+      :SomeOrg,
+      :SomeDomain
     ].each do |const|
       Object.send(:remove_const, const) if Object.const_defined?(const)
     end
@@ -238,7 +238,7 @@ RSpec.describe ":model" do
     it "creates the model class" do
       Foobara::Model.deanonymize_class(type.target_class)
       expect(type.target_class).to be(SomeOrg::SomeDomain::SomePrefix::SomeModel)
-      expect(type.scoped_full_path).to eq(%w[SomeOrg SomeDomain SomePrefix SomeModel])
+      expect(type.scoped_full_path).to eq(["SomeOrg", "SomeDomain", "SomePrefix", "SomeModel"])
       expect(type.scoped_prefix).to eq(["SomePrefix"])
     end
   end

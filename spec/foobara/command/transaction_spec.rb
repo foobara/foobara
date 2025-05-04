@@ -271,11 +271,11 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Entities do
     describe "manifest" do
       it "includes entity dependencies" do
         expect(Foobara.manifest[:type][:Employee][:deep_depends_on]).to eq(
-          %w[
-            Assignment
-            User
-            Package
-            Applicant
+          [
+            "Assignment",
+            "User",
+            "Package",
+            "Applicant"
           ]
         )
       end
@@ -470,7 +470,7 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Entities do
                 foo: :food,
                 bar: [10, 11],
                 duckfoo: "df",
-                duckbar: %w[db asdf]
+                duckbar: ["db", "asdf"]
               }
             )
           end
@@ -483,7 +483,7 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Entities do
               foo: :food,
               bar: [10, 11],
               duckfoo: "df",
-              duckbar: %w[db asdf]
+              duckbar: ["db", "asdf"]
             )
           end
         end

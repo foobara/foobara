@@ -16,8 +16,8 @@ module Foobara
         end
 
         def subclass(name: nil, **options)
-          arity_zero = %i[name applies_message]
-          arity_one = %i[applicable? cast]
+          arity_zero = [:name, :applies_message]
+          arity_one = [:applicable?, :cast]
           allowed = arity_zero + arity_one
 
           invalid_options = options.keys - allowed

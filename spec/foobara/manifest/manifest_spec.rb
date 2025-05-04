@@ -118,8 +118,8 @@ RSpec.describe Foobara::Manifest do
   let(:raw_stringified_manifest) { Foobara::Util.deep_stringify_keys(Foobara.manifest) }
 
   it "is a Manifest" do
-    integer = Foobara::Manifest::Type.new(raw_manifest, %i[type integer])
-    string = Foobara::Manifest::Type.new(raw_manifest, %i[type string])
+    integer = Foobara::Manifest::Type.new(raw_manifest, [:type, :integer])
+    string = Foobara::Manifest::Type.new(raw_manifest, [:type, :string])
 
     expect(integer).to be_builtin
 
@@ -176,7 +176,7 @@ RSpec.describe Foobara::Manifest do
     expect(entity.target_class).to eq("SomeOrg::SomeDomain::User")
     expect(entity.entity_manifest).to be_a(Hash)
     expect(entity.type_manifest).to be_a(Hash)
-    expect(entity.attribute_names).to match_array(%w[name ratings junk phone address])
+    expect(entity.attribute_names).to contain_exactly("name", "ratings", "junk", "phone", "address")
 
     expect(manifest.types).to include(entity)
     expect(entity.organization.types).to include(entity)
@@ -225,7 +225,7 @@ RSpec.describe Foobara::Manifest do
     expect(model.target_class).to eq("SomeOrg::SomeDomain::Types::Address")
     expect(model.model_manifest).to be_a(Hash)
     expect(model.type_manifest).to be_a(Hash)
-    expect(model.attribute_names).to match_array(%w[street city state zip])
+    expect(model.attribute_names).to contain_exactly("street", "city", "state", "zip")
 
     expect(manifest.types).to include(model)
     expect(model.organization.types).to include(model)
@@ -259,7 +259,7 @@ RSpec.describe Foobara::Manifest do
     expect(command.inputs_types_depended_on).to include(entity)
     expect(command.result_types_depended_on).to include(entity)
     expect(command.errors_types_depended_on).to include(
-      Foobara::Manifest::Type.new(raw_manifest, %i[type attributes])
+      Foobara::Manifest::Type.new(raw_manifest, [:type, :attributes])
     )
 
     type_declaration = command.result_type
