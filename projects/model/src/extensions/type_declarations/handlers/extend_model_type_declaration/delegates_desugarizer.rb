@@ -8,8 +8,8 @@ module Foobara
           end
 
           def desugarize(sugary_type_declaration)
-            desugarized = Util.deep_dup(sugary_type_declaration)
-            delegates = desugarized[:delegates]
+            desugarized = sugary_type_declaration.dup
+            delegates = Util.deep_symbolize_keys(desugarized[:delegates])
 
             if delegates.empty?
               desugarized.delete(:delegates)
