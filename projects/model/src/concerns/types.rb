@@ -199,7 +199,7 @@ module Foobara
             delegates[attribute_name] = delegate_manifest
 
             delegated_type_declaration = model_type.type_at_path(data_path).reference_or_declaration_data
-            attributes attribute_name => delegated_type_declaration
+            attributes(type: :attributes, element_type_declarations: { attribute_name => delegated_type_declaration })
 
             define_method attribute_name do
               data_path.value_at(self)
