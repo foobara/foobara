@@ -1,3 +1,10 @@
+# [0.0.117] - 2025-05-05
+
+- Make sure we do not apply an authenticator unless it is applicable
+- Move loaded/unloaded concept up into DetachedEntity from Entity
+  - This allows us to deal with serialization of detached entities as their primary keys
+- Fix bugs preventing connecting/importing types with delegated attributes
+
 # [0.0.116] - 2025-05-03
 
 - Add automatic transaction support to requests, cover in/out mutators/transformers

@@ -30,7 +30,9 @@ module Foobara
       end
 
       def authenticate(request)
-        process_value!(request)
+        if applicable?(request)
+          process_value!(request)
+        end
       end
 
       def to_proc
