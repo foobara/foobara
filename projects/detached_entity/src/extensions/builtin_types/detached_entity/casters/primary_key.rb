@@ -1,6 +1,6 @@
 module Foobara
   module BuiltinTypes
-    module Entity
+    module DetachedEntity
       module Casters
         class PrimaryKey < Value::Caster
           class << self
@@ -26,11 +26,15 @@ module Foobara
           end
 
           def transform(primary_key)
-            entity_class.thunk(primary_key)
+            entity_class.send(build_method, primary_key)
           end
 
           def applies_message
             primary_key_type.value_caster.applies_message
+          end
+
+          def build_method
+            :unloaded
           end
         end
       end
