@@ -1,5 +1,14 @@
 RSpec.describe Foobara::Model do
-  after { Foobara.reset_alls }
+  after do
+    Foobara.reset_alls
+    [
+      :SomeModel,
+      :SomeEntity,
+      :Foo
+    ].each do |const|
+      Object.send(:remove_const, const) if Object.const_defined?(const)
+    end
+  end
 
   let(:model_class) do
     stub_class("SomeModel", described_class) do
