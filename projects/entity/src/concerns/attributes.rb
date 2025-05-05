@@ -6,6 +6,10 @@ module Foobara
 
         include Concern
 
+        def can_read_attributes_other_than_primary_key?
+          loaded? || built? || created?
+        end
+
         def write_attribute_without_callbacks(attribute_name, value)
           without_callbacks do
             write_attribute(attribute_name, value)

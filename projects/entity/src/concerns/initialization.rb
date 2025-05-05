@@ -16,6 +16,7 @@ module Foobara
             record.build(attributes)
             # TODO: rename to something like "detached"
             record.is_built = true
+            record.is_loaded = false
 
             record.fire(:initialized)
             record.fire(:initialized_built)
@@ -39,6 +40,7 @@ module Foobara
             return record if record
 
             record = __private_new__
+            record.is_loaded = false
             record.is_persisted = true
             record.write_attributes_without_callbacks(primary_key_attribute => record_id)
 
@@ -80,6 +82,7 @@ module Foobara
           def create(attributes = {})
             record = __private_new__
             record.is_created = true
+            record.is_loaded = false
 
             defaults = attributes_type.declaration_data[:defaults]
             if defaults && !defaults.empty?

@@ -171,13 +171,14 @@ module Foobara
 
     attr_accessor :mutable, :skip_validations
 
+    ALLOWED_OPTIONS = [:validate, :mutable, :ignore_unexpected_attributes, :skip_validations].freeze
+
     def initialize(attributes = nil, options = {})
-      allowed_options = [:validate, :mutable, :ignore_unexpected_attributes, :skip_validations]
-      invalid_options = options.keys - allowed_options
+      invalid_options = options.keys - ALLOWED_OPTIONS
 
       unless invalid_options.empty?
         # :nocov:
-        raise ArgumentError, "Invalid options #{invalid_options} expected only #{allowed_options}"
+        raise ArgumentError, "Invalid options #{invalid_options} expected only #{ALLOWED_OPTIONS}"
         # :nocov:
       end
 
