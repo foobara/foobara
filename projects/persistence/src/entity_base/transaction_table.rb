@@ -255,7 +255,7 @@ module Foobara
           element_types = entity_class.attributes_type.element_types
 
           attributes_filter = attributes_filter.to_h do |attribute_name, value|
-            [attribute_name,  element_types[attribute_name].process_value!(value)]
+            [attribute_name, element_types[attribute_name].process_value!(value)]
           end
 
           tracked_records.each do |record|

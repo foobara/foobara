@@ -34,4 +34,25 @@ RSpec.describe Foobara::Persistence::EntityBase::TransactionTable do
       end
     end
   end
+
+  describe "#all" do
+    context "when a thunk is unloaded" do
+      it "still yields the loaded record for that thunk" do
+        user = user_class.transaction do
+          user_class.create(first_name: "Basil")
+        end
+
+        user_class.transaction do |tx|
+          user_class.thunk(user.id)
+
+          transaction_table = tx.table_for(user_class)
+
+          transaction_table.all do |record|
+            expect(record).to be_loaded
+            expect(record.first_name).to eq("Basil")
+          end
+        end
+      end
+    end
+  end
 end
