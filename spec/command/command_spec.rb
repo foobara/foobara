@@ -27,13 +27,17 @@ RSpec.describe Foobara::Command do
 
     let(:base) { 4 }
     let(:exponent) { 3 }
-    let(:command) { command_class.new(base:, exponent:) }
+    let(:inputs) do
+      { base:, exponent: }
+    end
+    let(:command) { command_class.new(inputs) }
     let(:state_machine) { command.state_machine }
 
     let(:outcome) { command.run }
     let(:result) { outcome.result }
     let(:errors) { outcome.errors }
     let(:error) { errors.first }
+    let(:errors_hash) { outcome.errors_hash }
 
     describe ".run!" do
       it "is success" do
@@ -103,6 +107,74 @@ RSpec.describe Foobara::Command do
         expect(error.attribute_name).to eq(:bar)
         expect(error.path).to eq([:foo, :bar])
         expect(error.symbol).to eq(:cannot_cast)
+      end
+    end
+
+    context "when it takes a tuple" do
+      let(:command_class) do
+        stub_class "CalculateExponent", described_class do
+          inputs operands: [:integer, :integer]
+
+          def execute
+            operands.first**operands.last
+          end
+        end
+      end
+
+      let(:operands) { [2, 3] }
+      let(:inputs) do
+        { operands: }
+      end
+
+      it "can handle tuple inputs" do
+        expect(outcome).to be_success
+      end
+
+      context "when the tuple is bad" do
+        let(:operands) { [2, "asdf"] }
+
+        it "gives an expected error" do
+          expect(outcome).to_not be_success
+          expect(errors_hash.keys).to eq(["data.operands.1.cannot_cast"])
+        end
+      end
+    end
+
+    context "when it takes an array" do
+      let(:command_class) do
+        stub_class "CalculateExponent", described_class do
+          inputs operands: [:integer]
+
+          def execute
+            operands.first**operands.last
+          end
+        end
+      end
+
+      let(:operands) { [2, 3] }
+      let(:inputs) do
+        { operands: }
+      end
+
+      it "can handle array inputs" do
+        expect(outcome).to be_success
+      end
+
+      context "when the array is bad" do
+        let(:operands) { [2, "asdf"] }
+
+        describe ".lookup_error_class" do
+          it "gives the expected class" do
+            expect(
+              command_class.lookup_error_class("data.operands.1.cannot_cast")
+            ).to eq(Foobara::Value::Processor::Casting::CannotCastError)
+          end
+        end
+
+        it "gives an expected error" do
+          expect(outcome).to_not be_success
+          expect(errors_hash.keys).to eq(["data.operands.1.cannot_cast"])
+        end
       end
     end
   end

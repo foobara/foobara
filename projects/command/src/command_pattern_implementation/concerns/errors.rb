@@ -32,7 +32,9 @@ module Foobara
           end
 
           def lookup_error_class(key)
-            key = ErrorKey.to_s_type(key)
+            unless error_context_type_map.key?(key)
+              key = ErrorKey.to_s_type(key)
+            end
 
             unless error_context_type_map.key?(key)
               # :nocov:
