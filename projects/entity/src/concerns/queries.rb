@@ -45,7 +45,13 @@ module Foobara
           end
 
           def load(record)
-            if !record.is_a?(Foobara::Entity) || !record.loaded?
+            if record.is_a?(Foobara::Entity)
+              if record.loaded?
+                record
+              else
+                current_transaction_table.load(record)
+              end
+            else
               current_transaction_table.load(record)
             end
           rescue ::Foobara::Persistence::EntityAttributesCrudDriver::Table::CannotFindError

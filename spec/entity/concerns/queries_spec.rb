@@ -91,4 +91,23 @@ RSpec.describe Foobara::Entity::Concerns::Queries do
       end
     end
   end
+
+  describe ".load" do
+    context "when the record is already loaded" do
+      it "returns the record" do
+        user = user_class.transaction do
+          user_class.create(name: "Basil")
+        end
+
+        user_class.transaction do
+          user = user_class.load(user.id)
+          expect(user).to be_a(user_class)
+          expect(user.name).to eq("Basil")
+          user = user_class.load(user)
+          expect(user).to be_a(user_class)
+          expect(user.name).to eq("Basil")
+        end
+      end
+    end
+  end
 end
