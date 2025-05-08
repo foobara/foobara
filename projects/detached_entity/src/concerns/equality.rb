@@ -16,6 +16,8 @@ module Foobara
         end
 
         def hash
+          # TODO: what about when it originally did not have a primary key but now does? such as
+          # after a transaction commit of a freshly created record?
           (primary_key || object_id).hash
         end
       end

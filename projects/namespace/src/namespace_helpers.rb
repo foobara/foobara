@@ -19,7 +19,14 @@ module Foobara
             subclass.extend ::Foobara::Scoped
 
             NamespaceHelpers.foobara_autoset_namespace(subclass, default_namespace: scoped_default_namespace)
-            NamespaceHelpers.foobara_autoset_scoped_path(subclass)
+
+            if !subclass.respond_to?(:will_set_scoped_path?) || !subclass.will_set_scoped_path?
+              NamespaceHelpers.foobara_autoset_scoped_path(
+                subclass,
+                set_namespace: true,
+                namespace_default: scoped_default_namespace
+              )
+            end
 
             subclass.extend ::Foobara::Namespace::IsNamespace
           end
@@ -34,6 +41,8 @@ module Foobara
             super
 
             subclass.extend ::Foobara::Scoped
+
+            return if subclass.respond_to?(:will_set_scoped_path?) && subclass.will_set_scoped_path?
 
             NamespaceHelpers.foobara_autoset_namespace(subclass, default_namespace: scoped_default_namespace)
             NamespaceHelpers.foobara_autoset_scoped_path(subclass)
@@ -161,7 +170,12 @@ module Foobara
           mod.scoped_namespace = default_namespace if default_namespace
         end
 
-        def foobara_autoset_scoped_path(mod, make_top_level: false)
+        def anon_sequence(class_name)
+          @anon_sequences ||= {}
+          @anon_sequences.key?(class_name) ? @anon_sequences[class_name] += 1 : @anon_sequences[class_name] = 1
+        end
+
+        def foobara_autoset_scoped_path(mod, make_top_level: false, set_namespace: false, namespace_default: nil)
           return if mod.scoped_path_set?
 
           mod_name = mod.name
@@ -174,7 +188,13 @@ module Foobara
               super_name = parent.scoped_path_set? ? parent.scoped_full_name : parent.name
             end until super_name
 
-            mod_name = [super_name, mod.object_id.to_s(16)].join("::")
+            short_name = if mod.respond_to?(:symbol) && mod.symbol
+                           mod.symbol.to_s
+                         else
+                           "Anon#{NamespaceHelpers.anon_sequence(super_name)}"
+                         end
+
+            mod_name = [super_name, short_name].join("::")
           end
 
           scoped_path = mod_name.split("::")
@@ -182,6 +202,8 @@ module Foobara
           adjusted_scoped_path = []
 
           next_mod = Object
+
+          parent = namespace_default
 
           while next_mod
             path_part = scoped_path.shift
@@ -192,6 +214,7 @@ module Foobara
 
             if next_mod.is_a?(IsNamespace) && next_mod != mod && !make_top_level
               adjusted_scoped_path = []
+              parent = next_mod
               next
             end
 
@@ -200,6 +223,10 @@ module Foobara
 
           mod.scoped_path_autoset = true
           mod.scoped_path = adjusted_scoped_path
+
+          if set_namespace
+            mod.scoped_namespace = parent
+          end
 
           if mod.is_a?(IsNamespace)
             update_children_with_new_parent(mod)
