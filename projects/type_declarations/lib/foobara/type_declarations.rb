@@ -73,6 +73,9 @@ module Foobara
         register_sensitive_value_remover(attributes_handler, SensitiveValueRemovers::Attributes)
         register_sensitive_type_remover(SensitiveTypeRemovers::Array.new(array_handler))
         register_sensitive_value_remover(array_handler, SensitiveValueRemovers::Array)
+
+        Foobara::AttributesTransformers::Reject.foobara_unregister_all
+        Foobara::AttributesTransformers::Only.foobara_unregister_all
       end
 
       def install!

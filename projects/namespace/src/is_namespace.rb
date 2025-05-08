@@ -94,6 +94,12 @@ module Foobara
         scoped.scoped_namespace = nil
       end
 
+      def foobara_unregister_all
+        foobara_registry.each_scoped do |child|
+          foobara_unregister(child)
+        end
+      end
+
       def foobara_lookup(
         path,
         filter: nil,
