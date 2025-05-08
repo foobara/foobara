@@ -11,9 +11,9 @@ module Foobara
               object.class.load(object)
             end
 
-            transform(object.attributes)
+            transform(object.attributes_with_delegates)
           when Model
-            transform(object.attributes)
+            transform(object.attributes_with_delegates)
           when Array
             object.map { |element| transform(element) }
           when Hash
