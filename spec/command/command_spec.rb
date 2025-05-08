@@ -116,7 +116,7 @@ RSpec.describe Foobara::Command do
           inputs operands: [:integer, :integer]
 
           def execute
-            operands.first**operands.last
+            operands.first ** operands.last
           end
         end
       end
@@ -146,7 +146,7 @@ RSpec.describe Foobara::Command do
           inputs operands: [:integer]
 
           def execute
-            operands.first**operands.last
+            operands.first ** operands.last
           end
         end
       end

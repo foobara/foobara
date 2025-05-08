@@ -24,7 +24,7 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Runtime do
 
   describe ".run!" do
     it "creates and runs the command and returns the result" do
-      expect(command_class.run!(base: 4, exponent: 3)).to eq(4**3)
+      expect(command_class.run!(base: 4, exponent: 3)).to eq(4 ** 3)
     end
   end
 
@@ -32,7 +32,7 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Runtime do
     it "creates and runs the command" do
       outcome = command_class.run(base: 4, exponent: 3)
       expect(outcome).to be_success
-      expect(outcome.result).to eq(4**3)
+      expect(outcome.result).to eq(4 ** 3)
     end
   end
 

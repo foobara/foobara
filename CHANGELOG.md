@@ -1,3 +1,15 @@
+# [0.0.119] - 2025-05-08
+
+- Make anonymous transformers more deterministic in manifests
+- Remove delegates and private attributes from exposed models
+- Make sure delegated attributes make it out through aggregate serializers
+
+# [0.0.118] - 2025-05-07
+
+- Fix bug preventing allow_nil from being used with entities
+- Fix bugs with .all and .load
+- Fix bug with possible error class lookups for tuple types
+
 # [0.0.117] - 2025-05-05
 
 - Make sure we do not apply an authenticator unless it is applicable

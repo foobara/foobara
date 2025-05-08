@@ -52,7 +52,7 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Runtime do
       expect(command.respond_to?(:exponent)).to be(true)
       expect(command.base).to eq(4)
       expect(command.exponent).to eq(3)
-      expect(command.run!).to eq(4**3)
+      expect(command.run!).to eq(4 ** 3)
     end
   end
 
@@ -68,7 +68,7 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Runtime do
         inputs CalculateInputs
 
         def execute
-          base**exponent
+          base ** exponent
         end
       end
     end
@@ -77,7 +77,7 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Runtime do
     let(:inputs) { { base: 4, exponent: 3 } }
 
     it "gives convenient access to the inputs" do
-      expect(command.run!).to eq(4**3)
+      expect(command.run!).to eq(4 ** 3)
     end
   end
 end
