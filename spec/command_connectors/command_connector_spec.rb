@@ -1746,7 +1746,10 @@ RSpec.describe Foobara::CommandConnector do
             attributes do
               id :integer
               name :string
-              stuff do
+              ssn :string, :sensitive
+              ssn2 :string, :private
+              foo :string
+              stuff :private do
                 things :array do
                   auth_user AuthUser, :required
                 end
@@ -1771,7 +1774,17 @@ RSpec.describe Foobara::CommandConnector do
 
         context "when user exists" do
           let(:user_id) do
-            CreateUser.run!(name: :whatever, stuff: { things: [{ auth_user: auth_user_id }] }).id
+            CreateUser.run!(
+              name: :whatever,
+              ssn: "123",
+              ssn2: "789",
+              foo: "bar",
+              stuff: {
+                things: [
+                  { auth_user: auth_user_id }
+                ]
+              }
+            ).id
           end
 
           let(:username) { "some_username" }
@@ -1793,7 +1806,7 @@ RSpec.describe Foobara::CommandConnector do
                   "user" => {
                     "id" => user_id,
                     "name" => "whatever",
-                    "stuff" => { "things" => [{ "auth_user" => auth_user_id }] },
+                    "foo" => "bar",
                     "username" => "some_username"
                   }
                 ]
@@ -1838,8 +1851,8 @@ RSpec.describe Foobara::CommandConnector do
               expect(JSON.parse(response.body)).to eq(
                 "id" => 1,
                 "name" => "whatever",
-                "stuff" => { "things" => [{ "auth_user" => 1 }] },
-                "username" => "some_username"
+                "username" => "some_username",
+                "foo" => "bar"
               )
             end
           end

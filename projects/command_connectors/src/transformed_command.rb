@@ -47,8 +47,15 @@ module Foobara
 
           remover = Namespace.use scoped_namespace do
             transformed_result_type = result_type_from_transformers(result_type, result_transformers)
+
+            path = if transformed_result_type.scoped_path_set?
+                     transformed_result_type.scoped_full_path
+                   else
+                     [*command_class.scoped_path, *suffix, "Result"]
+                   end
+
             remover_class.new(from: transformed_result_type).tap do |r|
-              r.scoped_path = ["SensitiveValueRemover", *transformed_result_type.scoped_full_path]
+              r.scoped_path = ["SensitiveValueRemover", *path]
             end
           end
 
