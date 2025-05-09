@@ -3,12 +3,12 @@ module Foobara
   # TODO: move this to command connectors project
   class TransformedCommand
     class << self
+      attr_writer :result_transformers
       attr_accessor :command_class,
                     :command_name,
                     :full_command_name,
                     :capture_unknown_error,
                     :inputs_transformers,
-                    :result_transformers,
                     :errors_transformers,
                     :pre_commit_transformers,
                     # TODO: get at least these serializers out of here...
@@ -20,7 +20,9 @@ module Foobara
                     :request_mutators,
                     :allowed_rule,
                     :requires_authentication,
-                    :authenticator
+                    :authenticator,
+                    :subclassed_in_namespace,
+                    :suffix
 
       def subclass(
         command_class,
@@ -40,28 +42,6 @@ module Foobara
         suffix: nil,
         capture_unknown_error: false
       )
-        result_type = command_class.result_type
-
-        if result_type&.has_sensitive_types?
-          remover_class = Foobara::TypeDeclarations.sensitive_value_remover_class_for_type(result_type)
-
-          remover = Namespace.use scoped_namespace do
-            transformed_result_type = result_type_from_transformers(result_type, result_transformers)
-
-            path = if transformed_result_type.scoped_path_set?
-                     transformed_result_type.scoped_full_path
-                   else
-                     [*command_class.scoped_path, *suffix, "Result"]
-                   end
-
-            remover_class.new(from: transformed_result_type).tap do |r|
-              r.scoped_path = ["SensitiveValueRemover", *path]
-            end
-          end
-
-          result_transformers = [*result_transformers, remover]
-        end
-
         Class.new(self).tap do |klass|
           klass.command_class = command_class
           klass.command_name = command_name
@@ -77,6 +57,8 @@ module Foobara
           klass.allowed_rule = allowed_rule
           klass.requires_authentication = requires_authentication
           klass.authenticator = authenticator
+          klass.subclassed_in_namespace = scoped_namespace
+          klass.suffix = suffix
         end
       end
 
@@ -84,6 +66,36 @@ module Foobara
                        :domain,
                        :organization,
                        to: :command_class
+
+      def result_transformers
+        return @result_transformers if @sensitive_mutator_considered
+
+        @sensitive_mutator_considered = true
+
+        result_type = command_class.result_type
+
+        if result_type&.has_sensitive_types?
+          remover_class = Foobara::TypeDeclarations.sensitive_value_remover_class_for_type(result_type)
+
+          remover = Namespace.use subclassed_in_namespace do
+            transformed_result_type = result_type_from_transformers
+
+            path = if transformed_result_type.scoped_path_set?
+                     transformed_result_type.scoped_full_path
+                   else
+                     [*command_class.scoped_path, *suffix, "Result"]
+                   end
+
+            remover_class.new(from: transformed_result_type).tap do |r|
+              r.scoped_path = ["SensitiveValueRemover", *path]
+            end
+          end
+
+          @result_transformers = [*@result_transformers, remover]
+        end
+
+        @result_transformers
+      end
 
       def inputs_type
         return @inputs_type if defined?(@inputs_type)
@@ -111,19 +123,19 @@ module Foobara
                        end
       end
 
-      def result_type_from_transformers(result_type, transformers)
-        transformers.reverse.each do |transformer|
+      def result_type_from_transformers
+        result_transformers.reverse.each do |transformer|
           if transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer
             new_type = transformer.to_type
             return new_type if new_type
           end
         end
 
-        result_type
+        command_class.result_type
       end
 
       def result_type
-        result_type_from_transformers(command_class.result_type, result_transformers)
+        result_type_from_transformers
       end
 
       def result_type_for_manifest
@@ -422,6 +434,9 @@ module Foobara
 
       def request_mutator
         return @request_mutator if defined?(@request_mutator)
+
+        # A hack: this will give the SensitiveValueRemover a chance to be injected
+        result_transformers
 
         if request_mutators.empty?
           @request_mutator = nil
