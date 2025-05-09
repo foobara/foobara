@@ -123,15 +123,15 @@ module Foobara
                        end
       end
 
-      def result_type_from_transformers(result_type = command_class.result_type, transformers = result_transformers)
-        transformers.reverse.each do |transformer|
+      def result_type_from_transformers
+        result_transformers.reverse.each do |transformer|
           if transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer
             new_type = transformer.to_type
             return new_type if new_type
           end
         end
 
-        result_type
+        command_class.result_type
       end
 
       def result_type
