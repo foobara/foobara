@@ -467,7 +467,12 @@ module Foobara
       end
 
       included = Set.new
-      additional_to_include = Set.new
+      additional_to_include = Set.new.tap do |s|
+        s.singleton_class.define_method(:<<) do |o|
+          binding.pry if o.scoped_full_path == ["Foobara", "Commandforge", "Types", "User"]
+          super(o)
+        end
+      end
 
       h = {
         organization: {},

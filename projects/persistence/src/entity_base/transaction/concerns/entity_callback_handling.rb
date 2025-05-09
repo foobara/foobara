@@ -114,6 +114,7 @@ module Foobara
 
                 Entity.after_initialized_created do |record:, **|
                   transaction = Persistence.current_transaction(record)
+
                   unless transaction
                     raise NoCurrentTransactionError,
                           "Cannot initialize #{record} because there's no current transaction"
@@ -131,6 +132,7 @@ module Foobara
 
                 Entity.after_initialized_thunk do |record:, **|
                   transaction = Persistence.current_transaction(record)
+
                   unless transaction
                     # :nocov:
                     raise NoCurrentTransactionError,

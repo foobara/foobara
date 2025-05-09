@@ -30,11 +30,22 @@ module Foobara
             end
 
             def tracked(record)
+              puts "tracking #{record.id} #{record.object_id}"
+
+              tracked_records.each do |tracked_record|
+                if tracked_record.primary_key && tracked_record.primary_key == record.primary_key
+                  if tracked_record.object_id != record.object_id
+                    # wtf, why are we reloading this record??
+                    binding.pry
+                  end
+                end
+              end
+
               tracked_records << record
             end
 
             def created(record)
-              tracked_records << record
+              tracked(record)
               mark_created(record)
             end
 
@@ -64,7 +75,7 @@ module Foobara
             end
 
             def updated(record)
-              tracked_records << record
+              tracked(record)
 
               # TODO: is this check redundant? Maybe have the entity explode directly instead?
               if hard_deleted?(record)
@@ -105,11 +116,15 @@ module Foobara
             interesting_record_states.each do |state|
               define_method "mark_#{state}" do |record|
                 set = records[state] ||= Set.new
+                puts "marking #{record.id} #{record.object_id} as #{state}"
+                puts set.to_a.map(&:object_id).sort
                 set << record
+                puts set.to_a.map(&:object_id).sort
               end
 
               define_method "unmark_#{state}" do |record|
                 if records.key?(state)
+                  puts "unmarking #{record.id} as #{state}"
                   records[state].delete(record)
                 end
               end

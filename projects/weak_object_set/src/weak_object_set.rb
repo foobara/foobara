@@ -10,13 +10,33 @@ module Foobara
       def cleanup_proc
         @cleanup_proc ||= ->(object_id) {
           unless @deactivated
+            puts "before"
+            puts "objects: #{@objects.keys.inspect}"
+            puts "object_id_to_key: #{@object_id_to_key.inspect}"
+            puts "key_to_object_id: #{@key_to_object_id.inspect}"
+            puts "GC: deleting #{object_id}"
             @objects.delete(object_id)
 
+            present = @object_id_to_key&.key?(object_id)
+            if present
+              puts "GC: deleting #{object_id} from object_id_to_key"
+            end
             key = @object_id_to_key&.delete(object_id)
 
             if key
+              if present
+                puts "GC: deleting #{key} from key_to_object_id"
+              end
               @key_to_object_id.delete(key)
             end
+            if @object_id_to_key.size != @key_to_object_id.size
+              binding.pry
+            end
+
+            puts "after"
+            puts "objects: #{@objects.keys.inspect}"
+            puts "object_id_to_key: #{@object_id_to_key.inspect}"
+            puts "key_to_object_id: #{@key_to_object_id.inspect}"
           end
         }
       end
@@ -139,14 +159,24 @@ module Foobara
 
     def delete(object)
       if @key_method
+        present = @object_id_to_key&.key?(object.object_id)
+
+        if present
+          puts "deleting #{object_id} #{object} from object_id_to_key"
+        end
         key = @object_id_to_key&.delete(object.object_id)
 
         if key
+          if present
+            puts "deleting #{key} from key_to_object_id"
+          end
           @key_to_object_id.delete(key)
+        elsif present
+          puts "no key!"
         end
       end
 
-      objects.delete(object)
+      objects.delete(object.object_id)
     end
 
     def include_key?(key)
