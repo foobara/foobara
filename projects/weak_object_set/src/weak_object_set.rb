@@ -1,6 +1,8 @@
 require "monitor"
 
 module Foobara
+  # TODO: a possible optimization: have a certain number of records before the Weakref approach kicks in
+  # that way we don't just immediately clear out useful information without any actual memory burden
   class WeakObjectSet
     class InvalidWtf < StandardError; end
 
@@ -145,7 +147,6 @@ module Foobara
         existing_object = self[object_id]
 
         if existing_object
-          puts "hit"
           if key_method
             key = object.send(key_method)
             old_key = object_id_to_key[object_id]
@@ -157,13 +158,11 @@ module Foobara
                 key_to_object_id[key] = object_id
                 object_id_to_key[object_id] = key
               else
-                binding.pry
                 object_id_to_key.delete(object_id)
               end
             end
           end
         else
-          puts "miss"
           garbage_cleaner.track(object)
 
           if key_method
@@ -176,14 +175,8 @@ module Foobara
                 delete(existing_record_object_id)
               end
 
-              puts "key"
-              puts key_to_object_id.inspect
-              puts object_id_to_key.inspect
-              puts "o #{object_id} k #{key}"
               key_to_object_id[key] = object_id
               object_id_to_key[object_id] = key
-            else
-              puts "no key"
             end
           end
 
@@ -200,8 +193,6 @@ module Foobara
                   else
                     object_or_object_id.object_id
                   end
-
-      puts "deleting #{object_id}"
 
       monitor.synchronize do
         if key_method
@@ -242,36 +233,6 @@ module Foobara
         if key_method
           self.key_to_object_id = {}
           self.object_id_to_key = {}
-        end
-      end
-    end
-
-    def validate!
-      # puts "validating!"
-      if (object_id_to_key&.size || 0) != (key_to_object_id&.size || 0)
-        puts "whoa"
-        binding.pry
-        raise InvalidWtf
-      end
-    end
-
-    def validate_for(object)
-      if key_method
-        key = object.send(key_method)
-
-        if key
-
-          by_key = find_by_key(key)
-
-          if by_key
-            if self[object].object_id != find_by_key(key).object_id
-              binding.pry
-              raise InvalidWtf
-            end
-          elsif self[object] && !object.created?
-            binding.pry
-            raise InvalidWtf
-          end
         end
       end
     end

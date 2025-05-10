@@ -30,11 +30,7 @@ module Foobara
             end
 
             def tracked(record)
-              tracked_records.validate!
-              tracked_records.validate_for(record)
-              puts "tracking #{record.primary_key} #{record.object_id}"
               tracked_records << record
-              tracked_records.validate!
             end
 
             def created(record)
@@ -109,13 +105,11 @@ module Foobara
             interesting_record_states.each do |state|
               define_method "mark_#{state}" do |record|
                 set = records[state] ||= Set.new
-                puts "marking #{record.primary_key} #{record.object_id} as #{state}"
                 set << record
               end
 
               define_method "unmark_#{state}" do |record|
                 if records.key?(state)
-                  puts "unmarking #{record.primary_key} as #{state}"
                   records[state].delete(record)
                 end
               end
