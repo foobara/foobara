@@ -34,7 +34,7 @@ module Foobara
             end
 
             def created(record)
-              tracked_records << record
+              tracked(record)
               mark_created(record)
             end
 
@@ -64,7 +64,7 @@ module Foobara
             end
 
             def updated(record)
-              tracked_records << record
+              tracked(record)
 
               # TODO: is this check redundant? Maybe have the entity explode directly instead?
               if hard_deleted?(record)
