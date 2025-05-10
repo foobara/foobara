@@ -181,8 +181,6 @@ module Foobara
                 # :nocov:
               end
 
-              binding.pry if entity.nil?
-
               record_id = entity.primary_key
               to_load_record_ids << record_id
               entities[record_id] = entity

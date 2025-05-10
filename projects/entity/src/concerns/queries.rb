@@ -49,12 +49,9 @@ module Foobara
               if record.loaded?
                 record
               else
-                current_transaction_table.tracked_records.validate_for(record)
-                current_transaction_table.tracked_records.validate!
                 current_transaction_table.load(record)
               end
             else
-              current_transaction_table.tracked_records.validate!
               current_transaction_table.load(record)
             end
           rescue ::Foobara::Persistence::EntityAttributesCrudDriver::Table::CannotFindError

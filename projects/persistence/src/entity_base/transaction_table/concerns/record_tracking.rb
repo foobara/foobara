@@ -30,24 +30,7 @@ module Foobara
             end
 
             def tracked(record)
-              puts "tracking #{record.primary_key} #{record.object_id}"
-
-              tracked_records.each do |tracked_record|
-                if tracked_record.primary_key && tracked_record.primary_key == record.primary_key
-                  if tracked_record.object_id != record.object_id
-                    # wtf, why are we reloading this record??
-                    binding.pry
-                  end
-                end
-              end
-
-              tracked_records.validate_for(record)
-              tracked_records.validate!
-
               tracked_records << record
-              # rescue => e
-              #   binding.pry
-              #   raise
             end
 
             def created(record)

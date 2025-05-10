@@ -19,7 +19,6 @@ module Foobara
           queue = self.queue
 
           ->(object_id) do
-            puts "cleaning #{object_id} #{deactivated?}"
             unless deactivated?
               begin
                 queue.push(object_id)
@@ -48,7 +47,6 @@ module Foobara
       end
 
       def track(object)
-        puts "adding finalizer for #{object.object_id}"
         ObjectSpace.define_finalizer(object, cleanup_proc)
       end
 
@@ -142,8 +140,6 @@ module Foobara
 
     def <<(object)
       monitor.synchronize do
-        validate_for(object)
-        validate!
         object_id = object.object_id
 
         if include?(object)
@@ -177,8 +173,6 @@ module Foobara
           end
 
           object
-        end.tap do
-          validate!
         end
       end
     end
@@ -191,27 +185,17 @@ module Foobara
                   end
 
       monitor.synchronize do
-        validate!
-
         if key_method
           present = object_id_to_key.key?(object_id)
 
-          if present
-            puts "deleting #{object_id} #{object_or_object_id} from object_id_to_key"
-          end
           key = object_id_to_key.delete(object_id)
 
           if key
-            if present
-              puts "deleting #{key} from key_to_object_id"
-            end
             key_to_object_id.delete(key)
-          elsif present
-            puts "no key!"
           end
         end
 
-        objects.delete(object_id).tap { validate! }
+        objects.delete(object_id)
       end
     end
 
@@ -232,7 +216,6 @@ module Foobara
     end
 
     def clear
-      validate!
       monitor.synchronize do
         garbage_cleaner.deactivate
 
@@ -244,7 +227,6 @@ module Foobara
           self.object_id_to_key = {}
         end
       end
-      validate!
     end
 
     def validate!

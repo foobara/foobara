@@ -25,7 +25,6 @@ module Foobara
           end
 
           def thunk(record_id)
-            current_transaction_table.tracked_records.validate!
             record_id = primary_key_type.process_value!(record_id)
 
             # TODO: is this possible?
@@ -34,8 +33,6 @@ module Foobara
               raise ArgumentError, "Primary key cannot be blank"
               # :nocov:
             end
-
-            current_transaction_table.tracked_records.validate!
 
             # check if tracked already...
             record = current_transaction_table.find_tracked(record_id)
