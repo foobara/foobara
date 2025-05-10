@@ -181,6 +181,8 @@ module Foobara
                 # :nocov:
               end
 
+              binding.pry if entity.nil?
+
               record_id = entity.primary_key
               to_load_record_ids << record_id
               entities[record_id] = entity
@@ -548,7 +550,7 @@ module Foobara
 
             # we need to update finding the tracked object by key and removing/reading it seems to be the simplest
             # way to accomplish that at the moment
-            tracked_records << record
+            tracked(record)
 
             record.is_persisted = record.is_loaded = true
             record.is_created = false
@@ -568,7 +570,7 @@ module Foobara
 
           # we need to update finding the tracked object by key and removing/reading it seems to be the simplest
           # way to accomplish that at the moment
-          tracked_records << record
+          tracked(record)
 
           record.is_persisted = record.is_loaded = true
           record.is_created = false

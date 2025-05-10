@@ -1,6 +1,8 @@
 module Foobara
   class WeakObjectSet
     class GarbageCleaner
+      class InvalidWtf < StandardError; end
+
       def initialize(objects, key_to_object_id = nil, object_id_to_key = nil)
         @objects = objects
         @key_to_object_id = key_to_object_id
@@ -65,8 +67,14 @@ module Foobara
     def [](object_or_object_id)
       ref = ref_for(object_or_object_id)
 
+      object = begin
+        ref&.__getobj__
+      rescue WeakRef::RefError # I don't think this rescue is necessary but not certain
+        nil
+      end
+
       if ref&.weakref_alive?
-        ref.__getobj__
+        object
       end
     end
 
@@ -82,8 +90,14 @@ module Foobara
 
     def each
       objects.each_value do |ref|
+        object = begin
+          ref.__getobj__
+        rescue WeakRef::RefError
+          nil
+        end
+
         if ref.weakref_alive?
-          yield ref.__getobj__
+          yield object
         end
       end
     end
@@ -117,6 +131,8 @@ module Foobara
     end
 
     def <<(object)
+      validate_for(object)
+      validate!
       object_id = object.object_id
 
       if include?(object)
@@ -150,14 +166,14 @@ module Foobara
         end
 
         object
+      end.tap do
+        validate!
       end
     end
 
-    def include?(object_or_object_id)
-      ref_for(object_or_object_id)&.weakref_alive?
-    end
-
     def delete(object)
+      validate!
+
       if @key_method
         present = @object_id_to_key&.key?(object.object_id)
 
@@ -176,17 +192,7 @@ module Foobara
         end
       end
 
-      objects.delete(object.object_id)
-    end
-
-    def include_key?(key)
-      unless @key_method
-        # :nocov:
-        raise "Cannot check by key if there was no key_method given."
-        # :nocov:
-      end
-
-      objects[key_to_object_id[key]]&.weakref_alive?
+      objects.delete(object.object_id).tap { validate! }
     end
 
     def find_by_key(key)
@@ -196,16 +202,48 @@ module Foobara
         # :nocov:
       end
 
-      object = objects[key_to_object_id[key]]
+      object_id = key_to_object_id[key]
 
-      if object&.weakref_alive?
-        object.__getobj__
+      if object_id
+        self[object_id]
       end
     end
 
     def clear
+      validate!
       @garbage_cleaner&.deactivate
       @key_to_object_id = @object_id_to_key = @objects = @garbage_cleaner = nil
+      validate!
+    end
+
+    def validate!
+      # puts "validating!"
+      if (@object_id_to_key&.size || 0) != (@key_to_object_id&.size || 0)
+        puts "whoa"
+        binding.pry
+        raise InvalidWtf
+      end
+    end
+
+    def validate_for(object)
+      if @key_method
+        key = object.send(@key_method)
+
+        if key
+
+          by_key = find_by_key(key)
+
+          if by_key
+            if self[object].object_id != find_by_key(key).object_id
+              binding.pry
+              raise InvalidWtf
+            end
+          elsif self[object] && !object.created?
+            binding.pry
+            raise InvalidWtf
+          end
+        end
+      end
     end
   end
 end

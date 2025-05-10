@@ -41,7 +41,13 @@ module Foobara
                 end
               end
 
+              tracked_records.validate_for(record)
+              tracked_records.validate!
+
               tracked_records << record
+              # rescue => e
+              #   binding.pry
+              #   raise
             end
 
             def created(record)
@@ -117,9 +123,7 @@ module Foobara
               define_method "mark_#{state}" do |record|
                 set = records[state] ||= Set.new
                 puts "marking #{record.id} #{record.object_id} as #{state}"
-                puts set.to_a.map(&:object_id).sort
                 set << record
-                puts set.to_a.map(&:object_id).sort
               end
 
               define_method "unmark_#{state}" do |record|
