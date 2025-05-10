@@ -41,12 +41,8 @@ module Foobara
               self.queue = nil
               break
             else
-              raise "wtf"
+              raise "Unexpected nil value in the queue"
             end
-          rescue => e
-            queue.close
-            binding.pry
-            raise
           end
         end
       end
@@ -198,7 +194,6 @@ module Foobara
         validate!
 
         if key_method
-          binding.pry if object_id_to_key.nil?
           present = object_id_to_key.key?(object_id)
 
           if present
