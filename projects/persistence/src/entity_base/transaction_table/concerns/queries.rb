@@ -21,9 +21,8 @@ module Foobara
                   attributes = normalize_attributes(attributes)
                   primary_key = primary_key_for_attributes(attributes)
 
-                  if tracked_records.include_key?(primary_key)
-                    record = tracked_records.find_by_key(primary_key)
-
+                  record = tracked_records.find_by_key(primary_key)
+                  if record
                     next if record.hard_deleted?
                     next if created?(record)
 

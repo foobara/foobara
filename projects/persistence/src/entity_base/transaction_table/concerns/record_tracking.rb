@@ -30,7 +30,7 @@ module Foobara
             end
 
             def tracked(record)
-              puts "tracking #{record.id} #{record.object_id}"
+              puts "tracking #{record.primary_key} #{record.object_id}"
 
               tracked_records.each do |tracked_record|
                 if tracked_record.primary_key && tracked_record.primary_key == record.primary_key
@@ -122,13 +122,13 @@ module Foobara
             interesting_record_states.each do |state|
               define_method "mark_#{state}" do |record|
                 set = records[state] ||= Set.new
-                puts "marking #{record.id} #{record.object_id} as #{state}"
+                puts "marking #{record.primary_key} #{record.object_id} as #{state}"
                 set << record
               end
 
               define_method "unmark_#{state}" do |record|
                 if records.key?(state)
-                  puts "unmarking #{record.id} as #{state}"
+                  puts "unmarking #{record.primary_key} as #{state}"
                   records[state].delete(record)
                 end
               end
