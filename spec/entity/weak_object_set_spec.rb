@@ -15,12 +15,11 @@ RSpec.describe Foobara::WeakObjectSet do
         end
 
         some_object = Foo.new("bar")
-        some_object_id = some_object.object_id
         set << some_object
 
-        puts "some_object #{some_object.object_id}"
-
+        # rubocop:disable Lint/UselessAssignment
         some_object = nil
+        # rubocop:enable Lint/UselessAssignment
         GC.start
 
         expect(set).to be_empty
