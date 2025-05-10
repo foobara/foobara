@@ -25,7 +25,9 @@ module Foobara
               begin
                 queue.push(object_id)
               rescue ClosedQueueError
+                # :nocov:
                 deactivate
+                # :nocov:
               end
             end
           end
@@ -42,7 +44,9 @@ module Foobara
               self.queue = nil
               break
             else
+              # :nocov:
               raise "Unexpected nil value in the queue"
+              # :nocov:
             end
           end
         end
@@ -81,7 +85,9 @@ module Foobara
         object = begin
           ref&.__getobj__
         rescue WeakRef::RefError
+          # :nocov:
           nil
+          # :nocov:
         end
 
         if ref&.weakref_alive?
@@ -133,7 +139,9 @@ module Foobara
         gc = GarbageCleaner.new(self, queue)
 
         ObjectSpace.define_finalizer gc do
+          # :nocov:
           queue.close
+          # :nocov:
         end
 
         gc
@@ -169,6 +177,16 @@ module Foobara
             key = object.send(key_method)
 
             if key
+              existing_record_object_id = key_to_object_id[key]
+
+              if existing_record_object_id
+                # Sometimes this path is hit in the test suite and sometimes not, depending on
+                # non-deterministic behavior of the garbage collector
+                # :nocov:
+                delete(existing_record_object_id)
+                # :nocov:
+              end
+
               key_to_object_id[key] = object_id
               object_id_to_key[object_id] = key
             end

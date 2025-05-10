@@ -7,15 +7,21 @@ RSpec.describe Foobara::WeakObjectSet do
     context "without key_method" do
       it "automatically removes records that have been garbage collected" do
         some_object = "asdf"
-        some_object_id = some_object.object_id
         set << some_object
 
+        # Deleting this line breaks the spec for mysterious reasons. Without this line, GC.start doesn't
+        # call the finalizer for "asdf" for some reason until the end of the test suite.
+        # It looks like when these finalizers run is not guaranteed so it might be a bad idea to
+        # test the behavior as if it were. Will leave this test here for now but might need to delete it if
+        # it acts up in other environments.
+        expect(set.size).to eq(1)
 
         # rubocop:disable Lint/UselessAssignment
         some_object = nil
         # rubocop:enable Lint/UselessAssignment
         GC.start
 
+        expect(set.size).to eq(0)
         expect(set).to be_empty
       end
     end

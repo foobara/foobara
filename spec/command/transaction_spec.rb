@@ -380,7 +380,6 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Entities do
         let(:applicant) { Applicant.create(user:, is_active: true) }
         let(:user) { User.create(name: "first user") }
 
-        # TODO: this is blinky and that is scary...
         it "can update an applicant" do
           applicant_id = Applicant.transaction { applicant }.id
 
