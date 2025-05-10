@@ -65,16 +65,29 @@ module Foobara
         end
 
         def load(entity_or_record_id)
+          if entity_or_record_id.nil?
+            # :nocov:
+            raise "Expected a record or record primary key but received nil"
+            # :nocov:
+          end
+
           if entity_or_record_id.is_a?(Entity)
-            if entity_or_record_id.loaded?
-              # :nocov:
-              raise "#{entity_or_record_id} is already loaded!"
-              # :nocov:
-            end
+            entity = if entity_or_record_id.persisted?
+                       unless entity_or_record_id.primary_key
+                         # :nocov:
+                         raise "Did not expect a record to be persisted but have no primary key"
+                         # :nocov:
+                       end
 
-            entity = tracked_records[entity_or_record_id]
+                       tracked_records.find_by_key(entity_or_record_id.primary_key)
+                     else
+                       # :nocov:
+                       raise "Cannot load an unpersisted record!"
+                       # :nocov:
+                     end
 
-            if entity && !entity.equal?(entity_or_record_id)
+            if entity &&
+               (!entity.equal?(entity_or_record_id) || entity.object_id != entity_or_record_id.object_id)
               # :nocov:
               raise "This transaction is already tracking a different entity with the same primary key." \
                     "Try passing in the primary key instead of constructing an unloaded entity to pass in."
@@ -151,7 +164,19 @@ module Foobara
                 next
               end
 
-              entity = tracked_records[entity_or_record_id]
+              entity = if entity_or_record_id.persisted?
+                         unless entity_or_record_id.primary_key
+                           # :nocov:
+                           raise "Did not expect a record to be persisted but have no primary key"
+                           # :nocov:
+                         end
+
+                         tracked_records.find_by_key(entity_or_record_id.primary_key)
+                       else
+                         # :nocov:
+                         raise "Cannot load an unpersisted record!"
+                         # :nocov:
+                       end
 
               if entity && !entity.equal?(entity_or_record_id)
                 # :nocov:
