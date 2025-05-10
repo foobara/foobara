@@ -78,7 +78,7 @@ module Foobara
 
         object = begin
           ref&.__getobj__
-        rescue WeakRef::RefError # I don't think this rescue is necessary but not certain
+        rescue WeakRef::RefError
           nil
         end
 
@@ -139,10 +139,13 @@ module Foobara
     end
 
     def <<(object)
-      monitor.synchronize do
-        object_id = object.object_id
+      object_id = object.object_id
 
-        if include?(object)
+      monitor.synchronize do
+        existing_object = self[object_id]
+
+        if existing_object
+          puts "hit"
           if key_method
             key = object.send(key_method)
             old_key = object_id_to_key[object_id]
@@ -154,23 +157,37 @@ module Foobara
                 key_to_object_id[key] = object_id
                 object_id_to_key[object_id] = key
               else
+                binding.pry
                 object_id_to_key.delete(object_id)
               end
             end
           end
         else
+          puts "miss"
           garbage_cleaner.track(object)
-
-          objects[object_id] = WeakRef.new(object)
 
           if key_method
             key = object.send(key_method)
 
             if key
+              existing_record_object_id = key_to_object_id[key]
+
+              if existing_record_object_id
+                delete(existing_record_object_id)
+              end
+
+              puts "key"
+              puts key_to_object_id.inspect
+              puts object_id_to_key.inspect
+              puts "o #{object_id} k #{key}"
               key_to_object_id[key] = object_id
               object_id_to_key[object_id] = key
+            else
+              puts "no key"
             end
           end
+
+          objects[object_id] = WeakRef.new(object)
 
           object
         end
@@ -184,10 +201,10 @@ module Foobara
                     object_or_object_id.object_id
                   end
 
+      puts "deleting #{object_id}"
+
       monitor.synchronize do
         if key_method
-          present = object_id_to_key.key?(object_id)
-
           key = object_id_to_key.delete(object_id)
 
           if key

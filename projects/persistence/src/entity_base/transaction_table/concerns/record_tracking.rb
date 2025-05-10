@@ -30,7 +30,11 @@ module Foobara
             end
 
             def tracked(record)
+              tracked_records.validate!
+              tracked_records.validate_for(record)
+              puts "tracking #{record.primary_key} #{record.object_id}"
               tracked_records << record
+              tracked_records.validate!
             end
 
             def created(record)
