@@ -10,8 +10,6 @@ RSpec.describe Foobara::WeakObjectSet do
         some_object_id = some_object.object_id
         set << some_object
 
-        expect(set.include?(some_object_id)).to be(true)
-        expect(set.include?(some_object)).to be(true)
 
         # rubocop:disable Lint/UselessAssignment
         some_object = nil
@@ -37,8 +35,8 @@ RSpec.describe Foobara::WeakObjectSet do
 
         expect(set).to_not be_empty
         expect(set.size).to eq(1)
-        expect(set.include_key?("asdf")).to be(true)
-        expect(set.include?(some_object_id)).to be(true)
+        expect(set.find_by_key("asdf")).to eq(some_object)
+        expect(set[some_object_id]).to be(some_object)
 
         expect(set.to_a.map(&:object_id)).to eq([some_object_id])
 
@@ -59,16 +57,14 @@ RSpec.describe Foobara::WeakObjectSet do
             some_object_id = some_object.object_id
             set << some_object
 
-            expect(set.include_key?("asdf")).to be(true)
+            expect(set.find_by_key("asdf")).to eq(some_object)
 
             some_object.bar = nil
             set << some_object
 
-            # rubocop:disable RSpec/PredicateMatcher
-            expect(set.include_key?("asdf")).to be_falsey
-            # rubocop:enable RSpec/PredicateMatcher
-            expect(set.include?(some_object)).to be(true)
-            expect(set.include?(some_object_id)).to be(true)
+            expect(set.find_by_key("asdf")).to be_nil
+            expect(set[some_object]).to eq(some_object)
+            expect(set[some_object_id]).to eq(some_object)
           end
         end
       end
