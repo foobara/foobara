@@ -73,7 +73,7 @@ module Foobara
           self.to to
         end
 
-        # we want to force these to be created now in the current name space if they are declarations
+        # we want to force these to be created now in the current namespace if they are declarations
         from_type
         to_type
       end

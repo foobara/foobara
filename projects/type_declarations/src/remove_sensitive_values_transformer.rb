@@ -5,25 +5,39 @@ module Foobara
     class RemoveSensitiveValuesTransformer < TypedTransformer
       def from(...)
         super.tap do
-          associations = Foobara::DetachedEntity.construct_deep_associations(from_type)
+          create_all_association_types_in_current_namespace(from_type)
+        end
+      end
 
-          associations&.values&.reverse&.each do |entity_type|
-            next if entity_type.sensitive?
-            next unless entity_type.has_sensitive_types?
+      def to(...)
+        super.tap do
+          create_all_association_types_in_current_namespace(to_type)
+        end
+      end
 
-            declaration = entity_type.declaration_data
-            sanitized_type_declaration = TypeDeclarations.remove_sensitive_types(declaration)
+      def create_all_association_types_in_current_namespace(type)
+        associations = Foobara::DetachedEntity.construct_deep_associations(type)
 
-            # We want to make sure that any types that change due to having sensitive types
-            # has a corresponding registered type in the command registry domain if needed
-            # TODO: this all feels so messy and brittle.
-            Domain.current.foobara_type_from_declaration(sanitized_type_declaration)
-          end
+        associations&.values&.reverse&.each do |entity_type|
+          next if entity_type.sensitive?
+          next unless entity_type.has_sensitive_types?
+
+          declaration = entity_type.declaration_data
+          sanitized_type_declaration = TypeDeclarations.remove_sensitive_types(declaration)
+
+          # We want to make sure that any types that change due to having sensitive types
+          # has a corresponding registered type in the command registry domain if needed
+          # TODO: this all feels so messy and brittle.
+          Domain.current.foobara_type_from_declaration(sanitized_type_declaration)
         end
       end
 
       def to_type_declaration
         TypeDeclarations.remove_sensitive_types(from_type.declaration_data)
+      end
+
+      def from_type_declaration
+        TypeDeclarations.remove_sensitive_types(to_type.declaration_data)
       end
 
       def transform(_value)
