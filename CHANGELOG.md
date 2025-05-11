@@ -1,3 +1,9 @@
+# [0.0.120] - 2025-05-11
+
+- Fix a race condition in persistence
+- Fix various problems preventing sensitive/private types from being properly removed
+  in exposed types
+
 # [0.0.119] - 2025-05-08
 
 - Make anonymous transformers more deterministic in manifests

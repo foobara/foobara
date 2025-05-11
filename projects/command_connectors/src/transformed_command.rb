@@ -3,12 +3,12 @@ module Foobara
   # TODO: move this to command connectors project
   class TransformedCommand
     class << self
-      attr_writer :result_transformers
+      # TODO: handle errors_transformers!
+      attr_writer :result_transformers, :inputs_transformers
       attr_accessor :command_class,
                     :command_name,
                     :full_command_name,
                     :capture_unknown_error,
-                    :inputs_transformers,
                     :errors_transformers,
                     :pre_commit_transformers,
                     # TODO: get at least these serializers out of here...
@@ -68,25 +68,34 @@ module Foobara
                        to: :command_class
 
       def result_transformers
-        return @result_transformers if @sensitive_mutator_considered
+        return @result_transformers if @considered_sensitive_value_remover
 
-        @sensitive_mutator_considered = true
+        @considered_sensitive_value_remover = true
 
         result_type = command_class.result_type
+
+        result_transformers.reverse.each do |transformer|
+          if transformer.is_a?(TypeDeclarations::TypedTransformer) ||
+             (transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer)
+            new_type = transformer.to_type
+            if new_type
+              result_type = new_type
+              break
+            end
+          end
+        end
 
         if result_type&.has_sensitive_types?
           remover_class = Foobara::TypeDeclarations.sensitive_value_remover_class_for_type(result_type)
 
           remover = Namespace.use subclassed_in_namespace do
-            transformed_result_type = result_type_from_transformers
-
-            path = if transformed_result_type.scoped_path_set?
-                     transformed_result_type.scoped_full_path
+            path = if result_type.scoped_path_set?
+                     result_type.scoped_full_path
                    else
                      [*command_class.scoped_path, *suffix, "Result"]
                    end
 
-            remover_class.new(from: transformed_result_type).tap do |r|
+            remover_class.new(from: result_type).tap do |r|
               r.scoped_path = ["SensitiveValueRemover", *path]
             end
           end
@@ -95,6 +104,44 @@ module Foobara
         end
 
         @result_transformers
+      end
+
+      def inputs_transformers
+        return @inputs_transformers if @considered_inputs_sensitive_value_remover
+
+        @considered_inputs_sensitive_value_remover = true
+
+        inputs_type = command_class.inputs_type
+
+        @inputs_transformers = transformers_to_processors(@inputs_transformers, inputs_type, direction: :to)
+
+        @inputs_transformers.each do |transformer|
+          if transformer.is_a?(TypeDeclarations::TypedTransformer)
+            new_type = transformer.from_type
+            if new_type
+              inputs_type = new_type
+              break
+            end
+          end
+        end
+
+        @inputs_transformers
+      end
+
+      def inputs_type_for_manifest
+        return @inputs_type_for_manifest if defined?(@inputs_type_for_manifest)
+
+        @inputs_type_for_manifest = if inputs_type&.has_sensitive_types?
+                                      remover_class = Foobara::TypeDeclarations.sensitive_value_remover_class_for_type(
+                                        inputs_type
+                                      )
+
+                                      Namespace.use subclassed_in_namespace do
+                                        remover_class.new(to: inputs_type).from_type
+                                      end
+                                    else
+                                      inputs_type
+                                    end
       end
 
       def inputs_type_from_transformers
@@ -125,7 +172,8 @@ module Foobara
 
       def result_type_from_transformers
         result_transformers.reverse.each do |transformer|
-          if transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer
+          if transformer.is_a?(TypeDeclarations::TypedTransformer) ||
+             (transformer.is_a?(Class) && transformer < TypeDeclarations::TypedTransformer)
             new_type = transformer.to_type
             return new_type if new_type
           end
@@ -160,7 +208,7 @@ module Foobara
         mutators = if request_mutators.size == 1
                      [request_mutator]
                    else
-                     request_mutator&.processors&.reverse
+                     request_mutator&.processors
                    end
 
         mutators&.each do |mutator|
@@ -239,21 +287,21 @@ module Foobara
         # TODO: memoize this
         # TODO: this should not delegate to command since transformers are in play
 
-        type = inputs_type
+        types_proc = proc do
+          type = inputs_type_for_manifest
 
-        if type
-          if type.registered?
-            # TODO: if we ever change from attributes-only inputs type
-            # then this will be handy
-            # :nocov:
-            types |= [type]
-            # :nocov:
+          if type
+            if type.registered?
+              # TODO: if we ever change from attributes-only inputs type
+              # then this will be handy
+              # :nocov:
+              types |= [type]
+              # :nocov:
+            end
+
+            types |= type.types_depended_on
           end
 
-          types |= type.types_depended_on
-        end
-
-        types_proc = proc do
           type = result_type
 
           if type
@@ -327,16 +375,18 @@ module Foobara
         result_types_depended_on = self.result_types_depended_on.map(&:foobara_manifest_reference)
         result_types_depended_on = result_types_depended_on.sort
 
-        # TODO: Do NOT defer to command_class.foobara_manifest because it might process types that
-        # might not have an exposed command and might not need one due to transformers/mutators/remove_sensitive flag
-        command_class.foobara_manifest.merge(
+        bit_bucket = Set.new
+        manifest = TypeDeclarations.with_manifest_context(to_include: bit_bucket) do
+          command_class.foobara_manifest
+        end
+
+        # TODO: handle errors_types_depended_on!
+        manifest.merge(
           Util.remove_blank(
             inputs_types_depended_on:,
             result_types_depended_on:,
             types_depended_on: types,
-            inputs_type: TypeDeclarations.with_manifest_context(remove_sensitive: false) do
-              inputs_type&.reference_or_declaration_data
-            end,
+            inputs_type: inputs_type_for_manifest&.reference_or_declaration_data,
             result_type: result_type&.reference_or_declaration_data,
             possible_errors: possible_errors_manifest,
             capture_unknown_error:,
@@ -412,6 +462,9 @@ module Foobara
       def response_mutator
         return @response_mutator if defined?(@response_mutator)
 
+        # A hack: this will give the SensitiveValueRemover a chance to be injected
+        result_transformers
+
         if response_mutators.empty?
           @response_mutator = nil
           return
@@ -431,8 +484,8 @@ module Foobara
       def request_mutator
         return @request_mutator if defined?(@request_mutator)
 
-        # A hack: this will give the SensitiveValueRemover a chance to be injected
-        result_transformers
+        # HACK: to give SensitiveValueRemover a chance to be injected
+        inputs_transformer
 
         if request_mutators.empty?
           @request_mutator = nil

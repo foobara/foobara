@@ -24,6 +24,8 @@ module Foobara
       end
 
       foobara_add_category_for_instance_of(:command, ExposedCommand)
+
+      foobara_depends_on_namespaces << Namespace.global
     end
 
     def register(command_class, **)
@@ -32,7 +34,8 @@ module Foobara
 
     def create_exposed_command(command_class, **)
       full_domain_name = command_class.domain.scoped_full_name
-      exposed_domain = foobara_lookup_domain(full_domain_name) || build_and_register_exposed_domain(full_domain_name)
+      exposed_domain = foobara_lookup_domain(full_domain_name, mode: Namespace::LookupMode::ABSOLUTE) ||
+                       build_and_register_exposed_domain(full_domain_name)
 
       exposed_command = create_exposed_command_without_domain(command_class, **)
 
@@ -75,8 +78,11 @@ module Foobara
                       end
 
       full_organization_name = domain_module.foobara_full_organization_name
-      exposed_organization = foobara_lookup_organization(full_organization_name) ||
-                             build_and_register_exposed_organization(full_organization_name)
+
+      exposed_organization = foobara_lookup_organization(
+        full_organization_name,
+        mode: Namespace::LookupMode::ABSOLUTE
+      ) || build_and_register_exposed_organization(full_organization_name)
 
       exposed_domain = Module.new
       exposed_domain.foobara_namespace!
