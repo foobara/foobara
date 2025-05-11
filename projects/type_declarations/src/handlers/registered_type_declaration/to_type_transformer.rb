@@ -15,7 +15,11 @@ module Foobara
           end
 
           def registered_type(strict_type_declaration)
-            lookup_type!(type_symbol(strict_type_declaration))
+            symbol = type_symbol(strict_type_declaration)
+            if TypeDeclarations.strict? || TypeDeclarations.strict_stringified?
+              symbol = "::#{symbol}"
+            end
+            lookup_type!(symbol)
           end
 
           def target_classes(strict_type_declaration)

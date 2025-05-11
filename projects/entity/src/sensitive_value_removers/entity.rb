@@ -21,7 +21,7 @@ module Foobara
         end
 
         def build_method
-          if to_type.extends?(:entity)
+          if to_type.extends_type?(BuiltinTypes[:entity])
             # TODO: test this code path
             # :nocov:
             :build

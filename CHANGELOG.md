@@ -1,3 +1,7 @@
+# [0.0.121] - 2025-05-11
+
+- Handle gnarly bugs that arise when creating a custom type named model (or entity or detached_entity)
+
 # [0.0.120] - 2025-05-11
 
 - Fix a race condition in persistence
