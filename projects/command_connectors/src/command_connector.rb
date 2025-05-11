@@ -454,6 +454,13 @@ module Foobara
     end
 
     def foobara_manifest
+      Namespace.use command_registry do
+        foobara_manifest_in_current_namespace
+      end
+    end
+
+    # TODO: try to break this giant method up
+    def foobara_manifest_in_current_namespace
       process_delayed_connections
 
       to_include = Set.new
@@ -506,16 +513,20 @@ module Foobara
                 else
                   domain_name = o.foobara_domain.scoped_full_name
 
-                  unless command_registry.foobara_registered?(domain_name)
+                  unless command_registry.foobara_registered?(domain_name, mode: Namespace::LookupMode::ABSOLUTE)
                     command_registry.build_and_register_exposed_domain(domain_name)
 
                     # Since we don't know which other domains/orgs creating this domain might have created,
                     # we will just add them all to be included just in case
-                    command_registry.foobara_all_domain.each do |exposed_domain|
+                    command_registry.foobara_all_domain(
+                      mode: Namespace::LookupMode::ABSOLUTE
+                    ).each do |exposed_domain|
                       additional_to_include << exposed_domain
                     end
 
-                    command_registry.foobara_all_organization.each do |exposed_organization|
+                    command_registry.foobara_all_organization(
+                      mode: Namespace::LookupMode::ABSOLUTE
+                    ).each do |exposed_organization|
                       additional_to_include << exposed_organization
                     end
                   end
@@ -612,7 +623,7 @@ module Foobara
     def all_exposed_commands
       process_delayed_connections
 
-      command_registry.foobara_all_command
+      command_registry.foobara_all_command(mode: Namespace::LookupMode::ABSOLUTE)
     end
   end
 end
