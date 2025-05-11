@@ -97,30 +97,30 @@ module Foobara
         @result_transformers
       end
 
-      def inputs_type
-        return @inputs_type if defined?(@inputs_type)
+      def inputs_type_from_transformers
+        return @inputs_type_from_transformers if defined?(@inputs_type_from_transformers)
 
-        @inputs_type = if inputs_transformer
-                         if inputs_transformer.is_a?(Value::Processor::Pipeline)
-                           inputs_transformer.processors.each do |transformer|
-                             if transformer.is_a?(TypeDeclarations::TypedTransformer)
-                               from_type = transformer.from_type
-                               if from_type
-                                 @inputs_type = from_type
-                                 return from_type
-                               end
-                             end
-                           end
+        @inputs_type_from_transformers = if inputs_transformer
+                                           if inputs_transformer.is_a?(Value::Processor::Pipeline)
+                                             inputs_transformer.processors.each do |transformer|
+                                               if transformer.is_a?(TypeDeclarations::TypedTransformer)
+                                                 from_type = transformer.from_type
+                                                 if from_type
+                                                   @inputs_type_from_transformers = from_type
+                                                   return from_type
+                                                 end
+                                               end
+                                             end
 
-                           command_class.inputs_type
-                         else
-                           if inputs_transformer.is_a?(TypeDeclarations::TypedTransformer)
-                             inputs_transformer.from_type
-                           end || command_class.inputs_type
-                         end
-                       else
-                         command_class.inputs_type
-                       end
+                                             command_class.inputs_type
+                                           else
+                                             if inputs_transformer.is_a?(TypeDeclarations::TypedTransformer)
+                                               inputs_transformer.from_type
+                                             end || command_class.inputs_type
+                                           end
+                                         else
+                                           command_class.inputs_type
+                                         end
       end
 
       def result_type_from_transformers
@@ -135,13 +135,9 @@ module Foobara
       end
 
       def result_type
-        result_type_from_transformers
-      end
+        return @result_type if defined?(@result_type)
 
-      def result_type_for_manifest
-        return @result_type_for_manifest if defined?(@result_type_for_manifest)
-
-        mutated_result_type = result_type
+        mutated_result_type = result_type_from_transformers
 
         mutators = if response_mutators.size == 1
                      [response_mutator]
@@ -153,13 +149,13 @@ module Foobara
           mutated_result_type = mutator.result_type_from(mutated_result_type)
         end
 
-        @result_type_for_manifest = mutated_result_type
+        @result_type = mutated_result_type
       end
 
-      def inputs_type_for_manifest
-        return @inputs_type_for_manifest if defined?(@inputs_type_for_manifest)
+      def inputs_type
+        return @inputs_type if defined?(@inputs_type)
 
-        mutated_inputs_type = inputs_type
+        mutated_inputs_type = inputs_type_from_transformers
 
         mutators = if request_mutators.size == 1
                      [request_mutator]
@@ -171,7 +167,7 @@ module Foobara
           mutated_inputs_type = mutator.inputs_type_from(mutated_inputs_type)
         end
 
-        @inputs_type_for_manifest = mutated_inputs_type
+        @inputs_type = mutated_inputs_type
       end
 
       def error_context_type_map
@@ -223,12 +219,12 @@ module Foobara
 
       def inputs_types_depended_on
         TypeDeclarations.with_manifest_context(remove_sensitive: false) do
-          inputs_type_for_manifest&.types_depended_on || []
+          inputs_type&.types_depended_on || []
         end
       end
 
       def result_types_depended_on
-        type_proc = -> { result_type_for_manifest&.types_depended_on || [] }
+        type_proc = -> { result_type&.types_depended_on || [] }
 
         if TypeDeclarations.manifest_context_set?(:remove_sensitive)
           type_proc.call
@@ -339,9 +335,9 @@ module Foobara
             result_types_depended_on:,
             types_depended_on: types,
             inputs_type: TypeDeclarations.with_manifest_context(remove_sensitive: false) do
-              inputs_type_for_manifest&.reference_or_declaration_data
+              inputs_type&.reference_or_declaration_data
             end,
-            result_type: result_type_for_manifest&.reference_or_declaration_data,
+            result_type: result_type&.reference_or_declaration_data,
             possible_errors: possible_errors_manifest,
             capture_unknown_error:,
             inputs_transformers:,
@@ -422,7 +418,7 @@ module Foobara
         end
 
         @response_mutator = begin
-          transformers = transformers_to_processors(response_mutators, result_type, direction: :from)
+          transformers = transformers_to_processors(response_mutators, result_type_from_transformers, direction: :from)
 
           if transformers.size == 1
             transformers.first
@@ -444,7 +440,7 @@ module Foobara
         end
 
         @request_mutator = begin
-          transformers = transformers_to_processors(request_mutators, result_type, direction: :to)
+          transformers = transformers_to_processors(request_mutators, inputs_type_from_transformers, direction: :to)
 
           if transformers.size == 1
             transformers.first
