@@ -1,5 +1,5 @@
 module Foobara
-  class CommandConnector
+  module CommandConnectors
     class Desugarizer < Value::Transformer
       class << self
         def requires_declaration_data?

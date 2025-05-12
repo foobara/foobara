@@ -1,7 +1,7 @@
 require_relative "../desugarizer"
 
 module Foobara
-  class CommandConnector
+  module CommandConnectors
     module Desugarizers
       class SymbolsToTrue < Desugarizer
         def applicable?(args_and_opts)

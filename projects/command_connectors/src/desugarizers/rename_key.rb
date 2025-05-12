@@ -1,5 +1,5 @@
 module Foobara
-  class CommandConnector
+  module CommandConnectors
     module Desugarizers
       class << self
         def rename(sugar_name, official_name)
