@@ -2,6 +2,8 @@ module Foobara
   class CommandConnector
     class UnexpectedSensitiveTypeInManifestError < StandardError; end
 
+    include Concerns::Desugarizers
+
     class << self
       def find_builtin_command_class(command_class_name)
         Util.find_constant_through_class_hierarchy(self, "Commands::#{command_class_name}")
@@ -313,9 +315,15 @@ module Foobara
       delayed_connections.clear
     end
 
-    def connect(registerable, *, authenticator: nil, **)
-      if authenticator
+    def connect(*args, **opts)
+      args, opts = desugarize_connect_args(args, opts)
+
+      registerable = args.first
+
+      if opts.key?(:authenticator)
+        authenticator = opts[:authenticator]
         authenticator = self.class.to_authenticator(authenticator)
+        opts = opts.merge(authenticator:)
       end
 
       case registerable
@@ -326,15 +334,15 @@ module Foobara
           # :nocov:
         end
 
-        command_registry.register(registerable, *, authenticator:, **)
+        command_registry.register(*args, **opts)
       when Module
         if registerable.foobara_organization?
           registerable.foobara_domains.map do |domain|
-            connect(domain, *, authenticator:, **)
+            connect(domain, *args[1..], **opts)
           end.flatten
         elsif registerable.foobara_domain?
           registerable.foobara_all_command(mode: Namespace::LookupMode::DIRECT).map do |command_class|
-            Util.array(connect(command_class, *, authenticator:, **))
+            Util.array(connect(command_class, *args[1..], **opts))
           end.flatten
         else
           # :nocov:
@@ -342,10 +350,21 @@ module Foobara
           # :nocov:
         end
       when Symbol, String
-        connect_delayed(registerable, *, authenticator:, **)
+        connect_delayed(*args, **opts)
       else
         # :nocov:
         raise "Don't know how to register #{registerable} (#{registerable.class})"
+        # :nocov:
+      end
+    end
+
+    def desugarize_connect_args(args, opts)
+      if self.class.desugarizer
+        self.class.desugarizer.process_value!([args, opts])
+      else
+        # TODO: test this code path by removing all desugarizers in a spec.
+        # :nocov:
+        [args, opts]
         # :nocov:
       end
     end

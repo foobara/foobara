@@ -436,12 +436,12 @@ RSpec.describe Foobara::CommandConnector do
 
       command_connector.connect(
         command_class,
-        inputs_transformers:,
-        result_transformers:,
+        inputs: inputs_transformers,
+        result: result_transformers,
         errors_transformers:,
         serializers:,
-        response_mutators:,
-        request_mutators:,
+        response: response_mutators,
+        request: request_mutators,
         allowed_rule:,
         requires_authentication:,
         pre_commit_transformers:,
@@ -2028,7 +2028,7 @@ RSpec.describe Foobara::CommandConnector do
       let(:command_connector) { command_connector_class_d.new }
 
       it "puts the expected allowed rules on the command connector" do
-        command_connector.connect(command_class, suffix: "A", allowed_rule: :a)
+        command_connector.connect(command_class, suffix: "A", allow_if: :a)
         command_connector.connect(command_class, suffix: "B")
         command_connector.connect(command_class, suffix: "C", allowed_rule: :c)
         command_connector.connect(command_class, suffix: "D", allowed_rule: :d)
@@ -2147,7 +2147,7 @@ RSpec.describe Foobara::CommandConnector do
       let(:command_connector_e) { command_connector_class_e.new(authenticator: :d) }
 
       it "puts the expected allowed rules on the command connector" do
-        command_connector_a.connect(command_class, requires_authentication: true)
+        command_connector_a.connect(command_class, :requires_authentication)
         command_connector_b.connect(command_class, requires_authentication: true)
         command_connector_c.connect(command_class, requires_authentication: true)
         command_connector_d.connect(command_class, requires_authentication: true)
