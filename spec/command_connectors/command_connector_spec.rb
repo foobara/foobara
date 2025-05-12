@@ -2028,7 +2028,7 @@ RSpec.describe Foobara::CommandConnector do
       let(:command_connector) { command_connector_class_d.new }
 
       it "puts the expected allowed rules on the command connector" do
-        command_connector.connect(command_class, suffix: "A", allowed_rule: :a)
+        command_connector.connect(command_class, suffix: "A", allow_if: :a)
         command_connector.connect(command_class, suffix: "B")
         command_connector.connect(command_class, suffix: "C", allowed_rule: :c)
         command_connector.connect(command_class, suffix: "D", allowed_rule: :d)
