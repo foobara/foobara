@@ -6,6 +6,7 @@ require "json"
 module Foobara
   module CommandConnectors
     foobara_domain!
+
     class << self
       def install!
         CommandConnector.add_desugarizer(CommandConnector::Desugarizers::AllowIf)
@@ -14,6 +15,11 @@ module Foobara
         CommandConnector.add_desugarizer(CommandConnector::Desugarizers::Request)
         CommandConnector.add_desugarizer(CommandConnector::Desugarizers::Response)
         CommandConnector.add_desugarizer(CommandConnector::Desugarizers::SymbolsToTrue)
+      end
+
+      def reset_all
+        remove_instance_variable("@desugarizer") if defined?(@desugarizer)
+        remove_instance_variable("@desugarizers") if defined?(@desugarizers)
       end
     end
   end

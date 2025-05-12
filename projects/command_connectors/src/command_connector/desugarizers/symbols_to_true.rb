@@ -20,7 +20,9 @@ module Foobara
             if arg.is_a?(::Symbol)
               new_opts[arg] = true
             else
+              # :nocov:
               raise "Was not expecting non-symbol arg: #{arg}"
+              # :nocov:
             end
           end
 

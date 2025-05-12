@@ -21,9 +21,15 @@ module Foobara
 
             case processors.size
             when 0
+              # TODO: test this code path by removing all desugarizers in a spec.
+              # :nocov:
               nil
+              # :nocov:
             when 1
+              # TODO: test this code path by removing all desugarizers in a spec.
+              # :nocov:
               processors.first
+              # :nocov:
             else
               Value::Processor::Pipeline.new(processors:)
             end

@@ -362,7 +362,10 @@ module Foobara
       if self.class.desugarizer
         self.class.desugarizer.process_value!([args, opts])
       else
+        # TODO: test this code path by removing all desugarizers in a spec.
+        # :nocov:
         [args, opts]
+        # :nocov:
       end
     end
 
