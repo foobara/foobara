@@ -9,12 +9,22 @@ module Foobara
 
     class << self
       def install!
-        CommandConnector.add_desugarizer(CommandConnector::Desugarizers::AllowIf)
-        CommandConnector.add_desugarizer(CommandConnector::Desugarizers::Inputs)
-        CommandConnector.add_desugarizer(CommandConnector::Desugarizers::Result)
-        CommandConnector.add_desugarizer(CommandConnector::Desugarizers::Request)
-        CommandConnector.add_desugarizer(CommandConnector::Desugarizers::Response)
         CommandConnector.add_desugarizer(CommandConnector::Desugarizers::SymbolsToTrue)
+        CommandConnector.add_desugarizer(
+          CommandConnector::Desugarizers.rename(:allow_if, :allowed_rule)
+        )
+        CommandConnector.add_desugarizer(
+          CommandConnector::Desugarizers.rename(:inputs, :inputs_transformers)
+        )
+        CommandConnector.add_desugarizer(
+          CommandConnector::Desugarizers.rename(:result, :result_transformers)
+        )
+        CommandConnector.add_desugarizer(
+          CommandConnector::Desugarizers.rename(:request, :request_mutators)
+        )
+        CommandConnector.add_desugarizer(
+          CommandConnector::Desugarizers.rename(:response, :response_mutators)
+        )
       end
 
       def reset_all

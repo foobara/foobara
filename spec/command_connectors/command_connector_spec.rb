@@ -71,6 +71,8 @@ RSpec.describe Foobara::CommandConnector do
   end
   let(:inputs_transformers) { nil }
   let(:result_transformers) { nil }
+  let(:inputs_transformers_sugar) { nil }
+  let(:result_transformers_sugar) { nil }
   let(:errors_transformers) { nil }
   let(:pre_commit_transformers) { nil }
   let(:serializers) { nil }
@@ -436,8 +438,10 @@ RSpec.describe Foobara::CommandConnector do
 
       command_connector.connect(
         command_class,
-        inputs: inputs_transformers,
-        result: result_transformers,
+        inputs: inputs_transformers_sugar,
+        result: result_transformers_sugar,
+        inputs_transformers:,
+        result_transformers:,
         errors_transformers:,
         serializers:,
         response: response_mutators,
@@ -791,7 +795,8 @@ RSpec.describe Foobara::CommandConnector do
       context "with multiple transformers" do
         let(:identity) { ->(x) { x } }
 
-        let(:inputs_transformers) { [identity, inputs_transformer] }
+        let(:inputs_transformers) { [inputs_transformer] }
+        let(:inputs_transformers_sugar) { identity }
         let(:result_transformers) { [->(result) { result * 2 }, identity] }
         let(:errors_transformers) { [identity, identity] }
         let(:pre_commit_transformers) { [identity, identity] }
