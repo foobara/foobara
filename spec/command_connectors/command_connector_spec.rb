@@ -52,7 +52,8 @@ RSpec.describe Foobara::CommandConnector do
 
   let(:authenticator) { nil }
   let(:default_serializers) do
-    [Foobara::CommandConnectors::Serializers::ErrorsSerializer, Foobara::CommandConnectors::Serializers::JsonSerializer]
+    [Foobara::CommandConnectors::Serializers::ErrorsSerializer,
+     Foobara::CommandConnectors::Serializers::JsonSerializer]
   end
   let(:default_pre_commit_transformer) { nil }
 
@@ -60,6 +61,7 @@ RSpec.describe Foobara::CommandConnector do
   let(:exponent) { 3 }
 
   let(:response) { command_connector.run(full_command_name:, action:, inputs:) }
+  let(:parsed_response) { JSON.parse(response.body) }
 
   let(:action) { "run" }
   let(:full_command_name) { "ComputeExponent" }
@@ -2193,6 +2195,45 @@ RSpec.describe Foobara::CommandConnector do
             symbol: :a,
             explanation: :a
           )
+        end
+      end
+    end
+  end
+
+  context "using only/reject sugar" do
+    describe "#run_command" do
+      let(:command_class) do
+        stub_class("SomeCommand", Foobara::Command) do
+          inputs do
+            foo :string, default: "defaultfoo"
+            bar :string, default: "defaultbar"
+            baz :string, default: "defaultbaz"
+          end
+          result do
+            foo :string
+            bar :string
+            baz :string
+          end
+
+          def execute
+            inputs
+          end
+        end
+      end
+      let(:full_command_name) { command_class.full_command_name }
+
+      context "with non-array" do
+        before do
+          command_connector.connect(command_class, inputs: { only: :foo }, result: { only: :bar })
+        end
+
+        let(:inputs) do
+          { foo: "foo" }
+        end
+
+        it "can add/remove inputs/results", :focus do
+          expect(response.status).to be(0)
+          expect(parsed_response).to eq("bar" => "defaultbar")
         end
       end
     end

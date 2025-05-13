@@ -15,6 +15,10 @@ module Foobara
         CommandConnector.add_desugarizer Desugarizers.rename :result, :result_transformers
         CommandConnector.add_desugarizer Desugarizers.rename :request, :request_mutators
         CommandConnector.add_desugarizer Desugarizers.rename :response, :response_mutators
+        CommandConnector.add_desugarizer Desugarizers::Attributes::OnlyInputs
+        CommandConnector.add_desugarizer Desugarizers::Attributes::RejectInputs
+        CommandConnector.add_desugarizer Desugarizers::Attributes::OnlyResult
+        CommandConnector.add_desugarizer Desugarizers::Attributes::RejectResult
       end
 
       def reset_all
