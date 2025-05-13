@@ -2279,7 +2279,7 @@ RSpec.describe Foobara::CommandConnector do
 
             it "can add/remove inputs/results" do
               expect(response.status).to be(0)
-              expect(parsed_response).to eq("bar" => "bar")
+              expect(parsed_response).to eq("foo" => "defaultfoo", "baz" => "baz")
             end
           end
 
