@@ -18,7 +18,9 @@ module Foobara
         attr_accessor :reject_attributes
 
         def symbol
-          reject_attributes&.sort&.join("_")&.to_sym
+          if reject_attributes
+            symbol_for_attribute_names(reject_attributes)
+          end
         end
 
         def will_set_scoped_path?

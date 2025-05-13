@@ -1,5 +1,11 @@
 module Foobara
   class AttributesTransformers < TypeDeclarations::TypedTransformer
+    class << self
+      def symbol_for_attribute_names(attribute_names)
+        attribute_names.sort.join("__")&.to_sym
+      end
+    end
+
     def initialize(...)
       super
 

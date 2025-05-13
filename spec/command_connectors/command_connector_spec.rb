@@ -2200,105 +2200,125 @@ RSpec.describe Foobara::CommandConnector do
     end
 
     context "when using only/reject sugar" do
-      describe "#run_command" do
-        let(:command_class) do
-          stub_class("SomeCommand", Foobara::Command) do
-            inputs do
-              foo :string, default: "defaultfoo"
-              bar :string, default: "defaultbar"
-              baz :string, default: "defaultbaz"
-            end
-            result do
-              foo :string
-              bar :string
-              baz :string
-            end
+      let(:command_class) do
+        stub_class("SomeCommand", Foobara::Command) do
+          inputs do
+            foo :string, default: "defaultfoo"
+            bar :string, default: "defaultbar"
+            baz :string, default: "defaultbaz"
+          end
+          result do
+            foo :string
+            bar :string
+            baz :string
+          end
 
-            def execute
-              inputs
-            end
+          def execute
+            inputs
           end
         end
-        let(:full_command_name) { command_class.full_command_name }
+      end
+      let(:full_command_name) { command_class.full_command_name }
 
-        context "when only" do
-          context "with non-array" do
-            let(:inputs_transformers_sugar) do
-              { only: :foo }
-            end
-            let(:result_transformers_sugar) do
-              { only: :bar }
-            end
-
-            let(:inputs) do
-              { foo: "foo" }
-            end
-
-            it "can add/remove inputs/results" do
-              expect(response.status).to be(0)
-              expect(parsed_response).to eq("bar" => "defaultbar")
-            end
+      context "when only" do
+        context "with non-array" do
+          let(:inputs_transformers_sugar) do
+            { only: :foo }
+          end
+          let(:result_transformers_sugar) do
+            { only: :bar }
           end
 
-          context "when arrays" do
-            let(:inputs_transformers_sugar) do
-              { only: [:foo, :bar] }
-            end
-            let(:result_transformers_sugar) do
-              { only: [:bar, :baz] }
-            end
-            let(:inputs) do
-              {
-                foo: "foo",
-                bar: "bar"
-              }
-            end
+          let(:inputs) do
+            { foo: "foo" }
+          end
 
-            it "can add/remove inputs/results" do
-              expect(response.status).to be(0)
-              expect(parsed_response).to eq("bar" => "bar", "baz" => "defaultbaz")
-            end
+          it "can add/remove inputs/results" do
+            expect(response.status).to be(0)
+            expect(parsed_response).to eq("bar" => "defaultbar")
           end
         end
 
-        context "when reject" do
-          context "with non-array" do
-            let(:inputs_transformers_sugar) do
-              { reject: :foo }
-            end
-            let(:result_transformers_sugar) do
-              { reject: :bar }
-            end
-
-            let(:inputs) do
-              {
-                bar: "bar",
-                baz: "baz"
-              }
-            end
-
-            it "can add/remove inputs/results" do
-              expect(response.status).to be(0)
-              expect(parsed_response).to eq("foo" => "defaultfoo", "baz" => "baz")
-            end
+        context "when arrays" do
+          let(:inputs_transformers_sugar) do
+            { only: [:foo, :bar] }
+          end
+          let(:result_transformers_sugar) do
+            { only: [:bar, :baz] }
+          end
+          let(:inputs) do
+            {
+              foo: "foo",
+              bar: "bar"
+            }
           end
 
-          context "when arrays" do
-            let(:inputs_transformers_sugar) do
-              { reject: [:foo, :bar] }
-            end
-            let(:result_transformers_sugar) do
-              { reject: [:bar, :baz] }
-            end
-            let(:inputs) do
-              { baz: "baz" }
-            end
-
-            it "can add/remove inputs/results" do
-              expect(response.status).to be(0)
-              expect(parsed_response).to eq("foo" => "defaultfoo")
-            end
+          it "can add/remove inputs/results" do
+            expect(response.status).to be(0)
+            expect(parsed_response).to eq("bar" => "bar", "baz" => "defaultbaz")
           end
+        end
+      end
+
+      context "when reject" do
+        context "with non-array" do
+          let(:inputs_transformers_sugar) do
+            { reject: :foo }
+          end
+          let(:result_transformers_sugar) do
+            { reject: :bar }
+          end
+
+          let(:inputs) do
+            {
+              bar: "bar",
+              baz: "baz"
+            }
+          end
+
+          it "can add/remove inputs/results" do
+            expect(response.status).to be(0)
+            expect(parsed_response).to eq("foo" => "defaultfoo", "baz" => "baz")
+          end
+        end
+
+        context "when arrays" do
+          let(:inputs_transformers_sugar) do
+            { reject: [:foo, :bar] }
+          end
+          let(:result_transformers_sugar) do
+            { reject: [:bar, :baz] }
+          end
+          let(:inputs) do
+            { baz: "baz" }
+          end
+
+          it "can add/remove inputs/results" do
+            expect(response.status).to be(0)
+            expect(parsed_response).to eq("foo" => "defaultfoo")
+          end
+        end
+      end
+
+      context "when mixture of sugar and non sugar transformers" do
+        let(:inputs_transformers_sugar) do
+          [
+            Foobara::AttributesTransformers.only(:bar, :baz),
+            { only: [:bar] }
+          ]
+        end
+        let(:result_transformers_sugar) do
+          { only: [:bar, :baz] }
+        end
+        let(:inputs) do
+          {
+            bar: "bar"
+          }
+        end
+
+        it "can add/remove inputs/results" do
+          expect(response.status).to be(0)
+          expect(parsed_response).to eq("bar" => "bar", "baz" => "defaultbaz")
         end
       end
     end

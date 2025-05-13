@@ -5,11 +5,15 @@ module Foobara
     module Desugarizers
       class Attributes < Desugarizer
         def desugarizer_symbol
+          # :nocov:
           raise "subclass responsibility"
+          # :nocov:
         end
 
         def opts_key
+          # :nocov:
           raise "subclass responsibility"
+          # :nocov:
         end
 
         def applicable?(args_and_opts)
