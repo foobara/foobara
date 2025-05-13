@@ -1,3 +1,7 @@
+# [0.0.122] - 2025-05-13
+
+- Add command connector sugar features and implement several command connector sugars
+
 # [0.0.121] - 2025-05-11
 
 - Handle gnarly bugs that arise when creating a custom type named model (or entity or detached_entity)

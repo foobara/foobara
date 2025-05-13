@@ -2155,7 +2155,7 @@ RSpec.describe Foobara::CommandConnector do
 
       it "puts the expected allowed rules on the command connector" do
         command_connector_a.connect(command_class, :requires_authentication)
-        command_connector_b.connect(command_class, requires_authentication: true)
+        command_connector_b.connect(command_class, :auth)
         command_connector_c.connect(command_class, requires_authentication: true)
         command_connector_d.connect(command_class, requires_authentication: true)
         command_connector_e.connect(command_class, requires_authentication: true, authenticator: [authenticator_e])
