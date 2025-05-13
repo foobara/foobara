@@ -2,6 +2,11 @@ module Foobara
   class AttributesTransformers < TypeDeclarations::TypedTransformer
     class << self
       def only(*attribute_names)
+        symbol = symbol_for_attribute_names(attribute_names)
+        existing = Only.foobara_lookup(symbol, mode: Namespace::LookupMode::DIRECT)
+
+        return existing if existing
+
         transformer_class = Class.new(Only)
         transformer_class.only_attributes = attribute_names
 
@@ -18,7 +23,9 @@ module Foobara
         attr_accessor :only_attributes
 
         def symbol
-          only_attributes&.sort&.join("_")&.to_sym
+          if only_attributes
+            symbol_for_attribute_names(only_attributes)
+          end
         end
 
         def will_set_scoped_path?

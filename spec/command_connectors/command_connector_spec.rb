@@ -52,7 +52,8 @@ RSpec.describe Foobara::CommandConnector do
 
   let(:authenticator) { nil }
   let(:default_serializers) do
-    [Foobara::CommandConnectors::Serializers::ErrorsSerializer, Foobara::CommandConnectors::Serializers::JsonSerializer]
+    [Foobara::CommandConnectors::Serializers::ErrorsSerializer,
+     Foobara::CommandConnectors::Serializers::JsonSerializer]
   end
   let(:default_pre_commit_transformer) { nil }
 
@@ -60,6 +61,7 @@ RSpec.describe Foobara::CommandConnector do
   let(:exponent) { 3 }
 
   let(:response) { command_connector.run(full_command_name:, action:, inputs:) }
+  let(:parsed_response) { JSON.parse(response.body) }
 
   let(:action) { "run" }
   let(:full_command_name) { "ComputeExponent" }
@@ -2193,6 +2195,130 @@ RSpec.describe Foobara::CommandConnector do
             symbol: :a,
             explanation: :a
           )
+        end
+      end
+    end
+
+    context "when using only/reject sugar" do
+      let(:command_class) do
+        stub_class("SomeCommand", Foobara::Command) do
+          inputs do
+            foo :string, default: "defaultfoo"
+            bar :string, default: "defaultbar"
+            baz :string, default: "defaultbaz"
+          end
+          result do
+            foo :string
+            bar :string
+            baz :string
+          end
+
+          def execute
+            inputs
+          end
+        end
+      end
+      let(:full_command_name) { command_class.full_command_name }
+
+      context "when only" do
+        context "with non-array" do
+          let(:inputs_transformers_sugar) do
+            { only: :foo }
+          end
+          let(:result_transformers_sugar) do
+            { only: :bar }
+          end
+
+          let(:inputs) do
+            { foo: "foo" }
+          end
+
+          it "can add/remove inputs/results" do
+            expect(response.status).to be(0)
+            expect(parsed_response).to eq("bar" => "defaultbar")
+          end
+        end
+
+        context "when arrays" do
+          let(:inputs_transformers_sugar) do
+            { only: [:foo, :bar] }
+          end
+          let(:result_transformers_sugar) do
+            { only: [:bar, :baz] }
+          end
+          let(:inputs) do
+            {
+              foo: "foo",
+              bar: "bar"
+            }
+          end
+
+          it "can add/remove inputs/results" do
+            expect(response.status).to be(0)
+            expect(parsed_response).to eq("bar" => "bar", "baz" => "defaultbaz")
+          end
+        end
+      end
+
+      context "when reject" do
+        context "with non-array" do
+          let(:inputs_transformers_sugar) do
+            { reject: :foo }
+          end
+          let(:result_transformers_sugar) do
+            { reject: :bar }
+          end
+
+          let(:inputs) do
+            {
+              bar: "bar",
+              baz: "baz"
+            }
+          end
+
+          it "can add/remove inputs/results" do
+            expect(response.status).to be(0)
+            expect(parsed_response).to eq("foo" => "defaultfoo", "baz" => "baz")
+          end
+        end
+
+        context "when arrays" do
+          let(:inputs_transformers_sugar) do
+            { reject: [:foo, :bar] }
+          end
+          let(:result_transformers_sugar) do
+            { reject: [:bar, :baz] }
+          end
+          let(:inputs) do
+            { baz: "baz" }
+          end
+
+          it "can add/remove inputs/results" do
+            expect(response.status).to be(0)
+            expect(parsed_response).to eq("foo" => "defaultfoo")
+          end
+        end
+      end
+
+      context "when mixture of sugar and non sugar transformers" do
+        let(:inputs_transformers_sugar) do
+          [
+            Foobara::AttributesTransformers.only(:bar, :baz),
+            { only: [:bar] }
+          ]
+        end
+        let(:result_transformers_sugar) do
+          { only: [:bar, :baz] }
+        end
+        let(:inputs) do
+          {
+            bar: "bar"
+          }
+        end
+
+        it "can add/remove inputs/results" do
+          expect(response.status).to be(0)
+          expect(parsed_response).to eq("bar" => "bar", "baz" => "defaultbaz")
         end
       end
     end
