@@ -544,6 +544,7 @@ module Foobara
           elsif transformer.respond_to?(:call)
             Value::Transformer.create(transform: transformer)
           else
+            binding.pry
             # :nocov:
             raise "Not sure how to apply #{inputs_transformer}"
             # :nocov:

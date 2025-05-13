@@ -10,7 +10,7 @@ module Foobara
           end
 
           def opts_key
-            :inputs_transformers
+            :result_transformers
           end
         end
       end
