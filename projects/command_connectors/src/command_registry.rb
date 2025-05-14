@@ -98,7 +98,7 @@ module Foobara
       domain_module.foobara_depends_on.each do |domain_name|
         # TODO: test this code path!!
         # :nocov:
-        unless foobara_organization_registered?(domain_name)
+        unless foobara_domain_registered?(domain_name)
           build_and_register_exposed_domain(domain_name)
         end
         # :nocov:

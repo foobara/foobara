@@ -1,3 +1,7 @@
+# [0.0.124] - 2025-05-14
+
+- Fix bug creating multiple exposed domains instead of just one
+
 # [0.0.123] - 2025-05-14
 
 - Allow type name strings as type declarations as a fallback instead of only symbols
