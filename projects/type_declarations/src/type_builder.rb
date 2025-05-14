@@ -108,6 +108,14 @@ module Foobara
         lru_cache.cached([type_declaration_bits, block]) do
           type_for_declaration_without_cache(*type_declaration_bits, &block)
         end
+      rescue NoTypeDeclarationHandlerFoundError
+        raise if TypeDeclarations.strict_stringified?
+        raise if TypeDeclarations.stringified?
+        raise if TypeDeclarations.strict?
+
+        TypeDeclarations.stringified do
+          type_for_declaration(*type_declaration_bits, &block)
+        end
       end
 
       def type_for_declaration_without_cache(*type_declaration_bits, &)

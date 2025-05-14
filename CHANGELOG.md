@@ -1,3 +1,7 @@
+# [0.0.123] - 2025-05-14
+
+- Allow type name strings as type declarations as a fallback instead of only symbols
+
 # [0.0.122] - 2025-05-13
 
 - Add command connector sugar features and implement several command connector sugars

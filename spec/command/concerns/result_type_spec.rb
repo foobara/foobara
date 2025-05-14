@@ -3,7 +3,7 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::ResultType do
     let(:command_class) {
       stub_class(:CommandClass, Foobara::Command) do
         inputs to_be_result: :duck
-        result :integer
+        result "integer"
 
         def execute
           to_be_result
@@ -16,7 +16,7 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::ResultType do
     describe ".raw_result_type_declaration" do
       subject { command_class.raw_result_type_declaration }
 
-      it { is_expected.to be(:integer) }
+      it { is_expected.to eq("integer") }
     end
 
     describe ".run!" do

@@ -8,6 +8,7 @@ module Foobara
     module Mode
       STRICT = :strict
       STRICT_STRINGIFIED = :strict_stringified
+      STRINGIFIED = :stringified
     end
 
     class << self
@@ -70,6 +71,10 @@ module Foobara
         using_mode(Mode::STRICT_STRINGIFIED, &)
       end
 
+      def stringified(&)
+        using_mode(Mode::STRINGIFIED, &)
+      end
+
       # TODO: use manifest context instead
       def using_mode(new_mode, &)
         with_manifest_context(mode: new_mode, &)
@@ -81,6 +86,10 @@ module Foobara
 
       def strict_stringified?
         foobara_manifest_context_mode == Mode::STRICT_STRINGIFIED
+      end
+
+      def stringified?
+        foobara_manifest_context_mode == Mode::STRINGIFIED
       end
 
       # TODO: we should desugarize these but can't because of a bug where desugarizing entities results in creating the
