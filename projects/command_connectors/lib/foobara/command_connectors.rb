@@ -19,6 +19,7 @@ module Foobara
         CommandConnector.add_desugarizer Desugarizers::Attributes::RejectInputs
         CommandConnector.add_desugarizer Desugarizers::Attributes::OnlyResult
         CommandConnector.add_desugarizer Desugarizers::Attributes::RejectResult
+        CommandConnector.add_desugarizer Desugarizers::Attributes::InputsFromYaml
         CommandConnector.add_desugarizer Desugarizers::Auth
       end
 

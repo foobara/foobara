@@ -2199,7 +2199,7 @@ RSpec.describe Foobara::CommandConnector do
       end
     end
 
-    context "when using only/reject sugar" do
+    context "when using sugar" do
       let(:command_class) do
         stub_class("SomeCommand", Foobara::Command) do
           inputs do
@@ -2319,6 +2319,60 @@ RSpec.describe Foobara::CommandConnector do
         it "can add/remove inputs/results" do
           expect(response.status).to be(0)
           expect(parsed_response).to eq("bar" => "bar", "baz" => "defaultbaz")
+        end
+      end
+
+      context "when using yaml sugar" do
+        let(:command_class) do
+          stub_class("SomeCommand", Foobara::Command) do
+            inputs do
+              foo :required do
+                foo :string, :required
+                bar :string, :required
+              end
+              bar :required do
+                foo :string, :required
+                bar :string, :required
+              end
+              baz :required do
+                foo :string, :required
+                bar :string, :required
+              end
+            end
+            result :duck
+
+            def execute
+              inputs
+            end
+          end
+        end
+
+        let(:inputs_transformers) do
+          { yaml: [:foo, :bar] }
+        end
+
+        let(:inputs) do
+          {
+            foo: "---\n:foo: foofoo\n:bar: foofoofoo\n",
+            bar: "---\n:foo: barbar\n:bar: barbarbar\n",
+            baz: { foo: "bazbaz", bar: "bazbazbaz" }
+          }
+        end
+
+        it "sets the type to a string for the yaml inputs" do
+          transformed_command = command_connector.transformed_command_from_name("SomeCommand")
+          inputs_type = transformed_command.inputs_type
+
+          expect(inputs_type.element_types[:foo].declaration_data[:type]).to eq(:string)
+          expect(inputs_type.element_types[:bar].declaration_data[:type]).to eq(:string)
+          expect(inputs_type.element_types[:baz].declaration_data[:type]).to eq(:attributes)
+
+          expect(response.status).to be(0)
+          expect(parsed_response).to eq(
+            "foo" => { "foo" => "foofoo", "bar" => "foofoofoo" },
+            "bar" => { "foo" => "barbar", "bar" => "barbarbar" },
+            "baz" => { "foo" => "bazbaz", "bar" => "bazbazbaz" }
+          )
         end
       end
     end

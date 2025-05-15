@@ -40,7 +40,7 @@ module Foobara
           transformers = transformers.map do |transformer|
             if transformer.is_a?(::Hash) && transformer.key?(desugarizer_symbol)
               params = transformer[desugarizer_symbol]
-              AttributesTransformers.send(desugarizer_symbol, *params)
+              AttributesTransformers.send(transformer_method, *params)
             else
               transformer
             end
@@ -51,6 +51,10 @@ module Foobara
           opts = opts.merge(opts_key => transformers)
 
           [args, opts]
+        end
+
+        def transformer_method
+          desugarizer_symbol
         end
       end
     end
