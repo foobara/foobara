@@ -35,6 +35,7 @@ module Foobara
       end
 
       def from_type_declaration
+        # TODO: verify the expected from_yaml keys are present
         declaration = to_type.declaration_data
         element_type_declarations = {}
         from_yaml = self.class.from_yaml_attributes

@@ -1,3 +1,7 @@
+# [0.0.125] - 2025-05-15
+
+- Create a yaml inputs sugar
+
 # [0.0.124] - 2025-05-14
 
 - Fix bug creating multiple exposed domains instead of just one
