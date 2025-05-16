@@ -1,6 +1,9 @@
-Foobara is a software framework with a focus on projects that have
-a complicated business domain. It accomplishes this by helping to
-build projects that are command-centric and discoverable, as well as some other features that aid in the mission.
+Foobara is a software framework to help you encapsulate your high-level
+domain operations in commands, and automatically expose machine-readable formal metadata about those
+commands so that integration code can be decoupled and abstracted away.
+
+This, as well as some other features of foobara, help manage domain complexity and produce
+more flexible systems with better management of domain complexity.
 
 You can watch a video that gives a good overview of what Foobara is and its goals here:
 [Introduction to the Foobara software framework](https://youtu.be/SSOmQqjNSVY)
@@ -24,6 +27,7 @@ You can watch a video that gives a good overview of what Foobara is and its goal
       * [HTTP Command Connectors](#http-command-connectors)
         * [Rack Connector](#rack-connector)
         * [Rails Connector](#rails-connector)
+    * [MCP Command Connector](#mcp-command-connector)
       * [Async Command Connectors](#async-command-connectors)
       * [Scheduler Command Connectors](#scheduler-command-connectors)
   * [Intermediate Foobara](#intermediate-foobara)
@@ -51,6 +55,7 @@ You can watch a video that gives a good overview of what Foobara is and its goal
     * [Namespaces](#namespaces)
     * [Value processors](#value-processors)
 * [Additional learning materials/Documentation](#additional-learning-materialsdocumentation)
+* [Help](#help)
 * [Contributing](#contributing)
   * [Developing locally](#developing-locally)
   * [Monorepo Structure](#monorepo-structure)
@@ -67,7 +72,7 @@ You can watch a video that gives a good overview of what Foobara is and its goal
 
 ## Discoverability
 
-* This means there is a formal machine-readable description of the systems/subsystems
+* This means there is a formal, machine-readable, description of the systems/subsystems
 * The implication of this is that integration code can be abstracted away.
 
 ## Implications of command-centric + discoverability
@@ -75,6 +80,7 @@ You can watch a video that gives a good overview of what Foobara is and its goal
 * The system better communicates the mental model of the problem and the chosen solution
 * Engineers are able to spend more time writing code relevant to the domain and less time
   writing code related to specific tech-stack, software pattern, or architecture decisions.
+* Engineers are much less likely to harmfully couple domain logic to integration logic.
 * Engineers can spend more time operating within a specific mental model at a time instead of
   multiple mental models all at once.
 
@@ -86,14 +92,14 @@ You can watch a video that gives a good overview of what Foobara is and its goal
   * Domains are namespaces of Commands, types, and errors
     * Domains (and commands) have explicit, unidirectional dependencies on other domains
   * Organizations are namespaces of Domains
-* Domain mappers
-  * These can map a concept from one domain to another
-  * This separation of concerns leads to commands that have code
-    that reflects the domain they belong to as opposed to logic from many different domains
 * Remote commands
   * These have the same interface as commands that live in other systems and act as a proxy to them
   * This allows rearchitecting of systems without changing interfaces and so reducing refactoring/testing required
   * These currently exist for both Ruby and Typescript
+* Domain mappers
+  * These can map a concept from one domain to another
+  * This separation of concerns leads to commands that have code
+    that reflects the domain they belong to as opposed to logic from many different domains
 * Code generators
   * Similar to remote commands, discoverability enables other types of tooling, including code generators,
     documentation tools, etc
@@ -107,8 +113,6 @@ You can watch a video that gives a good overview of what Foobara is and its goal
 # Installation
 
 To add foobara to an existing project, you can add `foobara` gem to your Gemfile or .gemspec as you normally would.
-You can also `gem install foobara` and whatever additional foobara gems you need and use them in
-scripts by requiring them.
 
 You could also use a generator to create a new Ruby Foobara project using the `foob` gem with `gem install foob` and
 then run `foob generate ruby-project --name your-org/your-new-project-name`
@@ -829,6 +833,67 @@ end
 ```
 
 This has the same effect as the previous code and is just a stylistic alternative.
+
+### MCP Command Connector
+
+We can have an MCP server for free for our commands. Let's try it!
+
+Let's simulate some bad data and expose some commands over MCP and ask an
+MCP client like Claude Code to find/fix the bad data.
+
+```ruby
+CreateCapybara.run!(name: "Fumiko", year_of_birth: 2020)
+# Simulate a year accidentally entered with a 2-digit format where a 4-digit format was expected:
+CreateCapybara.run!(name: "Barbara", year_of_birth: 19)
+CreateCapybara.run!(name: "Basil", year_of_birth: 2021)
+
+mcp_connector = Foobara::McpConnector.new
+
+mcp_connector.connect(FindAllCapybaras)
+mcp_connector.connect(UpdateCapybara)
+
+mcp_connector.run_stdio_server
+```
+
+Oh whoops, somebody entered Barbara's year of birth as 19 instead of 2019, whoops!
+Let's ask Claude Code to find/fix the bad record: 
+
+```
+$ claude
+> Hi! There's a Capybara whose birth year was entered incorrectly. Can you find which one
+  and fix it? Thanks!
+● I'll help find and fix the capybara with the incorrect birth year. Let me search for the
+  capybaras first.
+● mcp-test:FindAllCapybaras (MCP)()…
+  ⎿  [
+       {
+         "name": "Fumiko",
+         "year_of_birth": 2020,
+         "id": 1
+
+     … +7 lines (ctrl+r to expand)
+
+         "name": "Basil",
+         "year_of_birth": 2021,
+         "id": 3
+       }
+     ]
+● It looks like Barbara (id 2) has an incorrect birth year of 19, which is too low. Let me
+  fix that to 2019.
+● mcp-test:UpdateCapybara (MCP)(id: 2, year_of_birth: 2019)…
+  ⎿  {
+       "name": "Barbara",
+       "year_of_birth": 2019,
+       "id": 2
+     }
+● Fixed! Barbara's birth year has been updated from 19 to 2019.
+> Great! Thanks!
+● You're welcome!
+```
+Record fixed! A benefit of encapsulating your high-level domain operations behind commands that have machine-readable
+formal manifests describing them is easy tooling like this.
+
+See https://github.com/foobara/mcp-connector for details on how to do this if interested. 
 
 #### Async Command Connectors
 
@@ -2041,17 +2106,19 @@ TODO: give some code examples
   * All docs combined: https://docs.foobara.com/all/
   * Per-repository docs: https://foobara.com/docs
 
+# Help
+
+Are you actually trying to build something with Foobara? Happy to help! miles@foobara.com
+
 # Contributing
 
-Probably a good idea to reach out if you'd like to contribute code or documentation or other
-forms of help. We could pair on what you have in mind and you could drive or at least we can make sure
-it's a good use of time. I can be reached at azimux@gmail.com
+There are many ways you could help! There are tasks in the codebase for all skill levels including absolute beginner.
+There's also much need for improved documentation. If you're interested in helping but don't know how, then
+please reach out! miles@foobara.com
 
-You can contribute via a github pull request as is typical
-
-Make sure the test suite and linter pass locally before opening a pull request
-
-The build will fail if test coverage is below 100%
+You are welcome to also contribute via a github pull request or open issues for bugs. 
+Make sure the test suite and linter pass locally before opening a pull request as 
+the build will fail if test coverage is below 100%.
 
 ## Developing locally
 
@@ -2068,7 +2135,7 @@ And if the tests/linter pass then you could dive into modifying the code
 
 ## Monorepo Structure
 
-Foobara is split up into many projects
+Foobara is split up into many, many projects
 
 Many are in separate repositories which you can see at: https://github.com/orgs/foobara/repositories
 
