@@ -425,6 +425,13 @@ RSpec.describe Foobara::CommandConnector do
           end
         end
       end
+
+      describe "#all_exposed_type_names" do
+        it "includes the entity names" do
+          command_connector.connect(SomeOrg::SomeDomain::CreateUser)
+          expect(command_connector.all_exposed_type_names).to include("SomeOrg::SomeDomain::User")
+        end
+      end
     end
   end
 
