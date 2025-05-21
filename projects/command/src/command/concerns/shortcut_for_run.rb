@@ -19,6 +19,8 @@ module Foobara
 
         module ClassMethods
           def define_command_named_function
+            return if name.nil?
+
             command_class = self
             convenience_method_name = Foobara::Util.non_full_name(command_class)
             containing_module = Foobara::Util.module_for(command_class) || Object
