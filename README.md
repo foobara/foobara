@@ -348,7 +348,7 @@ We have so far seen one Foobara type which is `integer` but there are many other
 We used :integer to type the operands of our Add command. There are many ways to express types in Foobara
 but in this case we used the attributes DSL. It has the form:
 
-`<attribute_naem> <type_symbol> [processors] [description]`
+`<attribute_name> <type_symbol> [processors] [description]`
 
 We used a processor `:required` but there are many others and you can create your own.
 
