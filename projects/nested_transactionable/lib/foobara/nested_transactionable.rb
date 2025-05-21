@@ -45,7 +45,10 @@ module Foobara
 
       bases.each do |base|
         tx = base.current_transaction
-        transactions << tx if tx
+
+        if tx&.open?
+          transactions << tx
+        end
       end
     end
 
