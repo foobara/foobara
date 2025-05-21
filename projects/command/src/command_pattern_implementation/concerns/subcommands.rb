@@ -65,6 +65,8 @@ module Foobara
                             else
                               superclass.depends_on.dup
                             end
+
+              return @depends_on
             end
 
             if subcommand_classes.length == 1
