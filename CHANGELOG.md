@@ -1,3 +1,9 @@
+# [0.0.126] - 2025-05-21
+
+- Fix bugs with transations, Command.depends_on
+- Allow anonymous commands
+- Add CommandConnector#all_exposed_type_names
+
 # [0.0.125] - 2025-05-15
 
 - Create a yaml inputs sugar
