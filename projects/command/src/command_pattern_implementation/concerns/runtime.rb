@@ -67,7 +67,8 @@ module Foobara
         end
 
         def run_execute
-          result = process_result_using_result_type(execute)
+          raw_result = execute
+          result = process_result_using_result_type(raw_result)
           @outcome = Outcome.success(result)
         end
 

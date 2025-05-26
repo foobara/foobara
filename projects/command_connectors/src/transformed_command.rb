@@ -578,6 +578,7 @@ module Foobara
     def run
       apply_allowed_rule
       apply_pre_commit_transformers
+      set_inputs
       run_command
       # this gives us primary keys
       flush_transactions
@@ -607,6 +608,22 @@ module Foobara
                                 else
                                   untransformed_inputs
                                 end
+    end
+
+    def inputs
+      return @inputs if defined?(@inputs)
+
+      @inputs = if inputs_type
+                  outcome = inputs_type.process_value(untransformed_inputs)
+
+                  if outcome.success?
+                    outcome.result
+                  else
+                    untransformed_inputs
+                  end
+                else
+                  {}
+                end
     end
 
     def transform_result
@@ -719,6 +736,14 @@ module Foobara
       if pre_commit_transformer
         command.before_commit_transaction do |**|
           pre_commit_transformer.process_value!(self)
+        end
+      end
+    end
+
+    def set_inputs
+      if self.class.inputs_type
+        command.after_cast_and_validate_inputs do |**|
+          inputs
         end
       end
     end

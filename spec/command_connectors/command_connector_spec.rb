@@ -103,7 +103,7 @@ RSpec.describe Foobara::CommandConnector do
         end
       end
 
-      it "registers the command and can run it" do
+      it "registers the command" do
         command_connector.connect("SomeOrg::SomeDomain::SomeCommand")
 
         command_class
@@ -114,6 +114,7 @@ RSpec.describe Foobara::CommandConnector do
         transformed_command = exposed_command.transformed_command_class
 
         expect(transformed_command.command_class).to eq(command_class)
+        expect(transformed_command.new.inputs).to eq({})
       end
     end
 
