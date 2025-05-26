@@ -89,9 +89,9 @@ module Foobara
 
         unless strict
           if from
-            lookup_matching_domain_mapper(from: nil, to:)
+            lookup_matching_domain_mapper(from: nil, to:, criteria:)
           elsif to
-            lookup_matching_domain_mapper(from:, to: nil)
+            lookup_matching_domain_mapper(from:, to: nil, criteria:)
           end
         end
       end
