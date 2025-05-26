@@ -35,7 +35,7 @@ module Foobara
                   :element_type
 
       def initialize(
-        *,
+        declaration_data,
         target_classes:,
         base_type:,
         description: nil,
@@ -52,10 +52,12 @@ module Foobara
         sensitive_exposed: nil,
         **opts
       )
+        self.declaration_data = declaration_data
         self.sensitive = sensitive
         self.sensitive_exposed = sensitive_exposed
         self.base_type = base_type
         self.description = description
+        self.name = name
         self.casters = [*casters, *base_type&.casters]
         self.transformers = [*transformers, *base_type&.transformers]
         self.validators = [*validators, *base_type&.validators]
@@ -65,11 +67,10 @@ module Foobara
         # TODO: combine these maybe with the term "children_types"?
         self.element_types = element_types
         self.element_type = element_type
-        self.name = name
         self.target_classes = Util.array(target_classes)
         self.processor_classes_requiring_type = processor_classes_requiring_type
 
-        super(*, **opts.merge(processors:, prioritize: false))
+        super(declaration_data, **opts.merge(processors:, prioritize: false))
 
         apply_all_processors_needing_type!
 
@@ -274,8 +275,25 @@ module Foobara
       end
 
       def value_caster
-        # TODO: how can declaration_data be blank? That seems really strange...
-        Value::Processor::Casting.new({ cast_to: declaration_data }, casters:, target_classes:)
+        # TODO: figure out what would be needed to successfully memoize this
+        # return @value_caster if defined?(@value_caster)
+
+        # We make this exception for :duck because it will match any instance of
+        # Object but AllowNil will match nil which is also an instance of Object.
+        # This results in two matching casters. Instead of figuring out a way to make one
+        # conditional on the other we will just turn off this unique enforcement for :duck
+        enforce_unique = if declaration_data.is_a?(::Hash)
+                           declaration_data[:type] != :duck
+                         else
+                           true
+                         end
+
+        Value::Processor::Casting.new(
+          { cast_to: declaration_data },
+          casters:,
+          target_classes:,
+          enforce_unique:
+        )
       end
 
       def applicable?(value)

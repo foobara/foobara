@@ -1,6 +1,13 @@
+# [0.0.127] - 2025-05-25
+
+- Add better support for using ruby classes as types
+- Support using :attributes as a type directly
+- Make TransformedCommand#inputs reflect actual received inputs not transformed inputs
+- Add NestedTransactionable.with_needed_transactions_for_type
+
 # [0.0.126] - 2025-05-21
 
-- Fix bugs with transations, Command.depends_on
+- Fix bugs with transactions, Command.depends_on
 - Allow anonymous commands
 - Add CommandConnector#all_exposed_type_names
 

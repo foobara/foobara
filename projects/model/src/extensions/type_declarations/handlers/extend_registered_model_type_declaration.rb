@@ -10,6 +10,7 @@ module Foobara
             type_symbol = strict_type_declaration[:type]
 
             return false if type_symbol == expected_type_symbol
+            return false unless type_symbol.is_a?(::Symbol) || type_symbol.is_a?(::String)
 
             if type_registered?(type_symbol)
               type = lookup_type!(type_symbol)

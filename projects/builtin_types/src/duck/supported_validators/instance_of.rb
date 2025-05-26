@@ -14,6 +14,16 @@ module Foobara
             end
           end
 
+          class << self
+            def requires_parent_declaration_data?
+              true
+            end
+          end
+
+          def applicable?(value)
+            !value.nil? || !parent_declaration_data[:allow_nil]
+          end
+
           def expected_class_name
             declaration_data
           end

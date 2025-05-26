@@ -39,7 +39,7 @@ module Foobara
 
         attr_accessor :target_classes
 
-        def initialize(*, casters:, target_classes: nil)
+        def initialize(*, casters:, target_classes: nil, **)
           self.target_classes = Util.array(target_classes)
 
           processors = [
@@ -47,7 +47,7 @@ module Foobara
             *casters
           ]
 
-          super(*, processors:)
+          super(*, processors:, **)
         end
 
         def needs_cast?(value)
@@ -113,7 +113,7 @@ module Foobara
             build_error(*args)
           elsif error_class == MoreThanOneApplicableProcessorError
             # :nocov:
-            raise "Matched too many casters for #{args.inspect} with #{opts.inspect}"
+            raise "Matched too many casters for #{args.map(&:inspect).join(",")} with #{opts.inspect}"
             # :nocov:
           else
             super
