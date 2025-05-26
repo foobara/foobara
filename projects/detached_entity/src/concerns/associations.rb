@@ -187,7 +187,7 @@ module Foobara
                 construct_associations(element_type, path.append(:"#"), result, initial: false)
               end
             elsif type.extends?(BuiltinTypes[:attributes]) # TODO: matches attributes itself instead of only subtypes
-              type.element_types.each_pair do |attribute_name, element_type|
+              type.element_types&.each_pair do |attribute_name, element_type|
                 if remove_sensitive && element_type.sensitive?
                   next
                 end

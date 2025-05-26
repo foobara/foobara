@@ -354,4 +354,100 @@ RSpec.describe Foobara::BuiltinTypes::Attributes do
       end
     end
   end
+
+  describe "using :attributes directly as a type to match any hash with symbolizable keys" do
+    let(:attributes) do
+      {
+        foo: "foo",
+        bar: 10,
+        "baz" => :baz
+      }
+    end
+
+    let(:type) { Foobara::BuiltinTypes[:attributes] }
+
+    describe "#process_value" do
+      it "successfully casts and returns it" do
+        outcome = type.process_value(attributes)
+        expect(outcome).to be_success
+        expect(outcome.result).to eq(
+          foo: "foo",
+          bar: 10,
+          baz: :baz
+        )
+      end
+
+      context "when using :attributes as an attributes type" do
+        let(:type) do
+          Foobara::Domain.current.foobara_type_from_declaration do
+            foo :attributes, :required
+            bar :integer, :required
+            baz :symbol, :required
+          end
+        end
+
+        let(:attributes) do
+          {
+            foo: {
+              foo: "foo",
+              bar: 10,
+              "baz" => :baz
+            },
+            bar: "10",
+            baz: "baz"
+          }
+        end
+
+        it "can cast it" do
+          outcome = type.process_value(attributes)
+          expect(outcome).to be_success
+          expect(outcome.result).to eq(
+            foo: {
+              foo: "foo",
+              bar: 10,
+              baz: :baz
+            },
+            bar: 10,
+            baz: :baz
+          )
+        end
+
+        context "with allow_nil" do
+          let(:type) do
+            Foobara::Domain.current.foobara_type_from_declaration(:attributes, :allow_nil)
+          end
+
+          context "when not nil" do
+            let(:attributes) do
+              {
+                foo: "foo",
+                bar: 10,
+                "baz" => :baz
+              }
+            end
+
+            it "can cast it" do
+              outcome = type.process_value(attributes)
+              expect(outcome).to be_success
+              expect(outcome.result).to eq(
+                foo: "foo",
+                bar: 10,
+                baz: :baz
+              )
+            end
+          end
+
+          context "when nil" do
+            let(:attributes) { nil }
+
+            it "can cast it" do
+              outcome = type.process_value(attributes)
+              expect(outcome).to be_success
+              expect(outcome.result).to be_nil
+            end
+          end
+        end
+      end
+    end
+  end
 end

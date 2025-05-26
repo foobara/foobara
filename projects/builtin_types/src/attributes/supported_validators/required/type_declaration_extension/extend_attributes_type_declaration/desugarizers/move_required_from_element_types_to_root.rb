@@ -8,7 +8,7 @@ module Foobara
               module Desugarizers
                 class MoveRequiredFromElementTypesToRoot < TypeDeclarations::Desugarizer
                   def applicable?(value)
-                    value.is_a?(::Hash) && value[:type] == :attributes
+                    value.is_a?(::Hash) && value[:type] == :attributes && value.key?(:element_type_declarations)
                   end
 
                   def desugarize(rawish_type_declaration)

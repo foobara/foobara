@@ -13,7 +13,9 @@ module Foobara
           # we only handle case where it's a builtin type not an extension of one
           if strict_type_declaration.keys == [:type]
             type_symbol = strict_type_declaration[:type]
-            type_registered?(type_symbol)
+            if type_symbol.is_a?(::Symbol) || type_symbol.is_a?(::String)
+              type_registered?(type_symbol)
+            end
           end
         end
 

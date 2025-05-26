@@ -17,7 +17,8 @@ module Foobara
             type_symbol = sugary_type_declaration[:type]
 
             if [:attributes, "attributes"].include?(type_symbol)
-              Util.all_symbolizable_keys?(sugary_type_declaration[:element_type_declarations])
+              sugary_type_declaration.key?(:element_type_declarations) &&
+                Util.all_symbolizable_keys?(sugary_type_declaration[:element_type_declarations])
             elsif type_symbol.is_a?(::Symbol)
               # Why is this done?
               !type_registered?(type_symbol)
