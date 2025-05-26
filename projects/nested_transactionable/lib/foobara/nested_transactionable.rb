@@ -17,6 +17,33 @@ module Foobara
 
         entity_classes.uniq
       end
+
+      def with_needed_transactions_for_type(type, &)
+        relevant_entity_classes = relevant_entity_classes_for_type(type)
+
+        if relevant_entity_classes.empty?
+          return yield
+        end
+
+        tx_class = Class.new
+        tx_class.include NestedTransactionable
+
+        tx_class.define_method(:relevant_entity_classes) do
+          relevant_entity_classes
+        end
+
+        tx_instance = tx_class.new
+
+        begin
+          tx_instance.open_transaction
+          result = Persistence::EntityBase.using_transactions(tx_instance.transactions, &)
+          tx_instance.commit_transaction
+          result
+        rescue
+          tx_instance.rollback_transaction
+          raise
+        end
+      end
     end
 
     def relevant_entity_classes_for_type(type)
