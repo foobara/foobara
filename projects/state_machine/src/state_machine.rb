@@ -3,6 +3,8 @@ module Foobara
   require_project_file("state_machine", "callbacks")
   require_project_file("state_machine", "validations")
 
+  # TODO: allow quick creation of a statemachine either through better options to #initialize or a
+  # .for method.
   class StateMachine
     include Sugar
     include Callbacks
@@ -31,6 +33,13 @@ module Foobara
         create_transition_methods
         create_can_methods
         create_register_callback_methods
+      end
+
+      def for(transition_map)
+        klass = Class.new(self)
+
+        klass.set_transition_map(transition_map)
+        klass
       end
     end
 

@@ -1,3 +1,7 @@
+# [0.0.128] - 2025-05-29
+
+- Add StateMachine.for convenience method
+
 # [0.0.127] - 2025-05-25
 
 - Add better support for using ruby classes as types

@@ -2,16 +2,10 @@ RSpec.describe Foobara::StateMachine::Callbacks do
   subject { state_machine_class }
 
   let(:state_machine_class) do
-    Class.new(Foobara::StateMachine).tap do |klass|
-      klass.set_transition_map(
-        transition_map
-      )
-    end
+    Foobara::StateMachine.for(transition_map)
   end
 
-  let(:state_machine) {
-    state_machine_class.new
-  }
+  let(:state_machine) { state_machine_class.new }
 
   let(:transition_map) do
     {
