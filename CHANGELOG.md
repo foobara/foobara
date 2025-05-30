@@ -1,3 +1,7 @@
+# [0.0.129] - 2025-05-30
+
+- Store the raw, unprocessed, command result for debugging/introspection
+
 # [0.0.128] - 2025-05-29
 
 - Add StateMachine.for convenience method

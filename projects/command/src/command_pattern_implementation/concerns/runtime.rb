@@ -18,6 +18,7 @@ module Foobara
         end
 
         attr_reader :outcome, :exception
+        attr_accessor :raw_result
 
         def run!
           run.result!
@@ -67,7 +68,7 @@ module Foobara
         end
 
         def run_execute
-          raw_result = execute
+          self.raw_result = execute
           result = process_result_using_result_type(raw_result)
           @outcome = Outcome.success(result)
         end
