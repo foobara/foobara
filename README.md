@@ -3,7 +3,7 @@ domain operations in commands, and automatically expose machine-readable formal 
 commands so that integration code can be decoupled and abstracted away.
 
 This, as well as some other features of foobara, help manage domain complexity and produce
-more flexible systems with better management of domain complexity.
+more flexible systems.
 
 You can watch a video that gives a good overview of what Foobara is and its goals here:
 [Introduction to the Foobara software framework](https://youtu.be/SSOmQqjNSVY)
@@ -27,7 +27,7 @@ You can watch a video that gives a good overview of what Foobara is and its goal
       * [HTTP Command Connectors](#http-command-connectors)
         * [Rack Connector](#rack-connector)
         * [Rails Connector](#rails-connector)
-    * [MCP Command Connector](#mcp-command-connector)
+      * [MCP Command Connector](#mcp-command-connector)
       * [Async Command Connectors](#async-command-connectors)
       * [Scheduler Command Connectors](#scheduler-command-connectors)
   * [Intermediate Foobara](#intermediate-foobara)
@@ -834,7 +834,7 @@ end
 
 This has the same effect as the previous code and is just a stylistic alternative.
 
-### MCP Command Connector
+#### MCP Command Connector
 
 We can have an MCP server for free for our commands. Let's try it!
 
