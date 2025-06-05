@@ -16,9 +16,13 @@ end
 
 group :development, :test do
   gem "pry"
-  gem "pry-byebug"
   gem "rspec"
-  gem "ruby-prof"
+
+  unless RUBY_ENGINE == "jruby"
+    gem "byebug"
+    gem "pry-byebug"
+    gem "ruby-prof"
+  end
 end
 
 group :test do
