@@ -107,10 +107,14 @@ module Foobara
           # :nocov:
         end
 
-        def find!(_record_id)
-          # :nocov:
-          raise "subclass responsibility"
-          # :nocov:
+        def find!(record_id)
+          attributes = find(record_id)
+
+          unless attributes
+            raise CannotFindError.new(record_id, "does not exist")
+          end
+
+          attributes
         end
 
         def find_many!(record_ids)
