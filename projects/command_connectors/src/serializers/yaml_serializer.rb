@@ -1,3 +1,5 @@
+require "yaml"
+
 module Foobara
   module CommandConnectors
     module Serializers
