@@ -86,7 +86,10 @@ module Foobara
 
             defaults = attributes_type.declaration_data[:defaults]
             if defaults && !defaults.empty?
-              record.write_attributes_without_callbacks(defaults)
+              resolved_defaults = defaults.transform_values do |value|
+                value.is_a?(Proc) ? value.call : value
+              end
+              record.write_attributes_without_callbacks(resolved_defaults)
             end
 
             record.write_attributes_without_callbacks(attributes)

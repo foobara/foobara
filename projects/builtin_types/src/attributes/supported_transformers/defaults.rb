@@ -20,11 +20,11 @@ module Foobara
                   allow_nil = parent_declaration_data[:element_type_declarations][attribute_name][:allow_nil]
 
                   unless allow_nil
-                    to_apply[attribute_name] = default
+                    to_apply[attribute_name] = default.is_a?(Proc) ? default.call : default
                   end
                 end
               else
-                to_apply[attribute_name] = default
+                to_apply[attribute_name] = default.is_a?(Proc) ? default.call : default
               end
             end
 

@@ -273,7 +273,7 @@ module Foobara
         filter, method, bang = _filter_from_method_name(method_name)
 
         if filter
-          method = "foobara_#{method}#{bang ? "!" : ""}"
+          method = "foobara_#{method}#{"!" if bang}"
           send(method, *, **, filter:, &)
         else
           # :nocov:

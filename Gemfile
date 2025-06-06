@@ -7,7 +7,7 @@ gemspec
 # gem "foobara-util", path: "../util"
 
 group :development do
-  gem "foobara-rubocop-rules", "~> 0.0.1"
+  gem "foobara-rubocop-rules", ">= 1.0.0"
   gem "guard-rspec"
   gem "rake"
   gem "rubocop-rake"

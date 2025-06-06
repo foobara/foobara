@@ -1,3 +1,7 @@
+# [0.0.130] - 2025-06-06
+
+- Support using a proc as an attributes default for lazy evaluation of default values
+
 # [0.0.129] - 2025-05-30
 
 - Store the raw, unprocessed, command result for debugging/introspection
