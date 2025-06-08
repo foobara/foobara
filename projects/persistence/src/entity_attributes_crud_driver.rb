@@ -4,6 +4,12 @@ module Foobara
     class EntityAttributesCrudDriver
       attr_accessor :raw_connection, :tables
 
+      class << self
+        def has_real_transactions?
+          false
+        end
+      end
+
       def initialize(connection_or_credentials = nil)
         self.raw_connection = open_connection(connection_or_credentials)
         self.tables = {}
@@ -31,7 +37,7 @@ module Foobara
       def rollback_transaction(_raw_tx)
       end
 
-      def close_transaction(_raw_tx)
+      def commit_transaction(_raw_tx)
       end
 
       def table_for(entity_class)

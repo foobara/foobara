@@ -21,6 +21,7 @@ module Foobara
                 each_table(&:flush_created!)
                 each_table(&:flush_updated_and_hard_deleted!)
               end
+              entity_attributes_crud_driver.flush_transaction(raw_tx)
             rescue => e
               # :nocov:
               rollback!(e)
@@ -34,6 +35,7 @@ module Foobara
               state_machine.revert! do
                 each_table(&:revert!)
               end
+              entity_attributes_crud_driver.revert_transaction(raw_tx)
             rescue => e
               # :nocov:
               rollback!(e)
@@ -46,7 +48,7 @@ module Foobara
                 each_table(&:validate!)
                 each_table(&:flush_created!)
                 each_table(&:flush_updated_and_hard_deleted!)
-                entity_attributes_crud_driver.close_transaction(raw_tx)
+                entity_attributes_crud_driver.commit_transaction(raw_tx)
               end
             rescue => e
               # :nocov:
@@ -65,7 +67,6 @@ module Foobara
                 # TODO: raise error if already flushed and if crud_driver doesn't support true transactions
                 entity_attributes_crud_driver.rollback_transaction(raw_tx)
                 each_table(&:rollback!)
-                entity_attributes_crud_driver.close_transaction(raw_tx)
               end
 
               if !because_of && (self == entity_base.current_transaction)

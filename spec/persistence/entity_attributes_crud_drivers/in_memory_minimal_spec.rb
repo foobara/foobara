@@ -87,4 +87,10 @@ RSpec.describe Foobara::Persistence::CrudDrivers::InMemoryMinimal do
       end
     end
   end
+
+  describe ".has_real_transactions?" do
+    it "is a boolean" do
+      expect(described_class.has_real_transactions?).to satisfy { |v| [true, false].include?(v) }
+    end
+  end
 end
