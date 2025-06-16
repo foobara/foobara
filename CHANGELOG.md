@@ -1,3 +1,10 @@
+# [0.0.131] - 2025-06-16
+
+- Extract InMemoryMinimal crud driver specs to foobara-crud-driver-spec-helpers gem
+- Better support for nested transactions
+- Fix buggy actions carried out when committing/rolling back transactions
+- Fix thread leaks in WeakObjectSet and test suite
+
 # [0.0.130] - 2025-06-06
 
 - Support using a proc as an attributes default for lazy evaluation of default values
