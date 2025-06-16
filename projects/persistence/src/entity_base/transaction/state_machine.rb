@@ -7,6 +7,7 @@ module Foobara
           set_transition_map({
                                unopened: {
                                  open: :open,
+                                 open_nested: :open,
                                  close: :closed
                                },
                                open: {
@@ -17,7 +18,9 @@ module Foobara
                                  # TODO: should we have intermediate states to quickly get out of the open state?
                                  rollback: :closed,
                                  commit: :closed,
-                                 error: :closed
+                                 error: :closed,
+                                 commit_nested: :closed,
+                                 rollback_nested: :closed
                                }
                              })
         end

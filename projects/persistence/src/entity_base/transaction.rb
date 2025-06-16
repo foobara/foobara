@@ -6,7 +6,7 @@ module Foobara
         include Concerns::EntityCallbackHandling
         include Concerns::TransactionTracking
 
-        attr_accessor :state_machine, :entity_base, :raw_tx, :tables
+        attr_accessor :state_machine, :entity_base, :raw_tx, :tables, :is_nested
 
         def initialize(entity_base)
           self.entity_base = entity_base
@@ -161,6 +161,10 @@ module Foobara
         # convenience method...
         def perform(&)
           entity_base.using_transaction(self, &)
+        end
+
+        def nested?
+          is_nested
         end
       end
     end

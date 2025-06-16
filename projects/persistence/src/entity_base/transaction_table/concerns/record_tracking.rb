@@ -83,10 +83,25 @@ module Foobara
             end
 
             def rolled_back
+              closed
+            end
+
+            def committed
+              closed
+            end
+
+            def closed
               marked_hard_deleted.clear
               marked_updated.clear
               marked_created.clear
-              tracked_records.clear
+              marked_loading.clear
+            end
+
+            # We need to clear this one separately. That's because otherwise a different table
+            # might flush and create a thunk if it has an association to this table but we've stopped
+            # tracking the record.
+            def transaction_closed
+              tracked_records.close
             end
 
             def reverted

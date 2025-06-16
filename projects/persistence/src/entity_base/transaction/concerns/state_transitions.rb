@@ -15,6 +15,13 @@ module Foobara
               end
             end
 
+            def open_nested!(outer_tx)
+              state_machine.open_nested! do
+                self.is_nested = true
+                self.raw_tx = outer_tx.raw_tx
+              end
+            end
+
             def flush!
               state_machine.flush! do
                 each_table(&:validate!)
@@ -44,11 +51,25 @@ module Foobara
             end
 
             def commit!
+              return commit_nested! if nested?
+
               state_machine.commit! do
-                each_table(&:validate!)
-                each_table(&:flush_created!)
-                each_table(&:flush_updated_and_hard_deleted!)
+                each_table(&:commit!)
                 entity_attributes_crud_driver.commit_transaction(raw_tx)
+                each_table(&:transaction_closed)
+              end
+            rescue => e
+              # :nocov:
+              rollback!(e)
+              raise
+              # :nocov:
+            end
+
+            def commit_nested!
+              state_machine.commit_nested! do
+                each_table(&:commit!)
+                entity_attributes_crud_driver.flush_transaction(raw_tx)
+                each_table(&:transaction_closed)
               end
             rescue => e
               # :nocov:
@@ -63,11 +84,31 @@ module Foobara
             end
 
             def rollback!(because_of = nil)
+              return rollback_nested!(because_of) if nested?
+
               state_machine.rollback! do
                 # TODO: raise error if already flushed and if crud_driver doesn't support true transactions
                 entity_attributes_crud_driver.rollback_transaction(raw_tx)
                 each_table(&:rollback!)
               end
+
+              each_table(&:transaction_closed)
+
+              if !because_of && (self == entity_base.current_transaction)
+                raise RolledBack, "intentionally rolled back"
+              end
+            rescue
+              state_machine.error! if state_machine.currently_open?
+              raise
+            end
+
+            def rollback_nested!(because_of = nil)
+              state_machine.rollback_nested! do
+                entity_attributes_crud_driver.revert_transaction(raw_tx)
+                each_table(&:revert!)
+              end
+
+              each_table(&:transaction_closed)
 
               if !because_of && (self == entity_base.current_transaction)
                 raise RolledBack, "intentionally rolled back"

@@ -632,6 +632,14 @@ module Foobara
           rolled_back
         end
 
+        def commit!
+          validate!
+          flush_created!
+          flush_updated_and_hard_deleted!
+
+          committed
+        end
+
         def revert!
           # TODO: could pause record tracking while doing this as a performance boost
           marked_updated.each(&:restore_without_callbacks!)

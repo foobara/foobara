@@ -52,7 +52,31 @@ module Foobara
         Thread.inheritable_thread_local_var_set(transaction_key, transaction)
       end
 
-      VALID_MODES = [:use_existing, :open_nested, :open_new, nil].freeze
+      # What types of transaction scenarios are there?
+      # 1. If a transaction is already open, use it as a "nested transaction", otherwise, open a new one.
+      #    A nested transaction means that "rollback" is the same as "revert" and "commit" is the same as "flush".
+      #    For a true
+      # 2. If a transaction is already open, raise an error. otherwise, open a new one.
+      # 3. Open a new, independent transaction, no matter what.
+      # 4. If a transaction is already open, use it, otherwise, open a new one.
+      # 5. We are outside of a transaction but have a handle on one. We want to set it as the current transaction.
+      #    and do some work in that transaction.
+      # Which use cases do we probably need at the moment?
+      # 1. If we are running a command calling other commands, we will open transactions when needed but
+      #    inherit any already-open transactions. Commands don't commit or flush to the already-open transactions
+      #    that they inherit. So this feels like a "use existing" situation or a situation where we don't even
+      #    bother calling open_transaction at all.  This is the most important use-case.  It can be helpful to raise
+      #    in this situation because it is not expected that there's an existing transaction yet we're opening another.
+      # 2. We might have a situation where we are in one transaction but definitely want to open a new one and
+      #    commit it ourselves and have its results committed and visible independent of the current transaction.
+      #    So this feels like a "open new" situation where we don't want to raise an error if a transaction is
+      #    already open.
+      VALID_MODES = [
+        :use_existing,
+        :open_nested,
+        :open_new,
+        nil
+      ].freeze
 
       def using_transaction(existing_transaction, &)
         transaction(existing_transaction:, &)
@@ -67,18 +91,28 @@ module Foobara
 
         old_transaction = current_transaction
 
-        if old_transaction&.closed?
+        if old_transaction && !old_transaction.currently_open?
           old_transaction = nil
         end
 
-        if old_transaction&.currently_open?
+        open_nested = false
+
+        if old_transaction
           if mode == :use_existing || existing_transaction == old_transaction
             if block_given?
               return yield old_transaction
             else
               return old_transaction
             end
-          elsif mode != :open_nested && mode != :open_new
+          elsif mode == :open_nested
+            open_nested = true
+          elsif mode == :open_new
+            if existing_transaction
+              # :nocov:
+              raise ArgumentError, "Cannot use mode :open_new with existing_transaction:"
+              # :nocov:
+            end
+          else
             # :nocov:
             raise "Transaction already open. " \
                   "Use mode :use_existing if you want to make use of the existing transaction. " \
@@ -96,16 +130,27 @@ module Foobara
             tx = existing_transaction
           else
             tx = Transaction.new(self)
-            tx.open!
+
+            if open_nested
+              tx.open_nested!(old_transaction)
+            else
+              tx.open!
+            end
           end
 
           set_current_transaction(tx)
+
           result = yield tx
-          tx.commit! if tx.currently_open? && !existing_transaction
+
+          if tx.currently_open? && !existing_transaction
+            tx.commit!
+          end
           result
         rescue Foobara::Persistence::EntityBase::Transaction::RolledBack # rubocop:disable Lint/SuppressedException
         rescue => e
-          tx.rollback!(e) if tx.currently_open?
+          if tx.currently_open?
+            tx.rollback!(e)
+          end
           raise
         ensure
           set_current_transaction(old_transaction)
