@@ -20,7 +20,7 @@ module Foobara
           # TODO: all multiple record methods should return enumerators and code further up should only use
           # the lazy enumerator interface... to encourage that/catch bugs we will return lazy enumerators in these
           # built-in crud drivers
-          def all
+          def all(page_size: nil)
             records.each_value.lazy
           end
 

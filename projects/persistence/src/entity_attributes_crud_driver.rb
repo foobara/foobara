@@ -97,7 +97,7 @@ module Foobara
           # :nocov:
         end
 
-        def all
+        def all(page_size: nil)
           # :nocov:
           raise "subclass responsibility"
           # :nocov:
@@ -167,39 +167,22 @@ module Foobara
 
         def matches_attributes_filter?(attributes, attributes_filter)
           attributes_filter.all? do |attribute_name_or_path, value|
-            value = normalize_attribute_filter_value(value)
+            # get the model-free type?
+            attribute_type = entity_class.attributes_type.type_at_path(attribute_name_or_path)
+
+            value = restore_attributes(value, attribute_type)
 
             if attribute_name_or_path.is_a?(::Array)
               values = DataPath.values_at(attribute_name_or_path, attributes)
 
               values.any? do |attribute_value|
-                normalize_attribute_filter_value(attribute_value) == value
+                restore_attributes(attribute_value, attribute_type) == value
               end
             else
-              attribute_value = attributes[attribute_name_or_path]
-              normalize_attribute_filter_value(attribute_value) == value
+              attribute_value = DataPath.value_at(attribute_name_or_path, attributes)
+              attribute_value = restore_attributes(attribute_value, attribute_type)
+              attribute_value == value
             end
-          end
-        end
-
-        def normalize_attribute_filter_value(value)
-          case value
-          when ::Array
-            value.map { |v| normalize_attribute_filter_value(v) }
-          when ::Hash
-            value.to_h do |k, v|
-              [normalize_attribute_filter_value(k), normalize_attribute_filter_value(v)]
-            end
-          when DetachedEntity
-            if value.persisted?
-              normalize_attribute_filter_value(value.primary_key)
-            else
-              value
-            end
-          when Model
-            normalize_attribute_filter_value(value.attributes)
-          else
-            value
           end
         end
 
@@ -267,6 +250,50 @@ module Foobara
 
         def primary_key_attribute
           entity_class.primary_key_attribute
+        end
+
+        def restore_attributes(object, type = entity_class.attributes_type)
+          if type.extends?(BuiltinTypes[:attributes])
+            object.to_h do |attribute_name, attribute_value|
+              attribute_type = type.type_at_path(attribute_name)
+              [attribute_name.to_sym, restore_attributes(attribute_value, attribute_type)]
+            end
+          elsif type.extends?(BuiltinTypes[:tuple])
+            # TODO: test this code path
+            # :nocov:
+            object.map.with_index do |value, index|
+              element_type = type.element_types[index]
+              restore_attributes(value, element_type)
+            end
+            # :nocov:
+          elsif type.extends?(BuiltinTypes[:array])
+            element_type = type.element_type
+            object.map { |value| restore_attributes(value, element_type) }
+          elsif type.extends?(BuiltinTypes[:entity])
+            if object.is_a?(Model)
+              if object.persisted?
+                object = object.primary_key
+                restore_attributes(object, type.target_class.primary_key_type)
+              else
+                object
+              end
+            else
+              restore_attributes(object, type.target_class.primary_key_type)
+            end
+          elsif type.extends?(BuiltinTypes[:model])
+            if object.is_a?(Model)
+              object = object.attributes
+            end
+            restore_attributes(object, type.element_types)
+          else
+            outcome = type.process_value(object)
+
+            if outcome.success?
+              outcome.result
+            else
+              object
+            end
+          end
         end
       end
     end
