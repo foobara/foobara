@@ -4,8 +4,6 @@ module Foobara
   # TODO: a possible optimization: have a certain number of records before the Weakref approach kicks in
   # that way we don't just immediately clear out useful information without any actual memory burden
   class WeakObjectSet
-    class InvalidWtf < StandardError; end
-
     class GarbageCleaner
       attr_accessor :weak_object_set, :deactivated, :queue, :cleanup_thread
 
@@ -17,6 +15,12 @@ module Foobara
       end
 
       def cleanup_proc
+        if deactivated?
+          # :nocov:
+          raise "GarbageCleaner has been deactivated"
+          # :nocov:
+        end
+
         @cleanup_proc ||= begin
           queue = self.queue
 
@@ -35,6 +39,8 @@ module Foobara
       end
 
       def start_cleanup_thread
+        queue = self.queue
+
         self.cleanup_thread = Thread.new do
           loop do
             object_id = queue.pop
@@ -57,9 +63,16 @@ module Foobara
       end
 
       def deactivate
+        raise if deactivated?
+
         self.deactivated = true
         queue.close
+        # TODO: don't bother to join here outside of test suite
         cleanup_thread.join # just doing this for test suite/simplecov
+        @cleanup_proc = nil
+        @queue = nil
+        @weak_object_set = nil
+        @cleanup_thread = nil
       end
 
       def deactivated?
@@ -69,7 +82,7 @@ module Foobara
 
     include Enumerable
 
-    attr_accessor :monitor, :key_method, :key_to_object_id, :object_id_to_key, :objects
+    attr_accessor :monitor, :key_method, :key_to_object_id, :object_id_to_key, :objects, :closed
     attr_writer :garbage_cleaner
 
     def initialize(key_method = nil)
@@ -136,19 +149,17 @@ module Foobara
       @garbage_cleaner ||= begin
         queue = Queue.new
 
-        gc = GarbageCleaner.new(self, queue)
-
-        ObjectSpace.define_finalizer gc do
-          # :nocov:
-          queue.close
-          # :nocov:
-        end
-
-        gc
+        GarbageCleaner.new(self, queue)
       end
     end
 
     def <<(object)
+      if closed?
+        # :nocov:
+        raise "Cannot add objects to a closed WeakObjectSet"
+        # :nocov:
+      end
+
       object_id = object.object_id
 
       monitor.synchronize do
@@ -235,11 +246,30 @@ module Foobara
       end
     end
 
+    def close
+      raise if closed?
+
+      self.closed = true
+      stop_garbage_cleaner
+    end
+
+    def stop_garbage_cleaner
+      gc = nil
+
+      monitor.synchronize do
+        if @garbage_cleaner
+          gc = garbage_cleaner
+          self.garbage_cleaner = nil
+        end
+      end
+
+      gc&.deactivate
+    end
+
     def clear
       monitor.synchronize do
-        garbage_cleaner.deactivate
+        stop_garbage_cleaner
 
-        self.garbage_cleaner = nil
         self.objects = {}
 
         if key_method
@@ -247,6 +277,10 @@ module Foobara
           self.object_id_to_key = {}
         end
       end
+    end
+
+    def closed?
+      closed
     end
   end
 end

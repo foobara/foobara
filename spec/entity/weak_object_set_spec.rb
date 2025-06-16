@@ -1,6 +1,8 @@
 RSpec.describe Foobara::WeakObjectSet do
   let(:set) { described_class.new(key_method) }
 
+  after { set.close }
+
   describe "auto-removal of garbage collected records" do
     let(:key_method) { nil }
 
