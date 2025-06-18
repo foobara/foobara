@@ -22,6 +22,10 @@ module Foobara
         attr_reader :from_type, :to_type
       end
 
+      def always_applicable?
+        true
+      end
+
       def from_type_declaration
         nil
       end
