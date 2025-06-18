@@ -14,10 +14,10 @@ module Foobara
             if detached_to_primary_key?
               object.primary_key
             else
-              object.attributes_with_delegates
+              serialize(object.attributes_with_delegates)
             end
           when Model
-            object.attributes_with_delegates
+            serialize(object.attributes_with_delegates)
           when ::Array
             object.map { |element| serialize(element) }
           when ::Hash
