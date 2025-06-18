@@ -831,6 +831,10 @@ RSpec.describe Foobara::CommandConnector do
               def from_type_declaration
                 to_type
               end
+
+              def transform(value)
+                value
+              end
             end
           end
 

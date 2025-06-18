@@ -114,7 +114,9 @@ module Foobara
         inputs_type = command_class.inputs_type
 
         @inputs_transformers = transformers_to_processors(@inputs_transformers, inputs_type, direction: :to)
+        @inputs_transformers = @inputs_transformers.reverse
 
+        # TODO: this block looks pointless...
         @inputs_transformers.each do |transformer|
           if transformer.is_a?(TypeDeclarations::TypedTransformer)
             new_type = transformer.from_type
@@ -442,21 +444,18 @@ module Foobara
       def inputs_transformer
         return @inputs_transformer if defined?(@inputs_transformer)
 
-        if inputs_transformers.empty?
+        transformers = inputs_transformers
+
+        if transformers.empty?
           @inputs_transformer = nil
           return
         end
 
-        @inputs_transformer = begin
-          transformers = transformers_to_processors(inputs_transformers,
-                                                    command_class.inputs_type, direction: :to)
-
-          if transformers.size == 1
-            transformers.first
-          else
-            Value::Processor::Pipeline.new(processors: transformers)
-          end
-        end
+        @inputs_transformer = if transformers.size == 1
+                                transformers.first
+                              else
+                                Value::Processor::Pipeline.new(processors: transformers)
+                              end
       end
 
       def response_mutator
