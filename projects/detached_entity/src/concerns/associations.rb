@@ -234,6 +234,25 @@ module Foobara
               else
                 true
               end
+            elsif type.extends?(BuiltinTypes[:model])
+              element_types = type.element_types
+
+              if remove_sensitive
+                # TODO: test this code path
+                # :nocov:
+                element_types = element_types&.reject(&:sensitive?)
+                # :nocov:
+              end
+
+              contains_associations?(element_types, false)
+            elsif type.extends?(BuiltinTypes[:tuple])
+              element_types = type.element_types
+
+              element_types&.any? do |element_type|
+                if !remove_sensitive || !element_type.sensitive?
+                  contains_associations?(element_type, false)
+                end
+              end
             elsif type.extends?(BuiltinTypes[:array])
               # TODO: what to do about an associative array type?? Unclear how to make a key from that...
               # TODO: raise if associative array contains a non-persisted record to handle this edge case for now.
