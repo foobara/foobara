@@ -11,6 +11,10 @@ module Foobara
       def reset_all
         to_delete = []
 
+        if ENV["FOOBARA_ENV"].nil? || ENV["FOOBARA_ENV"] == "production"
+          raise "You're attempting to call the reset_all method in production!"
+        end
+
         all.each do |command_class|
           if command_class.name.include?("::")
             parent_name = Util.parent_module_name_for(command_class.name)
