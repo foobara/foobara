@@ -7,6 +7,9 @@ module Foobara
     end
 
     def reset_alls
+      if ENV["FOOBARA_ENV"].nil? || ENV["FOOBARA_ENV"] == "production"
+        raise "You're attempting to call the reset_alls method in production!"
+      end
       Monorepo.reset_alls
     end
   end
@@ -56,6 +59,9 @@ module Foobara
       end
 
       def reset_alls
+        if ENV["FOOBARA_ENV"].nil? || ENV["FOOBARA_ENV"] == "production"
+          raise "You're attempting to call the reset_alls method in production!"
+        end
         all_projects.each_value(&:reset_all)
       end
     end
