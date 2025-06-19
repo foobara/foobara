@@ -46,7 +46,20 @@ module Foobara
 
               to_type.declaration_data.merge(element_type_declaration:)
             elsif to_type.extends?(Foobara::BuiltinTypes[:detached_entity])
-              to_type.target_class.primary_key_type.reference_or_declaration_data
+              declaration = to_type.target_class.primary_key_type.reference_or_declaration_data
+
+              description = "#{to_type.target_class.model_name} #{to_type.target_class.primary_key_attribute}"
+
+              unless to_type.extends_directly?(Foobara::BuiltinTypes[:detached_entity]) ||
+                     to_type.extends_directly?(Foobara::BuiltinTypes[:entity])
+                description = [
+                  description,
+                  to_type.description
+                ].join(" : ")
+              end
+              declaration[:description] = description
+
+              declaration
             elsif to_type.extends?(Foobara::BuiltinTypes[:model])
               attributes_type = to_type.target_class.attributes_type
               EntityToPrimaryKeyInputsTransformer.new(to: attributes_type).from_type_declaration

@@ -232,6 +232,27 @@ module Foobara
         end
       end
 
+      def extends_directly?(type)
+        case type
+        when Type
+          base_type == type
+        when Symbol, String
+          concrete_type = created_in_namespace.foobara_lookup_type(type)
+
+          if concrete_type.nil?
+            # :nocov:
+            raise "No type found for #{type}"
+            # :nocov:
+          end
+
+          extends_directly?(concrete_type)
+        else
+          # :nocov:
+          raise ArgumentError, "Expected a Type or a Symbol/String, but got #{type.inspect}"
+          # :nocov:
+        end
+      end
+
       def extends_type?(type)
         return true if self == type
 

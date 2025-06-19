@@ -50,5 +50,13 @@ RSpec.describe Foobara::Types do
         end
       end
     end
+
+    describe "#extends_directly?" do
+      context "when a symbol" do
+        it "is true for its parent symbol" do
+          expect(type.extends_directly?(:attributes)).to be(true)
+        end
+      end
+    end
   end
 end

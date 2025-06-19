@@ -1,3 +1,11 @@
+# [0.0.132] - 2025-06-19
+
+- Add/improve the description for primary key types in EntityToPrimaryKeyInputsTransformer
+- Support model and tuple types in .has_associations?
+- Move EntityToPrimaryKeyInputsTransformer over from foobara-agent gem
+- Make sure EntitiesToPrimaryKeysSerializer recurses into models/detached entities
+- Fix bugs impacting use of multiple inputs transformers at a time and other issues with typed transformers
+
 # [0.0.131] - 2025-06-16
 
 - Extract InMemoryMinimal crud driver specs to foobara-crud-driver-spec-helpers gem

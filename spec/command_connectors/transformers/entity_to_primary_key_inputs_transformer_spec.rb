@@ -34,7 +34,7 @@ RSpec.describe Foobara::CommandConnectors::Transformers::EntityToPrimaryKeyInput
 
     Foobara::TypeDeclarations::Dsl::Attributes.to_declaration do
       some_tuple [:integer, :string, SomeEntity]
-      some_array [SomeEntity]
+      some_array [{ type: SomeEntity, description: "some random entity" }]
       some_model SomeModel
     end
   end
@@ -64,14 +64,21 @@ RSpec.describe Foobara::CommandConnectors::Transformers::EntityToPrimaryKeyInput
       element_type_declarations: {
         some_tuple: {
           type: :tuple,
-          element_type_declarations: [{ type: :integer }, { type: :string }, { type: :integer }],
+          element_type_declarations: [
+            { type: :integer },
+            { type: :string },
+            { type: :integer, description: "SomeEntity id" }
+          ],
           size: 3
         },
-        some_array: { type: :array, element_type_declaration: { type: :integer } },
+        some_array: {
+          type: :array,
+          element_type_declaration: { type: :integer, description: "SomeEntity id : some random entity" }
+        },
         some_model: {
           type: :attributes,
           element_type_declarations: {
-            some_entity: { type: :integer },
+            some_entity: { type: :integer, description: "SomeEntity id" },
             foo: { type: :string },
             bar: { type: :string }
           }

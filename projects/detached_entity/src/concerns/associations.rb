@@ -221,16 +221,7 @@ module Foobara
 
             if type.extends?(BuiltinTypes[:detached_entity])
               if initial
-                element_types = type.element_types
-
-                if remove_sensitive
-                  # TODO: test this code path
-                  # :nocov:
-                  element_types = element_types&.reject(&:sensitive?)
-                  # :nocov:
-                end
-
-                contains_associations?(element_types, false)
+                contains_associations?(type.element_types, false)
               else
                 true
               end
