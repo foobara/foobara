@@ -214,5 +214,11 @@ RSpec.describe Foobara::StateMachine do
         it { is_expected_to_raise(Foobara::StateMachine::MissingTransitions) }
       end
     end
+
+    describe ".states_that_can_perform" do
+      it "returns the expected states allowed to perform the given transition" do
+        expect(state_machine_class.states_that_can_perform(:start)).to eq([:unexecuted])
+      end
+    end
   end
 end

@@ -2,6 +2,7 @@ module Foobara
   require_project_file("state_machine", "sugar")
   require_project_file("state_machine", "callbacks")
   require_project_file("state_machine", "validations")
+  require_project_file("state_machine", "transitions")
 
   # TODO: allow quick creation of a statemachine either through better options to #initialize or a
   # .for method.
@@ -10,6 +11,7 @@ module Foobara
     include Callbacks
     include Validations
     include TransitionLog
+    include Transitions
 
     class InvalidTransition < StandardError; end
 

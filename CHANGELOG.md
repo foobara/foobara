@@ -1,3 +1,10 @@
+# [0.0.133] - 2025-06-26
+
+- Add StateMachine.states_that_can_perform
+- Add TransformedCommand#raw_inputs
+- Fix several TransactionTable#find_by* bugs that incorrectly match/don't match in-memory changed records
+- Fix bug that looked for associations in generic :attributes types
+
 # [0.0.132] - 2025-06-19
 
 - Add/improve the description for primary key types in EntityToPrimaryKeyInputsTransformer
