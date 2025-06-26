@@ -130,8 +130,20 @@ module Foobara
         end
 
         def find_by_attribute_containing(attribute_name, value)
+          found_type = entity_class.attributes_type.type_at_path("#{attribute_name}.#")
+
+          if value
+            value = restore_attributes(value, found_type)
+          end
+
           all.find do |found_attributes|
-            found_attributes[attribute_name]&.include?(value)
+            found_attributes[attribute_name].any? do |found_value|
+              if found_value
+                found_value = restore_attributes(found_value, found_type)
+              end
+
+              found_value == value
+            end
           end
         end
 
@@ -291,7 +303,10 @@ module Foobara
             if outcome.success?
               outcome.result
             else
+              # TODO: figure out how to test this code path
+              # :nocov:
               object
+              # :nocov:
             end
           end
         end

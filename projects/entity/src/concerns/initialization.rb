@@ -57,7 +57,7 @@ module Foobara
 
             record = current_transaction_table.find_tracked(record_id)
 
-            if record
+            if record&.loaded?
               # :nocov:
               raise "Already loaded for #{attributes}. Bug maybe?"
               # :nocov:

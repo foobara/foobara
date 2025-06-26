@@ -260,6 +260,7 @@ module Foobara
           value = entity_class.attributes_type.element_types[attribute_name].element_type.process_value!(value)
 
           tracked_records.each do |record|
+            next unless record.loaded? || record.created?
             next if hard_deleted?(record)
 
             # TODO: what if there are multiple??
@@ -274,7 +275,22 @@ module Foobara
           )
 
           if found_attributes
-            entity_class.loaded(normalize_attributes(found_attributes))
+            found_attributes = normalize_attributes(found_attributes)
+            record_id = primary_key_for_attributes(found_attributes)
+
+            record = find_tracked(record_id)
+
+            if record
+              # was already considered among tracked records if loaded? is true so do not return it as
+              # it has changed and no longer matches
+              unless record.loaded?
+                loading(record) do
+                  record.successfully_loaded(found_attributes)
+                end
+              end
+            else
+              entity_class.loaded(found_attributes)
+            end
           end
         end
 
@@ -286,6 +302,7 @@ module Foobara
           end
 
           tracked_records.each do |record|
+            next unless record.loaded? || record.created?
             next if hard_deleted?(record)
 
             if entity_attributes_crud_driver_table.matches_attributes_filter?(record.attributes, attributes_filter)
@@ -293,17 +310,37 @@ module Foobara
             end
           end
 
-          found_attributes = entity_attributes_crud_driver_table.find_by(attributes_filter)
+          found_attributes_enumerator = entity_attributes_crud_driver_table.find_many_by(attributes_filter)
 
-          if found_attributes
+          found_attributes_enumerator.each do |found_attributes|
             found_attributes = normalize_attributes(found_attributes)
             record_id = primary_key_for_attributes(found_attributes)
 
             record = find_tracked(record_id)
-            return record if record
 
-            entity_class.loaded(found_attributes)
+            if record
+              if record.loaded?
+                # was already considered among tracked records if loaded? is true so do not return it as
+                # it has changed and no longer matches
+                # TODO: figure out how to test this code path
+                # :nocov:
+                record = nil
+                # :nocov:
+              else
+                loading(record) do
+                  record.successfully_loaded(found_attributes)
+                end
+              end
+            else
+              record = entity_class.loaded(found_attributes)
+            end
+
+            if record
+              return record
+            end
           end
+
+          nil
         end
 
         def find_many_by(attributes_filter)
@@ -353,9 +390,28 @@ module Foobara
 
               next if yielded_ids.include?(record_id)
 
-              record = find_tracked(record_id) || entity_class.loaded(found_attributes)
+              record = find_tracked(record_id)
 
-              yielder << record
+              if record
+                if record.loaded?
+                  # was already considered among tracked records if loaded? is true so do not return it as
+                  # it has changed and no longer matches
+                  # TODO: figure out how to test this code path
+                  # :nocov:
+                  record = nil
+                  # :nocov:
+                else
+                  loading(record) do
+                    record.successfully_loaded(found_attributes)
+                  end
+                end
+              else
+                record = entity_class.loaded(found_attributes)
+              end
+
+              if record
+                yielder << record
+              end
             end
           end
         end
@@ -374,6 +430,7 @@ module Foobara
 
           Enumerator.new do |yielder|
             tracked_records.each do |record|
+              next unless record.loaded? || record.created?
               next if hard_deleted?(record)
 
               record_values = record.read_attribute(attribute_name)
@@ -401,9 +458,28 @@ module Foobara
 
               next if yielded_ids.include?(record_id)
 
-              record = find_tracked(record_id) || entity_class.loaded(found_attributes)
+              record = find_tracked(record_id)
 
-              yielder << record
+              if record
+                # TODO: test this code path
+                # :nocov:
+                if record.loaded?
+                  # was already considered among tracked records if loaded? is true so do not return it as
+                  # it has changed and no longer matches
+                  record = nil
+                else
+                  loading(record) do
+                    record.successfully_loaded(found_attributes)
+                  end
+                end
+                # :nocov:
+              else
+                record = entity_class.loaded(found_attributes)
+              end
+
+              if record
+                yielder << record
+              end
             end
           end
         end
@@ -422,6 +498,7 @@ module Foobara
 
           Enumerator.new do |yielder|
             tracked_records.each do |record|
+              next unless record.loaded? || record.created?
               next if hard_deleted?(record)
 
               record_value = record.read_attribute(attribute_name)
@@ -445,9 +522,28 @@ module Foobara
 
               next if yielded_ids.include?(record_id)
 
-              record = find_tracked(record_id) || entity_class.loaded(found_attributes)
+              record = find_tracked(record_id)
 
-              yielder << record
+              if record
+                # TODO: test this code path
+                # :nocov:
+                if record.loaded?
+                  # was already considered among tracked records if loaded? is true so do not return it as
+                  # it has changed and no longer matches
+                  record = nil
+                else
+                  loading(record) do
+                    record.successfully_loaded(found_attributes)
+                  end
+                end
+                # :nocov:
+              else
+                record = entity_class.loaded(found_attributes)
+              end
+
+              if record
+                yielder << record
+              end
             end
           end
         end

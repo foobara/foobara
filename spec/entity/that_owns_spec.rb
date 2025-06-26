@@ -212,6 +212,15 @@ RSpec.describe Foobara::Entity do
         expect(employee.priority_package).to be_a(Package)
       end
 
+      # test when it's tracked but not loaded...
+      User.transaction do
+        employee = Employee.thunk(employee_id)
+
+        expect(
+          Employee.find_by_attribute_containing(:assignments, 1)
+        ).to be(employee)
+      end
+
       User.transaction do
         # This tests the situation where the records have to be fetched from the database to answer the question
         # which covers a few lines of code that might not be hit by the above transaction
@@ -226,6 +235,8 @@ RSpec.describe Foobara::Entity do
           Employee.find_by_attribute_containing(:past_assignments, assignment_id).primary_key
         ).to be(employee_id)
         expect(User.find_by_attribute(:name, "applicant user5")).to be(User.thunk(6))
+        expect(User.find_by(name: "applicant user5")).to be(User.thunk(6))
+        expect(User.find_by(name: "does not exist")).to be_nil
       end
     end
   end
