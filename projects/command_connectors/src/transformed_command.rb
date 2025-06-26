@@ -791,6 +791,10 @@ module Foobara
       end
     end
 
+    def raw_inputs
+      untransformed_inputs
+    end
+
     def method_missing(method_name, ...)
       if command.respond_to?(method_name)
         command.send(method_name, ...)

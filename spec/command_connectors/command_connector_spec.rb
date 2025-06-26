@@ -1346,6 +1346,7 @@ RSpec.describe Foobara::CommandConnector do
 
           it "runs the command" do
             expect(response.status).to be(0)
+            expect(response.command.raw_inputs).to eq(bbaassee: 2, exponent: 3)
             expect(JSON.parse(response.body)).to eq("answer" => "8")
           end
 
