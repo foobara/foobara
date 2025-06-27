@@ -1,3 +1,7 @@
+# [0.0.134] - 2025-06-27
+
+- Add LoadAtomsPreCommitTransformer
+
 # [0.0.133] - 2025-06-26
 
 - Add StateMachine.states_that_can_perform

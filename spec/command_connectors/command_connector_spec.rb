@@ -45,7 +45,7 @@ RSpec.describe Foobara::CommandConnector do
   end
 
   let(:command_connector) do
-    described_class.new(authenticator:, default_serializers:)
+    described_class.new(authenticator:, default_serializers:, default_pre_commit_transformers:)
   end
 
   let(:command_registry) { command_connector.command_registry }
@@ -55,7 +55,7 @@ RSpec.describe Foobara::CommandConnector do
     [Foobara::CommandConnectors::Serializers::ErrorsSerializer,
      Foobara::CommandConnectors::Serializers::JsonSerializer]
   end
-  let(:default_pre_commit_transformer) { nil }
+  let(:default_pre_commit_transformers) { nil }
 
   let(:base) { 2 }
   let(:exponent) { 3 }
@@ -440,10 +440,6 @@ RSpec.describe Foobara::CommandConnector do
     before do
       if allowed_rules
         command_connector.allowed_rules(allowed_rules)
-      end
-
-      if default_pre_commit_transformer
-        command_connector.add_default_pre_commit_transformer(default_pre_commit_transformer)
       end
 
       command_connector.connect(
@@ -1040,6 +1036,12 @@ RSpec.describe Foobara::CommandConnector do
           Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
         end
 
+        let(:default_pre_commit_transformers) do
+          [
+            Foobara::CommandConnectors::Transformers::LoadAtomsPreCommitTransformer
+          ]
+        end
+
         let(:command_class) do
           user_class
 
@@ -1238,7 +1240,7 @@ RSpec.describe Foobara::CommandConnector do
                   ]
                 end
 
-                let(:default_pre_commit_transformer) do
+                let(:default_pre_commit_transformers) do
                   Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer
                 end
 

@@ -118,7 +118,10 @@ module Foobara
 
     attr_accessor :command_registry, :authenticator, :capture_unknown_error
 
-    def initialize(authenticator: nil, capture_unknown_error: nil, default_serializers: nil)
+    def initialize(authenticator: nil,
+                   capture_unknown_error: nil,
+                   default_serializers: nil,
+                   default_pre_commit_transformers: nil)
       authenticator = self.class.to_authenticator(authenticator)
 
       self.authenticator = authenticator
@@ -127,6 +130,10 @@ module Foobara
 
       Util.array(default_serializers).each do |serializer|
         add_default_serializer(serializer)
+      end
+
+      Util.array(default_pre_commit_transformers).each do |pre_commit_transformer|
+        add_default_pre_commit_transformer(pre_commit_transformer)
       end
 
       self.class.allowed_rules_to_register.each do |ruleish_args|
