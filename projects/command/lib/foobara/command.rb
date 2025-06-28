@@ -11,6 +11,8 @@ module Foobara
       def reset_all
         to_delete = []
 
+        raise_if_production!("reset_all")
+
         all.each do |command_class|
           if command_class.name.include?("::")
             parent_name = Util.parent_module_name_for(command_class.name)

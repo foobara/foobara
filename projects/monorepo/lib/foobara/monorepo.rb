@@ -2,11 +2,17 @@ require_relative "monorepo/project"
 
 module Foobara
   class << self
+    def raise_if_production!(method_name)
+      if ENV["FOOBARA_ENV"].nil? || ENV["FOOBARA_ENV"] == "production"
+        raise "#{method_name} can't be called in production!"
+      end
+    end
     def require_project_file(project, path)
       require_relative("../../../#{project}/src/#{path}")
     end
 
     def reset_alls
+      raise_if_production!("reset_alls")
       Monorepo.reset_alls
     end
   end
@@ -56,6 +62,7 @@ module Foobara
       end
 
       def reset_alls
+        raise_if_production!("reset_alls")
         all_projects.each_value(&:reset_all)
       end
     end
