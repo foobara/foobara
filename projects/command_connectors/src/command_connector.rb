@@ -303,7 +303,7 @@ module Foobara
     end
 
     def connect_delayed(registerable_name, *args, **opts)
-      delayed_connections[registerable_name] = { args:, opts: }
+      delayed_connections[registerable_name.to_s] = { args:, opts: }
     end
 
     def delayed_connections
