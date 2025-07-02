@@ -30,5 +30,5 @@ module Foobara
     end
   end
 
-  Monorepo.project "command_connectors"
+  project "command_connectors"
 end

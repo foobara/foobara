@@ -1,3 +1,7 @@
+# [0.0.135] - 2025-07-01
+
+- Eliminate Monorepo project
+
 # [0.0.134] - 2025-06-27
 
 - Add LoadAtomsPreCommitTransformer
