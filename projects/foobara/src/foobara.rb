@@ -53,7 +53,7 @@ module Foobara
       all_projects.each_value(&:reset_all)
     end
 
-    def raise_if_production!(method_name)
+    def raise_if_production!(*)
       if ENV["FOOBARA_ENV"].nil? || ENV["FOOBARA_ENV"] == "production"
         raise MethodCantBeCalledInProductionError
       end
