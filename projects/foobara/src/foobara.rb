@@ -1,9 +1,9 @@
 require_relative "project"
 
 module Foobara
-  class << self
-    class MethodCantBeCalledInProductionError < StandardError; end
+  class MethodCantBeCalledInProductionError < StandardError; end
 
+  class << self
     def require_project_file(project, path)
       require_relative("../../#{project}/src/#{path}")
     end
@@ -55,7 +55,7 @@ module Foobara
 
     def raise_if_production!(method_name)
       if ENV["FOOBARA_ENV"].nil? || ENV["FOOBARA_ENV"] == "production"
-        raise "#{method_name} cannot be called in production!"
+        raise MethodCantBeCalledInProductionError, "#{method_name} can't be called in production!"
       end
     end
   end
