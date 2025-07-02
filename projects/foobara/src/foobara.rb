@@ -49,7 +49,7 @@ module Foobara
     end
 
     def reset_alls
-      raise_if_production!(reset_alls)
+      raise_if_production!("reset_alls")
       all_projects.each_value(&:reset_all)
     end
 
