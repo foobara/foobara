@@ -1,6 +1,8 @@
 require_relative "project"
 
 module Foobara
+  class MethodCantBeCalledInProductionError < StandardError; end
+
   class << self
     def require_project_file(project, path)
       require_relative("../../#{project}/src/#{path}")
@@ -47,7 +49,14 @@ module Foobara
     end
 
     def reset_alls
+      raise_if_production!("reset_alls")
       all_projects.each_value(&:reset_all)
+    end
+
+    def raise_if_production!(*)
+      if ENV["FOOBARA_ENV"].nil? || ENV["FOOBARA_ENV"] == "production"
+        raise MethodCantBeCalledInProductionError
+      end
     end
   end
 end
