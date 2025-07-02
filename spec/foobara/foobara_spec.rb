@@ -1,11 +1,6 @@
 RSpec.describe Foobara do
   describe ".raise_if_production!" do
     let(:method_name) { "reset_alls" }
-    let(:original_env) { ENV.fetch("FOOBARA_ENV", nil) }
-
-    after do
-      ENV["FOOBARA_ENV"] = original_env
-    end
 
     context "when FOOBARA_ENV is nil" do
       stub_env_var("FOOBARA_ENV", nil)
@@ -44,9 +39,7 @@ RSpec.describe Foobara do
     end
 
     context "when in development environment" do
-      before do
-        ENV["FOOBARA_ENV"] = "development"
-      end
+      stub_env_var("FOOBARA_ENV", "development")
 
       it "doesn't raise MethodCantBeCalledInProductionError" do
         expect {
