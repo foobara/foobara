@@ -8,10 +8,7 @@ RSpec.describe Foobara do
       it "raises MethodCantBeCalledInProductionError" do
         expect {
           described_class.raise_if_production!(method_name)
-        }.to raise_error(
-          Foobara::MethodCantBeCalledInProductionError,
-          "#{method_name} can't be called in production!"
-        )
+        }.to raise_error(Foobara::MethodCantBeCalledInProductionError)
       end
     end
 
@@ -21,10 +18,7 @@ RSpec.describe Foobara do
       it "raises MethodCantBeCalledInProductionError" do
         expect {
           described_class.raise_if_production!(method_name)
-        }.to raise_error(
-          Foobara::MethodCantBeCalledInProductionError,
-          "#{method_name} can't be called in production!"
-        )
+        }.to raise_error(Foobara::MethodCantBeCalledInProductionError)
       end
     end
 

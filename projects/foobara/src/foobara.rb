@@ -55,7 +55,7 @@ module Foobara
 
     def raise_if_production!(method_name)
       if ENV["FOOBARA_ENV"].nil? || ENV["FOOBARA_ENV"] == "production"
-        raise MethodCantBeCalledInProductionError, "#{method_name} can't be called in production!"
+        raise MethodCantBeCalledInProductionError
       end
     end
   end
