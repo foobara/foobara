@@ -1,3 +1,5 @@
+require "foobara/util"
+
 require_relative "is_namespace"
 
 module Foobara
