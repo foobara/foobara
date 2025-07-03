@@ -72,7 +72,7 @@ module Foobara
     end
 
     def to_h
-      to_h do |error|
+      super do |error|
         [error.key, error.to_h]
       end
     end
