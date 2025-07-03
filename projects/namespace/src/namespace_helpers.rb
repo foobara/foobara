@@ -248,10 +248,10 @@ module Foobara
             next if parent == mod
 
             if parent && !parent.scoped_full_path.empty?
-              next if _start_with?(parent.scoped_full_path, mod.scoped_full_path)
+              next if Foobara::Util.start_with?(parent.scoped_full_path, mod.scoped_full_path)
             end
 
-            if _start_with?(scoped.scoped_full_path, mod.scoped_full_path)
+            if Foobara::Util.start_with?(scoped.scoped_full_path, mod.scoped_full_path)
               scoped.scoped_path = scoped.scoped_full_path[mod.scoped_full_path.size..]
 
               if parent
@@ -267,17 +267,6 @@ module Foobara
               end
             end
           end
-        end
-
-        # TODO: move to util
-        def _start_with?(large_array, small_array)
-          return false unless large_array.size > small_array.size
-
-          small_array.each.with_index do |item, index|
-            return false unless large_array[index] == item
-          end
-
-          true
         end
       end
 
