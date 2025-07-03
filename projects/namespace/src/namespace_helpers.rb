@@ -248,10 +248,10 @@ module Foobara
             next if parent == mod
 
             if parent && !parent.scoped_full_path.empty?
-              next if _start_with?(parent.scoped_full_path, mod.scoped_full_path)
+              next if Foobara::Util._start_with?(parent.scoped_full_path, mod.scoped_full_path)
             end
 
-            if _start_with?(scoped.scoped_full_path, mod.scoped_full_path)
+            if Foobara::Util._start_with?(scoped.scoped_full_path, mod.scoped_full_path)
               scoped.scoped_path = scoped.scoped_full_path[mod.scoped_full_path.size..]
 
               if parent
