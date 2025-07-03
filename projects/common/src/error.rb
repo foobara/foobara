@@ -231,6 +231,10 @@ module Foobara
       has_build_error = false
 
       1.upto(10) do |i|
+        backtrace_line = backtrace_when_initialized[i]
+
+        break unless backtrace_line
+
         if backtrace_when_initialized[i].end_with?("#build_error'")
           index = i + 1
           has_build_error = true
