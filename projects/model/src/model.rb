@@ -1,9 +1,6 @@
 require "inheritable_thread_vars"
 
 module Foobara
-  # TODO: either make this an abstract base class of ValueModel and Entity or rename it to ValueModel
-  # and have Entity inherit from it...
-  # TODO: also, why is this at the root level instead of in a project??
   class Model
     class NoSuchAttributeError < StandardError; end
     class AttributeIsImmutableError < StandardError; end

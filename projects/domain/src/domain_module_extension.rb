@@ -430,7 +430,6 @@ module Foobara
           end
         end
 
-        # TODO: can we kill this skip concept?
         def foobara_manifest
           to_include = TypeDeclarations.foobara_manifest_context_to_include
 

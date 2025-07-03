@@ -19,8 +19,6 @@ module Foobara
         self[:manually_added]
       end
 
-      # TODO: this has to die
-
       # oops, shadowed the convenience method
       def _path
         method_missing(:path)

@@ -11,7 +11,6 @@ module Foobara
         Thread.current[:foobara_current_namespace] || global
       end
 
-      # TODO: eliminate deprecated_namespace and yield instead
       def use(namespace)
         unless namespace.is_a?(Namespace::IsNamespace)
           # :nocov:

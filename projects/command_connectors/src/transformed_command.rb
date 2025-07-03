@@ -1,6 +1,5 @@
 module Foobara
   # TODO: feels so strange that this doesn't inherit from command
-  # TODO: move this to command connectors project
   class TransformedCommand
     class << self
       # TODO: handle errors_transformers!
@@ -752,7 +751,6 @@ module Foobara
       self.outcome = outcome if outcome
     rescue => e
       if capture_unknown_error
-        # TODO: move to superclass?
         self.outcome = Outcome.error(CommandConnector::UnknownError.for(e))
       else
         # :nocov:

@@ -4,7 +4,6 @@ module Foobara
     class NoSuchOrganization < StandardError; end
 
     class << self
-      # TODO: move this to organization.rb
       def to_organization(object)
         case object
         when nil
