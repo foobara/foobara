@@ -1,1 +1,0 @@
-module Foobara::Delegate; end

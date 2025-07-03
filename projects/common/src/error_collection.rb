@@ -1,6 +1,5 @@
 module Foobara
-  # TODO: inherit array instead of delegating
-  class ErrorCollection
+  class ErrorCollection < Array
     class ErrorAlreadySetError < StandardError; end
 
     class << self
@@ -11,12 +10,6 @@ module Foobara
       end
     end
 
-    attr_reader :error_array
-
-    def initialize
-      @error_array = []
-    end
-
     def success?
       empty?
     end
@@ -25,14 +18,12 @@ module Foobara
       !empty?
     end
 
-    foobara_delegate :empty?, :partition, :size, :clear, to: :error_array
-
     def errors
-      error_array
+      self
     end
 
     def each_error(&)
-      error_array.each(&)
+      each(&)
     end
 
     def has_error?(error)
@@ -42,7 +33,7 @@ module Foobara
         # :nocov:
       end
 
-      error_array.include?(error)
+      include?(error)
     end
 
     def add_error(error_or_collection_or_error_hash)
@@ -73,7 +64,7 @@ module Foobara
         raise ErrorAlreadySetError, "cannot set #{error} more than once"
       end
 
-      error_array << error
+      self << error
     end
 
     def add_errors(errors)
@@ -81,17 +72,17 @@ module Foobara
     end
 
     def to_h
-      error_array.to_h do |error|
+      to_h do |error|
         [error.key, error.to_h]
       end
     end
 
     def to_sentence
-      Util.to_sentence(error_array.map(&:message))
+      Util.to_sentence(map(&:message))
     end
 
     def keys
-      error_array.map(&:key)
+      map(&:key)
     end
   end
 end
