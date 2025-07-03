@@ -268,17 +268,6 @@ module Foobara
             end
           end
         end
-
-        # TODO: move to util
-        def _start_with?(large_array, small_array)
-          return false unless large_array.size > small_array.size
-
-          small_array.each.with_index do |item, index|
-            return false unless large_array[index] == item
-          end
-
-          true
-        end
       end
 
       def foobara_namespace!(scoped_path: nil, ignore_modules: nil)
