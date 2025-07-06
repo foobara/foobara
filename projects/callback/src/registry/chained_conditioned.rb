@@ -1,12 +1,10 @@
-Foobara.require_project_file("callback", "registry/conditioned")
+require_relative "joined_conditioned"
 
 module Foobara
   module Callback
     module Registry
       class ChainedConditioned < Conditioned
         attr_accessor :other_conditions_registry
-
-        class InvalidConditions < StandardError; end
 
         foobara_delegate :possible_conditions, :possible_condition_keys, to: :other_conditions_registry
 
