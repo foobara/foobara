@@ -6,6 +6,7 @@ module Foobara
 
         class << self
           def reset_all
+            Foobara.raise_if_production!("reset_all")
             Entity.instance_variable_set("@class_callback_registry", nil)
           end
         end

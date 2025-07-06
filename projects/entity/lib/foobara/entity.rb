@@ -21,6 +21,7 @@ module Foobara
       end
 
       def reset_all
+        Foobara.raise_if_production!("reset_all")
         Entity::Concerns::Callbacks.reset_all
 
         install!

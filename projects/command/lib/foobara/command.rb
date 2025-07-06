@@ -9,6 +9,7 @@ module Foobara
       end
 
       def reset_all
+        Foobara.raise_if_production!("reset_all")
         to_delete = []
 
         all.each do |command_class|

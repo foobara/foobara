@@ -34,6 +34,7 @@ module Foobara
     end
 
     def reset_all
+      Foobara.raise_if_production!("reset_all")
       if self.module.respond_to?(:reset_all)
         self.module.reset_all
       end

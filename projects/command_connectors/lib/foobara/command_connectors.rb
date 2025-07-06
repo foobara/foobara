@@ -24,6 +24,7 @@ module Foobara
       end
 
       def reset_all
+        Foobara.raise_if_production!("reset_all")
         remove_instance_variable("@desugarizer") if defined?(@desugarizer)
         remove_instance_variable("@desugarizers") if defined?(@desugarizers)
       end
