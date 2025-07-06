@@ -1,3 +1,10 @@
+# [0.0.136] - 2025-07-06
+
+- Do not allow calling Foobara.reset_alls in production
+- Fix an error backtrace bug
+- Separate Atom/Aggregate request versus object behavior in precommit transformers
+- Fix busted command-class-level state machine callbacks
+
 # [0.0.135] - 2025-07-01
 
 - Eliminate Monorepo project
