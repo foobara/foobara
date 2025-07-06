@@ -1,15 +1,9 @@
 module Foobara
   module CommandConnectors
     module Transformers
-      class LoadAggregatesPreCommitTransformer < Value::Transformer
-        def applicable?(request)
-          request.command.outcome.success?
-        end
-
-        def transform(request)
-          load_aggregates(request.command.outcome.result)
-
-          request
+      class LoadAggregatesTransformer < Value::Transformer
+        def transform(object)
+          load_aggregates(object)
         end
 
         def load_aggregates(object)

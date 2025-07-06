@@ -1,15 +1,9 @@
 module Foobara
   module CommandConnectors
     module Transformers
-      class LoadAtomsPreCommitTransformer < Value::Transformer
-        def applicable?(request)
-          request.command.outcome.success?
-        end
-
-        def transform(request)
-          load_atoms(request.command.outcome.result)
-
-          request
+      class LoadAtomsTransformer < Value::Transformer
+        def transform(object)
+          load_atoms(object)
         end
 
         def load_atoms(object)
