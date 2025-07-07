@@ -19,10 +19,12 @@ module Foobara
     end
 
     def errors
+      warn "DEPRECATED: Do not call ErrorCollection#errors instead just use the collection directly."
       self
     end
 
     def each_error(&)
+      warn "DEPRECATED: This method will be deprecated in the coming version"
       each(&)
     end
 
@@ -70,6 +72,7 @@ module Foobara
     end
 
     def to_h
+      warn "DEPRECATED: Use #errors_hash instead"
       super do |error|
         [error.key, error.to_h]
       end
