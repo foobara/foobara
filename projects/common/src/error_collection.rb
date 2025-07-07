@@ -71,10 +71,9 @@ module Foobara
       Util.array(errors).each { |error| add_error(error) }
     end
 
-    def to_h
-      warn "DEPRECATED: Use #errors_hash instead"
-      super do |error|
-        [error.key, error.to_h]
+    def errors_hash
+      each_with_object({}) do |error, hash|
+        hash[error.key] = error.to_h
       end
     end
 
@@ -84,6 +83,11 @@ module Foobara
 
     def keys
       map(&:key)
+    end
+
+    def to_h
+      warn "DEPRECATED: Use #errors_hash instead"
+      errors_hash
     end
   end
 end
