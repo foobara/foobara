@@ -1,6 +1,5 @@
 module Foobara
-  # TODO: inherit array instead of delegating
-  class ErrorCollection
+  class ErrorCollection < Array
     class ErrorAlreadySetError < StandardError; end
 
     class << self
@@ -11,12 +10,6 @@ module Foobara
       end
     end
 
-    attr_reader :error_array
-
-    def initialize
-      @error_array = []
-    end
-
     def success?
       empty?
     end
@@ -25,14 +18,14 @@ module Foobara
       !empty?
     end
 
-    foobara_delegate :empty?, :partition, :size, :clear, to: :error_array
-
     def errors
-      error_array
+      warn "DEPRECATED: Do not call ErrorCollection#errors instead just use the collection directly."
+      self
     end
 
     def each_error(&)
-      error_array.each(&)
+      warn "DEPRECATED: This method will be deprecated in the coming version"
+      each(&)
     end
 
     def has_error?(error)
@@ -42,15 +35,13 @@ module Foobara
         # :nocov:
       end
 
-      error_array.include?(error)
+      include?(error)
     end
 
     def add_error(error_or_collection_or_error_hash)
       error = case error_or_collection_or_error_hash
               when Error
                 error_or_collection_or_error_hash
-              when ErrorCollection
-                return add_errors(error_or_collection_or_error_hash.errors)
               when Hash
                 if error_or_collection_or_error_hash.key?(:symbol) &&
                    error_or_collection_or_error_hash.key?(:message)
@@ -73,25 +64,30 @@ module Foobara
         raise ErrorAlreadySetError, "cannot set #{error} more than once"
       end
 
-      error_array << error
+      self << error
     end
 
     def add_errors(errors)
       Util.array(errors).each { |error| add_error(error) }
     end
 
-    def to_h
-      error_array.to_h do |error|
-        [error.key, error.to_h]
+    def errors_hash
+      each_with_object({}) do |error, hash|
+        hash[error.key] = error.to_h
       end
     end
 
     def to_sentence
-      Util.to_sentence(error_array.map(&:message))
+      Util.to_sentence(map(&:message))
     end
 
     def keys
-      error_array.map(&:key)
+      map(&:key)
+    end
+
+    def to_h
+      warn "DEPRECATED: Use #errors_hash instead"
+      errors_hash
     end
   end
 end
