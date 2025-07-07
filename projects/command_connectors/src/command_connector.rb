@@ -116,17 +116,19 @@ module Foobara
       end
     end
 
-    attr_accessor :command_registry, :authenticator, :capture_unknown_error
+    attr_accessor :command_registry, :authenticator, :capture_unknown_error, :aggregate_entities
 
     def initialize(authenticator: nil,
                    capture_unknown_error: nil,
                    default_serializers: nil,
-                   default_pre_commit_transformers: nil)
+                   default_pre_commit_transformers: nil,
+                   aggregate_entities: nil)
       authenticator = self.class.to_authenticator(authenticator)
 
       self.authenticator = authenticator
       self.command_registry = CommandRegistry.new(authenticator:)
       self.capture_unknown_error = capture_unknown_error
+      self.aggregate_entities = aggregate_entities
 
       Util.array(default_serializers).each do |serializer|
         add_default_serializer(serializer)
@@ -341,7 +343,7 @@ module Foobara
           # :nocov:
         end
 
-        command_registry.register(*args, **opts)
+        command_registry.register(*args, **apply_defaults(opts))
       when Module
         if registerable.foobara_organization?
           registerable.foobara_domains.map do |domain|
@@ -362,6 +364,14 @@ module Foobara
         # :nocov:
         raise "Don't know how to register #{registerable} (#{registerable.class})"
         # :nocov:
+      end
+    end
+
+    def apply_defaults(opts)
+      if aggregate_entities.nil? || opts.key?(:aggregate_entities)
+        opts
+      else
+        opts.merge(aggregate_entities:)
       end
     end
 
