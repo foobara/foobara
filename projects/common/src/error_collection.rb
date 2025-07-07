@@ -40,8 +40,6 @@ module Foobara
       error = case error_or_collection_or_error_hash
               when Error
                 error_or_collection_or_error_hash
-              when ErrorCollection
-                return add_errors(error_or_collection_or_error_hash.errors)
               when Hash
                 if error_or_collection_or_error_hash.key?(:symbol) &&
                    error_or_collection_or_error_hash.key?(:message)
