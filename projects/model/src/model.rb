@@ -309,7 +309,7 @@ module Foobara
     end
 
     def validation_errors
-      attributes_type.process_value(attributes).errors
+      attributes_type.process_value(attributes).error_collection
     end
 
     def validate!

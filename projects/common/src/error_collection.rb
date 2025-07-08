@@ -6,7 +6,7 @@ module Foobara
       def to_h(errors)
         new.tap do |collection|
           collection.add_errors(errors)
-        end.to_h
+        end.errors_hash
       end
     end
 
@@ -19,13 +19,17 @@ module Foobara
     end
 
     def errors
+      # :nocov:
       warn "DEPRECATED: Do not call ErrorCollection#errors instead just use the collection directly."
       self
+      # :nocov:
     end
 
     def each_error(&)
+      # :nocov:
       warn "DEPRECATED: This method will be deprecated in the coming version"
       each(&)
+      # :nocov:
     end
 
     def has_error?(error)
@@ -86,8 +90,10 @@ module Foobara
     end
 
     def to_h
+      # :nocov:
       warn "DEPRECATED: Use #errors_hash instead"
       errors_hash
+      # :nocov:
     end
   end
 end

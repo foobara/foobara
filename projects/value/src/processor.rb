@@ -235,7 +235,7 @@ module Foobara
         return old_outcome unless applicable?(value)
 
         process_value(value).tap do |outcome|
-          outcome.add_errors(old_outcome.errors)
+          outcome.add_errors(old_outcome.error_collection)
         end
       end
 

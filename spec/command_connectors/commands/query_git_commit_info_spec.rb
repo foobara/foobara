@@ -14,7 +14,7 @@ RSpec.describe Foobara::CommandConnector::Commands::Ping do
       context "without git_commit_info.json file" do
         it "describes the command" do
           expect(response.status).to be(1)
-          error_hash = response.body.to_h
+          error_hash = response.body.errors_hash
           expect(error_hash.keys).to include("runtime.git_commit_info_file_not_found")
           expect(error_hash["runtime.git_commit_info_file_not_found"][:message]).to include(file_name)
         end

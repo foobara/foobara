@@ -254,7 +254,7 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Entities do
         outcome = read_command.run(employee: employee_id)
         expect(outcome).to_not be_success
 
-        errors = outcome.errors
+        errors = outcome.error_collection
 
         expect(errors.size).to eq(1)
 

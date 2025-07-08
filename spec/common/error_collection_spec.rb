@@ -25,7 +25,7 @@ RSpec.describe Foobara::ErrorCollection do
 
         expect(error_collection).to_not be_empty
         expect(error_collection.size).to eq(1)
-        error = error_collection.errors.first
+        error = error_collection.first
         expect(error).to be_a(Foobara::Error)
         expect(error.is_fatal).to be(true)
         expect(error.symbol).to eq(symbol)
@@ -57,7 +57,7 @@ RSpec.describe Foobara::ErrorCollection do
 
         expect(error_collection).to_not be_empty
         expect(error_collection.size).to eq(1)
-        error = error_collection.errors.first
+        error = error_collection.first
         expect(error).to be_a(Foobara::Error)
         expect(error.symbol).to eq(symbol)
         expect(error.message).to eq(message)

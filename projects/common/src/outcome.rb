@@ -56,29 +56,35 @@ module Foobara
     end
 
     foobara_delegate :has_errors?,
-                     :errors,
-                     :each_error,
                      :has_error?,
                      :add_error,
                      :add_errors,
                      to: :error_collection
+
+    def errors
+      error_collection
+    end
+
+    def each_error(&)
+      error_collection.each(&)
+    end
 
     def success?
       !has_errors?
     end
 
     def fatal?
-      errors.any?(&:fatal?)
+      error_collection.any?(&:fatal?)
     end
 
     def raise!
       return if success?
 
-      error = errors.first
+      error = error_collection.first
       original_backtrace = error.backtrace_when_initialized
 
-      if errors.size > 1
-        error = UnsuccessfulOutcomeError.new(errors)
+      if error_collection.size > 1
+        error = UnsuccessfulOutcomeError.new(error_collection)
       end
 
       error.set_backtrace(original_backtrace)
@@ -93,7 +99,7 @@ module Foobara
     end
 
     def errors_hash
-      error_collection.to_h
+      error_collection.errors_hash
     end
 
     def errors_sentence

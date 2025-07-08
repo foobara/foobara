@@ -11,8 +11,7 @@ module Foobara
         end
 
         def serialize(error_collection)
-          errors = error_collection.errors
-          errors.map(&:to_h)
+          error_collection.map(&:to_h)
         end
       end
     end
