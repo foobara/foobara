@@ -2,6 +2,12 @@ module Foobara
   class AttributesTransformers < TypeDeclarations::TypedTransformer
     class << self
       def reject(*attribute_names)
+        if attribute_names.empty?
+          # :nocov:
+          raise ArgumentError, "You must specify at least one attribute name"
+          # :nocov:
+        end
+
         transformer_class = Class.new(Reject)
         transformer_class.reject_attributes = attribute_names
 

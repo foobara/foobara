@@ -1,4 +1,6 @@
 RSpec.describe Foobara::TypeDeclarations::TypedTransformer do
+  after { Foobara.reset_alls }
+
   describe ".to/.to_type .from/.from_type" do
     context "when .type_declaration is a type" do
       let(:transformer_class) do

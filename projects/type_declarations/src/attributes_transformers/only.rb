@@ -2,10 +2,18 @@ module Foobara
   class AttributesTransformers < TypeDeclarations::TypedTransformer
     class << self
       def only(*attribute_names)
+        if attribute_names.empty?
+          # :nocov:
+          raise ArgumentError, "You must specify at least one attribute name"
+          # :nocov:
+        end
+
         symbol = symbol_for_attribute_names(attribute_names)
         existing = Only.foobara_lookup(symbol, mode: Namespace::LookupMode::DIRECT)
 
-        return existing if existing
+        if existing
+          return existing
+        end
 
         transformer_class = Class.new(Only)
         transformer_class.only_attributes = attribute_names

@@ -91,13 +91,5 @@ RSpec.describe Foobara::AttributesTransformers do
         expect(to_value).to eq({})
       end
     end
-
-    context "when rejecting no attributes" do
-      let(:reject) { [] }
-
-      it "is a no-op" do
-        expect(to_value).to eq(from_value)
-      end
-    end
   end
 end

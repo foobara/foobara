@@ -3,6 +3,12 @@ module Foobara
     class << self
       # TODO: dry this up with a .subclass method in AttributesTransformers?
       def from_yaml(*attribute_names)
+        if attribute_names.empty?
+          # :nocov:
+          raise ArgumentError, "You must specify at least one attribute name"
+          # :nocov:
+        end
+
         symbol = symbol_for_attribute_names(attribute_names)
         existing = FromYaml.foobara_lookup(symbol, mode: Namespace::LookupMode::DIRECT)
 
