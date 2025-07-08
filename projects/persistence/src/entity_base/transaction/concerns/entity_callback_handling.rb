@@ -10,6 +10,7 @@ module Foobara
           module EntityCallbackHandling
             class << self
               def reset_all
+                Foobara.raise_if_production!("reset_all")
                 install!
               end
 

@@ -2,6 +2,7 @@ module Foobara
   module TypeDeclarations
     class << self
       def reset_all
+        Foobara.raise_if_production!("reset_all")
         # TODO: this doesn't really belong here. I think we need to maybe call reset in reverse order?
         Foobara::Domain::DomainModuleExtension.all.each do |domain|
           var = "@foobara_type_builder"

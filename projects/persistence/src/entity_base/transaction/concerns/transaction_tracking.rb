@@ -21,6 +21,7 @@ module Foobara
               end
 
               def reset_all
+                Foobara.raise_if_production!("reset_all")
                 @open_transactions = nil
               end
 
