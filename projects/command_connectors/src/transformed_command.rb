@@ -61,10 +61,17 @@ module Foobara
         end
       end
 
-      foobara_delegate :description,
-                       :domain,
-                       :organization,
-                       to: :command_class
+      def description(...)
+        command_class.description(...)
+      end
+
+      def domain(...)
+        command_class.domain(...)
+      end
+
+      def organization(...)
+        command_class.organization(...)
+      end
 
       def result_transformers
         return @result_transformers if @considered_sensitive_value_remover
@@ -559,19 +566,53 @@ module Foobara
       construct_command
     end
 
-    foobara_delegate :description, to: :command_class
-    foobara_delegate :full_command_name,
-                     :command_name,
-                     :command_class,
-                     :capture_unknown_error,
-                     :inputs_transformers,
-                     :result_transformers,
-                     :errors_transformers,
-                     :pre_commit_transformers,
-                     :serializers,
-                     :allowed_rule,
-                     :authenticator,
-                     to: :class
+    def description(...)
+      command_class.description(...)
+    end
+
+    def full_command_name(...)
+      self.class.full_command_name(...)
+    end
+
+    def command_name(...)
+      self.class.command_name(...)
+    end
+
+    def command_class(...)
+      self.class.command_class(...)
+    end
+
+    def capture_unknown_error(...)
+      self.class.capture_unknown_error(...)
+    end
+
+    def inputs_transformers(...)
+      self.class.inputs_transformers(...)
+    end
+
+    def result_transformers(...)
+      self.class.result_transformers(...)
+    end
+
+    def errors_transformers(...)
+      self.class.errors_transformers(...)
+    end
+
+    def pre_commit_transformers(...)
+      self.class.pre_commit_transformers(...)
+    end
+
+    def serializers(...)
+      self.class.serializers(...)
+    end
+
+    def allowed_rule(...)
+      self.class.allowed_rule(...)
+    end
+
+    def authenticator(...)
+      self.class.authenticator(...)
+    end
 
     def run
       apply_allowed_rule

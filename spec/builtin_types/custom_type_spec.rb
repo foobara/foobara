@@ -58,7 +58,9 @@ RSpec.describe "custom types" do
           ]
         end
 
-        foobara_delegate :sugar_for_complex?, to: :class
+        def sugar_for_complex?(...)
+          self.class.sugar_for_complex?(...)
+        end
       end
 
       stub_class "ComplexTypeDeclarationHandler::SomeDesugarizer", Foobara::TypeDeclarations::Desugarizer do

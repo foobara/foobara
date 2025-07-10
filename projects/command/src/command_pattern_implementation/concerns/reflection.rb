@@ -180,7 +180,9 @@ module Foobara
           end
         end
 
-        foobara_delegate :type_for_declaration, to: :class
+        def type_for_declaration(...)
+          self.class.type_for_declaration(...)
+        end
       end
     end
   end
