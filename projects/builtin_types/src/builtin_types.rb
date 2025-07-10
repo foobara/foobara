@@ -5,8 +5,8 @@ module Foobara
 
   module BuiltinTypes
     class << self
-      def global_type_declaration_handler_registry(...)
-        TypeDeclarations.global_type_declaration_handler_registry(...)
+      def global_type_declaration_handler_registry
+        TypeDeclarations.global_type_declaration_handler_registry
       end
 
       # TODO: break this up
