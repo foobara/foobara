@@ -177,12 +177,25 @@ module Foobara
         self.class.processor_name
       end
 
-      foobara_delegate :error_class,
-                       :error_classes,
-                       :symbol,
-                       :requires_declaration_data?,
-                       :requires_parent_declaration_data?,
-                       to: :class
+      def error_class(...)
+        self.class.error_class(...)
+      end
+
+      def error_classes(...)
+        self.class.error_classes(...)
+      end
+
+      def symbol(...)
+        self.class.symbol(...)
+      end
+
+      def requires_declaration_data?(...)
+        self.class.requires_declaration_data?(...)
+      end
+
+      def requires_parent_declaration_data?(...)
+        self.class.requires_parent_declaration_data?(...)
+      end
 
       # Whoa, forgot this existed. Shouldn't we use this more?
       def runner(value)

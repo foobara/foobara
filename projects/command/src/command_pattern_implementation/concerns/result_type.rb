@@ -22,7 +22,13 @@ module Foobara
           end
         end
 
-        foobara_delegate :result_type, :raw_result_type_declaration, to: :class
+        def result_type(...)
+          self.class.result_type(...)
+        end
+
+        def raw_result_type_declaration(...)
+          self.class.raw_result_type_declaration(...)
+        end
       end
     end
   end

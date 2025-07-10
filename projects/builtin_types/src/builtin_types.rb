@@ -5,7 +5,9 @@ module Foobara
 
   module BuiltinTypes
     class << self
-      foobara_delegate :global_type_declaration_handler_registry, to: TypeDeclarations
+      def global_type_declaration_handler_registry(...)
+        TypeDeclarations.global_type_declaration_handler_registry(...)
+      end
 
       # TODO: break this up
       # TODO: much of this behavior is helpful to non-builtin types as well.

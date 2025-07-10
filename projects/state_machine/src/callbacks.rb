@@ -9,14 +9,33 @@ module Foobara
         self.callback_registry = Callback::Registry::ChainedConditioned.new(self.class.class_callback_registry)
       end
 
-      foobara_delegate :callbacks_for,
-                       :has_callbacks?,
-                       :has_before_callbacks?,
-                       :has_after_callbacks?,
-                       :has_around_callbacks?,
-                       :has_error_callbacks?,
-                       :has_failure_callbacks?,
-                       to: :callback_registry
+      def callbacks_for(...)
+        callback_registry.callbacks_for(...)
+      end
+
+      def has_callbacks?(...)
+        callback_registry.has_callbacks?(...)
+      end
+
+      def has_before_callbacks?(...)
+        callback_registry.has_before_callbacks?(...)
+      end
+
+      def has_after_callbacks?(...)
+        callback_registry.has_after_callbacks?(...)
+      end
+
+      def has_around_callbacks?(...)
+        callback_registry.has_around_callbacks?(...)
+      end
+
+      def has_error_callbacks?(...)
+        callback_registry.has_error_callbacks?(...)
+      end
+
+      def has_failure_callbacks?(...)
+        callback_registry.has_failure_callbacks?(...)
+      end
 
       def register_transition_callback(type, **, &)
         callback_registry.register_callback(type, **, &)

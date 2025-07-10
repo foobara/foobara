@@ -6,7 +6,13 @@ module Foobara
       class ChainedConditioned < Conditioned
         attr_accessor :other_conditions_registry
 
-        foobara_delegate :possible_conditions, :possible_condition_keys, to: :other_conditions_registry
+        def possible_conditions(...)
+          other_conditions_registry.possible_conditions(...)
+        end
+
+        def possible_condition_keys(...)
+          other_conditions_registry.possible_condition_keys(...)
+        end
 
         def initialize(other_conditions_registry)
           self.other_conditions_registry = other_conditions_registry

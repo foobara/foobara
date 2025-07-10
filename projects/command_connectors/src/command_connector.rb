@@ -145,19 +145,53 @@ module Foobara
       self.class.find_builtin_command_class(command_class_name)
     end
 
-    foobara_delegate :add_default_inputs_transformer,
-                     :add_default_result_transformer,
-                     :add_default_errors_transformer,
-                     :add_default_pre_commit_transformer,
-                     :add_default_serializer,
-                     :add_default_response_mutator,
-                     :allowed_rule,
-                     :allowed_rules,
-                     :transform_command_class,
-                     :transformed_command_from_name,
-                     :each_transformed_command_class,
-                     :all_transformed_command_classes,
-                     to: :command_registry
+    def add_default_inputs_transformer(...)
+      command_registry.add_default_inputs_transformer(...)
+    end
+
+    def add_default_result_transformer(...)
+      command_registry.add_default_result_transformer(...)
+    end
+
+    def add_default_errors_transformer(...)
+      command_registry.add_default_errors_transformer(...)
+    end
+
+    def add_default_pre_commit_transformer(...)
+      command_registry.add_default_pre_commit_transformer(...)
+    end
+
+    def add_default_serializer(...)
+      command_registry.add_default_serializer(...)
+    end
+
+    def add_default_response_mutator(...)
+      command_registry.add_default_response_mutator(...)
+    end
+
+    def allowed_rule(...)
+      command_registry.allowed_rule(...)
+    end
+
+    def allowed_rules(...)
+      command_registry.allowed_rules(...)
+    end
+
+    def transform_command_class(...)
+      command_registry.transform_command_class(...)
+    end
+
+    def transformed_command_from_name(...)
+      command_registry.transformed_command_from_name(...)
+    end
+
+    def each_transformed_command_class(...)
+      command_registry.each_transformed_command_class(...)
+    end
+
+    def all_transformed_command_classes(...)
+      command_registry.all_transformed_command_classes(...)
+    end
 
     def lookup_command(name)
       command_registry.foobara_lookup_command(name)

@@ -14,7 +14,9 @@ module Foobara
           self.tables = {}
         end
 
-        foobara_delegate :entity_attributes_crud_driver, to: :entity_base
+        def entity_attributes_crud_driver(...)
+          entity_base.entity_attributes_crud_driver(...)
+        end
 
         def create(entity_class, attributes = {})
           Persistence.to_base(entity_class).transaction(existing_transaction: self) do
