@@ -251,6 +251,8 @@ module Foobara
               next if Foobara::Util.start_with?(parent.scoped_full_path, mod.scoped_full_path)
             end
 
+            next if scoped.scoped_full_path == mod.scoped_full_path
+
             if Foobara::Util.start_with?(scoped.scoped_full_path, mod.scoped_full_path)
               scoped.scoped_path = scoped.scoped_full_path[mod.scoped_full_path.size..]
 

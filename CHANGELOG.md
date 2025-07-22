@@ -1,3 +1,12 @@
+# [0.0.137] - 2025-07-22
+
+- Fix bug where update_children_with_new_parent processes a scoped with itself
+- Don't double-create Reject inputs transformers
+- Fix description bug when transforming an entity to its primary key type
+- Add .raise_if_production method to all uses of reset_all(s)
+- Move the start_with? method another repository
+- Prevent attributes transformers without attributes
+
 # [0.0.136] - 2025-07-06
 
 - Do not allow calling Foobara.reset_alls in production
