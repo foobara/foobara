@@ -96,6 +96,18 @@ RSpec.describe Foobara::CommandConnectors::Transformers::EntityToPrimaryKeyInput
     end
   end
 
+  describe "#to_type" do
+    context "when it is :allow_nil" do
+      let(:type) do
+        Foobara::GlobalDomain.foobara_type_from_declaration(some_entity_class, :allow_nil)
+      end
+
+      it "carries over the allow_nil processor" do
+        expect(transformer.to_type.declaration_data).to eq(type: :SomeEntity, allow_nil: true)
+      end
+    end
+  end
+
   describe "#transform" do
     it "gives what was passed in because we expect this data to be cast where needed" do
       expect(transformer.transform(value)).to eq(

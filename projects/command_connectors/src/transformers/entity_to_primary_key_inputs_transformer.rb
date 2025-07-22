@@ -52,12 +52,18 @@ module Foobara
 
               unless to_type.extends_directly?(Foobara::BuiltinTypes[:detached_entity]) ||
                      to_type.extends_directly?(Foobara::BuiltinTypes[:entity])
+
                 description = [
                   description,
-                  to_type.description
+                  *to_type.description
                 ].join(" : ")
               end
+
               declaration[:description] = description
+
+              if to_type.declaration_data.key?(:allow_nil)
+                declaration[:allow_nil] = to_type.declaration_data[:allow_nil]
+              end
 
               declaration
             elsif to_type.extends?(Foobara::BuiltinTypes[:model])
