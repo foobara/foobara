@@ -8,6 +8,11 @@ module Foobara
           # :nocov:
         end
 
+        symbol = symbol_for_attribute_names(attribute_names)
+        existing = Reject.foobara_lookup(symbol, mode: Namespace::LookupMode::DIRECT)
+
+        return existing if existing
+
         transformer_class = Class.new(Reject)
         transformer_class.reject_attributes = attribute_names
 
