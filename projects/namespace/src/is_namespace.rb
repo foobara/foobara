@@ -74,6 +74,20 @@ module Foobara
         foobara_parent_namespace.nil?
       end
 
+      def to_scoped(scopedish)
+        if scopedish.is_a?(::String) || scopedish.is_a?(::Symbol) || scopedish.is_a?(::Array)
+          scopedish = foobara_lookup(scopedish)
+
+          unless scopedish
+            # :nocov:
+            raise ArgumentError, "Cannot unregister non-existent #{scopedish}"
+            # :nocov:
+          end
+        end
+
+        scopedish
+      end
+
       def foobara_register(scoped)
         foobara_registry.register(scoped)
         # awkward??
@@ -89,6 +103,8 @@ module Foobara
       end
 
       def foobara_unregister(scoped)
+        scoped = to_scoped(scoped)
+
         foobara_registry.unregister(scoped)
         foobara_children.delete(scoped)
         scoped.scoped_namespace = nil

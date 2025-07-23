@@ -1,3 +1,7 @@
+# [0.0.138] - 2025-07-23
+
+- Allow #foobara_unregister by symbol, string, or array path
+
 # [0.0.137] - 2025-07-22
 
 - Fix bug where update_children_with_new_parent processes a scoped with itself

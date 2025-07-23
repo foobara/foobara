@@ -125,6 +125,21 @@ RSpec.describe Foobara::Domain do
     end
   end
 
+  describe ".foobara_unregister" do
+    let(:type_symbol) { :some_type }
+    let(:type_declaration) { [:string, :downcase] }
+
+    it "creates and registers a type and puts it on the Types module" do
+      domain.foobara_register_type(type_symbol, *type_declaration)
+
+      expect {
+        domain.foobara_unregister([type_symbol])
+      }.to change {
+        domain.foobara_registered?(type_symbol)
+      }.from(true).to(false)
+    end
+  end
+
   describe ".foobara_register_type" do
     let(:type_symbol) { :some_type }
     let(:type_declaration) { [:string, :downcase] }
