@@ -1,3 +1,8 @@
+# [0.0.139] - 2025-07-23
+
+- Add back an ErrorCollection method that some external projects depend on
+- Allow reset_all to be called when it's part of install!'s implementation
+
 # [0.0.138] - 2025-07-23
 
 - Allow #foobara_unregister by symbol, string, or array path
