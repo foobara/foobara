@@ -1,3 +1,8 @@
+# [0.0.140] - 2025-07-25
+
+- Support result :array, &block style for declaring result type
+- Fix bug preventing using lambdas in attributes DSL
+
 # [0.0.139] - 2025-07-23
 
 - Add back an ErrorCollection method that some external projects depend on

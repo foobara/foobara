@@ -6,13 +6,15 @@ module Foobara
       # TODO: relocate these to a different file
       def args_to_type_declaration(*args, &block)
         if block
-          unless args.empty?
+          if args.empty? || args == [:attributes]
+            block
+          elsif args == [:array]
+            { type: :array, element_type_declaration: block }
+          else
             # :nocov:
-            raise ArgumentError, "Cannot provide both block and declaration"
+            raise ArgumentError, "Cannot provide both block and declaration of #{args}"
             # :nocov:
           end
-
-          block
         else
           case args.size
           when 0

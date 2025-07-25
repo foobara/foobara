@@ -49,6 +49,7 @@ RSpec.describe Foobara::Namespace::NamespaceHelpers do
       parent_module
       stub_module("ParentModule::ChildModule") do
         extend Foobara::Scoped
+
         foobara_autoset_scoped_path!
         Foobara::GlobalDomain.foobara_register(self)
       end
