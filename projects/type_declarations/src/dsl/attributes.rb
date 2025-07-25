@@ -46,7 +46,7 @@ module Foobara
         attr_accessor :_method_missing_disabled
 
         def _to_declaration(&)
-          instance_eval(&)
+          instance_exec(&)
           _type_declaration
         end
 
