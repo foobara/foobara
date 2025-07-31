@@ -4,6 +4,13 @@ module Foobara
   module TypeDeclarations
     module SensitiveTypeRemovers
       class Attributes < SensitiveTypeRemover
+        def applicable?(strict_type_declaration)
+          return false unless super
+
+          element_type_declarations = strict_type_declaration[:element_type_declarations]
+          element_type_declarations && !element_type_declarations.empty?
+        end
+
         def transform(strict_type_declaration)
           to_change = {}
           to_remove = []

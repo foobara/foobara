@@ -193,6 +193,7 @@ RSpec.describe Foobara::Manifest do
     expect(attributes.attribute_declarations[:ratings]).to be_array
     expect(attributes.attribute_declarations[:ratings].element_type.type).to eq(:integer)
     expect(attributes.attribute_declarations[:phone].allows_nil?).to be(true)
+    expect(attributes.has_attribute_declarations?).to be(true)
 
     attribute = attributes.attribute_declarations[:ratings]
     expect(attribute).to be_attribute

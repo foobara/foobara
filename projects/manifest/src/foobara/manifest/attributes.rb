@@ -3,7 +3,7 @@ require_relative "type_declaration"
 module Foobara
   module Manifest
     class Attributes < TypeDeclaration
-      optional_keys :required, :defaults
+      optional_keys :required, :defaults, :element_type_declarations
 
       alias attributes_manifest relevant_manifest
 
@@ -17,6 +17,10 @@ module Foobara
 
       def default_for(attribute_name)
         DataPath.value_at([:defaults, attribute_name], attributes_manifest)
+      end
+
+      def has_attribute_declarations?
+        !element_type_declarations.nil?
       end
 
       def attribute_declarations
