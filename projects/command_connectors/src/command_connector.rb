@@ -628,7 +628,7 @@ module Foobara
                            fixed_scoped_path = error.scoped_full_path[index..]
                            fixed_scoped_name = fixed_scoped_path.join("::")
                            fixed_scoped_prefix = fixed_scoped_path[..-2]
-                           fixed_parent = [:domain, domain.full_domain_name]
+                           fixed_parent = [:domain, domain.reference]
 
                            error.relevant_manifest.merge(
                              parent: fixed_parent,
