@@ -72,11 +72,11 @@ module Foobara
               possible_errors:,
               depends_on:,
               # TODO: allow inputs type to be nil or really any type?
-              inputs_type: inputs_type&.reference_or_declaration_data || {
+              inputs_type: inputs_type&.reference_or_declaration_data || GlobalDomain.foobara_type_from_declaration(
                 type: "::attributes",
                 element_type_declarations: {},
                 required: []
-              }
+              ).declaration_data
             ).merge(description:)
 
             if result_type

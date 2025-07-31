@@ -1,3 +1,9 @@
+# [0.0.141] - 2025-07-31
+
+- Fix bug returning a non-strict type declaration in the command connector manifest
+- Support using :attributes as a type to permit anything with symbolizable keys
+- Fix buggy global domain in command connector manifest
+
 # [0.0.140] - 2025-07-25
 
 - Support result :array, &block style for declaring result type
