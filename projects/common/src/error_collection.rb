@@ -27,7 +27,7 @@ module Foobara
 
     def error_array
       # :nocov:
-      warn "DEPRECATED: Do not call ErrorCollection#errors instead just use the collection directly."
+      warn "DEPRECATED: Do not call ErrorCollection#error_array instead just use the collection directly."
       self
       # :nocov:
     end
