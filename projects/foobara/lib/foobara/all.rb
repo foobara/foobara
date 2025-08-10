@@ -5,7 +5,7 @@ require "foobara"
 Foobara::Util.require_directory "#{__dir__}/../../src"
 
 module Foobara
-  # TODO: delete this but deprecate it for now to not break other projects
+  # TODO: deprecate this somehow?
   Monorepo = Foobara
 
   module All
@@ -16,6 +16,8 @@ module Foobara
   # could be independent projects
   projects "delegate", # Let's just kill delegate
            "concerns",
+           # This doesn't really seem to be generic because it has an odd use-case
+           # of needing to update entities when they acquire a primary key.
            "weak_object_set",
            "enumerated",
            "callback",
@@ -33,6 +35,7 @@ module Foobara
            "builtin_types",
            "model",
            "detached_entity",
+           # Want to get entity into its own repository with presistence, hmmm...
            "entity",
            "model_attribute_helpers",
            "nested_transactionable",

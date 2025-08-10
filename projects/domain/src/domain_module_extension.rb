@@ -366,9 +366,10 @@ module Foobara
                 model_module:,
                 attributes_declaration: attributes_type_declaration,
                 primary_key:,
-                description:,
-                _desugarized: { type_absolutified: true }
-              )
+                description:
+              ).tap do |h|
+                h.extend(TypeDeclarations::TypeAbsolutified)
+              end
             )
 
             entity_type.target_class
