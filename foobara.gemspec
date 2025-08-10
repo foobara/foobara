@@ -28,9 +28,9 @@ Gem::Specification.new do |spec|
   spec.require_paths = Dir.glob("./projects/*/lib", base: __dir__)
 
   spec.add_dependency "bigdecimal"
-  spec.add_dependency "foobara-lru-cache", "~> 0.0.2"
-  spec.add_dependency "foobara-util", ">= 1.0.0"
-  spec.add_dependency "inheritable-thread-vars", "~> 0.0.1"
+  spec.add_dependency "foobara-lru-cache", "< 2.0.0"
+  spec.add_dependency "foobara-util", "< 2.0.0"
+  spec.add_dependency "inheritable-thread-vars", "< 2.0.0"
 
   # For more information and examples about making a new gem, check out our
   # guide at: https://bundler.io/guides/creating_gem.html

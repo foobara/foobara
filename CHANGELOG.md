@@ -1,3 +1,7 @@
+# [0.0.142] - 2025-08-10
+
+- Add LruCache to IsNamespace to speed up lookups
+
 # [0.0.141] - 2025-07-31
 
 - Fix bug returning a non-strict type declaration in the command connector manifest
