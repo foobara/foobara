@@ -7,10 +7,9 @@ module Foobara
         class ShortTypeNameDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(sugary_type_declaration)
             return false if TypeDeclarations.strict_stringified? || TypeDeclarations.strict?
+            return false unless sugary_type_declaration.is_a?(::Hash)
 
             sugary_type_declaration = sugary_type_declaration.dup
-
-            return false unless sugary_type_declaration.is_a?(::Hash)
 
             sugary_type_declaration = normalize_type(sugary_type_declaration)
 
