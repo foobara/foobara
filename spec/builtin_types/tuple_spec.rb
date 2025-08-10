@@ -27,6 +27,18 @@ RSpec.describe ":tuple" do
           size: 2
         )
       end
+
+      context "when array sugar contains a Type" do
+        let(:type_declaration) { [:string, Foobara::BuiltinTypes[:integer], :symbol] }
+
+        it "converts to strict type declaration successfully" do
+          expect(type.declaration_data).to eq(
+            type: :tuple,
+            element_type_declarations: [{ type: :string }, { type: :integer }, { type: :symbol }],
+            size: 3
+          )
+        end
+      end
     end
 
     describe "#possible_errors" do

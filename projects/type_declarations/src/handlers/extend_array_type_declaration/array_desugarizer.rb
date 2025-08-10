@@ -17,9 +17,14 @@ module Foobara
             unless sugary_type_declaration.empty?
               element_type_declaration = sugary_type_declaration.first
 
-              handler = type_declaration_handler_for(element_type_declaration)
+              element_type_declaration = if element_type_declaration.is_a?(Types::Type)
+                                           element_type_declaration.reference_or_declaration_data
+                                         else
+                                           handler = type_declaration_handler_for(element_type_declaration)
+                                           handler.desugarize(element_type_declaration)
+                                         end
 
-              strict_type_declaration[:element_type_declaration] = handler.desugarize(element_type_declaration)
+              strict_type_declaration[:element_type_declaration] = element_type_declaration
             end
 
             strict_type_declaration

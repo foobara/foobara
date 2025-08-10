@@ -19,8 +19,12 @@ module Foobara
           def desugarize(sugary_type_declaration)
             sugar = sugary_type_declaration[:element_type_declaration]
 
-            handler = type_declaration_handler_for(sugar)
-            strict = handler.desugarize(sugar)
+            strict = if sugar.is_a?(Types::Type)
+                       sugar.reference_or_declaration_data
+                     else
+                       handler = type_declaration_handler_for(sugar)
+                       handler.desugarize(sugar)
+                     end
 
             sugary_type_declaration[:element_type_declaration] = strict
 

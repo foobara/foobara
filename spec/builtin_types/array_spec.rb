@@ -90,21 +90,51 @@ RSpec.describe ":array" do
     end
   end
 
-  context "when extending with an array literal and a description" do
-    let(:type_declaration) do
-      { type: [:string], description: "An array of strings", sensitive: true, sensitive_exposed: true }
-    end
-
+  context "when using a type declaration" do
     let(:type) do
       Foobara::Domain.current.foobara_type_from_declaration(type_declaration)
     end
 
-    it "has the description and is an array type as expected" do
-      expect(type.extends?(:array)).to be(true)
-      expect(type.description).to eq("An array of strings")
-      expect(type).to be_sensitive
-      expect(type).to be_sensitive_exposed
-      expect(type.process_value!([:foo, 1])).to eq(["foo", "1"])
+    context "when extending with an array literal and a description" do
+      let(:type_declaration) do
+        { type: [:string], description: "An array of strings", sensitive: true, sensitive_exposed: true }
+      end
+
+      it "has the description and is an array type as expected" do
+        expect(type.extends?(:array)).to be(true)
+        expect(type.description).to eq("An array of strings")
+        expect(type).to be_sensitive
+        expect(type).to be_sensitive_exposed
+        expect(type.process_value!([:foo, 1])).to eq(["foo", "1"])
+      end
+    end
+
+    context "when element type declaration is a Type" do
+      let(:type_declaration) do
+        { type: :array, element_type_declaration: Foobara::BuiltinTypes[:integer] }
+      end
+
+      it "creates the expected type" do
+        s = type.process_value!(["1", "2"])
+        expect(s).to eq([1, 2])
+
+        outcome = type.process_value(["asdf"])
+        expect(outcome).to_not be_success
+      end
+    end
+
+    context "when using array sugar of a Type" do
+      let(:type_declaration) do
+        [Foobara::BuiltinTypes[:integer]]
+      end
+
+      it "creates the expected type" do
+        s = type.process_value!(["1", "2"])
+        expect(s).to eq([1, 2])
+
+        outcome = type.process_value(["asdf"])
+        expect(outcome).to_not be_success
+      end
     end
   end
 end
