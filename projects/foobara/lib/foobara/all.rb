@@ -34,13 +34,13 @@ module Foobara
            "model",
            "detached_entity",
            "entity",
-           "model_attribute_helpers",
+           "persistence",
            "nested_transactionable",
-           "command",
-           "domain_mapper",
-           "persistence", # Feels like this would be loaded before command?
+           "model_attribute_helpers",
            "in_memory_crud_driver_minimal",
            "in_memory_crud_driver",
+           "command",
+           "domain_mapper",
            "manifest"
 
   install!
