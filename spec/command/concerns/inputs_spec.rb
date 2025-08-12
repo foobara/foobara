@@ -28,6 +28,8 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Runtime do
 
   let(:command) { command_class.new(inputs) }
   let(:inputs) { { base: 4, exponent: 3 } }
+  let(:outcome) { command.run }
+  let(:result) { outcome.result }
 
   describe ".raw_inputs_type_declaration" do
     subject { command_class.raw_inputs_type_declaration }
@@ -78,6 +80,32 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Runtime do
 
     it "gives convenient access to the inputs" do
       expect(command.run!).to eq(4 ** 3)
+    end
+  end
+
+  context "when add_inputs is called when there are no inputs yet" do
+    let(:command_class) do
+      stub_class(:CalculateInputs, Foobara::Model) do
+        attributes do
+          base :integer
+          exponent :integer
+        end
+      end
+      stub_class(:CalculateExponent, Foobara::Command) do
+        add_inputs do
+          base :integer, :required
+          exponent :integer, :required
+        end
+
+        def execute
+          base ** exponent
+        end
+      end
+    end
+
+    it "stills work as if inputs were empty" do
+      expect(outcome).to be_success
+      expect(result).to eq(64)
     end
   end
 end

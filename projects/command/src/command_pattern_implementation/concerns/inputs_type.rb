@@ -26,13 +26,17 @@ module Foobara
           end
 
           def add_inputs(...)
-            new_type = type_for_declaration(...)
-            new_declaration = TypeDeclarations::Attributes.merge(
-              inputs_type.declaration_data,
-              new_type.declaration_data
-            )
+            if inputs_type
+              new_type = type_for_declaration(...)
+              new_declaration = TypeDeclarations::Attributes.merge(
+                inputs_type.declaration_data,
+                new_type.declaration_data
+              )
 
-            inputs new_declaration
+              inputs new_declaration
+            else
+              inputs(...)
+            end
           end
 
           def inputs_type
