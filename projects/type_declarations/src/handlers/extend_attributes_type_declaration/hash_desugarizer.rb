@@ -7,18 +7,27 @@ module Foobara
       class ExtendAttributesTypeDeclaration < ExtendAssociativeArrayTypeDeclaration
         class HashDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(sugary_type_declaration)
-            return false unless sugary_type_declaration.is_a?(::Hash)
-            return false unless Util.all_symbolizable_keys?(sugary_type_declaration)
+            return false if sugary_type_declaration.strict?
+            return false unless sugary_type_declaration.hash?
 
-            sugary_type_declaration = Util.symbolize_keys(sugary_type_declaration)
+            type_symbol = if sugary_type_declaration.key?(:type)
+                            sugary_type_declaration[:type]
+                          elsif sugary_type_declaration.key?("type")
+                            sugary_type_declaration["type"]
+                          else
+                            return false
+                          end
 
-            return true unless sugary_type_declaration.key?(:type)
+            if type_symbol.is_a?(::String)
+              type_symbol = type_symbol.to_sym
+            end
 
-            type_symbol = sugary_type_declaration[:type]
-
-            if [:attributes, "attributes"].include?(type_symbol)
-              sugary_type_declaration.key?(:element_type_declarations) &&
+            if :attributes == type_symbol
+              if sugary_type_declaration.key?(:element_type_declarations)
                 Util.all_symbolizable_keys?(sugary_type_declaration[:element_type_declarations])
+              elsif sugary_type_declaration.key?("element_type_declarations")
+                Util.all_symbolizable_keys?(sugary_type_declaration["element_type_declarations"])
+              end
             elsif type_symbol.is_a?(::Symbol)
               # Why is this done?
               !type_registered?(type_symbol)
@@ -26,20 +35,22 @@ module Foobara
           end
 
           def desugarize(sugary_type_declaration)
-            sugary_type_declaration = Util.deep_dup(sugary_type_declaration)
+            sugary_type_declaration.symbolize_keys!
 
-            Util.symbolize_keys!(sugary_type_declaration)
+            unless sugary_type_declaration.deep_duped?
+              sugary_type_declaration.declaration_data.transform_values! do |value|
+                Util.deep_dup(value)
+              end
 
-            unless strictish_type_declaration?(sugary_type_declaration)
-              sugary_type_declaration = {
-                type: :attributes,
-                _desugarized: { type_absolutified: true },
-                element_type_declarations: sugary_type_declaration
-              }
-
+              sugary_type_declaration.is_deep_duped = true
             end
 
-            Util.symbolize_keys!(sugary_type_declaration[:element_type_declarations])
+            unless strictish_type_declaration?(sugary_type_declaration)
+              sugary_type_declaration.declaration_data = {
+                type: :attributes,
+                element_type_declarations: sugary_type_declaration.declaration_data
+              }
+            end
 
             sugary_type_declaration
           end

@@ -30,6 +30,9 @@ module Foobara
       declaration_data[key]
     end
 
+    def proc? = declaration_data.is_a?(::Proc)
+    def to_proc = declaration_data
+
     def []=(key, value)
       unless duped?
         self.declaration_data = declaration_data.dup
