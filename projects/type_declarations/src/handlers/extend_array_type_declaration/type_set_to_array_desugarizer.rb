@@ -7,7 +7,7 @@ module Foobara
         # TODO: make a quick way to convert a couple simple procs into a transformer
         class TypeSetToArrayDesugarizer < ArrayDesugarizer
           def applicable?(sugary_type_declaration)
-            if sugary_type_declaration.is_a?(::Hash) && sugary_type_declaration.key?(:type)
+            if sugary_type_declaration.hash? && sugary_type_declaration.key?(:type)
               extra_keys = sugary_type_declaration.keys - [:type, :description, :sensitive, :sensitive_exposed]
 
               return false if extra_keys.any?
@@ -15,13 +15,27 @@ module Foobara
               type = sugary_type_declaration[:type]
 
               if type.is_a?(::Array)
-                super(type)
+                declaration = TypeDeclaration.new(type)
+
+                if sugary_type_declaration.deep_duped?
+                  declaration.is_deep_duped = true
+                  declaration.is_duped = true
+                end
+
+                super(declaration)
               end
             end
           end
 
           def desugarize(sugary_type_declaration)
-            strict_type_declaration = super(sugary_type_declaration[:type])
+            strict_type_declaration = TypeDeclaration.new(sugary_type_declaration[:type])
+
+            if sugary_type_declaration.deep_duped?
+              strict_type_declaration.is_deep_duped = true
+              strict_type_declaration.is_duped = true
+            end
+
+            strict_type_declaration = super(strict_type_declaration)
 
             if sugary_type_declaration.key?(:description)
               strict_type_declaration[:description] = sugary_type_declaration[:description]
