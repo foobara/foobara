@@ -635,7 +635,7 @@ module Foobara
     end
 
     def transform_errors
-      if errors_transformer
+      if errors_transformer&.applicable?(errors)
         self.outcome = Outcome.errors(errors_transformer.process_value!(errors))
       end
     end

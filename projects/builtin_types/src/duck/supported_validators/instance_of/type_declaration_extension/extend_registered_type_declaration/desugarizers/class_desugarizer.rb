@@ -8,11 +8,19 @@ module Foobara
               module Desugarizers
                 class ClassDesugarizer < TypeDeclarations::Desugarizer
                   def applicable?(rawish_type_declaration)
-                    rawish_type_declaration.is_a?(::Class)
+                    rawish_type_declaration.class?
                   end
 
                   def desugarize(rawish_type_declaration)
-                    { type: :duck, instance_of: rawish_type_declaration.name }
+                    rawish_type_declaration.declaration_data = {
+                      type: :duck,
+                      instance_of: rawish_type_declaration.declaration_data.name
+                    }
+                    rawish_type_declaration.is_strict = true
+                    rawish_type_declaration.is_deep_duped = true
+                    rawish_type_declaration.is_duped = true
+
+                    rawish_type_declaration
                   end
 
                   def priority

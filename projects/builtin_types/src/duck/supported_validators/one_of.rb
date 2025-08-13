@@ -25,6 +25,7 @@ module Foobara
           end
 
           def applicable?(value)
+            binding.pry if value.is_a?(TypeDeclaration)
             # Might there be some way this validator could be marked not-applicable that doesn't require coupling
             # this processor to allow_nil? (or vice-versa)
             !value.nil? || !parent_declaration_data[:allow_nil]

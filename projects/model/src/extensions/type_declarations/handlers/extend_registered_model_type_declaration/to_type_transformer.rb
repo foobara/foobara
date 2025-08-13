@@ -14,7 +14,16 @@ module Foobara
           end
 
           def declaration_to_type(strict_type_declaration)
-            type_for_declaration(strict_type_declaration[:type])
+            type = strict_type_declaration.type
+            return type if type
+
+            type = type_for_declaration(strict_type_declaration[:type])
+
+            if type
+              strict_type_declaration.type = type
+            end
+
+            type
           end
         end
       end

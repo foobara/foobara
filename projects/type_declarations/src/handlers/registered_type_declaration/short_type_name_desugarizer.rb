@@ -30,6 +30,8 @@ module Foobara
             # maybe confusing in languages with no distinction between symbol and string?
             sugary_type_declaration[:type] = type.full_type_symbol
             sugary_type_declaration.is_absolutified = true
+
+            sugary_type_declaration
           end
 
           def priority

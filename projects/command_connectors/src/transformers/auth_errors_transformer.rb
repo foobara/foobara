@@ -20,6 +20,7 @@ module Foobara
             map
           end
         end
+
         def applicable?(_request)
           false
         end

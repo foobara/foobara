@@ -93,9 +93,9 @@ module Foobara
       end
 
       def process_value(raw_type_declaration)
-        # TODO: deep_dup this again??
         super.tap do |type_outcome|
           if type_outcome.success?
+            # TODO: do we really need to hold on to this raw_declaration_data ?
             type_outcome.result.raw_declaration_data = raw_type_declaration
           end
         end
@@ -103,16 +103,25 @@ module Foobara
 
       def desugarizer
         # TODO: memoize this?
-        Value::Processor::Pipeline.new(processors: desugarizers)
+        DesugarizerPipeline.new(processors: desugarizers)
       end
 
       def desugarize(value)
-        type_declaration = desugarizer.process_value!(value)
-        type_declaration.is_strict = true
-        type_declaration
+        unless value.strict?
+          if desugarizer.applicable?(value)
+            value = desugarizer.process_value!(value)
+            value.is_strict = true
+          end
+        end
+
+        value
+      rescue => e
+        binding.pry
+        raise
       end
 
       def type_declaration_validator
+        # TODO: memoize this
         Value::Processor::Pipeline.new(processors: type_declaration_validators)
       end
 

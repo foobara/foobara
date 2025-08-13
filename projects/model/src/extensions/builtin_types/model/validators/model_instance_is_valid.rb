@@ -14,6 +14,7 @@ module Foobara
           end
 
           def applicable?(model_instance)
+            binding.pry if model_instance.is_a?(TypeDeclaration)
             model_instance && !model_instance.skip_validations
           end
 

@@ -7,6 +7,7 @@ module Foobara
       class ExtendAttributesTypeDeclaration < ExtendAssociativeArrayTypeDeclaration
         class HashDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(sugary_type_declaration)
+            binding.pry if $stop
             return false if sugary_type_declaration.strict?
             return false unless sugary_type_declaration.hash?
 
@@ -14,9 +15,11 @@ module Foobara
                             sugary_type_declaration[:type]
                           elsif sugary_type_declaration.key?("type")
                             sugary_type_declaration["type"]
-                          else
-                            return false
                           end
+
+            unless type_symbol
+              return sugary_type_declaration.all_symbolizable_keys?
+            end
 
             if type_symbol.is_a?(::String)
               type_symbol = type_symbol.to_sym
@@ -37,19 +40,13 @@ module Foobara
           def desugarize(sugary_type_declaration)
             sugary_type_declaration.symbolize_keys!
 
-            unless sugary_type_declaration.deep_duped?
-              sugary_type_declaration.declaration_data.transform_values! do |value|
-                Util.deep_dup(value)
-              end
-
-              sugary_type_declaration.is_deep_duped = true
-            end
-
             unless strictish_type_declaration?(sugary_type_declaration)
               sugary_type_declaration.declaration_data = {
                 type: :attributes,
                 element_type_declarations: sugary_type_declaration.declaration_data
               }
+              sugary_type_declaration.is_absolutified = true
+              sugary_type_declaration.is_duped = true
             end
 
             sugary_type_declaration
@@ -62,8 +59,9 @@ module Foobara
           private
 
           def strictish_type_declaration?(hash)
-            keys = hash.keys.map(&:to_sym)
-            keys.include?(:type) && keys.include?(:element_type_declarations)
+            if hash.key?(:type) || hash.key?("type")
+              hash.key?(:element_type_declarations) || hash.key?("element_type_declarations")
+            end
           end
         end
       end

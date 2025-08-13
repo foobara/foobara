@@ -8,7 +8,8 @@ module Foobara
         class TypeSetToArrayDesugarizer < ArrayDesugarizer
           def applicable?(sugary_type_declaration)
             if sugary_type_declaration.hash? && sugary_type_declaration.key?(:type)
-              extra_keys = sugary_type_declaration.keys - [:type, :description, :sensitive, :sensitive_exposed]
+              extra_keys = sugary_type_declaration.declaration_data.keys -
+                           [:type, :description, :sensitive, :sensitive_exposed]
 
               return false if extra_keys.any?
 

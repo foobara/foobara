@@ -232,7 +232,10 @@ module Foobara
 
         value = old_outcome.result
 
-        return old_outcome unless applicable?(value)
+        unless applicable?(value)
+          binding.pry
+          raise "wtf"
+        end
 
         process_value(value).tap do |outcome|
           outcome.add_errors(old_outcome.error_collection)

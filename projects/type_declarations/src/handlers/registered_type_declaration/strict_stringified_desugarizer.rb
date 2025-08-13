@@ -13,9 +13,12 @@ module Foobara
             return false unless sugary_type_declaration.hash? && sugary_type_declaration.strict_stringified?
 
             raise "wtf" unless sugary_type_declaration.absolutified?
+            # TODO: delete this whole desugarizer now that we don't need _desugarized hack
           end
 
           def desugarize(sugary_type_declaration)
+            raise "wtf"
+
             sugary_type_declaration.symbolize_keys!
             type_symbol = sugary_type_declaration[:type]
 

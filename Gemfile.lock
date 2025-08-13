@@ -1,4 +1,11 @@
 PATH
+  remote: ../rubocop-rules
+  specs:
+    foobara-rubocop-rules (1.0.0)
+      rubocop
+      rubocop-rspec
+
+PATH
   remote: .
   specs:
     foobara (0.0.142)
@@ -21,9 +28,6 @@ GEM
     foobara-crud-driver-spec-helpers (1.0.1)
       foobara (~> 0.0.94)
     foobara-lru-cache (1.0.0)
-    foobara-rubocop-rules (1.0.0)
-      rubocop
-      rubocop-rspec
     foobara-spec-helpers (0.0.4)
       foobara-util
     foobara-util (1.0.2)
@@ -138,7 +142,7 @@ PLATFORMS
 DEPENDENCIES
   foobara!
   foobara-crud-driver-spec-helpers (< 2.0.0)
-  foobara-rubocop-rules (>= 1.0.0)
+  foobara-rubocop-rules (>= 1.0.0)!
   foobara-spec-helpers (< 2.0.0)
   guard-rspec
   pry

@@ -4,11 +4,12 @@ module Foobara
       class ExtendModelTypeDeclaration < ExtendRegisteredTypeDeclaration
         class SymbolizePrivate < TypeDeclarations::Desugarizer
           def applicable?(value)
-            if value.is_a?(::Hash) && value.key?(:type) && value.key?(:attributes_declaration) && value.key?(:private)
-              type_symbol = value[:type]
+            if value.hash? && value.key?(:type) && value.key?(:attributes_declaration) && value.key?(:private)
 
-              if type_registered?(type_symbol)
-                type = lookup_type!(type_symbol)
+              type = value.type || lookup_type(value[:type])
+
+              if type
+                value.type = type
                 type.extends?(BuiltinTypes[:model])
               end
             end
@@ -18,10 +19,10 @@ module Foobara
             private = rawish_type_declaration[:private]
 
             if private.any? { |key| key.is_a?(::String) }
-              rawish_type_declaration.merge(private: private.map(&:to_sym))
-            else
-              rawish_type_declaration
+              rawish_type_declaration[:private] = private.map(&:to_sym)
             end
+
+            rawish_type_declaration
           end
 
           def priority

@@ -4,6 +4,7 @@ module Foobara
       module Casters
         class Numeric < Value::Caster
           def applicable?(value)
+            binding.pry if value.is_a?(TypeDeclaration)
             value.is_a?(::Numeric)
           end
 

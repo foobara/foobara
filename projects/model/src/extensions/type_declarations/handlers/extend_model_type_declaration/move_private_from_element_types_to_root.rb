@@ -4,22 +4,33 @@ module Foobara
       class ExtendModelTypeDeclaration < ExtendRegisteredTypeDeclaration
         class MovePrivateFromElementTypesToRoot < TypeDeclarations::Desugarizer
           def applicable?(value)
-            if value.is_a?(::Hash) && value.key?(:type) && value.key?(:attributes_declaration)
-              type_symbol = value[:type]
+            if value.hash? && value.key?(:type) && value.key?(:attributes_declaration)
+              type = value.type || lookup_type(value[:type])
 
-              if type_registered?(type_symbol)
-                type = lookup_type!(type_symbol)
-                type.extends?(BuiltinTypes[:model])
+              if type
+                if type.extends?(BuiltinTypes[:model])
+                  value.type = type
+                  true
+                end
               end
             end
           end
 
           def desugarize(rawish_type_declaration)
             private = rawish_type_declaration[:private]
-            private = private ? private.dup : []
+
+            if private.nil?
+              private = []
+            else
+              unless rawish_type_declaration.deep_duped?
+                private = private.dup
+              end
+            end
 
             attributes_declaration = rawish_type_declaration[:attributes_declaration]
             element_type_declarations = attributes_declaration[:element_type_declarations]
+
+            binding.pry if element_type_declarations.nil?
 
             element_type_declarations.each_pair do |attribute_name, attribute_type_declaration|
               if attribute_type_declaration.is_a?(Hash) && attribute_type_declaration.key?(:private)
@@ -32,10 +43,15 @@ module Foobara
             end
 
             if private.empty?
-              rawish_type_declaration.except(:private)
+              rawish_type_declaration.delete(:private)
             else
-              rawish_type_declaration.merge(private:)
+              rawish_type_declaration[:private] = private
             end
+
+            rawish_type_declaration
+          rescue => e
+            binding.pry
+            raise
           end
 
           def priority

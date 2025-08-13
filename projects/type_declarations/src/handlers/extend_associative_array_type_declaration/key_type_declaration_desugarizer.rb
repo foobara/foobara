@@ -1,8 +1,8 @@
 module Foobara
   module TypeDeclarations
     module Handlers
-      class ExtendArrayTypeDeclaration < ExtendAssociativeArrayTypeDeclaration
-        class ElementTypeDeclarationDesugarizer < TypeDeclarations::Desugarizer
+      class ExtendAssociativeArrayTypeDeclaration < ExtendRegisteredTypeDeclaration
+        class KeyTypeDeclarationDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(sugary_type_declaration)
             return false if sugary_type_declaration.strict?
             return false unless sugary_type_declaration.hash?
@@ -23,9 +23,9 @@ module Foobara
             end
 
             if type_symbol.is_a?(::Symbol)
-              if type_symbol == :array
-                sugary_type_declaration.key?(:element_type_declaration) ||
-                  sugary_type_declaration.key?("element_type_declaration")
+              if type_symbol == :associative_array
+                sugary_type_declaration.key?(:key_type_declaration) ||
+                  sugary_type_declaration.key?("key_type_declaration")
               end
             end
           end
@@ -33,7 +33,7 @@ module Foobara
           def desugarize(sugary_type_declaration)
             sugary_type_declaration.symbolize_keys!
 
-            sugar = sugary_type_declaration[:element_type_declaration]
+            sugar = sugary_type_declaration[:key_type_declaration]
 
             strict = if sugar.is_a?(Types::Type)
                        sugar.reference_or_declaration_data
@@ -49,7 +49,7 @@ module Foobara
                        handler.desugarize(declaration).declaration_data
                      end
 
-            sugary_type_declaration[:element_type_declaration] = strict
+            sugary_type_declaration[:key_type_declaration] = strict
 
             sugary_type_declaration
           end

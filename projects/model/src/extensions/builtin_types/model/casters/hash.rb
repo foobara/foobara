@@ -10,6 +10,7 @@ module Foobara
           end
 
           def cast(attributes)
+            binding.pry if attributes.is_a?(TypeDeclaration)
             symbolized_attributes = super
 
             model_class.send(build_method(symbolized_attributes), symbolized_attributes)

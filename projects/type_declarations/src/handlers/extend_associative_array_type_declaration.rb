@@ -8,7 +8,7 @@ module Foobara
           strictish_type_declaration = if sugary_type_declaration.strict?
                                          sugary_type_declaration
                                        else
-                                         desugarize(TypeDeclaration.new(sugary_type_declaration))
+                                         desugarize(sugary_type_declaration.clone)
                                        end
 
           if strictish_type_declaration.hash? && strictish_type_declaration[:type] == :associative_array

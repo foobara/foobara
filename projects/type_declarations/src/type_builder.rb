@@ -7,11 +7,7 @@ module Foobara
       def args_to_type_declaration(*args, &block)
         if block
           if args.empty? || args == [:attributes]
-            type_declaration = TypeDeclaration.new(block)
-            type_declaration.is_absolutified = true
-            type_declaration.is_duped = true
-            type_declaration.is_deep_duped = true
-            type_declaration
+            TypeDeclaration.new(block)
           elsif args == [:array]
             type_declaration = TypeDeclaration.new(type: :array, element_type_declaration: block)
             type_declaration.is_absolutified = true
@@ -30,7 +26,13 @@ module Foobara
             raise ArgumentError, "expected 1 argument or a block but got 0 arguments and no block"
             # :nocov:
           when 1
-            TypeDeclaration.new(args.first)
+            arg = args.first
+
+            if arg.is_a?(TypeDeclaration)
+              arg
+            else
+              TypeDeclaration.new(arg)
+            end
           else
             type, *symbolic_processors, processor_data = args
 
@@ -98,8 +100,9 @@ module Foobara
           return handler if handler.applicable?(type_declaration)
         end
 
+        binding.pry
         raise NoTypeDeclarationHandlerFoundError,
-              "No type declaration handler found for #{type_declaration}"
+              "No type declaration handler found for #{type_declaration.declaration_data}"
       end
 
       def handlers
@@ -112,15 +115,17 @@ module Foobara
 
       def type_for_strict_stringified_declaration(type_declaration)
         TypeDeclarations.strict_stringified do
-          handler = type_declaration_handler_for(type_declaration)
-          handler.process_value!(type_declaration)
+          declaration = TypeDeclaration.new(type_declaration)
+          handler = type_declaration_handler_for(declaration)
+          handler.process_value!(declaration)
         end
       end
 
       def type_for_strict_declaration(type_declaration)
         TypeDeclarations.strict do
-          handler = type_declaration_handler_for(type_declaration)
-          handler.process_value!(type_declaration)
+          declaration = TypeDeclaration.new(type_declaration)
+          handler = type_declaration_handler_for(declaration)
+          handler.process_value!(declaration)
         end
       end
 
@@ -141,7 +146,6 @@ module Foobara
       def type_for_declaration_without_cache(*type_declaration_bits, &)
         type_declaration = TypeDeclarations.args_to_type_declaration(*type_declaration_bits, &)
 
-        type_declaration = TypeDeclaration.new(type_declaration)
         handler = type_declaration_handler_for(type_declaration)
         handler.process_value!(type_declaration)
       end

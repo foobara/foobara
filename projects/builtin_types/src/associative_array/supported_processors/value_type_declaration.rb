@@ -4,6 +4,7 @@ module Foobara
       module SupportedProcessors
         class ValueTypeDeclaration < TypeDeclarations::ElementProcessor
           def value_type
+            binding.pry
             @value_type ||= type_for_declaration(value_type_declaration)
           end
 

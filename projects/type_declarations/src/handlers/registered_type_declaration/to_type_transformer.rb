@@ -7,6 +7,7 @@ module Foobara
         # TODO: seems like we have more base classes than we need
         class ToTypeTransformer < TypeDeclarations::ToTypeTransformer
           def transform(strict_type_declaration)
+            strict_type_declaration.is_strict = true
             registered_type(strict_type_declaration)
           end
 
@@ -22,7 +23,15 @@ module Foobara
               raise "wtf isn't this guaranteed to be strict?"
             end
             # TODO: lookup in absolute mode instead...
+            # TODO: use declaration as a place to cache the type
+            if symbol.to_s =~ /AuthUser/
+              binding.pry
+              # $stop = true
+            end
             lookup_type!(symbol)
+          rescue => e
+            binding.pry
+            raise
           end
 
           def target_classes(strict_type_declaration)

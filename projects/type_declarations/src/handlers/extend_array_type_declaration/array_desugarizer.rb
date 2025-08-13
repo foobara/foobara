@@ -12,7 +12,12 @@ module Foobara
           end
 
           def desugarize(sugary_type_declaration)
-            strict_type_declaration = { type: :array }
+            strict_type_declaration = sugary_type_declaration
+            sugary_type_declaration = sugary_type_declaration.declaration_data
+
+            strict_type_declaration.declaration_data = { type: :array }
+            strict_type_declaration.is_duped = true
+            strict_type_declaration.is_absolutified = true
 
             unless sugary_type_declaration.empty?
               element_type_declaration = sugary_type_declaration.first
@@ -22,13 +27,13 @@ module Foobara
                                          else
                                            declaration = TypeDeclaration.new(element_type_declaration)
 
-                                           if sugary_type_declaration.deep_duped?
+                                           if strict_type_declaration.deep_duped?
                                              declaration.is_deep_duped = true
                                              declaration.is_duped = true
                                            end
 
-                                           handler = type_declaration_handler_for(element_type_declaration)
-                                           handler.desugarize(element_type_declaration).declaration_data
+                                           handler = type_declaration_handler_for(declaration)
+                                           handler.desugarize(declaration).declaration_data
                                          end
 
               strict_type_declaration[:element_type_declaration] = element_type_declaration
