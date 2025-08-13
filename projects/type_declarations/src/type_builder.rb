@@ -7,9 +7,17 @@ module Foobara
       def args_to_type_declaration(*args, &block)
         if block
           if args.empty? || args == [:attributes]
-            block
+            type_declaration = TypeDeclaration.new(block)
+            type_declaration.is_absolutified = true
+            type_declaration.is_duped = true
+            type_declaration.is_deep_duped = true
+            type_declaration
           elsif args == [:array]
-            { type: :array, element_type_declaration: block }
+            type_declaration = TypeDeclaration.new(type: :array, element_type_declaration: block)
+            type_declaration.is_absolutified = true
+            type_declaration.is_duped = true
+            type_declaration.is_deep_duped = true
+            type_declaration
           else
             # :nocov:
             raise ArgumentError, "Cannot provide both block and declaration of #{args}"
@@ -22,23 +30,33 @@ module Foobara
             raise ArgumentError, "expected 1 argument or a block but got 0 arguments and no block"
             # :nocov:
           when 1
-            args.first
+            TypeDeclaration.new(args.first)
           else
             type, *symbolic_processors, processor_data = args
 
-            if !symbolic_processors.empty?
-              symbolic_processors = symbolic_processors.to_h { |symbol| [symbol, true] }
+            type_declaration = if !symbolic_processors.empty?
+                                 symbolic_processors = symbolic_processors.to_h { |symbol| [symbol, true] }
 
-              if processor_data.is_a?(::Hash) && !processor_data.empty?
-                processor_data.merge(symbolic_processors)
-              else
-                symbolic_processors
-              end
-            elsif processor_data.is_a?(::Hash)
-              processor_data
-            else
-              { processor_data.to_sym => true }
-            end.merge(type:)
+                                 if processor_data.is_a?(::Hash) && !processor_data.empty?
+                                   h = processor_data.merge(symbolic_processors)
+                                   h[:type] = type
+                                   TypeDeclaration.new(h)
+                                 else
+                                   type_declaration = TypeDeclaration.new(symbolic_processors.merge(type:))
+                                   type_declaration.is_deep_duped = true
+                                   type_declaration
+                                 end
+                               elsif processor_data.is_a?(::Hash)
+                                 TypeDeclaration.new(processor_data.merge(type:))
+                               else
+                                 h = { type:, processor_data.to_sym => true }
+                                 type_declaration = TypeDeclaration.new(h)
+                                 type_declaration.is_deep_duped = true
+                                 type_declaration
+                               end
+
+            type_declaration.is_duped = true
+            type_declaration
           end
         end
       end
@@ -123,6 +141,7 @@ module Foobara
       def type_for_declaration_without_cache(*type_declaration_bits, &)
         type_declaration = TypeDeclarations.args_to_type_declaration(*type_declaration_bits, &)
 
+        type_declaration = TypeDeclaration.new(type_declaration)
         handler = type_declaration_handler_for(type_declaration)
         handler.process_value!(type_declaration)
       end

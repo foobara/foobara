@@ -6,50 +6,30 @@ module Foobara
       class RegisteredTypeDeclaration < TypeDeclarationHandler
         class ShortTypeNameDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(sugary_type_declaration)
-            return false if TypeDeclarations.strict_stringified? || TypeDeclarations.strict?
-            return false unless sugary_type_declaration.is_a?(::Hash)
+            return false if sugary_type_declaration.strict? || sugary_type_declaration.strict_stringified?
+            return false unless sugary_type_declaration.hash?
+            return false if sugary_type_declaration.absolutified?
 
-            sugary_type_declaration = sugary_type_declaration.dup
+            type_symbol = if sugary_type_declaration.key?(:type)
+                            sugary_type_declaration[:type]
+                          elsif sugary_type_declaration.key?("type")
+                            sugary_type_declaration["type"]
+                          end
 
-            sugary_type_declaration = normalize_type(sugary_type_declaration)
-
-            if sugary_type_declaration.key?(:type) &&
-               !sugary_type_declaration.dig(:_desugarized, :type_absolutified)
-              type_symbol = sugary_type_declaration[:type]
-
+            if type_symbol
               (type_symbol.is_a?(::Symbol) || type_symbol.is_a?(::String)) && type_registered?(type_symbol)
             end
           end
 
           def desugarize(sugary_type_declaration)
-            sugary_type_declaration = normalize_type(sugary_type_declaration)
+            sugary_type_declaration.symbolize_keys!
 
-            type_symbol = sugary_type_declaration[:type]
-            type = lookup_type!(type_symbol)
+            type = lookup_type!(sugary_type_declaration[:type])
 
-            desugarized = sugary_type_declaration[:_desugarized] || {}
-            desugarized[:type_absolutified] = true
             # TODO: just use the symbol and nothing else??
             # maybe confusing in languages with no distinction between symbol and string?
-            sugary_type_declaration.merge(type: type.full_type_symbol, _desugarized: desugarized)
-          end
-
-          # TODO: clean this up in a different desugarizer so we don't have to think about it here
-          def normalize_type(sugary_type_declaration)
-            if sugary_type_declaration.key?("type") && !sugary_type_declaration.key?(:type)
-              if Util.all_symbolizable_keys?(sugary_type_declaration)
-                sugary_type_declaration = Util.symbolize_keys(sugary_type_declaration)
-                type_symbol = sugary_type_declaration[:type]
-
-                if type_symbol.is_a?(::String)
-                  sugary_type_declaration[:type] = type_symbol.to_sym
-                end
-              end
-            else
-              sugary_type_declaration = sugary_type_declaration.dup
-            end
-
-            sugary_type_declaration
+            sugary_type_declaration[:type] = type.full_type_symbol
+            sugary_type_declaration.is_absolutified = true
           end
 
           def priority
