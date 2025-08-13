@@ -48,6 +48,33 @@ module Foobara
       declaration_data.symbolize_keys!
     end
 
+    def except(...) = declaration_data.except(...)
+    def slice(...) = declaration_data.slice(...)
+
+    def assign(other)
+      self.declaration_data = other.declaration_data
+
+      if strict? != other.strict?
+        self.is_strict = other.strict?
+      end
+
+      if duped? != other.duped?
+        self.is_duped = other.duped?
+      end
+
+      if absolutified? != other.absolutified?
+        self.is_absolutified = other.absolutified?
+      end
+
+      if strict_stringified? != other.strict_stringified?
+        self.is_strict_stringified = other.strict_stringified?
+      end
+
+      if deep_duped? != other.deep_duped?
+        self.is_deep_duped = other.deep_duped?
+      end
+    end
+
     alias absolutified? is_absolutified
     alias duped? is_duped
     alias deep_duped? is_deep_duped

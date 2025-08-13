@@ -107,7 +107,9 @@ module Foobara
       end
 
       def desugarize(value)
-        desugarizer.process_value!(value)
+        type_declaration = desugarizer.process_value!(value)
+        type_declaration.is_strict = true
+        type_declaration
       end
 
       def type_declaration_validator

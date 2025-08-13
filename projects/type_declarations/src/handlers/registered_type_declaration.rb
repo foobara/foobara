@@ -7,7 +7,12 @@ module Foobara
       class RegisteredTypeDeclaration < TypeDeclarationHandler
         def applicable?(sugary_type_declaration)
           binding.pry unless sugary_type_declaration.is_a?(TypeDeclaration)
-          strict_type_declaration = desugarize(sugary_type_declaration)
+
+          strict_type_declaration = if sugary_type_declaration.strict?
+                                      sugary_type_declaration
+                                    else
+                                      desugarize(TypeDeclaration.new(sugary_type_declaration.declaration_data))
+                                    end
 
           return false unless strict_type_declaration.is_a?(::Hash)
 
@@ -16,6 +21,10 @@ module Foobara
             type_symbol = strict_type_declaration[:type]
             if type_symbol.is_a?(::Symbol) || type_symbol.is_a?(::String)
               type_registered?(type_symbol)
+            end
+          end.tap do |applicable|
+            if applicable && !sugary_type_declaration.equal?(strict_type_declaration)
+              sugary_type_declaration.assign(strict_type_declaration)
             end
           end
         end
