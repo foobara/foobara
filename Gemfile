@@ -9,7 +9,7 @@ gemspec
 # gem "foobara-lru-cache", path: "../lru-cache"
 
 group :development do
-  gem "foobara-rubocop-rules", ">= 1.0.0"
+  gem "foobara-rubocop-rules", ">= 1.0.0" # , path: "../rubocop-rules"
   gem "guard-rspec"
   gem "rake"
   gem "rubocop-rake"

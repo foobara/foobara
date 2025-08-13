@@ -243,6 +243,7 @@ module Foobara
           # I guess we could just iterate over all objects and patch up any with matching prefixes?
           # is this expensive to have to look at all of them or no? I guess at least it's a one-time thing.
           # TODO: somehow look things up by prefixes since we know mod's path
+          # TODO: can't there be multiple namespace roots??
           Foobara.foobara_root_namespace.foobara_each do |scoped|
             parent = scoped.scoped_namespace
             next if parent == mod

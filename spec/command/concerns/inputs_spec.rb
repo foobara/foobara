@@ -31,12 +31,6 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Runtime do
   let(:outcome) { command.run }
   let(:result) { outcome.result }
 
-  describe ".raw_inputs_type_declaration" do
-    subject { command_class.raw_inputs_type_declaration }
-
-    it { is_expected.to be_a(Hash) }
-  end
-
   describe ".inputs_type_declaration" do
     subject { command_class.inputs_type_declaration }
 

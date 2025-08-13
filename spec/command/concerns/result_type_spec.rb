@@ -13,12 +13,6 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::ResultType do
 
     let(:command) { command_class.new(to_be_result:) }
 
-    describe ".raw_result_type_declaration" do
-      subject { command_class.raw_result_type_declaration }
-
-      it { is_expected.to eq("integer") }
-    end
-
     describe ".run!" do
       let(:outcome) { command.run }
       let(:result) { outcome.result }

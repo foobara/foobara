@@ -30,6 +30,7 @@ module Foobara
 
           def validation_errors(value)
             klass = Object.const_get(expected_class_name)
+
             unless value.is_a?(klass)
               build_error(value)
             end

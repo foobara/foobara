@@ -92,15 +92,6 @@ module Foobara
         [desugarizer, type_declaration_validator, to_type_transformer]
       end
 
-      def process_value(raw_type_declaration)
-        # TODO: deep_dup this again??
-        super.tap do |type_outcome|
-          if type_outcome.success?
-            type_outcome.result.raw_declaration_data = raw_type_declaration
-          end
-        end
-      end
-
       def desugarizer
         # TODO: memoize this?
         Value::Processor::Pipeline.new(processors: desugarizers)
