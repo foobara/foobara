@@ -15,9 +15,15 @@ module Foobara
           end
 
           def desugarize(symbol)
-            # TODO: just use the symbol and nothing else??
-            # maybe confusing in languages with no distinction between symbol and string?
-            { type: symbol.to_sym }
+            symbol = if TypeDeclarations.strict?
+                       symbol
+                     elsif TypeDeclarations.strict_stringified?
+                       symbol.to_sym
+                     else
+                       lookup_type!(type_symbol).full_type_symbol
+                     end
+
+            TypeDeclaration.new(symbol)
           end
 
           def priority

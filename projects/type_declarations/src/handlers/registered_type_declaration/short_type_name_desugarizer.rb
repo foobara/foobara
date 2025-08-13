@@ -29,8 +29,8 @@ module Foobara
 
             desugarized = sugary_type_declaration[:_desugarized] || {}
             desugarized[:type_absolutified] = true
-            # TODO: just use the symbol and nothing else??
-            # maybe confusing in languages with no distinction between symbol and string?
+            # Would be nice to use just the symbol as the type if it's registered but how do we know it
+            # has been absolutified?
             sugary_type_declaration.merge(type: type.full_type_symbol, _desugarized: desugarized)
           end
 
