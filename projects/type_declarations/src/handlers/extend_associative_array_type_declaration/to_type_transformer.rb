@@ -9,17 +9,9 @@ module Foobara
       class ExtendAssociativeArrayTypeDeclaration < ExtendRegisteredTypeDeclaration
         class ToTypeTransformer < ExtendRegisteredTypeDeclaration::ToTypeTransformer
           def transform(strict_type_declaration)
-            super.tap do |type|
-              key_type_declaration = type.declaration_data[:key_type_declaration]
-              value_type_declaration = type.declaration_data[:value_type_declaration]
-
-              if key_type_declaration || value_type_declaration
-                type.element_types = [
-                  type_for_declaration(key_type_declaration || :duck),
-                  type_for_declaration(value_type_declaration || :duck)
-                ]
-              end
-            end
+            type = super
+            type.element_types = :Hash
+            type
           end
         end
       end
