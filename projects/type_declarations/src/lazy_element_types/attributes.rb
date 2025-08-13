@@ -11,13 +11,11 @@ module Foobara
                                  if type_declarations.empty?
                                    {}
                                  else
-                                   Namespace.use(type.created_in_namespace) do
-                                     TypeDeclarations.strict do
-                                       domain = Domain.current
+                                   TypeDeclarations.strict do
+                                     domain = Domain.current
 
-                                       type_declarations.transform_values do |attribute_declaration|
-                                         domain.foobara_type_from_declaration(attribute_declaration)
-                                       end
+                                     type_declarations.transform_values do |attribute_declaration|
+                                       domain.foobara_type_from_declaration(attribute_declaration)
                                      end
                                    end
                                  end

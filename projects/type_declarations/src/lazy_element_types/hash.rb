@@ -13,15 +13,13 @@ module Foobara
           value_type_declaration = declaration_data[:value_type_declaration]
 
           type.element_types = if key_type_declaration || value_type_declaration
-                                 Namespace.use(type.created_in_namespace) do
-                                   TypeDeclarations.strict do
-                                     domain = Domain.current
+                                 TypeDeclarations.strict do
+                                   domain = Domain.current
 
-                                     [
-                                       domain.foobara_type_from_declaration(key_type_declaration || :duck),
-                                       domain.foobara_type_from_declaration(value_type_declaration || :duck)
-                                     ]
-                                   end
+                                   [
+                                     domain.foobara_type_from_declaration(key_type_declaration || :duck),
+                                     domain.foobara_type_from_declaration(value_type_declaration || :duck)
+                                   ]
                                  end
                                end
         end
