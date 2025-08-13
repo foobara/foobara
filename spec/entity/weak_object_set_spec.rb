@@ -23,8 +23,13 @@ RSpec.describe Foobara::WeakObjectSet do
         # rubocop:enable Lint/UselessAssignment
         GC.start
 
-        expect(set.size).to eq(0)
-        expect(set).to be_empty
+        unless RUBY_ENGINE == "jruby"
+          # I don't think GC.start isn't guaranteed to kick off either garbage collection or finalization
+          # In JRuby it does not seem to cause these to be garbage collected (or finalized?) upon request.
+          # So skipping if JRuby
+          expect(set.size).to eq(0)
+          expect(set).to be_empty
+        end
       end
     end
 
@@ -51,11 +56,17 @@ RSpec.describe Foobara::WeakObjectSet do
         # rubocop:disable Lint/UselessAssignment
         some_object = nil
         # rubocop:enable Lint/UselessAssignment
+
         GC.start
 
-        expect(set).to be_empty
-        expect(set.size).to eq(0)
-        expect(set.to_a).to eq([])
+        unless RUBY_ENGINE == "jruby"
+          # I don't think GC.start isn't guaranteed to kick off either garbage collection or finalization
+          # In JRuby it does not seem to cause these to be garbage collected (or finalized?) upon request.
+          # So skipping if JRuby
+          expect(set).to be_empty
+          expect(set.size).to eq(0)
+          expect(set.to_a).to eq([])
+        end
       end
 
       describe "#<<" do

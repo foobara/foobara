@@ -3,7 +3,9 @@ ENV["FOOBARA_ENV"] = "test"
 require "bundler/setup"
 
 require "pry"
-require "pry-byebug"
+unless RUBY_ENGINE == "jruby"
+  require "pry-byebug"
+end
 require "rspec/its"
 
 require "simplecov"
