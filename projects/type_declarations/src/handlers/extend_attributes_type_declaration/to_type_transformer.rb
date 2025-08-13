@@ -7,12 +7,9 @@ module Foobara
       class ExtendAttributesTypeDeclaration < ExtendAssociativeArrayTypeDeclaration
         class ToTypeTransformer < ExtendAssociativeArrayTypeDeclaration::ToTypeTransformer
           def transform(strict_type_declaration)
-            super.tap do |type|
-              type_declarations = type.declaration_data[:element_type_declarations]
-              type.element_types = type_declarations&.transform_values do |attribute_declaration|
-                type_for_declaration(attribute_declaration)
-              end
-            end
+            type = super
+            type.element_types = :Attributes
+            type
           end
         end
       end

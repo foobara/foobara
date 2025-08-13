@@ -77,10 +77,7 @@ module Foobara
               if outcome.success?
                 type = outcome.result
 
-                handler = handler_for_class(ExtendAttributesTypeDeclaration)
-                attributes_type_declaration = type.declaration_data[:attributes_declaration]
-
-                type.element_types = handler.process_value!(attributes_type_declaration)
+                type.element_types = :Model
 
                 model_class = type.target_class
                 existing_model_type = model_class.model_type

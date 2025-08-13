@@ -86,11 +86,23 @@ module Foobara
       end
 
       def element_type
-        @element_type || base_type&.element_type
+        type = @element_type || base_type&.element_type
+
+        if type.is_a?(::Symbol)
+          type = @element_type = TypeDeclarations::LazyElementTypes.const_get(type).resolve(self)
+        end
+
+        type
       end
 
       def element_types
-        @element_types || base_type&.element_types
+        types = @element_types || base_type&.element_types
+
+        if types.is_a?(::Symbol)
+          types = @element_types = TypeDeclarations::LazyElementTypes.const_get(types).resolve(self)
+        end
+
+        types
       end
 
       def has_sensitive_types?
