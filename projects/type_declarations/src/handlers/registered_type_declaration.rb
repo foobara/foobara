@@ -6,14 +6,24 @@ module Foobara
       # TODO: we should just use the symbol instead of {type: symbol} to save space and simplify some stuff...
       class RegisteredTypeDeclaration < TypeDeclarationHandler
         def applicable?(sugary_type_declaration)
-          if sugary_type_declaration.is_a?(::Hash) && sugary_type_declaration.keys.size == 1
-            sugary_type_declaration = if sugary_type_declaration.key?(:type)
-                                        sugary_type_declaration[:type]
-                                      elsif sugary_type_declaration.key?("type")
-                                        sugary_type_declaration["type"]
-                                      else
-                                        return false
-                                      end
+          if sugary_type_declaration.is_a?(::Hash)
+            if sugary_type_declaration.key?(:type)
+              if sugary_type_declaration.key?(:_desugarized)
+                if sugary_type_declaration.size != 2
+                  return false
+                end
+              elsif sugary_type_declaration.size != 1
+                return false
+              end
+
+              sugary_type_declaration = sugary_type_declaration[:type]
+            elsif sugary_type_declaration.key?("type")
+              if sugary_type_declaration.size != 1
+                return false
+              end
+
+              sugary_type_declaration = sugary_type_declaration["type"]
+            end
           end
 
           if sugary_type_declaration.is_a?(::Symbol) || sugary_type_declaration.is_a?(::String)
