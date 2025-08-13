@@ -25,8 +25,10 @@ RSpec.configure do |config|
   # Need to do :all instead of :each because for specs that use .around,
   # .after(:each) do |example| here is called after exmaple.run but before any threads created in
   # .around might have been cleaned up.
-  config.after(:all) do
-    expect(Thread.list.size).to eq(1)
+  unless RUBY_ENGINE == "jruby"
+    config.after(:all) do
+      expect(Thread.list.size).to eq(1)
+    end
   end
   config.filter_run_when_matching :focus
 

@@ -20,7 +20,7 @@ group :development, :test do
   gem "pry"
   gem "rspec"
 
-  unless RUBY_ENGINE == "jruby"
+  platforms :mri do
     gem "byebug"
     gem "pry-byebug"
     gem "ruby-prof"
