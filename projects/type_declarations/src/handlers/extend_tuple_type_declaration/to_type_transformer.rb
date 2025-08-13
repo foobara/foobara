@@ -7,15 +7,9 @@ module Foobara
       class ExtendTupleTypeDeclaration < ExtendAssociativeArrayTypeDeclaration
         class ToTypeTransformer < ExtendAssociativeArrayTypeDeclaration::ToTypeTransformer
           def transform(strict_type_declaration)
-            super.tap do |type|
-              element_type_declarations = type.declaration_data[:element_type_declarations]
-
-              if element_type_declarations && !element_type_declarations.empty?
-                type.element_types = element_type_declarations.map do |element_type_declaration|
-                  type_for_declaration(element_type_declaration)
-                end
-              end
-            end
+            type = super
+            type.element_types = :Tuple
+            type
           end
         end
       end
