@@ -60,6 +60,9 @@ module Foobara
 
       def allowed_keys
         to_type.element_types.keys
+      rescue => e
+        binding.pry
+        raise
       end
     end
   end

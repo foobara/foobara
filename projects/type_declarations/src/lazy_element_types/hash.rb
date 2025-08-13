@@ -7,21 +7,23 @@ module Foobara
         module_function
 
         def resolve(type)
-          TypeDeclarations.strict do
-            declaration_data = type.declaration_data
+          declaration_data = type.declaration_data
 
-            key_type_declaration = declaration_data[:key_type_declaration]
-            value_type_declaration = declaration_data[:value_type_declaration]
+          key_type_declaration = declaration_data[:key_type_declaration]
+          value_type_declaration = declaration_data[:value_type_declaration]
 
-            if key_type_declaration || value_type_declaration
-              domain = type.foobara_domain
+          type.element_types = if key_type_declaration || value_type_declaration
+                                 Namespace.use(type.created_in_namespace) do
+                                   TypeDeclarations.strict do
+                                     domain = Domain.current
 
-              type.element_types = [
-                domain.foobara_type_from_declaration(key_type_declaration || :duck),
-                domain.foobara_type_from_declaration(value_type_declaration || :duck)
-              ]
-            end
-          end
+                                     [
+                                       domain.foobara_type_from_declaration(key_type_declaration || :duck),
+                                       domain.foobara_type_from_declaration(value_type_declaration || :duck)
+                                     ]
+                                   end
+                                 end
+                               end
         end
       end
     end
