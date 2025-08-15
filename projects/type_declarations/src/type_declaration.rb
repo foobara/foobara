@@ -35,8 +35,6 @@ module Foobara
     def is_strict_stringified=(value)
       if value
         self.is_absolutified = true
-      elsif absolutified?
-        self.is_absolutified = false
       end
 
       @is_strict_stringified = value
@@ -78,10 +76,6 @@ module Foobara
       declaration_data.size
     end
 
-    def empty?
-      declaration_data.empty?
-    end
-
     def delete(key)
       return unless declaration_data.key?(key)
 
@@ -103,10 +97,6 @@ module Foobara
 
     def class?
       declaration_data.is_a?(::Class)
-    end
-
-    def type?
-      declaration_data.is_a?(Types::Type)
     end
 
     def []=(key, value)

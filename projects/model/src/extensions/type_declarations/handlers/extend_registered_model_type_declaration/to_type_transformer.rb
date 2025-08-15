@@ -15,15 +15,9 @@ module Foobara
           end
 
           def declaration_to_type(strict_type_declaration)
-            type = strict_type_declaration.type
-
-            unless type
-              # :nocov:
-              raise "Expected an applicable registered model extension to have a type cached on the declaration"
-              # :nocov:
-            end
-
-            type
+            # TODO: cache this on a #base_type= helper
+            strict_type_declaration.type ||
+              lookup_type(strict_type_declaration[:type], mode: Namespace::LookupMode::ABSOLUTE)
           end
         end
       end

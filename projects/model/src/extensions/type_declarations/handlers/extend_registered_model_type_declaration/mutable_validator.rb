@@ -24,10 +24,8 @@ module Foobara
             return if mutable == true || mutable == false
 
             model_type = strict_type_declaration.type
-            unless model_type
-              model_type = type_for_declaration(strict_type_declaration[:type])
-              strict_type_declaration.type = model_type
-            end
+
+            model_type ||= type_for_declaration(strict_type_declaration[:type])
 
             valid_attribute_names = model_type.element_types.element_types.keys
 
