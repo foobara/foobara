@@ -33,6 +33,7 @@ module Foobara
 
           def validation_errors(value)
             unless valid_values.include?(value)
+              binding.pry
               build_error(value)
             end
           end

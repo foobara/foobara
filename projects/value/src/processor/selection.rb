@@ -69,6 +69,7 @@ module Foobara
           if processor
             Outcome.success(processor)
           elsif error_if_none_applicable
+            binding.pry
             Outcome.error(build_error(value, error_class: NoApplicableProcessorError))
           else
             Outcome.success(nil)
