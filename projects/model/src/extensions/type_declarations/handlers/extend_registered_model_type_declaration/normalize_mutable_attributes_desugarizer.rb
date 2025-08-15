@@ -10,11 +10,7 @@ module Foobara
               return false if mutable == true || mutable == false
 
               if !mutable.is_a?(::Array) || (mutable.is_a?(::Array) && mutable.any? { |k| !k.is_a?(::Symbol) })
-                type = value.type
-                unless type
-                  type = type_for_declaration(value[:type])
-                  value.type = type if type
-                end
+                type = value.type || lookup_type(value[:type], mode: Namespace::LookupMode::ABSOLUTE)
 
                 type&.extends?(BuiltinTypes[:model])
               end

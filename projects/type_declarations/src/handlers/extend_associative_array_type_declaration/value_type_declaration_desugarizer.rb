@@ -11,26 +11,10 @@ module Foobara
             return false unless sugary_type_declaration.hash?
             return false unless sugary_type_declaration.all_symbolizable_keys?
 
-            return false unless sugary_type_declaration.key?(:type) || sugary_type_declaration.key?("type")
+            type_symbol = sugary_type_declaration[:type]
 
-            type_symbol = if sugary_type_declaration.key?(:type)
-                            sugary_type_declaration[:type]
-                          elsif sugary_type_declaration.key?("type")
-                            sugary_type_declaration["type"]
-                          else
-                            return false
-                          end
-
-            if type_symbol.is_a?(::String)
-              type_symbol = type_symbol.to_sym
-            end
-
-            if type_symbol.is_a?(::Symbol)
-              if type_symbol == :associative_array
-                sugary_type_declaration.key?(:value_type_declaration) ||
-                  sugary_type_declaration.key?("value_type_declaration")
-              end
-            end
+            type_symbol.is_a?(::Symbol) && type_symbol == :associative_array &&
+              sugary_type_declaration.key?(:value_type_declaration)
           end
 
           def desugarize(sugary_type_declaration)

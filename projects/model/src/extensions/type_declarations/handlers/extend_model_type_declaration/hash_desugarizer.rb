@@ -7,22 +7,7 @@ module Foobara
             return false unless sugary_type_declaration.hash?
             return false unless sugary_type_declaration.all_symbolizable_keys?
 
-            type_symbol = sugary_type_declaration[:type]
-            if type_symbol
-              if type_symbol.is_a?(::String)
-                type_symbol = type_symbol.to_sym
-              end
-              return true if type_symbol == expected_type_symbol
-            end
-
-            type_symbol = sugary_type_declaration["type"]
-            return true if type_symbol.nil?
-
-            if type_symbol.is_a?(::String)
-              type_symbol = type_symbol.to_sym
-            end
-
-            type_symbol == expected_type_symbol
+            sugary_type_declaration[:type] == expected_type_symbol
           end
 
           def expected_type_symbol

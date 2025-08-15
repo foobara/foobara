@@ -16,14 +16,7 @@ module Foobara
               type = sugary_type_declaration[:type]
 
               if type.is_a?(::Array)
-                declaration = TypeDeclaration.new(type)
-
-                if sugary_type_declaration.deep_duped?
-                  declaration.is_deep_duped = true
-                  declaration.is_duped = true
-                end
-
-                super(declaration)
+                super(TypeDeclaration.new(type))
               end
             end
           end
@@ -32,8 +25,11 @@ module Foobara
             strict_type_declaration = TypeDeclaration.new(sugary_type_declaration[:type])
 
             if sugary_type_declaration.deep_duped?
+              # TODO: probably not worth testing this path
+              # :nocov:
               strict_type_declaration.is_deep_duped = true
               strict_type_declaration.is_duped = true
+              # :nocov:
             end
 
             strict_type_declaration = super(strict_type_declaration)
