@@ -76,8 +76,8 @@ RSpec.describe Foobara::ModelAttributeHelpers::Concerns::AttributeHelpers do
       expect(for_create_declaration).to eq(
         type: :attributes,
         element_type_declarations: {
-          name: { type: :string },
-          ssn: { type: :string },
+          name: :string,
+          ssn: :string,
           stuff: {
             type: :attributes,
             element_type_declarations: {
@@ -85,8 +85,8 @@ RSpec.describe Foobara::ModelAttributeHelpers::Concerns::AttributeHelpers do
                 type: :tuple,
                 size: 2,
                 element_type_declarations: [
-                  { type: :integer },
-                  { type: :AuthUser }
+                  :integer,
+                  :AuthUser
                 ]
               }
             }

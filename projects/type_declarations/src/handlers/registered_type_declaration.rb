@@ -19,25 +19,20 @@ module Foobara
                                       desugarize(sugary_type_declaration.clone)
                                     end
 
-          return false unless strict_type_declaration.hash?
+          if strict_type_declaration.hash? && strict_type_declaration.declaration_data.keys == [:type]
+            raise "wtf"
+          end
 
-          # we only handle case where it's a builtin type not an extension of one
-          if strict_type_declaration.declaration_data.keys == [:type]
-            type_symbol = strict_type_declaration[:type]
-
-            if type_symbol.is_a?(::Symbol) || type_symbol.is_a?(::String)
-              type = lookup_type(type_symbol)
-
-              if type
-                strict_type_declaration.type = type
-
-                unless sugary_type_declaration.equal?(strict_type_declaration)
-                  sugary_type_declaration.assign(strict_type_declaration)
-                end
-
-                true
-              end
+          if strict_type_declaration.reference?
+            unless strict_type_declaration.type
+              strict_type_declaration.handle_symbolic_declaration
             end
+
+            unless sugary_type_declaration.equal?(strict_type_declaration)
+              sugary_type_declaration.assign(strict_type_declaration)
+            end
+
+            true
           end
         end
 
