@@ -11,7 +11,7 @@ module Foobara
           end
 
           def registered_type(strict_type_declaration)
-            type = strict_type_declaration.type
+            type = strict_type_declaration.type || strict_type_declaration.base_type
 
             return type if type
 

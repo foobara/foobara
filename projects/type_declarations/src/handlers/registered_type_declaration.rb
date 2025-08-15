@@ -8,6 +8,11 @@ module Foobara
         def applicable?(sugary_type_declaration)
           return true if sugary_type_declaration.type
 
+          unless sugary_type_declaration.reference_checked?
+            sugary_type_declaration.handle_symbolic_declaration
+            return true if sugary_type_declaration.type
+          end
+
           strict_type_declaration = if sugary_type_declaration.strict?
                                       sugary_type_declaration
                                     else

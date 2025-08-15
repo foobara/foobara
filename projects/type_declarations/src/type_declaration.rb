@@ -7,6 +7,7 @@ module Foobara
                   :declaration_data,
                   :is_deep_duped,
                   :is_absolutified,
+                  :reference_checked,
                   :type,
                   :base_type
 
@@ -21,7 +22,7 @@ module Foobara
 
       self.declaration_data = declaration_data
 
-      unless skip_reference_check
+      unless strict? || skip_reference_check
         handle_symbolic_declaration
       end
     end
@@ -35,7 +36,7 @@ module Foobara
     end
 
     def handle_symbolic_declaration
-      return if strict?
+      self.reference_checked = true
 
       symbol = if declaration_data.is_a?(::Symbol)
                  declaration_data
@@ -70,12 +71,23 @@ module Foobara
         end
       elsif TypeDeclarations.strict_stringified?
         symbolize_keys!
-        self[:type] = self[:type].to_sym
+        type_symbol = self[:type].to_sym
+        self[:type] = type_symbol
 
-        if declaration_data.keys.size == 1
-          self.is_strict = true
-          self.is_deep_duped = true
-          self.is_duped = true
+        type = Domain.current.foobara_root_namespace.foobara_lookup_type(
+          type_symbol,
+          mode: Namespace::LookupMode::ABSOLUTE
+        )
+
+        if type
+          if declaration_data.keys.size == 1
+            self.type = type
+            self.is_strict = true
+            self.is_deep_duped = true
+            self.is_duped = true
+          else
+            self.base_type = type
+          end
         end
       elsif declaration_data.is_a?(::Hash)
         type_symbol = self[:type] || self["type"]
@@ -272,5 +284,6 @@ module Foobara
     alias duped? is_duped
     alias deep_duped? is_deep_duped
     alias strict? is_strict
+    alias reference_checked? reference_checked
   end
 end

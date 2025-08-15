@@ -5,7 +5,9 @@ module Foobara
       class ExtendRegisteredModelTypeDeclaration < ExtendRegisteredTypeDeclaration
         def applicable?(sugary_type_declaration)
           strict_type_declaration = if sugary_type_declaration.strict?
+                                      # :nocov:
                                       sugary_type_declaration
+                                      # :nocov:
                                     else
                                       desugarize(sugary_type_declaration.clone)
                                     end
