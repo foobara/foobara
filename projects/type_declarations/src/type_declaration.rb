@@ -25,8 +25,6 @@ module Foobara
     def is_strict=(value)
       if value
         self.is_absolutified = true
-      elsif absolutified?
-        self.is_absolutified = false
       end
 
       @is_strict = value
