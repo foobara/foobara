@@ -4,13 +4,15 @@ module Foobara
     attr_reader :is_strict,
                 :is_strict_stringified
 
-    attr_accessor :declaration_data,
-                  :is_duped,
+    attr_accessor :is_duped,
+                  :declaration_data,
                   :is_deep_duped,
                   :is_absolutified,
                   :type
 
     def initialize(declaration_data)
+      return if type
+
       if TypeDeclarations.strict?
         self.is_strict = true
         self.is_absolutified = true
@@ -20,6 +22,8 @@ module Foobara
       end
 
       self.declaration_data = declaration_data
+
+      handle_symbolic_declaration
     end
 
     def is_strict=(value)
@@ -38,6 +42,44 @@ module Foobara
       @is_strict_stringified = value
     end
 
+    def handle_symbolic_declaration
+      symbol = if declaration_data.is_a?(::Symbol)
+                 declaration_data
+               elsif declaration_data.is_a?(::String) && (TypeDeclarations.stringified? || strict_stringified?)
+                 declaration_data.to_sym
+               end
+
+      if symbol
+        namespace = Domain.current
+
+        type = if absolutified?
+                 namespace = namespace.foobara_root_namespace
+                 namespace.foobara_lookup_type(symbol, mode: Namespace::LookupMode::ABSOLUTE)
+               else
+                 namespace.foobara_lookup_type(symbol)
+               end
+
+        if type
+          self.type = type
+
+          self.is_strict = true
+          self.is_deep_duped = true
+          self.is_duped = true
+
+          self.declaration_data = { type: type.full_type_symbol }
+        else
+          if declaration_data.is_a?(::Symbol)
+            self.is_duped = true
+            self.is_deep_duped = true
+          end
+
+          self.declaration_data = declaration_data
+        end
+      else
+        self.declaration_data = declaration_data
+      end
+    end
+
     def hash?
       declaration_data.is_a?(::Hash)
     end
@@ -48,14 +90,6 @@ module Foobara
 
     def [](key)
       declaration_data[key]
-    end
-
-    def symbol?
-      declaration_data.is_a?(::Symbol)
-    end
-
-    def string?
-      declaration_data.is_a?(::String)
     end
 
     def array?

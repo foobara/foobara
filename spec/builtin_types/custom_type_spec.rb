@@ -55,7 +55,6 @@ RSpec.describe "custom types" do
 
         define_method :desugarizers do
           [
-            Foobara::TypeDeclarations::Handlers::RegisteredTypeDeclaration::SymbolDesugarizer.instance,
             ComplexTypeDeclarationHandler::SomeDesugarizer.instance
           ]
         end

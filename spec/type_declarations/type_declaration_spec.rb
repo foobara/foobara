@@ -160,4 +160,27 @@ RSpec.describe Foobara::TypeDeclaration do
       end
     end
   end
+
+  describe "#initialize" do
+    context "when a type symbol" do
+      let(:declaration_data) { :integer }
+
+      context "when strict" do
+        let(:type_declaration) do
+          Foobara::TypeDeclarations.strict do
+            super()
+          end
+        end
+
+        it "sets the type and various flags" do
+          expect(type_declaration.type).to be(Foobara::BuiltinTypes[:integer])
+          expect(type_declaration.declaration_data).to eq(type: :integer)
+          expect(type_declaration).to be_strict
+          expect(type_declaration).to be_absolutified
+          expect(type_declaration).to be_duped
+          expect(type_declaration).to be_deep_duped
+        end
+      end
+    end
+  end
 end
