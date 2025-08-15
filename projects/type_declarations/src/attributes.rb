@@ -55,7 +55,6 @@ module Foobara
 
         def reject(declaration_data, *keys)
           binding.pry
-
           declaration = TypeDeclaration.new(declaration_data)
 
           element_type_declarations = declaration[:element_type_declarations]
@@ -65,7 +64,6 @@ module Foobara
           changed = false
 
           keys.flatten.each do |key|
-            binding.pry
             key = key.to_sym
 
             if element_type_declarations.key?(key)
@@ -82,7 +80,8 @@ module Foobara
 
             if defaults&.key?(key)
               changed = true
-              declaration[:defaults] = defaults.except(key)
+              defaults = defaults.except(key)
+              declaration[:defaults] = defaults
             end
           end
 

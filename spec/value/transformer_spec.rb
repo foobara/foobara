@@ -37,7 +37,7 @@ RSpec.describe Foobara::Value::Transformer do
 
       let(:transformer) { transformer_class.instance }
 
-      it "just gives back what was passed in" do
+      it "just gives back what was passed in", :focus do
         expect(transformer.process_value(15).result).to eq(15)
       end
     end
