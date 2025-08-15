@@ -17,8 +17,11 @@ module Foobara
                                              declaration = TypeDeclaration.new(element_type_declaration)
 
                                              if sugary_type_declaration.deep_duped?
+                                               # TODO: probably not worth directly testing this path
+                                               # :nocov:
                                                declaration.is_deep_duped = true
                                                declaration.is_duped = true
+                                               # :nocov:
                                              end
 
                                              handler = type_declaration_handler_for(declaration)

@@ -10,26 +10,15 @@ module Foobara
             return false if sugary_type_declaration.strict?
             return false unless sugary_type_declaration.hash?
 
-            type_symbol = if sugary_type_declaration.key?(:type)
-                            sugary_type_declaration[:type]
-                          elsif sugary_type_declaration.key?("type")
-                            sugary_type_declaration["type"]
-                          end
+            type_symbol = sugary_type_declaration[:type]
 
             unless type_symbol
               return sugary_type_declaration.all_symbolizable_keys?
             end
 
-            if type_symbol.is_a?(::String)
-              type_symbol = type_symbol.to_sym
-            end
-
             if type_symbol == :attributes
-              if sugary_type_declaration.key?(:element_type_declarations)
+              sugary_type_declaration.key?(:element_type_declarations) &&
                 Util.all_symbolizable_keys?(sugary_type_declaration[:element_type_declarations])
-              elsif sugary_type_declaration.key?("element_type_declarations")
-                Util.all_symbolizable_keys?(sugary_type_declaration["element_type_declarations"])
-              end
             elsif type_symbol.is_a?(::Symbol)
               # if the type isn't registered we will assume it's an attribute named type
               !type_registered?(type_symbol)

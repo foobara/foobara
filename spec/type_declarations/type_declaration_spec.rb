@@ -12,7 +12,7 @@ RSpec.describe Foobara::TypeDeclaration do
     end
 
     let(:type_declaration) do
-      Foobara::TypeDeclaration.new(declaration_data)
+      described_class.new(declaration_data)
     end
 
     it "deletes the expected attribute and results in a duped declaration" do

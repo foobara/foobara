@@ -28,11 +28,6 @@ module Foobara
             # maybe confusing in languages with no distinction between symbol and string?
             type = sugary_type_declaration.type
 
-            unless type
-              type = lookup_type(sugary_type_declaration.declaration_data)
-              sugary_type_declaration.type = type
-            end
-
             sugary_type_declaration.declaration_data = { type: type.full_type_symbol }
 
             sugary_type_declaration.is_strict = true
