@@ -16,9 +16,6 @@ module Foobara
 
             true
           end
-        rescue => e
-          binding.pry
-          raise
         end
 
         def priority

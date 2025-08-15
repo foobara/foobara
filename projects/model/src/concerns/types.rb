@@ -234,19 +234,13 @@ module Foobara
                 TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
               )
               attributes_type_declaration = Namespace.use domain do
-                #                 binding.pry
                 handler.desugarize(attributes_type_declaration.clone)
               end
 
               element_type_declarations = attributes_type_declaration[:element_type_declarations]
 
               element_type_declarations.each_pair do |attribute_name, attribute_type_declaration|
-                is_private = begin
-                  attribute_type_declaration.delete(:private)
-                rescue => e
-                  binding.pry
-                  raise
-                end
+                is_private = attribute_type_declaration.delete(:private)
 
                 if is_private
                   private |= [attribute_name]

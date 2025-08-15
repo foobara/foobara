@@ -9,9 +9,6 @@ module Foobara
                 class CastOneOf < TypeDeclarations::Desugarizer
                   def applicable?(rawish_type_declaration)
                     rawish_type_declaration.hash? && rawish_type_declaration[:one_of].is_a?(::Array)
-                  rescue => e
-                    binding.pry
-                    raise
                   end
 
                   def desugarize(rawish_type_declaration)
@@ -23,8 +20,6 @@ module Foobara
                     rawish_type_declaration[:one_of] = one_of.map do |value|
                       type.process_value!(value)
                     end
-
-                    binding.pry
 
                     rawish_type_declaration
                   end

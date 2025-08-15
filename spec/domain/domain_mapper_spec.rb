@@ -65,7 +65,6 @@ RSpec.describe Foobara::DomainMapper do
   describe "#map!" do
     it "maps it" do
       domain_mapper
-      $stop = true
       mapped_value = domain_mapper.map!(foo: 1, bar: "baz")
       expect(mapped_value).to be_a(SomeClass)
     end

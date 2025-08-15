@@ -352,11 +352,7 @@ module Foobara
               Foobara::TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
             )
 
-            binding.pry
-
             attributes_type = handler.type_for_declaration(attributes_type_declaration)
-
-            binding.pry
 
             # TODO: reuse the model_base_class primary key if it has one...
             primary_key = attributes_type.element_types.keys.first

@@ -6,7 +6,6 @@ module Foobara
       # TODO: we should just use the symbol instead of {type: symbol} to save space and simplify some stuff...
       class RegisteredTypeDeclaration < TypeDeclarationHandler
         def applicable?(sugary_type_declaration)
-          binding.pry unless sugary_type_declaration.is_a?(TypeDeclaration)
           return true if sugary_type_declaration.type
 
           strict_type_declaration = if sugary_type_declaration.strict?

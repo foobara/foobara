@@ -106,9 +106,6 @@ module Foobara
         end
 
         value
-      rescue => e
-        binding.pry
-        raise
       end
 
       def type_declaration_validator

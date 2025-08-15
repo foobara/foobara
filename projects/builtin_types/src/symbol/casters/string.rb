@@ -4,7 +4,6 @@ module Foobara
       module Casters
         class String < Value::Caster
           def applicable?(value)
-            binding.pry if value.is_a?(TypeDeclaration)
             value.is_a?(::String)
           end
 

@@ -19,11 +19,6 @@ module Foobara
       end
 
       def process_value(value)
-        unless applicable?(value)
-          binding.pry
-          raise "wtf"
-        end
-
         errors = Util.array(validation_errors(value))
 
         if errors.empty?

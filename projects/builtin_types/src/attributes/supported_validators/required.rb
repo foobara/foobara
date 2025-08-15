@@ -18,7 +18,6 @@ module Foobara
           end
 
           def applicable?(value)
-            binding.pry if value.is_a?(TypeDeclaration)
             value.is_a?(::Hash)
           end
 

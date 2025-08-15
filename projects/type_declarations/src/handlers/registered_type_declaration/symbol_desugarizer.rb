@@ -11,10 +11,6 @@ module Foobara
           # strings/symbols and they could also register a higher-priority handler
           # if needed
           def applicable?(sugary_type_declaration)
-            unless sugary_type_declaration.is_a?(TypeDeclaration)
-              binding.pry
-              raise "wtf"
-            end
             if sugary_type_declaration.symbol?
               # TODO: let's find the type and save it on the declaration to save calls elsewhere
               # since lookups and checking if registered are equally expensive

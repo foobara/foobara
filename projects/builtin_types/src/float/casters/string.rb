@@ -6,7 +6,6 @@ module Foobara
           FLOAT_REGEX = /^-?\d+(\.\d+)?([eE]-?\d+)?$/
 
           def applicable?(value)
-            binding.pry if value.is_a?(TypeDeclaration)
             value.is_a?(::String) && value =~ FLOAT_REGEX
           end
 

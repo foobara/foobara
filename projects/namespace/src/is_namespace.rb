@@ -195,8 +195,6 @@ module Foobara
           return scoped
         end
 
-        binding.pry if $stop
-
         if path[0] == ""
           if mode == LookupMode::DIRECT
             return nil unless scoped_full_name == ""

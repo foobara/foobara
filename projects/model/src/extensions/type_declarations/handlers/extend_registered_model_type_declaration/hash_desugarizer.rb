@@ -9,7 +9,7 @@ module Foobara
 
             type_symbol = sugary_type_declaration[:type]
 
-            if type_symbol&.is_a?(::Symbol)
+            if type_symbol.is_a?(::Symbol)
               type = sugary_type_declaration.type
 
               unless type

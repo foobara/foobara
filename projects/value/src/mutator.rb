@@ -18,10 +18,6 @@ module Foobara
       end
 
       def process_value(value)
-        unless applicable?(value)
-          binding.pry
-          raise "wtf"
-        end
         mutate(value)
         Outcome.success(value)
       end

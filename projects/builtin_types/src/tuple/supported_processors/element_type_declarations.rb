@@ -6,8 +6,6 @@ module Foobara
         # that element_type_declarations.size matches size if both are present and a Desugarizer that sets them both?
         class ElementTypeDeclarations < TypeDeclarations::ElementProcessor
           def applicable?(value)
-            binding.pry if value.is_a?(TypeDeclaration)
-            binding.pry if element_type_declarations.is_a?(TypeDeclaration)
             # Size mismatch is handled by size validator later so just bail out here since without a correct
             # size we don't really know what to expect to happen if we proceed.
             # TODO: would be nice to have the Size validator run earlier in the process so that we wouldn't have

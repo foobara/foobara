@@ -24,14 +24,7 @@ module Foobara
             end
             # TODO: lookup in absolute mode instead...
             # TODO: use declaration as a place to cache the type
-            if symbol.to_s =~ /AuthUser/
-              binding.pry if lookup_type(symbol).nil?
-              # $stop = true
-            end
             lookup_type!(symbol)
-          rescue => e
-            binding.pry
-            raise
           end
 
           def target_classes(strict_type_declaration)

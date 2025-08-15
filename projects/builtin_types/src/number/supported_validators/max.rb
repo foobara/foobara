@@ -15,7 +15,6 @@ module Foobara
           end
 
           def max
-            binding.pry if declaration_data.is_a?(TypeDeclaration)
             declaration_data
           end
 

@@ -9,7 +9,6 @@ module Foobara
         # TODO: make a quick way to convert a couple simple procs into a transformer
         class ElementTypeDeclarationsDesugarizer < HashDesugarizer
           def desugarize(sugary_type_declaration)
-            binding.pry if $stop
             sugary_type_declaration[:element_type_declarations] =
               sugary_type_declaration[:element_type_declarations].to_h do |attribute_name, element_type_declaration|
                 element_type_declaration = if element_type_declaration.is_a?(Types::Type)

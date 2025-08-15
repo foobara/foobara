@@ -22,9 +22,6 @@ module Foobara
           end
 
           applicable
-        rescue => e
-          binding.pry
-          raise
         end
 
         def priority

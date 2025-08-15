@@ -32,7 +32,6 @@ module Foobara
 
                     required.map do |key|
                       unless valid_attribute_names.include?(key)
-                        binding.pry
                         build_error(
                           message: "#{key} is not a valid default key, expected one of #{valid_attribute_names}",
                           context: {

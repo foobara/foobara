@@ -7,7 +7,6 @@ module Foobara
       class ExtendAttributesTypeDeclaration < ExtendAssociativeArrayTypeDeclaration
         class HashDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(sugary_type_declaration)
-            binding.pry if $stop
             return false if sugary_type_declaration.strict?
             return false unless sugary_type_declaration.hash?
 
@@ -25,7 +24,7 @@ module Foobara
               type_symbol = type_symbol.to_sym
             end
 
-            if :attributes == type_symbol
+            if type_symbl == :attributes
               if sugary_type_declaration.key?(:element_type_declarations)
                 Util.all_symbolizable_keys?(sugary_type_declaration[:element_type_declarations])
               elsif sugary_type_declaration.key?("element_type_declarations")

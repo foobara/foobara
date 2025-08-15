@@ -1,9 +1,9 @@
 module Foobara
   # Inheriting from ::Hash for now but we should remove this once all of the handlers are updated
   class TypeDeclaration
+    attr_reader :is_strict,
+                :is_strict_stringified
     attr_accessor :declaration_data,
-                  :is_strict,
-                  :is_strict_stringified,
                   :is_duped,
                   :is_deep_duped,
                   :is_absolutified,
@@ -18,36 +18,17 @@ module Foobara
         self.is_absolutified = true
       end
 
-      if declaration_data == :duck
-        binding.pry if strict?
-      end
-
       self.declaration_data = declaration_data
     end
 
     def is_strict=(value)
       if value
-        if declaration_data == :duck
-          binding.pry
-        end
         self.is_absolutified = true
       elsif absolutified?
         self.is_absolutified = false
       end
 
       @is_strict = value
-    end
-
-    def is_absolutified=(value)
-      if value
-        if proc?
-          binding.pry
-        end
-        if declaration_data == :duck
-          binding.pry
-        end
-      end
-      @is_absolutified = value
     end
 
     def is_strict_stringified=(value)
@@ -58,39 +39,6 @@ module Foobara
       end
 
       @is_strict_stringified = value
-    end
-
-    def declaration_data=(value)
-      if value.is_a?(::Hash) && value[:attributes_declaration].is_a?(TypeDeclaration)
-        binding.pry
-        raise "wtf"
-      end
-      if value == :duck
-        binding.pry if strict?
-      end
-
-      if declaration_data == :duck
-        binding.pry if strict?
-      end
-
-      if value.is_a?(TypeDeclaration)
-        binding.pry
-        raise "wtf"
-      end
-
-      if value.is_a?(::Proc) && absolutified?
-        binding.pry
-      end
-
-      if declaration_data == :duck
-        binding.pry if strict?
-      end
-
-      if value == declaration_data
-        binding.pry if strict?
-      end
-
-      @declaration_data = value
     end
 
     def hash?
@@ -136,10 +84,6 @@ module Foobara
     def delete(key)
       return unless declaration_data.key?(key)
 
-      if declaration_data == :duck
-        binding.pry if strict?
-      end
-
       if duped?
         declaration_data.delete(key)
       else
@@ -154,10 +98,6 @@ module Foobara
       if absolutified? && key == :type
         self.is_absolutified = false
       end
-
-      if declaration_data == :duck
-        binding.pry if strict?
-      end
     end
 
     def class?
@@ -169,16 +109,6 @@ module Foobara
     end
 
     def []=(key, value)
-      if value.is_a?(TypeDeclaration)
-        binding.pry
-        raise "wtf"
-      end
-      if declaration_data == :duck
-        binding.pry if strict?
-      end
-
-      binding.pry if declaration_data[key] == value && strict?
-
       if strict?
         self.is_strict = false
       end
@@ -189,10 +119,6 @@ module Foobara
       end
 
       declaration_data[key] = value
-
-      if declaration_data == :duck
-        binding.pry if strict?
-      end
     end
 
     def all_symbolizable_keys?
@@ -270,10 +196,6 @@ module Foobara
       if other.type
         self.type = other.type
       end
-
-      if declaration_data == :duck
-        binding.pry if strict?
-      end
     end
 
     def clone
@@ -293,10 +215,6 @@ module Foobara
 
       if type
         declaration.type = type
-      end
-
-      if declaration_data == :duck
-        binding.pry if strict?
       end
 
       declaration

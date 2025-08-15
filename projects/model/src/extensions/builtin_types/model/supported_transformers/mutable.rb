@@ -14,7 +14,6 @@ module Foobara
           end
 
           def transform(record)
-            binding.pry if record.is_a?(TypeDeclaration)
             if parent_declaration_data.key?(:mutable)
               # hmmmm.... can we really just arbitrarily clobber this?
               # wouldn't that be surprising to calling code that passes in a record/model?

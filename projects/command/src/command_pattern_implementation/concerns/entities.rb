@@ -60,7 +60,6 @@ module Foobara
 
           thunks = DataPath.values_at(data_path, inputs)
 
-          binding.pry if thunks.is_a?(::String)
           thunks_to_load = thunks.reject(&:created?)
 
           begin

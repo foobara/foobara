@@ -6,9 +6,7 @@ module Foobara
         class Downcase < Value::Transformer.subclass(
           transform: :downcase.to_proc,
           name: "Downcase",
-          applicable?: ->(value) {
-            binding.pry if value.is_a?(TypeDeclaration)
-            value.respond_to?(:downcase) }
+          applicable?: ->(value) { value.respond_to?(:downcase) }
         )
         end
       end

@@ -4,7 +4,6 @@ module Foobara
       module SupportedProcessors
         class KeyTypeDeclaration < TypeDeclarations::ElementProcessor
           def key_type
-            binding.pry
             @key_type ||= type_for_declaration(key_type_declaration)
           end
 

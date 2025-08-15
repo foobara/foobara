@@ -21,7 +21,6 @@ module Foobara
           end
 
           def applicable?(value)
-            binding.pry if value.is_a?(TypeDeclaration)
             !value.nil? || !parent_declaration_data[:allow_nil]
           end
 

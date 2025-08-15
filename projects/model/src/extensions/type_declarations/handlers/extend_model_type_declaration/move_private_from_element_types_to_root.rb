@@ -30,8 +30,6 @@ module Foobara
             attributes_declaration = rawish_type_declaration[:attributes_declaration]
             element_type_declarations = attributes_declaration[:element_type_declarations]
 
-            binding.pry if element_type_declarations.nil?
-
             element_type_declarations.each_pair do |attribute_name, attribute_type_declaration|
               if attribute_type_declaration.is_a?(Hash) && attribute_type_declaration.key?(:private)
                 is_private = attribute_type_declaration[:private]
@@ -49,9 +47,6 @@ module Foobara
             end
 
             rawish_type_declaration
-          rescue => e
-            binding.pry
-            raise
           end
 
           def priority

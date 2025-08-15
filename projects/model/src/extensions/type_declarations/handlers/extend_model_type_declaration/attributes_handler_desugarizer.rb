@@ -15,8 +15,6 @@ module Foobara
             handler = handler_for_class(ExtendAttributesTypeDeclaration)
             attributes_type_declaration = sugary_type_declaration[:attributes_declaration]
 
-            old_attributes_type_declaration = Util.deep_dup(attributes_type_declaration)
-
             declaration = sugary_type_declaration.clone_from_part(attributes_type_declaration)
 
             if sugary_type_declaration.deep_duped?
