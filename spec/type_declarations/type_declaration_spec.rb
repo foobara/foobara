@@ -1,20 +1,20 @@
 RSpec.describe Foobara::TypeDeclaration do
+  let(:declaration_data) do
+    {
+      type: :attributes,
+      element_type_declarations: {
+        foo: :integer,
+        bar: :integer
+      },
+      required: [:foo, :bar]
+    }
+  end
+
+  let(:type_declaration) do
+    described_class.new(declaration_data)
+  end
+
   describe "#delete" do
-    let(:declaration_data) do
-      {
-        type: :attributes,
-        element_type_declarations: {
-          foo: :integer,
-          bar: :integer
-        },
-        required: [:foo, :bar]
-      }
-    end
-
-    let(:type_declaration) do
-      described_class.new(declaration_data)
-    end
-
     it "deletes the expected attribute and results in a duped declaration" do
       expect(type_declaration.key?(:required)).to be true
       expect(type_declaration).to_not be_duped
@@ -23,6 +23,32 @@ RSpec.describe Foobara::TypeDeclaration do
 
       expect(type_declaration.key?(:required)).to be false
       expect(type_declaration).to be_duped
+    end
+  end
+
+  describe "#except" do
+    context "when strict" do
+      let(:type_declaration) do
+        super().tap do |declaration|
+          declaration.is_strict = true
+        end
+      end
+
+      it "removes the strict flag" do
+        declaration = type_declaration
+
+        expect {
+          declaration = declaration.except(:required)
+
+          expect(declaration.declaration_data).to eq(
+            type: :attributes,
+            element_type_declarations: {
+              foo: :integer,
+              bar: :integer
+            }
+          )
+        }.to change { declaration.strict? }.from(true).to(false)
+      end
     end
   end
 end
