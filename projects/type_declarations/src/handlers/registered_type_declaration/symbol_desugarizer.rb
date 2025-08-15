@@ -24,7 +24,6 @@ module Foobara
           end
 
           def desugarize(sugary_type_declaration)
-            binding.pry if sugary_type_declaration.hash? && sugary_type_declaration.key?("type")
             # TODO: just use the symbol and nothing else??
             # maybe confusing in languages with no distinction between symbol and string?
             type = sugary_type_declaration.type

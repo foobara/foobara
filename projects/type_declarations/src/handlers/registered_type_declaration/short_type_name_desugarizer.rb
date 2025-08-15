@@ -17,7 +17,6 @@ module Foobara
                           end
 
             if type_symbol
-              binding.pry if sugary_type_declaration.key?("type")
               if type_symbol.is_a?(::Symbol) || type_symbol.is_a?(::String)
                 type = sugary_type_declaration.type || lookup_type(type_symbol)
 

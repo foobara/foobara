@@ -8,7 +8,6 @@ module Foobara
         # rather hacky but other potential workarounds seemed gnarlier
         class StrictStringifiedDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(sugary_type_declaration)
-            binding.pry if sugary_type_declaration.hash? && sugary_type_declaration.key?("type")
             # TODO: we shouldn't have to check if this is a hash. This means some other desugarizer is unnecessarily
             # processing a type declaration as if it were sugary. Find and fix that to speed this up a tiny bit.
             sugary_type_declaration.hash? && sugary_type_declaration.strict_stringified?
