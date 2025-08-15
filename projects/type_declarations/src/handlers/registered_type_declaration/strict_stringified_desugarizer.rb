@@ -22,8 +22,7 @@ module Foobara
             sugary_type_declaration.symbolize_keys!
             type_symbol = sugary_type_declaration[:type]
 
-            type = Foobara.foobara_root_namespace.foobara_lookup_type!(type_symbol,
-                                                                       mode: Namespace::LookupMode::ABSOLUTE)
+            type = lookup_type(type_symbol, mode: Namespace::LookupMode::ABSOLUTE)
 
             unless type.full_type_symbol == type_symbol.to_sym
               raise "wtf... why wouldn't these match???"

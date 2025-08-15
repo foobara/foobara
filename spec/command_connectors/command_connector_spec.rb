@@ -1820,7 +1820,7 @@ RSpec.describe Foobara::CommandConnector do
             user_id
           end
 
-          it "finds the user and includes delegated attributes", :focus do
+          it "finds the user and includes delegated attributes" do
             expect(response.status).to be(0)
             expect(JSON.parse(response.body)).to eq(
               "stuff2" => {

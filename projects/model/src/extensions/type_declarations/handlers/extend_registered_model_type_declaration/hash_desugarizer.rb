@@ -13,9 +13,8 @@ module Foobara
               type = sugary_type_declaration.type
 
               unless type
-                type = Foobara.foobara_root_namespace.foobara_lookup_type(
-                  type_symbol, mode: Namespace::LookupMode::ABSOLUTE
-                )
+                type = lookup_type(type_symbol, mode: Namespace::LookupMode::ABSOLUTE)
+
                 if type
                   sugary_type_declaration.type = type
                 end
