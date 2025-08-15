@@ -24,7 +24,7 @@ module Foobara
               type_symbol = type_symbol.to_sym
             end
 
-            if type_symbl == :attributes
+            if type_symbol == :attributes
               if sugary_type_declaration.key?(:element_type_declarations)
                 Util.all_symbolizable_keys?(sugary_type_declaration[:element_type_declarations])
               elsif sugary_type_declaration.key?("element_type_declarations")
