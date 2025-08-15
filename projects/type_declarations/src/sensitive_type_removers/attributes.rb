@@ -16,6 +16,8 @@ module Foobara
           to_remove = []
 
           strict_type_declaration[:element_type_declarations].each_pair do |attribute_name, attribute_declaration|
+            next if attribute_declaration.is_a?(::Symbol)
+
             if attribute_declaration[:sensitive]
               to_remove << attribute_name
             else

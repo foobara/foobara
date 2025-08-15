@@ -48,7 +48,7 @@ module Foobara
 
         declaration[:element_type_declarations].each_pair do |attribute_name, declaration_data|
           element_type_declarations[attribute_name] = if from_yaml.include?(attribute_name)
-                                                        { type: :string }
+                                                        :string
                                                       else
                                                         declaration_data
                                                       end

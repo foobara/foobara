@@ -65,8 +65,10 @@ module Foobara
               if model_type
                 unless Foobara::TypeDeclarations.declarations_equal?(declaration.declaration_data,
                                                                      model_type.declaration_data)
+
                   type_domain = domain
                   self.model_type = nil
+
                   type_domain.foobara_type_from_declaration(declaration)
                 end
               else
@@ -247,9 +249,15 @@ module Foobara
               element_type_declarations = attributes_type_declaration[:element_type_declarations]
 
               element_type_declarations.each_pair do |attribute_name, attribute_type_declaration|
+                next if attribute_type_declaration.is_a?(::Symbol)
+
                 is_private = attribute_type_declaration.delete(:private)
 
                 if is_private
+                  if attribute_type_declaration.keys.size == 1
+                    element_type_declarations[attribute_name] = attribute_type_declaration[:type]
+                  end
+
                   private |= [attribute_name]
                 end
               end

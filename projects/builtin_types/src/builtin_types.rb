@@ -16,7 +16,7 @@ module Foobara
         description: "Built-in #{type_symbol} type",
         type_module: nil
       )
-        declaration_data = { type: type_symbol.to_sym }
+        declaration_data = type_symbol.to_sym
 
         module_symbol = Util.classify(type_symbol).to_sym
 

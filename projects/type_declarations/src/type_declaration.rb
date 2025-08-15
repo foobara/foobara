@@ -38,11 +38,11 @@ module Foobara
     def handle_symbolic_declaration
       self.reference_checked = true
 
-      symbol = if declaration_data.is_a?(::Symbol)
-                 declaration_data
-               elsif declaration_data.is_a?(::String) && TypeDeclarations.stringified?
-                 declaration_data.to_sym
-               end
+      if declaration_data.is_a?(::Symbol)
+        symbol = declaration_data
+      elsif declaration_data.is_a?(::String) && TypeDeclarations.stringified?
+        symbol = declaration_data.to_sym
+      end
 
       if symbol
         namespace = Domain.current
@@ -54,13 +54,16 @@ module Foobara
                end
 
         if type
+          unless strict?
+            self.declaration_data = type.full_type_symbol
+          end
+
           self.type = type
 
           self.is_strict = true
           self.is_deep_duped = true
           self.is_duped = true
 
-          self.declaration_data = { type: type.full_type_symbol }
         else
           if declaration_data.is_a?(::Symbol)
             self.is_duped = true
@@ -85,6 +88,7 @@ module Foobara
             self.is_strict = true
             self.is_deep_duped = true
             self.is_duped = true
+            self.declaration_data = type.full_type_symbol
           else
             self.base_type = type
           end
@@ -109,6 +113,8 @@ module Foobara
               self.is_absolutified = true
 
               if declaration_data.keys.size == 1
+                self.declaration_data = type.full_type_symbol
+
                 self.type = type
                 self.is_strict = true
                 self.is_deep_duped = true
@@ -273,11 +279,19 @@ module Foobara
         declaration.base_type = base_type
       end
 
+      if reference_checked?
+        declaration.reference_checked = true
+      end
+
       declaration
     end
 
     def clone_from_part(part)
       TypeDeclaration.new(part)
+    end
+
+    def reference?
+      strict? && declaration_data.is_a?(::Symbol)
     end
 
     alias absolutified? is_absolutified

@@ -391,7 +391,7 @@ module Foobara
 
         if registered?
           # TODO: we should just use the symbol and nothing else in this context instead of a hash with 1 element.
-          { type: foobara_manifest_reference.to_sym }
+          foobara_manifest_reference.to_sym
         elsif remove_sensitive
           TypeDeclarations.remove_sensitive_types(declaration_data)
         else

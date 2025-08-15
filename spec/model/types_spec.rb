@@ -42,9 +42,7 @@ RSpec.describe Foobara::Model do
       end
 
       it "contains the delegated attribute in the attributes_type" do
-        expect(manifest[:attributes_type][:element_type_declarations][:username]).to eq(
-          type: :string
-        )
+        expect(manifest[:attributes_type][:element_type_declarations][:username]).to eq(:string)
       end
 
       it "includes the delegate info in the manifest" do

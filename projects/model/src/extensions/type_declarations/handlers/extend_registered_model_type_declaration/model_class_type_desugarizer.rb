@@ -13,6 +13,9 @@ module Foobara
           def desugarize(hash)
             model_class = hash[:type]
             hash[:type] = model_class.model_type.foobara_manifest_reference.to_sym
+
+            hash.handle_symbolic_declaration
+
             hash
           end
 

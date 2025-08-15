@@ -108,7 +108,12 @@ module Foobara
 
       def to_detached_entity
         raise "not an detached_entity" unless detached_entity?
-        raise "detached_entity extension instead of an detached_entity" unless relevant_manifest.size == 1
+
+        unless relevant_manifest.is_a?(::Symbol) || relevant_manifest.size == 1
+          # :nocov:
+          raise "detached_entity extension instead of an detached_entity"
+          # :nocov:
+        end
 
         type = to_type
 
@@ -125,7 +130,12 @@ module Foobara
 
       def to_entity
         raise "not an entity" unless entity?
-        raise "entity extension instead of an entity" unless relevant_manifest.size == 1
+
+        unless relevant_manifest.is_a?(::Symbol) || relevant_manifest.size == 1
+          # :nocov:
+          raise "entity extension instead of an entity"
+          # :nocov:
+        end
 
         type = to_type
 
@@ -137,6 +147,30 @@ module Foobara
       def to_type
         # awkward??
         @to_type ||= find_type(self)
+      end
+
+      def type
+        if relevant_manifest.is_a?(::Symbol)
+          relevant_manifest
+        else
+          super
+        end
+      end
+
+      def sensitive
+        if relevant_manifest.is_a?(::Symbol)
+          false
+        else
+          super
+        end
+      end
+
+      def sensitive_exposed
+        if relevant_manifest.is_a?(::Symbol)
+          false
+        else
+          super
+        end
       end
     end
   end

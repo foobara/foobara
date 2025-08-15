@@ -223,7 +223,7 @@ RSpec.describe Foobara::TypeDeclaration do
       it "sets the type and various flags" do
         expect(type_declaration.type).to be(Foobara::BuiltinTypes[:integer])
 
-        expect(type_declaration.declaration_data).to eq(type: :integer)
+        expect(type_declaration.declaration_data).to eq(:integer)
 
         expect(type_declaration).to be_strict
         expect(type_declaration).to be_absolutified
@@ -239,7 +239,7 @@ RSpec.describe Foobara::TypeDeclaration do
         it "sets the type and various flags" do
           expect(type_declaration.type).to be(Foobara::BuiltinTypes[:integer])
 
-          expect(type_declaration.declaration_data).to eq(type: :integer)
+          expect(type_declaration.declaration_data).to eq(:integer)
 
           expect(type_declaration).to be_strict
           expect(type_declaration).to be_absolutified

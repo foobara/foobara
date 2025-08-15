@@ -37,7 +37,7 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Runtime do
     it {
       is_expected.to eq(
         type: :attributes,
-        element_type_declarations: { base: { type: :integer }, exponent: { type: :integer } }
+        element_type_declarations: { base: :integer, exponent: :integer }
       )
     }
   end
