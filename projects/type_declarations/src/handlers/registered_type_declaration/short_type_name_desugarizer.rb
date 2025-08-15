@@ -17,19 +17,24 @@ module Foobara
                           end
 
             if type_symbol
-              (type_symbol.is_a?(::Symbol) || type_symbol.is_a?(::String)) && type_registered?(type_symbol)
+              binding.pry if sugary_type_declaration.key?("type")
+              if type_symbol.is_a?(::Symbol) || type_symbol.is_a?(::String)
+                type = sugary_type_declaration.type || lookup_type(type_symbol)
+
+                if type
+                  # cheating and doing this here to save a lookup
+                  sugary_type_declaration.symbolize_keys!
+                  sugary_type_declaration[:type] = type.full_type_symbol
+                  sugary_type_declaration.is_absolutified = true
+
+                  true
+                end
+              end
             end
           end
 
           def desugarize(sugary_type_declaration)
-            sugary_type_declaration.symbolize_keys!
-
-            type = lookup_type!(sugary_type_declaration[:type])
-
-            # TODO: just use the symbol and nothing else??
-            # maybe confusing in languages with no distinction between symbol and string?
-            sugary_type_declaration[:type] = type.full_type_symbol
-            sugary_type_declaration.is_absolutified = true
+            # We cheated and applied this in applicable? to save a lookup
 
             sugary_type_declaration
           end

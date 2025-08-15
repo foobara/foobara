@@ -11,19 +11,34 @@ module Foobara
           # strings/symbols and they could also register a higher-priority handler
           # if needed
           def applicable?(sugary_type_declaration)
-            if sugary_type_declaration.symbol?
-              # TODO: let's find the type and save it on the declaration to save calls elsewhere
-              # since lookups and checking if registered are equally expensive
-              type_registered?(sugary_type_declaration.declaration_data)
-            elsif sugary_type_declaration.string? && TypeDeclarations.stringified?
-              type_registered?(sugary_type_declaration.declaration_data.to_sym)
+            type = if sugary_type_declaration.symbol? ||
+                      (sugary_type_declaration.string? && TypeDeclarations.stringified?)
+                     lookup_type(sugary_type_declaration.declaration_data)
+                   end
+
+            if type
+              sugary_type_declaration.type = type
+
+              true
             end
           end
 
           def desugarize(sugary_type_declaration)
+            binding.pry if sugary_type_declaration.hash? && sugary_type_declaration.key?("type")
             # TODO: just use the symbol and nothing else??
             # maybe confusing in languages with no distinction between symbol and string?
-            sugary_type_declaration.declaration_data = { type: sugary_type_declaration.declaration_data.to_sym }
+            type = sugary_type_declaration.type
+
+            unless type
+              type = lookup_type(sugary_type_declaration.declaration_data)
+              sugary_type_declaration.type = type
+            end
+
+            sugary_type_declaration.declaration_data = { type: type.full_type_symbol }
+
+            sugary_type_declaration.is_strict = true
+            sugary_type_declaration.is_duped = true
+            sugary_type_declaration.is_deep_duped = true
 
             sugary_type_declaration
           end

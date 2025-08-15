@@ -72,7 +72,7 @@ RSpec.describe Foobara::ModelAttributeHelpers::Concerns::AttributeHelpers do
     let(:include_private) { true }
     let(:include_delegates) { false }
 
-    it "removes the primary key", :focus do
+    it "removes the primary key" do
       expect(for_create_declaration).to eq(
         type: :attributes,
         element_type_declarations: {
