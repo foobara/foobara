@@ -54,7 +54,6 @@ module Foobara
         end
 
         def reject(declaration_data, *keys)
-          binding.pry
           declaration = TypeDeclaration.new(declaration_data)
 
           element_type_declarations = declaration[:element_type_declarations]

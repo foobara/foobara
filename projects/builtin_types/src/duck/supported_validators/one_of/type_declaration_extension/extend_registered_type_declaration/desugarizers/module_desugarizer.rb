@@ -23,6 +23,8 @@ module Foobara
                       one_of.sort_by(&:inspect)
                       # :nocov:
                     end
+
+                    rawish_type_declaration
                   end
 
                   def priority
