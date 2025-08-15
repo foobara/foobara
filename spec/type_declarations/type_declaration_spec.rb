@@ -54,65 +54,83 @@ RSpec.describe Foobara::TypeDeclaration do
         end
       end
     end
+  end
 
-    describe "#except" do
-      context "when strict" do
-        let(:type_declaration) do
-          super().tap do |declaration|
-            declaration.is_strict = true
-          end
-        end
-
-        it "removes the strict flag" do
-          declaration = type_declaration
-
-          expect {
-            declaration = declaration.except(:required)
-
-            expect(declaration.declaration_data).to eq(
-              type: :attributes,
-              element_type_declarations: {
-                foo: :integer,
-                bar: :integer
-              }
-            )
-          }.to change { declaration.strict? }.from(true).to(false)
+  describe "#except" do
+    context "when strict" do
+      let(:type_declaration) do
+        super().tap do |declaration|
+          declaration.is_strict = true
         end
       end
 
-      context "when strict_stringified" do
-        let(:declaration_data) do
-          {
+      it "removes the strict flag" do
+        declaration = type_declaration
+
+        expect {
+          declaration = declaration.except(:required)
+
+          expect(declaration.declaration_data).to eq(
+            type: :attributes,
+            element_type_declarations: {
+              foo: :integer,
+              bar: :integer
+            }
+          )
+        }.to change { declaration.strict? }.from(true).to(false)
+      end
+    end
+
+    context "when strict_stringified" do
+      let(:declaration_data) do
+        {
+          "type" => "attributes",
+          "element_type_declarations" => {
+            "foo" => "integer",
+            "bar" => "integer"
+          },
+          "required" => ["foo", "bar"]
+        }
+      end
+
+      let(:type_declaration) do
+        super().tap do |declaration|
+          declaration.is_strict_stringified = true
+        end
+      end
+
+      it "removes the strict flag" do
+        declaration = type_declaration
+
+        expect {
+          declaration = declaration.except("required")
+
+          expect(declaration.declaration_data).to eq(
             "type" => "attributes",
             "element_type_declarations" => {
               "foo" => "integer",
               "bar" => "integer"
-            },
-            "required" => ["foo", "bar"]
-          }
+            }
+          )
+        }.to change { declaration.strict_stringified? }.from(true).to(false)
+      end
+    end
+  end
+
+  describe "#clone" do
+    context "when strict with a type" do
+      let(:type_declaration) do
+        super().tap do |declaration|
+          declaration.is_strict = true
+          declaration.type = Foobara::Domain.current.foobara_type_from_declaration(declaration_data)
         end
+      end
 
-        let(:type_declaration) do
-          super().tap do |declaration|
-            declaration.is_strict_stringified = true
-          end
-        end
+      it "preserves the strict flag and type" do
+        clone = type_declaration.clone
 
-        it "removes the strict flag" do
-          declaration = type_declaration
-
-          expect {
-            declaration = declaration.except("required")
-
-            expect(declaration.declaration_data).to eq(
-              "type" => "attributes",
-              "element_type_declarations" => {
-                "foo" => "integer",
-                "bar" => "integer"
-              }
-            )
-          }.to change { declaration.strict_stringified? }.from(true).to(false)
-        end
+        expect(clone.type).to be_a(Foobara::Type)
+        expect(clone).to be_strict
       end
     end
   end
