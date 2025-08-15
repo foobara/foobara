@@ -204,7 +204,14 @@ module Foobara
             path = path[(foobara_root_namespace.scoped_path.size + 1)..]
           end
 
-          return foobara_root_namespace.foobara_lookup(path, filter:, mode: LookupMode::ABSOLUTE, initial: true)
+          root = foobara_root_namespace
+
+          [root, *root.foobara_depends_on_namespaces.map(&:foobara_root_namespace)].uniq.each do |namespace|
+            scoped = namespace.foobara_lookup(path, filter:, mode: LookupMode::ABSOLUTE, initial: true)
+            return scoped if scoped
+          end
+
+          return nil
         end
 
         partial = foobara_registry.lookup(path, filter)
