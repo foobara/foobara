@@ -73,9 +73,7 @@ module Foobara
       end
 
       def process_value(value)
-        if applicable?(value)
-          value = transform(value)
-        end
+        value = transform(value)
 
         Outcome.success(value)
       end

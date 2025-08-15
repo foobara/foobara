@@ -19,8 +19,6 @@ module Foobara
       end
 
       def process_value(value)
-        return Outcome.success(value) unless applicable?(value)
-
         errors = Util.array(validation_errors(value))
 
         if errors.empty?

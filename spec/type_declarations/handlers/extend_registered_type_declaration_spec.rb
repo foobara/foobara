@@ -2,7 +2,7 @@ RSpec.describe Foobara::TypeDeclarations::Handlers::ExtendRegisteredTypeDeclarat
   let(:handler) { described_class.instance }
 
   describe "#applicable?" do
-    subject { handler.applicable?(type_declaration) }
+    subject { handler.applicable?(Foobara::TypeDeclaration.new(type_declaration)) }
 
     context "when passed what looks like a registered type declaration" do
       let(:type_declaration) { { type: :some_random_type } }

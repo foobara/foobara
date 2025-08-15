@@ -18,10 +18,7 @@ module Foobara
       end
 
       def process_value(value)
-        if applicable?(value)
-          mutate(value)
-        end
-
+        mutate(value)
         Outcome.success(value)
       end
     end
