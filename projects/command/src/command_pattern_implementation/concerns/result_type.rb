@@ -16,10 +16,6 @@ module Foobara
                              superclass.result_type
                            end
           end
-
-          def raw_result_type_declaration
-            result_type.raw_declaration_data
-          end
         end
 
         foobara_delegate :result_type, :raw_result_type_declaration, to: :class

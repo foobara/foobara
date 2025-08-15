@@ -47,10 +47,6 @@ module Foobara
                            end
           end
 
-          def raw_inputs_type_declaration
-            inputs_type.raw_declaration_data
-          end
-
           def inputs_type_declaration
             inputs_type.declaration_data
           end
@@ -65,7 +61,7 @@ module Foobara
           end
         end
 
-        foobara_delegate :inputs_type, :raw_inputs_type_declaration, to: :class
+        foobara_delegate :inputs_type, to: :class
       end
     end
   end

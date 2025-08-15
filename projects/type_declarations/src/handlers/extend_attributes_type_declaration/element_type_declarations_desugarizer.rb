@@ -26,7 +26,7 @@ module Foobara
                                              handler.desugarize(declaration).declaration_data
                                            end
 
-                [attribute_name, element_type_declaration]
+                [attribute_name.to_sym, element_type_declaration]
               end
 
             sugary_type_declaration

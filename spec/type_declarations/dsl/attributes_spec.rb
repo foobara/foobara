@@ -13,7 +13,7 @@ RSpec.describe Foobara::TypeDeclarations::Dsl::Attributes do
         end
       end
 
-      expect(declaration).to eq(
+      expect(declaration.declaration_data).to eq(
         type: :attributes,
         element_type_declarations: {
           first_name: :string,
@@ -92,7 +92,7 @@ RSpec.describe Foobara::TypeDeclarations::Dsl::Attributes do
           foo bar: :string
         end
 
-        expect(declaration).to eq(
+        expect(declaration.declaration_data).to eq(
           element_type_declarations: {
             foo: {
               element_type_declarations: { bar: :string },

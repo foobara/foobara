@@ -26,12 +26,16 @@ module Foobara
 
                     element_type_declarations = rawish_type_declaration[:element_type_declarations]
 
+                    changed = false
+
                     element_type_declarations.each_pair do |attribute_name, attribute_type_declaration|
                       if attribute_type_declaration.is_a?(::Hash) && attribute_type_declaration.key?(:required)
                         is_required = attribute_type_declaration[:required]
 
-                        if [true, false].include?(is_required)
+                        if is_required == true || is_required == false
                           element_type_declarations[attribute_name] = attribute_type_declaration.except(:required)
+
+                          changed = true
 
                           if is_required
                             required_attributes << attribute_name
@@ -46,6 +50,10 @@ module Foobara
                       rawish_type_declaration.delete(:required)
                     else
                       rawish_type_declaration[:required] = required_attributes
+                    end
+
+                    if changed
+                      rawish_type_declaration[:element_type_declarations] = element_type_declarations
                     end
 
                     rawish_type_declaration

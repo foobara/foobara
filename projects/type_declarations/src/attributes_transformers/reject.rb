@@ -2,6 +2,7 @@ module Foobara
   class AttributesTransformers < TypeDeclarations::TypedTransformer
     class << self
       def reject(*attribute_names)
+        binding.pry
         if attribute_names.empty?
           # :nocov:
           raise ArgumentError, "You must specify at least one attribute name"
@@ -41,6 +42,7 @@ module Foobara
 
       def to_type_declaration
         if from_type
+          binding.pry
           from_declaration = from_type.declaration_data
           TypeDeclarations::Attributes.reject(from_declaration, *self.class.reject_attributes)
         end
@@ -48,6 +50,7 @@ module Foobara
 
       def from_type_declaration
         if to_type
+          binding.pry
           to_declaration = to_type.declaration_data
           TypeDeclarations::Attributes.reject(to_declaration, *self.class.reject_attributes)
         end

@@ -18,8 +18,6 @@ module Foobara
 
             value = outcome.result
 
-            binding.pry if $stop
-
             if processor.applicable?(value)
               processor.process_outcome(outcome)
             else

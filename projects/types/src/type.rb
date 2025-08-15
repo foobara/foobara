@@ -21,7 +21,6 @@ module Foobara
                     :element_processors,
                     :structure_count,
                     :is_builtin,
-                    :raw_declaration_data,
                     :name,
                     :target_classes,
                     :description,
