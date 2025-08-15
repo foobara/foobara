@@ -31,7 +31,7 @@ module Foobara
                 Util.all_symbolizable_keys?(sugary_type_declaration["element_type_declarations"])
               end
             elsif type_symbol.is_a?(::Symbol)
-              # Why is this done?
+              # if the type isn't registered we will assume it's an attribute named type
               !type_registered?(type_symbol)
             end
           end

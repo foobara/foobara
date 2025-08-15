@@ -10,11 +10,7 @@ module Foobara
           def applicable?(sugary_type_declaration)
             # TODO: we shouldn't have to check if this is a hash. This means some other desugarizer is unnecessarily
             # processing a type declaration as if it were sugary. Find and fix that to speed this up a tiny bit.
-            return false unless sugary_type_declaration.hash? && sugary_type_declaration.strict_stringified?
-
-            raise "wtf" unless sugary_type_declaration.absolutified?
-
-            true
+            sugary_type_declaration.hash? && sugary_type_declaration.strict_stringified?
           end
 
           def desugarize(sugary_type_declaration)
