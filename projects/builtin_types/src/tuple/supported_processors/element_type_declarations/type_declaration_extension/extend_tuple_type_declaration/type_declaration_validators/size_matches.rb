@@ -12,8 +12,7 @@ module Foobara
                       def context_type_declaration
                         {
                           expected_size: :integer,
-                          actual_size: :integer,
-                          value: :array
+                          actual_size: :integer
                         }
                       end
                     end
@@ -33,8 +32,7 @@ module Foobara
                         message: "Expected tuple to have #{size} elements but it had #{element_type_declarations_size}",
                         context: {
                           expected_size: size,
-                          actual_size: element_type_declarations_size,
-                          value: strict_type_declaration
+                          actual_size: element_type_declarations_size
                         }
                       )
                     end

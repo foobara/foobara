@@ -131,10 +131,11 @@ module Foobara
               TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
             )
 
-            handler.desugarize(
-              type: "::attributes",
-              element_type_declarations:
-            )
+            declaration = TypeDeclaration.new(type: :attributes, element_type_declarations:)
+            declaration.is_absolutified = true
+            declaration.is_duped = true
+
+            handler.desugarize(declaration).declaration_data
           end
 
           private

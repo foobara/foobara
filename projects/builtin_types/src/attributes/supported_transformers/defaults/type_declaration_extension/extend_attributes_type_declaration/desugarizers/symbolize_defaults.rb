@@ -8,7 +8,7 @@ module Foobara
               module Desugarizers
                 class SymbolizeDefaults < TypeDeclarations::Desugarizer
                   def applicable?(value)
-                    value.is_a?(::Hash) && value[:type] == :attributes && value[:defaults]
+                    value.hash? && value[:type] == :attributes && value[:defaults]
                   end
 
                   def desugarize(rawish_type_declaration)

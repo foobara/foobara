@@ -16,7 +16,7 @@ module Foobara
             validators = []
             element_processors = []
 
-            additional_processors_to_apply = strict_type_declaration.except(*non_processor_keys)
+            additional_processors_to_apply = strict_type_declaration.declaration_data.except(*non_processor_keys)
 
             # TODO: validate the name
             additional_processors_to_apply.each_pair do |processor_symbol, declaration_data|
@@ -49,7 +49,7 @@ module Foobara
             sensitive_exposed = strict_type_declaration[:sensitive_exposed]
 
             type_class.new(
-              strict_type_declaration,
+              strict_type_declaration.declaration_data,
               base_type:,
               description: strict_type_declaration[:description],
               casters:,

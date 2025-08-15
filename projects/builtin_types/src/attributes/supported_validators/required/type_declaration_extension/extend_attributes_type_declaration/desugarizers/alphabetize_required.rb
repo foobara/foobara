@@ -8,7 +8,7 @@ module Foobara
               module Desugarizers
                 class AlphabetizeRequired < TypeDeclarations::Desugarizer
                   def applicable?(value)
-                    value.is_a?(::Hash) && value[:type] == :attributes &&
+                    value.hash? && value[:type] == :attributes &&
                       value.key?(:required) && value[:required].size > 1
                   end
 
@@ -17,11 +17,11 @@ module Foobara
 
                     sorted_required = required.sort
 
-                    if sorted_required == required
-                      rawish_type_declaration
-                    else
-                      rawish_type_declaration.merge(required: sorted_required)
+                    if sorted_required != required
+                      rawish_type_declaration[:required] = sorted_required
                     end
+
+                    rawish_type_declaration
                   end
 
                   def priority

@@ -10,7 +10,8 @@ module Foobara
           end
 
           def desugarize(sugary_type_declaration)
-            sugary_type_declaration.merge(primary_key: sugary_type_declaration[:primary_key].to_sym)
+            sugary_type_declaration[:primary_key] = sugary_type_declaration[:primary_key].to_sym
+            sugary_type_declaration
           end
         end
       end

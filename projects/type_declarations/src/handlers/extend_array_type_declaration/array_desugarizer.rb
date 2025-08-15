@@ -8,11 +8,16 @@ module Foobara
         # TODO: make a quick way to convert a couple simple procs into a transformer
         class ArrayDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(sugary_type_declaration)
-            sugary_type_declaration.is_a?(::Array) && sugary_type_declaration.size <= 1
+            sugary_type_declaration.array? && sugary_type_declaration.size <= 1 && !sugary_type_declaration.strict?
           end
 
           def desugarize(sugary_type_declaration)
-            strict_type_declaration = { type: :array, _desugarized: { type_absolutified: true } }
+            strict_type_declaration = sugary_type_declaration
+            sugary_type_declaration = sugary_type_declaration.declaration_data
+
+            strict_type_declaration.declaration_data = { type: :array }
+            strict_type_declaration.is_duped = true
+            strict_type_declaration.is_absolutified = true
 
             unless sugary_type_declaration.empty?
               element_type_declaration = sugary_type_declaration.first
@@ -20,8 +25,18 @@ module Foobara
               element_type_declaration = if element_type_declaration.is_a?(Types::Type)
                                            element_type_declaration.reference_or_declaration_data
                                          else
-                                           handler = type_declaration_handler_for(element_type_declaration)
-                                           handler.desugarize(element_type_declaration)
+                                           declaration = TypeDeclaration.new(element_type_declaration)
+
+                                           if strict_type_declaration.deep_duped?
+                                             # TODO: probably not worth directly testing this path
+                                             # :nocov:
+                                             declaration.is_deep_duped = true
+                                             declaration.is_duped = true
+                                             # :nocov:
+                                           end
+
+                                           handler = type_declaration_handler_for(declaration)
+                                           handler.desugarize(declaration).declaration_data
                                          end
 
               strict_type_declaration[:element_type_declaration] = element_type_declaration

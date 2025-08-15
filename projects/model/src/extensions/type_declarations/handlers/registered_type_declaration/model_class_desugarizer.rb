@@ -4,13 +4,22 @@ module Foobara
       class RegisteredTypeDeclaration < TypeDeclarationHandler
         class ModelClassDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(sugary_type_declaration)
-            sugary_type_declaration.is_a?(Class) && sugary_type_declaration < Model
+            sugary_type_declaration.class? && sugary_type_declaration.declaration_data < Model
           end
 
-          def desugarize(model_class)
-            {
+          def desugarize(declaration)
+            model_class = declaration.declaration_data
+
+            declaration.declaration_data = {
               type: model_class.model_type.foobara_manifest_reference.to_sym
             }
+
+            declaration.is_absolutified = true
+            declaration.is_strict = true
+            declaration.is_duped = true
+            declaration.is_deep_duped = true
+
+            declaration
           end
 
           def priority

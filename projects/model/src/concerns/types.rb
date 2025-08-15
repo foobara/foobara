@@ -229,12 +229,12 @@ module Foobara
             private = []
             attributes_type_declaration = TypeDeclarations.args_to_type_declaration(...)
 
-            if attributes_type_declaration.is_a?(::Hash) || attributes_type_declaration.is_a?(Proc)
+            if attributes_type_declaration.hash? || attributes_type_declaration.proc?
               handler = domain.foobara_type_builder.handler_for_class(
                 TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
               )
               attributes_type_declaration = Namespace.use domain do
-                handler.desugarize(attributes_type_declaration)
+                handler.desugarize(attributes_type_declaration.clone)
               end
 
               element_type_declarations = attributes_type_declaration[:element_type_declarations]

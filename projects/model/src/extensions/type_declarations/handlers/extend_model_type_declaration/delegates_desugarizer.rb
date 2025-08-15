@@ -8,13 +8,13 @@ module Foobara
           end
 
           def desugarize(sugary_type_declaration)
-            desugarized = sugary_type_declaration.dup
-            delegates = Util.deep_symbolize_keys(desugarized[:delegates])
+            delegates = sugary_type_declaration[:delegates]
 
             if delegates.empty?
-              desugarized.delete(:delegates)
-              desugarized
+              sugary_type_declaration.delete(:delegates)
             else
+              delegates = Util.deep_symbolize_keys(sugary_type_declaration[:delegates])
+
               delegates.each_pair do |attribute_name, delegate_info|
                 h = delegate_info.merge(data_path: DataPath.new(delegate_info[:data_path]).to_s)
 
@@ -29,8 +29,10 @@ module Foobara
                 delegates[attribute_name] = h
               end
 
-              sugary_type_declaration.merge(delegates:)
+              sugary_type_declaration[:delegates] = delegates
             end
+
+            sugary_type_declaration
           end
         end
       end

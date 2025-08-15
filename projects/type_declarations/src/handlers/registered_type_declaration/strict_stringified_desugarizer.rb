@@ -10,23 +10,14 @@ module Foobara
           def applicable?(sugary_type_declaration)
             # TODO: we shouldn't have to check if this is a hash. This means some other desugarizer is unnecessarily
             # processing a type declaration as if it were sugary. Find and fix that to speed this up a tiny bit.
-            return false unless sugary_type_declaration.is_a?(::Hash) && TypeDeclarations.strict_stringified?
-
-            !sugary_type_declaration.dig(:_desugarized, :type_absolutified)
+            sugary_type_declaration.hash? && sugary_type_declaration.strict_stringified?
           end
 
           def desugarize(sugary_type_declaration)
-            sugary_type_declaration = Util.symbolize_keys(sugary_type_declaration)
-            type_symbol = sugary_type_declaration[:type]
+            sugary_type_declaration.symbolize_keys!
+            sugary_type_declaration[:type] = sugary_type_declaration[:type].to_sym
 
-            type = Foobara.foobara_root_namespace.foobara_lookup_type!(type_symbol,
-                                                                       mode: Namespace::LookupMode::ABSOLUTE)
-
-            type_symbol = type.full_type_symbol
-
-            desugarized = sugary_type_declaration[:_desugarized] || {}
-            desugarized[:type_absolutified] = true
-            sugary_type_declaration.merge(_desugarized: desugarized, type: type_symbol)
+            sugary_type_declaration
           end
 
           def priority

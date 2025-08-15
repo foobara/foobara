@@ -6,18 +6,35 @@ module Foobara
       class RegisteredTypeDeclaration < TypeDeclarationHandler
         # TODO: make a quick way to convert a couple simple procs into a transformer
         class SymbolDesugarizer < TypeDeclarations::Desugarizer
+          # TODO: we should always be applicable if it's a symbol or string and treat it as
+          # a reference instead of allowing more complex custom types to be expressed as
+          # strings/symbols and they could also register a higher-priority handler
+          # if needed
           def applicable?(sugary_type_declaration)
-            if sugary_type_declaration.is_a?(::Symbol)
-              type_registered?(sugary_type_declaration)
-            elsif sugary_type_declaration.is_a?(::String) && TypeDeclarations.stringified?
-              applicable?(sugary_type_declaration.to_sym)
+            type = if sugary_type_declaration.symbol? ||
+                      (sugary_type_declaration.string? && TypeDeclarations.stringified?)
+                     lookup_type(sugary_type_declaration.declaration_data)
+                   end
+
+            if type
+              sugary_type_declaration.type = type
+
+              true
             end
           end
 
-          def desugarize(symbol)
+          def desugarize(sugary_type_declaration)
             # TODO: just use the symbol and nothing else??
             # maybe confusing in languages with no distinction between symbol and string?
-            { type: symbol.to_sym }
+            type = sugary_type_declaration.type
+
+            sugary_type_declaration.declaration_data = { type: type.full_type_symbol }
+
+            sugary_type_declaration.is_strict = true
+            sugary_type_declaration.is_duped = true
+            sugary_type_declaration.is_deep_duped = true
+
+            sugary_type_declaration
           end
 
           def priority

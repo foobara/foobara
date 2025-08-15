@@ -117,7 +117,8 @@ module Foobara
               _add_attribute(attribute_name, type)
             else
               declaration = if block
-                              attributes_declaration = Attributes.to_declaration(&block).merge(declaration)
+                              attributes_declaration =
+                                Attributes.to_declaration(&block).declaration_data.merge(declaration)
 
                               if type == :array
                                 {
@@ -173,13 +174,21 @@ module Foobara
 
         def _type_declaration
           @_type_declaration ||= begin
-            sugar = {
-              type: "::attributes",
+            declaration = TypeDeclaration.new(
+              type: :attributes,
               element_type_declarations: {}
-            }
+            )
+
+            declaration.is_absolutified = true
+            declaration.is_duped = true
 
             handler = Domain.current.foobara_type_builder.handler_for_class(Handlers::ExtendAttributesTypeDeclaration)
-            handler.desugarize(sugar)
+            declaration = handler.desugarize(declaration)
+
+            declaration.is_strict = false
+            declaration.is_absolutified = true
+
+            declaration
           end
         end
       end

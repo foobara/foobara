@@ -7,39 +7,35 @@ module Foobara
       class ExtendAttributesTypeDeclaration < ExtendAssociativeArrayTypeDeclaration
         class HashDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(sugary_type_declaration)
-            return false unless sugary_type_declaration.is_a?(::Hash)
-            return false unless Util.all_symbolizable_keys?(sugary_type_declaration)
-
-            sugary_type_declaration = Util.symbolize_keys(sugary_type_declaration)
-
-            return true unless sugary_type_declaration.key?(:type)
+            return false if sugary_type_declaration.strict?
+            return false unless sugary_type_declaration.hash?
 
             type_symbol = sugary_type_declaration[:type]
 
-            if [:attributes, "attributes"].include?(type_symbol)
+            unless type_symbol
+              return sugary_type_declaration.all_symbolizable_keys?
+            end
+
+            if type_symbol == :attributes
               sugary_type_declaration.key?(:element_type_declarations) &&
                 Util.all_symbolizable_keys?(sugary_type_declaration[:element_type_declarations])
             elsif type_symbol.is_a?(::Symbol)
-              # Why is this done?
+              # if the type isn't registered we will assume it's an attribute named type
               !type_registered?(type_symbol)
             end
           end
 
           def desugarize(sugary_type_declaration)
-            sugary_type_declaration = Util.deep_dup(sugary_type_declaration)
-
-            Util.symbolize_keys!(sugary_type_declaration)
+            sugary_type_declaration.symbolize_keys!
 
             unless strictish_type_declaration?(sugary_type_declaration)
-              sugary_type_declaration = {
+              sugary_type_declaration.declaration_data = {
                 type: :attributes,
-                _desugarized: { type_absolutified: true },
-                element_type_declarations: sugary_type_declaration
+                element_type_declarations: sugary_type_declaration.declaration_data
               }
-
+              sugary_type_declaration.is_absolutified = true
+              sugary_type_declaration.is_duped = true
             end
-
-            Util.symbolize_keys!(sugary_type_declaration[:element_type_declarations])
 
             sugary_type_declaration
           end
@@ -51,8 +47,9 @@ module Foobara
           private
 
           def strictish_type_declaration?(hash)
-            keys = hash.keys.map(&:to_sym)
-            keys.include?(:type) && keys.include?(:element_type_declarations)
+            if hash.key?(:type) || hash.key?("type")
+              hash.key?(:element_type_declarations) || hash.key?("element_type_declarations")
+            end
           end
         end
       end

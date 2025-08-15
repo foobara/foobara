@@ -12,7 +12,7 @@ module Foobara
           end
 
           def applicable?(strict_type_declaration)
-            strict_type_declaration.is_a?(Hash) && strict_type_declaration.key?(:private)
+            strict_type_declaration.hash? && strict_type_declaration.key?(:private)
           end
 
           def validation_errors(strict_type_declaration)

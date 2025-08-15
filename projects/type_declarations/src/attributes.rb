@@ -25,12 +25,16 @@ module Foobara
             TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
           )
 
-          handler.desugarize(
-            type: "::attributes",
+          declaration = TypeDeclaration.new(
+            type: :attributes,
             element_type_declarations:,
             required:,
             defaults:
           )
+          declaration.is_absolutified = true
+          declaration.is_duped = true
+
+          handler.desugarize(declaration).declaration_data
         end
 
         def only(declaration, *keys)
@@ -49,9 +53,8 @@ module Foobara
           reject(declaration, keys_to_reject)
         end
 
-        def reject(declaration, *keys)
-          # TODO: do we really need a deep dup?
-          declaration = Util.deep_dup(declaration)
+        def reject(declaration_data, *keys)
+          declaration = TypeDeclaration.new(declaration_data)
 
           element_type_declarations = declaration[:element_type_declarations]
           required = declaration[:required]
@@ -64,17 +67,20 @@ module Foobara
 
             if element_type_declarations.key?(key)
               changed = true
-              element_type_declarations.delete(key)
+              declaration[:element_type_declarations] = declaration[:element_type_declarations].except(key)
             end
 
             if required&.include?(key)
               changed = true
+              required = required.dup
               required.delete(key)
+              declaration[:required] = required
             end
 
             if defaults&.key?(key)
               changed = true
-              defaults.delete(key)
+              defaults = defaults.except(key)
+              declaration[:defaults] = defaults
             end
           end
 
@@ -83,9 +89,9 @@ module Foobara
               TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
             )
 
-            handler.desugarize(declaration)
+            handler.desugarize(declaration).declaration_data
           else
-            declaration
+            declaration_data
           end
         end
       end

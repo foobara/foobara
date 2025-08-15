@@ -30,11 +30,14 @@ module Foobara
       end
 
       def remove_sensitive_types(strict_type_declaration)
-        handler = GlobalDomain.foobara_type_builder.type_declaration_handler_for(strict_type_declaration)
+        declaration = TypeDeclaration.new(strict_type_declaration)
+        declaration.is_strict = true
+
+        handler = GlobalDomain.foobara_type_builder.type_declaration_handler_for(declaration)
 
         sensitive_type_remover = sensitive_type_removers[handler.class.name]
 
-        if sensitive_type_remover
+        if sensitive_type_remover&.applicable?(strict_type_declaration)
           sensitive_type_remover.process_value!(strict_type_declaration)
         else
           strict_type_declaration
@@ -51,12 +54,16 @@ module Foobara
       end
 
       def sensitive_value_remover_class_for_type(type)
-        handler = GlobalDomain.foobara_type_builder.type_declaration_handler_for(type.declaration_data)
+        declaration_data = type.declaration_data
+        declaration = TypeDeclaration.new(declaration_data)
+        declaration.is_strict = true
+
+        handler = GlobalDomain.foobara_type_builder.type_declaration_handler_for(declaration)
         remover_class = sensitive_value_removers[handler.class.name]
 
         unless remover_class
           # :nocov:
-          raise "No sensitive value remover found for #{type.declaration_data}"
+          raise "No sensitive value remover found for #{declaration_data}"
           # :nocov:
         end
 

@@ -15,7 +15,21 @@ module Foobara
             handler = handler_for_class(ExtendAttributesTypeDeclaration)
             attributes_type_declaration = sugary_type_declaration[:attributes_declaration]
 
-            sugary_type_declaration.merge(attributes_declaration: handler.desugarize(attributes_type_declaration))
+            declaration = sugary_type_declaration.clone_from_part(attributes_type_declaration)
+
+            if sugary_type_declaration.deep_duped?
+              # TODO: probably not worth directly testing this path
+              # :nocov:
+              declaration.is_duped = true
+              declaration.is_deep_duped = true
+              # :nocov:
+            end
+
+            declaration = handler.desugarize(declaration)
+
+            sugary_type_declaration[:attributes_declaration] = declaration.declaration_data
+
+            sugary_type_declaration
           end
         end
       end

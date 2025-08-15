@@ -17,8 +17,6 @@ module Foobara
 
           # TODO: consider splitting this up into multiple desugarizers
           def desugarize(strictish_type_declaration)
-            strictish_type_declaration = strictish_type_declaration.dup
-
             if strictish_type_declaration.key?(:model_module)
               model_module = strictish_type_declaration[:model_module]
 

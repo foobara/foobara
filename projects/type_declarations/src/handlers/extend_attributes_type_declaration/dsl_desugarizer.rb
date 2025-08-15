@@ -6,7 +6,7 @@ module Foobara
       class ExtendAttributesTypeDeclaration < ExtendAssociativeArrayTypeDeclaration
         class DslDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(sugary_type_declaration)
-            sugary_type_declaration.is_a?(::Proc)
+            sugary_type_declaration.proc?
           end
 
           def desugarize(block)

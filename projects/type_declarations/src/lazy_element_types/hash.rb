@@ -17,8 +17,8 @@ module Foobara
                                    domain = Domain.current
 
                                    [
-                                     domain.foobara_type_from_declaration(key_type_declaration || :duck),
-                                     domain.foobara_type_from_declaration(value_type_declaration || :duck)
+                                     domain.foobara_type_from_declaration(key_type_declaration || { type: :duck }),
+                                     domain.foobara_type_from_declaration(value_type_declaration || { type: :duck })
                                    ]
                                  end
                                end

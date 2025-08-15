@@ -316,7 +316,10 @@ module Foobara
           # TODO: introduce a Namespace#scope method to simplify this a bit
           Foobara::Namespace.use self do
             if block
-              args = [TypeDeclarations::Dsl::Attributes.to_declaration(&block), *args]
+              args = [
+                TypeDeclarations::Dsl::Attributes.to_declaration(&block).declaration_data,
+                *args
+              ]
             end
 
             attributes_type_declaration, *args = args

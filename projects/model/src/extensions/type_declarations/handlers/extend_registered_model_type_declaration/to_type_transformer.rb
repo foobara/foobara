@@ -2,6 +2,7 @@ module Foobara
   module TypeDeclarations
     module Handlers
       class ExtendRegisteredModelTypeDeclaration < ExtendRegisteredTypeDeclaration
+        # TODO: seems like we can delete this handler entirely?
         class ToTypeTransformer < ExtendRegisteredTypeDeclaration::ToTypeTransformer
           # TODO: make declaration validator for model_class and model_base_class
           def target_classes(strict_type_declaration)
@@ -14,7 +15,9 @@ module Foobara
           end
 
           def declaration_to_type(strict_type_declaration)
-            type_for_declaration(strict_type_declaration[:type])
+            # TODO: cache this on a #base_type= helper
+            strict_type_declaration.type ||
+              lookup_type(strict_type_declaration[:type], mode: Namespace::LookupMode::ABSOLUTE)
           end
         end
       end

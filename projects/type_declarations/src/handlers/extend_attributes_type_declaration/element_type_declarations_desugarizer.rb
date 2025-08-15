@@ -9,20 +9,26 @@ module Foobara
         # TODO: make a quick way to convert a couple simple procs into a transformer
         class ElementTypeDeclarationsDesugarizer < HashDesugarizer
           def desugarize(sugary_type_declaration)
-            sugary_type_declaration = sugary_type_declaration.dup
-
             sugary_type_declaration[:element_type_declarations] =
               sugary_type_declaration[:element_type_declarations].to_h do |attribute_name, element_type_declaration|
-                if attribute_name != :_desugarized
-                  element_type_declaration = if element_type_declaration.is_a?(Types::Type)
-                                               element_type_declaration.reference_or_declaration_data
-                                             else
-                                               handler = type_declaration_handler_for(element_type_declaration)
-                                               handler.desugarize(element_type_declaration)
-                                             end
-                end
+                element_type_declaration = if element_type_declaration.is_a?(Types::Type)
+                                             element_type_declaration.reference_or_declaration_data
+                                           else
+                                             declaration = TypeDeclaration.new(element_type_declaration)
 
-                [attribute_name, element_type_declaration]
+                                             if sugary_type_declaration.deep_duped?
+                                               # TODO: probably not worth directly testing this path
+                                               # :nocov:
+                                               declaration.is_deep_duped = true
+                                               declaration.is_duped = true
+                                               # :nocov:
+                                             end
+
+                                             handler = type_declaration_handler_for(declaration)
+                                             handler.desugarize(declaration).declaration_data
+                                           end
+
+                [attribute_name.to_sym, element_type_declaration]
               end
 
             sugary_type_declaration

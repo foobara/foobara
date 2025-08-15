@@ -39,6 +39,54 @@ RSpec.describe ":associative_array" do
         it "includes the key type" do
           expect(type.types_depended_on.map(&:type_symbol)).to include(:boolean)
         end
+
+        context "when working with stringified values" do
+          let(:type) do
+            Foobara::Domain.current.foobara_type_from_declaration(
+              "type" => "associative_array",
+              "key_type_declaration" => "boolean"
+            )
+          end
+
+          it "includes the key type" do
+            expect(type.types_depended_on.map(&:type_symbol)).to include(:boolean)
+            expect(type.declaration_data).to eq(type: :associative_array, key_type_declaration: { type: :boolean })
+          end
+        end
+
+        context "when key_type_declaration is a Type" do
+          let(:type) do
+            Foobara::Domain.current.foobara_type_from_declaration(
+              :associative_array,
+              key_type_declaration: Foobara::BuiltinTypes[:boolean]
+            )
+          end
+
+          it "includes the key type" do
+            expect(type.types_depended_on.map(&:type_symbol)).to include(:boolean)
+          end
+        end
+
+        context "when it's a deep-duped declaration" do
+          let(:type) do
+            declaration_data = {
+              type: :associative_array,
+              key_type_declaration: { type: :boolean }
+            }
+
+            declaration = Foobara::TypeDeclaration.new(declaration_data)
+            handler = Foobara::Domain.current.foobara_type_builder.type_declaration_handler_for(declaration)
+
+            declaration = Foobara::TypeDeclaration.new(declaration_data)
+            declaration.is_deep_duped = true
+
+            handler.process_value!(declaration)
+          end
+
+          it "includes the key type" do
+            expect(type.types_depended_on.map(&:type_symbol)).to include(:boolean)
+          end
+        end
       end
 
       describe "#possible_errors" do
@@ -113,6 +161,53 @@ RSpec.describe ":associative_array" do
           expect(errors.size).to eq(2)
           expect(errors.map(&:path)).to contain_exactly([0, :value], [1, :value])
           expect(errors).to all be_a(Foobara::Value::Processor::Casting::CannotCastError)
+        end
+      end
+
+      context "when working with stringified values" do
+        let(:type) do
+          Foobara::Domain.current.foobara_type_from_declaration(
+            "type" => "associative_array",
+            "value_type_declaration" => "boolean"
+          )
+        end
+
+        it "includes the key type" do
+          expect(type.types_depended_on.map(&:type_symbol)).to include(:boolean)
+        end
+      end
+
+      context "when value_type_declaration is a Type" do
+        let(:type) do
+          Foobara::Domain.current.foobara_type_from_declaration(
+            :associative_array,
+            value_type_declaration: Foobara::BuiltinTypes[:boolean]
+          )
+        end
+
+        it "includes the key type" do
+          expect(type.types_depended_on.map(&:type_symbol)).to include(:boolean)
+        end
+      end
+
+      context "when it's a deep-duped declaration" do
+        let(:type) do
+          declaration_data = {
+            type: :associative_array,
+            value_type_declaration: { type: :boolean }
+          }
+
+          declaration = Foobara::TypeDeclaration.new(declaration_data)
+          handler = Foobara::Domain.current.foobara_type_builder.type_declaration_handler_for(declaration)
+
+          declaration = Foobara::TypeDeclaration.new(declaration_data)
+          declaration.is_deep_duped = true
+
+          handler.process_value!(declaration)
+        end
+
+        it "includes the key type" do
+          expect(type.types_depended_on.map(&:type_symbol)).to include(:boolean)
         end
       end
     end

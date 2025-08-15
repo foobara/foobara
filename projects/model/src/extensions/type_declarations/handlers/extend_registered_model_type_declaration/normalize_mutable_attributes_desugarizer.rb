@@ -4,22 +4,22 @@ module Foobara
       class ExtendRegisteredModelTypeDeclaration < ExtendRegisteredTypeDeclaration
         class NormalizeMutableAttributesDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(value)
-            if value.is_a?(::Hash) && value.key?(:mutable) && value.key?(:type)
+            if value.hash? && value.key?(:mutable) && value.key?(:type)
               mutable = value[:mutable]
 
-              return false if [true, false].include?(mutable)
+              return false if mutable == true || mutable == false
 
               if !mutable.is_a?(::Array) || (mutable.is_a?(::Array) && mutable.any? { |k| !k.is_a?(::Symbol) })
-                type = type_for_declaration(value[:type])
-                type.extends?(BuiltinTypes[:model])
+                type = value.type || lookup_type(value[:type], mode: Namespace::LookupMode::ABSOLUTE)
+
+                type&.extends?(BuiltinTypes[:model])
               end
             end
           end
 
           def desugarize(rawish_type_declaration)
-            rawish_type_declaration.merge(
-              mutable: Util.array(rawish_type_declaration[:mutable]).map!(&:to_sym)
-            )
+            rawish_type_declaration[:mutable] = Util.array(rawish_type_declaration[:mutable]).map!(&:to_sym)
+            rawish_type_declaration
           end
         end
       end

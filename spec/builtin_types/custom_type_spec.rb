@@ -34,6 +34,8 @@ RSpec.describe "custom types" do
       stub_class :ComplexTypeDeclarationHandler, Foobara::TypeDeclarations::TypeDeclarationHandler do
         class << self
           def sugar_for_complex?(sugary_type_declaration)
+            sugary_type_declaration = sugary_type_declaration.declaration_data
+
             if sugary_type_declaration.is_a?(Symbol)
               sugary_type_declaration = sugary_type_declaration.to_s
             end
@@ -47,7 +49,7 @@ RSpec.describe "custom types" do
         end
 
         def applicable?(sugary_type_declaration)
-          (sugary_type_declaration.is_a?(Hash) && sugary_type_declaration[:type] == :custom_complex) ||
+          (sugary_type_declaration.hash? && sugary_type_declaration[:type] == :custom_complex) ||
             sugar_for_complex?(sugary_type_declaration)
         end
 
@@ -67,7 +69,13 @@ RSpec.describe "custom types" do
         end
 
         def desugarize(_value)
-          { type: :custom_complex }
+          declaration = Foobara::TypeDeclaration.new(type: :custom_complex)
+
+          declaration.is_strict = true
+          declaration.is_duped = true
+          declaration.is_deep_duped = true
+
+          declaration
         end
       end
 
@@ -209,7 +217,7 @@ RSpec.describe "custom types" do
       end
 
       it "cannot get a type from the type declaration handler" do
-        outcome = type_declaration_handler.process_value(type_declaration)
+        outcome = type_declaration_handler.process_value(Foobara::TypeDeclaration.new(type_declaration))
 
         expect(outcome).to_not be_success
 
@@ -324,7 +332,11 @@ RSpec.describe "custom types" do
 
         context "when registered" do
           let(:type_declaration_handler) { type_declaration_handler_class.new }
-          let(:type) { type_declaration_handler.process_value!(type: :custom_complex, be_pointless: :true_symbol) }
+          let(:type) do
+            type_declaration_handler.process_value!(
+              Foobara::TypeDeclaration.new(type: :custom_complex, be_pointless: :true_symbol)
+            )
+          end
 
           before do
             # TODO: make this less awkward...
