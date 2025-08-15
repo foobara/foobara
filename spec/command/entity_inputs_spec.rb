@@ -48,7 +48,7 @@ RSpec.describe "Entity inputs for commands" do
       inputs_type_declaration = Foobara::Util.deep_dup(Fan.attributes_type.declaration_data)
       element_type_declarations = inputs_type_declaration[:element_type_declarations]
       element_type_declarations[:fan_of][:element_type_declaration] = { type: :User, mutable: ["fan_count"] }
-      element_type_declarations[:owner][:mutable] = false
+      element_type_declarations[:owner] = { mutable: false, type: element_type_declarations[:owner] }
 
       inputs inputs_type_declaration
       result Fan

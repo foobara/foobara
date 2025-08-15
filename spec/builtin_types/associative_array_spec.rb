@@ -50,7 +50,7 @@ RSpec.describe ":associative_array" do
 
           it "includes the key type" do
             expect(type.types_depended_on.map(&:type_symbol)).to include(:boolean)
-            expect(type.declaration_data).to eq(type: :associative_array, key_type_declaration: { type: :boolean })
+            expect(type.declaration_data).to eq(type: :associative_array, key_type_declaration: :boolean)
           end
         end
 

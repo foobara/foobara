@@ -48,6 +48,10 @@ module Foobara
             elsif to_type.extends?(Foobara::BuiltinTypes[:detached_entity])
               declaration = to_type.target_class.primary_key_type.reference_or_declaration_data
 
+              if declaration.is_a?(::Symbol)
+                declaration = { type: declaration  }
+              end
+
               description = "#{to_type.target_class.model_name} #{to_type.target_class.primary_key_attribute}"
 
               unless to_type.extends_directly?(Foobara::BuiltinTypes[:detached_entity]) ||

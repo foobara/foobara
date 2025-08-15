@@ -617,8 +617,8 @@ RSpec.describe Foobara::CommandConnector do
         expect(manifest[:command][:SomeCommand][:result_type]).to eq(
           type: :attributes,
           element_type_declarations: {
-            baz: { type: :string },
-            foo: { type: :string }
+            baz: :string,
+            foo: :string
           }
         )
         expect(JSON.parse(response.body)).to eq("foo" => "foo some value", "baz" => "bar some value")
@@ -671,7 +671,7 @@ RSpec.describe Foobara::CommandConnector do
           expect(manifest[:command][:SomeCommand][:result_type]).to eq(
             type: :attributes,
             element_type_declarations: {
-              baz: { type: :string }
+              baz: :string
             }
           )
           expect(JSON.parse(response.body)).to eq("baz" => "bar some value")
@@ -723,8 +723,8 @@ RSpec.describe Foobara::CommandConnector do
         expect(manifest[:command][:SomeCommand][:inputs_type]).to eq(
           type: :attributes,
           element_type_declarations: {
-            bar: { type: :string },
-            foo: { type: :string }
+            bar: :string,
+            foo: :string
           }
         )
 
@@ -755,9 +755,9 @@ RSpec.describe Foobara::CommandConnector do
           expect(manifest[:command][:SomeCommand][:inputs_type]).to eq(
             type: :attributes,
             element_type_declarations: {
-              foo2: { type: :integer },
-              foo: { type: :string },
-              bar: { type: :string }
+              foo2: :integer,
+              foo: :string,
+              bar: :string
             }
           )
 
@@ -815,8 +815,8 @@ RSpec.describe Foobara::CommandConnector do
           expect(transformed_command.inputs_type.declaration_data).to eq(
             type: :attributes,
             element_type_declarations: {
-              base: { type: :integer },
-              exponent: { type: :integer }
+              base: :integer,
+              exponent: :integer
             }
           )
         end
@@ -842,8 +842,8 @@ RSpec.describe Foobara::CommandConnector do
             expect(transformed_command.inputs_type.declaration_data).to eq(
               type: :attributes,
               element_type_declarations: {
-                base: { type: :integer },
-                exponent: { type: :integer }
+                base: :integer,
+                exponent: :integer
               }
             )
           end
@@ -1384,14 +1384,14 @@ RSpec.describe Foobara::CommandConnector do
               expect(inputs_type).to eq(
                 type: :attributes,
                 element_type_declarations: {
-                  exponent: { type: :string },
-                  bbaassee: { type: :string }
+                  exponent: :string,
+                  bbaassee: :string
                 }
               )
               expect(result_type).to eq(
                 type: :attributes,
                 element_type_declarations: {
-                  answer: { type: :string }
+                  answer: :string
                 }
               )
               expect(error_types).to eq(
@@ -1418,7 +1418,7 @@ RSpec.describe Foobara::CommandConnector do
                   processor_manifest_data: {
                     casting: { cast_to: { type: :attributes,
                                           element_type_declarations: {
-                                            bbaassee: { type: :string }, exponent: { type: :string }
+                                            bbaassee: :string, exponent:  :string
                                           } } }
                   }
                 },
@@ -1428,8 +1428,8 @@ RSpec.describe Foobara::CommandConnector do
                   key: "data.unexpected_attributes",
                   error: "attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError",
                   processor_class: "attributes::SupportedProcessors::ElementTypeDeclarations",
-                  processor_manifest_data: { element_type_declarations: { bbaassee: { type: :string },
-                                                                          exponent: { type: :string } } }
+                  processor_manifest_data: { element_type_declarations: { bbaassee: :string,
+                                                                          exponent: :string } }
                 },
                 "data.bbaassee.cannot_cast" => {
                   path: [:bbaassee],
@@ -1437,7 +1437,7 @@ RSpec.describe Foobara::CommandConnector do
                   symbol: :cannot_cast,
                   key: "data.bbaassee.cannot_cast",
                   error: "Foobara::Value::Processor::Casting::CannotCastError",
-                  processor_manifest_data: { casting: { cast_to: { type: :string } } }
+                  processor_manifest_data: { casting: { cast_to: :string } }
                 },
                 "data.exponent.cannot_cast" => {
                   path: [:exponent],
@@ -1445,7 +1445,7 @@ RSpec.describe Foobara::CommandConnector do
                   symbol: :cannot_cast,
                   key: "data.exponent.cannot_cast",
                   error: "Foobara::Value::Processor::Casting::CannotCastError",
-                  processor_manifest_data: { casting: { cast_to: { type: :string } } }
+                  processor_manifest_data: { casting: { cast_to: :string } }
                 }
               )
             end
@@ -1475,7 +1475,7 @@ RSpec.describe Foobara::CommandConnector do
         it "describes the command" do
           expect(response.status).to be(0)
           json = JSON.parse(response.body)
-          expect(json["inputs_type"]["element_type_declarations"]["base"]["type"]).to eq("integer")
+          expect(json["inputs_type"]["element_type_declarations"]["base"]).to eq("integer")
         end
 
         context "with describe path" do
@@ -1485,7 +1485,7 @@ RSpec.describe Foobara::CommandConnector do
           it "describes the command" do
             expect(response.status).to be(0)
             json = JSON.parse(response.body)
-            expect(json["inputs_type"]["element_type_declarations"]["base"]["type"]).to eq("integer")
+            expect(json["inputs_type"]["element_type_declarations"]["base"]).to eq("integer")
           end
         end
       end
@@ -1888,7 +1888,7 @@ RSpec.describe Foobara::CommandConnector do
           it "returns metadata about the commands" do
             expect(
               manifest[:command][:ComputeExponent][:result_type]
-            ).to eq(type: :integer)
+            ).to eq(:integer)
           end
 
           context "with an entity input" do
@@ -2378,8 +2378,8 @@ RSpec.describe Foobara::CommandConnector do
           transformed_command = command_connector.transformed_command_from_name("SomeCommand")
           inputs_type = transformed_command.inputs_type
 
-          expect(inputs_type.element_types[:foo].declaration_data[:type]).to eq(:string)
-          expect(inputs_type.element_types[:bar].declaration_data[:type]).to eq(:string)
+          expect(inputs_type.element_types[:foo].declaration_data).to eq(:string)
+          expect(inputs_type.element_types[:bar].declaration_data).to eq(:string)
           expect(inputs_type.element_types[:baz].declaration_data[:type]).to eq(:attributes)
 
           expect(response.status).to be(0)

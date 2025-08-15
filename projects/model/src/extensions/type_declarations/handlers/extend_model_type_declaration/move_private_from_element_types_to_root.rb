@@ -33,7 +33,15 @@ module Foobara
             element_type_declarations.each_pair do |attribute_name, attribute_type_declaration|
               if attribute_type_declaration.is_a?(Hash) && attribute_type_declaration.key?(:private)
                 is_private = attribute_type_declaration[:private]
-                element_type_declarations[attribute_name] = attribute_type_declaration.except(:private)
+
+                declaration = attribute_type_declaration.except(:private)
+
+                if declaration.keys == [:type]
+                  declaration = TypeDeclaration.new(declaration).declaration_data
+                end
+
+                element_type_declarations[attribute_name] = declaration
+
                 if is_private
                   private |= [attribute_name]
                 end

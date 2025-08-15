@@ -16,10 +16,19 @@ module Foobara
                                  TypeDeclarations.strict do
                                    domain = Domain.current
 
-                                   [
-                                     domain.foobara_type_from_declaration(key_type_declaration || { type: :duck }),
-                                     domain.foobara_type_from_declaration(value_type_declaration || { type: :duck })
-                                   ]
+                                   key_declaration = if key_type_declaration
+                                                       domain.foobara_type_from_declaration(key_type_declaration)
+                                                     else
+                                                       BuiltinTypes[:duck]
+                                                     end
+
+                                   value_declaration = if value_type_declaration
+                                                         domain.foobara_type_from_declaration(value_type_declaration)
+                                                       else
+                                                         BuiltinTypes[:duck]
+                                                       end
+
+                                   [key_declaration, value_declaration]
                                  end
                                end
         end

@@ -19,7 +19,7 @@ RSpec.describe Foobara::TypeDeclarations::TypeBuilder do
             type: :array,
             element_type_declaration: {
               type: :attributes,
-              element_type_declarations: { foo: { type: :string } },
+              element_type_declarations: { foo: :string },
               required: [:foo]
             }
           )
@@ -36,7 +36,7 @@ RSpec.describe Foobara::TypeDeclarations::TypeBuilder do
             type: :array,
             element_type_declaration: {
               type: :attributes,
-              element_type_declarations: { foo: { type: :string } },
+              element_type_declarations: { foo: :string },
               required: [:foo]
             }
           )

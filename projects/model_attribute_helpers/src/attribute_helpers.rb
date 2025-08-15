@@ -80,9 +80,11 @@ module Foobara
               if type.extends?(BuiltinTypes[:entity])
                 target_class = type.target_class
 
-                entry = foobara_type_declaration_value_at(declaration, DataPath.new(data_path).path)
-                entry.clear
-                entry.merge!(target_class.foobara_attributes_for_aggregate_update(initial: false))
+                set_foobara_type_declaration_value_at(
+                  declaration,
+                  DataPath.new(data_path).path,
+                  target_class.foobara_attributes_for_aggregate_update(initial: false)
+                )
               end
             end
 
@@ -111,9 +113,12 @@ module Foobara
                 # TODO: do we really need declaration_data? Why cant we use the type directly?
                 # TODO: make this work with the type directly for performance reasons.
                 primary_key_type_declaration = target_class.foobara_primary_key_type.declaration_data
-                entry = foobara_type_declaration_value_at(declaration, DataPath.new(data_path).path)
-                entry.clear
-                entry.merge!(primary_key_type_declaration)
+
+                set_foobara_type_declaration_value_at(
+                  declaration,
+                  DataPath.new(data_path).path,
+                  primary_key_type_declaration
+                )
               end
             end
 
@@ -140,23 +145,35 @@ module Foobara
 
           private
 
-          def foobara_type_declaration_value_at(declaration, path_parts)
-            return declaration if path_parts.empty?
-
+          def set_foobara_type_declaration_value_at(declaration, path_parts, value)
             path_part, *path_parts = path_parts
 
-            declaration = case path_part
-                          when :"#"
-                            declaration[:element_type_declaration]
-                          when Symbol, Integer
-                            declaration[:element_type_declarations][path_part]
-                          else
-                            # :nocov:
-                            raise "Bad path part #{path_part}"
-                            # :nocov:
-                          end
-
-            foobara_type_declaration_value_at(declaration, path_parts)
+            case path_part
+            when :"#"
+              if path_parts.empty?
+                declaration[:element_type_declaration] = value
+              else
+                set_foobara_type_declaration_value_at(
+                  declaration[:element_type_declaration],
+                  path_parts,
+                  value
+                )
+              end
+            when Symbol, Integer
+              if path_parts.empty?
+                declaration[:element_type_declarations][path_part] = value
+              else
+                set_foobara_type_declaration_value_at(
+                  declaration[:element_type_declarations][path_part],
+                  path_parts,
+                  value
+                )
+              end
+            else
+              # :nocov:
+              raise "Bad path part #{path_part}"
+              # :nocov:
+            end
           end
         end
       end

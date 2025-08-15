@@ -238,6 +238,8 @@ RSpec.describe Foobara::Manifest do
     expect(attributes.parent).to be_nil
     expect(attributes).to be_a(Foobara::Manifest::Attributes)
     expect(attributes.attribute_declarations[:street].type).to eq(:string)
+    expect(attributes.sensitive).to be_falsey
+    expect(attributes.sensitive_exposed).to be_falsey
 
     command = manifest.command_by_name("SomeOrg::SomeDomain::QueryUser")
 
@@ -265,10 +267,9 @@ RSpec.describe Foobara::Manifest do
 
     type_declaration = command.result_type
     expect(type_declaration.type).to eq(:"SomeOrg::SomeDomain::User")
-    expect(type_declaration.type_declaration_manifest).to be_a(Hash)
+    expect(type_declaration.type_declaration_manifest).to eq(:"SomeOrg::SomeDomain::User")
     expect(type_declaration.to_entity).to be_a(Foobara::Manifest::Entity)
-    expect(type_declaration.scoped_category).to be_nil
-    expect(type_declaration.parent).to be_nil
+    expect(type_declaration.to_entity.scoped_category).to eq(:type)
     expect(type_declaration).to_not be_sensitive
 
     global_domain = Foobara::Manifest::Domain.new(raw_manifest, [:domain, "global_organization::global_domain"])
