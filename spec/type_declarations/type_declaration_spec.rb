@@ -1,12 +1,8 @@
 RSpec.describe Foobara::TypeDeclaration do
   let(:declaration_data) do
     {
-      type: :attributes,
-      element_type_declarations: {
-        foo: :integer,
-        bar: :integer
-      },
-      required: [:foo, :bar]
+      foo: :integer,
+      bar: :integer
     }
   end
 
@@ -16,16 +12,58 @@ RSpec.describe Foobara::TypeDeclaration do
 
   describe "#delete" do
     it "deletes the expected attribute and results in a duped declaration" do
-      expect(type_declaration.key?(:required)).to be true
+      expect(type_declaration.key?(:foo)).to be true
       expect(type_declaration).to_not be_duped
 
-      type_declaration.delete(:required)
+      type_declaration.delete(:foo)
 
-      expect(type_declaration.key?(:required)).to be false
+      expect(type_declaration.key?(:foo)).to be false
       expect(type_declaration).to be_duped
     end
 
     context "when strict" do
+      let(:declaration_data) do
+        {
+          type: :attributes,
+          element_type_declarations: {
+            foo: :integer,
+            bar: :integer
+          },
+          required: [:foo, :bar]
+        }
+      end
+      let(:type_declaration) do
+        described_class.new(declaration_data, true)
+      end
+
+      context "when removing :type key" do
+        it "clears the absolutified flag" do
+          expect {
+            type_declaration.delete(:type)
+
+            expect(type_declaration.declaration_data).to eq(
+              element_type_declarations: {
+                foo: :integer,
+                bar: :integer
+              },
+              required: [:foo, :bar]
+            )
+          }.to change(type_declaration, :absolutified?).from(true).to(false)
+        end
+      end
+    end
+
+    context "when absolutified" do
+      let(:declaration_data) do
+        {
+          type: :attributes,
+          element_type_declarations: {
+            foo: :integer,
+            bar: :integer
+          },
+          required: [:foo, :bar]
+        }
+      end
       let(:type_declaration) do
         super().tap do |declaration|
           declaration.is_strict = true
@@ -58,9 +96,19 @@ RSpec.describe Foobara::TypeDeclaration do
 
   describe "#except" do
     context "when strict" do
+      let(:declaration_data) do
+        {
+          type: :attributes,
+          element_type_declarations: {
+            foo: :integer,
+            bar: :integer
+          },
+          required: [:foo, :bar]
+        }
+      end
       let(:type_declaration) do
-        super().tap do |declaration|
-          declaration.is_strict = true
+        Foobara::TypeDeclarations.strict do
+          super()
         end
       end
 
@@ -77,7 +125,8 @@ RSpec.describe Foobara::TypeDeclaration do
               bar: :integer
             }
           )
-        }.to change { declaration.strict? }.from(true).to(false)
+          # Hmmm rubocop complains about !! use... TODO: disable that?
+        }.to change { declaration.strict? == true }.from(true).to(false)
       end
     end
 
@@ -94,25 +143,21 @@ RSpec.describe Foobara::TypeDeclaration do
       end
 
       let(:type_declaration) do
-        super().tap do |declaration|
-          declaration.is_strict_stringified = true
+        Foobara::TypeDeclarations.strict_stringified do
+          super()
         end
       end
 
-      it "removes the strict flag" do
-        declaration = type_declaration
+      it "removes the element" do
+        declaration = type_declaration.except(:required)
 
-        expect {
-          declaration = declaration.except("required")
-
-          expect(declaration.declaration_data).to eq(
-            "type" => "attributes",
-            "element_type_declarations" => {
-              "foo" => "integer",
-              "bar" => "integer"
-            }
-          )
-        }.to change { declaration.strict_stringified? }.from(true).to(false)
+        expect(declaration.declaration_data).to eq(
+          type: :attributes,
+          element_type_declarations: {
+            "foo" => "integer",
+            "bar" => "integer"
+          }
+        )
       end
     end
   end
@@ -137,6 +182,16 @@ RSpec.describe Foobara::TypeDeclaration do
 
   describe "#assign" do
     context "when strict" do
+      let(:declaration_data) do
+        {
+          type: :attributes,
+          element_type_declarations: {
+            foo: :integer,
+            bar: :integer
+          },
+          required: [:foo, :bar]
+        }
+      end
       let(:type_declaration) do
         super().tap do |declaration|
           declaration.is_strict = true
@@ -165,16 +220,27 @@ RSpec.describe Foobara::TypeDeclaration do
     context "when a type symbol" do
       let(:declaration_data) { :integer }
 
-      context "when strict" do
+      it "sets the type and various flags" do
+        expect(type_declaration.type).to be(Foobara::BuiltinTypes[:integer])
+
+        expect(type_declaration.declaration_data).to eq(type: :integer)
+
+        expect(type_declaration).to be_strict
+        expect(type_declaration).to be_absolutified
+        expect(type_declaration).to be_duped
+        expect(type_declaration).to be_deep_duped
+      end
+
+      context "when absolutified" do
         let(:type_declaration) do
-          Foobara::TypeDeclarations.strict do
-            super()
-          end
+          described_class.new(declaration_data, true)
         end
 
         it "sets the type and various flags" do
           expect(type_declaration.type).to be(Foobara::BuiltinTypes[:integer])
+
           expect(type_declaration.declaration_data).to eq(type: :integer)
+
           expect(type_declaration).to be_strict
           expect(type_declaration).to be_absolutified
           expect(type_declaration).to be_duped

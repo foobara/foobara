@@ -1,29 +1,29 @@
 module Foobara
   # Inheriting from ::Hash for now but we should remove this once all of the handlers are updated
   class TypeDeclaration
-    attr_reader :is_strict,
-                :is_strict_stringified
+    attr_reader :is_strict
 
     attr_accessor :is_duped,
                   :declaration_data,
                   :is_deep_duped,
                   :is_absolutified,
-                  :type
+                  :type,
+                  :base_type
 
-    def initialize(declaration_data)
-      return if type
-
+    # TODO: we should be able to delete absolutified opt once strict declarations
+    # use `:ref` instead of `{type: :ref}` format.
+    def initialize(declaration_data, absolutified = false, skip_reference_check = false)
       if TypeDeclarations.strict?
         self.is_strict = true
-        self.is_absolutified = true
-      elsif TypeDeclarations.strict_stringified?
-        self.is_strict_stringified = true
+      elsif absolutified || TypeDeclarations.strict_stringified?
         self.is_absolutified = true
       end
 
       self.declaration_data = declaration_data
 
-      handle_symbolic_declaration
+      unless skip_reference_check
+        handle_symbolic_declaration
+      end
     end
 
     def is_strict=(value)
@@ -34,18 +34,12 @@ module Foobara
       @is_strict = value
     end
 
-    def is_strict_stringified=(value)
-      if value
-        self.is_absolutified = true
-      end
-
-      @is_strict_stringified = value
-    end
-
     def handle_symbolic_declaration
+      return if strict?
+
       symbol = if declaration_data.is_a?(::Symbol)
                  declaration_data
-               elsif declaration_data.is_a?(::String) && (TypeDeclarations.stringified? || strict_stringified?)
+               elsif declaration_data.is_a?(::String) && TypeDeclarations.stringified?
                  declaration_data.to_sym
                end
 
@@ -53,8 +47,7 @@ module Foobara
         namespace = Domain.current
 
         type = if absolutified?
-                 namespace = namespace.foobara_root_namespace
-                 namespace.foobara_lookup_type(symbol, mode: Namespace::LookupMode::ABSOLUTE)
+                 namespace.foobara_root_namespace.foobara_lookup_type(symbol, mode: Namespace::LookupMode::ABSOLUTE)
                else
                  namespace.foobara_lookup_type(symbol)
                end
@@ -75,8 +68,44 @@ module Foobara
 
           self.declaration_data = declaration_data
         end
-      else
-        self.declaration_data = declaration_data
+      elsif TypeDeclarations.strict_stringified?
+        symbolize_keys!
+        self[:type] = self[:type].to_sym
+
+        if declaration_data.keys.size == 1
+          self.is_strict = true
+          self.is_deep_duped = true
+          self.is_duped = true
+        end
+      elsif declaration_data.is_a?(::Hash)
+        type_symbol = self[:type] || self["type"]
+
+        if type_symbol
+          if type_symbol.is_a?(::Symbol) || type_symbol.is_a?(::String)
+
+            namespace = Domain.current
+
+            type = if absolutified?
+                     namespace.foobara_root_namespace.foobara_lookup_type(type_symbol, mode: Namespace::LookupMode::ABSOLUTE)
+                   else
+                     namespace.foobara_lookup_type(type_symbol)
+                   end
+
+            if type
+              symbolize_keys!
+              self[:type] = type.full_type_symbol
+              self.is_absolutified = true
+
+              if declaration_data.keys.size == 1
+                self.type = type
+                self.is_strict = true
+                self.is_deep_duped = true
+              else
+                self.base_type = type
+              end
+            end
+          end
+        end
       end
     end
 
@@ -169,10 +198,6 @@ module Foobara
         declaration.is_strict = false
       end
 
-      if declaration.strict_stringified?
-        declaration.is_strict_stringified = false
-      end
-
       declaration
     end
 
@@ -184,10 +209,6 @@ module Foobara
 
       if declaration.strict?
         declaration.is_strict = false
-      end
-
-      if declaration.strict_stringified?
-        declaration.is_strict_stringified = false
       end
 
       declaration
@@ -208,10 +229,6 @@ module Foobara
         self.is_duped = other.duped?
       end
 
-      if strict_stringified? != other.strict_stringified?
-        self.is_strict_stringified = other.strict_stringified?
-      end
-
       if deep_duped? != other.deep_duped?
         self.is_deep_duped = other.deep_duped?
       end
@@ -219,17 +236,17 @@ module Foobara
       if other.type
         self.type = other.type
       end
+
+      if other.base_type
+        self.base_type = other.base_type
+      end
     end
 
     def clone
-      declaration = TypeDeclaration.new(declaration_data)
+      declaration = TypeDeclaration.new(declaration_data, false, true)
 
       if strict?
         declaration.is_strict = true
-      end
-
-      if strict_stringified?
-        declaration.is_strict_stringified = true
       end
 
       if absolutified?
@@ -240,27 +257,20 @@ module Foobara
         declaration.type = type
       end
 
+      if base_type
+        declaration.base_type = base_type
+      end
+
       declaration
     end
 
     def clone_from_part(part)
-      declaration = TypeDeclaration.new(part)
-
-      if strict?
-        declaration.is_strict = true
-      end
-
-      if strict_stringified?
-        declaration.is_strict_stringified = true
-      end
-
-      declaration
+      TypeDeclaration.new(part)
     end
 
     alias absolutified? is_absolutified
     alias duped? is_duped
     alias deep_duped? is_deep_duped
     alias strict? is_strict
-    alias strict_stringified? is_strict_stringified
   end
 end

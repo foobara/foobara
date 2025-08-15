@@ -10,16 +10,14 @@ module Foobara
             registered_type(strict_type_declaration)
           end
 
-          def type_symbol(strict_type_declaration)
-            strict_type_declaration[:type]
-          end
-
           def registered_type(strict_type_declaration)
             type = strict_type_declaration.type
 
             return type if type
 
-            lookup_type!(type_symbol(strict_type_declaration), mode: Namespace::LookupMode::ABSOLUTE)
+            type = lookup_type!(strict_type_declaration[:type], mode: Namespace::LookupMode::ABSOLUTE)
+
+            strict_type_declaration.base_type = type
           end
 
           def target_classes(strict_type_declaration)
