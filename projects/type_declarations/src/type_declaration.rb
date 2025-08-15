@@ -162,16 +162,16 @@ module Foobara
     def assign(other)
       self.declaration_data = other.declaration_data
 
+      if absolutified? != other.absolutified?
+        self.is_absolutified = other.absolutified?
+      end
+
       if strict? != other.strict?
         self.is_strict = other.strict?
       end
 
       if duped? != other.duped?
         self.is_duped = other.duped?
-      end
-
-      if absolutified? != other.absolutified?
-        self.is_absolutified = other.absolutified?
       end
 
       if strict_stringified? != other.strict_stringified?

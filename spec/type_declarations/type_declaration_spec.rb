@@ -134,4 +134,30 @@ RSpec.describe Foobara::TypeDeclaration do
       end
     end
   end
+
+  describe "#assign" do
+    context "when strict" do
+      let(:type_declaration) do
+        super().tap do |declaration|
+          declaration.is_strict = true
+        end
+      end
+
+      it "copies everything over" do
+        clone = described_class.new(foo: :bar)
+
+        clone.assign(type_declaration)
+
+        expect(clone.declaration_data).to eq(
+          type: :attributes,
+          element_type_declarations: {
+            foo: :integer,
+            bar: :integer
+          },
+          required: [:foo, :bar]
+        )
+        expect(clone).to be_absolutified
+      end
+    end
+  end
 end
