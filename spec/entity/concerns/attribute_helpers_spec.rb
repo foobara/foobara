@@ -103,9 +103,9 @@ RSpec.describe Foobara::ModelAttributeHelpers::Concerns::AttributeHelpers do
         expect(for_create_declaration).to eq(
           type: :attributes,
           element_type_declarations: {
-            name: { type: :string },
-            ssn: { type: :string },
-            username: { type: :string },
+            name: :string,
+            ssn: :string,
+            username: :string,
             stuff: {
               type: :attributes,
               element_type_declarations: {
@@ -113,8 +113,8 @@ RSpec.describe Foobara::ModelAttributeHelpers::Concerns::AttributeHelpers do
                   type: :tuple,
                   size: 2,
                   element_type_declarations: [
-                    { type: :integer },
-                    { type: :AuthUser }
+                    :integer,
+                    :AuthUser
                   ]
                 }
               }
@@ -140,8 +140,8 @@ RSpec.describe Foobara::ModelAttributeHelpers::Concerns::AttributeHelpers do
           expect(for_create_declaration).to eq(
             type: :attributes,
             element_type_declarations: {
-              name: { type: :string },
-              username: { type: :string },
+              name: :string,
+              username: :string,
               stuff: {
                 type: :attributes,
                 element_type_declarations: {
@@ -149,8 +149,8 @@ RSpec.describe Foobara::ModelAttributeHelpers::Concerns::AttributeHelpers do
                     type: :tuple,
                     size: 2,
                     element_type_declarations: [
-                      { type: :integer },
-                      { type: :AuthUser }
+                      :integer,
+                      :AuthUser
                     ]
                   }
                 }
@@ -168,10 +168,10 @@ RSpec.describe Foobara::ModelAttributeHelpers::Concerns::AttributeHelpers do
           expect(for_create_declaration).to eq(
             type: :attributes,
             element_type_declarations: {
-              id: { type: :integer },
-              name: { type: :string },
-              ssn: { type: :string },
-              username: { type: :string },
+              id: :integer,
+              name: :string,
+              ssn: :string,
+              username: :string,
               stuff: {
                 type: :attributes,
                 element_type_declarations: {
@@ -179,8 +179,8 @@ RSpec.describe Foobara::ModelAttributeHelpers::Concerns::AttributeHelpers do
                     type: :tuple,
                     size: 2,
                     element_type_declarations: [
-                      { type: :integer },
-                      { type: :AuthUser }
+                      :integer,
+                      :AuthUser
                     ]
                   }
                 }
@@ -198,9 +198,9 @@ RSpec.describe Foobara::ModelAttributeHelpers::Concerns::AttributeHelpers do
       expect(SomeEntity.foobara_attributes_for_find_by).to eq(
         type: :attributes,
         element_type_declarations: {
-          id: { type: :integer },
-          name: { type: :string },
-          reviews: { type: :array, element_type_declaration: { type: :integer } }
+          id: :integer,
+          name: :string,
+          reviews: { type: :array, element_type_declaration: :integer }
         }
       )
     end
