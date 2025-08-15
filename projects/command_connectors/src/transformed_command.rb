@@ -733,7 +733,9 @@ module Foobara
     def apply_pre_commit_transformers
       if pre_commit_transformer
         command.before_commit_transaction do |**|
-          pre_commit_transformer.process_value!(self)
+          if pre_commit_transformer.applicable?(self)
+            pre_commit_transformer.process_value!(self)
+          end
         end
       end
     end

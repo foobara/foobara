@@ -18,7 +18,11 @@ module Foobara
             declaration = sugary_type_declaration.clone_from_part(attributes_type_declaration)
 
             if sugary_type_declaration.deep_duped?
+              # TODO: probably not worth directly testing this path
+              # :nocov:
+              declaration.is_duped = true
               declaration.is_deep_duped = true
+              # :nocov:
             end
 
             declaration = handler.desugarize(declaration)
