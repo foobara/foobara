@@ -30,6 +30,8 @@ module Foobara
       end
 
       def remove_sensitive_types(strict_type_declaration)
+        binding.pry if strict_type_declaration.is_a?(TypeDeclaration)
+
         declaration = TypeDeclaration.new(strict_type_declaration)
         declaration.is_strict = true
 
@@ -37,7 +39,7 @@ module Foobara
 
         sensitive_type_remover = sensitive_type_removers[handler.class.name]
 
-        if sensitive_type_remover
+        if sensitive_type_remover&.applicable?(strict_type_declaration)
           sensitive_type_remover.process_value!(strict_type_declaration)
         else
           strict_type_declaration

@@ -3,6 +3,7 @@ module Foobara
   class TypeDeclaration
     attr_reader :is_strict,
                 :is_strict_stringified
+
     attr_accessor :declaration_data,
                   :is_duped,
                   :is_deep_duped,
