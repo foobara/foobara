@@ -6,7 +6,12 @@ module Foobara
 
         module ClassMethods
           def type_declaration(...)
-            super.merge(type: :entity)
+            declaration = super
+
+            declaration[:type] = :entity
+            declaration.is_absolutified = true
+
+            declaration
           end
         end
       end

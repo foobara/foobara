@@ -63,7 +63,8 @@ module Foobara
               declaration = type_declaration(attributes_type.declaration_data)
 
               if model_type
-                unless Foobara::TypeDeclarations.declarations_equal?(declaration, model_type.declaration_data)
+                unless Foobara::TypeDeclarations.declarations_equal?(declaration.declaration_data,
+                                                                     model_type.declaration_data)
                   type_domain = domain
                   self.model_type = nil
                   type_domain.foobara_type_from_declaration(declaration)
@@ -97,19 +98,25 @@ module Foobara
               end
             end
 
-            Util.remove_blank(
-              type: :model,
-              name: model_name,
-              model_module: model_module_name,
-              model_class:,
-              model_base_class:,
-              attributes_declaration:,
-              description:,
-              _desugarized: { type_absolutified: true },
-              mutable:,
-              delegates:,
-              private: private_attribute_names
+            type_declaration = TypeDeclaration.new(
+              Util.remove_blank(
+                type: :model,
+                name: model_name,
+                model_module: model_module_name,
+                model_class:,
+                model_base_class:,
+                attributes_declaration:,
+                description:,
+                mutable:,
+                delegates:,
+                private: private_attribute_names
+              )
             )
+
+            type_declaration.is_absolutified = true
+            type_declaration.is_duped = true
+
+            type_declaration
           end
 
           def foobara_attributes_type

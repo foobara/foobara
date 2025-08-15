@@ -20,7 +20,13 @@ module Foobara
           def type_declaration(...)
             raise "No primary key set yet" unless primary_key_attribute
 
-            super.merge(type: :detached_entity, primary_key: primary_key_attribute)
+            declaration = super
+
+            declaration[:type] = :detached_entity
+            declaration[:primary_key] = primary_key_attribute
+            declaration.is_absolutified = true
+
+            declaration
           end
 
           def set_model_type

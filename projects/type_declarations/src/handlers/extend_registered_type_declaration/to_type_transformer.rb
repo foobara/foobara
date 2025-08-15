@@ -74,7 +74,7 @@ module Foobara
           end
 
           def non_processor_keys
-            [:type, :_desugarized, :description, :sensitive, :sensitive_exposed]
+            [:type, :description, :sensitive, :sensitive_exposed]
           end
         end
       end

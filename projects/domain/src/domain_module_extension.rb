@@ -361,7 +361,7 @@ module Foobara
                              scoped_full_name
                            end
 
-            entity_type = foobara_type_builder.type_for_declaration(
+            declaration = TypeDeclaration.new(
               Util.remove_blank(
                 type: :entity,
                 name:,
@@ -369,10 +369,14 @@ module Foobara
                 model_module:,
                 attributes_declaration: attributes_type_declaration,
                 primary_key:,
-                description:,
-                _desugarized: { type_absolutified: true }
+                description:
               )
             )
+
+            declaration.is_absolutified = true
+            declaration.is_duped = true
+
+            entity_type = foobara_type_builder.type_for_declaration(declaration)
 
             entity_type.target_class
           end
