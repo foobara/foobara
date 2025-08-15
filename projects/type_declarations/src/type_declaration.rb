@@ -61,6 +61,10 @@ module Foobara
     end
 
     def declaration_data=(value)
+      if value.is_a?(::Hash) && value[:attributes_declaration].is_a?(TypeDeclaration)
+        binding.pry
+        raise "wtf"
+      end
       if value == :duck
         binding.pry if strict?
       end
@@ -165,6 +169,10 @@ module Foobara
     end
 
     def []=(key, value)
+      if value.is_a?(TypeDeclaration)
+        binding.pry
+        raise "wtf"
+      end
       if declaration_data == :duck
         binding.pry if strict?
       end

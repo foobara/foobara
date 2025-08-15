@@ -5,6 +5,7 @@ module Foobara
     module Handlers
       class ExtendRegisteredTypeDeclaration < RegisteredTypeDeclaration
         def applicable?(sugary_type_declaration)
+          binding.pry if sugary_type_declaration["type"] == "string"
           strict_type_declaration = if sugary_type_declaration.strict?
                                       sugary_type_declaration
                                     else

@@ -316,7 +316,10 @@ module Foobara
           # TODO: introduce a Namespace#scope method to simplify this a bit
           Foobara::Namespace.use self do
             if block
-              args = [TypeDeclarations::Dsl::Attributes.to_declaration(&block), *args]
+              args = [
+                TypeDeclarations::Dsl::Attributes.to_declaration(&block).declaration_data,
+                *args
+              ]
             end
 
             attributes_type_declaration, *args = args
@@ -349,7 +352,11 @@ module Foobara
               Foobara::TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
             )
 
+            binding.pry
+
             attributes_type = handler.type_for_declaration(attributes_type_declaration)
+
+            binding.pry
 
             # TODO: reuse the model_base_class primary key if it has one...
             primary_key = attributes_type.element_types.keys.first

@@ -8,29 +8,24 @@ module Foobara
         # rather hacky but other potential workarounds seemed gnarlier
         class StrictStringifiedDesugarizer < TypeDeclarations::Desugarizer
           def applicable?(sugary_type_declaration)
+            binding.pry if sugary_type_declaration.hash? && sugary_type_declaration["type"] == "string"
+
             # TODO: we shouldn't have to check if this is a hash. This means some other desugarizer is unnecessarily
             # processing a type declaration as if it were sugary. Find and fix that to speed this up a tiny bit.
             return false unless sugary_type_declaration.hash? && sugary_type_declaration.strict_stringified?
 
             raise "wtf" unless sugary_type_declaration.absolutified?
-            # TODO: delete this whole desugarizer now that we don't need _desugarized hack
+
+            true
           end
 
           def desugarize(sugary_type_declaration)
-            raise "wtf"
+            binding.pry if sugary_type_declaration.hash? && sugary_type_declaration["type"] == "string"
 
             sugary_type_declaration.symbolize_keys!
-            type_symbol = sugary_type_declaration[:type]
+            sugary_type_declaration[:type] = sugary_type_declaration[:type].to_sym
 
-            type = lookup_type(type_symbol, mode: Namespace::LookupMode::ABSOLUTE)
-
-            unless type.full_type_symbol == type_symbol.to_sym
-              raise "wtf... why wouldn't these match???"
-            end
-
-            type_symbol = type.full_type_symbol
-
-            sugary_type_declaration[:type] = type_symbol.to_sym
+            sugary_type_declaration
           end
 
           def priority
