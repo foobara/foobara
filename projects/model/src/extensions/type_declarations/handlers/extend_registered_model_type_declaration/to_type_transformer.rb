@@ -2,6 +2,7 @@ module Foobara
   module TypeDeclarations
     module Handlers
       class ExtendRegisteredModelTypeDeclaration < ExtendRegisteredTypeDeclaration
+        # TODO: seems like we can delete this handler entirely?
         class ToTypeTransformer < ExtendRegisteredTypeDeclaration::ToTypeTransformer
           # TODO: make declaration validator for model_class and model_base_class
           def target_classes(strict_type_declaration)
@@ -15,12 +16,11 @@ module Foobara
 
           def declaration_to_type(strict_type_declaration)
             type = strict_type_declaration.type
-            return type if type
 
-            type = type_for_declaration(strict_type_declaration[:type])
-
-            if type
-              strict_type_declaration.type = type
+            unless type
+              # :nocov:
+              raise "Expected an applicable registered model extension to have a type cached on the declaration"
+              # :nocov:
             end
 
             type
