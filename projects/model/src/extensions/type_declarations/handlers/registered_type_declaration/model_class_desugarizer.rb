@@ -18,7 +18,9 @@ module Foobara
               declaration.type = type
               declaration.reference_checked = true
             else
+              # :nocov:
               declaration.reference_checked = false
+              # :nocov:
             end
 
             declaration.is_absolutified = true

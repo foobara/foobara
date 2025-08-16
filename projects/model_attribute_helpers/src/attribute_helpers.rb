@@ -145,25 +145,6 @@ module Foobara
 
           private
 
-          def foobara_type_declaration_value_at(declaration, path_parts)
-            return declaration if path_parts.empty?
-
-            path_part, *path_parts = path_parts
-
-            declaration = case path_part
-                          when :"#"
-                            declaration[:element_type_declaration]
-                          when Symbol, Integer
-                            declaration[:element_type_declarations][path_part]
-                          else
-                            # :nocov:
-                            raise "Bad path part #{path_part}"
-                            # :nocov:
-                          end
-
-            foobara_type_declaration_value_at(declaration, path_parts)
-          end
-
           def set_foobara_type_declaration_value_at(declaration, path_parts, value)
             path_part, *path_parts = path_parts
 

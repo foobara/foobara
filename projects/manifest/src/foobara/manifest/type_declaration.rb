@@ -110,7 +110,9 @@ module Foobara
         raise "not an detached_entity" unless detached_entity?
 
         unless relevant_manifest.is_a?(::Symbol) || relevant_manifest.size == 1
+          # :nocov:
           raise "detached_entity extension instead of an detached_entity"
+          # :nocov:
         end
 
         type = to_type
@@ -130,7 +132,9 @@ module Foobara
         raise "not an entity" unless entity?
 
         unless relevant_manifest.is_a?(::Symbol) || relevant_manifest.size == 1
+          # :nocov:
           raise "entity extension instead of an entity"
+          # :nocov:
         end
 
         type = to_type

@@ -21,7 +21,9 @@ module Foobara
 
           if strict_type_declaration.reference?
             unless strict_type_declaration.type
+              # :nocov:
               strict_type_declaration.handle_symbolic_declaration
+              # :nocov:
             end
 
             unless sugary_type_declaration.equal?(strict_type_declaration)

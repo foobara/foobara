@@ -36,16 +36,6 @@ module Foobara
               else
                 super
               end
-            elsif parent_declaration_data.is_a?(::Symbol)
-              type = Namespace.current.foobara_lookup_type!(
-                parent_declaration_data, mode: Namespace::LookupMode::ABSOLUTE
-              )
-
-              if type.builtin?
-                super
-              else
-                type.target_class.possible_errors
-              end
             else
               super
             end
