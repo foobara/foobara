@@ -238,6 +238,8 @@ RSpec.describe Foobara::Manifest do
     expect(attributes.parent).to be_nil
     expect(attributes).to be_a(Foobara::Manifest::Attributes)
     expect(attributes.attribute_declarations[:street].type).to eq(:string)
+    expect(attributes.sensitive).to be_falsey
+    expect(attributes.sensitive_exposed).to be_falsey
 
     command = manifest.command_by_name("SomeOrg::SomeDomain::QueryUser")
 

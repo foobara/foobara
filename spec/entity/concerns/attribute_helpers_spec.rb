@@ -22,8 +22,20 @@ RSpec.describe Foobara::ModelAttributeHelpers::Concerns::AttributeHelpers do
   end
 
   describe ".attributes_for_atom_update" do
+    before do
+      stub_class("SomeOtherEntity", Foobara::Entity) do
+        attributes do
+          id :integer
+          reviews :array do
+            stuff [SomeEntity], default: []
+          end
+        end
+        primary_key :id
+      end
+    end
+
     it "returns a hash" do
-      expect(SomeEntity.foobara_attributes_for_atom_update(require_primary_key: false)).to be_a(Hash)
+      expect(SomeOtherEntity.foobara_attributes_for_atom_update(require_primary_key: false)).to be_a(Hash)
     end
   end
 
