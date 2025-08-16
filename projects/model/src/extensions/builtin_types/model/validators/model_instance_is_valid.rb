@@ -22,19 +22,36 @@ module Foobara
           end
 
           def possible_errors
-            model_class_name = parent_declaration_data[:model_class]
+            if parent_declaration_data.is_a?(::Hash)
+              model_class_name = parent_declaration_data[:model_class]
 
-            if model_class_name
-              model_class = if Object.const_defined?(model_class_name)
-                              Object.const_get(model_class_name)
-                            else
-                              Namespace.current.foobara_lookup_type!(model_class_name).target_class
-                            end
+              if model_class_name
+                model_class = if Object.const_defined?(model_class_name)
+                                Object.const_get(model_class_name)
+                              else
+                                Namespace.current.foobara_lookup_type!(model_class_name).target_class
+                              end
 
-              model_class.possible_errors
+                model_class.possible_errors
+              else
+                super
+              end
+            elsif parent_declaration_data.is_a?(::Symbol)
+              type = Namespace.current.foobara_lookup_type!(
+                parent_declaration_data, mode: Namespace::LookupMode::ABSOLUTE
+              )
+
+              if type.builtin?
+                super
+              else
+                type.target_class.possible_errors
+              end
             else
               super
             end
+          rescue => e
+            binding.pry
+            raise
           end
         end
       end

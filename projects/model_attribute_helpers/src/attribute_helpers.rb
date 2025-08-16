@@ -80,9 +80,11 @@ module Foobara
               if type.extends?(BuiltinTypes[:entity])
                 target_class = type.target_class
 
-                entry = foobara_type_declaration_value_at(declaration, DataPath.new(data_path).path)
-                entry.clear
-                entry.merge!(target_class.foobara_attributes_for_aggregate_update(initial: false))
+                set_foobara_type_declaration_value_at(
+                  declaration,
+                  DataPath.new(data_path).path,
+                  target_class.foobara_attributes_for_aggregate_update(initial: false)
+                )
               end
             end
 
