@@ -18,8 +18,9 @@ GEM
     diff-lcs (1.6.2)
     docile (1.4.1)
     ffi (1.17.2-x86_64-linux-gnu)
-    foobara-crud-driver-spec-helpers (1.0.1)
-      foobara (~> 0.0.94)
+    foobara-crud-driver-spec-helpers (1.0.2)
+      base64
+      foobara (< 2.0.0)
     foobara-lru-cache (1.0.0)
     foobara-rubocop-rules (1.0.1)
       rubocop

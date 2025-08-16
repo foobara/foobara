@@ -977,7 +977,7 @@ RSpec.describe Foobara::CommandConnector do
             expect(response.outcome).to_not be_success
             expect(
               JSON.parse(response.body).find { |e| e["key"] == "runtime.not_allowed" }["message"]
-            ).to match(/base == 1900/)
+            ).to match(/not.?allowed/i)
           end
 
           describe "#foobara_manifest" do

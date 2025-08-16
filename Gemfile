@@ -9,21 +9,27 @@ gemspec
 # gem "foobara-lru-cache", path: "../lru-cache"
 
 group :development do
-  gem "foobara-rubocop-rules", ">= 1.0.0" # , path: "../rubocop-rules"
   gem "guard-rspec"
+end
+
+group :development, :ci do
+  gem "foobara-rubocop-rules", ">= 1.0.0" # , path: "../rubocop-rules"
   gem "rake"
   gem "rubocop-rake"
   gem "rubocop-rspec"
 end
 
+group :development, :test, :ci do
+  gem "rspec"
+end
+
 group :development, :test do
   gem "pry"
   gem "pry-byebug"
-  gem "rspec"
   gem "ruby-prof"
 end
 
-group :test do
+group :test, :ci do
   gem "foobara-crud-driver-spec-helpers", "< 2.0.0" # , path: "../crud-driver-spec-helpers"
   gem "foobara-spec-helpers", "< 2.0.0" # , path: "../spec-helpers"
   gem "rspec-its"

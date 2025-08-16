@@ -708,7 +708,9 @@ module Foobara
               source = if allowed_rule.block.respond_to?("source") && defined?(MethodSource)
                          begin
                            # This only works when pry is loaded
+                           # :nocov:
                            allowed_rule.block.source
+                           # :nocov:
                          rescue MethodSource::SourceNotFoundError
                            # This path is hit if the way the source code is extracted
                            # doesn't result in valid Ruby, for example, as part of a hash such as:
