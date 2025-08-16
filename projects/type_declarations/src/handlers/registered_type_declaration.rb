@@ -20,7 +20,9 @@ module Foobara
                                     end
 
           if strict_type_declaration.hash? && strict_type_declaration.declaration_data.keys == [:type]
-            raise "wtf"
+            if strict_type_declaration.declaration_data != { type: :custom_complex }
+              binding.pry
+            end
           end
 
           if strict_type_declaration.reference?

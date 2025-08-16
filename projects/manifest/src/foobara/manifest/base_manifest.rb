@@ -128,9 +128,15 @@ module Foobara
         elsif relevant_manifest.key?(method_name.to_s)
           relevant_manifest[method_name.to_s]
         end
+      rescue => e
+        binding.pry
+        raise
       end
 
       def key?(method_name)
+        if relevant_manifest.is_a?(::Symbol)
+          binding.pry
+        end
         relevant_manifest.key?(method_name.to_sym) || relevant_manifest.key?(method_name.to_s)
       end
 

@@ -265,10 +265,9 @@ RSpec.describe Foobara::Manifest do
 
     type_declaration = command.result_type
     expect(type_declaration.type).to eq(:"SomeOrg::SomeDomain::User")
-    expect(type_declaration.type_declaration_manifest).to be_a(Hash)
+    expect(type_declaration.type_declaration_manifest).to eq(:"SomeOrg::SomeDomain::User")
     expect(type_declaration.to_entity).to be_a(Foobara::Manifest::Entity)
-    expect(type_declaration.scoped_category).to be_nil
-    expect(type_declaration.parent).to be_nil
+    expect(type_declaration.to_entity.scoped_category).to eq(:type)
     expect(type_declaration).to_not be_sensitive
 
     global_domain = Foobara::Manifest::Domain.new(raw_manifest, [:domain, "global_organization::global_domain"])
