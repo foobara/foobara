@@ -1,4 +1,4 @@
-name: rspec
+name: ci
 
 on:
   push:
@@ -8,9 +8,9 @@ on:
   pull_request:
 
 jobs:
-  ci:
+  rspec:
     runs-on: ubuntu-latest
-    name: RSpec and Rubocop
+    name: RSpec
     timeout-minutes: 3
     env:
       BUNDLE_ONLY: ci
@@ -26,5 +26,21 @@ jobs:
           bundler-cache: true
       - name: Run rspec
         run: bundle exec rspec
+  rubocop:
+    runs-on: ubuntu-latest
+    name: Rubocop
+    timeout-minutes: 3
+    env:
+      BUNDLE_ONLY: ci
+    steps:
+      - uses: actions/checkout@v3
+      - name: set ruby version
+        run: |
+          echo ruby_version=`cat .ruby-version` >> "$GITHUB_ENV"
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
       - name: Run rubocop
         run: bundle exec rubocop
