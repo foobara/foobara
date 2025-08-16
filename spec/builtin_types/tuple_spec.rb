@@ -21,8 +21,8 @@ RSpec.describe ":tuple" do
         expect(type.declaration_data).to eq(
           type: :tuple,
           element_type_declarations: [
-            { type: :big_decimal },
-            { type: :attributes, element_type_declarations: { a: { type: :integer } } }
+            :big_decimal,
+            { type: :attributes, element_type_declarations: { a: :integer } }
           ],
           size: 2
         )
@@ -34,7 +34,7 @@ RSpec.describe ":tuple" do
         it "converts to strict type declaration successfully" do
           expect(type.declaration_data).to eq(
             type: :tuple,
-            element_type_declarations: [{ type: :string }, { type: :integer }, { type: :symbol }],
+            element_type_declarations: [:string, :integer, :symbol],
             size: 3
           )
         end

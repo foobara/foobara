@@ -24,9 +24,9 @@ RSpec.describe Foobara::TypeDeclarations do
         expect(type_declaration_without_sensitive_types).to eq(
           type: :attributes,
           element_type_declarations: {
-            baz: { type: :string },
-            bar: { type: :string },
-            foo: { type: :string }
+            baz: :string,
+            bar: :string,
+            foo: :string
           },
           required: [:bar, :foo],
           defaults: { foo: "foo", bar: "bar" }
@@ -55,13 +55,13 @@ RSpec.describe Foobara::TypeDeclarations do
           expect(type_declaration_without_sensitive_types).to eq(
             type: :attributes,
             element_type_declarations: {
-              baz: { type: :string },
-              foo: { type: :string },
+              baz: :string,
+              foo: :string,
               nested: {
                 type: :attributes,
                 element_type_declarations: {
-                  baz: { type: :string },
-                  foo: { type: :string }
+                  baz: :string,
+                  foo: :string
                 },
                 required: [:foo],
                 defaults: { foo: "foo" }
@@ -70,7 +70,7 @@ RSpec.describe Foobara::TypeDeclarations do
                 type: :array,
                 element_type_declaration: {
                   type: :attributes,
-                  element_type_declarations: { foo: { type: :string } }
+                  element_type_declarations: { foo: :string }
                 }
               }
             },
@@ -93,9 +93,9 @@ RSpec.describe Foobara::TypeDeclarations do
           expect(type_declaration_without_sensitive_types).to eq(
             type: :attributes,
             element_type_declarations: {
-              baz: { type: :string },
-              bar: { type: :string },
-              foo: { type: :string }
+              baz: :string,
+              bar: :string,
+              foo: :string
             },
             required: [:bar, :foo],
             defaults: { foo: "foo", bar: "bar" }
@@ -118,7 +118,7 @@ RSpec.describe Foobara::TypeDeclarations do
             foo: {
               type: :attributes,
               element_type_declarations: {
-                foo: { type: :string }
+                foo: :string
               }
             }
           )
@@ -170,15 +170,15 @@ RSpec.describe Foobara::TypeDeclarations do
           element_type_declaration: {
             type: :attributes,
             element_type_declarations: {
-              foo: { type: :string },
-              bar: { type: :string },
-              baz: { type: :string },
+              foo: :string,
+              bar: :string,
+              baz: :string,
               nested: {
                 type: :attributes,
                 element_type_declarations: {
-                  foo: { type: :string },
-                  bar: { type: :string },
-                  baz: { type: :string }
+                  foo: :string,
+                  bar: :string,
+                  baz: :string
                 },
                 required: [:bar, :foo], defaults: { foo: "foo", bar: "bar" }
               },
@@ -186,7 +186,7 @@ RSpec.describe Foobara::TypeDeclarations do
                 type: :array,
                 element_type_declaration: {
                   type: :attributes,
-                  element_type_declarations: { foo: { type: :string } }
+                  element_type_declarations: { foo: :string }
                 }
               }
             },
@@ -243,11 +243,11 @@ RSpec.describe Foobara::TypeDeclarations do
         expect(
           type_declaration_without_sensitive_types[:attributes_declaration][:element_type_declarations]
         ).to eq(
-          id: { type: :integer },
-          foo: { type: :string },
-          some_inner_entity: { type: :InnerEntity },
-          some_detached_entity: { type: :InnerDetachedEntity },
-          some_model: { type: :SomeModel }
+          id: :integer,
+          foo: :string,
+          some_inner_entity: :InnerEntity,
+          some_detached_entity: :InnerDetachedEntity,
+          some_model: :SomeModel
         )
       end
 
@@ -264,11 +264,11 @@ RSpec.describe Foobara::TypeDeclarations do
           expect(
             type_declaration_without_sensitive_types[:attributes_declaration][:element_type_declarations]
           ).to eq(
-            id: { type: :integer },
-            foo: { type: :string },
-            some_inner_entity: { type: :InnerEntity },
-            some_detached_entity: { type: :InnerDetachedEntity },
-            some_model: { type: :SomeModel }
+            id: :integer,
+            foo: :string,
+            some_inner_entity: :InnerEntity,
+            some_detached_entity: :InnerDetachedEntity,
+            some_model: :SomeModel
           )
         end
       end
