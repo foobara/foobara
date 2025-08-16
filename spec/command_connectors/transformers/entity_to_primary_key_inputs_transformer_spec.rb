@@ -65,8 +65,8 @@ RSpec.describe Foobara::CommandConnectors::Transformers::EntityToPrimaryKeyInput
         some_tuple: {
           type: :tuple,
           element_type_declarations: [
-            { type: :integer },
-            { type: :string },
+            :integer,
+            :string,
             { type: :integer, description: "SomeEntity id" }
           ],
           size: 3
@@ -79,11 +79,10 @@ RSpec.describe Foobara::CommandConnectors::Transformers::EntityToPrimaryKeyInput
           type: :attributes,
           element_type_declarations: {
             some_entity: { type: :integer, description: "SomeEntity id" },
-            foo: { type: :string },
-            bar: { type: :string }
+            foo: :string,
+            bar: :string
           }
         }
-
       }
     )
   end
