@@ -19,12 +19,6 @@ module Foobara
                                       desugarize(sugary_type_declaration.clone)
                                     end
 
-          if strict_type_declaration.hash? && strict_type_declaration.declaration_data.keys == [:type]
-            if strict_type_declaration.declaration_data != { type: :custom_complex }
-              binding.pry
-            end
-          end
-
           if strict_type_declaration.reference?
             unless strict_type_declaration.type
               strict_type_declaration.handle_symbolic_declaration

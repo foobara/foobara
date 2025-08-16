@@ -49,7 +49,7 @@ module Foobara
               declaration = to_type.target_class.primary_key_type.reference_or_declaration_data
 
               if declaration.is_a?(::Symbol)
-                declaration = { type: :integer }
+                declaration = { type: declaration  }
               end
 
               description = "#{to_type.target_class.model_name} #{to_type.target_class.primary_key_attribute}"

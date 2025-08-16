@@ -49,9 +49,6 @@ module Foobara
             else
               super
             end
-          rescue => e
-            binding.pry
-            raise
           end
         end
       end
