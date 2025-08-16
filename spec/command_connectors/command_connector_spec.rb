@@ -1472,10 +1472,10 @@ RSpec.describe Foobara::CommandConnector do
         let(:full_command_name) { "ComputeExponent" }
         let(:inputs) { {} }
 
-        it "describes the command", :focus do
+        it "describes the command" do
           expect(response.status).to be(0)
           json = JSON.parse(response.body)
-          expect(json["inputs_type"]["element_type_declarations"]["base"]["type"]).to eq("integer")
+          expect(json["inputs_type"]["element_type_declarations"]["base"]).to eq("integer")
         end
 
         context "with describe path" do
@@ -1485,7 +1485,7 @@ RSpec.describe Foobara::CommandConnector do
           it "describes the command" do
             expect(response.status).to be(0)
             json = JSON.parse(response.body)
-            expect(json["inputs_type"]["element_type_declarations"]["base"]["type"]).to eq("integer")
+            expect(json["inputs_type"]["element_type_declarations"]["base"]).to eq("integer")
           end
         end
       end
@@ -1888,7 +1888,7 @@ RSpec.describe Foobara::CommandConnector do
           it "returns metadata about the commands" do
             expect(
               manifest[:command][:ComputeExponent][:result_type]
-            ).to eq(type: :integer)
+            ).to eq(:integer)
           end
 
           context "with an entity input" do
@@ -2378,8 +2378,8 @@ RSpec.describe Foobara::CommandConnector do
           transformed_command = command_connector.transformed_command_from_name("SomeCommand")
           inputs_type = transformed_command.inputs_type
 
-          expect(inputs_type.element_types[:foo].declaration_data[:type]).to eq(:string)
-          expect(inputs_type.element_types[:bar].declaration_data[:type]).to eq(:string)
+          expect(inputs_type.element_types[:foo].declaration_data).to eq(:string)
+          expect(inputs_type.element_types[:bar].declaration_data).to eq(:string)
           expect(inputs_type.element_types[:baz].declaration_data[:type]).to eq(:attributes)
 
           expect(response.status).to be(0)
