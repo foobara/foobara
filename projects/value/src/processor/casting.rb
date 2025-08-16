@@ -89,8 +89,13 @@ module Foobara
         end
 
         def error_message(value)
-          type = declaration_data[:cast_to][:type].to_s
-          article = type =~ /^[aeiouy]/i ? "an" : "a"
+          type = declaration_data[:cast_to]
+
+          if type.is_a?(::Hash)
+            type = type[:type]
+          end
+
+          article = type.to_s =~ /^[aeiouy]/i ? "an" : "a"
 
           "Cannot cast #{value.inspect} to #{article} #{type}. Expected it to #{applies_message}"
         end

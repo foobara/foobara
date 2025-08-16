@@ -85,7 +85,7 @@ RSpec.describe ":tuple" do
       context "when an element has an error" do
         let(:value) { ["3", { a: "not valid" }] }
 
-        it "has error for that element" do
+        it "has error for that element", :focus do
           expect(error.to_h).to eq(
             key: "data.1.a.cannot_cast",
             path: [1, :a],
@@ -95,7 +95,7 @@ RSpec.describe ":tuple" do
             symbol: :cannot_cast,
             message: 'At 1.a: Cannot cast "not valid" to an integer. Expected it to be a Integer, ' \
                      "or be a string of digits optionally with a minus sign in front",
-            context: { cast_to: { type: :integer }, value: "not valid" }
+            context: { cast_to: :integer, value: "not valid" }
           )
         end
       end

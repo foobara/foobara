@@ -27,8 +27,6 @@ module Foobara
               end
             end
 
-            element_type_declarations_changed = false
-
             attributes_declaration = rawish_type_declaration[:attributes_declaration]
             element_type_declarations = attributes_declaration[:element_type_declarations]
 
@@ -36,8 +34,13 @@ module Foobara
               if attribute_type_declaration.is_a?(Hash) && attribute_type_declaration.key?(:private)
                 is_private = attribute_type_declaration[:private]
 
-                element_type_declarations[attribute_name] = attribute_type_declaration.except(:private)
-                element_type_declarations_changed = true
+                declaration = attribute_type_declaration.except(:private)
+
+                if declaration.keys == [:type]
+                  declaration = TypeDeclaration.new(declaration).declaration_data
+                end
+
+                element_type_declarations[attribute_name] = declaration
 
                 if is_private
                   private |= [attribute_name]
@@ -49,10 +52,6 @@ module Foobara
               rawish_type_declaration.delete(:private)
             else
               rawish_type_declaration[:private] = private
-            end
-
-            if element_type_declarations_changed
-              binding.pry
             end
 
             rawish_type_declaration

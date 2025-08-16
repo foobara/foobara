@@ -78,7 +78,7 @@ RSpec.describe ":array" do
             symbol: :cannot_cast,
             message: "At 2: Cannot cast {not: :valid} to an integer. Expected it to be a Integer, " \
                      "or be a string of digits optionally with a minus sign in front",
-            context: { cast_to: { type: :integer }, value: { not: :valid } }
+            context: { cast_to: :integer, value: { not: :valid } }
           }
         )
 
