@@ -502,7 +502,9 @@ module Foobara
       end
 
       def mutate_request(request)
-        request_mutator&.process_value!(request)
+        if request_mutator&.applicable?(request)
+          request_mutator.process_value!(request)
+        end
       end
 
       def result_transformer
@@ -594,8 +596,10 @@ module Foobara
     end
 
     def transform_inputs
-      self.transformed_inputs = if self.class.inputs_transformer
-                                  outcome = self.class.inputs_transformer.process_value(untransformed_inputs)
+      transformer = self.class.inputs_transformer
+
+      self.transformed_inputs = if transformer&.applicable?(untransformed_inputs)
+                                  outcome = transformer.process_value(untransformed_inputs)
 
                                   if outcome.success?
                                     outcome.result
@@ -625,13 +629,19 @@ module Foobara
     end
 
     def transform_result
-      if self.class.result_transformer
-        self.outcome = Outcome.success(self.class.result_transformer.process_value!(result))
+      transformer = self.class.result_transformer
+
+      if transformer&.applicable?(result)
+        self.outcome = Outcome.success(transformer.process_value!(result))
       end
     end
 
     def mutate_response(response)
-      self.class.response_mutator&.process_value!(response)
+      mutator = self.class.response_mutator
+
+      if mutator&.applicable?(response)
+        mutator.process_value!(response)
+      end
     end
 
     def transform_errors
