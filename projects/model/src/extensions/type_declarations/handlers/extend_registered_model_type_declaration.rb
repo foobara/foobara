@@ -19,7 +19,8 @@ module Foobara
             return false unless type_symbol.is_a?(::Symbol) || type_symbol.is_a?(::String)
 
             # TODO: cache this on a #base_type= helper
-            type = strict_type_declaration.type || lookup_type(type_symbol, mode: Namespace::LookupMode::ABSOLUTE)
+            type = strict_type_declaration.type ||
+                   lookup_type(type_symbol, mode: Namespace::LookupMode::ABSOLUTE)
 
             if type
               if type.extends?(BuiltinTypes[expected_type_symbol])

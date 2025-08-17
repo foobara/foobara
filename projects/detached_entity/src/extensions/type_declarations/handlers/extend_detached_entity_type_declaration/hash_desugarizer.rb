@@ -15,7 +15,8 @@ module Foobara
             return true if type_symbol == expected_type_symbol
 
             if type_symbol.is_a?(::Symbol)
-              type = sugary_type_declaration.type || lookup_type(type_symbol, mode: Namespace::LookupMode::ABSOLUTE)
+              type = sugary_type_declaration.type ||
+                     lookup_type(type_symbol, mode: Namespace::LookupMode::ABSOLUTE)
 
               type&.extends?(BuiltinTypes[expected_type_symbol])
             end

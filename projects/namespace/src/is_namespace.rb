@@ -134,48 +134,29 @@ module Foobara
         IsNamespace.lru_cache
       end
 
-      def foobara_lookup(
-        path,
-        filter: nil,
-        mode: LookupMode::GENERAL,
-        visited: nil,
-        initial: true
-      )
-        # TODO: make it so this is only necessary when initial
+      def foobara_lookup(path, filter: nil, mode: LookupMode::GENERAL)
+        LookupMode.validate!(mode)
         path = Namespace.to_registry_path(path)
-        visited_key = [path, mode, initial, self]
 
-        if initial
-          lru_key = [path, mode, self, filter]
-          found, value = lru_cache.get(lru_key)
-          return value if found
+        lru_cache.cached([path, mode, self, filter]) do
+          visited = Set.new
+          foobara_lookup_without_cache(path, filter:, mode:, visited:)
         end
+      end
 
-        return nil if visited&.include?(visited_key)
+      def foobara_lookup_without_cache(path, filter:, mode:, visited:)
+        visited_key = [path, mode, self]
+        return nil if visited.include?(visited_key)
 
-        visited ||= Set.new
         visited << visited_key
 
-        LookupMode.validate!(mode) if initial
-
         if mode == LookupMode::RELAXED
-          scoped = foobara_lookup(
-            path,
-            filter:,
-            mode: LookupMode::GENERAL,
-            visited:,
-            initial: false
-          )
-          if scoped
-            if initial
-              lru_cache.set_if_missing(lru_key, scoped)
-            end
+          scoped = foobara_lookup_without_cache(path, filter:, mode: LookupMode::GENERAL, visited:)
 
-            return scoped
-          end
+          return scoped if scoped
 
           candidates = foobara_children.map do |namespace|
-            namespace.foobara_lookup(path, filter:, mode:, visited:, initial: false)
+            namespace.foobara_lookup_without_cache(path, filter:, mode:, visited:)
           end.compact
 
           if candidates.size > 1
@@ -186,11 +167,7 @@ module Foobara
           end
 
           scoped = candidates.first ||
-                   foobara_parent_namespace&.foobara_lookup(path, filter:, mode:, visited:, initial: false)
-
-          if initial
-            lru_cache.set_if_missing(lru_key, scoped)
-          end
+                   foobara_parent_namespace&.foobara_lookup_without_cache(path, filter:, mode:, visited:)
 
           return scoped
         end
@@ -204,32 +181,41 @@ module Foobara
             path = path[(foobara_root_namespace.scoped_path.size + 1)..]
           end
 
-          root = foobara_root_namespace
+          return foobara_lookup_without_cache(path, filter:, mode: LookupMode::ABSOLUTE, visited:)
+        end
 
-          [root, *root.foobara_depends_on_namespaces.map(&:foobara_root_namespace)].uniq.each do |namespace|
-            scoped = namespace.foobara_lookup(path, filter:, mode: LookupMode::ABSOLUTE, initial: true)
+        root = foobara_root_namespace
+
+        if mode == LookupMode::ABSOLUTE
+          [
+            root,
+            *root.foobara_depends_on_namespaces.map(&:foobara_root_namespace)
+          ].uniq.each do |namespace|
+            scoped = namespace.foobara_lookup_without_cache(path,
+                                                            filter:,
+                                                            mode: LookupMode::CHILDREN_ONLY,
+                                                            visited:)
             return scoped if scoped
           end
 
           return nil
         end
 
+        if mode == LookupMode::ABSOLUTE_SINGLE_NAMESPACE
+          return foobara_root_namespace.foobara_lookup_without_cache(path,
+                                                                     filter:,
+                                                                     mode: LookupMode::CHILDREN_ONLY,
+                                                                     visited:)
+        end
+
         partial = foobara_registry.lookup(path, filter)
 
         if mode == LookupMode::DIRECT
-          if initial
-            lru_cache.set_if_missing(lru_key, partial)
-          end
-
           return partial
         end
 
         if partial
           if partial.scoped_path == path
-            if initial
-              lru_cache.set_if_missing(lru_key, partial)
-            end
-
             return partial
           end
         end
@@ -243,23 +229,15 @@ module Foobara
         scoped = _lookup_in(path, to_consider, filter:, visited:)
 
         if scoped
-          if initial
-            lru_cache.set_if_missing(lru_key, scoped)
-          end
-
           return scoped
         end
 
-        if [LookupMode::GENERAL, LookupMode::STRICT].include?(mode) && foobara_parent_namespace
-          scoped = foobara_parent_namespace.foobara_lookup(
-            path, filter:, mode: LookupMode::STRICT, visited:, initial: false
+        if (mode == LookupMode::GENERAL || mode == LookupMode::STRICT) && foobara_parent_namespace
+          scoped = foobara_parent_namespace.foobara_lookup_without_cache(
+            path, filter:, mode: LookupMode::STRICT, visited:
           )
 
           if scoped
-            if initial
-              lru_cache.set_if_missing(lru_key, scoped)
-            end
-
             return scoped
           end
         end
@@ -268,10 +246,6 @@ module Foobara
           scoped = _lookup_in(path, foobara_depends_on_namespaces, filter:, visited:)
 
           if scoped
-            if initial
-              lru_cache.set_if_missing(lru_key, scoped)
-            end
-
             return scoped
           end
         end
@@ -284,7 +258,7 @@ module Foobara
                       end
 
         candidates = to_consider.map do |namespace|
-          namespace.foobara_lookup(path, filter:, mode:, visited:, initial: false)
+          namespace.foobara_lookup_without_cache(path, filter:, mode:, visited:)
         end.compact
 
         if candidates.size > 1
@@ -293,27 +267,7 @@ module Foobara
           # :nocov:
         end
 
-        scoped = candidates.first || partial
-
-        if scoped
-          if initial
-            lru_cache.set_if_missing(lru_key, scoped)
-          end
-
-          return scoped
-        end
-
-        # As a last resort we'll see if we're trying to fetch a builtin type from a different namespace
-        # TODO: these lookup modes are really confusing and were designed prior to having multiple root
-        # namespaces playing a role in command connectors.
-        if initial
-          scoped = Namespace.global.foobara_lookup(path, filter:, mode: LookupMode::ABSOLUTE, visited:, initial: false)
-
-          if scoped.is_a?(Types::Type) && scoped.builtin?
-            lru_cache.set_if_missing(lru_key, scoped)
-            scoped
-          end
-        end
+        candidates.first || partial
       end
 
       def foobara_parent_namespace
@@ -335,9 +289,10 @@ module Foobara
       def foobara_each(filter: nil, mode: Namespace::LookupMode::GENERAL, &)
         foobara_registry.each_scoped(filter:, &)
 
-        return if mode == Namespace::LookupMode::DIRECT
-
-        if [Namespace::LookupMode::GENERAL, Namespace::LookupMode::ABSOLUTE].include?(mode)
+        if mode == LookupMode::GENERAL ||
+           mode == LookupMode::CHILDREN_ONLY ||
+           mode == LookupMode::ABSOLUTE ||
+           mode == LookupMode::ABSOLUTE_SINGLE_NAMESPACE
           foobara_children.each do |child|
             child.foobara_each(filter:, mode:, &)
           end
@@ -449,19 +404,18 @@ module Foobara
         end
 
         matching_children.sort_by(&:first).reverse.each do |(matching_child_score, matching_child)|
-          scoped = matching_child.foobara_lookup(
+          scoped = matching_child.foobara_lookup_without_cache(
             path[matching_child_score..],
-            mode: LookupMode::ABSOLUTE,
+            mode: LookupMode::CHILDREN_ONLY,
             filter:,
-            visited:,
-            initial: false
+            visited:
           )
 
           return scoped if scoped
         end
 
         last_resort.uniq.each do |namespace|
-          scoped = namespace.foobara_lookup(path, filter:, mode: LookupMode::ABSOLUTE, visited:, initial: false)
+          scoped = namespace.foobara_lookup_without_cache(path, filter:, mode: LookupMode::CHILDREN_ONLY, visited:)
           return scoped if scoped
         end
 

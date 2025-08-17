@@ -17,7 +17,7 @@ module Foobara
           def declaration_to_type(strict_type_declaration)
             # TODO: cache this on a #base_type= helper
             strict_type_declaration.type ||
-              lookup_type(strict_type_declaration[:type], mode: Namespace::LookupMode::ABSOLUTE)
+              lookup_type(strict_type_declaration[:type], mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE)
           end
         end
       end

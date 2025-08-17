@@ -1,6 +1,6 @@
 module Foobara
   class Namespace
-    # TODO: need to define these better...
+    # TODO: need to define these better/more intuitively
     # use-cases
     # 1. general: just general lookup. find it wherever the heck it might be
     #   children: y
@@ -17,6 +17,14 @@ module Foobara
     # 4. absolute
     #   children: y
     #   parent: n
+    #   dependent: y
+    # 5. absolute_single_namespace
+    #   children: y
+    #   parent: n
+    #   dependent: n
+    # 6. children_only (internal use... absolute and absolute_single_namespace jump to top, children only does not)
+    #   children: y
+    #   parent: n
     #   dependent: n
     # TODO: don't we have an enumerated class/project for this?
     module LookupMode
@@ -25,7 +33,10 @@ module Foobara
       DIRECT = :direct
       STRICT = :strict
       ABSOLUTE = :absolute
-      ALL = [GENERAL, RELAXED, DIRECT, STRICT, ABSOLUTE].freeze
+      ABSOLUTE_SINGLE_NAMESPACE = :absolute_single_namespace
+      CHILDREN_ONLY = :children_only
+
+      ALL = [GENERAL, RELAXED, DIRECT, STRICT, ABSOLUTE, ABSOLUTE_SINGLE_NAMESPACE, CHILDREN_ONLY].freeze
 
       class << self
         def validate!(mode)
