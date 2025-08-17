@@ -59,4 +59,44 @@ RSpec.describe Foobara::Types do
       end
     end
   end
+
+  describe "#primitive?" do
+    subject { type.primitive? }
+
+    let(:type) { Foobara::Domain.current.foobara_type_from_declaration(type_declaration) }
+
+    context "when primitive" do
+      let(:type_declaration) { :integer }
+
+      it { is_expected.to be true }
+    end
+
+    context "when derived" do
+      let(:type_declaration) do
+        { type: :integer, description: "an integer!" }
+      end
+
+      it { is_expected.to be false }
+    end
+  end
+
+  describe "#derived?" do
+    subject { type.derived? }
+
+    let(:type) { Foobara::Domain.current.foobara_type_from_declaration(type_declaration) }
+
+    context "when primitive" do
+      let(:type_declaration) { :integer }
+
+      it { is_expected.to be false }
+    end
+
+    context "when derived" do
+      let(:type_declaration) do
+        { type: :integer, description: "an integer!" }
+      end
+
+      it { is_expected.to be true }
+    end
+  end
 end

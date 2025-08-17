@@ -3,6 +3,7 @@ require "time"
 require "bigdecimal"
 
 module Foobara
+  # TODO: rename this to PrimitiveTypes and deprecate the name BuiltinTypes
   module BuiltinTypes
     class << self
       def builtin_types

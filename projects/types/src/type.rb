@@ -76,6 +76,15 @@ module Foobara
         validate_processors!
       end
 
+      # TODO: replace the concept of builtin? with primitive?
+      def primitive?
+        declaration_data.is_a?(::Symbol)
+      end
+
+      def derived?
+        declaration_data.is_a?(::Hash)
+      end
+
       def sensitive?
         sensitive
       end
@@ -461,6 +470,8 @@ module Foobara
         super.merge(h)
       end
 
+      # TODO: replace the concept of builtin? with primitive? and delete this method since
+      # primitive? already exists.
       def builtin?
         is_builtin
       end
