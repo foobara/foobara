@@ -156,7 +156,7 @@ module Foobara
         visited ||= Set.new
         visited << visited_key
 
-        LookupMode.validate!(mode)
+        LookupMode.validate!(mode) if initial
 
         if mode == LookupMode::RELAXED
           scoped = foobara_lookup(
