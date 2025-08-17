@@ -109,13 +109,15 @@ module Foobara
     end
 
     def global_domain
-      foobara_lookup_domain("") || build_and_register_exposed_domain("")
+      foobara_lookup_domain("", mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE) ||
+        build_and_register_exposed_domain("")
     end
 
     def global_organization
       # TODO: test this
       # :nocov:
-      foobara_lookup_organization("") || build_and_register_exposed_organization("")
+      foobara_lookup_organization("", mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE) ||
+        build_and_register_exposed_organization("")
       # :nocov:
     end
 
