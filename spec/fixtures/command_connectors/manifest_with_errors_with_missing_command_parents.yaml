@@ -79,12 +79,9 @@
                 :username_or_email:
                   :allow_nil: true
                   :type: :string
-                :plaintext_password:
-                  :type: :string
-                :token_ttl:
-                  :type: :integer
-                :refresh_token_ttl:
-                  :type: :integer
+                :plaintext_password: :string
+                :token_ttl: :integer
+                :refresh_token_ttl: :integer
               :required: &1
               - :plaintext_password
               :defaults:
@@ -119,8 +116,7 @@
         :error: Foobara::Value::Processor::Casting::CannotCastError
         :processor_manifest_data: &6
           :casting:
-            :cast_to: &44
-              :type: :string
+            :cast_to: :string
       data.plaintext_password.missing_required_attribute:
         :path:
         - :plaintext_password
@@ -140,8 +136,7 @@
         :error: Foobara::Value::Processor::Casting::CannotCastError
         :processor_manifest_data: &2
           :casting:
-            :cast_to: &41
-              :type: :integer
+            :cast_to: :integer
       data.token_ttl.cannot_cast:
         :path:
         - :token_ttl
@@ -212,10 +207,8 @@
     :result_type:
       :type: :attributes
       :element_type_declarations:
-        :access_token:
-          :type: :string
-        :refresh_token:
-          :type: :string
+        :access_token: :string
+        :refresh_token: :string
       :required:
       - :access_token
       - :refresh_token
@@ -283,14 +276,10 @@
             :cast_to: &9
               :type: :attributes
               :element_type_declarations: &8
-                :user:
-                  :type: :Foobara::Auth::Types::User
-                :refresh_token_text:
-                  :type: :string
-                :token_ttl:
-                  :type: :integer
-                :refresh_token_ttl:
-                  :type: :integer
+                :user: :Foobara::Auth::Types::User
+                :refresh_token_text: :string
+                :token_ttl: :integer
+                :refresh_token_ttl: :integer
               :required: &7
               - :user
               - :refresh_token_text
@@ -365,24 +354,18 @@
               :attributes_declaration: &23
                 :type: :attributes
                 :element_type_declarations:
-                  :id:
-                    :type: :integer
-                  :username:
-                    :type: :string
-                  :email:
-                    :type: :email
+                  :id: :integer
+                  :username: :string
+                  :email: :email
                   :roles:
                     :type: :array
-                    :element_type_declaration:
-                      :type: :Foobara::Auth::Types::Role
+                    :element_type_declaration: :Foobara::Auth::Types::Role
                   :api_keys:
                     :type: :array
-                    :element_type_declaration:
-                      :type: :Foobara::Auth::Types::Token
+                    :element_type_declaration: :Foobara::Auth::Types::Token
                   :refresh_tokens:
                     :type: :array
-                    :element_type_declaration:
-                      :type: :Foobara::Auth::Types::Token
+                    :element_type_declaration: :Foobara::Auth::Types::Token
                   :password_secret:
                     :allow_nil: true
                     :type: :Foobara::Auth::Types::Secret
@@ -436,10 +419,8 @@
     :result_type:
       :type: :attributes
       :element_type_declarations:
-        :access_token:
-          :type: :string
-        :refresh_token:
-          :type: :string
+        :access_token: :string
+        :refresh_token: :string
       :required:
       - :access_token
       - :refresh_token
@@ -499,10 +480,8 @@
             :cast_to: &12
               :type: :attributes
               :element_type_declarations: &11
-                :username:
-                  :type: :string
-                :email:
-                  :type: :email
+                :username: :string
+                :email: :email
                 :plaintext_password:
                   :allow_nil: true
                   :type: :string
@@ -516,10 +495,9 @@
         :symbol: :cannot_cast
         :key: data.email.cannot_cast
         :error: Foobara::Value::Processor::Casting::CannotCastError
-        :processor_manifest_data: &39
+        :processor_manifest_data:
           :casting:
-            :cast_to: &38
-              :type: :email
+            :cast_to: :email
       data.email.cannot_exceed64_characters:
         :path:
         - :email
@@ -658,8 +636,7 @@
     - Foobara::Auth::SetPassword
     :inputs_type: *12
     :description:
-    :result_type:
-      :type: :Foobara::Auth::Types::User
+    :result_type: :Foobara::Auth::Types::User
     :serializers:
     - Foobara::CommandConnectors::Serializers::ErrorsSerializer
     - Foobara::CommandConnectors::Serializers::AtomicSerializer
@@ -759,24 +736,18 @@
     :context_type_declaration:
       :type: :attributes
       :element_type_declarations:
-        :id:
-          :type: :integer
-        :username:
-          :type: :string
-        :email:
-          :type: :email
+        :id: :integer
+        :username: :string
+        :email: :email
         :roles:
           :type: :array
-          :element_type_declaration:
-            :type: :Foobara::Auth::Types::Role
+          :element_type_declaration: :Foobara::Auth::Types::Role
         :api_keys:
           :type: :array
-          :element_type_declaration:
-            :type: :Foobara::Auth::Types::Token
+          :element_type_declaration: :Foobara::Auth::Types::Token
         :refresh_tokens:
           :type: :array
-          :element_type_declaration:
-            :type: :Foobara::Auth::Types::Token
+          :element_type_declaration: :Foobara::Auth::Types::Token
         :password_secret:
           :allow_nil: true
           :type: :Foobara::Auth::Types::Secret
@@ -875,8 +846,7 @@
     :context_type_declaration: &14
       :type: :attributes
       :element_type_declarations:
-        :refresh_token_id:
-          :type: :string
+        :refresh_token_id: :string
     :is_fatal: true
     :error_class: Foobara::Auth::RefreshLogin::InvalidRefreshTokenError
     :base_error: Foobara::RuntimeError
@@ -971,8 +941,7 @@
     :context_type_declaration:
       :type: :attributes
       :element_type_declarations:
-        :state:
-          :type: :Foobara::Auth::token_state
+        :state: :Foobara::Auth::token_state
       :required:
       - :state
     :is_fatal: true
@@ -1028,10 +997,8 @@
     :context_type_declaration:
       :type: :attributes
       :element_type_declarations:
-        :attribute_name:
-          :type: :symbol
-        :value:
-          :type: :duck
+        :attribute_name: :symbol
+        :value: :duck
     :is_fatal: false
     :error_class: Foobara::Value::DataError
   :Foobara::Value::Processor::Casting::CannotCastError:
@@ -1064,12 +1031,9 @@
     :context_type_declaration:
       :type: :attributes
       :element_type_declarations:
-        :cast_to:
-          :type: :duck
-        :value:
-          :type: :duck
-        :attribute_name:
-          :type: :symbol
+        :cast_to: :duck
+        :value: :duck
+        :attribute_name: :symbol
     :is_fatal: true
     :error_class: Foobara::Value::Processor::Casting::CannotCastError
     :base_error: Foobara::Value::DataError
@@ -1103,12 +1067,9 @@
     :context_type_declaration:
       :type: :attributes
       :element_type_declarations:
-        :expected_size:
-          :type: :integer
-        :actual_size:
-          :type: :integer
-        :value:
-          :type: :array
+        :expected_size: :integer
+        :actual_size: :integer
+        :value: :array
     :is_fatal: false
     :error_class: Foobara::BuiltinTypes::Array::SupportedValidators::Size::IncorrectTupleSizeError
     :base_error: Foobara::Value::DataError
@@ -1143,12 +1104,10 @@
       :element_type_declarations:
         :unexpected_attributes:
           :type: :array
-          :element_type_declaration:
-            :type: :symbol
+          :element_type_declaration: :symbol
         :allowed_attributes:
           :type: :array
-          :element_type_declaration:
-            :type: :symbol
+          :element_type_declaration: :symbol
     :is_fatal: true
     :error_class: Foobara::BuiltinTypes::Attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError
     :base_error: Foobara::Value::DataError
@@ -1181,8 +1140,7 @@
     :context_type_declaration:
       :type: :attributes
       :element_type_declarations:
-        :attribute_name:
-          :type: :symbol
+        :attribute_name: :symbol
     :is_fatal: true
     :error_class: Foobara::BuiltinTypes::Attributes::SupportedValidators::Required::MissingRequiredAttributeError
     :base_error: Foobara::Value::DataError
@@ -1216,10 +1174,8 @@
     :context_type_declaration:
       :type: :attributes
       :element_type_declarations:
-        :value:
-          :type: :duck
-        :expected_class_name:
-          :type: :string
+        :value: :duck
+        :expected_class_name: :string
     :is_fatal: false
     :error_class: Foobara::BuiltinTypes::Duck::SupportedValidators::InstanceOf::NotInstanceOfError
     :base_error: Foobara::Value::DataError
@@ -1252,12 +1208,10 @@
     :context_type_declaration:
       :type: :attributes
       :element_type_declarations:
-        :value:
-          :type: :duck
+        :value: :duck
         :valid_values:
           :type: :array
-          :element_type_declaration:
-            :type: :duck
+          :element_type_declaration: :duck
     :is_fatal: false
     :error_class: Foobara::BuiltinTypes::Duck::SupportedValidators::OneOf::ValueNotValidError
     :base_error: Foobara::Value::DataError
@@ -1290,12 +1244,9 @@
     :context_type_declaration: &15
       :type: :attributes
       :element_type_declarations:
-        :value:
-          :type: :duck
-        :regex:
-          :type: :duck
-        :negate_regex:
-          :type: :duck
+        :value: :duck
+        :regex: :duck
+        :negate_regex: :duck
     :is_fatal: false
     :error_class: Foobara::BuiltinTypes::Email::Validators::CannotExceed64Characters::CannotExceed64CharactersError
     :base_error: Foobara::Value::DataError
@@ -1569,10 +1520,8 @@
     :context_type_declaration:
       :type: :attributes
       :element_type_declarations:
-        :value:
-          :type: :number
-        :max:
-          :type: :number
+        :value: :number
+        :max: :number
     :is_fatal: false
     :error_class: Foobara::BuiltinTypes::Number::SupportedValidators::Max::MaxExceededError
     :base_error: Foobara::Value::DataError
@@ -1606,10 +1555,8 @@
     :context_type_declaration:
       :type: :attributes
       :element_type_declarations:
-        :value:
-          :type: :number
-        :min:
-          :type: :number
+        :value: :number
+        :min: :number
     :is_fatal: false
     :error_class: Foobara::BuiltinTypes::Number::SupportedValidators::Min::BelowMinimumError
     :base_error: Foobara::Value::DataError
@@ -1643,10 +1590,8 @@
     :context_type_declaration:
       :type: :attributes
       :element_type_declarations:
-        :value:
-          :type: :string
-        :regex:
-          :type: :duck
+        :value: :string
+        :regex: :duck
     :is_fatal: false
     :error_class: Foobara::BuiltinTypes::String::SupportedValidators::Matches::DoesNotMatchError
     :base_error: Foobara::Value::DataError
@@ -1681,10 +1626,8 @@
     :context_type_declaration:
       :type: :attributes
       :element_type_declarations:
-        :value:
-          :type: :string
-        :max_length:
-          :type: :integer
+        :value: :string
+        :max_length: :integer
     :is_fatal: false
     :error_class: Foobara::BuiltinTypes::String::SupportedValidators::MaxLength::MaxLengthExceededError
     :base_error: Foobara::Value::DataError
