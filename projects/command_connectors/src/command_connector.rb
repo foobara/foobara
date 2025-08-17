@@ -494,8 +494,7 @@ module Foobara
       to_include << command_registry.global_organization
       to_include << command_registry.global_domain
 
-      # ABSOLUTE lets us get all of the children but not include dependent domains (GlobalDomain)
-      command_registry.foobara_each(mode: Namespace::LookupMode::ABSOLUTE) do |exposed_whatever|
+      command_registry.foobara_each(mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE) do |exposed_whatever|
         to_include << exposed_whatever
       end
 
@@ -539,19 +538,20 @@ module Foobara
                 else
                   domain_name = o.foobara_domain.scoped_full_name
 
-                  unless command_registry.foobara_registered?(domain_name, mode: Namespace::LookupMode::ABSOLUTE)
+                  unless command_registry.foobara_registered?(domain_name,
+                                                              mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE)
                     command_registry.build_and_register_exposed_domain(domain_name)
 
                     # Since we don't know which other domains/orgs creating this domain might have created,
                     # we will just add them all to be included just in case
                     command_registry.foobara_all_domain(
-                      mode: Namespace::LookupMode::ABSOLUTE
+                      mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE
                     ).each do |exposed_domain|
                       additional_to_include << exposed_domain
                     end
 
                     command_registry.foobara_all_organization(
-                      mode: Namespace::LookupMode::ABSOLUTE
+                      mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE
                     ).each do |exposed_organization|
                       additional_to_include << exposed_organization
                     end
@@ -649,7 +649,7 @@ module Foobara
     def all_exposed_commands
       process_delayed_connections
 
-      command_registry.foobara_all_command(mode: Namespace::LookupMode::ABSOLUTE)
+      command_registry.foobara_all_command(mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE)
     end
 
     def all_exposed_type_names

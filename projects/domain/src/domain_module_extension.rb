@@ -435,6 +435,7 @@ module Foobara
             foobara_depends_on_namespaces << domain
             foobara_type_builder.accesses << domain.foobara_type_builder
 
+            lru_cache.reset!
             foobara_depends_on << domain_name
           end
         end

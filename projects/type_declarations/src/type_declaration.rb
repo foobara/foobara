@@ -45,12 +45,10 @@ module Foobara
       end
 
       if symbol
-        namespace = Domain.current
-
         type = if absolutified?
-                 namespace.foobara_root_namespace.foobara_lookup_type(symbol, mode: Namespace::LookupMode::ABSOLUTE)
+                 Domain.current.foobara_lookup_type(symbol, mode: Namespace::LookupMode::ABSOLUTE)
                else
-                 namespace.foobara_lookup_type(symbol)
+                 Domain.current.foobara_lookup_type(symbol)
                end
 
         if type
@@ -77,10 +75,7 @@ module Foobara
         type_symbol = self[:type].to_sym
         self[:type] = type_symbol
 
-        type = Domain.current.foobara_root_namespace.foobara_lookup_type(
-          type_symbol,
-          mode: Namespace::LookupMode::ABSOLUTE
-        )
+        type = Domain.current.foobara_lookup_type(type_symbol, mode: Namespace::LookupMode::ABSOLUTE)
 
         if type
           if declaration_data.keys.size == 1
@@ -98,13 +93,10 @@ module Foobara
 
         if type_symbol
           if type_symbol.is_a?(::Symbol) || type_symbol.is_a?(::String)
-
-            namespace = Domain.current
-
             type = if absolutified?
-                     namespace.foobara_root_namespace.foobara_lookup_type(type_symbol, mode: Namespace::LookupMode::ABSOLUTE)
+                     Domain.current.foobara_lookup_type(type_symbol, mode: Namespace::LookupMode::ABSOLUTE)
                    else
-                     namespace.foobara_lookup_type(type_symbol)
+                     Domain.current.foobara_lookup_type(type_symbol)
                    end
 
             if type

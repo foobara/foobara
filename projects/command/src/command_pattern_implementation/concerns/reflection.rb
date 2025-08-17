@@ -24,8 +24,10 @@ module Foobara
             to_include = TypeDeclarations.foobara_manifest_context_to_include
 
             depends_on = self.depends_on.map do |command_name|
-              other_command = Foobara::Namespace.global.foobara_lookup!(command_name,
-                                                                        mode: Foobara::Namespace::LookupMode::ABSOLUTE)
+              other_command = Foobara::Namespace.global.foobara_lookup!(
+                command_name,
+                mode: Foobara::Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE
+              )
               if to_include
                 to_include << other_command
               end

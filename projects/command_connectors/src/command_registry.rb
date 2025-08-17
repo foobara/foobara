@@ -34,7 +34,8 @@ module Foobara
 
     def create_exposed_command(command_class, **)
       full_domain_name = command_class.domain.scoped_full_name
-      exposed_domain = foobara_lookup_domain(full_domain_name, mode: Namespace::LookupMode::ABSOLUTE) ||
+      exposed_domain = foobara_lookup_domain(full_domain_name,
+                                             mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE) ||
                        build_and_register_exposed_domain(full_domain_name)
 
       exposed_command = create_exposed_command_without_domain(command_class, **)
@@ -81,7 +82,7 @@ module Foobara
 
       exposed_organization = foobara_lookup_organization(
         full_organization_name,
-        mode: Namespace::LookupMode::ABSOLUTE
+        mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE
       ) || build_and_register_exposed_organization(full_organization_name)
 
       exposed_domain = Module.new

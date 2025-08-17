@@ -25,7 +25,7 @@ module Foobara
             else
               existing_type = Domain.current.foobara_lookup_type(
                 model_class_name,
-                mode: Namespace::LookupMode::ABSOLUTE
+                mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE
               )
 
               existing_type&.target_class
@@ -102,8 +102,8 @@ module Foobara
 
                   model_class.description type.declaration_data[:description]
 
-                  if domain.foobara_type_registered?(type_symbol, mode: Namespace::LookupMode::ABSOLUTE)
-                    existing_type = domain.foobara_lookup_type(type_symbol, mode: Namespace::LookupMode::ABSOLUTE)
+                  if domain.foobara_type_registered?(type_symbol, mode: Namespace::LookupMode::DIRECT)
+                    existing_type = domain.foobara_lookup_type(type_symbol, mode: Namespace::LookupMode::DIRECT)
                     domain.foobara_unregister(existing_type)
                   end
 

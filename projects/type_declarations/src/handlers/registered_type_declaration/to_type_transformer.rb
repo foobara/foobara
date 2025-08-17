@@ -15,7 +15,7 @@ module Foobara
 
             return type if type
 
-            type = lookup_type!(strict_type_declaration[:type], mode: Namespace::LookupMode::ABSOLUTE)
+            type = lookup_type!(strict_type_declaration[:type], mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE)
 
             strict_type_declaration.base_type = type
           end
