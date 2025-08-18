@@ -90,6 +90,12 @@ module Foobara
         @custom = to_type.custom?
       end
 
+      def primitive?
+        if reference?
+          to_type.primitive?
+        end
+      end
+
       def to_model
         raise "not an model" unless model?
 
@@ -109,7 +115,7 @@ module Foobara
       def to_detached_entity
         raise "not an detached_entity" unless detached_entity?
 
-        unless relevant_manifest.is_a?(::Symbol) || relevant_manifest.size == 1
+        if to_type.primitive?
           # :nocov:
           raise "detached_entity extension instead of an detached_entity"
           # :nocov:
@@ -131,7 +137,7 @@ module Foobara
       def to_entity
         raise "not an entity" unless entity?
 
-        unless relevant_manifest.is_a?(::Symbol) || relevant_manifest.size == 1
+        if to_type.primitive?
           # :nocov:
           raise "entity extension instead of an entity"
           # :nocov:
@@ -150,7 +156,7 @@ module Foobara
       end
 
       def type
-        if relevant_manifest.is_a?(::Symbol)
+        if reference?
           relevant_manifest
         else
           super
@@ -158,7 +164,7 @@ module Foobara
       end
 
       def sensitive
-        if relevant_manifest.is_a?(::Symbol)
+        if reference?
           false
         else
           super
@@ -166,11 +172,15 @@ module Foobara
       end
 
       def sensitive_exposed
-        if relevant_manifest.is_a?(::Symbol)
+        if reference?
           false
         else
           super
         end
+      end
+
+      def reference?
+        relevant_manifest.is_a?(::Symbol) || relevant_manifest.is_a?(::String)
       end
     end
   end

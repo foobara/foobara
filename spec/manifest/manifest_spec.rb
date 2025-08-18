@@ -183,6 +183,14 @@ RSpec.describe Foobara::Manifest do
     expect(entity.to_type_declaration_from_declaration_data.name).to eq("User")
 
     attributes = entity.attributes_type
+    expect(attributes).to be_a(Foobara::Manifest::TypeDeclaration)
+    expect(attributes.reference?).to be_falsey
+    expect(attributes.primitive?).to be_falsey
+    expect(attributes.attribute_declarations[:id].reference?).to be_truthy
+    expect(attributes.attribute_declarations[:id].primitive?).to be_truthy
+    expect(attributes.attribute_declarations[:address].reference?).to be_truthy
+    expect(attributes.attribute_declarations[:address].primitive?).to be_falsey
+
     expect(attributes).to_not be_custom
     expect(attributes.scoped_category).to be_nil
     expect(attributes.parent).to be_nil

@@ -70,13 +70,22 @@ module Foobara
         scoped_full_name
       end
 
+      # TODO: replace this with primitive?
       def builtin?
         BuiltinTypes.builtin_reference?(reference)
       end
 
-      # Not sure the best way to define this...
+      def primitive?
+        declaration_data.is_a?(::String) || declaration_data.is_a?(::Symbol)
+      end
+
+      # This name is confusing.
+      # This represents a type that is 1) registered 2) not primitive 3) does not inherit from :model
+      # Because this is a Manifest::Type it is registered by definition. Non-registered types are
+      # represented in the manifest only as type declarations scattered the other categories where
+      # needed.
       def custom?
-        !builtin? && !model?
+        !primitive? && !extends_symbol?(:model)
       end
 
       def extends_symbol?(symbol)
