@@ -96,7 +96,7 @@ module Foobara
       end
 
       def stringified?
-        foobara_manifest_context_mode == Mode::STRINGIFIED
+        foobara_manifest_context_mode == Mode::STRINGIFIED || strict_stringified?
       end
 
       # TODO: we should desugarize these but can't because of a bug where desugarizing entities results in creating the
