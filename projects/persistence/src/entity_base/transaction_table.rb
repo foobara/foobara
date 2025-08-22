@@ -716,16 +716,14 @@ module Foobara
 
         def normalize_attributes(attributes)
           if attributes
-            begin
-              attributes = attributes.transform_keys(&:to_sym)
+            attributes = attributes.transform_keys(&:to_sym)
 
-              primary_key_name = entity_class.primary_key_attribute
-              primary_key_value = attributes[primary_key_name]
+            primary_key_name = entity_class.primary_key_attribute
+            primary_key_value = attributes[primary_key_name]
 
-              attributes[primary_key_name] = entity_class.primary_key_type.cast!(primary_key_value)
+            attributes[primary_key_name] = entity_class.primary_key_type.cast!(primary_key_value)
 
-              attributes
-            end
+            attributes
           end
         end
       end
