@@ -62,7 +62,20 @@ module Foobara
             # :nocov:
           end
 
-          tables[entity_class] ||= TransactionTable.new(self, entity_class)
+          table = tables[entity_class]
+
+          if table
+            table
+          else
+            if defined?(@ordered_tables)
+              # TODO: test this path
+              # :nocov:
+              remove_instance_variable(:@ordered_tables)
+              # :nocov:
+            end
+
+            tables[entity_class] = TransactionTable.new(self, entity_class)
+          end
         end
 
         def updated(record)
@@ -154,6 +167,7 @@ module Foobara
         end
 
         # WARNING! this seems to bypass validations, hmmm....
+        # TODO: delete this method... only called from test suite
         def flush_created_record!(record)
           table_for(record).flush_created_record!(record)
         end

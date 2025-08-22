@@ -80,7 +80,26 @@ module Foobara
 
             # TODO: this belongs elsewhere
             def each_table(&)
-              tables.values.each(&)
+              @ordered_tables ||= if tables.size <= 1
+                                    tables.values
+                                  else
+                                    entity_class_to_table = {}
+                                    entity_classes = []
+
+                                    tables.each_value do |table|
+                                      entity_class = table.entity_class
+                                      entity_classes << entity_class
+                                      entity_class_to_table[entity_class] = table
+                                    end
+
+                                    ordered_entity_classes = EntityBase.order_entity_classes(entity_classes)
+
+                                    ordered_entity_classes.map do |entity_class|
+                                      entity_class_to_table[entity_class]
+                                    end
+                                  end
+
+              @ordered_tables.each(&)
             end
 
             def rollback!(because_of = nil)

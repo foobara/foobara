@@ -642,8 +642,6 @@ module Foobara
 
         def flush_created!
           marked_created.each do |record|
-            flush_created_associations!(record)
-
             # TODO: do this in bulk
             attributes = entity_attributes_crud_driver_table.insert(to_persistable(record))
             primary_key_attribute = entity_class.primary_key_attribute
