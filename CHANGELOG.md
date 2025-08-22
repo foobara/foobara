@@ -1,3 +1,22 @@
+# [0.1.1] - 2025-08-22
+
+- Change type declarations for references to registered types to have a structure of `:some_type` 
+  instead of a `{ type: :some_type }` structure. This makes things faster and also make things less ambiguous.
+- Order entity bases and transaction tables by dependencies to simplify making sure associations
+  already have their primary keys set
+- Add Manifest::Type#primitive? and Manifest::TypeDeclaration#primitive?/#reference?
+- Add Type#primitive? and Type#derived? concepts
+- Add ABSOLUTE_SINGLE_NAMESPACE and refactor #foobara_lookup to be much faster
+- Checking #applicable? is now the caller's responsibility when running value processors
+- Run RSpec and Rubocop in separate jobs in CI
+- Don't load pry by default
+- Introduce TypeDeclaration and use it to eliminate some desugarizers and speed things up significantly
+  while also improving code readability
+- Eliminate `_desugarized` metadata entry from declaration data now that TypeDeclaration can encapsulate
+  such state
+- Lazy load Type#element_type(s) and strictify them
+- Fix bug where .add_inputs is called when .inputs was never called
+
 # [0.0.142] - 2025-08-10
 
 - Add LruCache to IsNamespace to speed up lookups
