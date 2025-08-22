@@ -162,17 +162,6 @@ module Foobara
           table_for(entity).track_created(entity)
         end
 
-        def created?(record)
-          table_for(record).created?(record)
-        end
-
-        # WARNING! this seems to bypass validations, hmmm....
-        # TODO: delete this method... only called from test suite
-        def flush_created_record!(record)
-          table_for(record).flush_created_record!(record)
-        end
-
-        # convenience method...
         def perform(&)
           entity_base.using_transaction(self, &)
         end

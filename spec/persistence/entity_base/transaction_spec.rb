@@ -491,7 +491,7 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
           expect(loaded_aggregate.some_entities).to all be_a(SomeEntity)
           expect(loaded_aggregate.some_entities.map(&:primary_key)).to contain_exactly(1, 2, 101, 102)
 
-          new_aggregate = aggregate_class.create(
+          aggregate_class.create(
             foo: 30,
             some_entities: [
               entity_class.create(foo: 11, bar: :baz)
@@ -501,7 +501,7 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
           expect(aggregate_class.contains_associations?).to be(true)
           expect(entity_class.contains_associations?).to be(false)
 
-          tx.flush_created_record!(new_aggregate)
+          tx.flush!
         end
       end
     end

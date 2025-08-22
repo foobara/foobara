@@ -661,43 +661,6 @@ module Foobara
           marked_created.clear
         end
 
-        def flush_created_record!(record)
-          flush_created_associations!(record)
-
-          unmark_created(record)
-
-          attributes = entity_attributes_crud_driver_table.insert(to_persistable(record))
-          record.write_attributes_without_callbacks(attributes)
-
-          # we need to update finding the tracked object by key and removing/reading it seems to be the simplest
-          # way to accomplish that at the moment
-          tracked(record)
-
-          record.is_persisted = record.is_loaded = true
-          record.is_created = false
-          record.save_persisted_attributes
-        end
-
-        def flush_created_associations!(record)
-          entity_class.associations.each_key do |association_data_path|
-            DataPath.values_at(association_data_path, record).each do |associated_record|
-              next unless associated_record.created?
-
-              transaction = Persistence::EntityBase::Transaction.open_transaction_for(associated_record)
-
-              unless transaction
-                # :nocov:
-                raise "No open transaction for #{associated_record}"
-                # :nocov:
-              end
-
-              if transaction.created?(associated_record)
-                transaction.flush_created_record!(associated_record)
-              end
-            end
-          end
-        end
-
         def flush_updated_and_hard_deleted!
           # TODO: use bulk operations to improve performance...
           marked_updated.each do |record|
