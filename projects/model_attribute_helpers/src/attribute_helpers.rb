@@ -54,7 +54,7 @@ module Foobara
               end
 
               unless include_delegates
-                declaration = Foobara::TypeDeclarations::Attributes.reject(declaration, *delegates.keys)
+                declaration = Foobara::TypeDeclarations::Attributes.reject(declaration, *foobara_delegates.keys)
               end
 
               Domain.current.foobara_type_from_declaration(declaration)

@@ -161,16 +161,16 @@ module Foobara
             end
           end
 
-          def delegates
-            @delegates ||= {}
+          def foobara_delegates
+            @foobara_delegates ||= {}
           end
 
           def has_delegated_attributes?
             !delegates.empty?
           end
 
-          def private_attribute_names
-            @private_attribute_names ||= []
+          def foobara_private_attribute_names
+            @foobara_private_attribute_names ||= []
           end
 
           def private_attributes(attribute_names)
@@ -180,7 +180,7 @@ module Foobara
           end
 
           def private_attribute(attribute_name)
-            @private_attribute_names = private_attribute_names | [attribute_name]
+            @foobara_private_attribute_names = private_attribute_names | [attribute_name]
 
             set_model_type
           end

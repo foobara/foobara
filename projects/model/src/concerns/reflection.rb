@@ -23,8 +23,8 @@ module Foobara
               model_name: foobara_model_name,
               model_base_class: foobara_type.declaration_data[:model_base_class],
               model_class: foobara_type.declaration_data[:model_class],
-              delegates:,
-              private: private_attribute_names
+              delegates: foobara_delegates,
+              private: foobara_private_attribute_names
             )
           end
         end
