@@ -646,7 +646,10 @@ module Foobara
 
             # TODO: do this in bulk
             attributes = entity_attributes_crud_driver_table.insert(to_persistable(record))
-            record.write_attributes_without_callbacks(attributes)
+            primary_key_attribute = entity_class.primary_key_attribute
+            primary_key = attributes[primary_key_attribute]
+
+            record.write_attributes_without_callbacks(primary_key_attribute => primary_key)
 
             # we need to update finding the tracked object by key and removing/reading it seems to be the simplest
             # way to accomplish that at the moment
@@ -700,8 +703,7 @@ module Foobara
         def flush_updated_and_hard_deleted!
           # TODO: use bulk operations to improve performance...
           marked_updated.each do |record|
-            attributes = entity_attributes_crud_driver_table.update(to_persistable(record))
-            record.write_attributes_without_callbacks(attributes)
+            entity_attributes_crud_driver_table.update(to_persistable(record))
             record.save_persisted_attributes
           end
 
