@@ -145,6 +145,9 @@ module Foobara
       def type_for_declaration_without_cache(*type_declaration_bits, &)
         type_declaration = TypeDeclarations.args_to_type_declaration(*type_declaration_bits, &)
 
+        type = type_declaration.type
+        return type if type
+
         handler = type_declaration_handler_for(type_declaration)
         handler.process_value!(type_declaration)
       end
