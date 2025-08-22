@@ -21,6 +21,45 @@ module Foobara
             end.call
           end
         end
+
+        def order_entity_classes(entity_classes)
+          return entity_classes if entity_classes.size <= 1
+
+          without_associations, with_associations = entity_classes.partition do |entity_class|
+            entity_class.associations.empty?
+          end
+
+          if with_associations.size > 1
+            i = 0
+            end_at = with_associations.size - 1
+
+            while i < end_at
+              entity_class = with_associations[i]
+              associations = entity_class.associations.values.uniq
+
+              changed = false
+
+              j = i + 1
+
+              while j <= end_at
+                other = with_associations[j]
+
+                if associations.include?(other.foobara_type)
+                  with_associations[j] = entity_class
+                  with_associations[i] = other
+                  changed = true
+                  break
+                end
+
+                j += 1
+              end
+
+              i += 1 unless changed
+            end
+          end
+
+          without_associations + with_associations
+        end
       end
 
       def initialize(name, entity_attributes_crud_driver:)

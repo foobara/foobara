@@ -99,6 +99,10 @@ module Foobara
       end
 
       def objects_to_bases(objects)
+        if objects.size > 1 && objects.all? { |o| o.is_a?(::Class) && o < Entity }
+          objects = EntityBase.order_entity_classes(objects)
+        end
+
         objects.map do |object|
           object_to_base(object)
         end.uniq
