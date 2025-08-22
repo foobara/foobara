@@ -184,12 +184,12 @@ RSpec.describe Foobara::Manifest do
 
     attributes = entity.attributes_type
     expect(attributes).to be_a(Foobara::Manifest::TypeDeclaration)
-    expect(attributes.reference?).to be_falsey
-    expect(attributes.primitive?).to be_falsey
-    expect(attributes.attribute_declarations[:id].reference?).to be_truthy
-    expect(attributes.attribute_declarations[:id].primitive?).to be_truthy
-    expect(attributes.attribute_declarations[:address].reference?).to be_truthy
-    expect(attributes.attribute_declarations[:address].primitive?).to be_falsey
+    expect(attributes).to_not be_reference
+    expect(attributes).to_not be_primitive
+    expect(attributes.attribute_declarations[:id]).to be_reference
+    expect(attributes.attribute_declarations[:id]).to be_primitive
+    expect(attributes.attribute_declarations[:address]).to be_reference
+    expect(attributes.attribute_declarations[:address]).to_not be_primitive
 
     expect(attributes).to_not be_custom
     expect(attributes.scoped_category).to be_nil

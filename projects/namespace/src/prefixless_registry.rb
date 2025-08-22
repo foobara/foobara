@@ -41,6 +41,8 @@ module Foobara
         registry.each_value(&)
       end
 
+      private
+
       def to_key(scoped)
         if scoped.scoped_prefix
           raise RegisteringScopedWithPrefixError,

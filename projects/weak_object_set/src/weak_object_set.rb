@@ -95,6 +95,7 @@ module Foobara
       monitor.synchronize do
         ref = ref_for(object_or_object_id)
 
+        # TODO: is this necessary? Why not check weakref_alive? now that we're in a mutex?
         object = begin
           ref&.__getobj__
         rescue WeakRef::RefError
@@ -122,6 +123,7 @@ module Foobara
     def each
       monitor.synchronize do
         objects.each_value do |ref|
+          # Is this still necessary now that we're in a mutex?
           object = begin
             ref.__getobj__
           rescue WeakRef::RefError

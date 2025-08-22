@@ -98,9 +98,12 @@ module Foobara
         scopedish
       end
 
+      # TODO: make this thread-safe
       def foobara_register(scoped)
         foobara_registry.register(scoped)
 
+        # TODO: do we really need to clear the whole cache? Why not just the possible
+        # impacted keys based on scoped.scoped_path ?
         IsNamespace.clear_lru_cache!
         # awkward??
         scoped.scoped_namespace = self
@@ -376,6 +379,10 @@ module Foobara
                                Foobara::Namespace::UnambiguousRegistry
                              when Foobara::Namespace::BaseRegistry::WouldMakeRegistryAmbiguousError
                                Foobara::Namespace::AmbiguousRegistry
+                             else
+                               # :nocov:
+                               raise ArgumentError, "Not sure how to upgrade a #{error.class}"
+                               # :nocov:
                              end
 
         old_registry = foobara_registry
