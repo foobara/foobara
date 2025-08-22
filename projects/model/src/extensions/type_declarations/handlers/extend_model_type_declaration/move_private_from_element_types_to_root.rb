@@ -9,7 +9,7 @@ module Foobara
 
               if type
                 if type.extends?(BuiltinTypes[:model])
-                  value.type = type
+                  value.base_type = type
                   true
                 end
               end
