@@ -330,7 +330,7 @@ module Foobara
                          end
 
         Value::Processor::Casting.new(
-          { cast_to: declaration_data },
+          { cast_to: reference_or_declaration_data },
           casters:,
           target_classes:,
           enforce_unique:
