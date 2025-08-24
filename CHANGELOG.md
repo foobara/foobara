@@ -1,3 +1,9 @@
+# [0.1.2] - 2025-08-24
+
+- Exclude processor/processor_class categories from manifest by default
+- Fix bug where entity types were not converted to detached_entity types in manifests
+- Shorten cast_to declarations by using references when possible
+
 # [0.1.1] - 2025-08-22
 
 - Change type declarations for references to registered types to have a structure of `:some_type` 

@@ -38,7 +38,7 @@ module Foobara
     end
 
     def foobara_manifest
-      to_include = TypeDeclarations.foobara_manifest_context_to_include
+      to_include = TypeDeclarations.foobara_manifest_context_to_include || Set.new
       include_processors = TypeDeclarations.include_processors?
 
       h = {
@@ -54,19 +54,28 @@ module Foobara
         organization: foobara_organization&.foobara_manifest_reference
       }
 
-      parent = scoped_namespace
+      candidate = scoped_namespace
+      parent = nil
 
-      if parent
-        parent_category = Namespace.global.foobara_category_symbol_for(parent)
+      while candidate
+        parent_category = Namespace.global.foobara_category_symbol_for(candidate)
+        break unless parent_category
 
         if parent_category
-          if to_include
-            if include_processors || (parent_category != :processor && parent_category != :processor_class)
-              to_include << parent
+          if include_processors || (parent_category != :processor && parent_category != :processor_class)
+            if candidate != Foobara::Value
+              parent = candidate
+              break
             end
           end
-          h[:parent] = [parent_category, parent.foobara_manifest_reference]
         end
+
+        candidate = candidate.scoped_namespace
+      end
+
+      if parent
+        to_include << parent
+        h[:parent] = [parent_category, parent.foobara_manifest_reference]
       end
 
       h
