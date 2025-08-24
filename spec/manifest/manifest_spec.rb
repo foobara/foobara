@@ -114,8 +114,12 @@ RSpec.describe Foobara::Manifest do
   end
 
   let(:manifest) { Foobara::Manifest::RootManifest.new(raw_manifest) }
-  let(:raw_manifest) { Foobara.manifest }
-  let(:raw_stringified_manifest) { Foobara::Util.deep_stringify_keys(Foobara.manifest) }
+  let(:raw_manifest) do
+    Foobara::TypeDeclarations.with_manifest_context(include_processors: true) do
+      Foobara.manifest
+    end
+  end
+  let(:raw_stringified_manifest) { Foobara::Util.deep_stringify_keys(raw_manifest) }
 
   it "is a Manifest" do
     integer = Foobara::Manifest::Type.new(raw_manifest, [:type, :integer])

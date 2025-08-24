@@ -39,6 +39,7 @@ module Foobara
 
     def foobara_manifest
       to_include = TypeDeclarations.foobara_manifest_context_to_include
+      include_processors = TypeDeclarations.include_processors?
 
       h = {
         scoped_path:,
@@ -60,7 +61,9 @@ module Foobara
 
         if parent_category
           if to_include
-            to_include << parent
+            if include_processors || (parent_category != :processor && parent_category != :processor_class)
+              to_include << parent
+            end
           end
           h[:parent] = [parent_category, parent.foobara_manifest_reference]
         end

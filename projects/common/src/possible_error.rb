@@ -48,39 +48,45 @@ module Foobara
     # TODO: technically does not belong in this project but maybe it should
     def foobara_manifest
       to_include = TypeDeclarations.foobara_manifest_context_to_include
+      include_processors = TypeDeclarations.include_processors?
 
       if to_include
         to_include << error_class
       end
 
-      if processor
-        processor_class = processor.class
-        if to_include
-          to_include << processor_class
+      h = key.to_h.merge(
+        key: key.to_s,
+        error: error_class.foobara_manifest_reference,
+        manually_added:
+      )
+
+      if include_processors
+        if processor
+          processor_class = processor.class
+          if to_include
+            to_include << processor_class
+          end
+
+          if processor.scoped_path_set?
+            # Unclear why nothing in the test suite passes through here.
+            # TODO: either test this or delete it.
+            # :nocov:
+            to_include << processor
+            processor_reference = processor.foobara_manifest_reference
+            # :nocov:
+          end
         end
 
-        if processor.scoped_path_set?
-          # Unclear why nothing in the test suite passes through here.
-          # TODO: either test this or delete it.
-          # :nocov:
-          to_include << processor
-          processor_reference = processor.foobara_manifest_reference
-          # :nocov:
-        end
-      end
+        processor_manifest_data = data unless processor_reference
 
-      processor_manifest_data = data unless processor_reference
-
-      Util.remove_blank(
-        key.to_h.merge(
-          key: key.to_s,
-          error: error_class.foobara_manifest_reference,
+        h.merge!(
           processor: processor_reference,
           processor_class: processor_class&.foobara_manifest_reference,
-          processor_manifest_data:,
-          manually_added:
+          processor_manifest_data:
         )
-      )
+      end
+
+      Util.remove_blank(h)
     end
   end
 end

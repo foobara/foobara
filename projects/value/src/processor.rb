@@ -322,12 +322,6 @@ module Foobara
       def foobara_manifest
         to_include = TypeDeclarations.foobara_manifest_context_to_include
 
-        unless scoped_path_set?
-          if self.class.scoped_path_set?
-            self.scoped_path = self.class.scoped_path
-          end
-        end
-
         possible_errors = self.possible_errors.map do |possible_error|
           [possible_error.key.to_s, possible_error.foobara_manifest]
         end

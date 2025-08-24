@@ -416,6 +416,7 @@ module Foobara
       def foobara_manifest
         to_include = TypeDeclarations.foobara_manifest_context_to_include
         remove_sensitive = TypeDeclarations.foobara_manifest_context_remove_sensitive?
+        include_processors = TypeDeclarations.include_processors?
 
         types = []
 
@@ -455,11 +456,13 @@ module Foobara
           h[:sensitive_exposed] = true
         end
 
-        h.merge!(
-          supported_processor_manifest.merge(
-            Util.remove_blank(processors: processor_manifest)
+        if include_processors
+          h.merge!(
+            supported_processor_manifest.merge(
+              Util.remove_blank(processors: processor_manifest)
+            )
           )
-        )
+        end
 
         target_classes.sort_by(&:name).each do |target_class|
           if target_class.respond_to?(:foobara_manifest)

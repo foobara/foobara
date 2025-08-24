@@ -750,7 +750,9 @@ RSpec.describe Foobara::CommandConnector do
         end
 
         it "mutates the request and gives an expected mutated inputs type in the manifest" do
-          manifest = command_connector.foobara_manifest
+          manifest = Foobara::TypeDeclarations.with_manifest_context(include_processors: true) do
+            command_connector.foobara_manifest
+          end
 
           expect(manifest[:command][:SomeCommand][:inputs_type]).to eq(
             type: :attributes,
@@ -1217,11 +1219,12 @@ RSpec.describe Foobara::CommandConnector do
               end
 
               it "contains pre_commit_transformers in its manifest" do
-                command_manifest = command_connector.foobara_manifest[:command][:QueryUser]
-                manifest = command_manifest[:pre_commit_transformers].find { |h|
-                  h[:name] == "Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer"
-                }
-                expect(manifest).to be_a(Hash)
+                command_manifest = Foobara::TypeDeclarations.with_manifest_context(include_processor: true) do
+                  command_connector.foobara_manifest[:command][:QueryUser]
+                end
+                expect(command_manifest[:pre_commit_transformers]).to include(
+                  "Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer"
+                )
                 expect(command_manifest[:serializers]).to include(
                   "Foobara::CommandConnectors::Serializers::AggregateSerializer"
                 )
@@ -1246,10 +1249,9 @@ RSpec.describe Foobara::CommandConnector do
 
                 it "contains pre_commit_transformers in its manifest" do
                   command_manifest = command_connector.foobara_manifest[:command][:QueryUser]
-                  manifest = command_manifest[:pre_commit_transformers].find { |h|
-                    h[:name] == "Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer"
-                  }
-                  expect(manifest).to be_a(Hash)
+                  expect(command_manifest[:pre_commit_transformers]).to include(
+                    "Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer"
+                  )
                   expect(command_manifest[:serializers]).to include(
                     "Foobara::CommandConnectors::Serializers::AggregateSerializer"
                   )
@@ -1372,7 +1374,11 @@ RSpec.describe Foobara::CommandConnector do
           end
 
           describe "#manifest" do
-            let(:manifest) { command_connector.foobara_manifest }
+            let(:manifest) do
+              Foobara::TypeDeclarations.with_manifest_context(include_processors: true) do
+                command_connector.foobara_manifest
+              end
+            end
 
             it "uses types from the transformers" do
               h = manifest[:command][:ComputeExponent]

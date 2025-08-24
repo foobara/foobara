@@ -333,34 +333,22 @@ module Foobara
       end
 
       def foobara_manifest
-        to_include = TypeDeclarations.foobara_manifest_context_to_include
+        to_include = TypeDeclarations.foobara_manifest_context_to_include || Set.new
 
         types = types_depended_on.select(&:registered?).map do |t|
-          if to_include
-            to_include << t
-          end
+          to_include << t
           t.foobara_manifest_reference
         end.sort
 
         inputs_transformers = TypeDeclarations.with_manifest_context(remove_sensitive: false) do
-          self.inputs_transformers.map(&:foobara_manifest)
+          processors_to_manifest_symbols(self.inputs_transformers)
         end
-        result_transformers = self.result_transformers.map(&:foobara_manifest)
-        errors_transformers = self.errors_transformers.map(&:foobara_manifest)
-        pre_commit_transformers = self.pre_commit_transformers.map(&:foobara_manifest)
-        serializers = self.serializers.map do |s|
-          if s.respond_to?(:foobara_manifest)
-            if to_include
-              to_include << s
-            end
-            s.foobara_manifest_reference
-          else
-            { proc: s.to_s }
-          end
-        end
-
-        response_mutators = mutators_to_manifest_symbols(self.response_mutators, to_include:)
-        request_mutators = mutators_to_manifest_symbols(self.request_mutators, to_include:)
+        result_transformers = processors_to_manifest_symbols(self.result_transformers)
+        errors_transformers = processors_to_manifest_symbols(self.errors_transformers)
+        pre_commit_transformers = processors_to_manifest_symbols(self.pre_commit_transformers)
+        serializers = processors_to_manifest_symbols(self.serializers)
+        response_mutators = processors_to_manifest_symbols(self.response_mutators)
+        request_mutators = processors_to_manifest_symbols(self.request_mutators)
 
         authenticator_details = if authenticator
                                   {
@@ -404,28 +392,32 @@ module Foobara
         )
       end
 
-      def mutators_to_manifest_symbols(mutators, to_include:)
-        return nil if mutators.nil? || mutators.empty?
+      def processors_to_manifest_symbols(processors)
+        return nil if processors.nil? || processors.empty?
 
-        mutators.map do |mutator|
-          if mutator.scoped_path_set?
-            to_include << mutator
-            mutator.foobara_manifest_reference
-          elsif mutator.is_a?(Value::Mutator)
-            klass = mutator.class
+        to_include = TypeDeclarations.foobara_manifest_context_to_include || Set.new
+        include_processors = TypeDeclarations.include_processors?
+
+        processors.map do |processor|
+          if processor.respond_to?(:scoped_path_set?) && processor.scoped_path_set?
+            if include_processors
+              to_include << processor
+            end
+            processor.foobara_manifest_reference
+          elsif processor.is_a?(Value::Processor)
+            klass = processor.class
 
             if klass.scoped_path_set?
-              to_include << klass
+              if include_processors
+                to_include << klass
+              end
               klass.foobara_manifest_reference
               # TODO: Delete this nocov block
               # TODO: make anonymous scoped path's have better names instead of random hexadecimal
               # :nocov:
-            elsif mutator.symbol
-              mutator.symbol
+            elsif processor.respond_to?(:symbol) && processor.symbol
+              processor.symbol
             else
-
-              to_include << klass if klass.scoped_path_set?
-
               name = klass.name
 
               while name.nil?
@@ -436,6 +428,12 @@ module Foobara
               "Anonymous#{Util.non_full_name(name)}"
               # :nocov:
             end
+          elsif processor.is_a?(::Proc)
+            "Proc"
+          else
+            # :nocov:
+            "Unknown"
+            # :nocov:
           end
         end
       end
