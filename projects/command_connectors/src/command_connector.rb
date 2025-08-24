@@ -536,24 +536,45 @@ module Foobara
                         "Make sure these are not included."
                 # :nocov:
                 else
+                  mode = Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE
                   domain_name = o.foobara_domain.scoped_full_name
 
-                  unless command_registry.foobara_registered?(domain_name,
-                                                              mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE)
-                    command_registry.build_and_register_exposed_domain(domain_name)
+                  exposed_domain = command_registry.foobara_lookup_domain(domain_name, mode:)
+
+                  unless exposed_domain
+                    exposed_domain = command_registry.build_and_register_exposed_domain(domain_name)
 
                     # Since we don't know which other domains/orgs creating this domain might have created,
                     # we will just add them all to be included just in case
-                    command_registry.foobara_all_domain(
-                      mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE
-                    ).each do |exposed_domain|
+                    command_registry.foobara_all_domain(mode:).each do |exposed_domain|
                       additional_to_include << exposed_domain
                     end
 
-                    command_registry.foobara_all_organization(
-                      mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE
-                    ).each do |exposed_organization|
+                    command_registry.foobara_all_organization(mode:).each do |exposed_organization|
                       additional_to_include << exposed_organization
+                    end
+                  end
+
+                  if o.extends_type?(BuiltinTypes[:entity])
+                    declaration_data = o.declaration_data
+
+                    if declaration_data.is_a?(::Hash) && declaration_data[:type] == :entity
+                      if o.foobara_root_namespace != command_registry.foobara_root_namespace
+                        # Let's swap it out with a detached type
+                        detached_entity = command_registry.foobara_lookup_type(o.scoped_full_name, mode:)
+
+                        unless detached_entity
+                          declaration_data = o.declaration_data.merge(
+                            type: :detached_entity,
+                            model_base_class: "Foobara::DetachedEntity"
+                          )
+
+                          detached_entity = exposed_domain.foobara_type_from_declaration(declaration_data)
+                        end
+
+                        additional_to_include << detached_entity
+                        next
+                      end
                     end
                   end
                 end

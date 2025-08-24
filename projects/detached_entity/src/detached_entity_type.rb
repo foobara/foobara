@@ -25,11 +25,21 @@ module Foobara
         declaration_data = manifest[:declaration_data]
 
         if self.class.type_requires_conversion?(declaration_data[:type])
+          # TODO: No longer is hit in this test suite but ActiveRecordType needs this class
+          # and potentially this snippet of code in order to do the right thing.
+          # TODO: test that out and delete this method if possible.
+          # :nocov:
           declaration_data = declaration_data.merge(type: :detached_entity)
+          # :nocov:
         end
 
         if self.class.model_base_class_requires_conversion?(declaration_data[:model_base_class])
+          # TODO: No longer is hit in this test suite but ActiveRecordType needs this class
+          # and potentially this snippet of code in order to do the right thing.
+          # TODO: test that out and delete this method if possible.
+          # :nocov:
           declaration_data = declaration_data.merge(model_base_class: "Foobara::DetachedEntity")
+          # :nocov:
         end
 
         # TODO: remove private attributes, add delegated attributes
