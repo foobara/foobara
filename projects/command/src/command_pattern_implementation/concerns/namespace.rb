@@ -9,6 +9,14 @@ module Foobara
         end
 
         module ClassMethods
+          def abstract
+            @abstract = true
+          end
+
+          def abstract?
+            @abstract
+          end
+
           def type_for_declaration(...)
             domain.foobara_type_from_declaration(...)
           end

@@ -344,13 +344,21 @@ module Foobara
         command_registry.register(*args, **opts)
       when Module
         if registerable.foobara_organization?
+          args = args[1..]
           registerable.foobara_domains.map do |domain|
-            connect(domain, *args[1..], **opts)
+            connect(domain, *args, **opts)
           end.flatten
         elsif registerable.foobara_domain?
-          registerable.foobara_all_command(mode: Namespace::LookupMode::DIRECT).map do |command_class|
-            Util.array(connect(command_class, *args[1..], **opts))
-          end.flatten
+          args = args[1..]
+          connected = []
+
+          registerable.foobara_each_command(mode: Namespace::LookupMode::DIRECT) do |command_class|
+            unless command_class.abstract?
+              connected << connect(command_class, *args, **opts)
+            end
+          end
+
+          connected.flatten
         else
           # :nocov:
           raise "Don't know how to register #{registerable} (#{registerable.class})"

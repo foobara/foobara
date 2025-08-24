@@ -6,6 +6,8 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Errors do
   context "with simple command" do
     let(:command_base_class) {
       stub_class(:CalculateExponentBase, Foobara::Command) do
+        abstract
+
         inputs(
           type: :attributes,
           element_type_declarations: {

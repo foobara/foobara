@@ -1,3 +1,7 @@
+# [0.1.3] - 2025-08-25
+
+- Add Command#abstract and exclude abstract commands from CommandConnector#connect when connecting domains/orgs
+
 # [0.1.2] - 2025-08-24
 
 - Exclude processor/processor_class categories from manifest by default
