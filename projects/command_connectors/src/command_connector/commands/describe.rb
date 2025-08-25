@@ -20,7 +20,7 @@ module Foobara
         end
 
         def stamp_request_metadata
-          manifest[:metadata] = { when: Time.now }
+          manifest[:metadata] = { when: Time.now, foobara_version: Foobara::Version::VERSION }
         end
       end
     end
