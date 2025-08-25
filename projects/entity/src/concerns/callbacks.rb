@@ -35,7 +35,9 @@ module Foobara
           end
         end
 
-        foobara_delegate :register_callback, to: :callback_registry
+        def register_callback(...)
+          callback_registry.register_callback(...)
+        end
 
         module ClassMethods
           def class_callback_registry
@@ -68,7 +70,13 @@ module Foobara
             end
           end
 
-          foobara_delegate :register_callback, :possible_actions, to: :class_callback_registry
+          def register_callback(...)
+            class_callback_registry.register_callback(...)
+          end
+
+          def possible_actions
+            class_callback_registry.possible_actions
+          end
         end
 
         on_include do

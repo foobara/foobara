@@ -55,11 +55,15 @@ module Foobara
       end
     end
 
-    foobara_delegate :has_errors?,
-                     :has_error?,
-                     :add_error,
-                     :add_errors,
-                     to: :error_collection
+    foobara_delegate :has_error, :add_errors, to: :error_collection
+
+    def has_errors?
+      error_collection.has_errors?
+    end
+
+    def add_errors(...)
+      error_collection.add_errors(...)
+    end
 
     def errors
       error_collection
