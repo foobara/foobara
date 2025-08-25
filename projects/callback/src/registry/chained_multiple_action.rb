@@ -8,12 +8,12 @@ module Foobara
 
         class InvalidConditions < StandardError; end
 
-        def possible_actions(...)
-          other_multiple_actions_registry.possible_actions(...)
+        def possible_actions
+          other_multiple_actions_registry.possible_actions
         end
 
-        def allowed_types(...)
-          other_multiple_actions_registry.allowed_types(...)
+        def allowed_types
+          other_multiple_actions_registry.allowed_types
         end
 
         def initialize(other_multiple_actions_registry)

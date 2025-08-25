@@ -6,12 +6,12 @@ module Foobara
       class ChainedConditioned < Conditioned
         attr_accessor :other_conditions_registry
 
-        def possible_conditions(...)
-          other_conditions_registry.possible_conditions(...)
+        def possible_conditions
+          other_conditions_registry.possible_conditions
         end
 
-        def possible_condition_keys(...)
-          other_conditions_registry.possible_condition_keys(...)
+        def possible_condition_keys
+          other_conditions_registry.possible_condition_keys
         end
 
         def initialize(other_conditions_registry)

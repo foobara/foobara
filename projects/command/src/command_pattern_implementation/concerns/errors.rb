@@ -53,8 +53,8 @@ module Foobara
           super
         end
 
-        def has_errors?(...)
-          error_collection.has_errors?(...)
+        def has_errors?
+          error_collection.has_errors?
         end
 
         private

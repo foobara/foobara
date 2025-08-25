@@ -6,12 +6,12 @@ module Foobara
       class JoinedConditioned < Conditioned
         attr_accessor :first, :second
 
-        def possible_conditions(...)
-          first.possible_conditions(...)
+        def possible_conditions
+          first.possible_conditions
         end
 
-        def possible_condition_keys(...)
-          first.possible_condition_keys(...)
+        def possible_condition_keys
+          first.possible_condition_keys
         end
 
         def initialize(first, second)
