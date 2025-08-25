@@ -63,14 +63,24 @@ module Foobara
 
         if parent_category
           if include_processors || (parent_category != :processor && parent_category != :processor_class)
-            if candidate != Foobara::Value
-              parent = candidate
-              break
-            end
+            parent = if candidate == Foobara::Value
+                       GlobalDomain
+                     else
+                       candidate
+                     end
+            break
           end
         end
 
         candidate = candidate.scoped_namespace
+      end
+
+      if parent == GlobalDomain
+        h[:scoped_path] = scoped_full_path
+        h[:scoped_name] = scoped_full_name
+        h[:scoped_prefix] = scoped_full_path[..-2]
+        h[:domain] = parent.foobara_manifest_reference
+        h[:organization] = parent.foobara_organization.foobara_manifest_reference
       end
 
       if parent

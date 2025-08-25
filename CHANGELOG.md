@@ -1,4 +1,12 @@
-# [0.1.3] - 2025-08-25
+# [0.1.4] - 2025-08-24
+
+- Fix TransformedCommand#foobara_manifest bug that failed to overwrite transformed possible_errors
+  if the new possible errors is empty
+- Make sure we set nil inputs_type in TransformedCommand#foobara_manifest to empty attributes
+  for compatibility with other projects
+- Sets the parent for various Foobara::Value children to be GlobalDomain in manifests
+
+# [0.1.3] - 2025-08-24
 
 - Add Command#abstract and exclude abstract commands from CommandConnector#connect when connecting domains/orgs
 
