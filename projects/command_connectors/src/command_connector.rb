@@ -579,6 +579,7 @@ module Foobara
                         unless detached_entity
                           declaration_data = o.declaration_data.merge(
                             type: :detached_entity,
+                            detached_locally: true,
                             model_base_class: "Foobara::DetachedEntity"
                           )
 
