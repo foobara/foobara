@@ -640,8 +640,8 @@ module Foobara
       end
 
       h = normalize_manifest(h)
-
-      patch_up_broken_parents_for_errors_with_missing_command_parents(h)
+      h = patch_up_broken_parents_for_errors_with_missing_command_parents(h)
+      remove_detached_locally_flags(h)
     end
 
     def normalize_manifest(manifest_hash)
@@ -680,6 +680,23 @@ module Foobara
       end
 
       manifest_hash.merge(error: error_category)
+    end
+
+    def remove_detached_locally_flags(manifest_hash)
+      manifest_hash[:type] = manifest_hash[:type].transform_values do |type_manifest|
+        type_declaration = type_manifest[:declaration_data]
+
+        if type_declaration.is_a?(::Hash) && type_declaration.key?(:detached_locally) &&
+           type_declaration[:type] == :detached_entity
+          type_manifest.merge(
+            declaration_data: type_declaration.except(:detached_locally)
+          )
+        else
+          type_manifest
+        end
+      end
+
+      manifest_hash
     end
 
     def all_exposed_commands
