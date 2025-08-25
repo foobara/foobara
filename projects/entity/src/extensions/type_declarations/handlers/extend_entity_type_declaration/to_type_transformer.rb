@@ -17,6 +17,11 @@ module Foobara
               end
             end
           end
+
+          # TODO: use constants for these arrays for performance reasons
+          def non_processor_keys
+            super - [:detached_locally]
+          end
         end
       end
     end

@@ -157,13 +157,12 @@ module Foobara
             result = {},
             initial: true
           )
-            if initial && type.extends?(BuiltinTypes[:detached_entity])
-              return construct_associations(type.element_types, path, result, initial: false)
-            end
-
             remove_sensitive = TypeDeclarations.foobara_manifest_context_remove_sensitive?
 
-            if type.extends?(BuiltinTypes[:entity])
+            if initial && type.extends?(BuiltinTypes[:detached_entity])
+              construct_associations(type.target_class.foobara_attributes_type, path, result, initial: false)
+            elsif type.extends?(BuiltinTypes[:entity]) ||
+                  (type.extends?(BuiltinTypes[:detached_entity]) && type.declaration_data[:detached_locally])
               result[path.to_s] = type
             elsif type.extends?(BuiltinTypes[:tuple])
               element_types = type.element_types

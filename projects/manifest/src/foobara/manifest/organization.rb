@@ -21,6 +21,10 @@ module Foobara
         domains.map(&:types).flatten
       end
 
+      def detached_entities
+        domains.map(&:detached_entities).flatten
+      end
+
       def entities
         domains.map(&:entities).flatten
       end
