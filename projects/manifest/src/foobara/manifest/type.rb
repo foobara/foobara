@@ -72,7 +72,7 @@ module Foobara
 
       # TODO: replace this with primitive?
       def builtin?
-        BuiltinTypes.builtin_reference?(reference)
+        BuiltinTypes.builtin_reference?(reference) || self[:builtin]
       end
 
       def primitive?
