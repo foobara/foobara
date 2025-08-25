@@ -369,27 +369,45 @@ module Foobara
           command_class.foobara_manifest
         end
 
+        # TODO: This should support nil as an inputs_type but it breaks other projects for now
+        inputs_type = inputs_type_for_manifest&.reference_or_declaration_data ||
+                      { type: :attributes, element_type_declarations: {} }
+
         # TODO: handle errors_types_depended_on!
-        manifest.merge(
-          Util.remove_blank(
-            inputs_types_depended_on:,
-            result_types_depended_on:,
-            types_depended_on: types,
-            inputs_type: inputs_type_for_manifest&.reference_or_declaration_data,
-            result_type: result_type&.reference_or_declaration_data,
-            possible_errors: possible_errors_manifest,
-            capture_unknown_error:,
-            inputs_transformers:,
-            result_transformers:,
-            errors_transformers:,
-            pre_commit_transformers:,
-            serializers:,
-            response_mutators:,
-            request_mutators:,
-            requires_authentication:,
-            authenticator: authenticator_details
-          )
-        )
+        to_merge = {
+          inputs_types_depended_on:,
+          result_types_depended_on:,
+          types_depended_on: types,
+          inputs_type:,
+          result_type: result_type&.reference_or_declaration_data,
+          possible_errors: possible_errors_manifest,
+          capture_unknown_error:,
+          inputs_transformers:,
+          result_transformers:,
+          errors_transformers:,
+          pre_commit_transformers:,
+          serializers:,
+          response_mutators:,
+          request_mutators:,
+          requires_authentication:,
+          authenticator: authenticator_details
+        }
+
+        manifest = manifest.dup
+
+        to_merge.each_pair do |key, value|
+          # TODO: we could probably remove empty strings and nils, too, and from the whole hash
+          # if (value.is_a?(::Hash) || value.is_a?(::Array)) && value.empty?
+          #   manifest.delete(key)
+          # else
+          #   manifest[key] = value
+          # end
+          # TODO: for now, just including everything for stability
+          # But we should remove all empty values in a future version
+          manifest[key] = value
+        end
+
+        manifest
       end
 
       def processors_to_manifest_symbols(processors)
