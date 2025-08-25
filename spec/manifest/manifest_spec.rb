@@ -128,6 +128,7 @@ RSpec.describe Foobara::Manifest do
     expect(integer).to be_builtin
 
     expect(manifest).to be_a(Foobara::Manifest::RootManifest)
+    expect(manifest.detached_entities).to be_an(Array)
     expect(manifest.lookup_path(:command, :does_not_exist)).to be_nil
     expect(manifest.lookup(:does_not_exist)).to be_nil
     expect(manifest.global_domain).to be_global
