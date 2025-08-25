@@ -350,7 +350,7 @@ module Foobara
         response_mutators = processors_to_manifest_symbols(self.response_mutators)
         request_mutators = processors_to_manifest_symbols(self.request_mutators)
 
-        authenticator_details = if authenticator
+        authenticator_details = if requires_authentication && authenticator
                                   {
                                     symbol: authenticator.symbol,
                                     explanation: authenticator.explanation
@@ -395,16 +395,30 @@ module Foobara
 
         manifest = manifest.dup
 
+        # TODO: we should remove all blank valued keys but keeping many for now for stability
+        safe_to_remove = [
+          :pre_commit_transformers,
+          :response_mutators,
+          :request_mutators,
+          :capture_unknown_error,
+          :inputs_transformers,
+          :result_transformers,
+          :errors_transformers,
+          :requires_authentication,
+          :authenticator
+        ]
+
         to_merge.each_pair do |key, value|
           # TODO: we could probably remove empty strings and nils, too, and from the whole hash
-          # if (value.is_a?(::Hash) || value.is_a?(::Array)) && value.empty?
-          #   manifest.delete(key)
-          # else
-          #   manifest[key] = value
-          # end
-          # TODO: for now, just including everything for stability
-          # But we should remove all empty values in a future version
-          manifest[key] = value
+          if value.nil? || ((value.is_a?(::Hash) || value.is_a?(::Array)) && value.empty?)
+            if safe_to_remove.include?(key)
+              manifest.delete(key)
+            else
+              manifest[key] = value
+            end
+          else
+            manifest[key] = value
+          end
         end
 
         manifest
