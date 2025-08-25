@@ -61,8 +61,8 @@ module Foobara
           end
         end
 
-        def inputs_type(...)
-          self.class.inputs_type(...)
+        def inputs_type
+          self.class.inputs_type
         end
       end
     end
