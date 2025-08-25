@@ -352,7 +352,9 @@ module Foobara
           args = args[1..]
           connected = []
 
-          registerable.foobara_each_command(mode: Namespace::LookupMode::DIRECT) do |command_class|
+          registerable = registerable.foobara_all_command(mode: Namespace::LookupMode::DIRECT)
+
+          registerable.each do |command_class|
             unless command_class.abstract?
               connected << connect(command_class, *args, **opts)
             end
