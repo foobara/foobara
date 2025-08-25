@@ -4,7 +4,7 @@ module Foobara
       class ExtendDetachedEntityTypeDeclaration < ExtendModelTypeDeclaration
         class ToTypeTransformer < ExtendModelTypeDeclaration::ToTypeTransformer
           def non_processor_keys
-            [:primary_key, *super]
+            [:primary_key, :detached_locally, *super]
           end
 
           def process_value(strict_declaration_type)

@@ -405,7 +405,8 @@ module Foobara
           :result_transformers,
           :errors_transformers,
           :requires_authentication,
-          :authenticator_details
+          :authenticator_details,
+          :authenticator
         ]
 
         to_merge.each_pair do |key, value|

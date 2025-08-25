@@ -31,6 +31,10 @@ module Foobara
         end
       end
 
+      def detached_entities
+        organizations.map(&:detached_entities).flatten
+      end
+
       def entities
         organizations.map(&:entities).flatten
       end

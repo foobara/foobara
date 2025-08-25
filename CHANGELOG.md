@@ -1,3 +1,7 @@
+# [0.1.5] - 2025-08-25
+
+- Add a detached_locally flag and Fix incorrectly reported associations for entities detached locally
+
 # [0.1.4] - 2025-08-24
 
 - Fix TransformedCommand#foobara_manifest bug that failed to overwrite transformed possible_errors
