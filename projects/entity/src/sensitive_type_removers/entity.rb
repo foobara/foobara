@@ -7,12 +7,14 @@ module Foobara
 
           if strict_type_declaration != new_type_declaration
             if new_type_declaration[:type] == :entity
-              # TODO: attempt to fix this in connector instead?
-              new_type_declaration[:type] = :detached_entity
-              new_type_declaration[:detached_locally] = true
+              if Namespace.current.foobara_root_namespace == Namespace.global.foobara_root_namespace
+                # Nervous about creating two entities with the same name in the same namespace
+                # So going to create a detached entity instead
+                new_type_declaration[:type] = :detached_entity
 
-              if new_type_declaration[:model_base_class] == "Foobara::Entity"
-                new_type_declaration[:model_base_class] = "Foobara::DetachedEntity"
+                if new_type_declaration[:model_base_class] == "Foobara::Entity"
+                  new_type_declaration[:model_base_class] = "Foobara::DetachedEntity"
+                end
               end
             end
           end

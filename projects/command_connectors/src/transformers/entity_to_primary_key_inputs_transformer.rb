@@ -54,6 +54,7 @@ module Foobara
 
               description = "#{to_type.target_class.model_name} #{to_type.target_class.primary_key_attribute}"
 
+              # TODO: doesn't everything that extends :entity also extend :detached_entity?
               unless to_type.extends_directly?(Foobara::BuiltinTypes[:detached_entity]) ||
                      to_type.extends_directly?(Foobara::BuiltinTypes[:entity])
 

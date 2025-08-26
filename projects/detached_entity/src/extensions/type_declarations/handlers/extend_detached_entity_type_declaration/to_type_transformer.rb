@@ -3,8 +3,9 @@ module Foobara
     module Handlers
       class ExtendDetachedEntityTypeDeclaration < ExtendModelTypeDeclaration
         class ToTypeTransformer < ExtendModelTypeDeclaration::ToTypeTransformer
+          # TODO: use constants for these arrays for performance reasons
           def non_processor_keys
-            [:primary_key, :detached_locally, *super]
+            [:primary_key, *super]
           end
 
           def process_value(strict_declaration_type)

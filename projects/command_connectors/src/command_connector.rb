@@ -569,30 +569,6 @@ module Foobara
                       additional_to_include << exposed_organization
                     end
                   end
-
-                  if o.extends_type?(BuiltinTypes[:entity])
-                    declaration_data = o.declaration_data
-
-                    if declaration_data.is_a?(::Hash) && declaration_data[:type] == :entity
-                      if o.foobara_root_namespace != command_registry.foobara_root_namespace
-                        # Let's swap it out with a detached type
-                        detached_entity = command_registry.foobara_lookup_type(o.scoped_full_name, mode:)
-
-                        unless detached_entity
-                          declaration_data = o.declaration_data.merge(
-                            type: :detached_entity,
-                            detached_locally: true,
-                            model_base_class: "Foobara::DetachedEntity"
-                          )
-
-                          detached_entity = exposed_domain.foobara_type_from_declaration(declaration_data)
-                        end
-
-                        additional_to_include << detached_entity
-                        next
-                      end
-                    end
-                  end
                 end
               end
 
@@ -640,8 +616,7 @@ module Foobara
       end
 
       h = normalize_manifest(h)
-      h = patch_up_broken_parents_for_errors_with_missing_command_parents(h)
-      remove_detached_locally_flags(h)
+      patch_up_broken_parents_for_errors_with_missing_command_parents(h)
     end
 
     def normalize_manifest(manifest_hash)
@@ -680,23 +655,6 @@ module Foobara
       end
 
       manifest_hash.merge(error: error_category)
-    end
-
-    def remove_detached_locally_flags(manifest_hash)
-      manifest_hash[:type] = manifest_hash[:type].transform_values do |type_manifest|
-        type_declaration = type_manifest[:declaration_data]
-
-        if type_declaration.is_a?(::Hash) && type_declaration.key?(:detached_locally) &&
-           type_declaration[:type] == :detached_entity
-          type_manifest.merge(
-            declaration_data: type_declaration.except(:detached_locally)
-          )
-        else
-          type_manifest
-        end
-      end
-
-      manifest_hash
     end
 
     def all_exposed_commands

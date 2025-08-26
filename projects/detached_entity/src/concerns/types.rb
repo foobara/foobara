@@ -26,14 +26,6 @@ module Foobara
             declaration[:primary_key] = primary_key_attribute
             declaration.is_absolutified = true
 
-            if model_type
-              model_type_declaration_data = model_type.declaration_data
-
-              if model_type_declaration_data.key?(:detached_locally)
-                declaration[:detached_locally] = model_type_declaration_data[:detached_locally]
-              end
-            end
-
             declaration
           end
 
