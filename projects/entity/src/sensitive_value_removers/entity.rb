@@ -8,7 +8,7 @@ module Foobara
           elsif record.persisted?
             # We will assume that we do not need to clean up the primary key itself as
             # we will assume we don't allow sensitive primary keys for now.
-            thunkish = to_type.target_class.build(record.class.primary_key_attribute => record.primary_key)
+            thunkish = to_type.target_class.send(build_method, record.class.primary_key_attribute => record.primary_key)
             thunkish.skip_validations = true
             thunkish.mutable = false
             thunkish
@@ -20,7 +20,14 @@ module Foobara
         end
 
         def build_method
-          :build
+          if to_type.extends?(BuiltinTypes[:entity])
+            # TODO: figure out a way to test this path
+            # :nocov:
+            :build
+            # :nocov:
+          else
+            :new
+          end
         end
       end
     end

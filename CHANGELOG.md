@@ -1,3 +1,9 @@
+# [0.1.7] - 2025-08-25
+
+- Go back to using :detached_entity for entities that have had sensitive types removed to
+  avoid casting problems with multiple entities with the same name
+- Remove private attributes as if they were sensitive attributes when exposing models
+
 # [0.1.6] - 2025-08-25
 
 - Allow constructing a thunk-like record when removing sensitive values from a thunk
