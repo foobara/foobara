@@ -61,7 +61,9 @@ module Foobara
           end
         end
 
-        foobara_delegate :inputs_type, to: :class
+        def inputs_type
+          self.class.inputs_type
+        end
       end
     end
   end

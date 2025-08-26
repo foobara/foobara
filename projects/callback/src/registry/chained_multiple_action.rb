@@ -8,7 +8,13 @@ module Foobara
 
         class InvalidConditions < StandardError; end
 
-        foobara_delegate :possible_actions, :allowed_types, to: :other_multiple_actions_registry
+        def possible_actions
+          other_multiple_actions_registry.possible_actions
+        end
+
+        def allowed_types
+          other_multiple_actions_registry.allowed_types
+        end
 
         def initialize(other_multiple_actions_registry)
           self.other_multiple_actions_registry = other_multiple_actions_registry

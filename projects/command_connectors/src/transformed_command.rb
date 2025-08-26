@@ -61,10 +61,11 @@ module Foobara
         end
       end
 
-      foobara_delegate :description,
-                       :domain,
-                       :organization,
-                       to: :command_class
+      foobara_delegate :domain, :organization, to: :command_class
+
+      def description
+        command_class.description
+      end
 
       def result_transformers
         return @result_transformers if @considered_sensitive_value_remover
