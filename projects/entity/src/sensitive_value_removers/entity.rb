@@ -8,11 +8,10 @@ module Foobara
           elsif record.persisted?
             # We will assume that we do not need to clean up the primary key itself as
             # we will assume we don't allow sensitive primary keys for now.
-            # We use .new because the target_class should be a detached entity
-            to_type.target_class.new(
-              { record.class.primary_key_attribute => record.primary_key },
-              { mutable: false, skip_validations: true }
-            )
+            thunkish = to_type.target_class.build(record.class.primary_key_attribute => record.primary_key)
+            thunkish.skip_validations = true
+            thunkish.mutable = false
+            thunkish
           else
             # :nocov:
             raise "Not sure what to do with a record that isn't loaded, created, or persisted"
@@ -21,14 +20,7 @@ module Foobara
         end
 
         def build_method
-          if to_type.extends_type?(BuiltinTypes[:entity])
-            # TODO: test this code path
-            # :nocov:
-            :build
-            # :nocov:
-          else
-            :new
-          end
+          :build
         end
       end
     end
