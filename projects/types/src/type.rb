@@ -116,6 +116,12 @@ module Foobara
       def has_sensitive_types?
         return true if sensitive?
 
+        # TODO: this is a hack... come up with a better/separate way to detect types with private attributes
+        if declaration_data.is_a?(::Hash)
+          private = declaration_data[:private]
+          return true if private.is_a?(::Array) && !private.empty?
+        end
+
         if element_type
           return true if element_type.has_sensitive_types?
         end
