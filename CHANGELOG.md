@@ -1,6 +1,12 @@
-# [0.1.5] - 2025-08-25
+# [0.1.6] - 2025-08-25
 
-- Add a detached_locally flag and Fix incorrectly reported associations for entities detached locally
+- Allow constructing a thunk-like record when removing sensitive values from a thunk
+- Undo automatically converting connected entities to detached entities
+- Honor imported builtin types in manifest
+- Add Foobara version to manifest metadata
+- Add RootManifest#detached_entities
+- Remove some items from the manifest that should be safe to remove
+- Let's use GlobalDomain in the manifest for objects scoped to Foobara::Value
 
 # [0.1.4] - 2025-08-24
 

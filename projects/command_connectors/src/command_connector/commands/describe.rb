@@ -1,3 +1,5 @@
+require_relative "../../../../../version"
+
 module Foobara
   class CommandConnector
     module Commands

@@ -4,7 +4,7 @@ module Foobara
       module Validators
         class ModelInstanceIsValid < DetachedEntity::Validators::ModelInstanceIsValid
           def applicable?(record)
-            record && (record.created? || record.built?)
+            record && (record.created? || record.built?) && !record.skip_validations
           end
 
           def expected_type_symbol
