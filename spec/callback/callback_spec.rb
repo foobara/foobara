@@ -35,6 +35,16 @@ RSpec.describe Foobara::Callback do
       let(:runner) { registry.runner(:walk).callback_data(foo: :bar) }
 
       describe "#run" do
+        context "with a block for a callback type that does not allow a block" do
+          it "raises an error" do
+            expect {
+              registry.register_callback(:before, :walk) { |&block| block.call }
+            }.to raise_error(
+              Foobara::Callback::Block::Concerns::BlockParameterNotAllowed::BlockParameterNotAllowedError
+            )
+          end
+        end
+
         context "with block" do
           it "calls expected callbacks in order" do
             ran = false

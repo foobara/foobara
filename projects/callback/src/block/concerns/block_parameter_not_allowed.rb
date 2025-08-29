@@ -3,15 +3,15 @@ module Foobara
     class Block
       module Concerns
         module BlockParameterNotAllowed
+          class BlockParameterNotAllowedError < StandardError; end
+
           private
 
           def validate_original_block!
             super
 
             if takes_block?
-              # :nocov:
-              raise ArgumentError, "#{type} callback is not allowed to accept a block"
-              # :nocov:
+              raise BlockParameterNotAllowedError, "#{type} callback is not allowed to accept a block"
             end
           end
         end
