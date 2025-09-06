@@ -7,6 +7,7 @@ module Foobara
             super.tap do |outcome|
               if outcome.success?
                 type = outcome.result
+                type.cast_even_if_instance_of_target_type = true
                 entity_class = type.target_class
 
                 unless entity_class.can_be_created_through_casting?

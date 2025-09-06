@@ -116,6 +116,32 @@ RSpec.describe Foobara::Entity do
     end
   end
 
+  describe ".model_type.process_value!" do
+    before do
+      Foobara::Persistence.default_crud_driver = Foobara::Persistence::CrudDrivers::InMemory.new
+    end
+
+    context "when record comes from a different closed transaction" do
+      let(:record_from_a_different_transaction) do
+        entity_class.transaction do
+          entity_class.create(attributes)
+        end
+      end
+
+      it "casts it to a new thunk from the current transaction using its primary key" do
+        record_from_a_different_transaction
+
+        cast_value = entity_class.transaction do
+          entity_class.model_type.process_value!(record_from_a_different_transaction)
+        end
+
+        expect(cast_value).to be_a(entity_class)
+        expect(cast_value.pk).to eq(record_from_a_different_transaction.pk)
+        expect(cast_value.object_id).to_not eq(record_from_a_different_transaction.object_id)
+      end
+    end
+  end
+
   describe "equality methods" do
     let(:loaded_and_persisted_record) do
       entity_class.build(attributes.merge(pk:)).tap do |record|

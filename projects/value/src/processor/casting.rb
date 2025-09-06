@@ -37,16 +37,20 @@ module Foobara
           end
         end
 
-        attr_accessor :target_classes
+        attr_accessor :target_classes, :cast_even_if_instance_of_target_type
 
-        def initialize(*, casters:, target_classes: nil, **)
+        def initialize(*, casters:, target_classes: nil, cast_even_if_instance_of_target_type: nil, **)
           self.target_classes = Util.array(target_classes)
+
+          if cast_even_if_instance_of_target_type
+            self.cast_even_if_instance_of_target_type = true
+          end
 
           super(*, processors: casters, **)
         end
 
         def process_value(value)
-          if needs_cast?(value)
+          if cast_even_if_instance_of_target_type || needs_cast?(value)
             super
           else
             Outcome.success(value)

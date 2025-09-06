@@ -28,7 +28,8 @@ module Foobara
                   :validators,
                   :target_classes,
                   :processor_classes_requiring_type,
-                  :element_processors
+                  :element_processors,
+                  :cast_even_if_instance_of_target_type
 
       attr_writer :element_types,
                   :element_type
@@ -338,6 +339,11 @@ module Foobara
         @type_symbol = type_symbol.to_sym
       end
 
+      def cast_even_if_instance_of_target_type=(flag)
+        clear_caches
+        @cast_even_if_instance_of_target_type = flag
+      end
+
       def casters=(processors)
         clear_caches
         @casters = processors
@@ -403,7 +409,8 @@ module Foobara
             { cast_to: reference_or_declaration_data },
             casters:,
             target_classes:,
-            enforce_unique:
+            enforce_unique:,
+            cast_even_if_instance_of_target_type:
           )
         end
       end

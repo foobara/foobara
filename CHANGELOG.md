@@ -1,3 +1,8 @@
+# [0.1.8] - 2025-08-25
+
+- Memoize various parts of Type
+- Eliminate DoesNotNeedCastIf* processors
+
 # [0.1.7] - 2025-08-25
 
 - Go back to using :detached_entity for entities that have had sensitive types removed to
