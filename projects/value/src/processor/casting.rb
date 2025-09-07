@@ -42,50 +42,23 @@ module Foobara
         def initialize(*, casters:, target_classes: nil, **)
           self.target_classes = Util.array(target_classes)
 
-          processors = [
-            *does_not_need_cast_processor,
-            *casters
-          ]
+          super(*, processors: casters, **)
+        end
 
-          super(*, processors:, **)
+        def process_value(value)
+          if needs_cast?(value)
+            super
+          else
+            Outcome.success(value)
+          end
         end
 
         def needs_cast?(value)
-          !does_not_need_cast_processor.applicable?(value)
+          target_classes.none? { |klass| value.is_a?(klass) }
         end
 
         def can_cast?(value)
           processors.any? { |processor| processor.applicable?(value) }
-        end
-
-        def does_not_need_cast_processor
-          return @does_not_need_cast_processor if defined?(@does_not_need_cast_processor)
-
-          errorified_name = target_classes.map do |c|
-            if c.name
-              c.name
-            elsif c.respond_to?(:foobara_name)
-              c.foobara_name
-            else
-              # TODO: test this code path
-              # :nocov:
-              "Anon"
-              # :nocov:
-            end
-          end.map { |name| name.split("::").last }.sort.join("Or")
-
-          class_name = "NoCastNeededIfIsA#{errorified_name}"
-
-          @does_not_need_cast_processor = if target_classes && !target_classes.empty?
-                                            Caster.subclass(
-                                              name: class_name,
-                                              applicable?: ->(value) {
-                                                target_classes.any? { |target_class| value.is_a?(target_class) }
-                                              },
-                                              applies_message: "be a #{target_classes.map(&:name).join(" or ")}",
-                                              cast: ->(value) { value }
-                                            ).instance
-                                          end
         end
 
         def error_message(value)
@@ -101,7 +74,12 @@ module Foobara
         end
 
         def applies_message
-          Util.to_or_sentence(processors.map(&:applies_message).flatten)
+          Util.to_or_sentence(
+            [
+              "be a #{target_classes.map(&:name).join(" or ")}",
+              *processors.map(&:applies_message).flatten
+            ]
+          )
         end
 
         def error_context(value)

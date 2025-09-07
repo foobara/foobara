@@ -15,20 +15,20 @@ module Foobara
       end
 
       attr_accessor :base_type,
-                    :casters,
-                    :transformers,
-                    :validators,
-                    :element_processors,
                     :structure_count,
                     :is_builtin,
                     :name,
-                    :target_classes,
                     :description,
                     :sensitive,
-                    :sensitive_exposed,
-                    :processor_classes_requiring_type
+                    :sensitive_exposed
 
-      attr_reader :type_symbol
+      attr_reader :type_symbol,
+                  :casters,
+                  :transformers,
+                  :validators,
+                  :target_classes,
+                  :processor_classes_requiring_type,
+                  :element_processors
 
       attr_writer :element_types,
                   :element_type
@@ -168,7 +168,32 @@ module Foobara
           category.delete_if { |p| p.symbol == symbol }
 
           category << processor
+          clear_caches
         end
+      end
+
+      def clear_caches
+        [
+          :@value_validator,
+          :@processors,
+          :@value_caster,
+          :@value_transformer,
+          :@element_processor,
+          :@possible_errors,
+          :@processors_without_casters
+        ].each do |instance_variable|
+          if instance_variable_defined?(instance_variable)
+            remove_instance_variable(instance_variable)
+          end
+        end
+      end
+
+      def remove_caster_instances_of(klass)
+        self.casters = casters.reject do |caster|
+          caster.is_a?(klass)
+        end
+
+        clear_caches
       end
 
       def remove_processor_by_symbol(symbol)
@@ -184,6 +209,7 @@ module Foobara
         end
         supported_processor_classes&.each { |processor_hash| processor_hash.delete(symbol) }
         processor_classes_requiring_type&.delete_if { |p| p.symbol == symbol }
+        clear_caches
       end
 
       def each_processor_class_requiring_type(&block)
@@ -218,6 +244,8 @@ module Foobara
             end
           end
         end
+
+        clear_caches
       end
 
       def target_class
@@ -299,9 +327,45 @@ module Foobara
         base_type&.extends_type?(type)
       end
 
+      def processors=(...)
+        clear_caches
+        super
+      end
+
       def type_symbol=(type_symbol)
         @scoped_path ||= type_symbol.to_s.split("::")
+        clear_caches
         @type_symbol = type_symbol.to_sym
+      end
+
+      def casters=(processors)
+        clear_caches
+        @casters = processors
+      end
+
+      def transformers=(processors)
+        clear_caches
+        @transformers = processors
+      end
+
+      def validators=(processors)
+        clear_caches
+        @validators = processors
+      end
+
+      def target_classes=(processors)
+        clear_caches
+        @target_classes = processors
+      end
+
+      def processor_classes_requiring_type=(processors)
+        clear_caches
+        @processor_classes_requiring_type = processors
+      end
+
+      def element_processors=(processors)
+        clear_caches
+        @element_processors = processors
       end
 
       def full_type_symbol
@@ -313,17 +377,16 @@ module Foobara
       end
 
       def processors
-        [
+        @processors ||= [
           value_caster,
           value_transformer,
           value_validator,
           element_processor
-        ].compact
+        ].compact.sort_by(&:priority)
       end
 
       def value_caster
-        # TODO: figure out what would be needed to successfully memoize this
-        # return @value_caster if defined?(@value_caster)
+        return @value_caster if defined?(@value_caster)
 
         # We make this exception for :duck because it will match any instance of
         # Object but AllowNil will match nil which is also an instance of Object.
@@ -335,16 +398,18 @@ module Foobara
                            true
                          end
 
-        Value::Processor::Casting.new(
-          { cast_to: reference_or_declaration_data },
-          casters:,
-          target_classes:,
-          enforce_unique:
-        )
+        Namespace.use created_in_namespace do
+          @value_caster = Value::Processor::Casting.new(
+            { cast_to: reference_or_declaration_data },
+            casters:,
+            target_classes:,
+            enforce_unique:
+          )
+        end
       end
 
       def applicable?(value)
-        value_caster.can_cast?(value)
+        !value_caster.needs_cast?(value) || value_caster.can_cast?(value)
       end
 
       foobara_delegate :needs_cast?, to: :value_caster
@@ -362,24 +427,30 @@ module Foobara
       # method in the instance of the processor as needed. This means it can't really memoize stuff. Should we create
       # an instance of something from the instance of the processor and then ask it questions?? TODO: try this
       def value_transformer
-        if transformers && !transformers.empty?
-          Value::Processor::Pipeline.new(processors: transformers)
-        end
+        return @value_transformer if defined?(@value_transformer)
+
+        @value_transformer = if transformers && !transformers.empty?
+                               Value::Processor::Pipeline.new(processors: transformers)
+                             end
       end
 
       # TODO: figure out how to safely memoize stuff so like this for performance reasons
       # A good way, but potentially a decent amount of work, is to have a class that takes value to its initialize
       # method.
       def value_validator
-        if validators && !validators.empty?
-          Value::Processor::Pipeline.new(processors: validators)
-        end
+        return @value_validator if defined?(@value_validator)
+
+        @value_validator = if validators && !validators.empty?
+                             Value::Processor::Pipeline.new(processors: validators)
+                           end
       end
 
       def element_processor
-        if element_processors && !element_processors.empty?
-          Value::Processor::Pipeline.new(processors: element_processors)
-        end
+        return @element_processor if defined?(@element_processor)
+
+        @element_processor = if element_processors && !element_processors.empty?
+                               Value::Processor::Pipeline.new(processors: element_processors)
+                             end
       end
 
       # TODO: some way of memoizing these values? Would need to introduce a new class that takes the value to its

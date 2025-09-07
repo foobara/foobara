@@ -10,9 +10,7 @@ module Foobara
                 entity_class = type.target_class
 
                 unless entity_class.can_be_created_through_casting?
-                  type.casters = type.casters.reject do |caster|
-                    caster.is_a?(Foobara::BuiltinTypes::Entity::Casters::Hash)
-                  end
+                  type.remove_caster_instances_of(Foobara::BuiltinTypes::Entity::Casters::Hash)
                 end
               end
             end

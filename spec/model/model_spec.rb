@@ -81,6 +81,7 @@ RSpec.describe Foobara::Model do
       expect(model_class).to be_a(Class)
       expect(model_class.superclass).to be(described_class)
       expect(model_class.name).to be_nil
+      expect(model_class.foobara_name).to eq("SomeEntity")
 
       described_class.deanonymize_class(model_class)
 
