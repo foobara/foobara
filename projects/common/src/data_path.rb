@@ -31,6 +31,7 @@ module Foobara
         key.to_s_type
       end
 
+      # TODO: flip these arguments?
       def values_at(data_path, object)
         unless data_path.is_a?(DataPath)
           data_path = new(data_path)

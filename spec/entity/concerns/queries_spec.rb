@@ -8,17 +8,7 @@ RSpec.describe Foobara::Entity::Concerns::Queries do
   end
 
   let(:user_class) do
-    stub_class = ->(klass) { stub_const(klass.name, klass) }
-
-    Class.new(Foobara::Entity) do
-      class << self
-        def name
-          "User"
-        end
-      end
-
-      stub_class.call(self)
-
+    stub_class "User", Foobara::Entity do
       attributes do
         id :integer
         name :string, :required
@@ -107,6 +97,87 @@ RSpec.describe Foobara::Entity::Concerns::Queries do
           expect(user).to be_a(user_class)
           expect(user.name).to eq("Basil")
         end
+      end
+    end
+
+    context "with load_paths:" do
+      let(:outer_entity) do
+        user_class
+
+        stub_class "Outer", Foobara::Entity do
+          attributes do
+            id :integer
+            stuff :required do
+              users [User], :required
+            end
+          end
+
+          primary_key :id
+        end
+      end
+
+      let(:outer_record) do
+        outer_entity.transaction do
+          outer_entity.create(stuff: { users: })
+        end
+      end
+
+      let(:users) do
+        (0..3).map do |i|
+          User.create(name: "name#{i}")
+        end
+      end
+
+      it "can load records with various types of load_paths specified in different ways" do
+        record_id = outer_record.id
+
+        record = outer_entity.transaction do
+          outer_entity.load(record_id)
+        end
+        expect(record).to be_a(outer_entity)
+        expect(record.stuff[:users].map(&:loaded?)).to eq([false, false, false, false])
+
+        record = outer_entity.transaction do
+          outer_entity.load(record_id, load_paths: "stuff.users.2")
+        end
+        expect(record).to be_a(outer_entity)
+        expect(record.stuff[:users].map(&:loaded?)).to eq([false, false, true, false])
+
+        record = outer_entity.transaction do
+          outer_entity.load(record_id, load_paths: ["stuff.users.2"])
+        end
+        expect(record).to be_a(outer_entity)
+        expect(record.stuff[:users].map(&:loaded?)).to eq([false, false, true, false])
+
+        record = outer_entity.transaction do
+          outer_entity.load(record_id, load_paths: ["stuff", "users", "2"])
+        end
+        expect(record).to be_a(outer_entity)
+        expect(record.stuff[:users].map(&:loaded?)).to eq([false, false, true, false])
+
+        record = outer_entity.transaction do
+          outer_entity.load(record_id, load_paths: [:stuff, :users, :"2"])
+        end
+        expect(record).to be_a(outer_entity)
+        expect(record.stuff[:users].map(&:loaded?)).to eq([false, false, true, false])
+
+        record = outer_entity.transaction do
+          outer_entity.load(record_id, load_paths: [[:stuff, :users, :"2"]])
+        end
+        expect(record).to be_a(outer_entity)
+        expect(record.stuff[:users].map(&:loaded?)).to eq([false, false, true, false])
+
+        record = outer_entity.transaction do
+          outer_entity.load(record_id, load_paths: [[:stuff, :users, :"#"]])
+        end
+        expect(record).to be_a(outer_entity)
+        expect(record.stuff[:users].map(&:loaded?)).to eq([true, true, true, true])
+
+        record = outer_entity.transaction do
+          outer_entity.load(record_id, load_paths: [[:stuff, :users]])
+        end
+        expect(record).to be_a(outer_entity)
+        expect(record.stuff[:users].map(&:loaded?)).to eq([true, true, true, true])
       end
     end
   end

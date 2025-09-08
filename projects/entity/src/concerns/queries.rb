@@ -44,16 +44,40 @@ module Foobara
             current_transaction_table.find_many_by(attributes)
           end
 
-          def load(record)
-            if record.is_a?(Foobara::Entity)
-              if record.loaded?
-                record
+          def load(record, load_paths: nil)
+            record = if record.is_a?(Foobara::Entity)
+                       if record.loaded?
+                         record
+                       else
+                         current_transaction_table.load(record)
+                       end
+                     else
+                       current_transaction_table.load(record)
+                     end
+
+            if load_paths
+              if load_paths.is_a?(::Array)
+                first = load_paths.first
+
+                if first.is_a?(::Symbol) || (first.is_a?(::String) && !first.include?("."))
+                  load_paths = [load_paths]
+                end
               else
-                current_transaction_table.load(record)
+                load_paths = [load_paths]
               end
-            else
-              current_transaction_table.load(record)
+
+              load_paths.each do |data_path|
+                DataPath.values_at(data_path, record).each do |value|
+                  if value.is_a?(Foobara::Entity)
+                    value.class.load(value)
+                  elsif value.is_a?(::Array)
+                    value.each { |r| r.class.load(r) }
+                  end
+                end
+              end
             end
+
+            record
           rescue ::Foobara::Persistence::EntityAttributesCrudDriver::Table::CannotFindError
             primary_key = if record.is_a?(Foobara::Entity)
                             record.primary_key

@@ -1,4 +1,8 @@
-# [0.1.8] - 2025-08-25
+# [0.1.9] - 2025-09-08
+
+- Support passing load_paths: to Entity.load to pre-load certain associations
+
+# [0.1.8] - 2025-09-05
 
 - Memoize various parts of Type
 - Eliminate DoesNotNeedCastIf* processors
