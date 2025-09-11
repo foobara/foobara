@@ -6,6 +6,26 @@ module Foobara
 
         include Concern
 
+        module ClassMethods
+          def inputs_association_paths
+            return @inputs_association_paths if defined?(@inputs_association_paths)
+
+            @inputs_association_paths = if inputs_type.nil?
+                                          nil
+                                        else
+                                          keys = Entity.construct_associations(inputs_type).keys
+
+                                          if keys.empty?
+                                            nil
+                                          else
+                                            keys.map do |key|
+                                              DataPath.new(key)
+                                            end
+                                          end
+                                        end
+          end
+        end
+
         attr_reader :inputs, :raw_inputs
 
         def initialize(inputs = {})

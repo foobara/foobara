@@ -98,10 +98,24 @@ module Foobara
 
           # TODO: kill this method in favor of possible_errors
           def error_context_type_map
+            return @error_context_type_map if defined?(@error_context_type_map)
+
             process_error_constants
-            @error_context_type_map ||= if superclass < Foobara::Command
-                                          superclass.error_context_type_map.dup
-                                        end || {}
+            map = if superclass < Foobara::Command
+                    superclass.error_context_type_map.dup
+                  end || {}
+
+            @error_context_type_map = if @error_context_type_map
+                                        map.merge(@error_context_type_map)
+                                      else
+                                        map
+                                      end
+
+            inputs_association_paths&.each do |data_path|
+              possible_input_error(data_path.to_sym, CommandPatternImplementation::NotFoundError)
+            end
+
+            @error_context_type_map
           end
 
           def register_possible_error_class(possible_error)

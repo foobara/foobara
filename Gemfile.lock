@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    foobara (0.1.9)
+    foobara (0.1.10)
       bigdecimal
       foobara-lru-cache (< 2.0.0)
       foobara-util (< 2.0.0)
@@ -129,9 +129,9 @@ GEM
     simplecov-html (0.13.2)
     simplecov_json_formatter (0.1.4)
     thor (1.4.0)
-    unicode-display_width (3.1.5)
-      unicode-emoji (~> 4.0, >= 4.0.4)
-    unicode-emoji (4.0.4)
+    unicode-display_width (3.2.0)
+      unicode-emoji (~> 4.1)
+    unicode-emoji (4.1.0)
 
 PLATFORMS
   x86_64-linux

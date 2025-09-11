@@ -89,6 +89,15 @@ RSpec.describe "Entity inputs for commands" do
     end
   end
 
+  context "when an entity doesn't exist" do
+    it "gives a not_found error" do
+      outcome = CreateFan.run(attrs: { foo: :bar }, fan_of: [10], owner: 10)
+
+      expect(outcome).to_not be_success
+      expect(outcome.errors_hash.keys).to contain_exactly("data.fan_of.0.not_found", "data.owner.not_found")
+    end
+  end
+
   describe ".possible_errors" do
     it "does not include creation errors for nested entities" do
       User.transaction do
@@ -141,7 +150,9 @@ RSpec.describe "Entity inputs for commands" do
         "data.attrs.bar.#.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
         "data.attrs.duckfoo.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
         "data.attrs.duckbar.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
-        "data.attrs.duckbar.#.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError
+        "data.attrs.duckbar.#.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
+        "data.fan_of.#.not_found": Foobara::CommandPatternImplementation::Concerns::Runtime::NotFoundError,
+        "data.owner.not_found": Foobara::CommandPatternImplementation::Concerns::Runtime::NotFoundError
       )
     end
   end

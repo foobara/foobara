@@ -55,16 +55,22 @@ RSpec.describe Foobara::CommandConnectors::Transformers::LoadAtomsPreCommitTrans
       some_entity_class.create(foo: "foo", bar: "bar")
     end
   end
+  let(:some_other_record) do
+    some_entity_class.transaction do
+      some_entity_class.create(foo: "baz", bar: "baz")
+    end
+  end
 
   let(:command_class) do
     inputs_type = type
+    id = some_other_record.primary_key
 
     stub_class "SomeCommand", Foobara::Command do
       inputs inputs_type
       result inputs_type
 
-      def execute
-        inputs
+      define_method :execute do
+        inputs.merge(some_tuple: [*some_tuple[..-2], id])
       end
     end
   end
@@ -89,7 +95,7 @@ RSpec.describe Foobara::CommandConnectors::Transformers::LoadAtomsPreCommitTrans
       result = response.outcome.result
 
       expect(result).to eq(
-        some_tuple: [1, "foo", some_record],
+        some_tuple: [1, "foo", some_other_record],
         some_array: [some_record],
         some_model: SomeModel.new(some_entity: some_record, foo: "foo", bar: "bar")
       )

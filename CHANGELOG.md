@@ -1,3 +1,10 @@
+# [0.1.10] - 2025-09-11
+
+- Add NotFoundError when an entity input doesn't exist
+- Make #add_input_error more flexible
+- Fix an error path array bug
+- Fix a bug that might prevent inherited possible errors
+
 # [0.1.9] - 2025-09-08
 
 - Support passing load_paths: to Entity.load to pre-load certain associations

@@ -290,14 +290,22 @@ RSpec.describe Foobara::CommandConnector do
         context "when command can return a thunk" do
           let(:serializers) { [] }
           let(:full_command_name) { "SomeOrg::SomeDomain::FindUser" }
-          let(:user_id) do
-            user = SomeOrg::SomeDomain::CreateUser.run!(
+          let(:user) do
+            SomeOrg::SomeDomain::CreateUser.run!(
               username: "foo",
               password: "bar",
               foo: [{ bar: "bar", baz: "baz" }, { baz: "baz2" }]
             )
-
+          end
+          let(:user_id) do
             user.id
+          end
+          let(:some_other_user) do
+            SomeOrg::SomeDomain::CreateUser.run!(
+              username: "baz",
+              password: "baz",
+              foo: [{ bar: "baz", baz: "baz" }, { baz: "baz" }]
+            )
           end
           let(:inputs) do
             { user: user_id }
@@ -305,6 +313,8 @@ RSpec.describe Foobara::CommandConnector do
           let(:pre_commit_transformers) { [] }
 
           before do
+            some_other_user_id = some_other_user.id
+
             stub_class "SomeOrg::SomeDomain::FindUser", Foobara::Command do
               inputs do
                 user SomeOrg::SomeDomain::User
@@ -312,8 +322,8 @@ RSpec.describe Foobara::CommandConnector do
 
               result SomeOrg::SomeDomain::User
 
-              def execute
-                SomeOrg::SomeDomain::User.thunk(user.id)
+              define_method :execute do
+                SomeOrg::SomeDomain::User.thunk(some_other_user_id)
               end
             end
 
@@ -322,7 +332,7 @@ RSpec.describe Foobara::CommandConnector do
 
           it "returns a thunk but in the command connector's namespace" do
             expect(response.status).to be(0)
-            expect(JSON.parse(response.body)).to eq(user_id)
+            expect(JSON.parse(response.body)).to eq(some_other_user.id)
           end
         end
 
