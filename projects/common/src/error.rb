@@ -215,6 +215,11 @@ module Foobara
       self.message = message
       self.context = context
       self.category = category
+
+      if path.is_a?(::String) || path.is_a?(::Symbol)
+        path = path.to_s.split(".").map(&:to_sym)
+      end
+
       self.path = path
       self.runtime_path = runtime_path
       self.is_fatal = is_fatal

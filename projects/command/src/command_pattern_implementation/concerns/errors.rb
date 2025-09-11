@@ -78,7 +78,7 @@ module Foobara
                   elsif args.empty? || (args.size == 1 && args.first.is_a?(Hash))
                     error_args = opts.merge(args.first || {})
                     symbol = error_args[:symbol]
-                    path = Util.array(error_args[:input] || error_args[:path])
+                    path = error_args[:input] || error_args[:path]
 
                     error_args = error_args.except(:input)
 
@@ -100,8 +100,14 @@ module Foobara
                     input, symbol, message = args
                     context = opts
 
-                    error_class = self.class.lookup_input_error_class(symbol, input)
-                    error_class.new(path: Util.array(input), symbol:, context:, message:)
+                    if symbol.is_a?(::Class) && symbol < Foobara::Error
+                      error_class = symbol
+                      symbol = error_class.symbol
+                    else
+                      error_class = self.class.lookup_input_error_class(symbol, input)
+                    end
+
+                    error_class.new(path: input, symbol:, context:, message:)
                   else
                     # :nocov:
                     raise ArgumentError,

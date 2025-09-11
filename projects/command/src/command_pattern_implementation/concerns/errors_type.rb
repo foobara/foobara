@@ -81,6 +81,11 @@ module Foobara
             symbol = error_class.symbol
 
             possible_error = PossibleError.new(error_class, symbol:, data:)
+
+            if path.is_a?(::String) || path.is_a?(::Symbol)
+              path = path.to_s.split(".")
+            end
+
             possible_error.prepend_path!(path)
 
             possible_error.manually_added = true
