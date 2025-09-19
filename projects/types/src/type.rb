@@ -20,7 +20,9 @@ module Foobara
                     :name,
                     :description,
                     :sensitive,
-                    :sensitive_exposed
+                    :sensitive_exposed,
+                    :element_type_loader_symbol,
+                    :element_types_loader_symbol
 
       attr_reader :type_symbol,
                   :casters,
@@ -44,8 +46,6 @@ module Foobara
         transformers: [],
         validators: [],
         element_processors: nil,
-        element_type: nil,
-        element_types: nil,
         structure_count: nil,
         processor_classes_requiring_type: nil,
         sensitive: nil,
@@ -64,9 +64,6 @@ module Foobara
         self.element_processors = [*element_processors, *base_type&.element_processors]
 
         self.structure_count = structure_count
-        # TODO: combine these maybe with the term "children_types"?
-        self.element_types = element_types
-        self.element_type = element_type
         self.target_classes = Util.array(target_classes)
         self.processor_classes_requiring_type = processor_classes_requiring_type
 
@@ -95,23 +92,23 @@ module Foobara
       end
 
       def element_type
-        type = @element_type || base_type&.element_type
-
-        if type.is_a?(::Symbol)
-          type = @element_type = TypeDeclarations::LazyElementTypes.const_get(type).resolve(self)
+        lru_cache.cached([self, :element_type]) do
+          if element_type_loader_symbol
+            TypeDeclarations::LazyElementTypes.const_get(element_type_loader_symbol).resolve(self)
+          else
+            base_type&.element_type
+          end
         end
-
-        type
       end
 
       def element_types
-        types = @element_types || base_type&.element_types
-
-        if types.is_a?(::Symbol)
-          types = @element_types = TypeDeclarations::LazyElementTypes.const_get(types).resolve(self)
+        lru_cache.cached([self, :element_types]) do
+          if element_types_loader_symbol
+            TypeDeclarations::LazyElementTypes.const_get(element_types_loader_symbol).resolve(self)
+          else
+            base_type&.element_types
+          end
         end
-
-        types
       end
 
       def has_sensitive_types?

@@ -10,7 +10,7 @@ module Foobara
         class ToTypeTransformer < ExtendRegisteredTypeDeclaration::ToTypeTransformer
           def transform(strict_type_declaration)
             type = super
-            type.element_types = :Hash
+            type.element_types_loader_symbol = :Hash
             type
           end
         end

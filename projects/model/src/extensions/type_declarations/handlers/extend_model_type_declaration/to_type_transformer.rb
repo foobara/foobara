@@ -77,7 +77,7 @@ module Foobara
               if outcome.success?
                 type = outcome.result
 
-                type.element_types = :Model
+                type.element_types_loader_symbol = :Model
 
                 model_class = type.target_class
                 existing_model_type = model_class.model_type
