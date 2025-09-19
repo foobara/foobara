@@ -129,7 +129,7 @@ module Foobara
       end
 
       def type_for_declaration(*type_declaration_bits, &block)
-        lru_cache.cached([type_declaration_bits, block]) do
+        lru_cache.cached([self, *block&.object_id, *type_declaration_bits]) do
           type_for_declaration_without_cache(*type_declaration_bits, &block)
         end
       rescue NoTypeDeclarationHandlerFoundError
@@ -152,16 +152,10 @@ module Foobara
         handler.process_value!(type_declaration)
       end
 
-      def clear_cache
-        if @lru_cache
-          lru_cache.reset!
-        end
-      end
-
       private
 
       def lru_cache
-        @lru_cache ||= Foobara::LruCache.new(100)
+        Namespace::IsNamespace.lru_cache
       end
     end
   end

@@ -27,6 +27,7 @@ module Foobara
     #   parent: n
     #   dependent: n
     # TODO: don't we have an enumerated class/project for this?
+    # Maybe use bitmasks for the above 3 places to look instead of a list of 7 lookup types? (There should be 8...)
     module LookupMode
       GENERAL = :general
       RELAXED = :relaxed

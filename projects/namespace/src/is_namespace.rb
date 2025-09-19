@@ -5,11 +5,13 @@ module Foobara
     module IsNamespace
       class << self
         def lru_cache
-          @lru_cache ||= Foobara::LruCache.new(100)
+          @lru_cache ||= Foobara::LruCache.new(200)
         end
 
         def clear_lru_cache!
-          @lru_cache = nil
+          if @lru_cache
+            lru_cache.reset!
+          end
         end
       end
 
@@ -141,7 +143,7 @@ module Foobara
         LookupMode.validate!(mode)
         path = Namespace.to_registry_path(path)
 
-        lru_cache.cached([path, mode, self, filter]) do
+        lru_cache.cached([self, path, mode, *filter]) do
           visited = Set.new
           foobara_lookup_without_cache(path, filter:, mode:, visited:)
         end
