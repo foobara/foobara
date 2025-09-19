@@ -65,8 +65,6 @@ module Foobara
         def foobara_unregister(scoped)
           scoped = to_scoped(scoped)
 
-          foobara_type_builder.clear_cache
-
           if scoped.is_a?(Foobara::Types::Type)
             parent_mod = nil
 
