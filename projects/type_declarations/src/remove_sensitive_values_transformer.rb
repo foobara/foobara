@@ -16,7 +16,9 @@ module Foobara
       end
 
       def create_all_association_types_in_current_namespace(type)
-        associations = Foobara::DetachedEntity.construct_deep_associations(type)
+        associations = Namespace.use type.created_in_namespace do
+          Foobara::DetachedEntity.construct_deep_associations(type)
+        end
 
         associations&.values&.reverse&.each do |entity_type|
           next if entity_type.sensitive?
