@@ -8,7 +8,7 @@ module Foobara
         class ToTypeTransformer < ExtendAssociativeArrayTypeDeclaration::ToTypeTransformer
           def transform(strict_type_declaration)
             type = super
-            type.element_types_loader_symbol = :Tuple
+            type.element_types_loader = LazyElementTypes::Tuple
             type
           end
         end

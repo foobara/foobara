@@ -21,8 +21,8 @@ module Foobara
                     :description,
                     :sensitive,
                     :sensitive_exposed,
-                    :element_type_loader_symbol,
-                    :element_types_loader_symbol
+                    :element_type_loader,
+                    :element_types_loader
 
       attr_reader :type_symbol,
                   :casters,
@@ -93,8 +93,8 @@ module Foobara
 
       def element_type
         lru_cache.cached([self, :element_type]) do
-          if element_type_loader_symbol
-            TypeDeclarations::LazyElementTypes.const_get(element_type_loader_symbol).resolve(self)
+          if element_type_loader
+            element_type_loader.resolve(self)
           else
             base_type&.element_type
           end
@@ -103,8 +103,8 @@ module Foobara
 
       def element_types
         lru_cache.cached([self, :element_types]) do
-          if element_types_loader_symbol
-            TypeDeclarations::LazyElementTypes.const_get(element_types_loader_symbol).resolve(self)
+          if element_types_loader
+            element_types_loader.resolve(self)
           else
             base_type&.element_types
           end

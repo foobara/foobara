@@ -1,3 +1,9 @@
+# [0.1.11] - 2025-09-24
+
+- Make sure type builder caches are cleared when namespace caches are cleared
+- Make sure element type resolution is performed in the right namespace
+- Do not dual-purpose memoized @element_type(s) var, and memoize in IsNamespace.lru_cache instead
+
 # [0.1.10] - 2025-09-11
 
 - Add NotFoundError when an entity input doesn't exist
