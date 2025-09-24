@@ -1,11 +1,10 @@
 RSpec.describe Foobara::WeakObjectSet do
-  let(:set) { described_class.new(key_method) }
-
   after { set.close }
 
-  describe "auto-removal of garbage collected records" do
-    let(:key_method) { nil }
+  let(:set) { described_class.new(key_method) }
+  let(:key_method) { nil }
 
+  describe "auto-removal of garbage collected records" do
     context "without key_method" do
       it "automatically removes records that have been garbage collected" do
         some_object = "asdf"
@@ -76,6 +75,17 @@ RSpec.describe Foobara::WeakObjectSet do
           end
         end
       end
+    end
+  end
+
+  describe "#delete" do
+    it "removes the object being deleted" do
+      some_object = "asdf"
+      set << some_object
+
+      expect {
+        set.delete(some_object)
+      }.to change { set.member?(some_object) }.from(true).to(false)
     end
   end
 end

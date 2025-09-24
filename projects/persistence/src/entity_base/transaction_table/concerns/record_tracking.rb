@@ -44,7 +44,6 @@ module Foobara
                 unmark_updated(record)
               else
                 unmark_created(record)
-                tracked_records.delete(record)
               end
             end
 

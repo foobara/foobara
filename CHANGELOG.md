@@ -1,3 +1,7 @@
+# [0.1.12] - 2025-09-24
+
+- Fix bug where a hard-deleted, non-persisted record cannot be cast
+
 # [0.1.11] - 2025-09-24
 
 - Make sure type builder caches are cleared when namespace caches are cleared
