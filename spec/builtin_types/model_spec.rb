@@ -319,9 +319,8 @@ RSpec.describe ":model" do
     end
 
     before do
-      type.type_symbol = type.name.to_sym
-      domain.foobara_register(type)
-      type.foobara_parent_namespace = domain
+      type
+      domain
     end
 
     it "can be used by symbol" do

@@ -94,7 +94,6 @@ module Foobara
       exposed_domain.foobara_depends_on domain_module
 
       exposed_organization.foobara_register(exposed_domain)
-      exposed_domain.foobara_parent_namespace = exposed_organization
 
       domain_module.foobara_depends_on.each do |domain_name|
         # TODO: test this code path!!
@@ -135,7 +134,6 @@ module Foobara
       exposed_organization.unexposed_organization = org
 
       foobara_register(exposed_organization)
-      exposed_organization.foobara_parent_namespace = self
 
       exposed_organization
     end

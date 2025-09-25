@@ -20,10 +20,7 @@ module Foobara
           foobara_autoset_namespace!(default_namespace: Foobara::GlobalOrganization)
           foobara_autoset_scoped_path!
 
-          # TODO: wow this is awkward. We should find a cleaner way to set children on namespaces.
-          parent = foobara_parent_namespace
-          parent.foobara_register(self)
-          self.foobara_parent_namespace = parent
+          foobara_parent_namespace.foobara_register(self)
         end
 
         include(DomainModuleExtension)
@@ -99,10 +96,7 @@ module Foobara
           self.scoped_namespace = Namespace.global
           foobara_autoset_scoped_path!(make_top_level: true)
 
-          # TODO: wow this is awkward. We should find a cleaner way to set children on namespaces.
-          parent = foobara_parent_namespace
-          parent.foobara_register(self)
-          self.foobara_parent_namespace = parent
+          foobara_parent_namespace.foobara_register(self)
         end
       end
 

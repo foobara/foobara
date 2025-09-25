@@ -35,7 +35,16 @@ module Foobara
 
       def foobara_parent_namespace=(namespace)
         self.scoped_namespace = namespace
-        scoped_namespace.foobara_children << self if namespace
+
+        if namespace
+          if namespace.foobara_children.include?(self)
+            # :nocov:
+            raise "Already registered on parent"
+            # :nocov:
+          end
+
+          namespace.foobara_children << self
+        end
       end
 
       def foobara_add_category(symbol, &block)
@@ -107,8 +116,12 @@ module Foobara
         # TODO: do we really need to clear the whole cache? Why not just the possible
         # impacted keys based on scoped.scoped_path ?
         IsNamespace.clear_lru_cache!
-        # awkward??
-        scoped.scoped_namespace = self
+
+        if scoped.is_a?(Namespace::IsNamespace)
+          scoped.foobara_parent_namespace = self
+        else
+          scoped.scoped_namespace = self
+        end
 
         if scoped.respond_to?(:foobara_on_register)
           scoped.foobara_on_register

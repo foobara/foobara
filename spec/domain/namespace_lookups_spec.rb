@@ -21,7 +21,6 @@ RSpec.describe "Foobara namespace lookup" do
       b: :string
     )
     custom_type_a.type_symbol = :custom
-    custom_type_a.foobara_parent_namespace = OrgA::DomainA
     OrgA::DomainA.foobara_register(custom_type_a)
 
     stub_class "OrgA::DomainA::CommandA", Foobara::Command
@@ -35,7 +34,6 @@ RSpec.describe "Foobara namespace lookup" do
       d: :string
     )
     custom_type_b.type_symbol = :custom
-    custom_type_b.foobara_parent_namespace = OrgA::DomainB
     OrgA::DomainB.foobara_register(custom_type_b)
 
     stub_class "OrgA::DomainB::CommandA", Foobara::Command

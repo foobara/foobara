@@ -90,8 +90,7 @@ module Foobara
 
         # TODO: really need to encapsulate this somehow...
         type.type_symbol = type_symbol
-        type.foobara_parent_namespace ||= GlobalDomain
-        type.foobara_parent_namespace.foobara_register(type)
+        (type.foobara_parent_namespace || GlobalDomain).foobara_register(type)
 
         supported_casters_module = Util.constant_value(builtin_type_module, :SupportedCasters)
         supported_caster_classes = if supported_casters_module
@@ -151,7 +150,6 @@ module Foobara
             parent = scoped.scoped_namespace
 
             if parent.nil? || parent == Foobara || parent == Namespace.global || parent == GlobalDomain
-              scoped.foobara_parent_namespace = type
               type.foobara_register(scoped)
             end
           end

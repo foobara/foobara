@@ -184,6 +184,7 @@ RSpec.describe Foobara::Command do
         stub_module "SomeDomain::SomePrefix" do
           foobara_namespace!
           foobara_autoset_namespace!
+          foobara_autoset_scoped_path!
         end
         stub_class "SomeDomain::SomePrefix::SomeCommand", described_class
       end

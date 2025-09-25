@@ -22,11 +22,11 @@ module Foobara
 
     def scoped_clear_caches
       [
-        "@scoped_absolute_name",
-        "@scoped_name",
-        "@scoped_prefix",
-        "@scoped_full_name",
-        "@scoped_full_path"
+        :@scoped_absolute_name,
+        :@scoped_name,
+        :@scoped_prefix,
+        :@scoped_full_name,
+        :@scoped_full_path
       ].each do |variable|
         remove_instance_variable(variable) if instance_variable_defined?(variable)
       end

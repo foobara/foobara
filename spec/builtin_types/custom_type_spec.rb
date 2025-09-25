@@ -341,7 +341,6 @@ RSpec.describe "custom types" do
             # TODO: make this less awkward...
             type.type_symbol = :custom_complex
             Foobara::GlobalDomain.foobara_register(type)
-            type.foobara_parent_namespace = Foobara::GlobalDomain
           end
 
           it "gives the complex type for the complex symbol" do

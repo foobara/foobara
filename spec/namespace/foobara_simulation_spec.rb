@@ -28,7 +28,6 @@ RSpec.describe Foobara::Namespace do
         foobara_instances_are_namespaces!
 
         def add_processor(processor)
-          processor.foobara_parent_namespace = self
           foobara_register(processor)
         end
 
@@ -59,7 +58,6 @@ RSpec.describe Foobara::Namespace do
       end
 
       Integer = Type.new(:integer)
-      Integer.foobara_parent_namespace = Foobara
       Foobara.foobara_register(Integer)
 
       class Max < Processor

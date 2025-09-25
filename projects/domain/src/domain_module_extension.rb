@@ -264,18 +264,54 @@ module Foobara
                    foobara_type_from_declaration(*type_declaration_bits, &block)
                  end
 
-          if type_symbol.is_a?(::Array)
-            type.scoped_path = type_symbol
-            type.type_symbol = type_symbol.join("::")
+          new_scoped_path, new_type_symbol = if type_symbol.is_a?(::Array)
+                                               [type_symbol, type_symbol.join("::").to_sym]
+                                             else
+                                               type_symbol = type_symbol.to_s if type_symbol.is_a?(::Symbol)
+
+                                               [type_symbol.split("::"), type_symbol.to_sym]
+                                             end
+
+          if type.scoped_path_set? && type.registered? && foobara_registered?(type, mode: Namespace::LookupMode::DIRECT)
+            old_symbol = type.type_symbol
+            old_type = foobara_lookup_type(old_symbol, mode: Namespace::LookupMode::DIRECT)
+
+            if old_symbol != new_type_symbol
+              foobara_unregister(type)
+
+              type.scoped_path = new_scoped_path
+              type.type_symbol = new_type_symbol
+
+              foobara_register(type)
+              # :nocov:
+            elsif old_type != type
+              # TODO: delete this check if it's not really helping
+
+              raise "Didn't expect to find an old type"
+              # :nocov:
+            end
           else
-            type_symbol = type_symbol.to_s if type_symbol.is_a?(::Symbol)
+            type.scoped_path = new_scoped_path
+            type.type_symbol = new_type_symbol
 
-            type.scoped_path = type_symbol.split("::")
-            type.type_symbol = type_symbol.to_sym
+            old_type = foobara_lookup_type(new_type_symbol, mode: Namespace::LookupMode::DIRECT)
+
+            if old_type && old_type != type
+              # TODO: delete this check if it's not really helping
+              # :nocov:
+              raise "Didn't expect to find an old type"
+              # :nocov:
+            end
+
+            if foobara_registered?(type, mode: Namespace::LookupMode::DIRECT)
+              # TODO: delete this check if it's not really helping
+              # :nocov:
+              raise "Already registered: #{type.inspect}"
+              # :nocov:
+            end
+
+            foobara_register(type)
           end
-
-          type.foobara_parent_namespace ||= self
-          foobara_register(type)
 
           _set_type_constant(type)
 
@@ -299,7 +335,6 @@ module Foobara
           end
 
           foobara_register(type)
-          type.foobara_parent_namespace = self
 
           type.target_class
         end

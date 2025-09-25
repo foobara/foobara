@@ -17,8 +17,7 @@ module Foobara
                     :allowed_rule,
                     :requires_authentication,
                     :authenticator,
-                    :scoped_path,
-                    :scoped_namespace
+                    :scoped_path
 
       def initialize(
         command_class,

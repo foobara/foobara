@@ -3,7 +3,6 @@ require_relative "global_organization"
 module Foobara
   module GlobalDomain
     foobara_namespace!(scoped_path: [])
-    self.foobara_parent_namespace = GlobalOrganization
     GlobalOrganization.foobara_register(self)
 
     foobara_domain!

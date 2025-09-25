@@ -17,7 +17,6 @@ module Foobara
         transformer_class.reject_attributes = attribute_names
 
         Namespace::NamespaceHelpers.foobara_autoset_scoped_path(transformer_class, set_namespace: true)
-        transformer_class.foobara_parent_namespace = transformer_class.scoped_namespace
         transformer_class.scoped_namespace.foobara_register(transformer_class)
 
         transformer_class

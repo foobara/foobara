@@ -47,13 +47,7 @@ module Foobara
             NamespaceHelpers.foobara_autoset_namespace(subclass, default_namespace: scoped_default_namespace)
             NamespaceHelpers.foobara_autoset_scoped_path(subclass)
 
-            if subclass.scoped_namespace
-              if subclass.is_a?(Foobara::Namespace::IsNamespace)
-                subclass.foobara_parent_namespace = subclass.scoped_namespace
-              end
-
-              subclass.scoped_namespace.foobara_register(subclass)
-            end
+            subclass.scoped_namespace&.foobara_register(subclass)
           end
         end
       end
@@ -262,11 +256,6 @@ module Foobara
 
                 mod.foobara_register(scoped)
 
-                if scoped.is_a?(Namespace::IsNamespace)
-                  scoped.foobara_parent_namespace = mod
-                else
-                  scoped.scoped_namespace = mod
-                end
               end
             end
           end

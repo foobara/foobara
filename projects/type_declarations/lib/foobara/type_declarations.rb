@@ -59,7 +59,6 @@ module Foobara
           Namespace.global.foobara_children << child
         end
 
-        GlobalDomain.foobara_parent_namespace = GlobalOrganization
         GlobalOrganization.foobara_register(GlobalDomain)
 
         register_type_declaration(Handlers::RegisteredTypeDeclaration.new)
