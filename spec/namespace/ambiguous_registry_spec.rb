@@ -56,5 +56,15 @@ RSpec.describe Foobara::Namespace::AmbiguousRegistry do
         expect(registry.lookup(["a", "User"])).to eq(user2)
       end
     end
+
+    describe "#unregister" do
+      it "unregisters the element" do
+        expect(registry.lookup(["z", "a", "User"])).to eq(user7)
+
+        registry.unregister(user7)
+
+        expect(registry.lookup(["z", "a", "User"])).to be_nil
+      end
+    end
   end
 end

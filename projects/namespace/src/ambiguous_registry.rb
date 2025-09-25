@@ -21,15 +21,7 @@ module Foobara
           # :nocov:
         end
 
-        registered = lookup([short_name])
-
-        unless registered
-          # :nocov:
-          raise NotRegisteredError, "Not registered: #{short_name.inspect}"
-          # :nocov:
-        end
-
-        unless entry.delete(registered)
+        unless entry.delete(scoped)
           # :nocov:
           raise NotRegisteredError, "Not registered: #{short_name.inspect}"
           # :nocov:
