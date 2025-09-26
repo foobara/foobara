@@ -111,6 +111,10 @@ module Foobara
 
       # TODO: make this thread-safe
       def foobara_register(scoped)
+        if scoped.scoped_unregistered?
+          scoped.scoped_reregistering!
+        end
+
         foobara_registry.register(scoped)
 
         # TODO: do we really need to clear the whole cache? Why not just the possible
@@ -121,6 +125,10 @@ module Foobara
           scoped.foobara_parent_namespace = self
         else
           scoped.scoped_namespace = self
+        end
+
+        if scoped.unregistered_foobara_manifest_reference
+          scoped.unregistered_foobara_manifest_reference = nil
         end
 
         if scoped.respond_to?(:foobara_on_register)
@@ -137,7 +145,11 @@ module Foobara
 
         foobara_registry.unregister(scoped)
         foobara_children.delete(scoped)
+
+        scoped.unregistered_foobara_manifest_reference = scoped.foobara_manifest_reference
+
         scoped.scoped_namespace = nil
+        scoped.scoped_unregistered!
 
         IsNamespace.clear_lru_cache!
       end

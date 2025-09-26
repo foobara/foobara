@@ -3,8 +3,16 @@ module Foobara
     class NoScopedPathSetError < StandardError; end
 
     attr_reader :scoped_namespace
+    attr_accessor :unregistered_foobara_manifest_reference
 
     def scoped_path
+      if scoped_unregistered?
+        # TODO: can probably delete this defensive check
+        # :nocov:
+        raise "Cannot use unregistered Scoped object"
+        # :nocov:
+      end
+
       unless defined?(@scoped_path)
         # :nocov:
         raise NoScopedPathSetError, "No scoped path set. Explicitly set it to nil if that's what you want."
@@ -26,7 +34,9 @@ module Foobara
         :@scoped_name,
         :@scoped_prefix,
         :@scoped_full_name,
-        :@scoped_full_path
+        :@scoped_full_path,
+        :@scoped_short_name,
+        :@scoped_short_path
       ].each do |variable|
         remove_instance_variable(variable) if instance_variable_defined?(variable)
       end
@@ -78,6 +88,13 @@ module Foobara
     attr_writer :foobara_manifest_reference
 
     def foobara_manifest_reference
+      if scoped_unregistered?
+        # TODO: can probably delete this defensive check
+        # :nocov:
+        raise "Cannot use unregistered Scoped object"
+        # :nocov:
+      end
+
       @foobara_manifest_reference ||= scoped_full_name
     end
 
@@ -108,6 +125,18 @@ module Foobara
 
     def scoped_category
       @scoped_category ||= Namespace.global.foobara_category_symbol_for(self)
+    end
+
+    def scoped_unregistered!
+      @scoped_unregistered = true
+    end
+
+    def scoped_unregistered?
+      @scoped_unregistered
+    end
+
+    def scoped_reregistering!
+      @scoped_unregistered = nil
     end
   end
 end
