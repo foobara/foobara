@@ -1,3 +1,10 @@
+# [0.1.13] - 2025-09-27
+
+- Fix various bugs resulting in values missing from connector manifest or included when they should not be
+- Type creation performance improvements
+- Fix bugs revolving around incorreclty making use of unregistered types
+- Fix bug with deleting entries from an AmbiguousRegistry
+
 # [0.1.12] - 2025-09-24
 
 - Fix bug where a hard-deleted, non-persisted record cannot be cast

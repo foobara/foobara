@@ -3,18 +3,6 @@ require_relative "scoped"
 module Foobara
   class Namespace
     module IsNamespace
-      class << self
-        def lru_cache
-          @lru_cache ||= Foobara::LruCache.new(200)
-        end
-
-        def clear_lru_cache!
-          if @lru_cache
-            lru_cache.reset!
-          end
-        end
-      end
-
       include Scoped
 
       def scoped_clear_caches
@@ -117,16 +105,15 @@ module Foobara
 
         foobara_registry.register(scoped)
 
-        # TODO: do we really need to clear the whole cache? Why not just the possible
-        # impacted keys based on scoped.scoped_path ?
-        IsNamespace.clear_lru_cache!
-
         if scoped.is_a?(Namespace::IsNamespace)
           scoped.foobara_parent_namespace = self
         else
           scoped.scoped_namespace = self
         end
 
+        # TODO: do we really need to clear the whole cache? Why not just the possible
+        # impacted keys based on scoped.scoped_path ?
+        Namespace.clear_lru_cache!
         if scoped.unregistered_foobara_manifest_reference
           scoped.unregistered_foobara_manifest_reference = nil
         end
@@ -151,7 +138,7 @@ module Foobara
         scoped.scoped_namespace = nil
         scoped.scoped_unregistered!
 
-        IsNamespace.clear_lru_cache!
+        Namespace.clear_lru_cache!
       end
 
       def foobara_unregister_all
@@ -161,7 +148,7 @@ module Foobara
       end
 
       def lru_cache
-        IsNamespace.lru_cache
+        Namespace.lru_cache
       end
 
       def foobara_lookup(path, filter: nil, mode: LookupMode::GENERAL)
