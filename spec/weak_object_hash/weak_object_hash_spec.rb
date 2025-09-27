@@ -1,20 +1,46 @@
 RSpec.describe Foobara::WeakObjectHash do
   let(:weak_object_hash) { described_class.new }
 
-  describe "#[]" do
-    it "gives back what is put in" do
-      key = Object.new
-      value = Object.new
-
-      weak_object_hash[key] = value
-
-      expect(weak_object_hash[key]).to be(value)
-      expect(weak_object_hash.size).to eq(1)
-      expect(weak_object_hash).to_not be_empty
+  context "when finalizers in use" do
+    before do
+      weak_object_hash.skip_finalizer = false
     end
 
-    context "when key is garbage collected" do
-      it "gives nil" do
+    describe "#[]" do
+      it "gives back what is put in" do
+        key = Object.new
+        value = Object.new
+
+        weak_object_hash[key] = value
+
+        expect(weak_object_hash[key]).to be(value)
+        expect(weak_object_hash.size).to eq(1)
+        expect(weak_object_hash).to_not be_empty
+      end
+
+      context "when key is garbage collected" do
+        it "gives nil" do
+          key = Object.new
+          value = Object.new
+
+          weak_object_hash[key] = value
+
+          expect(weak_object_hash[key]).to be(value)
+          expect(weak_object_hash.size).to eq(1)
+          expect(weak_object_hash).to_not be_empty
+
+          key = nil
+          GC.start
+
+          expect(weak_object_hash[key]).to be_nil
+          expect(weak_object_hash.size).to eq(0)
+          expect(weak_object_hash).to be_empty
+        end
+      end
+    end
+
+    describe "#delete" do
+      it "removes the entry" do
         key = Object.new
         value = Object.new
 
@@ -24,81 +50,61 @@ RSpec.describe Foobara::WeakObjectHash do
         expect(weak_object_hash.size).to eq(1)
         expect(weak_object_hash).to_not be_empty
 
-        key = nil
-        GC.start
+        expect(weak_object_hash.delete(key)).to eq(value)
 
         expect(weak_object_hash[key]).to be_nil
         expect(weak_object_hash.size).to eq(0)
         expect(weak_object_hash).to be_empty
       end
     end
-  end
 
-  describe "#delete" do
-    it "removes the entry" do
-      key = Object.new
-      value = Object.new
+    describe "#clear" do
+      it "empties the hash" do
+        key = Object.new
+        value = Object.new
 
-      weak_object_hash[key] = value
-
-      expect(weak_object_hash[key]).to be(value)
-      expect(weak_object_hash.size).to eq(1)
-      expect(weak_object_hash).to_not be_empty
-
-      expect(weak_object_hash.delete(key)).to eq(value)
-
-      expect(weak_object_hash[key]).to be_nil
-      expect(weak_object_hash.size).to eq(0)
-      expect(weak_object_hash).to be_empty
-    end
-  end
-
-  describe "#clear" do
-    it "empties the hash" do
-      key = Object.new
-      value = Object.new
-
-      weak_object_hash[key] = value
-
-      expect(weak_object_hash[key]).to be(value)
-      expect(weak_object_hash.size).to eq(1)
-      expect(weak_object_hash).to_not be_empty
-
-      weak_object_hash.clear
-
-      expect(weak_object_hash[key]).to be_nil
-      expect(weak_object_hash.size).to eq(0)
-      expect(weak_object_hash).to be_empty
-    end
-  end
-
-  describe "#close!" do
-    it "closes the hash and gives errors when reading/writing to it" do
-      key = Object.new
-      value = Object.new
-
-      weak_object_hash[key] = value
-
-      expect(weak_object_hash[key]).to be(value)
-      expect(weak_object_hash.size).to eq(1)
-      expect(weak_object_hash).to_not be_empty
-      expect(weak_object_hash).to_not be_closed
-
-      weak_object_hash.close!
-
-      expect {
         weak_object_hash[key] = value
-      }.to raise_error(Foobara::WeakObjectHash::ClosedError)
 
-      expect {
-        weak_object_hash[key]
-      }.to raise_error(Foobara::WeakObjectHash::ClosedError)
+        expect(weak_object_hash[key]).to be(value)
+        expect(weak_object_hash.size).to eq(1)
+        expect(weak_object_hash).to_not be_empty
 
-      expect {
+        weak_object_hash.clear
+
+        expect(weak_object_hash[key]).to be_nil
+        expect(weak_object_hash.size).to eq(0)
+        expect(weak_object_hash).to be_empty
+      end
+    end
+
+    describe "#close!" do
+      it "closes the hash and gives errors when reading/writing to it" do
+        key = Object.new
+        value = Object.new
+
+        weak_object_hash[key] = value
+
+        expect(weak_object_hash[key]).to be(value)
+        expect(weak_object_hash.size).to eq(1)
+        expect(weak_object_hash).to_not be_empty
+        expect(weak_object_hash).to_not be_closed
+
         weak_object_hash.close!
-      }.to raise_error(Foobara::WeakObjectHash::ClosedError)
 
-      expect(weak_object_hash).to be_closed
+        expect {
+          weak_object_hash[key] = value
+        }.to raise_error(Foobara::WeakObjectHash::ClosedError)
+
+        expect {
+          weak_object_hash[key]
+        }.to raise_error(Foobara::WeakObjectHash::ClosedError)
+
+        expect {
+          weak_object_hash.close!
+        }.to raise_error(Foobara::WeakObjectHash::ClosedError)
+
+        expect(weak_object_hash).to be_closed
+      end
     end
   end
 
