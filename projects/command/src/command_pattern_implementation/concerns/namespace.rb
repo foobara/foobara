@@ -48,6 +48,16 @@ module Foobara
           def full_command_symbol
             @full_command_symbol ||= Util.underscore_sym(full_command_name)
           end
+
+          def handle_reregistered_types!
+            if inputs_type
+              inputs inputs_type.reference_or_declaration_data
+            end
+
+            if result_type
+              result result_type.reference_or_declaration_data
+            end
+          end
         end
 
         foobara_delegate :type_for_declaration, to: :class

@@ -1126,6 +1126,7 @@ RSpec.describe Foobara::CommandConnector do
 
           before do
             User.attributes referral: referral_class, point: point_class
+            QueryUser.handle_reregistered_types!
           end
 
           context "with atomic_entities: true" do
@@ -1152,7 +1153,7 @@ RSpec.describe Foobara::CommandConnector do
 
               let(:user_id) { user.id }
 
-              let(:referral_id) {  user.referral.id }
+              let(:referral_id) { user.referral.id }
 
               it "serializes as an atom" do
                 expect(response.status).to be(0)
