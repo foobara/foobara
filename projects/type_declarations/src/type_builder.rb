@@ -155,7 +155,7 @@ module Foobara
       private
 
       def lru_cache
-        Namespace::IsNamespace.lru_cache
+        Namespace.lru_cache
       end
     end
   end
