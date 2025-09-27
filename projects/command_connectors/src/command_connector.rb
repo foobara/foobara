@@ -504,11 +504,12 @@ module Foobara
       to_include << command_registry.global_organization
       to_include << command_registry.global_domain
 
-      command_registry.foobara_each(mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE) do |exposed_whatever|
-        to_include << exposed_whatever
+      command_registry.foobara_each_command(mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE) do |exposed_command|
+        to_include << exposed_command
       end
 
       included = Set.new
+
       additional_to_include = Set.new
 
       h = {
@@ -551,23 +552,22 @@ module Foobara
                         "Make sure these are not included."
                 # :nocov:
                 else
+
                   mode = Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE
                   domain_name = o.foobara_domain.scoped_full_name
 
                   exposed_domain = command_registry.foobara_lookup_domain(domain_name, mode:)
 
-                  unless exposed_domain
-                    exposed_domain = command_registry.build_and_register_exposed_domain(domain_name)
+                  exposed_domain ||= command_registry.build_and_register_exposed_domain(domain_name)
 
-                    # Since we don't know which other domains/orgs creating this domain might have created,
-                    # we will just add them all to be included just in case
-                    command_registry.foobara_all_domain(mode:).each do |exposed_domain|
-                      additional_to_include << exposed_domain
-                    end
+                  # Since we don't know which other domains/orgs creating this domain might have created,
+                  # we will just add them all to be included just in case
+                  command_registry.foobara_all_domain(mode:).each do |exposed_domain|
+                    additional_to_include << exposed_domain
+                  end
 
-                    command_registry.foobara_all_organization(mode:).each do |exposed_organization|
-                      additional_to_include << exposed_organization
-                    end
+                  command_registry.foobara_all_organization(mode:).each do |exposed_organization|
+                    additional_to_include << exposed_organization
                   end
                 end
               end
