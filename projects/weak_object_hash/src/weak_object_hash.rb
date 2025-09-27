@@ -12,6 +12,7 @@ module Foobara
     def initialize
       self.monitor = Monitor.new
       self.object_ids_to_values_and_weak_refs = {}
+      self.skip_finalizer = true
     end
 
     def []=(object, value)
