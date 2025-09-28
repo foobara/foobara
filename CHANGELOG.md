@@ -1,3 +1,7 @@
+# [0.1.14] - 2025-09-27
+
+- When using aggregate/atom_entities connector options, remove default serializer/pre-commit transformers of the other
+
 # [0.1.13] - 2025-09-27
 
 - Fix various bugs resulting in values missing from connector manifest or included when they should not be

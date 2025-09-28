@@ -58,12 +58,16 @@ module Foobara
         if aggregate_entities
           pre_commit_transformers = [
             *pre_commit_transformers,
-            Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer
-          ].uniq
-          serializers = [
-            *serializers,
-            Foobara::CommandConnectors::Serializers::AggregateSerializer
-          ].uniq
+            CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer
+          ]
+
+          pre_commit_transformers.uniq!
+          pre_commit_transformers.delete(CommandConnectors::Transformers::LoadAtomsPreCommitTransformer)
+
+          serializers = [*serializers, CommandConnectors::Serializers::AggregateSerializer]
+
+          serializers.uniq!
+          serializers.delete(Foobara::CommandConnectors::Serializers::AtomicSerializer)
         # TODO: either both should have special behavior for false or neither should
         elsif aggregate_entities == false
           pre_commit_transformers = pre_commit_transformers&.reject do |t|
@@ -73,7 +77,18 @@ module Foobara
             s == Foobara::CommandConnectors::Serializers::AggregateSerializer
           end
         elsif atomic_entities
-          serializers = [*serializers, Foobara::CommandConnectors::Serializers::AtomicSerializer].uniq
+          pre_commit_transformers = [
+            *pre_commit_transformers,
+            CommandConnectors::Transformers::LoadAtomsPreCommitTransformer
+          ]
+
+          pre_commit_transformers.uniq!
+          pre_commit_transformers.delete(CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer)
+
+          serializers = [*serializers, Foobara::CommandConnectors::Serializers::AtomicSerializer]
+
+          serializers.uniq!
+          serializers.delete(CommandConnectors::Serializers::AggregateSerializer)
         end
 
         self.command_class = command_class
@@ -98,7 +113,9 @@ module Foobara
             self.pre_commit_transformers = [
               *self.pre_commit_transformers,
               CommandConnectors::Transformers::LoadDelegatedAttributesEntitiesPreCommitTransformer
-            ].uniq
+            ]
+
+            pre_commit_transformers.uniq!
           end
         end
       end
