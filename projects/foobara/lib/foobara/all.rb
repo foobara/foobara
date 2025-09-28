@@ -16,6 +16,8 @@ module Foobara
   # could be independent projects
   projects "delegate", # Let's just kill delegate
            "concerns",
+           "weak_object_hash",
+           # group weak_object_set with entity/persistence stuff
            "weak_object_set",
            "enumerated",
            "callback",
