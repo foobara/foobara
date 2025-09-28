@@ -42,8 +42,8 @@ RSpec.describe Foobara::WeakObjectSet do
 
         expect(set).to_not be_empty
         expect(set.size).to eq(1)
-        expect(set.find_by_key("asdf")).to eq(some_object)
-        expect(set[some_object_id]).to be(some_object)
+        expect(set.find_by_key("asdf").object_id).to eq(some_object.object_id)
+        expect(set[some_object_id].object_id).to be(some_object.object_id)
 
         expect(set.to_a.map(&:object_id)).to eq([some_object_id])
 
@@ -64,7 +64,7 @@ RSpec.describe Foobara::WeakObjectSet do
             some_object_id = some_object.object_id
             set << some_object
 
-            expect(set.find_by_key("asdf")).to eq(some_object)
+            expect(set.find_by_key("asdf").object_id).to eq(some_object.object_id)
 
             some_object.bar = nil
             set << some_object
