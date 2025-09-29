@@ -6,15 +6,6 @@ module Foobara
           Foobara.raise_if_production!("reset_all")
         end
 
-        # TODO: this doesn't really belong here. I think we need to maybe call reset in reverse order?
-        Foobara::Domain::DomainModuleExtension.all.each do |domain|
-          var = "@foobara_type_builder"
-
-          if domain.instance_variable_defined?(var)
-            domain.remove_instance_variable(var)
-          end
-        end
-
         Util.descendants(Error).each do |error_class|
           if error_class.instance_variable_defined?(:@context_type)
             error_class.remove_instance_variable(:@context_type)

@@ -12,10 +12,6 @@ module Foobara
 
     module DomainModuleExtension
       class << self
-        def all
-          @all ||= []
-        end
-
         # TODO: rename this
         def _copy_constants(old_mod, new_class)
           old_mod.constants.each do |const_name|
@@ -54,10 +50,6 @@ module Foobara
 
       include Concern
       include Manifestable
-
-      on_include do
-        DomainModuleExtension.all << self
-      end
 
       module ClassMethods
         attr_writer :foobara_domain_name, :foobara_full_domain_name
