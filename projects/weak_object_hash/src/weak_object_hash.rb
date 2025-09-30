@@ -117,6 +117,30 @@ module Foobara
       self
     end
 
+    def values
+      values = []
+
+      monitor.synchronize do
+        each_pair do |_key, value|
+          values << value
+        end
+      end
+
+      values
+    end
+
+    def keys
+      keys = []
+
+      monitor.synchronize do
+        each_pair do |key, _value|
+          keys << key
+        end
+      end
+
+      keys
+    end
+
     def size
       size = 0
       to_delete = nil
