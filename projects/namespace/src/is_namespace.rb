@@ -111,6 +111,9 @@ module Foobara
           scoped.scoped_namespace = self
         end
 
+        # TODO: do we really need to clear the whole cache? Why not just the possible
+        # impacted keys based on scoped.scoped_path ?
+        Namespace.clear_lru_cache!
         Namespace.fire_changed!
 
         if scoped.unregistered_foobara_manifest_reference
@@ -137,6 +140,7 @@ module Foobara
         scoped.scoped_namespace = nil
         scoped.scoped_unregistered!
 
+        Namespace.clear_lru_cache!
         Namespace.fire_changed!
       end
 
@@ -147,17 +151,7 @@ module Foobara
       end
 
       def lru_cache
-        return @lru_cache if defined?(@lru_cache)
-
-        @lru_cache = Foobara::LruCache.new(100)
-
-        Namespace.on_change(self, :clear_lru_cache!)
-
-        @lru_cache
-      end
-
-      def clear_lru_cache!
-        @lru_cache&.reset!
+        Namespace.lru_cache
       end
 
       def foobara_lookup(path, filter: nil, mode: LookupMode::GENERAL)

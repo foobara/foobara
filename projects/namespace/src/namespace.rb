@@ -61,6 +61,14 @@ module Foobara
           object.send(method_name)
         end
       end
+
+      def lru_cache
+        @lru_cache ||= Foobara::LruCache.new(1000)
+      end
+
+      def clear_lru_cache!
+        @lru_cache&.reset!
+      end
     end
 
     class NotFoundError < StandardError; end
