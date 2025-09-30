@@ -118,6 +118,12 @@ module Foobara
             pre_commit_transformers.uniq!
           end
         end
+
+        Namespace.on_change(self, :clear_caches)
+      end
+
+      def clear_caches
+        @transformed_command_class = nil
       end
 
       def _has_delegated_attributes?(type)
