@@ -34,7 +34,7 @@ module Foobara
 
       module ClassMethods
         def context_type
-          @context_type ||= begin
+          Namespace.lru_cache.cached([self, :context_type]) do
             Foobara::Domain.foobara_type_from_declaration(self, context_type_declaration)
           rescue NoContextTypeSetError
             if abstract?
