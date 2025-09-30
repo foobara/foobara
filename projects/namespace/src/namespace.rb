@@ -50,13 +50,15 @@ module Foobara
         end
       end
 
-      def lru_cache
-        @lru_cache ||= Foobara::LruCache.new(1000)
+      def on_change(object, method_name)
+        @on_change ||= WeakObjectHash.new
+
+        @on_change[object] = method_name
       end
 
-      def clear_lru_cache!
-        if @lru_cache
-          lru_cache.reset!
+      def fire_changed!
+        @on_change&.each_pair do |object, method_name|
+          object.send(method_name)
         end
       end
     end

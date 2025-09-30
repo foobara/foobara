@@ -135,6 +135,35 @@ RSpec.describe Foobara::Namespace do
         end
       end
     end
+
+    context "with on_change callbacks" do
+      let(:listener) do
+        Object.new.tap do |o|
+          o.instance_eval do
+            def calls
+              @calls ||= 0
+            end
+
+            def changed
+              @calls ||= 0
+              @calls += 1
+            end
+          end
+        end
+      end
+
+      before do
+        described_class.on_change(listener, :changed)
+      end
+
+      it "calls the listener when a new type is registered" do
+        expect(listener.calls).to eq(0)
+
+        namespace.foobara_register(scoped_object)
+
+        expect(listener.calls).to eq(1)
+      end
+    end
   end
 
   describe "#lookup" do
