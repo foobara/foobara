@@ -197,15 +197,4 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Callbacks do
       end
     end
   end
-
-  describe ".subclass_defined_callbacks" do
-    before do
-      stub_class "CommandA", Foobara::Command
-      stub_class "CommandB", CommandA
-    end
-
-    it "can pass them on to a subclass" do
-      expect(Foobara::Command.all).to include(CommandB)
-    end
-  end
 end

@@ -5,21 +5,7 @@ module Foobara
         include Concern
         include Manifestable
 
-        def initialize(...)
-          self.class.all << self
-          super
-        end
-
         module ClassMethods
-          def all
-            @all ||= []
-          end
-
-          def reset_all
-            Foobara.raise_if_production!("reset_all")
-            remove_instance_variable("@all") if instance_variable_defined?("@all")
-          end
-
           def foobara_manifest
             to_include = TypeDeclarations.foobara_manifest_context_to_include
 
