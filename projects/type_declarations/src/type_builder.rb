@@ -155,7 +155,17 @@ module Foobara
       private
 
       def lru_cache
-        Namespace.lru_cache
+        return @lru_cache if defined?(@lru_cache)
+
+        @lru_cache = Foobara::LruCache.new(100)
+
+        Namespace.on_change(self, :clear_lru_cache!)
+
+        @lru_cache
+      end
+
+      def clear_lru_cache!
+        @lru_cache.reset!
       end
     end
   end
