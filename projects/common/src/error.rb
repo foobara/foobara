@@ -10,6 +10,17 @@ module Foobara
     # Need to do this early so doing it here... not sure if this is OK as it couples namespaces and errors
 
     class << self
+      def inherited(subclass)
+        Namespace.on_change(subclass, :clear_caches)
+        super
+      end
+
+      def clear_caches
+        if instance_variable_defined?(:@context_type)
+          remove_instance_variable(:@context_type)
+        end
+      end
+
       def abstract
         @abstract = true
       end

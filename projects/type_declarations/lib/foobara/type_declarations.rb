@@ -6,12 +6,6 @@ module Foobara
           Foobara.raise_if_production!("reset_all")
         end
 
-        Util.descendants(Error).each do |error_class|
-          if error_class.instance_variable_defined?(:@context_type)
-            error_class.remove_instance_variable(:@context_type)
-          end
-        end
-
         [
           "foobara_children",
           "foobara_registry",
