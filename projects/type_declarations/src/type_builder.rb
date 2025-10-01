@@ -155,17 +155,9 @@ module Foobara
       private
 
       def lru_cache
-        return @lru_cache if defined?(@lru_cache)
-
-        @lru_cache = Foobara::LruCache.new(100)
-
-        Namespace.on_change(self, :clear_lru_cache!)
-
-        @lru_cache
-      end
-
-      def clear_lru_cache!
-        @lru_cache.reset!
+        @lru_cache ||= Foobara::LruCache.new(100).tap do |cache|
+          Namespace.on_change(cache, :reset!)
+        end
       end
     end
   end

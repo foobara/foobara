@@ -151,7 +151,7 @@ module Foobara
       end
 
       def lru_cache
-        Namespace.lru_cache
+        @lru_cache ||= Namespace.lru_cache
       end
 
       def foobara_lookup(path, filter: nil, mode: LookupMode::GENERAL)
