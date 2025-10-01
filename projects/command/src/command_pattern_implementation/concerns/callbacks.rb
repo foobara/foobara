@@ -6,19 +6,7 @@ module Foobara
       module Callbacks
         include Concern
 
-        inherited_overridable_class_attr_accessor :subclass_defined_callbacks
-
         module ClassMethods
-          def inherited(subclass)
-            super
-
-            subclass_defined_callbacks.runner.callback_data(subclass).run
-          end
-
-          def after_subclass_defined(&)
-            subclass_defined_callbacks.register_callback(:after, &)
-          end
-
           def state_machine_callback_registry
             return @state_machine_callback_registry if defined?(@state_machine_callback_registry)
 
@@ -99,10 +87,6 @@ module Foobara
 
         def state_machine_callback_registry
           state_machine.callback_registry
-        end
-
-        on_include do
-          self.subclass_defined_callbacks ||= Foobara::Callback::Registry::SingleAction.new
         end
       end
     end
