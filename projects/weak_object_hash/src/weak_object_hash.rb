@@ -25,7 +25,7 @@ module Foobara
       monitor.synchronize do
         delete(object)
 
-        object_ids_to_values_and_weak_refs[object_id] = [value, weak_ref]
+        object_ids_to_values_and_weak_refs[object_id] = [weak_ref, value]
 
         unless skip_finalizer?
           ObjectSpace.define_finalizer(object, finalizer_proc)
@@ -47,7 +47,7 @@ module Foobara
 
         return nil unless pair
 
-        value, weak_ref = pair
+        weak_ref, value = pair
 
         if weak_ref.weakref_alive?
           if weak_ref.__getobj__ != object
@@ -77,7 +77,7 @@ module Foobara
 
         return nil unless pair
 
-        value, weak_ref = pair
+        weak_ref, value = pair
 
         if weak_ref.weakref_alive?
           object = weak_ref.__getobj__
@@ -104,7 +104,7 @@ module Foobara
     def each_pair
       monitor.synchronize do
         object_ids_to_values_and_weak_refs.each_pair do |object_id, pair|
-          value, weak_ref = pair
+          weak_ref, value = pair
 
           if weak_ref.weakref_alive?
             yield weak_ref.__getobj__, value
@@ -147,7 +147,7 @@ module Foobara
 
       monitor.synchronize do
         object_ids_to_values_and_weak_refs.each_pair do |object_id, pair|
-          weak_ref = pair.last
+          weak_ref = pair.first
 
           if weak_ref.weakref_alive?
             size += 1
@@ -186,7 +186,7 @@ module Foobara
     def clear
       monitor.synchronize do
         object_ids_to_values_and_weak_refs.each_value do |pair|
-          weak_ref = pair.last
+          weak_ref = pair.first
 
           if weak_ref.weakref_alive?
             unless skip_finalizer?
