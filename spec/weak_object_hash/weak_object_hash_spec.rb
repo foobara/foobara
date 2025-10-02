@@ -1,5 +1,6 @@
 RSpec.describe Foobara::WeakObjectHash do
-  let(:weak_object_hash) { described_class.new }
+  let(:weak_object_hash) { described_class.new(skip_finalizer:) }
+  let(:skip_finalizer) { false }
 
   shared_examples "a weak object hash" do
     describe "#[]" do
@@ -168,9 +169,7 @@ RSpec.describe Foobara::WeakObjectHash do
   it_behaves_like "a weak object hash"
 
   context "when skipping finalizer" do
-    before do
-      weak_object_hash.skip_finalizer = true
-    end
+    let(:skip_finalizer) { true }
 
     it_behaves_like "a weak object hash"
   end

@@ -6,12 +6,12 @@ module Foobara
   class WeakObjectHash
     class ClosedError < StandardError; end
 
-    attr_accessor :object_ids_to_values_and_weak_refs, :monitor, :closed
-    attr_writer :skip_finalizer
-
-    def initialize
+    def initialize(skip_finalizer: false)
+      if skip_finalizer
+        self.skip_finalizer = true
+      end
       self.monitor = Monitor.new
-      self.object_ids_to_values_and_weak_refs = {}
+      self.object_ids_to_weak_refs_and_values = {}
     end
 
     def []=(object, value)
@@ -25,7 +25,7 @@ module Foobara
       monitor.synchronize do
         delete(object)
 
-        object_ids_to_values_and_weak_refs[object_id] = [weak_ref, value]
+        object_ids_to_weak_refs_and_values[object_id] = [weak_ref, value]
 
         unless skip_finalizer?
           ObjectSpace.define_finalizer(object, finalizer_proc)
@@ -43,26 +43,30 @@ module Foobara
       end
 
       monitor.synchronize do
-        pair = object_ids_to_values_and_weak_refs[object_id]
+        pair = object_ids_to_weak_refs_and_values[object_id]
 
         return nil unless pair
 
         weak_ref, value = pair
 
         if weak_ref.weakref_alive?
-          if weak_ref.__getobj__ != object
-            # :nocov:
-            raise "Unexpected, weak ref's object doesn't match the stored key object"
-            # :nocov:
+          if skip_finalizer?
+            if weak_ref.__getobj__ == object
+              value
+            else
+              # :nocov:
+              object_ids_to_weak_refs_and_values.delete(object_id)
+              nil
+              # :nocov:
+            end
+          else
+            value
           end
-
-          value
         else
           # Seems unreachable... if it's been garbage collected how could we have a reference to the object
           # to pass it in?
           # :nocov:
-          object_ids_to_values_and_weak_refs.delete(object_id)
-
+          object_ids_to_weak_refs_and_values.delete(object_id)
           nil
           # :nocov:
         end
@@ -73,43 +77,42 @@ module Foobara
       object_id = object.object_id
 
       monitor.synchronize do
-        pair = object_ids_to_values_and_weak_refs.delete(object_id)
+        pair = object_ids_to_weak_refs_and_values.delete(object_id)
 
         return nil unless pair
 
         weak_ref, value = pair
 
         if weak_ref.weakref_alive?
-          object = weak_ref.__getobj__
 
-          if weak_ref.__getobj__ != object
-            # :nocov:
-            raise "Unexpected, weak ref's object doesn't match the stored key object"
-            # :nocov:
+          if skip_finalizer?
+            if weak_ref.__getobj__ == object
+              value
+            end
+          else
+            # Hmmm, there's seemingly no safe way to remove the finalizer for the previous entry
+            # if it exists. This is because we can only remove all finalizers on object. Not only
+            # the ones we've created.
+            # We will just do this anyway with that caveat and maybe make this configuratble in the future.
+            unless skip_finalizer?
+              ObjectSpace.undefine_finalizer(object)
+            end
+
+            value
           end
-
-          # Hmmm, there's seemingly no safe way to remove the finalizer for the previous entry
-          # if it exists. This is because we can only remove all finalizers on object. Not only
-          # the ones we've created.
-          # We will just do this anyway with that caveat and maybe make this configuratble in the future.
-          unless skip_finalizer?
-            ObjectSpace.undefine_finalizer(object)
-          end
-
-          value
         end
       end
     end
 
     def each_pair
       monitor.synchronize do
-        object_ids_to_values_and_weak_refs.each_pair do |object_id, pair|
+        object_ids_to_weak_refs_and_values.each_pair do |object_id, pair|
           weak_ref, value = pair
 
           if weak_ref.weakref_alive?
             yield weak_ref.__getobj__, value
           else
-            object_ids_to_values_and_weak_refs.delete(object_id)
+            object_ids_to_weak_refs_and_values.delete(object_id)
           end
         end
       end
@@ -146,7 +149,7 @@ module Foobara
       to_delete = nil
 
       monitor.synchronize do
-        object_ids_to_values_and_weak_refs.each_pair do |object_id, pair|
+        object_ids_to_weak_refs_and_values.each_pair do |object_id, pair|
           weak_ref = pair.first
 
           if weak_ref.weakref_alive?
@@ -158,7 +161,7 @@ module Foobara
         end
 
         to_delete&.each do |object_id|
-          object_ids_to_values_and_weak_refs.delete(object_id)
+          object_ids_to_weak_refs_and_values.delete(object_id)
         end
       end
 
@@ -178,24 +181,24 @@ module Foobara
         self.closed = true
         clear
         @finalizer_proc = nil
-        self.object_ids_to_values_and_weak_refs = nil
+        self.object_ids_to_weak_refs_and_values = nil
         self.monitor = nil
       end
     end
 
     def clear
       monitor.synchronize do
-        object_ids_to_values_and_weak_refs.each_value do |pair|
-          weak_ref = pair.first
+        unless skip_finalizer?
+          object_ids_to_weak_refs_and_values.each_value do |pair|
+            weak_ref = pair.first
 
-          if weak_ref.weakref_alive?
-            unless skip_finalizer?
+            if weak_ref.weakref_alive?
               ObjectSpace.undefine_finalizer(weak_ref.__getobj__)
             end
           end
         end
 
-        object_ids_to_values_and_weak_refs.clear
+        object_ids_to_weak_refs_and_values.clear
       end
     end
 
@@ -209,10 +212,12 @@ module Foobara
 
     private
 
+    attr_accessor :object_ids_to_weak_refs_and_values, :monitor, :closed, :skip_finalizer
+
     def finalizer_proc
       @finalizer_proc ||= ->(object_id) do
         unless closed?
-          object_ids_to_values_and_weak_refs.delete(object_id)
+          object_ids_to_weak_refs_and_values.delete(object_id)
         end
       end
     end
