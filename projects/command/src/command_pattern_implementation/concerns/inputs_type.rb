@@ -16,6 +16,10 @@ module Foobara
               remove_instance_variable(:@inputs_association_paths)
             end
 
+            if defined?(@entity_class_paths)
+              remove_instance_variable(:@entity_class_paths)
+            end
+
             type = type_for_declaration(...)
 
             if type.extends?(BuiltinTypes[:model]) && !type.extends?(BuiltinTypes[:entity])
