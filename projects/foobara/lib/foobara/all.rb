@@ -17,8 +17,6 @@ module Foobara
   projects "delegate", # Let's just kill delegate
            "concerns",
            "weak_object_hash",
-           # group weak_object_set with entity/persistence stuff
-           "weak_object_set",
            "enumerated",
            "callback",
            "state_machine",
@@ -36,6 +34,8 @@ module Foobara
            "model",
            "detached_entity",
            "entity",
+           # only used by entity persistence so loading it here
+           "weak_object_set",
            "persistence",
            "nested_transactionable",
            "model_attribute_helpers",
