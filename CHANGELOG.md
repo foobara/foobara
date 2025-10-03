@@ -1,3 +1,12 @@
+# [0.1.15] - 2025-10-02
+
+- Make some more methods private
+- Clear transformed command class cache and entity class paths cache on Namespace changes
+- Implement Namespace.on_change
+- Add WeakObjectHash project
+- Remove command-named function concept and Command@all
+- Don't store all domain modules created, allowing more garbage collection
+
 # [0.1.14] - 2025-09-27
 
 - When using aggregate/atom_entities connector options, remove default serializer/pre-commit transformers of the other

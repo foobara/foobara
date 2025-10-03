@@ -74,6 +74,12 @@ module Foobara
           outcome&.success?
         end
 
+        def halt!
+          raise Halt
+        end
+
+        private
+
         def run_execute
           self.raw_result = execute
           result = process_result_using_result_type(raw_result)
@@ -128,12 +134,6 @@ module Foobara
         def validate
           # can override if desired, default is a no-op
         end
-
-        def halt!
-          raise Halt
-        end
-
-        private
 
         def invoke_with_callbacks_and_transition_in_transaction(transition_or_transitions)
           Persistence::EntityBase.using_transactions(transactions) do

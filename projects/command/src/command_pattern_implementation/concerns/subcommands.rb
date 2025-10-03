@@ -16,6 +16,8 @@ module Foobara
           is_subcommand
         end
 
+        private
+
         def run_subcommand!(subcommand_class, inputs = {})
           domain = self.class.domain
           sub_domain = subcommand_class.domain
