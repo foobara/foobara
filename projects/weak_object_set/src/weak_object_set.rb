@@ -56,6 +56,8 @@ module Foobara
             end
           end
         end
+
+        cleanup_thread.priority = -2
       end
 
       def track(object)
@@ -68,7 +70,7 @@ module Foobara
         self.deactivated = true
         queue.close
         # TODO: don't bother to join here outside of test suite
-        cleanup_thread.join # just doing this for test suite/simplecov
+        cleanup_thread.join if ENV["FOOBARA_ENV"] == "test" # just doing this for test suite/simplecov
         @cleanup_proc = nil
         @queue = nil
         @weak_object_set = nil
