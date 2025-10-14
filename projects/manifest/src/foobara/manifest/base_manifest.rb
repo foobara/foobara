@@ -146,15 +146,19 @@ module Foobara
       end
 
       def ==(other)
-        other.class == self.class && other.path.map(&:to_sym) == path.map(&:to_sym)
+        other.class == self.class && other.symbol_path == symbol_path
       end
 
       def eql?(other)
         self == other
       end
 
+      def symbol_path
+        @symbol_path ||= path.map(&:to_sym)
+      end
+
       def hash
-        [root_manifest, path.map(&:to_sym)].hash
+        @hash ||= [self.class, symbol_path].hash
       end
     end
   end

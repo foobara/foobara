@@ -1,3 +1,8 @@
+# [0.1.16] - 2025-10-15
+
+- Improve manifest processing performance by memoizing ManifestBase#hash
+- Add Manifest::Type#type_symbol and memoize it
+
 # [0.1.15] - 2025-10-02
 
 - Make some more methods private

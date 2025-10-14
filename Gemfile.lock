@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    foobara (0.1.15)
+    foobara (0.1.16)
       bigdecimal
       foobara-lru-cache (< 2.0.0)
       foobara-util (< 2.0.0)
@@ -22,7 +22,7 @@ GEM
       base64
       foobara (< 2.0.0)
     foobara-lru-cache (1.0.0)
-    foobara-rubocop-rules (1.0.3)
+    foobara-rubocop-rules (1.0.4)
       rubocop
       rubocop-rspec
     foobara-spec-helpers (0.0.4)
