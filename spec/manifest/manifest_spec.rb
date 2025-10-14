@@ -223,7 +223,12 @@ RSpec.describe Foobara::Manifest do
 
     entity_with_associations = manifest.entity_by_name("SomeOrg::SomeDomain::Referral")
     expect(entity_with_associations).to have_associations
+
     expect(entity_with_associations.associations[:user]).to eq(entity)
+
+    expect(
+      entity_with_associations.attributes_type.attribute_declarations[:user].type_symbol
+    ).to eq(:"SomeOrg::SomeDomain::User")
 
     model = manifest.model_by_name("SomeOrg::SomeDomain::Types::Address")
 

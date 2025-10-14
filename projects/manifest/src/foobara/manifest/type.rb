@@ -66,6 +66,10 @@ module Foobara
         scoped_name
       end
 
+      def type_symbol
+        scoped_full_name.to_sym
+      end
+
       def full_type_name
         scoped_full_name
       end

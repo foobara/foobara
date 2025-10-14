@@ -28,6 +28,10 @@ module Foobara
         sensitive || sensitive_exposed
       end
 
+      def type_symbol
+        to_type.type_symbol
+      end
+
       # rubocop:disable Naming/MemoizedInstanceVariableName
       # TODO: create an Attribute class to encapsulate this situation
       def attribute?
