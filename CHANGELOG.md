@@ -1,3 +1,9 @@
+# [0.2.0] - 2025-10-21
+
+- Support setting an entity base for a domain
+- Add TransactionGroup
+- Properly sort and nest bases/transactions/entities to fix some multi-base transaction bugs
+
 # [0.1.16] - 2025-10-15
 
 - Improve manifest processing performance by memoizing ManifestBase#hash

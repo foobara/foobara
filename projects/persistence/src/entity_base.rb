@@ -22,6 +22,7 @@ module Foobara
           end
         end
 
+        # returns the entities such that ones on the right are allowed to depend on ones on the left
         def order_entity_classes(entity_classes)
           return entity_classes if entity_classes.size <= 1
 
@@ -66,7 +67,6 @@ module Foobara
         self.entity_attributes_crud_driver = entity_attributes_crud_driver
         self.tables = {}
         self.name = name
-        # TODO: a smell?
       end
 
       def register_entity_class(entity_class, table_name: entity_class.full_entity_name)
@@ -77,6 +77,10 @@ module Foobara
 
       def register_table(table)
         tables[table.table_name] = table
+      end
+
+      def entity_classes
+        entity_attributes_crud_driver.tables.values.map(&:entity_class)
       end
 
       def transaction_key

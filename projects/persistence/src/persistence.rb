@@ -28,8 +28,7 @@ module Foobara
 
       # TODO: automatically order these by dependency...
       # TODO: also, consider automatically opening transactions for dependent entities automatically...
-      def transaction(*objects, mode: nil, &block)
-        # def transaction(mode = nil, existing_transaction: nil)
+      def transaction(*objects, mode: nil, &)
         bases = objects_to_bases(objects)
 
         if bases.empty?
@@ -39,13 +38,9 @@ module Foobara
         end
 
         if bases.size == 1
-          bases.first.transaction(mode, &block)
+          bases.first.transaction(mode, &)
         else
-          bases.inject(block) do |nested_proc, base|
-            proc do
-              base.transaction(mode, &nested_proc)
-            end
-          end.call
+          Foobara::TransactionGroup.run(bases:, mode:, &)
         end
       end
 
@@ -99,13 +94,15 @@ module Foobara
       end
 
       def objects_to_bases(objects)
-        if objects.size > 1 && objects.all? { |o| o.is_a?(::Class) && o < Entity }
-          objects = EntityBase.order_entity_classes(objects)
-        end
-
-        objects.map do |object|
+        unsorted = objects.map do |object|
           object_to_base(object)
         end.uniq
+
+        if bases_need_sorting?
+          sort_bases!
+        end
+
+        bases.values & unsorted
       end
 
       def object_to_base(object)
@@ -131,22 +128,23 @@ module Foobara
         @bases ||= {}
       end
 
-      def base_for_entity_class_name(entity_class_name)
-        table_for_entity_class_name(entity_class_name).entity_base
-      end
-
       def base_for_entity_class(entity_class)
-        table_for_entity_class_name(entity_class.full_entity_name).entity_base
+        table_for_entity_class(entity_class).entity_base
       end
 
-      def table_for_entity_class_name(entity_class_name)
+      def table_for_entity_class(entity_class)
+        entity_class_name = entity_class.full_entity_name
         table = tables_for_entity_class_name[entity_class_name]
 
         return table if table
 
-        if default_base
-          table = EntityBase::Table.new(entity_class_name, default_base)
-          default_base.register_table(table)
+        domain = entity_class.domain
+
+        base = domain.foobara_default_entity_base || default_base
+
+        if base
+          table = EntityBase::Table.new(entity_class_name, base)
+          base.register_table(table)
           tables_for_entity_class_name[entity_class_name] = table
         else
           # :nocov:
@@ -156,9 +154,118 @@ module Foobara
         end
       end
 
-      def register_base(base)
-        # TODO: add some validations here
+      def register_base(*args, name: nil, prefix: nil)
+        base = case args
+               in [EntityBase]
+                 args.first
+               in [Class => crud_driver_class, *rest] if crud_driver_class < EntityAttributesCrudDriver
+                 unless name
+                   # :nocov:
+                   raise ArgumentError, "Must provide name: when registering a base with a crud driver class"
+                   # :nocov:
+                 end
+
+                 crud_args, opts = case rest
+                                   in [Hash]
+                                     # TODO: test this code path
+                                     # :nocov:
+                                     [[], rest]
+                                     # :nocov:
+                                   in [] | [Array] | [Array, Hash]
+                                     rest
+                                   end
+
+                 crud_driver = crud_driver_class.new(*crud_args, **opts, prefix:)
+                 EntityBase.new(name, entity_attributes_crud_driver: crud_driver)
+               end
+
+        bases_need_sorting!
         bases[base.name] = base
+      end
+
+      def sort_bases(bases)
+        return bases.dup if bases.size <= 1
+
+        if bases_need_sorting?
+          sort_bases!
+        end
+
+        sorted_bases = self.bases.values & bases
+
+        missing = bases - sorted_bases
+
+        unless missing.empty?
+          # :nocov:
+          raise ArgumentError, "Missing bases: #{missing} are the not registered or something?"
+          # :nocov:
+          # sorted_bases = [*missing, *sorted_bases]
+        end
+
+        sorted_bases
+      end
+
+      def sort_transactions(transactions)
+        return transactions.dup if transactions.size <= 1
+
+        if bases_need_sorting?
+          sort_bases!
+        end
+
+        sorted_bases = bases.values & transactions.map(&:entity_base)
+
+        sorted_bases.map do |base|
+          transactions.find { |tx| tx.entity_base == base }
+        end
+      end
+
+      # TODO: make this private
+      # TODO: add a callback so objects that are sensitive to this order can update when needed
+      def sort_bases!
+        return if bases.size <= 1
+
+        old_bases = bases.values
+
+        entity_classes = []
+
+        old_bases.each do |base|
+          entity_classes += base.entity_classes
+        end
+
+        return if entity_classes.size <= 1
+
+        entity_classes.select!(&:contains_associations?)
+
+        return if entity_classes.size <= 1
+
+        entity_classes = EntityBase.order_entity_classes(entity_classes)
+
+        new_bases = entity_classes.map(&:entity_base)
+        new_bases.reverse!
+        new_bases.uniq!
+
+        missing = old_bases - new_bases
+
+        unless missing.empty?
+          new_bases = [*new_bases, *missing]
+        end
+
+        @bases_need_sorting = false
+
+        self.last_table_count = table_count
+
+        @bases = new_bases.to_h do |base|
+          [base.name, base]
+        end
+      end
+
+      def bases_need_sorting!
+        @bases_need_sorting = true
+      end
+
+      def bases_need_sorting?
+        return true if @bases_need_sorting
+
+        @bases_need_sorting = table_count != last_table_count
       end
 
       def register_entity(base, entity_class, table_name: entity_class.full_entity_name)
@@ -170,6 +277,14 @@ module Foobara
 
       def tables_for_entity_class_name
         @tables_for_entity_class_name ||= {}
+      end
+
+      private
+
+      attr_accessor :last_table_count
+
+      def table_count
+        bases.values.map { |v| v.entity_attributes_crud_driver.tables.size }.sum
       end
     end
   end

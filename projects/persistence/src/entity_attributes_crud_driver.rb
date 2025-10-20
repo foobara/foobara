@@ -2,7 +2,7 @@ module Foobara
   # Might be best to rename this to CrudDrivers or CrudDriver instead of Persistence?
   module Persistence
     class EntityAttributesCrudDriver
-      attr_accessor :raw_connection, :tables
+      attr_accessor :raw_connection, :tables, :prefix
 
       class << self
         def has_real_transactions?
@@ -10,7 +10,8 @@ module Foobara
         end
       end
 
-      def initialize(connection_or_credentials = nil)
+      def initialize(connection_or_credentials = nil, prefix: nil)
+        self.prefix = prefix
         self.raw_connection = open_connection(connection_or_credentials)
         self.tables = {}
       end
@@ -43,7 +44,26 @@ module Foobara
       def table_for(entity_class)
         key = entity_class.full_entity_name
 
-        tables[key] ||= self.class::Table.new(entity_class, self)
+        tables[key] ||= begin
+          if prefix
+            table_name = entity_class.entity_name
+            table_name.gsub!(/^Types::/, "")
+
+            table_name = Util.underscore(entity_class.entity_name)
+
+            table_name = if prefix == true
+                           "#{Util.underscore(entity_class.domain.scoped_full_name)}_#{table_name}"
+                         else
+                           "#{prefix}_#{table_name}"
+                         end
+
+            table_name.gsub!("::", "_")
+          end
+
+          # TODO: this seems like a smell
+          Persistence.bases_need_sorting!
+          self.class::Table.new(entity_class, self, table_name)
+        end
       end
 
       # TODO: relocate this to another file?
@@ -82,7 +102,13 @@ module Foobara
 
         attr_accessor :table_name, :entity_class, :raw_connection, :crud_driver
 
-        def initialize(entity_class, crud_driver, table_name = Util.underscore(entity_class.entity_name))
+        def initialize(entity_class, crud_driver, table_name = nil)
+          if table_name.nil?
+            table_name = Util.underscore(entity_class.entity_name)
+            table_name.gsub!(/^types::/, "")
+            table_name.gsub!("::", "_")
+          end
+
           self.crud_driver = crud_driver
           self.entity_class = entity_class
           # what is this used for?

@@ -27,6 +27,9 @@ group :development, :test do
   gem "pry"
   gem "pry-byebug"
   gem "ruby-prof"
+  # TODO: Just adding this to suppress warnings seemingly coming from pry-byebug. Can probably remove this once
+  # pry-byebug has irb as a gem dependency
+  gem "irb"
 end
 
 group :test, :ci do

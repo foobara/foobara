@@ -11,7 +11,7 @@ module Foobara
 
         module ClassMethods
           def entity_base
-            @entity_base ||= Foobara::Persistence.base_for_entity_class_name(full_entity_name)
+            @entity_base ||= Foobara::Persistence.base_for_entity_class(self)
           end
         end
 

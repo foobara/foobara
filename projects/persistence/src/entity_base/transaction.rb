@@ -57,7 +57,6 @@ module Foobara
             entity_class = entity_class.class
           end
 
-          # TODO: so much passing self around...
           unless entity_base == entity_class.entity_base
             # :nocov:
             raise "#{entity_class} is from a different entity base! Cannot proceed."
