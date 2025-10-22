@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    foobara (0.2.0)
+    foobara (0.2.1)
       bigdecimal
       foobara-lru-cache (< 2.0.0)
       foobara-util (< 2.0.0)
@@ -20,9 +20,9 @@ GEM
     docile (1.4.1)
     erb (5.1.1)
     ffi (1.17.2-x86_64-linux-gnu)
-    foobara-crud-driver-spec-helpers (1.1.0)
+    foobara-crud-driver-spec-helpers (1.1.1)
       base64
-      foobara (>= 0.1.16, < 2.0.0)
+      foobara (>= 0.2.0, < 2.0.0)
     foobara-lru-cache (1.0.0)
     foobara-rubocop-rules (1.0.4)
       rubocop

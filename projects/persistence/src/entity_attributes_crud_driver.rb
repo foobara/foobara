@@ -2,7 +2,7 @@ module Foobara
   # Might be best to rename this to CrudDrivers or CrudDriver instead of Persistence?
   module Persistence
     class EntityAttributesCrudDriver
-      attr_accessor :raw_connection, :tables, :prefix
+      attr_accessor :raw_connection, :tables, :table_prefix
 
       class << self
         def has_real_transactions?
@@ -10,8 +10,8 @@ module Foobara
         end
       end
 
-      def initialize(connection_or_credentials = nil, prefix: nil)
-        self.prefix = prefix
+      def initialize(connection_or_credentials = nil, table_prefix: nil)
+        self.table_prefix = table_prefix
         self.raw_connection = open_connection(connection_or_credentials)
         self.tables = {}
       end
@@ -45,16 +45,16 @@ module Foobara
         key = entity_class.full_entity_name
 
         tables[key] ||= begin
-          if prefix
+          if table_prefix
             table_name = entity_class.entity_name
             table_name.gsub!(/^Types::/, "")
 
             table_name = Util.underscore(entity_class.entity_name)
 
-            table_name = if prefix == true
+            table_name = if table_prefix == true
                            "#{Util.underscore(entity_class.domain.scoped_full_name)}_#{table_name}"
                          else
-                           "#{prefix}_#{table_name}"
+                           "#{table_prefix}_#{table_name}"
                          end
 
             table_name.gsub!("::", "_")

@@ -23,7 +23,7 @@ RSpec.describe Foobara::Persistence do
   end
 
   describe ".register_base" do
-    context "when using a prefix" do
+    context "when using a table prefix" do
       let(:user_class) do
         stub_class :User, Foobara::Entity do
           attributes id: :integer
@@ -35,7 +35,7 @@ RSpec.describe Foobara::Persistence do
 
       it "registers the base and its crud drivers uses prefixes" do
         expect {
-          described_class.register_base(driver_class, name: "some_base", prefix: "some_prefix")
+          described_class.register_base(driver_class, name: "some_base", table_prefix: "some_prefix")
         }.to change(described_class.bases, :size).by(1)
 
         base = described_class.bases["some_base"]

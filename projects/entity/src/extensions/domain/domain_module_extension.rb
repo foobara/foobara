@@ -4,9 +4,9 @@ module Foobara
       module ClassMethods
         attr_reader :foobara_default_entity_base
 
-        def foobara_set_entity_base(*, name: nil, prefix: nil)
+        def foobara_set_entity_base(*, name: nil, table_prefix: nil)
           name ||= Util.underscore(scoped_full_name).gsub("::", "_")
-          base = Persistence.register_base(*, name:, prefix:)
+          base = Persistence.register_base(*, name:, table_prefix:)
           @foobara_default_entity_base = base
         end
       end

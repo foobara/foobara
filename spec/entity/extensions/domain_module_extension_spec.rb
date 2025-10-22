@@ -4,7 +4,7 @@ RSpec.describe Foobara::Domain::DomainModuleExtension do
   end
 
   describe ".foobara_set_entity_base" do
-    context "when using a prefix" do
+    context "when using a table prefix" do
       let(:org) do
         stub_module("SomeOrg") { foobara_organization! }
       end
@@ -27,8 +27,8 @@ RSpec.describe Foobara::Domain::DomainModuleExtension do
       end
       let(:driver_class) { Foobara::Persistence::CrudDrivers::InMemory }
 
-      it "creates a base using the prefix and uses it for the entities in that domain" do
-        base = domain.foobara_set_entity_base(driver_class, prefix: "some_prefix")
+      it "creates a base using the table prefix and uses it for the entities in that domain" do
+        base = domain.foobara_set_entity_base(driver_class, table_prefix: "some_prefix")
         expect(domain.foobara_default_entity_base).to be(base)
 
         expect(some_entity_class.entity_base).to be(base)

@@ -154,7 +154,7 @@ module Foobara
         end
       end
 
-      def register_base(*args, name: nil, prefix: nil)
+      def register_base(*args, name: nil, table_prefix: nil)
         base = case args
                in [EntityBase]
                  args.first
@@ -175,7 +175,7 @@ module Foobara
                                      rest
                                    end
 
-                 crud_driver = crud_driver_class.new(*crud_args, **opts, prefix:)
+                 crud_driver = crud_driver_class.new(*crud_args, **opts, table_prefix:)
                  EntityBase.new(name, entity_attributes_crud_driver: crud_driver)
                end
 

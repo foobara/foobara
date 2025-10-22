@@ -1,3 +1,7 @@
+# [0.2.1] - 2025-10-21
+
+- Rename EntityBase#initialize prefix: to table_prefix: to avoid collision with redis-crud-driver
+
 # [0.2.0] - 2025-10-21
 
 - Support setting an entity base for a domain
