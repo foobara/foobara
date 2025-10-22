@@ -10,10 +10,13 @@ module Foobara
         end
       end
 
-      def initialize(connection_or_credentials = nil, table_prefix: nil)
+      def initialize(connection_or_credentials = nil, table_prefix: nil, connect: true)
         self.table_prefix = table_prefix
-        self.raw_connection = open_connection(connection_or_credentials)
         self.tables = {}
+
+        if connect
+          self.raw_connection = open_connection(connection_or_credentials)
+        end
       end
 
       # Default behavior is for technologies that don't have a connection concept

@@ -1,3 +1,8 @@
+# [0.2.2] - 2025-10-21
+
+- Add a connect: option to EntityAttributesCrudDriver#initialize to allow skipping connecting by
+  default in cases where a more complex connection algorithm is needed, like pooling
+
 # [0.2.1] - 2025-10-21
 
 - Rename EntityBase#initialize prefix: to table_prefix: to avoid collision with redis-crud-driver
