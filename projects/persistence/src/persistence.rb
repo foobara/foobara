@@ -173,6 +173,8 @@ module Foobara
                                      # :nocov:
                                    in [] | [Array] | [Array, Hash]
                                      rest
+                                   in Array
+                                     [rest]
                                    end
 
                  crud_driver = crud_driver_class.new(*crud_args, **opts, table_prefix:)

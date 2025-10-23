@@ -1,3 +1,7 @@
+# [0.2.3] - 2025-10-22
+
+- Fix Persistence.register_base bug
+
 # [0.2.2] - 2025-10-21
 
 - Add a connect: option to EntityAttributesCrudDriver#initialize to allow skipping connecting by

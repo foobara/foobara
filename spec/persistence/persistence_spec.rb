@@ -23,6 +23,29 @@ RSpec.describe Foobara::Persistence do
   end
 
   describe ".register_base" do
+    context "when using a crud driver that takes args" do
+      let(:crud_driver_class) do
+        stub_class "SomeCrudDriver", Foobara::Persistence::EntityAttributesCrudDriver do
+          attr_accessor :connection_url
+
+          def initialize(connection_url, **)
+            super(**)
+            self.connection_url = connection_url
+          end
+        end
+      end
+
+      it "passes the argument through to the crud driver" do
+        described_class.register_base(
+          crud_driver_class,
+          "some_connection_url",
+          name: "some_base"
+        )
+        base = described_class.bases["some_base"]
+        expect(base.entity_attributes_crud_driver.connection_url).to eq("some_connection_url")
+      end
+    end
+
     context "when using a table prefix" do
       let(:user_class) do
         stub_class :User, Foobara::Entity do
