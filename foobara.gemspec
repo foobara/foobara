@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.summary = "A command-centric and discoverable software framework with a focus on domain concepts " \
                  "and abstracting away integration code"
   spec.description = spec.summary
-  spec.homepage = "https://foobara.com"
+  spec.homepage = "https://foobara.org"
   spec.license = "MPL-2.0"
   spec.required_ruby_version = Foobara::Version::MINIMUM_RUBY_VERSION
 

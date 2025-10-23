@@ -2100,11 +2100,11 @@ TODO: give some code examples
 # Additional learning materials/Documentation
 
 * Overview and code demo videos:
-  * https://foobara.com/videos
+  * https://foobara.org/videos
   * https://www.youtube.com/@FoobaraFlix
 * YARD Docs
   * All docs combined: https://docs.foobara.com/all/
-  * Per-repository docs: https://foobara.com/docs
+  * Per-repository docs: https://foobara.org/docs
 
 # Help
 
