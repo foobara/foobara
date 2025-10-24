@@ -2129,7 +2129,7 @@ Fork the repository and run this(Only for SSH):
 ```
 git clone git@github.com:${your_github_username}/foobara.git
 ```
-Create a new branch for you to push into
+Create a new branch for you to push into(branch name is not limited to this format)
 ```
 git checkout -b develop/${your_github_username}
 ```
@@ -2150,7 +2150,7 @@ Check the installation:
 bundler -v
 ```
 ### 2. Installing mise (LINUX/WSL)
-Mise is a package manager and helps with managing different versions of ruby. It allows you to switch different versions of ruby.
+Mise is a software, which helps us manage and install different versions of other tools, in our case ruby.
 To setup mise following the script given below:
 
 ```
