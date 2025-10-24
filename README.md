@@ -2133,7 +2133,11 @@ Create a new branch for you to push into
 ```
 git checkout -b develop/${your_github_username}
 ```
+Now navigate to project directory
 
+```
+cd foobara
+```
 ### 2. Installing bundler:
 Bundler is the package manager for ruby like npm and pip are for JS and python respectively
 
