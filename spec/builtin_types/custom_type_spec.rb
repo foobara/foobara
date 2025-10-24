@@ -27,8 +27,6 @@ RSpec.describe "custom types" do
       custom_caster = array_to_complex_caster.new
       klass = complex_class
 
-      c = [custom_caster]
-
       pointless = pointless_validator
 
       stub_class :ComplexTypeDeclarationHandler, Foobara::TypeDeclarations::TypeDeclarationHandler do
@@ -84,16 +82,19 @@ RSpec.describe "custom types" do
 
           validators = be_pointless ? [pointless.new(be_pointless)] : []
 
-          Foobara::Types::Type.new(
+          type = Foobara::Types::Type.new(
             strict_type_declaration,
             base_type: Foobara::Namespace.global.foobara_lookup_type!(:number),
             name: :custom_complex,
-            casters: c,
             transformers: [],
             validators:,
             element_processors: nil,
             target_classes: klass
           )
+
+          type.add_caster(custom_caster)
+
+          type
         end
       end
 

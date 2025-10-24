@@ -346,6 +346,11 @@ module Foobara
         @casters = processors
       end
 
+      def add_caster(processor)
+        casters << processor
+        clear_caches
+      end
+
       def transformers=(processors)
         clear_caches
         @transformers = processors
