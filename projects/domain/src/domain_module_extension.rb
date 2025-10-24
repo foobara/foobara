@@ -278,7 +278,7 @@ module Foobara
               # :nocov:
             elsif old_type != type
               # TODO: delete this check if it's not really helping
-
+              binding.pry
               raise "Didn't expect to find an old type"
               # :nocov:
             end
@@ -291,6 +291,7 @@ module Foobara
             if old_type && old_type != type
               # TODO: delete this check if it's not really helping
               # :nocov:
+              binding.pry
               raise "Didn't expect to find an old type"
               # :nocov:
             end

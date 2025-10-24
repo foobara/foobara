@@ -12,6 +12,11 @@ module Foobara
             end
           end
 
+          def initialize(...)
+            # binding.pry
+            super
+          end
+
           def message
             if path.empty?
               super
@@ -51,7 +56,12 @@ module Foobara
 
         def process_value(value)
           if cast_even_if_instance_of_target_type || needs_cast?(value)
-            super
+            begin
+              super
+            rescue => e
+              puts "wtf"
+              raise e
+            end
           else
             Outcome.success(value)
           end

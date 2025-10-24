@@ -79,6 +79,10 @@ module Foobara
           end
         end
 
+        def handles_entity_class?(entity_class)
+          tables.key?(entity_class)
+        end
+
         def updated(record)
           table_for(record).updated(record)
         end

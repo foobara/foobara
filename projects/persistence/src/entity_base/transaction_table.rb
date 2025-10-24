@@ -299,6 +299,9 @@ module Foobara
 
           attributes_filter = attributes_filter.to_h do |attribute_name, value|
             [attribute_name, element_types[attribute_name].process_value!(value)]
+          rescue => e
+            binding.pry
+            raise
           end
 
           tracked_records.each do |record|
@@ -656,6 +659,7 @@ module Foobara
             record.is_persisted = record.is_loaded = true
             record.is_created = false
             record.save_persisted_attributes
+            record.fire(:persisted)
           end
 
           marked_created.clear

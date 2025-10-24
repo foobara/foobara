@@ -83,6 +83,7 @@ module Foobara
       transition_map = self.class.transition_map
 
       if in_terminal_state?
+        binding.pry
         raise InvalidTransition,
               "#{current_state} is a terminal state so no transitions from here are allowed."
       end
