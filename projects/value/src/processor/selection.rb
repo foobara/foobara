@@ -1,5 +1,5 @@
-Foobara.require_project_file("value", "processor/multi")
-Foobara.require_project_file("value", "data_error")
+require_relative "multi"
+require_relative "../data_error"
 
 module Foobara
   module Value

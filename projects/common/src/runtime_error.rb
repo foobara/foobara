@@ -1,4 +1,4 @@
-Foobara.require_project_file("common", "error")
+require_relative "error"
 
 module Foobara
   # NOTE: annoyingly this will clash with ::RuntimeError if not fully qualified when using

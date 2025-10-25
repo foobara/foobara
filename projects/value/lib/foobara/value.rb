@@ -3,5 +3,5 @@ module Foobara
     foobara_domain!
   end
 
-  Foobara.require_project_file("value", "processor")
+  require_relative "../../src/processor"
 end
