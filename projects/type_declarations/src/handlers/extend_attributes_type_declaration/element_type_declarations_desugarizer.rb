@@ -1,6 +1,6 @@
-Foobara.require_project_file("type_declarations", "desugarizer")
-Foobara.require_project_file("type_declarations", "handlers/extend_associative_array_type_declaration")
-Foobara.require_project_file("type_declarations", "handlers/extend_attributes_type_declaration/hash_desugarizer")
+require_relative "../../desugarizer"
+require_relative "../extend_associative_array_type_declaration"
+require_relative "hash_desugarizer"
 
 module Foobara
   module TypeDeclarations
