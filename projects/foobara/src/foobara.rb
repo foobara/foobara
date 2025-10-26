@@ -5,7 +5,10 @@ module Foobara
 
   class << self
     def require_project_file(project, path)
+      # :nocov:
+      warn "DEPRECATION WARNING: require_project_file is deprecated. Use require_relative instead."
       require_relative("../../#{project}/src/#{path}")
+      # :nocov:
     end
 
     attr_accessor :is_installed

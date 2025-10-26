@@ -1,8 +1,8 @@
 require "inheritable_thread_vars"
 
 module Foobara
-  require_project_file("type_declarations", "type_builder")
-  require_project_file("type_declarations", "error_extension")
+  require_relative "type_builder"
+  require_relative "error_extension"
 
   module TypeDeclarations
     module Mode
