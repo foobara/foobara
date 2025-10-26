@@ -2131,31 +2131,28 @@ git clone git@github.com:${your_github_username}/foobara.git
 ```
 Create a new branch for you to push into
 ```
-git checkout -b develop/${your_github_username}
+git checkout -b <branch-name>
 ```
 Now navigate to project directory
 
 ```
 cd foobara
 ```
-### 2. Installing bundler:
-Bundler is the package manager for ruby like npm and pip are for JS and python respectively
 
-To install bundler run:
-```
-sudo gem install bundler
-```
-Check the installation:
-```
-bundler -v
-```
 ### 2. Installing mise (LINUX/WSL)
 Mise is a package manager and helps with managing different versions of ruby. It allows you to switch different versions of ruby.
-To setup mise following the script given below:
+
+The installation docs might be updated by mise so here's the reference to that: [Installation Docs](https://mise.jdx.dev/installing-mise.html)
+
+***If you already installed by following mise's docs then, you can skip this section***
+
+Else to setup mise follow the script given below:
 
 ```
-sudo apt update -y && sudo apt install -y gpg sudo wget curl
-sudo install -dm 755 /etc/apt/keyrings
+sudo apt update -y && sudo apt install -y gpg wget \
+build-essential \
+  libssl-dev zlib1g-dev libreadline-dev libyaml-dev libxml2-dev \
+  libxslt1-dev libffi-dev libgdbm-dev autoconf bison
 wget -qO - https://mise.jdx.dev/gpg-key.pub | gpg --dearmor | sudo tee /etc/apt/keyrings/mise-archive-keyring.gpg 1> /dev/null
 echo "deb [signed-by=/etc/apt/keyrings/mise-archive-keyring.gpg arch=amd64] https://mise.jdx.dev/deb stable main" | sudo tee /etc/apt/sources.list.d/mise.list
 sudo apt update
@@ -2168,19 +2165,10 @@ mise -v
 ```
 It should print out an ascii-art saying "mise-en-place"
 ### 3. Install required ruby version
-In this project, we require >=3.40 version of ruby and we will be installing the same now
+To automatically install the required version mentioned in the .ruby-version in the project's directory, run this command
 
 ```
-mise use -g ruby@3.4
-```
-Sometimes, if you are using **WSL** you might encounter some build failure errors. This is due to some missing packages like openssl. Simply run this:
-
-```
-sudo apt update
-sudo apt install -y build-essential \
-  libssl-dev zlib1g-dev libreadline-dev libyaml-dev libxml2-dev \
-  libxslt1-dev libffi-dev libgdbm-dev autoconf bison
-
+mise settings add idiomatic_version_file_enable_tools ruby
 ```
 
 ### 4. Activating mise
@@ -2194,9 +2182,18 @@ Now environment variables are updated and you can verify it by running:
 ```
 ruby -v
 ```
-It will print out:
+It will print out the ruby version, which is mentioned in .ruby-version file
+
+Bundler is also necessary so check if it is installed by running:
+
 ```
-ruby 3.4.7 (2025-10-08 revision 7a5688e2a2) +PRISM [x86_64-linux]
+bundler -v
+```
+
+If it is not installed, run:
+
+```
+gem install bundler
 ```
 You can list out your mise tools and its versions by running:
 ```
