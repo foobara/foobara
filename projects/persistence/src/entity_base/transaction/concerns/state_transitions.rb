@@ -60,6 +60,7 @@ module Foobara
               state_machine.commit! do
                 each_table(&:commit!)
                 entity_attributes_crud_driver.commit_transaction(raw_tx)
+                each_table(&:committed)
                 each_table(&:transaction_closed)
               end
             rescue => e
