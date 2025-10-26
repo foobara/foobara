@@ -51,7 +51,7 @@ module Foobara
       end
 
       def on_change(object, method_name)
-        @on_change ||= WeakObjectHash.new
+        @on_change ||= ObjectSpace::WeakMap.new
 
         @on_change[object] = method_name
       end

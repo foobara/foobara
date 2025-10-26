@@ -16,7 +16,6 @@ module Foobara
   # could be independent projects
   projects "delegate", # Let's just kill delegate
            "concerns",
-           "weak_object_hash",
            "enumerated",
            "callback",
            "state_machine",
