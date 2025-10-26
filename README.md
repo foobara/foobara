@@ -2126,13 +2126,17 @@ You should be able to do the typical stuff:
 
 ### 1. Cloning repository:
 Fork the repository and run this(Only for SSH):
+
 ```
 git clone git@github.com:${your_github_username}/foobara.git
 ```
+
 Create a new branch for you to push into
+
 ```
 git checkout -b <branch-name>
 ```
+
 Now navigate to project directory
 
 ```
@@ -2160,10 +2164,13 @@ sudo apt install -y mise
 ```
 
 Verify if it's installed or not by running:
+
 ```
 mise -v
 ```
+
 It should print out an ascii-art saying "mise-en-place"
+
 ### 3. Install required ruby version
 To automatically install the required version mentioned in the .ruby-version in the project's directory, run this command
 
@@ -2173,29 +2180,23 @@ mise settings add idiomatic_version_file_enable_tools ruby
 
 ### 4. Activating mise
 We can activate mise so that it will update the environment variables such that we will use the correct version of ruby.
+
 ```
 echo 'eval "$(mise activate bash)"' >> ~/.bashrc
 ```
+
 Restart the terminal
 
 Now environment variables are updated and you can verify it by running:
+
 ```
 ruby -v
 ```
+
 It will print out the ruby version, which is mentioned in .ruby-version file
 
-Bundler is also necessary so check if it is installed by running:
-
-```
-bundler -v
-```
-
-If it is not installed, run:
-
-```
-gem install bundler
-```
 You can list out your mise tools and its versions by running:
+
 ```
 mise list
 ```
@@ -2204,15 +2205,16 @@ mise list
 Before running test-suite, we need to install all the dependencies
 
 Run this to install all the dependencies:
+
 ```
 bundle
 ```
 
 Run the tests now:
+
 ```
 rake
 ```
-
 
 And if the tests/linter pass then you could dive into modifying the code
 
