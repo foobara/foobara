@@ -86,6 +86,10 @@ module Foobara
             end
 
             def committed
+              marked_persisted.each do |record|
+                record.fire(:persisted)
+              end
+
               closed
             end
 
@@ -113,7 +117,8 @@ module Foobara
               :updated,
               :hard_deleted,
               :created,
-              :loading
+              :loading,
+              :persisted
             ]
 
             interesting_record_states.each do |state|

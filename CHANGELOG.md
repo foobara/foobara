@@ -1,3 +1,11 @@
+# [0.2.4] -2025-10-26
+
+- Remove all uses of .require_project_file and deprecate it
+- Replace custom WeakObjectHash with similar standard library ObjectSpace::WeakMap
+- Call #committed only after whole transaction has been fully committed
+- Add/fire a :persisted event for callbacks when an entity receives a primary key and is committed
+- Add Type#add_caster
+
 # [0.2.3] - 2025-10-22
 
 - Fix Persistence.register_base bug

@@ -656,6 +656,7 @@ module Foobara
             record.is_persisted = record.is_loaded = true
             record.is_created = false
             record.save_persisted_attributes
+            mark_persisted(record)
           end
 
           marked_created.clear
@@ -695,8 +696,6 @@ module Foobara
           validate!
           flush_created!
           flush_updated_and_hard_deleted!
-
-          committed
         end
 
         def revert!
