@@ -1,6 +1,7 @@
 module Foobara
   class CommandConnector
     class UnexpectedSensitiveTypeInManifestError < StandardError; end
+    class AlreadyConnectedError < StandardError; end
 
     include Concerns::Desugarizers
 
@@ -305,7 +306,15 @@ module Foobara
     end
 
     def connect_delayed(registerable_name, *args, **opts)
-      delayed_connections[registerable_name.to_s] = { args:, opts: }
+      key = registerable_name.to_s
+
+      if delayed_connections.key?(key)
+        # :nocov:
+        raise AlreadyConnectedError, "Already connected #{key}"
+        # :nocov:
+      else
+        delayed_connections[key] = { args:, opts: }
+      end
     end
 
     def delayed_connections
@@ -313,6 +322,8 @@ module Foobara
     end
 
     def process_delayed_connections
+      return if delayed_connections.empty?
+
       delayed_connections.each_pair do |registerable_name, arg_hash|
         args = arg_hash[:args]
         opts = arg_hash[:opts]

@@ -1,3 +1,9 @@
+# [0.2.5] - 2025-10-27
+
+- Do not allow commands to be connected multiple times via symbol/string
+- Add CommandConnector#all_exposed_command_names
+- pry is again required by default in development/test mode but can be skipped with SKIP_PRY env var
+
 # [0.2.4] -2025-10-26
 
 - Remove all uses of .require_project_file and deprecate it
