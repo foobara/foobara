@@ -665,6 +665,10 @@ module Foobara
       command_registry.foobara_all_command(mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE)
     end
 
+    def all_exposed_command_names
+      all_exposed_commands.map(&:full_command_name)
+    end
+
     def all_exposed_type_names
       # TODO: cache this or better yet cache #foobara_manifest
       foobara_manifest[:type].keys.sort.map(&:to_s)
