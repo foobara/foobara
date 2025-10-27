@@ -2172,7 +2172,15 @@ mise -v
 It should print out an ascii-art saying "mise-en-place"
 
 ### 3. Install required ruby version
-To automatically install the required version mentioned in the .ruby-version in the project's directory, run this command
+In this project, currently we require ruby version >=3.4 so we can install it manually using the command below
+
+```
+mise use -g ruby@3.4
+```
+
+In case, you want to automatically activate the ruby version whenever you navigate to the directory containing .ruby-version file
+
+This helps a lot when you have lot of ruby projects with different versions and don't want to switch ruby versions each time manually
 
 ```
 mise settings add idiomatic_version_file_enable_tools ruby
