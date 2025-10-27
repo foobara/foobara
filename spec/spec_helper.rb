@@ -2,7 +2,7 @@ ENV["FOOBARA_ENV"] = "test"
 
 require "bundler/setup"
 
-unless ENV["SKIP_PRY"] == "true"
+unless ENV["SKIP_PRY"] == "true" || ENV["CI"] == "true"
   require "pry"
   require "pry-byebug"
 end
