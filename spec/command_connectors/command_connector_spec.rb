@@ -2339,6 +2339,26 @@ RSpec.describe Foobara::CommandConnector do
         end
       end
 
+      context "when set" do
+        context "with non-array" do
+          let(:inputs_transformers_sugar) do
+            { set: { foo: -> { "setfoo" } } }
+          end
+
+          let(:inputs) do
+            {
+              bar: "bar",
+              baz: "baz"
+            }
+          end
+
+          it "can add/remove inputs/results" do
+            expect(response.status).to be(0)
+            expect(parsed_response).to eq("foo" => "setfoo", "baz" => "baz", "bar" => "bar")
+          end
+        end
+      end
+
       context "when mixture of sugar and non sugar transformers" do
         let(:inputs_transformers_sugar) do
           [

@@ -1,3 +1,7 @@
+# [0.2.6] - 2025-10-30
+
+- Add a set inputs transformer
+
 # [0.2.5] - 2025-10-27
 
 - Do not allow commands to be connected multiple times via symbol/string

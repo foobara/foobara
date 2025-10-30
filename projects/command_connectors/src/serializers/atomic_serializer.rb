@@ -1,6 +1,11 @@
 module Foobara
   module CommandConnectors
     module Serializers
+      # This seems to interpret "Atomic" as load the first entity you hit but not deeper entities.
+      # Other interpretations it could have been:
+      # 1) If top-level is an entity, load it and convert all nested entities to primary keys,
+      #   otherwise, convert all entities to primary keys
+      # 2) Once past the first model, all entities are cast to primary keys
       class AtomicSerializer < SuccessSerializer
         def serialize(object)
           case object

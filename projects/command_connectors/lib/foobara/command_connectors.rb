@@ -17,6 +17,7 @@ module Foobara
         CommandConnector.add_desugarizer Desugarizers.rename :response, :response_mutators
         CommandConnector.add_desugarizer Desugarizers::Attributes::OnlyInputs
         CommandConnector.add_desugarizer Desugarizers::Attributes::RejectInputs
+        CommandConnector.add_desugarizer Desugarizers::SetInputs
         CommandConnector.add_desugarizer Desugarizers::Attributes::OnlyResult
         CommandConnector.add_desugarizer Desugarizers::Attributes::RejectResult
         CommandConnector.add_desugarizer Desugarizers::Attributes::InputsFromYaml

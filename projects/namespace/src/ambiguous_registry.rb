@@ -8,6 +8,12 @@ module Foobara
       def register(scoped)
         short_name = scoped.scoped_short_name
         registry[short_name] ||= []
+        # This kind of error should only happen in test suites that need to unregister/reregister things
+        # with different object_ids but the same scoped full name. So will check it in commented out.
+        # if registry[short_name].map(&:scoped_full_name).include?(scoped.scoped_full_name)
+        #   raise "Already registered: #{scoped.scoped_full_name}"
+        # end
+
         registry[short_name] |= [scoped]
       end
 
