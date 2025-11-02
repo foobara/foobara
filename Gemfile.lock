@@ -29,7 +29,7 @@ GEM
       rubocop-rspec
     foobara-spec-helpers (0.0.4)
       foobara-util
-    foobara-util (1.0.3)
+    foobara-util (1.0.4)
     formatador (1.2.2)
       reline
     guard (2.19.1)
@@ -50,7 +50,7 @@ GEM
       rspec (>= 2.99.0, < 4.0)
     inheritable-thread-vars (0.0.3)
     io-console (0.8.1)
-    irb (1.15.2)
+    irb (1.15.3)
       pp (>= 0.6.0)
       rdoc (>= 4.0.0)
       reline (>= 0.4.2)
@@ -91,7 +91,7 @@ GEM
     rb-fsevent (0.11.2)
     rb-inotify (0.11.1)
       ffi (~> 1.0)
-    rdoc (6.15.0)
+    rdoc (6.15.1)
       erb
       psych (>= 4.0.0)
       tsort
@@ -110,11 +110,11 @@ GEM
     rspec-its (2.0.0)
       rspec-core (>= 3.13.0)
       rspec-expectations (>= 3.13.0)
-    rspec-mocks (3.13.6)
+    rspec-mocks (3.13.7)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
     rspec-support (3.13.6)
-    rubocop (1.81.6)
+    rubocop (1.81.7)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)

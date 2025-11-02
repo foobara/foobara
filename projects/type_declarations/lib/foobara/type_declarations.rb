@@ -46,8 +46,10 @@ module Foobara
           Namespace.global.foobara_register(scoped)
         end
 
+        children = Namespace.global.foobara_children
+
         @original_children.each do |child|
-          Namespace.global.foobara_children << child
+          children.foobara_children << child unless children.include?(child)
         end
 
         GlobalOrganization.foobara_register(GlobalDomain)
