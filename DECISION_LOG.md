@@ -1,26 +1,36 @@
 This document is intended to document the rationale behind certain key decisions
 
 <!-- TOC -->
-* [2024-10-27 Release under the MPL-2.0 license](#2024-10-27-release-under-the-mpl-20-license)
+* [2025-11-02 Decide on a meaning for a value with an atomic association-depth](#2025-11-02-decide-on-a-meaning-for-a-value-with-an-atomic-association-depth)
+  * [Problem](#problem)
+    * [Pros of the foobara.git interpretation](#pros-of-the-foobaragit-interpretation)
+    * [Cons of the foobara.git interpretation](#cons-of-the-foobaragit-interpretation)
   * [Decision](#decision)
   * [Rationale](#rationale)
-* [2024-06-24 make code in src/ non-colliding with other projects and add src to require_paths](#2024-06-24-make-code-in-src-non-colliding-with-other-projects-and-add-src-to-require_paths)
+* [2024-12-08 Create a DetachedEntity type, import Entity as immutable DetachedEntity](#2024-12-08-create-a-detachedentity-type-import-entity-as-immutable-detachedentity)
+  * [Problem](#problem-1)
   * [Decision](#decision-1)
-  * [Rationale](#rationale-1)
-* [[RETRACTED] 2024-05-31 Temporarily release under AGPLv3](#retracted-2024-05-31-temporarily-release-under-agplv3)
+  * [Concerns](#concerns)
+* [2024-10-27 Release under the MPL-2.0 license](#2024-10-27-release-under-the-mpl-20-license)
   * [Decision](#decision-2)
-  * [Rationale](#rationale-2)
-* [2024-05-30 Dual-license satellite foobara gems under Apache-2.0 OR MIT](#2024-05-30-dual-license-satellite-foobara-gems-under-apache-20-or-mit)
+  * [Rationale](#rationale-1)
+* [2024-06-24 make code in src/ non-colliding with other projects and add src to require_paths](#2024-06-24-make-code-in-src-non-colliding-with-other-projects-and-add-src-to-require_paths)
   * [Decision](#decision-3)
+  * [Rationale](#rationale-2)
+* [[RETRACTED] 2024-05-31 Temporarily release under AGPLv3](#retracted-2024-05-31-temporarily-release-under-agplv3)
+  * [Decision](#decision-4)
   * [Rationale](#rationale-3)
+* [2024-05-30 Dual-license satellite foobara gems under Apache-2.0 OR MIT](#2024-05-30-dual-license-satellite-foobara-gems-under-apache-20-or-mit)
+  * [Decision](#decision-5)
+  * [Rationale](#rationale-4)
     * [Why MIT](#why-mit)
     * [Why Apache-2.0](#why-apache-20)
     * [Why Apache-2.0 OR MIT](#why-apache-20-or-mit)
     * [Other licenses that were contenders](#other-licenses-that-were-contenders)
     * [Other concern about the murky state of generative AI and copyright implications](#other-concern-about-the-murky-state-of-generative-ai-and-copyright-implications)
 * [[RETRACTED] 2024-05-19 License under user choice of 3 licenses](#retracted-2024-05-19-license-under-user-choice-of-3-licenses)
-  * [Decision](#decision-4)
-  * [Rationale](#rationale-4)
+  * [Decision](#decision-6)
+  * [Rationale](#rationale-5)
     * [Why MIT OR Apache 2.0](#why-mit-or-apache-20)
       * [Why MIT is attractive](#why-mit-is-attractive)
       * [Why Apache 2.0 is attractive](#why-apache-20-is-attractive)
@@ -31,6 +41,82 @@ This document is intended to document the rationale behind certain key decisions
     * [What would have been an ideal license?](#what-would-have-been-an-ideal-license)
   * [Conclusion](#conclusion)
 <!-- TOC -->
+
+# 2025-11-02 Decide on a meaning for a value with an atomic association-depth
+
+## Problem
+
+There is currently inconsistency in various places around what it means to be a
+value with an atomic association depth. This mostly works, regardless, because in
+the monorepo (this repo), the interpretation includes more loaded data than the
+interpretation in dependent repos (in particular typescript-remote-command-generator.)
+
+Even in typescript-remote-command-generator, though, there is now inconsistencies that are
+resulting in some bugs in the new castJsonResult function that is generated. It is interpretting it
+as entities are loaded if they are not past a model.
+
+Both systems get the obvious scenarios correct, namely, aggregate association-depth
+really only has one reasonable interpretation (every entity record in the entire tree is loaded)
+and values of types that have no reachable entities have identical aggregate and atomic
+association-depth representations.
+
+The remaining interpretations vary as follows, though:
+
+1. In foobara.git (this repo) we interpret being an atomically-loaded value to mean
+   that once we've hit an entity in the tree ov values starting at the value in question,
+   we load that entity record but all records reachable from that first-encountered entity
+   are not loaded.
+2. In typescript-remote-command-generator.git, 
+   a. In older code paths, if the type of the value in question is an entity, we load it and only it.
+      All other reachable entity values in all other circumstances are unloaded.
+   b. A few recently-added code paths instead mimic, or try to mimic, the foobara.git interpretation.
+      They maintain a flag that indicates if we are past the first model in the structure or not.
+      This differs from the other generators in the project that follow 2.a. but also differs from
+      foobara.git in that crossing a model switches to primary keys, not just crossing an entity.
+
+### Pros of the foobara.git interpretation
+
+1. You get more data in cases where you're very likely to want that data. For example,
+   what if we wanted an array of users from the backend. The foobara.git approach would
+   give something like `[{id: 123, name: "Fumiko", year_of_birth: 2019}]` but the alternative
+   would give `[123]`. I suspect more-often-than-not this isn't what would be desired.
+
+### Cons of the foobara.git interpretation
+
+1. On the flipside of the above pro, it could be that we receive a non-entity model or data structure with lots of
+   very large entity records deeper within it but with no way to declare them as not-to-be-loaded.
+2. It can be a little more complicated to implement, for example, in typescript-remote-command-generator.git,
+   we have a ModelAtomGenerator. It uses UnloadedEntityGenerator for any entity values that are reachable from it.
+   But if we wanted to implement the foobara.git interpretation, how do we know if we want the
+   UnloadedEntityGenerator or the EntityAtomGenerator? To know this, we would need to know if we are past
+   the first entity. it's possible we can figure this out by traversing #parent and checking each if it's
+   an entity. This makes me nervous because it's more complexity to an already complex design as well
+   as not sure if it will work. If we always have the type_declaration as the relevant manifest it *should*
+   work but I'm not sure I want to test that and couple to it.
+
+## Decision
+
+For now, let's converge on the typescript-remote-command-generator.git interpretation (the old/existing one, that
+if the type is an entity, we will load it, otherwise all reachable entities will be unloaded.)
+
+## Rationale
+
+1. Going with the load-load-the-first-entity-encountered-but-nothing-deeper approach (probably) requires
+   one of several somewhat non-trivial changes to the typescript-remote-command-generator
+   project generator to support it due to its design:
+   a. This allows the atomic concept to serve as the least-loading-possible where needed 
+      (although there still wouldn't be a way to just get a primary key that answers a question.)
+   b. This does not require introducing a type of generator that represents being atomic past/before the
+      first entity.
+   c. Nor figuring out a way to pass extra state to the generators to let them know where they are
+   d. Nor having to dig upwards through the parents of the relevant manifest to figure this out.
+   Whereas foobara.git technically would require no changes, except performance improvements
+   by not unnecessarily loading records that won't be used by the typescript remote commands.
+2. Entities/Persistence should probably be extracted from this monorepo so we can promote
+   commands/connectors/other types as a lightweight 1.0.0 version while allowing
+   entities/persistence to develop and reach
+   1.0.0 quality at its own pace along the way. So perfecting these concepts might not be worth prioritizing.
+   So going with the simplest option that will work is probably wise.
 
 # 2024-12-08 Create a DetachedEntity type, import Entity as immutable DetachedEntity
 

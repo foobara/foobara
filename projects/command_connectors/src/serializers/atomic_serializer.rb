@@ -4,8 +4,11 @@ module Foobara
       # This seems to interpret "Atomic" as load the first entity you hit but not deeper entities.
       # Other interpretations it could have been:
       # 1) If top-level is an entity, load it and convert all nested entities to primary keys,
-      #   otherwise, convert all entities to primary keys
+      #    otherwise, convert all entities to primary keys
       # 2) Once past the first model, all entities are cast to primary keys
+      #
+      # However, in the typescript-remote-command-generator, the logic is a little different...
+      # There, AtomModelGenerator always uses primary keys for all entities.
       class AtomicSerializer < SuccessSerializer
         def serialize(object)
           case object
