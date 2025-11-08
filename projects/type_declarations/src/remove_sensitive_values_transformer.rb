@@ -3,7 +3,6 @@ require_relative "typed_transformer"
 module Foobara
   module TypeDeclarations
     class RemoveSensitiveValuesTransformer < TypedTransformer
-
       def to_type_declaration
         TypeDeclarations.remove_sensitive_types(from_type.declaration_data)
       end
