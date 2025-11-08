@@ -13,6 +13,8 @@ module Foobara
 
         model = Namespace.global.foobara_lookup_type!(:model)
         BuiltinTypes.build_and_register!(:detached_entity, model, nil)
+
+        Foobara::DetachedEntity.include(Foobara::DetachedEntityTypesTransformers);
       end
 
       def reset_all
