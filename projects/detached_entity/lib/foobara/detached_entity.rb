@@ -14,7 +14,7 @@ module Foobara
         model = Namespace.global.foobara_lookup_type!(:model)
         BuiltinTypes.build_and_register!(:detached_entity, model, nil)
 
-        Foobara::TypeDeclarations::RemoveSensitiveValuesTransformer.include(Foobara::DetachedEntityTypesTransformers)
+        TypeDeclarations::RemoveSensitiveValuesTransformer.include(DetachedEntityTypesTransformers)
       end
 
       def reset_all

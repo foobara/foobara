@@ -1,5 +1,3 @@
-require_relative "../../type_declarations/src/typed_transformer"
-
 module Foobara
   module DetachedEntityTypesTransformers
     def from(...)
