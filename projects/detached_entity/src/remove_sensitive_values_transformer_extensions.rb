@@ -1,5 +1,5 @@
 module Foobara
-  module DetachedEntityTypesTransformers
+  module RemoveSensitiveValuesTransformerExtensions
     def from(...)
       super.tap do
         create_all_association_types_in_current_namespace(from_type)
