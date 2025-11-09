@@ -1,5 +1,5 @@
 module Foobara
-  class DetachedEntity
+  class DetachedEntity < Model
     module RemoveSensitiveValuesTransformerExtensions
       def from(...)
         super.tap do
