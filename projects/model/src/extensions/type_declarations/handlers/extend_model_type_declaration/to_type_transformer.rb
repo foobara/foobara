@@ -118,7 +118,20 @@ module Foobara
 
                   model_class.description type.declaration_data[:description]
 
-                  domain.foobara_register_model(model_class)
+                  full_name = type.scoped_full_name
+
+                  if model_class.full_model_name.size > full_name.size
+                    # TODO: why does this happen exactly??
+                    full_name = model_class.full_model_name
+                  end
+
+                  if type.scoped_path_set? && foobara_registered?(full_name, mode: Namespace::LookupMode::DIRECT)
+                    # :nocov:
+                    raise AlreadyRegisteredError, "Already registered: #{type.inspect}"
+                    # :nocov:
+                  end
+
+                  domain.foobara_register(type)
 
                   if type.declaration_data[:delegates]
                     model_class.delegate_attributes type.declaration_data[:delegates]
