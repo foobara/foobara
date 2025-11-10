@@ -118,7 +118,7 @@ module Foobara
 
                   model_class.description type.declaration_data[:description]
 
-                  domain.foobara_register_model(model_class)
+                  domain.foobara_register(type)
 
                   if type.declaration_data[:delegates]
                     model_class.delegate_attributes type.declaration_data[:delegates]

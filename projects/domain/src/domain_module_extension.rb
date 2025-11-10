@@ -310,27 +310,6 @@ module Foobara
           type
         end
 
-        def foobara_register_model(model_class)
-          type = model_class.model_type
-
-          full_name = type.scoped_full_name
-
-          if model_class.full_model_name.size > full_name.size
-            # TODO: why does this happen exactly??
-            full_name = model_class.full_model_name
-          end
-
-          if type.scoped_path_set? && foobara_registered?(full_name, mode: Namespace::LookupMode::DIRECT)
-            # :nocov:
-            raise AlreadyRegisteredError, "Already registered: #{type.inspect}"
-            # :nocov:
-          end
-
-          foobara_register(type)
-
-          type.target_class
-        end
-
         def foobara_register_and_deanonymize_entity(name, *, &)
           entity_class = foobara_register_entity(name, *, &)
           Foobara::Model.deanonymize_class(entity_class)
