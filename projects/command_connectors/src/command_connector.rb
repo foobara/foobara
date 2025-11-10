@@ -443,12 +443,10 @@ module Foobara
           end
         end
       ensure
-        request.use_transaction do
-          if (request.response || request).outcome&.success?
-            request.commit_transaction_if_open
-          else
-            request.rollback_transaction
-          end
+        if (request.response || request).outcome&.success?
+          request.commit_transaction_if_open
+        else
+          request.rollback_transaction
         end
       end
 

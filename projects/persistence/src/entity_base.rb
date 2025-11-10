@@ -188,6 +188,7 @@ module Foobara
           if tx.currently_open? && !existing_transaction
             tx.commit!
           end
+
           result
         rescue Foobara::Persistence::EntityBase::Transaction::RolledBack # rubocop:disable Lint/SuppressedException
         rescue => e

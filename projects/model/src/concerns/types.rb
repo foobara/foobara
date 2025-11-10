@@ -208,6 +208,7 @@ module Foobara
             delegates[attribute_name] = delegate_manifest
 
             delegated_type_declaration = model_type.type_at_path(data_path).reference_or_declaration_data
+            # TODO: add defaults and required for the delegated declaration!
             attributes(type: :attributes, element_type_declarations: { attribute_name => delegated_type_declaration })
 
             define_method attribute_name do

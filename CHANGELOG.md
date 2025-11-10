@@ -1,3 +1,7 @@
+# [0.2.7] - 2025-11-10
+
+- Fix CommandConnector authorization bug that can fail to close transactions
+
 # [0.2.6] - 2025-10-30
 
 - Add a set inputs transformer
