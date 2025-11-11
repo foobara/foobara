@@ -1,36 +1,41 @@
 This document is intended to document the rationale behind certain key decisions
 
 <!-- TOC -->
-* [2025-11-02 Decide on a meaning for a value with an atomic association-depth](#2025-11-02-decide-on-a-meaning-for-a-value-with-an-atomic-association-depth)
+* [2025-11-10 Break this monorepo into 3 smaller monorepos and make entities/persistence monorepo optional](#2025-11-10-break-this-monorepo-into-3-smaller-monorepos-and-make-entitiespersistence-monorepo-optional)
   * [Problem](#problem)
-    * [Pros of the foobara.git interpretation](#pros-of-the-foobaragit-interpretation)
-    * [Cons of the foobara.git interpretation](#cons-of-the-foobaragit-interpretation)
   * [Decision](#decision)
   * [Rationale](#rationale)
-* [2024-12-08 Create a DetachedEntity type, import Entity as immutable DetachedEntity](#2024-12-08-create-a-detachedentity-type-import-entity-as-immutable-detachedentity)
+  * [Plan](#plan)
+* [2025-11-02 Decide on a meaning for a value with an atomic association-depth](#2025-11-02-decide-on-a-meaning-for-a-value-with-an-atomic-association-depth)
   * [Problem](#problem-1)
+    * [Pros of the foobara.git interpretation](#pros-of-the-foobaragit-interpretation)
+    * [Cons of the foobara.git interpretation](#cons-of-the-foobaragit-interpretation)
   * [Decision](#decision-1)
+  * [Rationale](#rationale-1)
+* [2024-12-08 Create a DetachedEntity type, import Entity as immutable DetachedEntity](#2024-12-08-create-a-detachedentity-type-import-entity-as-immutable-detachedentity)
+  * [Problem](#problem-2)
+  * [Decision](#decision-2)
   * [Concerns](#concerns)
 * [2024-10-27 Release under the MPL-2.0 license](#2024-10-27-release-under-the-mpl-20-license)
-  * [Decision](#decision-2)
-  * [Rationale](#rationale-1)
-* [2024-06-24 make code in src/ non-colliding with other projects and add src to require_paths](#2024-06-24-make-code-in-src-non-colliding-with-other-projects-and-add-src-to-require_paths)
   * [Decision](#decision-3)
   * [Rationale](#rationale-2)
-* [[RETRACTED] 2024-05-31 Temporarily release under AGPLv3](#retracted-2024-05-31-temporarily-release-under-agplv3)
+* [2024-06-24 make code in src/ non-colliding with other projects and add src to require_paths](#2024-06-24-make-code-in-src-non-colliding-with-other-projects-and-add-src-to-require_paths)
   * [Decision](#decision-4)
   * [Rationale](#rationale-3)
-* [2024-05-30 Dual-license satellite foobara gems under Apache-2.0 OR MIT](#2024-05-30-dual-license-satellite-foobara-gems-under-apache-20-or-mit)
+* [[RETRACTED] 2024-05-31 Temporarily release under AGPLv3](#retracted-2024-05-31-temporarily-release-under-agplv3)
   * [Decision](#decision-5)
   * [Rationale](#rationale-4)
+* [2024-05-30 Dual-license satellite foobara gems under Apache-2.0 OR MIT](#2024-05-30-dual-license-satellite-foobara-gems-under-apache-20-or-mit)
+  * [Decision](#decision-6)
+  * [Rationale](#rationale-5)
     * [Why MIT](#why-mit)
     * [Why Apache-2.0](#why-apache-20)
     * [Why Apache-2.0 OR MIT](#why-apache-20-or-mit)
     * [Other licenses that were contenders](#other-licenses-that-were-contenders)
     * [Other concern about the murky state of generative AI and copyright implications](#other-concern-about-the-murky-state-of-generative-ai-and-copyright-implications)
 * [[RETRACTED] 2024-05-19 License under user choice of 3 licenses](#retracted-2024-05-19-license-under-user-choice-of-3-licenses)
-  * [Decision](#decision-6)
-  * [Rationale](#rationale-5)
+  * [Decision](#decision-7)
+  * [Rationale](#rationale-6)
     * [Why MIT OR Apache 2.0](#why-mit-or-apache-20)
       * [Why MIT is attractive](#why-mit-is-attractive)
       * [Why Apache 2.0 is attractive](#why-apache-20-is-attractive)
@@ -41,6 +46,72 @@ This document is intended to document the rationale behind certain key decisions
     * [What would have been an ideal license?](#what-would-have-been-an-ideal-license)
   * [Conclusion](#conclusion)
 <!-- TOC -->
+
+# 2025-11-10 Break this monorepo into 3 smaller monorepos and make entities/persistence monorepo optional
+
+## Problem
+
+Many projects in this monorepo independently could provide value,
+but some are further from a 1.0 release.
+
+## Decision
+
+Split this monorepo into 3 smaller monorepos, higher level stuff (foobara, this monorepo),
+foobara-entities (new monorepo), foobara-typesystem (new monorepo). foobara and foobara-entities will
+depend on foobara-typesystem but foobara will no-longer depend on foobara-entities.
+
+Here's the groupings:
+
+foobara (this monorepo):
+
+command_connectors
+manifest
+domain_mapper
+command
+
+foobara-entities (new monorepo):
+
+in_memory_crud_driver
+in_memory_crud_driver_minimal
+model_attribute_helpers
+nested_transactionable
+persistence
+weak_object_set
+entity
+detached_entity
+model (probably better to put this in foobara-typesystem but putting it here for now)
+
+foobara-typesystem
+
+builtin_types
+type_declarations
+types
+value
+common
+domain
+namespace
+state_machine
+callback
+enumerated
+concerns
+delegate
+
+## Rationale
+
+This would allow foobara and foobara-typesystem to be released as 1.0.0 while
+foobara-entities stays 0.x.x and continues to evolve and stabilize as an optional gem.
+
+People who don't want foobara-entities can use the more-stable and lighter-weight subset of these projects.
+
+## Plan
+
+Already happening, but keep pushing entities/persisteince stuff in lower-level projects up into
+an entities/persistence project. We also might need new projects to handle the plumbing of
+foobara-entities into foobara into which we can push down entities/persistence code from
+the high-level foobara projects into the entities/persistence projects. Regardless, that code
+must be pushed down into an entities/persistence project, either a new one or an existing one.
+We might also want a plumbing project for integrating foobara and foobara-typesystem, depending
+on how things go and what we learn.
 
 # 2025-11-02 Decide on a meaning for a value with an atomic association-depth
 
