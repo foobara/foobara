@@ -1,7 +1,5 @@
 module Foobara
   module NestedTransactionable
-    include Concern
-
     class << self
       def relevant_entity_classes_for_type(type)
         entity_classes = []
