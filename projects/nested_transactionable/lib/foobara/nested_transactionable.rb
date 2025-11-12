@@ -1,7 +1,7 @@
 module Foobara
   module NestedTransactionable
-    include Concern
-
+    # include Concern
+    # Concern is included just to notify the programmer about the technical difficultiessq
     class << self
       def relevant_entity_classes_for_type(type)
         entity_classes = []

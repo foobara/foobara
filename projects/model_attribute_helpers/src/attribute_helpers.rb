@@ -18,7 +18,7 @@ module Foobara
       # foobara_primary_key_type (nil if not an entity type)
       # foobara_associations
       module AttributeHelpers
-        include Foobara::Concern
+        include Concern
 
         module ClassMethods
           def foobara_has_primary_key?
@@ -46,15 +46,15 @@ module Foobara
 
             Namespace.use foobara_attributes_type.created_in_namespace do
               unless includes_primary_key
-                declaration = Foobara::TypeDeclarations::Attributes.reject(declaration, foobara_primary_key_attribute)
+                declaration = TypeDeclarations::Attributes.reject(declaration, foobara_primary_key_attribute)
               end
 
               unless include_private
-                declaration = Foobara::TypeDeclarations::Attributes.reject(declaration, *private_attribute_names)
+                declaration = TypeDeclarations::Attributes.reject(declaration, *private_attribute_names)
               end
 
               unless include_delegates
-                declaration = Foobara::TypeDeclarations::Attributes.reject(declaration, *foobara_delegates.keys)
+                declaration = TypeDeclarations::Attributes.reject(declaration, *foobara_delegates.keys)
               end
 
               Domain.current.foobara_type_from_declaration(declaration)
