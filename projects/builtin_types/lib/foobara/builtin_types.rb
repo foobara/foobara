@@ -66,6 +66,7 @@ module Foobara
 
       def reset_all
         Foobara.raise_if_production!("reset_all")
+
         builtin_types.each do |builtin_type|
           builtin_type.foobara_each do |scoped|
             if scoped.scoped_namespace == builtin_type

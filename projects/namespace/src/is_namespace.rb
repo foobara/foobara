@@ -181,7 +181,7 @@ module Foobara
 
           if candidates.size > 1
             # :nocov:
-            raise AmbiguousNameError,
+            raise AmbiguousLookupError,
                   "#{path} is ambiguous. Matches the following: #{candidates.map(&:scoped_full_name)}"
             # :nocov:
           end

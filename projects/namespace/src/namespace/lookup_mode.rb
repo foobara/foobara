@@ -30,6 +30,12 @@ module Foobara
     # Maybe use bitmasks for the above 3 places to look instead of a list of 7 lookup types? (There should be 8...)
     module LookupMode
       GENERAL = :general
+      # Relaxed will allow you to find registered entries without prefixes as long as it's not ambiguous
+      # So if there is a SomeOrg::SomeDomain::SomeCommand `GlobalOrganization.foobara_lookup(:SomeCommand)`
+      # will return nil but
+      # `GlobalOrganization.foobara_lookup(:SomeCommand, mode: Foobara::Namespace::LookupMode::RELAXED)`
+      # will return SomeOrg::SomeDomain::SomeCommand even though we didn't specify the necessary prefixes
+      # to navigate to it.
       RELAXED = :relaxed
       DIRECT = :direct
       STRICT = :strict
