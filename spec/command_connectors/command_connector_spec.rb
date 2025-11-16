@@ -150,6 +150,8 @@ RSpec.describe Foobara::CommandConnector do
       it "registers the command" do
         command_connector.connect(org_module)
 
+        expect(command_connector.command_connected?(SomeOrg::SomeDomain::SomeCommand)).to be true
+
         exposed_commands = command_connector.all_exposed_commands
         expect(exposed_commands.size).to eq(1)
         exposed_command = exposed_commands.first

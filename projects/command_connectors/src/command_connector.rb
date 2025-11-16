@@ -682,5 +682,11 @@ module Foobara
       # TODO: cache this or better yet cache #foobara_manifest
       foobara_manifest[:type].keys.sort.map(&:to_s)
     end
+
+    def command_connected?(original_command_class)
+      all_exposed_commands.any? do |command|
+        command.command_class == original_command_class
+      end
+    end
   end
 end
