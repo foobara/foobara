@@ -14,6 +14,8 @@ module Foobara
           request
         end
 
+        private
+
         def load_delegated_attribute_entities(object)
           case object
           when Entity

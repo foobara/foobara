@@ -167,8 +167,6 @@ module Foobara
             end
           end
         end
-
-        foobara_delegate :type_for_declaration, to: :class
       end
     end
   end

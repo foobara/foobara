@@ -2024,7 +2024,10 @@ RSpec.describe Foobara::CommandConnector do
         expect(error_manifest[:scoped_prefix]).to be_nil
         expect(error_manifest[:scoped_name]).to eq("UserNotFoundError")
 
-        patched_up_manifest = command_connector.patch_up_broken_parents_for_errors_with_missing_command_parents(
+        # TODO: figure out how to set up this situation instead of directly passing a manifest
+        # hash to a private method
+        patched_up_manifest = command_connector.send(
+          :patch_up_broken_parents_for_errors_with_missing_command_parents,
           manifest_hash
         )
 

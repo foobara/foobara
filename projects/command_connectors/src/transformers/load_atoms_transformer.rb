@@ -6,6 +6,8 @@ module Foobara
           load_atoms(object)
         end
 
+        private
+
         def load_atoms(object)
           case object
           when Entity

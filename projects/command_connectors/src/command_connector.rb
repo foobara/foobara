@@ -4,6 +4,7 @@ module Foobara
     class AlreadyConnectedError < StandardError; end
 
     include Concerns::Desugarizers
+    include Concerns::Reflection
 
     class << self
       def find_builtin_command_class(command_class_name)
@@ -144,6 +145,68 @@ module Foobara
       end
     end
 
+    def connect(*args, **opts)
+      args, opts = desugarize_connect_args(args, opts)
+
+      registerable = args.first
+
+      if opts.key?(:authenticator)
+        authenticator = opts[:authenticator]
+        authenticator = self.class.to_authenticator(authenticator)
+        opts = opts.merge(authenticator:)
+      end
+
+      case registerable
+      when Class
+        unless registerable < Command
+          # :nocov:
+          raise "Don't know how to register #{registerable} (#{registerable.class})"
+          # :nocov:
+        end
+
+        command_registry.register(*args, **opts)
+      when Module
+        if registerable.foobara_organization?
+          args = args[1..]
+          registerable.foobara_domains.map do |domain|
+            connect(domain, *args, **opts)
+          end.flatten
+        elsif registerable.foobara_domain?
+          args = args[1..]
+          connected = []
+
+          registerable = registerable.foobara_all_command(mode: Namespace::LookupMode::DIRECT)
+
+          registerable.each do |command_class|
+            unless command_class.abstract?
+              connected << connect(command_class, *args, **opts)
+            end
+          end
+
+          connected.flatten
+        else
+          # :nocov:
+          raise "Don't know how to register #{registerable} (#{registerable.class})"
+          # :nocov:
+        end
+      when Symbol, String
+        connect_delayed(*args, **opts)
+      else
+        # :nocov:
+        raise "Don't know how to register #{registerable} (#{registerable.class})"
+        # :nocov:
+      end
+    end
+
+    # TODO: maybe introduce a Runner interface?
+    def run(...)
+      process_delayed_connections
+
+      request = build_request(...)
+
+      run_request(request)
+    end
+
     def find_builtin_command_class(command_class_name)
       self.class.find_builtin_command_class(command_class_name)
     end
@@ -165,6 +228,28 @@ module Foobara
     def lookup_command(name)
       command_registry.foobara_lookup_command(name)
     end
+
+    def type_from_name(name)
+      Foobara.foobara_lookup_type(name, mode: Namespace::LookupMode::RELAXED)
+    end
+
+    def all_exposed_commands
+      process_delayed_connections
+
+      command_registry.foobara_all_command(mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE)
+    end
+
+    def all_exposed_command_names
+      all_exposed_commands.map(&:full_command_name)
+    end
+
+    def command_connected?(original_command_class)
+      all_exposed_commands.any? do |command|
+        command.command_class == original_command_class
+      end
+    end
+
+    protected
 
     def request_to_command_class(request)
       action = request.action
@@ -335,59 +420,6 @@ module Foobara
       delayed_connections.clear
     end
 
-    def connect(*args, **opts)
-      args, opts = desugarize_connect_args(args, opts)
-
-      registerable = args.first
-
-      if opts.key?(:authenticator)
-        authenticator = opts[:authenticator]
-        authenticator = self.class.to_authenticator(authenticator)
-        opts = opts.merge(authenticator:)
-      end
-
-      case registerable
-      when Class
-        unless registerable < Command
-          # :nocov:
-          raise "Don't know how to register #{registerable} (#{registerable.class})"
-          # :nocov:
-        end
-
-        command_registry.register(*args, **opts)
-      when Module
-        if registerable.foobara_organization?
-          args = args[1..]
-          registerable.foobara_domains.map do |domain|
-            connect(domain, *args, **opts)
-          end.flatten
-        elsif registerable.foobara_domain?
-          args = args[1..]
-          connected = []
-
-          registerable = registerable.foobara_all_command(mode: Namespace::LookupMode::DIRECT)
-
-          registerable.each do |command_class|
-            unless command_class.abstract?
-              connected << connect(command_class, *args, **opts)
-            end
-          end
-
-          connected.flatten
-        else
-          # :nocov:
-          raise "Don't know how to register #{registerable} (#{registerable.class})"
-          # :nocov:
-        end
-      when Symbol, String
-        connect_delayed(*args, **opts)
-      else
-        # :nocov:
-        raise "Don't know how to register #{registerable} (#{registerable.class})"
-        # :nocov:
-      end
-    end
-
     def desugarize_connect_args(args, opts)
       if self.class.desugarizer
         self.class.desugarizer.process_value!([args, opts])
@@ -404,15 +436,6 @@ module Foobara
         # TODO: feels like a smell
         request.command_connector = self
       end
-    end
-
-    # TODO: maybe introduce a Runner interface?
-    def run(...)
-      process_delayed_connections
-
-      request = build_request(...)
-
-      run_request(request)
     end
 
     def run_request(request)
@@ -494,199 +517,6 @@ module Foobara
       serialize_response_body(response)
 
       response
-    end
-
-    def type_from_name(name)
-      Foobara.foobara_lookup_type(name, mode: Namespace::LookupMode::RELAXED)
-    end
-
-    def foobara_manifest
-      Namespace.use command_registry do
-        foobara_manifest_in_current_namespace
-      end
-    end
-
-    # TODO: try to break this giant method up
-    def foobara_manifest_in_current_namespace
-      process_delayed_connections
-
-      to_include = Set.new
-
-      to_include << command_registry.global_organization
-      to_include << command_registry.global_domain
-
-      command_registry.foobara_each_command(mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE) do |exposed_command|
-        to_include << exposed_command
-      end
-
-      included = Set.new
-
-      additional_to_include = Set.new
-
-      h = {
-        organization: {},
-        domain: {},
-        type: {},
-        command: {},
-        error: {}
-      }
-
-      if TypeDeclarations.include_processors?
-        h.merge!(
-          processor: {},
-          processor_class: {}
-        )
-      end
-
-      TypeDeclarations.with_manifest_context(to_include: additional_to_include, remove_sensitive: true) do
-        until to_include.empty? && additional_to_include.empty?
-          object = nil
-
-          if to_include.empty?
-            until additional_to_include.empty?
-              o = additional_to_include.first
-              additional_to_include.delete(o)
-
-              if o.is_a?(::Module)
-                if o.foobara_domain? || o.foobara_organization?
-                  unless o.foobara_root_namespace == command_registry
-                    next
-                  end
-                elsif o.is_a?(::Class) && o < Foobara::Command
-                  next
-                end
-              elsif o.is_a?(Types::Type)
-                if o.sensitive?
-                  # :nocov:
-                  raise UnexpectedSensitiveTypeInManifestError,
-                        "Unexpected sensitive type in manifest: #{o.scoped_full_path}. " \
-                        "Make sure these are not included."
-                # :nocov:
-                else
-
-                  mode = Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE
-                  domain_name = o.foobara_domain.scoped_full_name
-
-                  exposed_domain = command_registry.foobara_lookup_domain(domain_name, mode:)
-
-                  exposed_domain ||= command_registry.build_and_register_exposed_domain(domain_name)
-
-                  # Since we don't know which other domains/orgs creating this domain might have created,
-                  # we will just add them all to be included just in case
-                  command_registry.foobara_all_domain(mode:).each do |exposed_domain|
-                    additional_to_include << exposed_domain
-                  end
-
-                  command_registry.foobara_all_organization(mode:).each do |exposed_organization|
-                    additional_to_include << exposed_organization
-                  end
-                end
-              end
-
-              object = o
-              break
-            end
-          else
-            object = to_include.first
-            to_include.delete(object)
-          end
-
-          break unless object
-          next if included.include?(object)
-
-          manifest_reference = object.foobara_manifest_reference.to_sym
-
-          category_symbol = command_registry.foobara_category_symbol_for(object)
-
-          unless category_symbol
-            # :nocov:
-            raise "no category symbol for #{object}"
-            # :nocov:
-          end
-
-          namespace = if object.is_a?(Types::Type)
-                        object.created_in_namespace
-                      else
-                        Foobara::Namespace.current
-                      end
-
-          # TODO: do we really need to enter the namespace here for this?
-          h[category_symbol][manifest_reference] = Foobara::Namespace.use namespace do
-            object.foobara_manifest
-          end
-
-          included << object
-        end
-      end
-
-      h[:domain].each_value do |domain_manifest|
-        # TODO: hack, we need to trim types down to what is actually included in this manifest
-        domain_manifest[:types] = domain_manifest[:types].select do |type_name|
-          h[:type].key?(type_name.to_sym)
-        end
-      end
-
-      h = normalize_manifest(h)
-      patch_up_broken_parents_for_errors_with_missing_command_parents(h)
-    end
-
-    def normalize_manifest(manifest_hash)
-      manifest_hash.map do |key, entries|
-        [key, entries.sort.to_h]
-      end.sort.to_h
-    end
-
-    def patch_up_broken_parents_for_errors_with_missing_command_parents(manifest_hash)
-      root_manifest = Manifest::RootManifest.new(manifest_hash)
-
-      error_category = {}
-
-      root_manifest.errors.each do |error|
-        error_manifest = if error.parent_category == :command &&
-                            !root_manifest.contains?(error.parent_name, error.parent_category)
-                           domain = error.domain
-                           index = domain.scoped_full_path.size
-
-                           fixed_scoped_path = error.scoped_full_path[index..]
-                           fixed_scoped_name = fixed_scoped_path.join("::")
-                           fixed_scoped_prefix = fixed_scoped_path[..-2]
-                           fixed_parent = [:domain, domain.reference]
-
-                           error.relevant_manifest.merge(
-                             parent: fixed_parent,
-                             scoped_path: fixed_scoped_path,
-                             scoped_name: fixed_scoped_name,
-                             scoped_prefix: fixed_scoped_prefix
-                           )
-                         else
-                           error.relevant_manifest
-                         end
-
-        error_category[error.scoped_full_name.to_sym] = error_manifest
-      end
-
-      manifest_hash.merge(error: error_category)
-    end
-
-    def all_exposed_commands
-      process_delayed_connections
-
-      command_registry.foobara_all_command(mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE)
-    end
-
-    def all_exposed_command_names
-      all_exposed_commands.map(&:full_command_name)
-    end
-
-    def all_exposed_type_names
-      # TODO: cache this or better yet cache #foobara_manifest
-      foobara_manifest[:type].keys.sort.map(&:to_s)
-    end
-
-    def command_connected?(original_command_class)
-      all_exposed_commands.any? do |command|
-        command.command_class == original_command_class
-      end
     end
   end
 end

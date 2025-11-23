@@ -5,10 +5,6 @@ module Foobara
 
   module BuiltinTypes
     class << self
-      def global_type_declaration_handler_registry
-        TypeDeclarations.global_type_declaration_handler_registry
-      end
-
       # TODO: break this up
       # TODO: much of this behavior is helpful to non-builtin types as well.
       def build_and_register!(
@@ -156,6 +152,12 @@ module Foobara
         end
 
         type
+      end
+
+      private
+
+      def global_type_declaration_handler_registry
+        TypeDeclarations.global_type_declaration_handler_registry
       end
 
       def install_type_declaration_extensions_for(processor_class)

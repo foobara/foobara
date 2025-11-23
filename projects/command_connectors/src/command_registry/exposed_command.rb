@@ -126,10 +126,6 @@ module Foobara
         @transformed_command_class = nil
       end
 
-      def _has_delegated_attributes?(type)
-        type&.extends?(BuiltinTypes[:model]) && type.target_class&.has_delegated_attributes?
-      end
-
       def full_command_name
         scoped_full_name
       end
@@ -191,6 +187,8 @@ module Foobara
                                        end
       end
 
+      private
+
       # TODO: what to do if the whole return type is sensitive? return nil?
       def result_has_sensitive_types?
         result_type = command_class.result_type
@@ -205,6 +203,10 @@ module Foobara
         else
           command_class.result_type.has_sensitive_types?
         end
+      end
+
+      def _has_delegated_attributes?(type)
+        type&.extends?(BuiltinTypes[:model]) && type.target_class&.has_delegated_attributes?
       end
     end
   end

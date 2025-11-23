@@ -13,6 +13,8 @@ module Foobara
                          end
           end
 
+          private
+
           def validate_original_block!
             super
 

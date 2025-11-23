@@ -35,9 +35,7 @@ module Foobara
               return Outcome.error(
                 build_error(
                   attributes_hash,
-                  message: "Unexpected attributes #{
-                  unexpected_attributes
-                }. Expected only #{allowed_attributes}",
+                  message: "Unexpected attributes #{unexpected_attributes}. Expected only #{allowed_attributes}",
                   context: {
                     unexpected_attributes:,
                     allowed_attributes:

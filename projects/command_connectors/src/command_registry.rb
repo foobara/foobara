@@ -32,43 +32,9 @@ module Foobara
       create_exposed_command(command_class, **)
     end
 
-    def create_exposed_command(command_class, **)
-      full_domain_name = command_class.domain.scoped_full_name
-      exposed_domain = foobara_lookup_domain(full_domain_name,
-                                             mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE) ||
-                       build_and_register_exposed_domain(full_domain_name)
-
-      exposed_command = create_exposed_command_without_domain(command_class, **)
-
-      exposed_domain.foobara_register(exposed_command)
-
-      exposed_command
-    end
-
     # TODO: eliminate this method
     def create_exposed_command_without_domain(command_class, **)
       ExposedCommand.new(command_class, **apply_defaults(**))
-    end
-
-    def apply_defaults(
-      inputs_transformers: nil,
-      result_transformers: nil,
-      errors_transformers: nil,
-      pre_commit_transformers: nil,
-      serializers: nil,
-      allowed_rule: default_allowed_rule,
-      authenticator: nil,
-      **opts
-    )
-      opts.merge(
-        inputs_transformers: [*inputs_transformers, *default_inputs_transformers],
-        result_transformers: [*result_transformers, *default_result_transformers],
-        errors_transformers: [*errors_transformers, *default_errors_transformers],
-        pre_commit_transformers: [*pre_commit_transformers, *default_pre_commit_transformers],
-        serializers: [*serializers, *default_serializers],
-        allowed_rule: allowed_rule && to_allowed_rule(allowed_rule),
-        authenticator: authenticator || self.authenticator
-      )
     end
 
     def build_and_register_exposed_domain(domain_full_name)
@@ -211,6 +177,37 @@ module Foobara
       default_serializers << serializer
     end
 
+    def transformed_command_from_name(name)
+      foobara_lookup_command(name, mode: Namespace::LookupMode::RELAXED)&.transformed_command_class
+    end
+
+    def all_transformed_command_classes
+      foobara_all_command.map(&:transformed_command_class)
+    end
+
+    def each_transformed_command_class(&)
+      foobara_all_command.map(&:transformed_command_class).each(&)
+    end
+
+    def size
+      foobara_all_command.size
+    end
+
+    private
+
+    def create_exposed_command(command_class, **)
+      full_domain_name = command_class.domain.scoped_full_name
+      exposed_domain = foobara_lookup_domain(full_domain_name,
+                                             mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE) ||
+                       build_and_register_exposed_domain(full_domain_name)
+
+      exposed_command = create_exposed_command_without_domain(command_class, **)
+
+      exposed_domain.foobara_register(exposed_command)
+
+      exposed_command
+    end
+
     def to_allowed_rule(*args)
       symbol, object = case args.size
                        when 1
@@ -289,20 +286,25 @@ module Foobara
       end
     end
 
-    def transformed_command_from_name(name)
-      foobara_lookup_command(name, mode: Namespace::LookupMode::RELAXED)&.transformed_command_class
-    end
-
-    def all_transformed_command_classes
-      foobara_all_command.map(&:transformed_command_class)
-    end
-
-    def each_transformed_command_class(&)
-      foobara_all_command.map(&:transformed_command_class).each(&)
-    end
-
-    def size
-      foobara_all_command.size
+    def apply_defaults(
+      inputs_transformers: nil,
+      result_transformers: nil,
+      errors_transformers: nil,
+      pre_commit_transformers: nil,
+      serializers: nil,
+      allowed_rule: default_allowed_rule,
+      authenticator: nil,
+      **opts
+    )
+      opts.merge(
+        inputs_transformers: [*inputs_transformers, *default_inputs_transformers],
+        result_transformers: [*result_transformers, *default_result_transformers],
+        errors_transformers: [*errors_transformers, *default_errors_transformers],
+        pre_commit_transformers: [*pre_commit_transformers, *default_pre_commit_transformers],
+        serializers: [*serializers, *default_serializers],
+        allowed_rule: allowed_rule && to_allowed_rule(allowed_rule),
+        authenticator: authenticator || self.authenticator
+      )
     end
   end
 end

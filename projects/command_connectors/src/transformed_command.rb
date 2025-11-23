@@ -425,52 +425,6 @@ module Foobara
         manifest
       end
 
-      def processors_to_manifest_symbols(processors)
-        return nil if processors.nil? || processors.empty?
-
-        to_include = TypeDeclarations.foobara_manifest_context_to_include || Set.new
-        include_processors = TypeDeclarations.include_processors?
-
-        processors.map do |processor|
-          if processor.respond_to?(:scoped_path_set?) && processor.scoped_path_set?
-            if include_processors
-              to_include << processor
-            end
-            processor.foobara_manifest_reference
-          elsif processor.is_a?(Value::Processor)
-            klass = processor.class
-
-            if klass.scoped_path_set?
-              if include_processors
-                to_include << klass
-              end
-              klass.foobara_manifest_reference
-              # TODO: Delete this nocov block
-              # TODO: make anonymous scoped path's have better names instead of random hexadecimal
-              # :nocov:
-            elsif processor.respond_to?(:symbol) && processor.symbol
-              processor.symbol
-            else
-              name = klass.name
-
-              while name.nil?
-                klass = klass.superclass
-                name = klass.name
-              end
-
-              "Anonymous#{Util.non_full_name(name)}"
-              # :nocov:
-            end
-          elsif processor.is_a?(::Proc)
-            "Proc"
-          else
-            # :nocov:
-            "Unknown"
-            # :nocov:
-          end
-        end
-      end
-
       def inputs_transformer
         return @inputs_transformer if defined?(@inputs_transformer)
 
@@ -581,6 +535,54 @@ module Foobara
           end
         end
       end
+
+      private
+
+      def processors_to_manifest_symbols(processors)
+        return nil if processors.nil? || processors.empty?
+
+        to_include = TypeDeclarations.foobara_manifest_context_to_include || Set.new
+        include_processors = TypeDeclarations.include_processors?
+
+        processors.map do |processor|
+          if processor.respond_to?(:scoped_path_set?) && processor.scoped_path_set?
+            if include_processors
+              to_include << processor
+            end
+            processor.foobara_manifest_reference
+          elsif processor.is_a?(Value::Processor)
+            klass = processor.class
+
+            if klass.scoped_path_set?
+              if include_processors
+                to_include << klass
+              end
+              klass.foobara_manifest_reference
+              # TODO: Delete this nocov block
+              # TODO: make anonymous scoped path's have better names instead of random hexadecimal
+              # :nocov:
+            elsif processor.respond_to?(:symbol) && processor.symbol
+              processor.symbol
+            else
+              name = klass.name
+
+              while name.nil?
+                klass = klass.superclass
+                name = klass.name
+              end
+
+              "Anonymous#{Util.non_full_name(name)}"
+              # :nocov:
+            end
+          elsif processor.is_a?(::Proc)
+            "Proc"
+          else
+            # :nocov:
+            "Unknown"
+            # :nocov:
+          end
+        end
+      end
     end
 
     attr_accessor :command, :untransformed_inputs, :transformed_inputs, :outcome, :request
@@ -624,23 +626,6 @@ module Foobara
 
     def authenticated_credential
       request.authenticated_credential
-    end
-
-    def transform_inputs
-      transformer = self.class.inputs_transformer
-
-      self.transformed_inputs = if transformer&.applicable?(untransformed_inputs)
-                                  outcome = transformer.process_value(untransformed_inputs)
-
-                                  if outcome.success?
-                                    outcome.result
-                                  else
-                                    self.outcome = outcome
-                                    untransformed_inputs
-                                  end
-                                else
-                                  untransformed_inputs
-                                end
     end
 
     def inputs
@@ -727,6 +712,60 @@ module Foobara
       end
     end
 
+    def result
+      outcome.result
+    end
+
+    def errors
+      outcome.errors
+    end
+
+    # TODO: kill this
+    def serialize_result(body)
+      if serializer
+        serializer.process_value!(body)
+      else
+        body
+      end
+    end
+
+    def raw_inputs
+      untransformed_inputs
+    end
+
+    def method_missing(method_name, ...)
+      if command.respond_to?(method_name)
+        command.send(method_name, ...)
+      else
+        # :nocov:
+        super
+        # :nocov:
+      end
+    end
+
+    def respond_to_missing?(method_name, private = false)
+      command.respond_to?(method_name, private) || super
+    end
+
+    private
+
+    def transform_inputs
+      transformer = self.class.inputs_transformer
+
+      self.transformed_inputs = if transformer&.applicable?(untransformed_inputs)
+                                  outcome = transformer.process_value(untransformed_inputs)
+
+                                  if outcome.success?
+                                    outcome.result
+                                  else
+                                    self.outcome = outcome
+                                    untransformed_inputs
+                                  end
+                                else
+                                  untransformed_inputs
+                                end
+    end
+
     def construct_command
       self.command = command_class.new(transformed_inputs)
     end
@@ -804,18 +843,6 @@ module Foobara
       end
     end
 
-    def result
-      outcome.result
-    end
-
-    def errors
-      outcome.errors
-    end
-
-    def flush_transactions
-      request.opened_transactions&.reverse&.each(&:flush!)
-    end
-
     def transform_outcome
       if outcome.success?
         # can we do this while still in the transaction of the command???
@@ -825,31 +852,8 @@ module Foobara
       end
     end
 
-    # TODO: kill this
-    def serialize_result(body)
-      if serializer
-        serializer.process_value!(body)
-      else
-        body
-      end
-    end
-
-    def raw_inputs
-      untransformed_inputs
-    end
-
-    def method_missing(method_name, ...)
-      if command.respond_to?(method_name)
-        command.send(method_name, ...)
-      else
-        # :nocov:
-        super
-        # :nocov:
-      end
-    end
-
-    def respond_to_missing?(method_name, private = false)
-      command.respond_to?(method_name, private) || super
+    def flush_transactions
+      request.opened_transactions&.reverse&.each(&:flush!)
     end
   end
 end
