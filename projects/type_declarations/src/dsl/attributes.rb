@@ -45,6 +45,8 @@ module Foobara
 
         attr_accessor :_method_missing_disabled
 
+        # Underscores are used in this class to free up more potential attribute names
+        # by assuming they generally won't start with _ in real use.
         def _to_declaration(&)
           instance_exec(&)
           _type_declaration

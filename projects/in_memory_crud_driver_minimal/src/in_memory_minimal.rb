@@ -12,10 +12,6 @@ module Foobara
             super
           end
 
-          def get_id
-            @last_id += 1
-          end
-
           # CRUD
           # TODO: all multiple record methods should return enumerators and code further up should only use
           # the lazy enumerator interface... to encourage that/catch bugs we will return lazy enumerators in these
@@ -75,6 +71,12 @@ module Foobara
 
           def hard_delete_all
             self.records = {}
+          end
+
+          private
+
+          def get_id
+            @last_id += 1
           end
         end
       end

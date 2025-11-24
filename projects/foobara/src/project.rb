@@ -21,7 +21,9 @@ module Foobara
 
     def load
       require require_path
+
       src_dir = "#{project_path}/src"
+
       if Dir.exist?(src_dir)
         Util.require_directory(src_dir)
       end
@@ -35,6 +37,7 @@ module Foobara
 
     def reset_all
       Foobara.raise_if_production!("reset_all")
+
       if self.module.respond_to?(:reset_all)
         self.module.reset_all
       end

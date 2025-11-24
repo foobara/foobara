@@ -2,6 +2,8 @@ module Foobara
   module TypeDeclarations
     module LazyElementTypes
       module Array
+        # TODO: change this to class << self?
+
         module_function
 
         def resolve(type)

@@ -6,6 +6,7 @@ module Foobara
     Namespace.global.foobara_register(self)
 
     foobara_organization!
+
     self.foobara_manifest_reference = self.foobara_organization_name = "global_organization"
   end
 end

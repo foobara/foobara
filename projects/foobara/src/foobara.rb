@@ -4,6 +4,7 @@ module Foobara
   class MethodCantBeCalledInProductionError < StandardError; end
 
   class << self
+    # TODO: let's eliminate this method
     def require_project_file(project, path)
       # :nocov:
       warn "DEPRECATION WARNING: require_project_file is deprecated. Use require_relative instead."

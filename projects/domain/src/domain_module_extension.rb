@@ -478,6 +478,8 @@ module Foobara
           manifest
         end
 
+        private
+
         def _set_type_constant(type)
           domain = if scoped_full_path.empty?
                      GlobalDomain

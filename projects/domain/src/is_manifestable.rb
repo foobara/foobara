@@ -8,6 +8,7 @@ module Foobara
       ].each do |variable|
         remove_instance_variable(variable) if instance_variable_defined?(variable)
       end
+
       super
     end
 

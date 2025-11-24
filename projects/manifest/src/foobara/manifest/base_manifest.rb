@@ -25,6 +25,7 @@ module Foobara
             values.each do |value|
               value = value.to_sym
               optional_keys << value
+
               if default
                 optional_key_defaults[value] = default
               end

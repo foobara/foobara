@@ -135,41 +135,6 @@ module Foobara
         end
       end
 
-      def apply_all_processors_needing_type!
-        each_processor_class_requiring_type do |processor_class|
-          # TODO: is this a smell?
-          processor = processor_class.new(self)
-
-          category = case processor
-                     when Value::Caster
-                       casters
-                     when Value::Validator
-                       # :nocov:
-                       validators
-                       # :nocov:
-                     when Value::Transformer
-                       # :nocov:
-                       transformers
-                       # :nocov:
-                     when Types::ElementProcessor
-                       # :nocov:
-                       element_processors
-                       # :nocov:
-                     else
-                       # TODO: add validator that these are all fine so we don't have to bother here...
-                       # :nocov:
-                       raise "Not sure where to put #{processor}"
-                       # :nocov:
-                     end
-
-          symbol = processor.symbol
-          category.delete_if { |p| p.symbol == symbol }
-
-          category << processor
-          clear_caches
-        end
-      end
-
       def clear_caches
         [
           :@value_validator,
@@ -216,34 +181,6 @@ module Foobara
         processor_classes_requiring_type&.each do |processor_class|
           block.call(processor_class)
         end
-      end
-
-      def validate_processors!
-        all = [casters, transformers, validators, element_processors]
-
-        all.each do |processor_group|
-          processor_group.each.with_index do |processor, index|
-            if processor.requires_parent_declaration_data?
-              processor_group[index] = processor.dup_processor(parent_declaration_data: declaration_data)
-            end
-          end
-
-          processor_group.group_by(&:symbol).each_pair do |symbol, members|
-            if members.size > 1
-              if members.map { |m| m.class.name }.uniq.size == members.size
-                members[1..].each do |member|
-                  processor_group.delete(member)
-                end
-              else
-                # :nocov:
-                raise "Type #{name} has multiple processors with symbol #{symbol}"
-                # :nocov:
-              end
-            end
-          end
-        end
-
-        clear_caches
       end
 
       def target_class
@@ -573,6 +510,75 @@ module Foobara
         base_type
       end
 
+      def registered?
+        !!type_symbol
+      end
+
+      private
+
+      def apply_all_processors_needing_type!
+        each_processor_class_requiring_type do |processor_class|
+          # TODO: is this a smell?
+          processor = processor_class.new(self)
+
+          category = case processor
+                     when Value::Caster
+                       casters
+                     when Value::Validator
+                       # :nocov:
+                       validators
+                       # :nocov:
+                     when Value::Transformer
+                       # :nocov:
+                       transformers
+                       # :nocov:
+                     when Types::ElementProcessor
+                       # :nocov:
+                       element_processors
+                       # :nocov:
+                     else
+                       # TODO: add validator that these are all fine so we don't have to bother here...
+                       # :nocov:
+                       raise "Not sure where to put #{processor}"
+                       # :nocov:
+                     end
+
+          symbol = processor.symbol
+          category.delete_if { |p| p.symbol == symbol }
+
+          category << processor
+          clear_caches
+        end
+      end
+
+      def validate_processors!
+        all = [casters, transformers, validators, element_processors]
+
+        all.each do |processor_group|
+          processor_group.each.with_index do |processor, index|
+            if processor.requires_parent_declaration_data?
+              processor_group[index] = processor.dup_processor(parent_declaration_data: declaration_data)
+            end
+          end
+
+          processor_group.group_by(&:symbol).each_pair do |symbol, members|
+            if members.size > 1
+              if members.map { |m| m.class.name }.uniq.size == members.size
+                members[1..].each do |member|
+                  processor_group.delete(member)
+                end
+              else
+                # :nocov:
+                raise "Type #{name} has multiple processors with symbol #{symbol}"
+                # :nocov:
+              end
+            end
+          end
+        end
+
+        clear_caches
+      end
+
       def supported_processor_manifest
         to_include = TypeDeclarations.foobara_manifest_context_to_include
 
@@ -670,10 +676,6 @@ module Foobara
           validators: validators_manifest.sort,
           validator_classes: validator_classes_manifest.sort
         )
-      end
-
-      def registered?
-        !!type_symbol
       end
     end
   end

@@ -20,6 +20,8 @@ module Foobara
       end
 
       # oops, shadowed the convenience method
+      # TODO: come up with a name other than _path since this isn't private.
+      # ideally we could just call this path and rename the convenience method.
       def _path
         method_missing(:path)
       end

@@ -17,11 +17,7 @@ module Foobara
             if skip_dependent_transactions
               entity_base.transaction(mode, &)
             else
-              Foobara::Persistence.transaction(
-                self, *deep_depends_on,
-                mode:,
-                &
-              )
+              Foobara::Persistence.transaction(self, *deep_depends_on, mode:, &)
             end
           end
         end

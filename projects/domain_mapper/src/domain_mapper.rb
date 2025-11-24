@@ -52,6 +52,8 @@ module Foobara
         [*match_score(from_type, from_value), *match_score(to_type, to_value)].sum
       end
 
+      private
+
       def match_score(type_indicator, value)
         return 1 if type_indicator.nil? || value.nil?
         return 20 if type_indicator == value
