@@ -156,7 +156,7 @@ module Foobara
           error_category = {}
 
           root_manifest.errors.each do |error|
-            error_manifest = if error.parent_category == :command &&
+            error_manifest = if (error.parent_category == :command || error.parent_category == :organization) &&
                                 !root_manifest.contains?(error.parent_name, error.parent_category)
                                domain = error.domain
                                index = domain.scoped_full_path.size

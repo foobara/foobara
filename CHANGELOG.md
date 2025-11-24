@@ -1,3 +1,8 @@
+# [0.3.0] - 2025-11-23
+
+- Fix bug caused by exposing errors with organizations as parents
+- Restructure code in some projects and make many more methods private
+
 # [0.2.7] - 2025-11-10
 
 - Fix CommandConnector authorization bug that can fail to close transactions
