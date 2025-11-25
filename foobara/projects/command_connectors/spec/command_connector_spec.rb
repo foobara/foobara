@@ -2009,9 +2009,9 @@ RSpec.describe Foobara::CommandConnector do
     end
 
     describe "#patch_up_broken_parents_for_errors_with_missing_command_parents" do
-      let(:fixture_path) do
-        "#{__dir__}/../fixtures/command_connectors/manifest_with_errors_with_missing_command_parents.yaml"
-      end
+      let(:fixture_path) {
+        "#{__dir__}/fixtures/command_connectors/manifest_with_errors_with_missing_command_parents.yaml"
+      }
       let(:manifest_hash) do
         YAML.load_file(fixture_path, aliases: true)
       end
