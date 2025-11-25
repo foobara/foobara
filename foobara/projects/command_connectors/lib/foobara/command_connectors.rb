@@ -32,5 +32,5 @@ module Foobara
     end
   end
 
-  project "command_connectors"
+  project "command_connectors", project_path: "#{__dir__}/../../"
 end

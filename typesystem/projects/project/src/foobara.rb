@@ -18,9 +18,9 @@ module Foobara
       @all_projects ||= {}
     end
 
-    def projects(*symbols)
+    def projects(*symbols, project_path: nil)
       symbols.each do |symbol|
-        project(symbol)
+        project(symbol, project_path: "#{project_path}/projects/#{symbol}")
       end
     end
 

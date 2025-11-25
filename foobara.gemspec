@@ -26,7 +26,11 @@ Gem::Specification.new do |spec|
     ".ruby-version"
   ]
 
-  spec.require_paths = Dir.glob("./projects/*/lib", base: __dir__)
+  spec.require_paths = [
+    *Dir.glob("./entities/projects/*/lib", base: __dir__),
+    *Dir.glob("./foobara/projects/*/lib", base: __dir__),
+    *Dir.glob("./typesystem/projects/*/lib", base: __dir__)
+  ]
 
   spec.add_dependency "bigdecimal"
   spec.add_dependency "foobara-lru-cache", "< 2.0.0"
