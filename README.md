@@ -2141,8 +2141,16 @@ Foobara is split up into many, many projects
 
 Many are in separate repositories which you can see at: https://github.com/orgs/foobara/repositories
 
-This repository, however, is a monorepo. Sometimes projects are extracted from here
-into their own repositories. Each project in this repository has its own directory in the projects/ directory.
+This repository, however, is a monorepo which in turn contains two submonorepos! You can
+see the projects in this repository in projects/ and `projects/typesystem` and `projects/entities`
+are their own submonorepos with their own `projects/` directories.
+
+These two submonorepos are in the process of being decoupled for removal into their own
+repositories/gems so that Foobara can require `typesystem` but not the less stable `entities`
+in preparation for a 1.0 release.
+
+Sometimes projects are extracted from this repository
+into their own repositories.
 
 # Licensing
 

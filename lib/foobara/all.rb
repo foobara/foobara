@@ -12,7 +12,7 @@ module Foobara
     # TODO: delete this and make Rubocop exception in .rubocop.yml
   end
 
-  project_path = "#{__dir__}/../../../../projects/typesystem"
+  project_path = "#{__dir__}/../../projects/typesystem"
 
   # could be independent projects
   # but these are stored in typesystem for now
@@ -38,7 +38,7 @@ module Foobara
            "builtin_types",
            project_path:)
 
-  project_path = "#{__dir__}/../../../../projects/entities"
+  project_path = "#{__dir__}/../../projects/entities"
 
   # The goal is to make these parts optional and extract them to allow
   # one to use foobara as a lighter-weight service object layer if desired
@@ -55,7 +55,7 @@ module Foobara
            "in_memory_crud_driver",
            project_path:)
 
-  project_path = "#{__dir__}/../../../.."
+  project_path = "#{__dir__}/../.."
 
   # Not represented here is command_connectors which is lazily-loaded to make scripts faster
   projects("command",
