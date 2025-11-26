@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+IFS=$'\n\t'
+
+echo
+echo "Going to bundle and run the test suite. If anything fails please let us know!"
+echo
+
+bundle install
+bundle exec rake
+
+echo
+echo "You're all set up and ready to hack on Foobara! yay!"
+echo
