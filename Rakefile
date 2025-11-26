@@ -65,7 +65,9 @@ spec_tasks = [
 depends_on_spec_tasks = ["spec:coverage"]
 non_spec_tasks = [:rubocop]
 
-task default: [*spec_tasks, *depends_on_spec_tasks, *non_spec_tasks]
+task default: "suite:all:parallel"
+
+task "suite:all:serial" => [*spec_tasks, *depends_on_spec_tasks, *non_spec_tasks]
 
 task "suite:all:parallel" do
   require "pty"
