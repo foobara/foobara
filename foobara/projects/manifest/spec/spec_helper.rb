@@ -10,8 +10,9 @@ end
 require "rspec/its"
 require "simplecov"
 
-SimpleCov.command_name "root"
-SimpleCov.coverage_dir "coverage/root"
+SimpleCov.root "#{__dir__}/../../../../"
+SimpleCov.command_name "manifest"
+SimpleCov.coverage_dir "coverage/manifest"
 
 SimpleCov.start do
   add_filter "spec/support/"
@@ -20,7 +21,6 @@ SimpleCov.start do
 end
 
 require "foobara/all"
-require "foobara/command_connectors"
 
 RSpec.configure do |config|
   # Need to do :all instead of :each because for specs that use .around,

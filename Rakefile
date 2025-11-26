@@ -28,6 +28,14 @@ task "spec:command_connectors" do
   end
 end
 
+desc "Run manifest specs"
+task "spec:manifest" do
+  puts "Running manifest specs"
+  Dir.chdir "#{__dir__}/foobara/projects/manifest" do
+    sh "bundle exec rspec"
+  end
+end
+
 desc "Run root specs"
 task "spec:root" do
   puts "Running root specs"
@@ -36,4 +44,10 @@ task "spec:root" do
   end
 end
 
-task default: ["spec:root", "spec:command_connectors", :spec, "spec:coverage", :rubocop]
+task default: [
+  "spec:root",
+  "spec:command_connectors",
+  "spec:manifest",
+  "spec:coverage",
+  :rubocop
+]
