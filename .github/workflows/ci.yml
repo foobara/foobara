@@ -8,7 +8,7 @@ on:
   pull_request:
 
 jobs:
-  rspec:
+  build:
     runs-on: ubuntu-latest
     name: RSpec
     timeout-minutes: 3
@@ -24,29 +24,5 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - name: Run root specs
-        run: bundle exec rake spec:root
-      - name: Run command_connectors specs
-        run: bundle exec rake spec:command_connectors
-      - name: Run manifest specs
-        run: bundle exec rake spec:manifest
-      - name: Verify 100% coverage
-        run: bundle exec rake spec:coverage
-  rubocop:
-    runs-on: ubuntu-latest
-    name: Rubocop
-    timeout-minutes: 3
-    env:
-      BUNDLE_ONLY: ci
-    steps:
-      - uses: actions/checkout@v3
-      - name: set ruby version
-        run: |
-          echo ruby_version=`cat .ruby-version` >> "$GITHUB_ENV"
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
-      - name: Run rubocop
-        run: bundle exec rubocop
+      - name: Run parallelized build
+        run: bundle exec rake suite:all:parallel
