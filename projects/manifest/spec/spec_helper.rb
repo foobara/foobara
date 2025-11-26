@@ -10,7 +10,7 @@ end
 require "rspec/its"
 require "simplecov"
 
-SimpleCov.root "#{__dir__}/../../../../"
+SimpleCov.root "#{__dir__}/../../../"
 SimpleCov.command_name "manifest"
 SimpleCov.coverage_dir "coverage/manifest"
 

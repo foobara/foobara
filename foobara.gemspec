@@ -27,9 +27,13 @@ Gem::Specification.new do |spec|
   ]
 
   spec.require_paths = [
+    *Dir.glob("projects/typesystem/projects/*/lib", base: __dir__),
     *Dir.glob("projects/entities/projects/*/lib", base: __dir__),
-    *Dir.glob("foobara/projects/*/lib", base: __dir__),
-    *Dir.glob("projects/typesystem/projects/*/lib", base: __dir__)
+    *Dir.glob("projects/command/lib", base: __dir__),
+    *Dir.glob("projects/domain_mapper/lib", base: __dir__),
+    *Dir.glob("projects/command_connectors/lib", base: __dir__),
+    *Dir.glob("projects/manifest/lib", base: __dir__),
+    *Dir.glob("projects/foobara/lib", base: __dir__)
   ]
 
   spec.add_dependency "bigdecimal"

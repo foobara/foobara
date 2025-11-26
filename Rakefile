@@ -23,7 +23,7 @@ end
 desc "Run command_connectors specs"
 task "spec:command_connectors" do
   puts "Running command_connectors specs"
-  Dir.chdir "#{__dir__}/foobara/projects/command_connectors" do
+  Dir.chdir "#{__dir__}/projects/command_connectors" do
     sh "bundle exec rspec"
   end
 end
@@ -31,7 +31,7 @@ end
 desc "Run manifest specs"
 task "spec:manifest" do
   puts "Running manifest specs"
-  Dir.chdir "#{__dir__}/foobara/projects/manifest" do
+  Dir.chdir "#{__dir__}/projects/manifest" do
     sh "bundle exec rspec"
   end
 end
