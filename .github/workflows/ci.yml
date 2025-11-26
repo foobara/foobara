@@ -24,8 +24,12 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-      - name: Run rspec
+      - name: Run root specs
         run: bundle exec rspec
+      - name: Run command_connectors specs
+        run: cd foobara/projects/command_connectors && bundle exec rspec
+      - name: Verify 100% coverage
+        run: bundle exec rake spec:coverage
   rubocop:
     runs-on: ubuntu-latest
     name: Rubocop
