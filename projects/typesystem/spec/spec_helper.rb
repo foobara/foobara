@@ -22,11 +22,10 @@ end
 
 project_path = "#{__dir__}/.."
 
-require "foobara/project"
+require "foobara/delegate"
 
 # TODO: seems like projects should register themselves as projects via their lib/foobara/whatever file
-Foobara.projects("delegate",
-                 "concerns",
+Foobara.projects("concerns",
                  "enumerated",
                  "callback",
                  "state_machine",

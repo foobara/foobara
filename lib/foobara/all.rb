@@ -1,4 +1,4 @@
-require "foobara/project"
+require "foobara/delegate"
 # TODO: Weird to have both of these requiring each other...
 require "foobara"
 
@@ -15,8 +15,7 @@ module Foobara
 
   # could be independent projects
   # but these are stored in typesystem for now
-  projects("delegate", # Let's just kill delegate
-           "concerns",
+  projects("concerns",
            "enumerated",
            "callback",
            "state_machine",
