@@ -44,6 +44,18 @@ task "spec:manifest" do
   end
 end
 
+desc "Run typesystem specs"
+task "spec:typesystem" do
+  require "English"
+
+  puts "Running typesystem specs"
+  Dir.chdir "#{__dir__}/projects/typesystem" do
+    unless system "bundle exec rspec"
+      exit $CHILD_STATUS.exitstatus
+    end
+  end
+end
+
 desc "Run root specs"
 task "spec:root" do
   require "English"
@@ -58,6 +70,7 @@ end
 
 spec_tasks = [
   "spec:manifest",
+  "spec:typesystem",
   "spec:command_connectors",
   "spec:root"
 ]
