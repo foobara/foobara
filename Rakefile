@@ -20,60 +20,30 @@ task "spec:coverage" do
   end
 end
 
-desc "Run command_connectors specs"
-task "spec:command_connectors" do
-  require "English"
-
-  puts "Running command_connectors specs"
-  Dir.chdir "#{__dir__}/projects/command_connectors" do
-    unless system "bundle exec rspec"
-      exit $CHILD_STATUS.exitstatus
-    end
-  end
-end
-
-desc "Run manifest specs"
-task "spec:manifest" do
-  require "English"
-
-  puts "Running manifest specs"
-  Dir.chdir "#{__dir__}/projects/manifest" do
-    unless system "bundle exec rspec"
-      exit $CHILD_STATUS.exitstatus
-    end
-  end
-end
-
-desc "Run typesystem specs"
-task "spec:typesystem" do
-  require "English"
-
-  puts "Running typesystem specs"
-  Dir.chdir "#{__dir__}/projects/typesystem" do
-    unless system "bundle exec rspec"
-      exit $CHILD_STATUS.exitstatus
-    end
-  end
-end
-
-desc "Run root specs"
-task "spec:root" do
-  require "English"
-
-  puts "Running root specs"
-  Dir.chdir __dir__ do
-    unless system "bundle exec rspec"
-      exit $CHILD_STATUS.exitstatus
-    end
-  end
-end
-
-spec_tasks = [
-  "spec:manifest",
-  "spec:typesystem",
-  "spec:command_connectors",
-  "spec:root"
+spec_names = [
+  "typesystem",
+  "manifest",
+  "command_connectors",
+  "root"
 ]
+
+spec_names.each do |spec_name|
+  dir = spec_name == "root" ? __dir__ : "#{__dir__}/projects/#{spec_name}"
+
+  desc "Run #{spec_name} specs"
+  task "spec:#{spec_name}" do
+    require "English"
+
+    puts "Running #{spec_name} specs"
+    Dir.chdir dir do
+      unless system "bundle exec rspec"
+        exit $CHILD_STATUS.exitstatus
+      end
+    end
+  end
+end
+
+spec_tasks = spec_names.map { |spec_name| "spec:#{spec_name}" }
 
 depends_on_spec_tasks = ["spec:coverage"]
 non_spec_tasks = [:rubocop]
