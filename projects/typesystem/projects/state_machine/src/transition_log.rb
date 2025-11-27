@@ -1,3 +1,5 @@
+require "foobara/concerns"
+
 module Foobara
   class StateMachine
     module TransitionLog

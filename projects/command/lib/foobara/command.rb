@@ -10,3 +10,5 @@ module Foobara
     end
   end
 end
+
+Foobara.project("command", project_path: "#{__dir__}/../..")

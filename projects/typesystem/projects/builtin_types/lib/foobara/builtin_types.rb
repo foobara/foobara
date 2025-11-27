@@ -1,3 +1,5 @@
+require "foobara/type_declarations"
+
 require "date"
 require "time"
 require "bigdecimal"
@@ -82,3 +84,5 @@ module Foobara
     end
   end
 end
+
+Foobara.project("builtin_types", project_path: "#{__dir__}/../..")

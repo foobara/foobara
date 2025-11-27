@@ -1,3 +1,5 @@
+require "foobara/value"
+
 module Foobara
   module Types
     class Type < Value::Processor::Pipeline

@@ -20,23 +20,9 @@ SimpleCov.start do
   formatter Class.new { def format(_result) = nil }
 end
 
-project_path = "#{__dir__}/.."
-
+# TODO: we should be able to remove these once all projects are separated
 require "foobara/delegate"
-
-# TODO: seems like projects should register themselves as projects via their lib/foobara/whatever file
-Foobara.projects("concerns",
-                 "enumerated",
-                 "callback",
-                 "state_machine",
-                 "namespace",
-                 "domain",
-                 "common",
-                 "value",
-                 "types",
-                 "type_declarations",
-                 "builtin_types",
-                 project_path:)
+require "foobara/state_machine"
 
 RSpec.configure do |config|
   config.filter_run_when_matching :focus

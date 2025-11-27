@@ -1,3 +1,5 @@
+require "foobara/model"
+
 module Foobara
   class DetachedEntity < Model
     abstract
@@ -24,3 +26,5 @@ module Foobara
     end
   end
 end
+
+Foobara.project("detached_entity", project_path: "#{__dir__}/../..")

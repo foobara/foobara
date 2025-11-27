@@ -1,3 +1,5 @@
+require "foobara/value"
+
 require_relative "with_registries"
 
 module Foobara

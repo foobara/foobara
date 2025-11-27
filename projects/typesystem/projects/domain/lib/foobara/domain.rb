@@ -17,3 +17,5 @@ module Foobara
     end
   end
 end
+
+Foobara.project("domain", project_path: "#{__dir__}/../..")

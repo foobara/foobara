@@ -14,3 +14,5 @@ module Foobara
     end
   end
 end
+
+Foobara.project("model_attribute_helpers", project_path: "#{__dir__}/../..")

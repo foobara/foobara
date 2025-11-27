@@ -1,3 +1,5 @@
+require "foobara/concerns"
+
 module Foobara
   module Enumerated
     module Accessors

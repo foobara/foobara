@@ -1,3 +1,5 @@
+require "foobara/enumerated"
+
 module Foobara
   class StateMachine
     module Sugar

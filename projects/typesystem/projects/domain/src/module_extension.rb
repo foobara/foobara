@@ -1,3 +1,5 @@
+require "foobara/namespace"
+
 require_relative "organization_module_extension"
 require_relative "domain_module_extension"
 

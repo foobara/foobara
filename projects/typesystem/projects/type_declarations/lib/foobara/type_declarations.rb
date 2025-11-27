@@ -1,3 +1,5 @@
+require "foobara/types"
+
 module Foobara
   module TypeDeclarations
     class << self
@@ -136,3 +138,5 @@ module Foobara
     end
   end
 end
+
+Foobara.project("type_declarations", project_path: "#{__dir__}/../..")

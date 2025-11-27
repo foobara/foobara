@@ -1,3 +1,5 @@
+require "foobara/weak_object_set"
+
 module Foobara
   module Persistence
     class EntityBase

@@ -1,3 +1,5 @@
+require "foobara/state_machine"
+
 module Foobara
   module Persistence
     class EntityBase

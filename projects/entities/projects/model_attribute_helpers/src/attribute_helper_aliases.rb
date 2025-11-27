@@ -1,4 +1,4 @@
-# This is currently the working file, fix this up/move it
+require "foobara/concerns"
 
 module Foobara
   module ModelAttributeHelpers

@@ -1,3 +1,5 @@
+require "foobara/callback"
+
 module Foobara
   class StateMachine
     module Callbacks

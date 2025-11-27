@@ -1,3 +1,5 @@
+require "foobara/entity"
+
 module Foobara
   module Persistence
     class << self
@@ -21,3 +23,5 @@ module Foobara
     end
   end
 end
+
+Foobara.project("persistence", project_path: "#{__dir__}/../..")

@@ -1,3 +1,5 @@
+require "foobara/command"
+
 module Foobara
   class DomainMapper
     class << self
@@ -8,3 +10,5 @@ module Foobara
     end
   end
 end
+
+Foobara.project("domain_mapper", project_path: "#{__dir__}/../..")

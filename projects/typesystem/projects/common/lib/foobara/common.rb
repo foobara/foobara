@@ -9,3 +9,5 @@ module Foobara
     end
   end
 end
+
+Foobara.project("common", project_path: "#{__dir__}/../..")

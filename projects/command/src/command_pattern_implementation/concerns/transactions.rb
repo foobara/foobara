@@ -1,3 +1,5 @@
+require "foobara/nested_transactionable"
+
 module Foobara
   module CommandPatternImplementation
     module Concerns

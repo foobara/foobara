@@ -1,4 +1,5 @@
 require_relative "is_namespace"
+require "foobara/concerns"
 
 module Foobara
   class Namespace

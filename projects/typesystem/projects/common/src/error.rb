@@ -1,3 +1,5 @@
+require "foobara/domain"
+
 module Foobara
   class Error < StandardError
     foobara_autoregister_subclasses(default_namespace: Foobara::GlobalDomain)
