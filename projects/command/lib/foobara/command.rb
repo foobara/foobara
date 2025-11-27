@@ -1,7 +1,4 @@
 module Foobara
-  # TODO: Make some kind of module to house these methods instead of the Command class
-  class Service; end
-
   class Command
     class << self
       def install!

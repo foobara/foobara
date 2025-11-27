@@ -1,3 +1,5 @@
+require "foobara/persistence"
+
 module Foobara
   module NestedTransactionable
     class << self

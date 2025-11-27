@@ -15,24 +15,23 @@ module Foobara
         end
 
         [
-          "foobara_children",
-          "foobara_registry",
-          "foobara_type_builder"
+          :@foobara_children,
+          :@foobara_registry,
+          :@foobara_type_builder
         ].each do |var_name|
-          var_name = "@#{var_name}"
-
           # Don't we only have to do this for Foobara and not all of these??
           [
             Namespace.global,
             Foobara::GlobalOrganization,
             Foobara::GlobalDomain,
             Domain,
-            Command,
             Types::Type,
             Value::Processor,
             Error
           ].each do |klass|
-            klass.remove_instance_variable(var_name) if klass.instance_variable_defined?(var_name)
+            if klass.instance_variable_defined?(var_name)
+              klass.remove_instance_variable(var_name)
+            end
           end
         end
 

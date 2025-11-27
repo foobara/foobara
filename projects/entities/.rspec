@@ -1,0 +1,5 @@
+--format progress
+--color
+--require spec_helper
+--order defined
+--seed 0

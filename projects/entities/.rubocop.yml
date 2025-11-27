@@ -1,0 +1,24 @@
+AllCops:
+  TargetRubyVersion: 3.2
+  NewCops: enable
+
+inherit_gem:
+  foobara-rubocop-rules:
+    - rules/*
+
+Naming/FileName:
+  ExpectMatchingDefinition: true
+  CheckDefinitionPathHierarchy: true
+  Exclude:
+    - spec/lib/**/*
+    - spec/**/*
+    - bin/*
+  CheckDefinitionPathHierarchyRoots:
+    - src
+    - extensions
+    - spec
+  IgnoreExecutableScripts: true
+
+# Disabling because default_declaration_data isn't a proper predicate and too lazy to wrap it in disable comments
+Naming/PredicateMethod:
+  Enabled: false

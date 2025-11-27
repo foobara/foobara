@@ -15,14 +15,17 @@ task "spec:coverage" do
 
   resultsets = Dir["coverage/*/.resultset.json"]
 
+  puts
   SimpleCov.collate resultsets do
     minimum_coverage line: 100
   end
+  puts
 end
 
 spec_names = [
   "typesystem",
   "manifest",
+  "entities",
   "command_connectors",
   "root"
 ]
