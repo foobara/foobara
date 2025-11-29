@@ -1,11 +1,5 @@
 module Foobara
   class << self
-    # TODO: come up with a way to change a type's manifest... Or maybe treat Model very differently?
-    # ok... new manifest will be of this form...
-    # { <orgs|commands|types, etc, letś call this a type category...> => full_scoped_name => manifest }
-    #
-    # The manifest itself will only contain full scoped names. This is kind of analogous to a store serializer
-    # in the http connector.
     def manifest
       to_include = Namespace.global.foobara_all_organization.to_set
 
@@ -59,10 +53,6 @@ module Foobara
 
     def all_domains
       Namespace.global.foobara_all_domain
-    end
-
-    def all_commands
-      Namespace.global.foobara_all_command
     end
 
     def all_types

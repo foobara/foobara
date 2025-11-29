@@ -96,7 +96,6 @@ module Foobara
                   child = Object.const_get(child_name)
 
                   break if child.foobara_domain?
-
                   break if child.foobara_organization?
 
                   # TODO: unclear why we need this check, hmmm, figure it out and document it (or delete if not needed)
@@ -105,9 +104,7 @@ module Foobara
                     # in .reset_alls hmmmmmm...
                     # :nocov:
                     value = child.const_get(constant)
-
-                    # TODO: can we make this not coupled to model project??
-                    value.is_a?(Types::Type) || (value.is_a?(::Class) && value < Foobara::Model)
+                    value.is_a?(Types::Type) || (value.is_a?(::Class) && value.respond_to?(:foobara_type?))
                     # :nocov:
                   end
 
@@ -245,10 +242,6 @@ module Foobara
           end
         end
 
-        def foobara_command_classes
-          foobara_all_command(mode: Namespace::LookupMode::DIRECT)
-        end
-
         def foobara_register_type(type_symbol, *type_declaration_bits, &block)
           type = if block.nil? && type_declaration_bits.size == 1 && type_declaration_bits.first.is_a?(Types::Type)
                    type_declaration_bits.first
@@ -310,107 +303,6 @@ module Foobara
           type
         end
 
-        def foobara_register_and_deanonymize_entity(name, *, &)
-          entity_class = foobara_register_entity(name, *, &)
-          Foobara::Model.deanonymize_class(entity_class)
-        end
-
-        # TODO: kill this off
-        def foobara_register_entity(name, *args, &block)
-          # TODO: introduce a Namespace#scope method to simplify this a bit
-          Foobara::Namespace.use self do
-            if block
-              args = [
-                TypeDeclarations::Dsl::Attributes.to_declaration(&block).declaration_data,
-                *args
-              ]
-            end
-
-            attributes_type_declaration, *args = args
-
-            model_base_class, description = case args.size
-                                            when 0
-                                              []
-                                            when 1, 2
-                                              arg, other = args
-
-                                              if args.first.is_a?(::String)
-                                                [other, arg]
-                                              else
-                                                args
-                                              end
-                                            else
-                                              # :nocov:
-                                              raise ArgumentError, "Too many arguments"
-                                              # :nocov:
-                                            end
-
-            if model_base_class
-              attributes_type_declaration = TypeDeclarations::Attributes.merge(
-                model_base_class.attributes_type.declaration_data,
-                attributes_type_declaration
-              )
-            end
-
-            handler = foobara_type_builder.handler_for_class(
-              Foobara::TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
-            )
-
-            attributes_type = handler.type_for_declaration(attributes_type_declaration)
-
-            # TODO: reuse the model_base_class primary key if it has one...
-            primary_key = attributes_type.element_types.keys.first
-
-            model_module = unless scoped_full_path.empty?
-                             scoped_full_name
-                           end
-
-            declaration = TypeDeclaration.new(
-              Util.remove_blank(
-                type: :entity,
-                name:,
-                model_base_class:,
-                model_module:,
-                attributes_declaration: attributes_type_declaration,
-                primary_key:,
-                description:
-              )
-            )
-
-            declaration.is_absolutified = true
-            declaration.is_duped = true
-
-            entity_type = foobara_type_builder.type_for_declaration(declaration)
-
-            entity_type.target_class
-          end
-        end
-
-        def foobara_register_and_deanonymize_entities(entity_names_to_attributes)
-          entities = []
-
-          entity_names_to_attributes.each_pair do |entity_name, attributes_declaration|
-            entities << foobara_register_and_deanonymize_entity(entity_name, attributes_declaration)
-          end
-
-          entities
-        end
-
-        def foobara_register_entities(entity_names_to_attributes)
-          entities = []
-
-          entity_names_to_attributes.each_pair do |entity_name, attributes_type_declaration|
-            entities << foobara_register_entity(entity_name, attributes_type_declaration)
-          end
-
-          entities
-        end
-
-        def foobara_can_call_subcommands_from?(other_domain)
-          other_domain = Domain.to_domain(other_domain)
-          other_domain == self || self == GlobalDomain || foobara_depends_on?(other_domain)
-        end
-
         def foobara_depends_on?(other_domain)
           other_domain = Domain.to_domain(other_domain)
           other_domain == GlobalDomain || foobara_depends_on.include?(other_domain.foobara_full_domain_name)
@@ -455,13 +347,6 @@ module Foobara
             domain.foobara_manifest_reference
           end.sort
 
-          commands = foobara_all_command(mode: Namespace::LookupMode::DIRECT).map do |command_class|
-            if to_include
-              to_include << command_class
-            end
-            command_class.foobara_manifest_reference
-          end.sort
-
           types = foobara_all_type(mode: Namespace::LookupMode::DIRECT).map do |type|
             if to_include
               to_include << type
@@ -469,7 +354,7 @@ module Foobara
             type.foobara_manifest_reference
           end.sort
 
-          manifest = super.merge(commands:, types:)
+          manifest = super.merge(types:)
 
           unless depends_on.empty?
             manifest[:depends_on] = depends_on

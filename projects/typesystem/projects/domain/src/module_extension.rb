@@ -69,16 +69,8 @@ module Foobara
 
             if value != child
               types_mod.send(:remove_const, child.scoped_short_name) if value
-              # TODO: can we decouple this from the model project?
-              new_value = if child.extends?("::model")
-                            child.target_class
-                          else
-                            # TODO: test this path or delete it if unreachable
-                            # :nocov:
-                            child
-                            # :nocov:
-                          end
-              types_mod.const_set(child.scoped_short_name, new_value)
+
+              foobara_set_types_mod_constant(types_mod, child.scoped_short_name, child)
             end
           end
         end
@@ -108,6 +100,16 @@ module Foobara
 
       def foobara_organization?
         false
+      end
+
+      private
+
+      # Unclear if we actually need this but putting it here to allow entities project
+      # to override this to set the constant to the target class
+      def foobara_set_types_mod_constant(types_mod, name, value)
+        # :nocov:
+        types_mod.const_set(types_mod, name, value)
+        # :nocov:
       end
     end
   end
