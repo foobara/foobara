@@ -1,3 +1,5 @@
+require "foobara/lru_cache"
+
 module Foobara
   class Namespace
     include IsNamespace
