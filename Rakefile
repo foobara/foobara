@@ -23,10 +23,10 @@ task "spec:coverage" do
 end
 
 spec_names = [
-  "typesystem",
   "manifest",
-  "entities",
+  "typesystem",
   "command_connectors",
+  "entities",
   "root"
 ]
 
