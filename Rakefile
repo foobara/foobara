@@ -131,7 +131,12 @@ task "suite:all:parallel" do
               end
 
               stdio_mutex.synchronize do
-                puts "Could not #{task}\n#{stderr.read}"
+                info = begin
+                  "\n#{stdouterr.read}"
+                rescue IOError
+                  ""
+                end
+                puts "Could not #{task}\n#{info}"
               end
             end
           end
