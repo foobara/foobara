@@ -25,7 +25,7 @@ module Foobara
         casters_module = Util.constant_value(builtin_type_module, :Casters)
         caster_classes = if casters_module
                            Util.constant_values(casters_module, extends: Value::Processor)
-                         end
+                         end&.sort_by(&:name)
         casters = []
         caster_classes&.each do |caster_class|
           if caster_class.respond_to?(:requires_type?) && caster_class.requires_type?
