@@ -11,43 +11,6 @@ module Foobara
     end
 
     module DomainModuleExtension
-      class << self
-        # TODO: rename this
-        def _copy_constants(old_mod, new_class)
-          old_mod.constants.each do |const_name|
-            value = old_mod.const_get(const_name)
-            if new_class.const_defined?(const_name)
-              # TODO: figure out how to test this path. Seems to occur when models are nested and loaded
-              # remotely in a certain order
-              # :nocov:
-              to_replace = new_class.const_get(const_name)
-              if to_replace != value
-                new_class.send(:remove_const, const_name)
-                new_class.const_set(const_name, value)
-              end
-              # :nocov:
-            else
-              new_class.const_set(const_name, value)
-            end
-          end
-
-          lower_case_constants = old_mod.instance_variable_get(:@foobara_lowercase_constants)
-
-          if lower_case_constants && !lower_case_constants.empty?
-            lower_case_constants&.each do |lower_case_constant|
-              new_class.singleton_class.define_method lower_case_constant do
-                old_mod.send(lower_case_constant)
-              end
-            end
-
-            new_lowercase_constants = new_class.instance_variable_get(:@foobara_lowercase_constants) || []
-            new_lowercase_constants += lower_case_constants
-
-            new_class.instance_variable_set(:@foobara_lowercase_constants, new_lowercase_constants)
-          end
-        end
-      end
-
       include Concern
       include Manifestable
 
@@ -421,7 +384,7 @@ module Foobara
                 types_mod.send(:remove_const, type.scoped_short_name)
                 types_mod.const_set(type.scoped_short_name, type.target_class)
 
-                DomainModuleExtension._copy_constants(existing_value, type.target_class)
+                Domain.copy_constants(existing_value, type.target_class)
               else
                 # :nocov:
                 raise CannotSetTypeConstantError,
