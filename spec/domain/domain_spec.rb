@@ -18,6 +18,24 @@ RSpec.describe Foobara::Domain do
     stub_class "#{domain.name}::SomeCommand", Foobara::Command
   }
 
+  describe ".copy_constants" do
+    context "when to module already has a constant with the same name as from module" do
+      let(:from_mod) do
+        stub_module("FromModule").tap { it::FOO = "bar".freeze }
+      end
+
+      let(:to_mod) do
+        stub_module("ToModule").tap { it::FOO = "baz".freeze }
+      end
+
+      it "clobbers the new module constant with the old module constant" do
+        expect {
+          described_class.copy_constants(from_mod, to_mod)
+        }.to change { to_mod::FOO }.from("baz").to("bar")
+      end
+    end
+  end
+
   describe ".to_domain" do
     context "when nil" do
       it "is the global domain" do
