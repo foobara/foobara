@@ -1,3 +1,4 @@
+require "foobara/constants"
 require_relative "project"
 
 module Foobara
