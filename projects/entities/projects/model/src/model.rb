@@ -229,7 +229,17 @@ module Foobara
       validate! if validate # TODO: test this code path
     end
 
-    foobara_delegate :model_name, :valid_attribute_name?, :validate_attribute_name!, to: :class
+    def model_name
+      self.class.model_name
+    end
+
+    def valid_attribute_name?(attribute_name)
+      self.class.valid_attribute_name?(attribute_name)
+    end
+
+    def validate_attribute_name!(attribute_name)
+      self.class.validate_attribute_name!(attribute_name)
+    end
 
     def attributes
       @attributes ||= {}

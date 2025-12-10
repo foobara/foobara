@@ -67,7 +67,13 @@ module Foobara
         end
       end
 
-      foobara_delegate :context_type, :context_type_declaration, to: :class
+      def context_type
+        self.class.context_type
+      end
+
+      def context_type_declaration
+        self.class.context_type_declaration
+      end
     end
   end
 end

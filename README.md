@@ -1578,7 +1578,7 @@ module FoobaraDemo
 
         alias animal from
 
-        foobara_delegate :first_name, :last_name, :birthday, to: :animal
+        foobara_delegate :first_name, :last_name, :birthday, to: :animal # Deprecated
 
         def birthday_to_age
           today = Date.today

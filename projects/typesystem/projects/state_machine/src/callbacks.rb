@@ -11,14 +11,34 @@ module Foobara
         self.callback_registry = Callback::Registry::ChainedConditioned.new(self.class.class_callback_registry)
       end
 
-      foobara_delegate :callbacks_for,
-                       :has_callbacks?,
-                       :has_before_callbacks?,
-                       :has_after_callbacks?,
-                       :has_around_callbacks?,
-                       :has_error_callbacks?,
-                       :has_failure_callbacks?,
-                       to: :callback_registry
+      def callbacks_for(*args, **opts)
+        callback_registry.callbacks_for(*args, **opts)
+      end
+
+      def has_callbacks?(*args, **opts)
+        callback_registry.has_callbacks?(*args, **opts)
+      end
+
+      def has_before_callbacks?(*args, **opts)
+        callback_registry.has_before_callbacks?(*args, **opts)
+      end
+
+      def has_after_callbacks?(*args, **opts)
+        callback_registry.has_after_callbacks?(*args, **opts)
+      end
+
+      def has_around_callbacks?(*args, **opts)
+        callback_registry.has_around_callbacks?(*args, **opts)
+      end
+
+      def has_error_callbacks?(*args, **opts)
+        callback_registry.has_error_callbacks?(*args, **opts)
+      end
+
+      def has_failure_callbacks?(*args, **opts)
+        # There is no explicit has_failure_callbacks? on the registry base; map to has_error_callbacks?
+        callback_registry.has_error_callbacks?(*args, **opts)
+      end
 
       def register_transition_callback(type, **, &)
         callback_registry.register_callback(type, **, &)

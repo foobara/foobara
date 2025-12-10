@@ -4,7 +4,13 @@ module Foobara
       module Types
         include Concern
 
-        foobara_delegate :full_entity_name, :entity_name, to: :class
+        def full_entity_name
+          self.class.full_entity_name
+        end
+
+        def entity_name
+          self.class.entity_name
+        end
 
         module ClassMethods
           def entity_type

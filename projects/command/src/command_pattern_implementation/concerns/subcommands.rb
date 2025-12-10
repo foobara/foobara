@@ -10,7 +10,9 @@ module Foobara
 
         attr_accessor :is_subcommand
 
-        foobara_delegate :verify_depends_on!, to: :class
+        def verify_depends_on!(subcommand_class)
+          self.class.verify_depends_on!(subcommand_class)
+        end
 
         def subcommand?
           is_subcommand
