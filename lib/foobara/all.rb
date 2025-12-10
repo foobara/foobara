@@ -1,3 +1,4 @@
+require "foobara/constants"
 require "foobara/delegate"
 # TODO: Weird to have both of these requiring each other...
 require "foobara"

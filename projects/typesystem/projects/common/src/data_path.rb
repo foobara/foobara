@@ -5,7 +5,7 @@ module Foobara
     class BadPathError < StandardError; end
 
     # TODO: use this wherever it makes sense
-    EMPTY_PATH = [].freeze
+    EMPTY_PATH = Foobara::EMPTY_ARRAY
 
     class TooManyValuesAtPathError < StandardError
       attr_accessor :path, :values
