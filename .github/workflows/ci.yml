@@ -26,3 +26,9 @@ jobs:
           bundler-cache: true
       - name: Run parallelized build
         run: bundle exec rake suite:all:parallel
+#      - name: Upload coverage directory
+#        if: always()
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: coverage-report
+#          path: coverage/
