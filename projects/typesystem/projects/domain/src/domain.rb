@@ -79,6 +79,36 @@ module Foobara
       def current
         to_domain(Namespace.current)
       end
+
+      def copy_constants(old_mod, new_class)
+        old_mod.constants.each do |const_name|
+          value = old_mod.const_get(const_name)
+          if new_class.const_defined?(const_name)
+            to_replace = new_class.const_get(const_name)
+            if to_replace != value
+              new_class.send(:remove_const, const_name)
+              new_class.const_set(const_name, value)
+            end
+          else
+            new_class.const_set(const_name, value)
+          end
+        end
+
+        lower_case_constants = old_mod.instance_variable_get(:@foobara_lowercase_constants)
+
+        if lower_case_constants && !lower_case_constants.empty?
+          lower_case_constants&.each do |lower_case_constant|
+            new_class.singleton_class.define_method lower_case_constant do
+              old_mod.send(lower_case_constant)
+            end
+          end
+
+          new_lowercase_constants = new_class.instance_variable_get(:@foobara_lowercase_constants) || []
+          new_lowercase_constants += lower_case_constants
+
+          new_class.instance_variable_set(:@foobara_lowercase_constants, new_lowercase_constants)
+        end
+      end
     end
   end
 end

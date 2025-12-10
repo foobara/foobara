@@ -51,7 +51,7 @@ module Foobara
               end
 
               if existing_module_to_copy_over
-                Foobara::Domain::DomainModuleExtension._copy_constants(
+                Foobara::Domain.copy_constants(
                   existing_module_to_copy_over, anonymous_model_class
                 )
               end
