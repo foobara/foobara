@@ -604,12 +604,6 @@ module Foobara
       construct_command
     end
 
-    def description
-      # :nocov:
-      self.class.description
-      # :nocov:
-    end
-
     def full_command_name
       # :nocov:
       self.class.full_command_name
