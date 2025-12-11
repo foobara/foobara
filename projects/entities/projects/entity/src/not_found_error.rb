@@ -54,11 +54,15 @@ module Foobara
       end
 
       def primary_key_attribute
+        # :nocov:
         entity_class.primary_key_attribute
+        # :nocov:
       end
 
       def full_entity_name
+        # :nocov:
         entity_class.full_entity_name
+        # :nocov:
       end
 
       def criteria

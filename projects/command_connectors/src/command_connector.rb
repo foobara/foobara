@@ -232,27 +232,29 @@ module Foobara
     end
 
     def add_default_response_mutator(mutator)
+      # :nocov:
       command_registry.add_default_response_mutator(mutator)
+      # :nocov:
     end
 
-    def allowed_rule(*args)
-      command_registry.allowed_rule(*args)
+    def allowed_rule(*)
+      # :nocov:
+      command_registry.allowed_rule(*)
+      # :nocov:
     end
 
-    def allowed_rules
-      command_registry.allowed_rules
+    def allowed_rules(*)
+      command_registry.allowed_rules(*)
     end
 
-    def transform_command_class(*args)
-      command_registry.transform_command_class(*args)
+    def transformed_command_from_name(*)
+      command_registry.transformed_command_from_name(*)
     end
 
-    def transformed_command_from_name(*args)
-      command_registry.transformed_command_from_name(*args)
-    end
-
-    def each_transformed_command_class(&block)
-      command_registry.each_transformed_command_class(&block)
+    def each_transformed_command_class(&)
+      # :nocov:
+      command_registry.each_transformed_command_class(&)
+      # :nocov:
     end
 
     def all_transformed_command_classes

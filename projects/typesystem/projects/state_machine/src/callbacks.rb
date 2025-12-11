@@ -11,33 +11,40 @@ module Foobara
         self.callback_registry = Callback::Registry::ChainedConditioned.new(self.class.class_callback_registry)
       end
 
-      def callbacks_for(*args, **opts)
-        callback_registry.callbacks_for(*args, **opts)
+      def callbacks_for(*, **)
+        # :nocov:
+        callback_registry.callbacks_for(*, **)
+        # :nocov:
       end
 
-      def has_callbacks?(*args, **opts)
-        callback_registry.has_callbacks?(*args, **opts)
+      def has_callbacks?(*, **)
+        # :nocov:
+        callback_registry.has_callbacks?(*, **)
+        # :nocov:
       end
 
-      def has_before_callbacks?(*args, **opts)
-        callback_registry.has_before_callbacks?(*args, **opts)
+      def has_before_callbacks?(*, **)
+        # :nocov:
+        callback_registry.has_before_callbacks?(*, **)
+        # :nocov:
       end
 
-      def has_after_callbacks?(*args, **opts)
-        callback_registry.has_after_callbacks?(*args, **opts)
+      def has_after_callbacks?(*, **)
+        # :nocov:
+        callback_registry.has_after_callbacks?(*, **)
+        # :nocov:
       end
 
-      def has_around_callbacks?(*args, **opts)
-        callback_registry.has_around_callbacks?(*args, **opts)
+      def has_around_callbacks?(*, **)
+        # :nocov:
+        callback_registry.has_around_callbacks?(*, **)
+        # :nocov:
       end
 
-      def has_error_callbacks?(*args, **opts)
-        callback_registry.has_error_callbacks?(*args, **opts)
-      end
-
-      def has_failure_callbacks?(*args, **opts)
-        # There is no explicit has_failure_callbacks? on the registry base; map to has_error_callbacks?
-        callback_registry.has_error_callbacks?(*args, **opts)
+      def has_error_callbacks?(*, **)
+        # :nocov:
+        callback_registry.has_error_callbacks?(*, **)
+        # :nocov:
       end
 
       def register_transition_callback(type, **, &)

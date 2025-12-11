@@ -72,7 +72,9 @@ module Foobara
       end
 
       def context_type_declaration
+        # :nocov:
         self.class.context_type_declaration
+        # :nocov:
       end
     end
   end

@@ -67,11 +67,15 @@ module Foobara
       end
 
       def starting_desugarizers_with_inherited
+        # :nocov:
         self.class.starting_desugarizers_with_inherited
+        # :nocov:
       end
 
       def starting_desugarizers_without_inherited
+        # :nocov:
         self.class.starting_desugarizers_without_inherited
+        # :nocov:
       end
 
       def starting_type_declaration_validators

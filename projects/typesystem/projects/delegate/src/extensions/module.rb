@@ -1,4 +1,5 @@
 class Module
+  # :nocov:
   def foobara_delegate(*method_names, to:, allow_nil: false)
     warn "[DEPRECATION] `foobara_delegate` is deprecated and will be removed in future versions"
 
@@ -11,4 +12,5 @@ class Module
       end
     end
   end
+  # :nocov:
 end

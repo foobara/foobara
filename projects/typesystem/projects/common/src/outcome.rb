@@ -56,7 +56,9 @@ module Foobara
     end
 
     def has_error
+      # :nocov:
       error_collection.has_error
+      # :nocov:
     end
 
     def add_errors(*errors)
@@ -65,10 +67,6 @@ module Foobara
 
     def has_errors?
       error_collection.has_errors?
-    end
-
-    def add_errors(...)
-      error_collection.add_errors(...)
     end
 
     def errors

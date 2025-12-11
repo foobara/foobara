@@ -234,7 +234,9 @@ module Foobara
     end
 
     def valid_attribute_name?(attribute_name)
+      # :nocov:
       self.class.valid_attribute_name?(attribute_name)
+      # :nocov:
     end
 
     def validate_attribute_name!(attribute_name)

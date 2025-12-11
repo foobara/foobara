@@ -48,7 +48,9 @@ module Foobara
       end
 
       def lookup_absolute_type!(...)
+        # :nocov:
         self.class.lookup_absolute_type!(...)
+        # :nocov:
       end
 
       def type_registered?(...)

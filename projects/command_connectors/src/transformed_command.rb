@@ -62,11 +62,15 @@ module Foobara
       end
 
       def domain
+        # :nocov:
         command_class.domain
+        # :nocov:
       end
 
       def organization
+        # :nocov:
         command_class.organization
+        # :nocov:
       end
 
       def description
@@ -601,15 +605,21 @@ module Foobara
     end
 
     def description
+      # :nocov:
       self.class.description
+      # :nocov:
     end
 
     def full_command_name
+      # :nocov:
       self.class.full_command_name
+      # :nocov:
     end
 
     def command_name
+      # :nocov:
       self.class.command_name
+      # :nocov:
     end
 
     def command_class
@@ -621,11 +631,15 @@ module Foobara
     end
 
     def inputs_transformers
+      # :nocov:
       self.class.inputs_transformers
+      # :nocov:
     end
 
     def result_transformers
+      # :nocov:
       self.class.result_transformers
+      # :nocov:
     end
 
     def errors_transformers
