@@ -53,7 +53,17 @@ module Foobara
         data_path :string # TODO: we don't have a way to specify an exact value for a type
       end
 
-      foobara_delegate :primary_key_attribute, :full_entity_name, to: :entity_class
+      def primary_key_attribute
+        # :nocov:
+        entity_class.primary_key_attribute
+        # :nocov:
+      end
+
+      def full_entity_name
+        # :nocov:
+        entity_class.full_entity_name
+        # :nocov:
+      end
 
       def criteria
         context[:criteria]

@@ -190,15 +190,37 @@ module Foobara
       end
     end
 
-    foobara_delegate :runtime_path,
-                     :runtime_path=,
-                     :category,
-                     :category=,
-                     :path,
-                     :path=,
-                     :symbol,
-                     :symbol=,
-                     to: :error_key
+    def runtime_path
+      error_key.runtime_path
+    end
+
+    def runtime_path=(runtime_path)
+      error_key.runtime_path = runtime_path
+    end
+
+    def category
+      error_key.category
+    end
+
+    def category=(category)
+      error_key.category = category
+    end
+
+    def path
+      error_key.path
+    end
+
+    def path=(path)
+      error_key.path = path
+    end
+
+    def symbol
+      error_key.symbol
+    end
+
+    def symbol=(symbol)
+      error_key.symbol = symbol
+    end
 
     # TODO: seems like we should not allow the symbol to vary within instances of a class
     # TODO: any items serializable in self.class.to_h should not be overrideable like this...
