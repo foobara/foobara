@@ -418,7 +418,7 @@ module Foobara
 
         def find_all_by_attribute_containing_any_of(attribute_name, values)
           values = Util.array(values)
-          return [] if values.empty?
+          return EMPTY_ARRAY if values.empty?
 
           value_type = entity_class.attributes_type.element_types[attribute_name].element_type
 
@@ -486,7 +486,7 @@ module Foobara
 
         def find_all_by_attribute_any_of(attribute_name, values)
           values = Util.array(values)
-          return [] if values.empty?
+          return Util::EMPTY_ARRAY if values.empty?
 
           value_type = entity_class.attributes_type.element_types[attribute_name]
 
