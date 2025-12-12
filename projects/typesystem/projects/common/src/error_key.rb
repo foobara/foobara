@@ -2,7 +2,7 @@ module Foobara
   # TODO: paths have use outside of errors. Make this more general.
   class ErrorKey
     # TODO: use this wherever it makes sense
-    EMPTY_PATH = [].freeze
+    EMPTY_PATH = EMPTY_ARRAY
 
     class << self
       def to_s_type(key)

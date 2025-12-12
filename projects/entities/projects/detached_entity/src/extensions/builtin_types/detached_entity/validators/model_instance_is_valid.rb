@@ -5,7 +5,7 @@ module Foobara
         class ModelInstanceIsValid < Model::Validators::ModelInstanceIsValid
           # Why is this here in entity/ instead of in model/?
           def possible_errors
-            return [] if parent_declaration_data == expected_type_symbol
+            return EMPTY_ARRAY if parent_declaration_data == expected_type_symbol
 
             # TODO: we should also ask the class if it is mutable...
             mutable = parent_declaration_data.key?(:mutable) ? parent_declaration_data[:mutable] : false
