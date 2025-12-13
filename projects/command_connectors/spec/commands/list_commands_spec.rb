@@ -13,29 +13,29 @@ RSpec.describe Foobara::CommandConnector::Commands::ListCommands do
   end
 
   describe ".inputs_type_declaration" do
-    subject { command_class.inputs_type_declaration }
+    let(:declaration) { command_class.inputs_type_declaration }
 
     it "uses attributes DSL format" do
-      expect(subject[:type]).to eq(:attributes)
-      expect(subject[:element_type_declarations]).to have_key(:request)
-      expect(subject[:element_type_declarations]).to have_key(:verbose)
+      expect(declaration[:type]).to eq(:attributes)
+      expect(declaration[:element_type_declarations]).to have_key(:request)
+      expect(declaration[:element_type_declarations]).to have_key(:verbose)
     end
 
     it "declares request as optional" do
-      if subject[:required]
-        expect(subject[:required]).not_to include(:request)
+      if declaration[:required]
+        expect(declaration[:required]).to_not include(:request)
       else
         # No required inputs means all are optional
-        expect(subject[:required]).to be_nil
+        expect(declaration[:required]).to be_nil
       end
     end
 
     it "declares verbose as optional" do
-      if subject[:required]
-        expect(subject[:required]).not_to include(:verbose)
+      if declaration[:required]
+        expect(declaration[:required]).to_not include(:verbose)
       else
         # No required inputs means all are optional
-        expect(subject[:required]).to be_nil
+        expect(declaration[:required]).to be_nil
       end
     end
   end
@@ -44,8 +44,7 @@ RSpec.describe Foobara::CommandConnector::Commands::ListCommands do
     let(:mock_command_class) { Object.new }
 
     before do
-      allow(mock_command_class).to receive(:full_command_name).and_return("TestCommand")
-      allow(mock_command_class).to receive(:description).and_return("A test command")
+      allow(mock_command_class).to receive_messages(full_command_name: "TestCommand", description: "A test command")
       mock_command_classes << mock_command_class
     end
 
@@ -80,7 +79,7 @@ RSpec.describe Foobara::CommandConnector::Commands::ListCommands do
         # This should work but might fail when trying to access command_connector
         # Let's test that it at least doesn't fail during validation
         command = command_class.new(inputs)
-        expect { command.cast_and_validate_inputs }.not_to raise_error
+        expect { command.cast_and_validate_inputs }.to_not raise_error
       end
     end
 
@@ -99,7 +98,7 @@ RSpec.describe Foobara::CommandConnector::Commands::ListCommands do
 
       it "passes validation since all inputs are optional" do
         command = command_class.new(inputs)
-        expect { command.cast_and_validate_inputs }.not_to raise_error
+        expect { command.cast_and_validate_inputs }.to_not raise_error
       end
     end
   end
@@ -126,7 +125,7 @@ RSpec.describe Foobara::CommandConnector::Commands::ListCommands do
   end
 
   describe "result type" do
-    subject { command_class.result_type }
+    let(:result_type) { command_class.result_type }
 
     it "declares the correct result type" do
       expected = {
@@ -143,7 +142,7 @@ RSpec.describe Foobara::CommandConnector::Commands::ListCommands do
           size: 2
         }
       }
-      expect(subject.declaration_data).to eq(expected)
+      expect(result_type.declaration_data).to eq(expected)
     end
   end
 end

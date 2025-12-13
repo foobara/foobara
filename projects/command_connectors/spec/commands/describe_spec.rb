@@ -6,26 +6,26 @@ RSpec.describe Foobara::CommandConnector::Commands::Describe do
   before do
     # Setup mock manifestable
     allow(mock_manifestable).to receive(:foobara_manifest).and_return({
-      test: "manifest_data",
-      version: "1.0.0"
-    })
+                                                                        test: "manifest_data",
+                                                                        version: "1.0.0"
+                                                                      })
   end
 
   describe ".inputs_type_declaration" do
-    subject { command_class.inputs_type_declaration }
+    let(:declaration) { command_class.inputs_type_declaration }
 
     it "uses attributes DSL format" do
-      expect(subject[:type]).to eq(:attributes)
-      expect(subject[:element_type_declarations]).to have_key(:manifestable)
-      expect(subject[:element_type_declarations]).to have_key(:request)
+      expect(declaration[:type]).to eq(:attributes)
+      expect(declaration[:element_type_declarations]).to have_key(:manifestable)
+      expect(declaration[:element_type_declarations]).to have_key(:request)
     end
 
     it "declares manifestable as required" do
-      expect(subject[:required]).to include(:manifestable)
+      expect(declaration[:required]).to include(:manifestable)
     end
 
     it "declares request as optional" do
-      expect(subject[:required]).not_to include(:request)
+      expect(declaration[:required]).to_not include(:request)
     end
   end
 
@@ -58,14 +58,7 @@ RSpec.describe Foobara::CommandConnector::Commands::Describe do
     context "when manifestable is missing" do
       let(:inputs) { { request: mock_request } }
 
-      it "fails validation" do
-        command = command_class.new(inputs)
-        outcome = command.run
-        expect(outcome).to_not be_success
-        expect(outcome.errors).to_not be_empty
-      end
-
-      it "has validation errors" do
+      it "fails validation with errors" do
         command = command_class.new(inputs)
         outcome = command.run
         expect(outcome).to_not be_success
