@@ -4,8 +4,10 @@ module Foobara
   class CommandConnector
     module Commands
       class Describe < Foobara::Command
-        inputs manifestable: :duck,
-               request: :duck
+        inputs do
+          manifestable :duck, :required
+          request :duck
+        end
         result :associative_array
 
         def execute

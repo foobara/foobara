@@ -2,8 +2,10 @@ module Foobara
   class CommandConnector
     module Commands
       class ListCommands < Command
-        inputs request: :duck, # TODO: have some way to specify by Ruby class...
-               verbose: :boolean
+        inputs do
+          request :duck # TODO: have some way to specify by Ruby class...
+          verbose :boolean
+        end
 
         result [
           [
