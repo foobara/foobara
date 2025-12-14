@@ -61,7 +61,17 @@ module Foobara
         end
       end
 
-      foobara_delegate :domain, :organization, to: :command_class
+      def domain
+        # :nocov:
+        command_class.domain
+        # :nocov:
+      end
+
+      def organization
+        # :nocov:
+        command_class.organization
+        # :nocov:
+      end
 
       def description
         command_class.description
@@ -594,19 +604,57 @@ module Foobara
       construct_command
     end
 
-    foobara_delegate :description, to: :command_class
-    foobara_delegate :full_command_name,
-                     :command_name,
-                     :command_class,
-                     :capture_unknown_error,
-                     :inputs_transformers,
-                     :result_transformers,
-                     :errors_transformers,
-                     :pre_commit_transformers,
-                     :serializers,
-                     :allowed_rule,
-                     :authenticator,
-                     to: :class
+    def full_command_name
+      # :nocov:
+      self.class.full_command_name
+      # :nocov:
+    end
+
+    def command_name
+      # :nocov:
+      self.class.command_name
+      # :nocov:
+    end
+
+    def command_class
+      self.class.command_class
+    end
+
+    def capture_unknown_error
+      self.class.capture_unknown_error
+    end
+
+    def inputs_transformers
+      # :nocov:
+      self.class.inputs_transformers
+      # :nocov:
+    end
+
+    def result_transformers
+      # :nocov:
+      self.class.result_transformers
+      # :nocov:
+    end
+
+    def errors_transformers
+      self.class.errors_transformers
+    end
+
+    def pre_commit_transformers
+      self.class.pre_commit_transformers
+    end
+
+    def serializers
+      self.class.serializers
+    end
+
+    def allowed_rule
+      self.class.allowed_rule
+    end
+
+    def authenticator
+      self.class.authenticator
+    end
 
     def run
       apply_allowed_rule

@@ -4,7 +4,9 @@ module Foobara
       module PrimaryKey
         include Concern
 
-        foobara_delegate :primary_key_attribute, to: :class
+        def primary_key_attribute
+          self.class.primary_key_attribute
+        end
 
         module ClassMethods
           def primary_key(attribute_name)

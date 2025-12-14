@@ -31,14 +31,35 @@ module Foobara
         end
       end
 
-      foobara_delegate :type_for_declaration,
-                       :type_declaration_handler_for,
-                       :lookup_type,
-                       :lookup_type!,
-                       :lookup_absolute_type!,
-                       :type_registered?,
-                       :handler_for_class,
-                       to: :class
+      def type_for_declaration(...)
+        self.class.type_for_declaration(...)
+      end
+
+      def type_declaration_handler_for(...)
+        self.class.type_declaration_handler_for(...)
+      end
+
+      def lookup_type(...)
+        self.class.lookup_type(...)
+      end
+
+      def lookup_type!(...)
+        self.class.lookup_type!(...)
+      end
+
+      def lookup_absolute_type!(...)
+        # :nocov:
+        self.class.lookup_absolute_type!(...)
+        # :nocov:
+      end
+
+      def type_registered?(...)
+        self.class.type_registered?(...)
+      end
+
+      def handler_for_class(...)
+        self.class.handler_for_class(...)
+      end
     end
   end
 end

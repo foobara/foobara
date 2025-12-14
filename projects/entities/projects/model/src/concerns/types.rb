@@ -4,7 +4,9 @@ module Foobara
       module Types
         include Concern
 
-        foobara_delegate :attributes_type, to: :class
+        def attributes_type
+          self.class.attributes_type
+        end
 
         module ClassMethods
           attr_reader :model_type
