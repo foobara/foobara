@@ -10,11 +10,11 @@ module Foobara
 
           if self == Type
             if type.entity?
-              type = Entity.new(type.root_manifest, type.path)
+              type = Entity.new(type.root_manifest, type.manifest_path)
             elsif type.detached_entity?
-              type = DetachedEntity.new(type.root_manifest, type.path)
+              type = DetachedEntity.new(type.root_manifest, type.manifest_path)
             elsif type.model?
-              type = Model.new(type.root_manifest, type.path)
+              type = Model.new(type.root_manifest, type.manifest_path)
             end
           end
 
@@ -105,7 +105,7 @@ module Foobara
       end
 
       def to_type_declaration_from_declaration_data
-        TypeDeclaration.new(root_manifest, [*path, :declaration_data])
+        TypeDeclaration.new(root_manifest, [*manifest_path, :declaration_data])
       end
     end
   end

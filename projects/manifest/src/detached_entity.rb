@@ -15,7 +15,7 @@ module Foobara
       end
 
       def primary_key_type
-        @primary_key_type ||= TypeDeclaration.new(root_manifest, [*path, :primary_key_type])
+        @primary_key_type ||= TypeDeclaration.new(root_manifest, [*manifest_path, :primary_key_type])
       end
 
       def attribute_names
