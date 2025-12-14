@@ -162,7 +162,7 @@ RSpec.describe Foobara::Manifest do
     expect(detached_entity.primary_key_name).to eq("id")
     expect(detached_entity).to_not have_associations
     expect(detached_entity).to be_detached_entity
-    Foobara::Manifest::TypeDeclaration.new(raw_manifest, [*detached_entity.path, :declaration_data])
+    Foobara::Manifest::TypeDeclaration.new(raw_manifest, [*detached_entity.manifest_path, :declaration_data])
     some_other_domain = manifest.domain_by_name("SomeOtherDomain")
     #     expect(declaration.to_type).to be_detached_entity
     expect(some_other_domain.detached_entities).to include(detached_entity)
@@ -215,7 +215,7 @@ RSpec.describe Foobara::Manifest do
     expect(attribute).to_not be_required
     expect(attribute.default).to eq([])
 
-    new_attributes = Foobara::Manifest::TypeDeclaration.new(attributes.root_manifest, attributes.path)
+    new_attributes = Foobara::Manifest::TypeDeclaration.new(attributes.root_manifest, attributes.manifest_path)
     expect(new_attributes).to be_a(Foobara::Manifest::Attributes)
     expect(new_attributes).to be_attributes
     expect(new_attributes).to eql(attributes)
@@ -272,7 +272,7 @@ RSpec.describe Foobara::Manifest do
     expect(command.command_manifest).to be_a(Hash)
     expect(command.inputs_type).to be_a(Foobara::Manifest::Attributes)
     expect(command.inputs_type.required).to be_nil
-    command = Foobara::Manifest::Command.new(raw_stringified_manifest, command.path)
+    command = Foobara::Manifest::Command.new(raw_stringified_manifest, command.manifest_path)
     expect(command.inputs_type.required).to be_nil
     some_other_user_declaration = command.inputs_type.attribute_declarations[:some_other_user]
     expect(command.domain.find_type(some_other_user_declaration)).to be_a(Foobara::Manifest::Entity)

@@ -6,7 +6,7 @@ module Foobara
       alias array_manifest relevant_manifest
 
       def element_type
-        @element_type ||= TypeDeclaration.new(root_manifest, [*path, :element_type_declaration])
+        @element_type ||= TypeDeclaration.new(root_manifest, [*manifest_path, :element_type_declaration])
       end
     end
   end
