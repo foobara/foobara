@@ -8,7 +8,7 @@ module Foobara
       alias model_manifest relevant_manifest
 
       def attributes_type
-        Attributes.new(root_manifest, [*path, :attributes_type])
+        Attributes.new(root_manifest, [*path, :declaration_data, :attributes_declaration])
       end
 
       def attribute_names
