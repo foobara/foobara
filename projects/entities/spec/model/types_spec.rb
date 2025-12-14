@@ -28,7 +28,7 @@ RSpec.describe Foobara::Model do
     let(:writer) { nil }
     let(:auth_user) { auth_user_class.new(username:, email:) }
     let(:username) { "Basil" }
-    let(:email) { "basil@foobara.com" }
+    let(:email) { "basil@foobara.org" }
 
     let(:user) { user_class.new(auth_user:) }
 
@@ -247,7 +247,7 @@ RSpec.describe Foobara::Model do
 
     let(:auth_user) { auth_user_class.new(username:, email:) }
     let(:username) { "Basil" }
-    let(:email) { "basil@foobara.com" }
+    let(:email) { "basil@foobara.org" }
     let(:some_attribute) { 100 }
 
     let(:user) { user_class.new(auth_user:, some_attribute:) }
