@@ -1,15 +1,10 @@
 RSpec.describe Foobara::CommandConnector::Commands::Describe do
   let(:command_class) { described_class }
-  let(:mock_manifestable) { Object.new }
-  let(:mock_request) { Object.new }
-
-  before do
-    # Setup mock manifestable
-    allow(mock_manifestable).to receive(:foobara_manifest).and_return({
-                                                                        test: "manifest_data",
-                                                                        version: "1.0.0"
-                                                                      })
-  end
+  let(:command) { command_class.new(inputs) }
+  let(:outcome) { command.run }
+  let(:result) { outcome.result }
+  let(:manifestable) { Foobara::BuiltinTypes[:integer] }
+  let(:request) { Foobara::CommandConnector::Request.new }
 
   describe ".inputs_type_declaration" do
     let(:declaration) { command_class.inputs_type_declaration }
@@ -31,48 +26,35 @@ RSpec.describe Foobara::CommandConnector::Commands::Describe do
 
   describe "#run" do
     context "with valid inputs" do
-      let(:inputs) { { manifestable: mock_manifestable, request: mock_request } }
-
-      it "executes successfully" do
-        outcome = command_class.new(inputs).run
-        expect(outcome).to be_success
-        expect(outcome.result).to have_key(:test)
-        expect(outcome.result).to have_key(:metadata)
+      let(:inputs) do
+        { manifestable:, request: }
       end
 
-      it "includes metadata in the manifest" do
-        outcome = command_class.new(inputs).run
+      it "executes successfully" do
+        expect(outcome).to be_success
+        expect(outcome.result).to have_key(:metadata)
         metadata = outcome.result[:metadata]
         expect(metadata).to have_key(:when)
         expect(metadata).to have_key(:foobara_version)
         expect(metadata[:foobara_version]).to eq(Foobara::Version::VERSION)
       end
-
-      it "builds manifest from manifestable" do
-        outcome = command_class.new(inputs).run
-        expect(outcome.result[:test]).to eq("manifest_data")
-        expect(outcome.result[:version]).to eq("1.0.0")
-      end
     end
 
     context "when manifestable is missing" do
-      let(:inputs) { { request: mock_request } }
+      let(:inputs) { { request: } }
 
       it "fails validation with errors" do
-        command = command_class.new(inputs)
-        outcome = command.run
         expect(outcome).to_not be_success
         expect(outcome.errors).to_not be_empty
       end
     end
 
     context "when request is missing" do
-      let(:inputs) { { manifestable: mock_manifestable } }
+      let(:inputs) { { manifestable:  } }
 
       it "executes successfully since request is optional" do
-        outcome = command_class.new(inputs).run
         expect(outcome).to be_success
-        expect(outcome.result).to have_key(:test)
+        expect(outcome.result[:declaration_data]).to be(:integer)
       end
     end
 
@@ -80,8 +62,6 @@ RSpec.describe Foobara::CommandConnector::Commands::Describe do
       let(:inputs) { {} }
 
       it "fails validation due to missing required manifestable" do
-        command = command_class.new(inputs)
-        outcome = command.run
         expect(outcome).to_not be_success
         expect(outcome.errors).to_not be_empty
       end
@@ -89,19 +69,15 @@ RSpec.describe Foobara::CommandConnector::Commands::Describe do
   end
 
   describe "input access" do
-    let(:inputs) { { manifestable: mock_manifestable, request: mock_request } }
-    let(:command) { command_class.new(inputs) }
+    let(:inputs) { { manifestable:, request: } }
 
     before do
       command.cast_and_validate_inputs
     end
 
-    it "provides access to manifestable input" do
-      expect(command.manifestable).to eq(mock_manifestable)
-    end
-
-    it "provides access to request input" do
-      expect(command.request).to eq(mock_request)
+    it "provides access to inputs" do
+      expect(command.manifestable).to be(manifestable)
+      expect(command.request).to eq(request)
     end
   end
 end
