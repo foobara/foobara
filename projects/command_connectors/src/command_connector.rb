@@ -331,12 +331,15 @@ module Foobara
       when "run"
         request.inputs
       when "describe"
-        manifestable = transformed_command_from_name(full_command_name) || type_from_name(full_command_name)
+        manifestable_name = full_command_name || request.inputs[:manifestable]
+        manifestable = if manifestable_name
+                         transformed_command_from_name(manifestable_name) || type_from_name(manifestable_name)
+                       end
 
         unless manifestable
           # :nocov:
           raise NoCommandOrTypeFoundError.new(
-            message: "Could not find command or type registered for #{full_command_name}"
+            message: "Could not find command or type registered for #{manifestable_name}"
           )
           # :nocov:
         end
