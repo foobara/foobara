@@ -17,7 +17,8 @@ task "spec:coverage" do
 
   puts
   SimpleCov.collate resultsets do
-    minimum_coverage line: 100
+    enable_coverage :branch
+    minimum_coverage branch: 100
   end
   puts
 end
