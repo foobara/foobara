@@ -1135,7 +1135,6 @@ RSpec.describe Foobara::CommandConnector do
 
           before do
             User.attributes referral: referral_class, point: point_class
-            QueryUser.handle_reregistered_types!
           end
 
           context "with atomic_entities: true" do

@@ -111,6 +111,7 @@ module Foobara
                       return Outcome.success(existing_type)
                     end
 
+                    reregistering = true
                     domain.foobara_unregister(existing_type)
                   end
 
@@ -126,6 +127,10 @@ module Foobara
 
                   if type.declaration_data[:private]
                     model_class.private_attributes type.declaration_data[:private]
+                  end
+
+                  if reregistering
+                    Model.fire_reregistered!(model_class)
                   end
                 end
               end
