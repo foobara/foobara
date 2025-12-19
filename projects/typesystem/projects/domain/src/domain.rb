@@ -20,14 +20,12 @@ module Foobara
         when Foobara::Scoped
           if object.is_a?(Module) && object.foobara_domain?
             object
+          elsif object == Namespace.global
+            GlobalDomain
+          elsif object.scoped_path_set? && object.scoped_path.empty?
+            object.foobara_lookup_domain!("")
           else
-            parent = object.scoped_namespace
-
-            if parent
-              to_domain(parent)
-            else
-              GlobalDomain
-            end
+            to_domain(object.scoped_namespace)
           end
         else
           # :nocov:
