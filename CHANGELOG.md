@@ -1,4 +1,4 @@
-# [0.4.0] - 2025-12-19
+# [0.4.1] - 2025-12-19
 
 - Add a model_plumbing project and use it to fix up commands when models are reregistered
 - Fix a .to_domain bug where we might grab the wrong global domain

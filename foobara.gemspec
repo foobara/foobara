@@ -18,6 +18,7 @@ Gem::Specification.new do |spec|
   spec.metadata["changelog_uri"] = "#{spec.metadata["source_code_uri"]}/blob/main/CHANGELOG.md"
 
   spec.files = Dir[
+    "lib/**/*",
     "projects/**/*",
     "version.rb",
     "LICENSE*.txt",
