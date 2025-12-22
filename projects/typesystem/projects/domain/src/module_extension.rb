@@ -26,54 +26,6 @@ module Foobara
         end
 
         include(DomainModuleExtension)
-
-        children = foobara_children
-        children = children.sort_by { |child| child.scoped_path.size }
-
-        # see if we are upgrading from prefix to domain and copy over types to Types module
-        children.each do |child|
-          next unless child.is_a?(Types::Type)
-
-          types_mod_path = scoped_full_path.dup
-          unless child.scoped_path.first == "Types"
-            types_mod_path << "Types"
-          end
-
-          types_mod_path += child.scoped_path[..-2]
-          types_mod = Util.make_module_p(types_mod_path.join("::"))
-
-          # TODO: dry this up
-          # TODO: this doesn't handle a type nested under a lower-case type for now
-          if child.scoped_short_name =~ /^[a-z]/
-            unless types_mod.respond_to?(child.scoped_short_name)
-              types_mod.singleton_class.define_method child.scoped_short_name do
-                child
-              end
-
-              unless types_mod.instance_variable_defined?(:@foobara_lowercase_constants)
-                # TODO: test this path or delete it if unreachable
-                # :nocov:
-                types_mod.instance_variable_set(:@foobara_lowercase_constants, [])
-                # :nocov:
-              end
-
-              types_mod.instance_variable_get(:@foobara_lowercase_constants) << child.scoped_short_name
-            end
-          else
-            value = if types_mod.const_defined?(child.scoped_short_name, false)
-                      # TODO: test this path or delete it if unreachable
-                      # :nocov:
-                      types_mod.const_get(child.scoped_short_name, false)
-                      # :nocov:
-                    end
-
-            if value != child
-              types_mod.send(:remove_const, child.scoped_short_name) if value
-
-              foobara_set_types_mod_constant(types_mod, child.scoped_short_name, child)
-            end
-          end
-        end
       end
 
       def foobara_organization!
@@ -100,16 +52,6 @@ module Foobara
 
       def foobara_organization?
         false
-      end
-
-      private
-
-      # Unclear if we actually need this but putting it here to allow entities project
-      # to override this to set the constant to the target class
-      def foobara_set_types_mod_constant(types_mod, name, value)
-        # :nocov:
-        types_mod.const_set(types_mod, name, value)
-        # :nocov:
       end
     end
   end
