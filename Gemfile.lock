@@ -22,6 +22,7 @@ GEM
     diff-lcs (1.6.2)
     docile (1.4.1)
     erb (6.0.1)
+    ffi (1.17.2)
     ffi (1.17.2-x86_64-linux-gnu)
     foobara-crud-driver-spec-helpers (1.1.2)
       base64
@@ -94,10 +95,11 @@ GEM
     rb-fsevent (0.11.2)
     rb-inotify (0.11.1)
       ffi (~> 1.0)
-    rdoc (7.0.2)
+    rdoc (7.0.3)
       erb
       psych (>= 4.0.0)
       tsort
+    readline-ext (0.2.0)
     regexp_parser (2.11.3)
     reline (0.6.3)
       io-console (~> 0.5)
@@ -117,7 +119,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
     rspec-support (3.13.6)
-    rubocop (1.82.0)
+    rubocop (1.82.1)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
@@ -168,6 +170,7 @@ DEPENDENCIES
   pry
   pry-byebug
   rake
+  readline-ext
   rspec
   rspec-its
   rubocop-rake

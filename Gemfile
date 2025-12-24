@@ -33,6 +33,8 @@ group :development, :test do
   # TODO: Just adding this to suppress warnings seemingly coming from pry-byebug. Can probably remove this once
   # pry-byebug has irb as a gem dependency
   gem "irb"
+  # not sure why byebug doesn't include this itself hmmm...
+  gem "readline-ext"
 end
 
 group :test, :ci do
