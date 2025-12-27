@@ -1,6 +1,5 @@
 module Foobara
   class CommandConnector
-    # TODO: should switch to a processor and give errors if the authenticator header is malformed
     class Authenticator < Value::Transformer
       attr_reader :block
 

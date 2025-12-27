@@ -76,14 +76,17 @@ RSpec.describe Foobara::CommandConnectors::Transformers::LoadAtomsPreCommitTrans
   end
 
   let(:command_connector) do
-    Foobara::CommandConnector.new(default_pre_commit_transformers: described_class)
+    cc = command_class
+    Foobara::CommandConnector.new(default_pre_commit_transformers: described_class) do
+      command cc
+    end
   end
 
   let(:transformer) { described_class.new(to: type) }
 
   describe "#transform" do
     it "gives what was passed in because we expect this data to be cast where needed" do
-      command_connector.connect(command_class)
+      command_connector
       response = command_connector.run(
         full_command_name: command_class.full_command_name,
         inputs: value,

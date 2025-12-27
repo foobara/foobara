@@ -124,7 +124,8 @@ module Foobara
                    authenticator: nil,
                    capture_unknown_error: nil,
                    default_serializers: nil,
-                   default_pre_commit_transformers: nil)
+                   default_pre_commit_transformers: nil,
+                   &block)
       authenticator = self.class.to_authenticator(authenticator)
 
       self.authenticator = authenticator
@@ -143,7 +144,14 @@ module Foobara
       self.class.allowed_rules_to_register.each do |ruleish_args|
         command_registry.allowed_rule(*ruleish_args)
       end
+
+      if block
+        instance_eval(&block)
+      end
     end
+
+    # TODO: should this be the official way to connect a command instead of #connect ?
+    def command(...) = connect(...)
 
     def connect(*args, **opts)
       args, opts = desugarize_connect_args(args, opts)
