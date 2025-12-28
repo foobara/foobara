@@ -63,7 +63,7 @@ module Foobara
         case object
         when Class
           if object < Authenticator
-            object.new
+            object.instance
           else
             # :nocov:
             raise ArgumentError, "Expected a class that inherits from Authenticator"
@@ -485,6 +485,7 @@ module Foobara
       end
     end
 
+    # TODO: get all this persistence stuff out of here and into entities plumbing somehow
     def run_request(request)
       command_class = determine_command_class(request)
       request.command_class = command_class

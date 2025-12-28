@@ -1,8 +1,19 @@
 module Foobara
   module TypeDeclarations
     # TODO: this should instead be a processor and have its own possible_errors
+    # TODO: does it make sense that this is in this project? Seems to be more generic than TypeDeclarations
     class TypedTransformer < Value::Transformer
       class << self
+        def subclass(to: nil, from: nil, &map_proc)
+          klass = Class.new(self)
+
+          klass.to(to) if to
+          klass.from(from) if from
+          klass.define_method(:transform, &map_proc) if map_proc
+
+          klass
+        end
+
         def requires_declaration_data?
           false
         end
@@ -66,8 +77,8 @@ module Foobara
         @to_type = Domain.current.foobara_type_from_declaration(...)
       end
 
-      def initialize(from: nil, to: nil)
-        super()
+      def initialize(from: nil, to: nil, **)
+        super(**)
 
         if from
           self.from from
