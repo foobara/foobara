@@ -13,8 +13,8 @@ require "rspec/its"
 require "simplecov"
 
 SimpleCov.root "#{__dir__}/../../../"
-SimpleCov.command_name "command_connectors"
-SimpleCov.coverage_dir "coverage/command_connectors"
+SimpleCov.command_name "entities_plumbing"
+SimpleCov.coverage_dir "coverage/entities_plumbing"
 
 SimpleCov.start do
   add_filter "spec/support/"
@@ -23,8 +23,6 @@ SimpleCov.start do
 end
 
 require "foobara/all"
-require "foobara/command_connectors"
-# TODO: eliminate this require! We should not depend on entities in this project!
 require "foobara/entities_plumbing"
 
 RSpec.configure do |config|
