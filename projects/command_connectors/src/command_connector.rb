@@ -116,17 +116,94 @@ module Foobara
           end
         end
       end
+
+      # don't call this auth_user ?
+      # Change to typed transformer, not mapper
+      def to_auth_user_mapper(object)
+        case object
+        when TypeDeclarations::TypedTransformer
+          object
+        when ::Class
+          if object < TypeDeclarations::TypedTransformer
+            object.instance
+          elsif object < Foobara::DomainMapper
+            build_auth_mapper(object.to_type) { |authenticated_user| object.map!(authenticated_user) }
+          elsif object < Foobara::Command
+            inputs_type = object.inputs_type
+            element_types = inputs_type.element_types
+            size = element_types.size
+
+            first_required_input = if size == 1
+                                     element_types.keys.first
+                                   elsif size > 1
+                                     declaration = inputs_type&.declaration_data
+                                     required_attribute_names = declaration&.[](:required) || EMPTY_ARRAY
+
+                                     if required_attribute_names.size == 1
+                                       required_attribute_names.first
+                                     else
+                                       # :nocov:
+                                       raise ArgumentError,
+                                             "Ambiguous inputs when trying to use #{object} as a mapper. " \
+                                             "Should have either only 1 input or only 1 required input."
+                                       # :nocov:
+                                     end
+                                   else
+                                     # :nocov:
+                                     raise ArgumentError, "To use a command as a mapper it must take an input to map"
+                                     # :nocov:
+                                   end
+
+            build_auth_mapper(object.result_type) do |authenticated_user|
+              object.run!(first_required_input => authenticated_user)
+            end
+          else
+            # :nocov:
+            raise ArgumentError, "not sure how to convert a #{object} to an auth mapper"
+            # :nocov:
+          end
+        when ::Hash
+          object => { to:, map: }
+          build_auth_mapper(to, &map)
+        when ::Array
+          object => [to, map]
+          build_auth_mapper(to, &map)
+        else
+          # :nocov:
+          raise ArgumentError, "Not sure how to convert #{object} to an auth mapper"
+          # :nocov:
+        end
+      end
+
+      # TODO: make private
+      def build_auth_mapper(to_type, &)
+        TypeDeclarations::TypedTransformer.subclass(to: to_type, &).instance
+      end
     end
 
-    attr_accessor :command_registry, :authenticator, :capture_unknown_error, :name
+    attr_accessor :command_registry, :authenticator, :capture_unknown_error, :name,
+                  :auth_map
 
     def initialize(name: nil,
                    authenticator: nil,
                    capture_unknown_error: nil,
                    default_serializers: nil,
                    default_pre_commit_transformers: nil,
+                   auth_map: nil,
+                   current_user: nil,
                    &block)
       authenticator = self.class.to_authenticator(authenticator)
+
+      if current_user
+        auth_map ||= {}
+        auth_map[:current_user] = current_user
+      end
+
+      if auth_map
+        self.auth_map = auth_map.transform_values do |mapper|
+          self.class.to_auth_user_mapper(mapper)
+        end
+      end
 
       self.authenticator = authenticator
       self.command_registry = CommandRegistry.new(authenticator:)
