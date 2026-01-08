@@ -478,6 +478,65 @@ RSpec.describe Foobara::Domain do
 
         it { is_expected.to be(true) }
 
+        context "when domain does not respond to mod" do
+          it "returns true via d == domain branch" do
+            # Tests: d == domain (first part of OR, when domain.respond_to?(:mod) is false)
+            # This ensures we hit the d == domain branch directly
+            expect(organization.foobara_owns_domain?(domain)).to be(true)
+          end
+
+          it "returns false when domain is not owned" do
+            # Tests: domain.respond_to?(:mod) is false AND d != domain
+            other_org = stub_module("SomeOtherOrg") { foobara_organization! }
+            expect(other_org.foobara_owns_domain?(domain)).to be(false)
+          end
+        end
+
+        context "when domain responds to mod" do
+          let(:domain_wrapper) do
+            domain_module = domain
+            obj = Object.new
+            def obj.mod
+              @domain_module
+            end
+
+            def obj.respond_to?(method)
+              method == :mod || super
+            end
+            obj.instance_variable_set(:@domain_module, domain_module)
+            obj
+          end
+
+          it "returns true via d == domain.mod branch" do
+            # Tests: domain.respond_to?(:mod) is true AND d == domain.mod
+            expect(organization.foobara_owns_domain?(domain_wrapper)).to be(true)
+          end
+
+          it "returns false when domain.mod does not match" do
+            # Tests: domain.respond_to?(:mod) is true AND d != domain.mod
+            other_org_for_unowned = stub_module("SomeOtherOrgForUnowned") { foobara_organization! }
+            unowned_domain = stub_module("#{other_org_for_unowned.name}::UnownedDomain") { foobara_domain! }
+            unowned_wrapper = Object.new
+            def unowned_wrapper.mod
+              @domain_module
+            end
+
+            def unowned_wrapper.respond_to?(method)
+              method == :mod || super
+            end
+            unowned_wrapper.instance_variable_set(:@domain_module, unowned_domain)
+            expect(organization.foobara_owns_domain?(unowned_wrapper)).to be(false)
+          end
+
+          it "returns false when domain doesn't respond to mod" do
+            # Tests: domain.respond_to?(:mod) is true AND d != domain.mod
+            other_org_for_unowned = stub_module("SomeOtherOrgForUnowned") { foobara_organization! }
+            unowned_domain = stub_module("#{other_org_for_unowned.name}::UnownedDomain") { foobara_domain! }
+
+            expect(organization.foobara_owns_domain?(unowned_domain)).to be(false)
+          end
+        end
+
         context "when does not own domain" do
           subject { other_org.foobara_owns_domain?(domain) }
 
@@ -498,6 +557,15 @@ RSpec.describe Foobara::Domain do
           expect(Foobara.all_organizations).to include(organization)
           expect(Foobara.all_domains).to include(domain)
           expect(Foobara.all_commands).to include(command_class)
+        end
+
+        it "handles nil to_include" do
+          # Tests: if to_include (line 43) - else branch when to_include is nil
+          # Call foobara_manifest when TypeDeclarations.foobara_manifest_context_to_include returns nil
+          allow(Foobara::TypeDeclarations).to receive(:foobara_manifest_context_to_include).and_return(nil)
+          manifest = organization.foobara_manifest
+          expect(manifest).to be_a(Hash)
+          expect(manifest[:domains]).to be_an(Array)
         end
       end
 

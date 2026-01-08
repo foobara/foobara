@@ -107,6 +107,14 @@ RSpec.describe Foobara::Command do
 
           expect(command_manifest[:depends_on]).to eq(["SomeDomain1::SomeCommand2"])
         end
+
+        it "handles nil to_include" do
+          # Tests the else branch when to_include is nil (line 10)
+          allow(Foobara::TypeDeclarations).to receive(:foobara_manifest_context_to_include).and_return(nil)
+          manifest = domain_module1.foobara_manifest
+          expect(manifest).to be_a(Hash)
+          expect(manifest[:commands]).to be_an(Array)
+        end
       end
     end
 

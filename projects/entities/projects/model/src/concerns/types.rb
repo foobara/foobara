@@ -224,7 +224,7 @@ module Foobara
             else
               method = :"#{attribute_name}="
 
-              if instance_methods.include?(method)
+              if method_defined?(method)
                 # TODO: test this code path
                 # :nocov:
                 remove_method method
