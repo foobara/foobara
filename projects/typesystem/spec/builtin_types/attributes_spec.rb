@@ -182,6 +182,19 @@ RSpec.describe Foobara::BuiltinTypes::Attributes do
   end
 
   describe "required attributes" do
+    describe "Required validator" do
+      let(:validator) { Foobara::BuiltinTypes::Attributes::SupportedValidators::Required.new(required: [:a]) }
+
+      context "when value is not a hash" do
+        it "returns false for applicable?" do
+          # Tests the else branch when value.is_a?(::Hash) is false (line 21 in required.rb)
+          expect(validator.applicable?([])).to be(false)
+          expect(validator.applicable?("string")).to be(false)
+          expect(validator.applicable?(123)).to be(false)
+        end
+      end
+    end
+
     context "when all strings" do
       let(:type_declaration) do
         {
@@ -227,6 +240,25 @@ RSpec.describe Foobara::BuiltinTypes::Attributes do
               ExtendAttributesTypeDeclaration::TypeDeclarationValidators::ArrayOfSymbols::
               InvalidRequiredAttributesValuesGivenError
         )
+      end
+    end
+
+    context "when required is not an array" do
+      let(:type_declaration) do
+        {
+          type: :attributes,
+          element_type_declarations: {
+            a: :integer,
+            b: :integer
+          },
+          required: :a
+        }
+      end
+
+      it "does not use ArrayWithValidAttributeNames validator" do
+        # Tests the branch when required.is_a?(::Array) is false
+        # This should not raise the ArrayWithValidAttributeNames error
+        expect { type }.to_not raise_error
       end
     end
 
@@ -375,6 +407,23 @@ RSpec.describe Foobara::BuiltinTypes::Attributes do
           bar: 10,
           baz: :baz
         )
+      end
+
+      context "when hash has non-symbolic keys" do
+        let(:attributes_with_string_keys) do
+          {
+            "foo" => "foo",
+            "bar" => 10,
+            baz: :baz
+          }
+        end
+
+        it "symbolizes keys" do
+          # Tests the else branch when non_symbolic_keys is not empty (line 18 in hash.rb)
+          outcome = type.process_value(attributes_with_string_keys)
+          expect(outcome).to be_success
+          expect(outcome.result.keys.all? { |k| k.is_a?(Symbol) }).to be(true)
+        end
       end
 
       context "when using :attributes as an attributes type" do

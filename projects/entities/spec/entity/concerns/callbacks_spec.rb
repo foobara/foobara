@@ -31,6 +31,25 @@ RSpec.describe Foobara::Entity::Concerns::Callbacks do
     end
   end
 
+  describe ".class_callback_registry" do
+    context "when Entity class itself" do
+      it "creates a MultipleAction registry" do
+        # Tests the if branch when self == Entity (line 65 in callbacks.rb)
+        registry = Foobara::Entity.class_callback_registry
+        expect(registry).to be_a(Foobara::Callback::Registry::MultipleAction)
+        expect(registry.allowed_types).to include(:after)
+      end
+    end
+
+    context "when Entity subclass" do
+      it "creates a ChainedMultipleAction registry" do
+        # Tests the else branch when self != Entity (line 70 in callbacks.rb)
+        registry = entity_class.class_callback_registry
+        expect(registry).to be_a(Foobara::Callback::Registry::ChainedMultipleAction)
+      end
+    end
+  end
+
   describe ".after_any_action" do
     let(:record) { entity_class.create(foo: 10) }
 

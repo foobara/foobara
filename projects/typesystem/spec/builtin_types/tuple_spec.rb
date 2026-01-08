@@ -15,6 +15,34 @@ RSpec.describe ":tuple" do
     [:big_decimal, { a: :integer }]
   end
 
+  describe "SetSize desugarizer" do
+    let(:desugarizer) do
+      Foobara::BuiltinTypes::Tuple::SupportedProcessors::ElementTypeDeclarations::TypeDeclarationExtension::
+        ExtendTupleTypeDeclaration::Desugarizers::SetSize.new
+    end
+
+    context "when value is not a hash" do
+      it "returns nil" do
+        # Tests the else branch when value.hash? is false (line 11)
+        type_declaration_obj = Foobara::TypeDeclaration.new(:not_a_hash)
+        expect(desugarizer.applicable?(type_declaration_obj)).to be_nil
+      end
+    end
+  end
+
+  describe "LazyElementTypes::Tuple" do
+    context "when tuple type without element_type_declarations" do
+      let(:type_declaration) do
+        { type: :tuple }
+      end
+
+      it "resolves element_types to nil" do
+        # Tests the else branch when element_type_declarations is nil (line 11 in tuple.rb)
+        expect(type.element_types).to be_nil
+      end
+    end
+  end
+
   context "when using array sugar" do
     describe "#declaration_data" do
       it "converts to strict type declaration successfully" do
@@ -74,6 +102,13 @@ RSpec.describe ":tuple" do
         let(:value) { ["3", { a: "2" }] }
 
         it { is_expected.to eq([BigDecimal(3), { a: 2 }]) }
+
+        it "validates size correctly" do
+          # Tests the else branch when array.size == expected_size (line 23 in size.rb)
+          # This ensures the validator doesn't return an error when sizes match
+          expect(outcome).to be_success
+          expect(result).to eq([BigDecimal(3), { a: 2 }])
+        end
       end
 
       context "when value has too many elements" do
