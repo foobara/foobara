@@ -97,13 +97,13 @@ module Foobara
                   root_namespace = Namespace.current.foobara_root_namespace
                   domain = root_namespace.foobara_lookup_domain(domain_name)
 
-                  type_symbol = type.declaration_data[:name]
+                  type_symbol = type.declaration_data[:name].to_sym
 
                   if domain.foobara_type_registered?(type_symbol, mode: Namespace::LookupMode::DIRECT)
                     existing_type = domain.foobara_lookup_type(type_symbol, mode: Namespace::LookupMode::DIRECT)
 
                     if existing_type.created_in_namespace == type.created_in_namespace &&
-                       existing_type.type_symbol == type_symbol.to_sym &&
+                       existing_type.type_symbol == type_symbol &&
                        existing_type.declaration_data == type.declaration_data
                       # There's nothing different about this new model type. Let's just return the old one
                       # to reduce burdens on clearing caches.
@@ -111,10 +111,11 @@ module Foobara
                       return Outcome.success(existing_type)
                     end
 
+                    reregistering = true
                     domain.foobara_unregister(existing_type)
                   end
 
-                  type.type_symbol = type_symbol.to_sym
+                  type.type_symbol = type_symbol
 
                   model_class.description type.declaration_data[:description]
 
@@ -126,6 +127,10 @@ module Foobara
 
                   if type.declaration_data[:private]
                     model_class.private_attributes type.declaration_data[:private]
+                  end
+
+                  if reregistering
+                    Model.fire_reregistered!(model_class)
                   end
                 end
               end

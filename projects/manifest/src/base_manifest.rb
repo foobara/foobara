@@ -5,7 +5,7 @@ module Foobara
     class BaseManifest
       include TruncatedInspect
 
-      attr_accessor :root_manifest, :path
+      attr_accessor :root_manifest, :manifest_path
 
       class << self
         attr_accessor :category_symbol
@@ -50,15 +50,22 @@ module Foobara
         end
       end
 
-      def initialize(root_manifest, path)
+      def initialize(root_manifest, manifest_path)
         self.root_manifest = root_manifest
-        self.path = path
+        self.manifest_path = manifest_path
 
         if relevant_manifest.nil?
           # :nocov:
-          raise InvalidPath, "invalid path #{path}"
+          raise InvalidPath, "invalid path #{manifest_path}"
           # :nocov:
         end
+      end
+
+      def path
+        # :nocov:
+        warn "[DEPRECATION] `path` is deprecated. Please use `manifest_path` instead."
+        manifest_path
+        # :nocov:
       end
 
       def domain
@@ -94,7 +101,7 @@ module Foobara
       end
 
       def relevant_manifest
-        @relevant_manifest ||= Foobara::DataPath.values_at(path, root_manifest).first
+        @relevant_manifest ||= Foobara::DataPath.values_at(manifest_path, root_manifest).first
       end
 
       def find_type(type_declaration)
@@ -155,7 +162,7 @@ module Foobara
       end
 
       def symbol_path
-        @symbol_path ||= path.map(&:to_sym)
+        @symbol_path ||= manifest_path.map(&:to_sym)
       end
 
       def hash

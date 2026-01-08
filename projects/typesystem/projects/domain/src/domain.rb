@@ -20,14 +20,12 @@ module Foobara
         when Foobara::Scoped
           if object.is_a?(Module) && object.foobara_domain?
             object
+          elsif object == Namespace.global
+            GlobalDomain
+          elsif object.scoped_path_set? && object.scoped_path.empty?
+            object.foobara_lookup_domain!("")
           else
-            parent = object.scoped_namespace
-
-            if parent
-              to_domain(parent)
-            else
-              GlobalDomain
-            end
+            to_domain(object.scoped_namespace)
           end
         else
           # :nocov:
@@ -92,21 +90,6 @@ module Foobara
           else
             new_class.const_set(const_name, value)
           end
-        end
-
-        lower_case_constants = old_mod.instance_variable_get(:@foobara_lowercase_constants)
-
-        if lower_case_constants && !lower_case_constants.empty?
-          lower_case_constants&.each do |lower_case_constant|
-            new_class.singleton_class.define_method lower_case_constant do
-              old_mod.send(lower_case_constant)
-            end
-          end
-
-          new_lowercase_constants = new_class.instance_variable_get(:@foobara_lowercase_constants) || []
-          new_lowercase_constants += lower_case_constants
-
-          new_class.instance_variable_set(:@foobara_lowercase_constants, new_lowercase_constants)
         end
       end
     end

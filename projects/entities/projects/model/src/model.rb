@@ -162,6 +162,18 @@ module Foobara
           end
         end
       end
+
+      # Why aren't we using the callbacks project for this?
+      def on_reregister(&block)
+        @on_reregister ||= []
+        @on_reregister << block
+      end
+
+      def fire_reregistered!(model_class)
+        @on_reregister&.each do |block|
+          block.call(model_class)
+        end
+      end
     end
 
     abstract

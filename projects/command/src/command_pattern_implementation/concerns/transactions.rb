@@ -7,6 +7,7 @@ module Foobara
         include Concern
         include NestedTransactionable
 
+        # TODO: move this out of here!
         def relevant_entity_classes
           return @relevant_entity_classes if defined?(@relevant_entity_classes)
 

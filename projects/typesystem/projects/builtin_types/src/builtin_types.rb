@@ -154,12 +154,6 @@ module Foobara
         type
       end
 
-      private
-
-      def global_type_declaration_handler_registry
-        TypeDeclarations.global_type_declaration_handler_registry
-      end
-
       def install_type_declaration_extensions_for(processor_class)
         extension_module = Util.constant_value(processor_class, :TypeDeclarationExtension)
 
@@ -209,6 +203,12 @@ module Foobara
             end
           end
         end
+      end
+
+      private
+
+      def global_type_declaration_handler_registry
+        TypeDeclarations.global_type_declaration_handler_registry
       end
     end
   end

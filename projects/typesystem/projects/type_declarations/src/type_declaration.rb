@@ -38,18 +38,20 @@ module Foobara
     def handle_symbolic_declaration
       self.reference_checked = true
 
-      if declaration_data.is_a?(::Symbol)
-        symbol = declaration_data
-      elsif declaration_data.is_a?(::String) && TypeDeclarations.stringified?
-        symbol = declaration_data.to_sym
-      end
+      symbol = if declaration_data.is_a?(::Symbol)
+                 declaration_data
+               elsif declaration_data.is_a?(::String)
+                 declaration_data.to_sym
+               end
 
       if symbol
-        type = if absolutified?
-                 Domain.current.foobara_lookup_type(symbol, mode: Namespace::LookupMode::ABSOLUTE)
+        mode = if absolutified?
+                 Namespace::LookupMode::ABSOLUTE
                else
-                 Domain.current.foobara_lookup_type(symbol)
+                 Namespace::LookupMode::RELAXED
                end
+
+        type = Domain.current.foobara_lookup_type(symbol, mode:)
 
         if type
           unless strict?
@@ -61,7 +63,6 @@ module Foobara
           self.is_strict = true
           self.is_deep_duped = true
           self.is_duped = true
-
         else
           if declaration_data.is_a?(::Symbol)
             self.is_duped = true
@@ -93,11 +94,13 @@ module Foobara
 
         if type_symbol
           if type_symbol.is_a?(::Symbol) || type_symbol.is_a?(::String)
-            type = if absolutified?
-                     Domain.current.foobara_lookup_type(type_symbol, mode: Namespace::LookupMode::ABSOLUTE)
+            mode = if absolutified?
+                     Namespace::LookupMode::ABSOLUTE
                    else
-                     Domain.current.foobara_lookup_type(type_symbol)
+                     Namespace::LookupMode::RELAXED
                    end
+
+            type = Domain.current.foobara_lookup_type(type_symbol, mode:)
 
             if type
               symbolize_keys!

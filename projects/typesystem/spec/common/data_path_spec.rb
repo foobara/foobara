@@ -1,5 +1,3 @@
-require "ostruct"
-
 RSpec.describe Foobara::DataPath do
   let(:key) { described_class.new(path) }
 
@@ -174,13 +172,14 @@ RSpec.describe Foobara::DataPath do
   end
 
   describe ".set_value_at" do
-    # rubocop:disable Style/OpenStructUse
+    let(:some_struct) { Struct.new(:z) }
+
     let(:object) do
       [
         {
           a: {
             b: [1, 2, { c: 4 }],
-            d: OpenStruct.new
+            d: some_struct.new("zz")
           }
         },
         "whatever"
@@ -198,7 +197,7 @@ RSpec.describe Foobara::DataPath do
             {
               a: {
                 b: [1, 2, { c: 100 }],
-                d: OpenStruct.new
+                d: some_struct.new("zz")
               }
             },
             "whatever"
@@ -235,7 +234,7 @@ RSpec.describe Foobara::DataPath do
             {
               a: {
                 b: [1, 100, { c: 4 }],
-                d: OpenStruct.new
+                d: some_struct.new("zz")
               }
             },
             "whatever"
@@ -257,7 +256,7 @@ RSpec.describe Foobara::DataPath do
             {
               a: {
                 b: [1, 2, { c: 4 }],
-                d: OpenStruct.new(z: 200)
+                d: some_struct.new(200)
               }
             },
             "whatever"
@@ -265,6 +264,5 @@ RSpec.describe Foobara::DataPath do
         )
       end
     end
-    # rubocop:enable Style/OpenStructUse
   end
 end

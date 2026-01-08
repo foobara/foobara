@@ -2,9 +2,11 @@ ENV["FOOBARA_ENV"] = "test"
 
 require "bundler/setup"
 
-unless ENV["SKIP_PRY"] == "true" || ENV["CI"] == "true"
+if ENV["RUBY_DEBUG"] == "true"
+  require "debug"
+elsif ENV["SKIP_PRY"] != "true" && ENV["CI"] != "true"
   require "pry"
-  require "pry-byebug"
+  require "pry-byebug" unless ENV["SKIP_BYEBUG"] == "true"
 end
 
 require "rspec/its"
@@ -23,13 +25,16 @@ end
 
 require "foobara/all"
 require "foobara/command_connectors"
+# TODO: eliminate this require! We should not depend on entities in this project!
+require "foobara/entities_plumbing"
 
 RSpec.configure do |config|
   # Need to do :all instead of :each because for specs that use .around,
   # .after(:each) do |example| here is called after example.run but before any threads created in
   # .around might have been cleaned up.
   config.after(:suite) do
-    expect(Thread.list.size).to eq(1)
+    threads = Thread.list.reject { |t| t.name == "DEBUGGER__::SESSION@server" }
+    expect(threads.size).to eq(1)
   end
   config.filter_run_when_matching :focus
 

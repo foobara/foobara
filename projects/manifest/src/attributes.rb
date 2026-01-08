@@ -27,7 +27,7 @@ module Foobara
         element_type_declarations.keys.to_h do |attribute_name|
           [
             attribute_name.to_sym,
-            TypeDeclaration.new(root_manifest, [*path, :element_type_declarations, attribute_name])
+            TypeDeclaration.new(root_manifest, [*manifest_path, :element_type_declarations, attribute_name])
           ]
         end
       end

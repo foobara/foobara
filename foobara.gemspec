@@ -18,6 +18,7 @@ Gem::Specification.new do |spec|
   spec.metadata["changelog_uri"] = "#{spec.metadata["source_code_uri"]}/blob/main/CHANGELOG.md"
 
   spec.files = Dir[
+    "lib/**/*",
     "projects/**/*",
     "version.rb",
     "LICENSE*.txt",
@@ -30,10 +31,7 @@ Gem::Specification.new do |spec|
     "lib",
     *Dir.glob("projects/typesystem/projects/*/lib", base: __dir__),
     *Dir.glob("projects/entities/projects/*/lib", base: __dir__),
-    "projects/command/lib",
-    "projects/domain_mapper/lib",
-    "projects/command_connectors/lib",
-    "projects/manifest/lib"
+    *Dir.glob("projects/*/lib", base: __dir__)
   ]
 
   spec.add_dependency "bigdecimal"

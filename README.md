@@ -1578,7 +1578,9 @@ module FoobaraDemo
 
         alias animal from
 
-        foobara_delegate :first_name, :last_name, :birthday, to: :animal # Deprecated
+        def first_name = animal.first_name
+        def last_name = animal.last_name
+        def birthday = animal.birthday
 
         def birthday_to_age
           today = Date.today
@@ -2116,18 +2118,18 @@ TODO: give some code examples
   * https://foobara.org/videos
   * https://www.youtube.com/@FoobaraFlix
 * YARD Docs
-  * All docs combined: https://docs.foobara.com/all/
+  * All docs combined: https://docs.foobara.org/all/
   * Per-repository docs: https://foobara.org/docs
 
 # Help
 
-Are you actually trying to build something with Foobara? Happy to help! miles@foobara.com
+Are you actually trying to build something with Foobara? Happy to help! miles@foobara.org
 
 # Contributing
 
 There are many ways you could help! There are tasks in the codebase for all skill levels including absolute beginner.
 There's also much need for improved documentation. If you're interested in helping but don't know how, then
-please reach out! miles@foobara.com
+please reach out! miles@foobara.org
 
 You are welcome to also contribute via a github pull request or open issues for bugs. 
 Make sure the test suite and linter pass locally before opening a pull request as 

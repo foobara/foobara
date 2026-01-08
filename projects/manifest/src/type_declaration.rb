@@ -12,9 +12,9 @@ module Foobara
           if self == TypeDeclaration
             case type_declaration.type.to_sym
             when :attributes
-              Attributes.new(type_declaration.root_manifest, type_declaration.path)
+              Attributes.new(type_declaration.root_manifest, type_declaration.manifest_path)
             when :array
-              Array.new(type_declaration.root_manifest, type_declaration.path)
+              Array.new(type_declaration.root_manifest, type_declaration.manifest_path)
             else
               type_declaration
             end
@@ -37,7 +37,7 @@ module Foobara
       def attribute?
         return @is_attribute if defined?(@is_attribute)
 
-        parent_path_atom = path[2..][-2]
+        parent_path_atom = manifest_path[2..][-2]
         @is_attribute = [:element_type_declarations, "element_type_declarations"].include?(parent_path_atom)
       end
       # rubocop:enable Naming/MemoizedInstanceVariableName
@@ -47,7 +47,7 @@ module Foobara
 
         raise "Not an attribute" unless attribute?
 
-        @parent_attributes = Attributes.new(root_manifest, path[0..-3])
+        @parent_attributes = Attributes.new(root_manifest, manifest_path[0..-3])
       end
 
       def attribute_name
@@ -55,7 +55,7 @@ module Foobara
 
         raise "Not an attribute" unless attribute?
 
-        @attribute_name = path[-1]
+        @attribute_name = manifest_path[-1]
       end
 
       def required?

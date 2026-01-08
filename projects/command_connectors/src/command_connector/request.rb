@@ -63,6 +63,31 @@ module Foobara
         command_class.authenticator
       end
 
+      def auth_mappers
+        # TODO: make this consistent?
+        command_connector.auth_map
+      end
+
+      def auth_mapped_method?(method_name)
+        auth_mappers&.key?(method_name)
+      end
+
+      def auth_mapper_for(name)
+        auth_mappers&.[](name.to_sym)
+      end
+
+      def auth_mapped_value_for(name)
+        return unless authenticated_user
+
+        @auth_mapper_cache ||= {}
+
+        if @auth_mapper_cache.key?(name)
+          @auth_mapper_cache[name]
+        else
+          @auth_mapper_cache[name] = auth_mapper_for(name)&.process_value!(authenticated_user)
+        end
+      end
+
       def serializer
         return @serializer if defined?(@serializer)
 
@@ -113,11 +138,12 @@ module Foobara
         outcome.error_collection
       end
 
+      # TODO: move this to entity_plumbing
       def relevant_entity_classes
         if command_class.is_a?(::Class) && command_class < TransformedCommand
           entity_classes = authenticator&.relevant_entity_classes(self)
           [*entity_classes, *relevant_entity_classes_from_inputs_transformer]
-        end || []
+        end || EMPTY_ARRAY
       end
 
       private

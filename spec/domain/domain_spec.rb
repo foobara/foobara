@@ -162,13 +162,12 @@ RSpec.describe Foobara::Domain do
     let(:type_symbol) { :some_type }
     let(:type_declaration) { [:string, :downcase] }
 
-    it "creates and registers a type and puts it on the Types module" do
+    it "creates and registers a type" do
       domain.foobara_register_type(type_symbol, *type_declaration)
 
       type = domain.foobara_lookup(type_symbol)
 
       expect(type.process_value!("FooBarBaz")).to eq("foobarbaz")
-      expect(SomeDomain::Types.some_type).to be(type)
     end
 
     context "when registering a Type instead of a type declaration" do
@@ -180,7 +179,6 @@ RSpec.describe Foobara::Domain do
         type = domain.foobara_lookup(type_symbol)
 
         expect(type.process_value!("FooBarBaz")).to eq("foobarbaz")
-        expect(SomeDomain::Types.some_type).to be(type)
       end
     end
 
@@ -195,7 +193,6 @@ RSpec.describe Foobara::Domain do
         domain.foobara_register_type(type_symbol, type)
 
         expect(type.process_value!("FooBarBaz")).to eq("foobarbaz")
-        expect(SomeDomain::Types.some_type).to be(type)
       end
     end
 
@@ -210,27 +207,13 @@ RSpec.describe Foobara::Domain do
         domain.foobara_register_type(type_symbol, type)
 
         expect(type.process_value!("FooBarBaz")).to eq("foobarbaz")
-        expect(SomeDomain::Types.some_type).to be(type)
-      end
-    end
-
-    context "when type constant is upper case" do
-      let(:type_symbol) { "SomeType" }
-
-      it "creates and registers a type and puts it on the Types module as a constant" do
-        domain.foobara_register_type(type_symbol, *type_declaration)
-
-        type = domain.foobara_lookup(type_symbol)
-        expect(type).to be_a(Foobara::Types::Type)
-        expect(SomeDomain::Types::SomeType).to be(type)
       end
     end
 
     context "when registering on the GlobalDomain" do
-      it "creates and registers the type and puts it on the Types module" do
+      it "creates and registers the type" do
         type = Foobara::GlobalDomain.foobara_register_type(type_symbol, *type_declaration)
-        expect(type).to be_a(Foobara::Types::Type)
-        expect(Foobara::GlobalDomain::Types.some_type).to be(type)
+        expect(type).to be_a(Foobara::Type)
       end
     end
 
@@ -274,15 +257,6 @@ RSpec.describe Foobara::Domain do
         expect(SomeOtherDomain::SomeOuterModel).to be_a(Module)
         expect(SomeOtherDomain::SomeOuterModel).to_not be_a(Class)
         expect(SomeOtherDomain::SomeOuterModel.instance_variable_get(:@foobara_created_via_make_class)).to be(true)
-        expect(Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel).to be_a(Module)
-        expect(Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel).to_not be_a(Class)
-        expect(
-          Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel.instance_variable_get(
-            :@foobara_created_via_make_class
-          )
-        ).to be(true)
-        expect(Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel.some_inner_type).to be(inner_type)
-        expect(Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
         expect(SomeOtherDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
         expect(SomeOtherDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_model)
 
@@ -292,51 +266,16 @@ RSpec.describe Foobara::Domain do
 
         expect(SomeOtherDomain::SomeOuterModel).to be_a(Class)
         expect(SomeOtherDomain::SomeOuterModel.model_type).to be(outer_model)
-        expect(Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel).to be_a(Class)
-        expect(Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel.model_type).to be(outer_model)
-        expect(Foobara::GlobalDomain::Types::SomeOtherDomain::SomeOuterModel.some_inner_type).to be(inner_type)
         expect(SomeOtherDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
         expect(SomeOtherDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_model)
+        expect(SomeOtherDomain::SomeOuterModel.model_type.foobara_lookup(:some_inner_type)).to be(inner_type)
 
         some_other_domain.foobara_domain!
 
         expect(SomeOtherDomain::SomeOuterModel).to be_a(Class)
         expect(SomeOtherDomain::SomeOuterModel.model_type).to be(outer_model)
-        expect(SomeOtherDomain::Types::SomeOuterModel).to be_a(Class)
-        expect(SomeOtherDomain::Types::SomeOuterModel.model_type).to be(outer_model)
-        expect(SomeOtherDomain::Types::SomeOuterModel.some_inner_type).to be(inner_type)
         expect(SomeOtherDomain::SomeOuterModel::SomeInnerModel).to be_a(Class)
         expect(SomeOtherDomain::SomeOuterModel::SomeInnerModel.model_type).to be(inner_model)
-
-        expect(Foobara::GlobalDomain.constants(false)).to_not include(:Types)
-      end
-    end
-
-    context "when it already has a Types prefix" do
-      let(:type_symbol) { [:Types, :Foo, :Bar, :some_type] }
-
-      it "creates and registers the type and puts it on the existing Types module" do
-        domain.foobara_register_type(type_symbol, *type_declaration)
-
-        type = domain.foobara_lookup(type_symbol)
-
-        expect(type).to be_a(Foobara::Types::Type)
-        expect(SomeDomain::Types::Foo::Bar.some_type).to be(type)
-      end
-
-      context "when the Types module already exists" do
-        before do
-          stub_module("SomeDomain::Types")
-        end
-
-        it "creates and registers the type and puts it on the existing Types module" do
-          domain.foobara_register_type(type_symbol, *type_declaration)
-
-          type = domain.foobara_lookup(type_symbol)
-
-          expect(type).to be_a(Foobara::Types::Type)
-          expect(SomeDomain::Types::Foo::Bar.some_type).to be(type)
-        end
       end
     end
   end

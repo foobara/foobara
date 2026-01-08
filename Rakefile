@@ -24,6 +24,7 @@ task "spec:coverage" do
 end
 
 spec_names = [
+  "entities_plumbing",
   "manifest",
   "typesystem",
   "command_connectors",

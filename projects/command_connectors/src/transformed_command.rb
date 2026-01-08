@@ -782,7 +782,9 @@ module Foobara
     end
 
     def method_missing(method_name, ...)
-      if command.respond_to?(method_name)
+      if auth_mapped_method?(method_name)
+        auth_mapped_value_for(method_name)
+      elsif command.respond_to?(method_name)
         command.send(method_name, ...)
       else
         # :nocov:
@@ -791,8 +793,16 @@ module Foobara
       end
     end
 
+    def auth_mapped_value_for(name)
+      request.auth_mapped_value_for(name)
+    end
+
+    def auth_mapped_method?(method_name)
+      request&.auth_mapped_method?(method_name)
+    end
+
     def respond_to_missing?(method_name, private = false)
-      command.respond_to?(method_name, private) || super
+      command.respond_to?(method_name, private) || auth_mapped_method?(method_name) || super
     end
 
     private

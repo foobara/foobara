@@ -22,18 +22,18 @@ module Foobara
       end
 
       def inputs_type
-        Attributes.new(root_manifest, [*path, :inputs_type])
+        Attributes.new(root_manifest, [*manifest_path, :inputs_type])
       end
 
       def result_type
-        TypeDeclaration.new(root_manifest, [*path, :result_type])
+        TypeDeclaration.new(root_manifest, [*manifest_path, :result_type])
       rescue Foobara::Manifest::InvalidPath
         nil
       end
 
       def possible_errors
         (super || {}).keys.to_h do |key|
-          [key, PossibleError.new(root_manifest, [*path, :possible_errors, key])]
+          [key, PossibleError.new(root_manifest, [*manifest_path, :possible_errors, key])]
         end
       end
 

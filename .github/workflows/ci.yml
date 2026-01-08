@@ -11,6 +11,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: RSpec
+    strategy:
+      matrix:
+        ruby: ['3.4', '4.0']
     timeout-minutes: 3
     env:
       BUNDLE_ONLY: ci

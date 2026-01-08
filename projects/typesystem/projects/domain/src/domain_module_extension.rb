@@ -17,80 +17,6 @@ module Foobara
       module ClassMethods
         attr_writer :foobara_domain_name, :foobara_full_domain_name
 
-        def foobara_unregister(scoped)
-          scoped = to_scoped(scoped)
-
-          if scoped.is_a?(Foobara::Types::Type)
-            parent_mod = nil
-
-            if const_defined?(:Types, false)
-              parent_path = ["Foobara::GlobalDomain"]
-              unless scoped.type_symbol.to_s.start_with?("Types::")
-                parent_path << "Types"
-              end
-              parent_path += scoped.type_symbol.to_s.split("::")[..-2]
-
-              parent_name = parent_path.join("::")
-              child_name = [*parent_path, scoped.type_symbol.to_s.split("::").last].join("::")
-              removed = false
-
-              if Object.const_defined?(parent_name)
-                parent_mod = Object.const_get(parent_name)
-
-                if scoped.scoped_short_name =~ /^[a-z]/
-                  lower_case_constants = parent_mod.instance_variable_get(:@foobara_lowercase_constants)
-
-                  if lower_case_constants&.include?(scoped.scoped_short_name)
-                    parent_mod.singleton_class.undef_method scoped.scoped_short_name
-                    lower_case_constants.delete(scoped.scoped_short_name)
-                  end
-
-                  removed = true
-                elsif parent_mod.const_defined?(scoped.scoped_short_name, false)
-                  parent_mod.send(:remove_const, scoped.scoped_short_name)
-                  removed = true
-                end
-              end
-
-              if removed
-                child_name = parent_name
-
-                while child_name
-                  child = Object.const_get(child_name)
-
-                  break if child.foobara_domain?
-                  break if child.foobara_organization?
-
-                  # TODO: unclear why we need this check, hmmm, figure it out and document it (or delete if not needed)
-                  break if child.constants(false).any? do |constant|
-                    # TODO: a clue: this stopped being entered by the test suite after deleting GlobalDomain::Types
-                    # in .reset_alls hmmmmmm...
-                    # :nocov:
-                    value = child.const_get(constant)
-                    value.is_a?(Types::Type) || (value.is_a?(::Class) && value.respond_to?(:foobara_type?))
-                    # :nocov:
-                  end
-
-                  lower_case_constants = child.instance_variable_get(:@foobara_lowercase_constants)
-                  break if lower_case_constants && !lower_case_constants.empty?
-
-                  parent_name = Util.parent_module_name_for(child_name)
-                  break unless Object.const_defined?(parent_name)
-
-                  parent = Object.const_get(parent_name)
-
-                  child_sym = Util.non_full_name(child).to_sym
-                  parent.send(:remove_const, child_sym)
-
-                  child_name = parent_name
-                end
-              end
-            end
-          end
-
-          super
-        end
-
         def foobara_domain_map(*args, to: nil, strict: false, criteria: nil, should_raise: false, **opts)
           case args.size
           when 1
@@ -261,8 +187,6 @@ module Foobara
             foobara_register(type)
           end
 
-          _set_type_constant(type)
-
           type
         end
 
@@ -324,83 +248,6 @@ module Foobara
           end
 
           manifest
-        end
-
-        private
-
-        def _set_type_constant(type)
-          domain = if scoped_full_path.empty?
-                     GlobalDomain
-                   else
-                     self
-                   end
-
-          path = type.scoped_path
-          if path.first == "Types"
-            path = path[1..]
-          end
-
-          types_mod = if domain.const_defined?(:Types)
-                        domain.const_get(:Types)
-                      else
-                        domain.const_set(:Types, Module.new)
-                      end
-
-          if type.scoped_prefix
-            const_name = [types_mod.name, *path[0..-2]].join("::")
-            types_mod = Util.make_module_p(const_name, tag: true)
-          end
-
-          # TODO: dry this up
-          if type.scoped_short_name =~ /\A[a-z]/
-            unless types_mod.respond_to?(type.scoped_short_name)
-              types_mod.singleton_class.define_method type.scoped_short_name do
-                type
-              end
-
-              unless types_mod.instance_variable_defined?(:@foobara_lowercase_constants)
-                types_mod.instance_variable_set(:@foobara_lowercase_constants, [])
-              end
-
-              types_mod.instance_variable_get(:@foobara_lowercase_constants) << type.scoped_short_name
-            end
-          elsif types_mod.const_defined?(type.scoped_short_name, false)
-            existing_value = types_mod.const_get(type.scoped_short_name)
-            existing_value_type = if existing_value.is_a?(::Class) && existing_value < Foobara::Model
-                                    # TODO: test this code path
-                                    # :nocov:
-                                    existing_value.model_type
-                                    # :nocov:
-                                  else
-                                    existing_value
-                                  end
-
-            if existing_value_type != type
-              if existing_value.is_a?(::Module) && !existing_value.is_a?(::Class) &&
-                 existing_value.instance_variable_get(:@foobara_created_via_make_class) &&
-                 # not allowing lower-case "constants" to be namespaces
-                 type.extends?("::model")
-
-                types_mod.send(:remove_const, type.scoped_short_name)
-                types_mod.const_set(type.scoped_short_name, type.target_class)
-
-                Domain.copy_constants(existing_value, type.target_class)
-              else
-                # :nocov:
-                raise CannotSetTypeConstantError,
-                      "Already defined constant #{types_mod.name}::#{type.scoped_short_name}"
-                # :nocov:
-              end
-            end
-          else
-            symbol = type.scoped_short_name
-
-            if type.extends?("::model")
-              type = type.target_class
-            end
-
-            types_mod.const_set(symbol, type)
-          end
         end
       end
     end

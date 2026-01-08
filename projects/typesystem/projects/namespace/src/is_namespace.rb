@@ -156,6 +156,7 @@ module Foobara
 
       def foobara_lookup(path, filter: nil, mode: LookupMode::GENERAL)
         LookupMode.validate!(mode)
+
         path = Namespace.to_registry_path(path)
 
         lru_cache.cached([self, path, mode, *filter]) do
@@ -188,6 +189,13 @@ module Foobara
 
           scoped = candidates.first ||
                    foobara_parent_namespace&.foobara_lookup_without_cache(path, filter:, mode:, visited:)
+
+          scoped ||= foobara_lookup_without_cache(
+            [*scoped_full_path, *path],
+            filter:,
+            mode: LookupMode::GENERAL,
+            visited:
+          )
 
           return scoped
         end

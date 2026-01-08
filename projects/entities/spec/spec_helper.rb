@@ -2,9 +2,11 @@ ENV["FOOBARA_ENV"] = "test"
 
 require "bundler/setup"
 
-unless ENV["SKIP_PRY"] == "true" || ENV["CI"] == "true"
+if ENV["RUBY_DEBUG"] == "true"
+  require "debug"
+elsif ENV["SKIP_PRY"] != "true" && ENV["CI"] != "true"
   require "pry"
-  require "pry-byebug"
+  require "pry-byebug" unless ENV["SKIP_BYEBUG"] == "true"
 end
 
 require "rspec/its"

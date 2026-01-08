@@ -1,3 +1,13 @@
+# [0.4.1] - 2025-12-19
+
+- Add a model_plumbing project and use it to fix up commands when models are reregistered
+- Fix a .to_domain bug where we might grab the wrong global domain
+- Allow running Describe without a full_command_name input
+- Rename BaseManifest#path to BaseManifest#manifest_path (#61)
+- Remove attributes_type from model manifest (#60)
+- Big reorganization of this monorepo into 3 submonorepos: the top-level, typesystem, and entities
+- Make more stuff private that can be private
+
 # [0.3.0] - 2025-11-23
 
 - Fix bug caused by exposing errors with organizations as parents
