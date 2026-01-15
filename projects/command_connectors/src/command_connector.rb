@@ -118,7 +118,6 @@ module Foobara
       end
 
       # don't call this auth_user ?
-      # Change to typed transformer, not mapper
       def to_auth_user_mapper(object)
         case object
         when TypeDeclarations::TypedTransformer

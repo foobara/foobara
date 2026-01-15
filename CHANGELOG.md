@@ -1,3 +1,14 @@
+# [0.4.2] - 2026-01-15
+
+- Fix relaxed lookup bug for a symbol starting with a prefix
+- Allow registered types to be looked up by string and in relaxed mode
+- Create entities_plumbing project and implement auth mapping for entities
+- Implement auth mappers concept
+- Change authenticator to be a TypedTransformer
+- Allow passing a block to a connector to simplify connecting stuff a bit
+- Remove likely-unused automatic creation of Types module constants
+- Support official ruby debug
+
 # [0.4.1] - 2025-12-19
 
 - Add a model_plumbing project and use it to fix up commands when models are reregistered
