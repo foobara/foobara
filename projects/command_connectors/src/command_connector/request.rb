@@ -16,10 +16,12 @@ module Foobara
                     :action,
                     :response,
                     :authenticated_user,
-                    :authenticated_credential
+                    :authenticated_credential,
+                    :auth_mappers,
+                    :authenticator
 
       def initialize(**opts)
-        valid_keys = [:inputs, :full_command_name, :action, :serializers]
+        valid_keys = [:inputs, :full_command_name, :action, :serializers, :authenticator, :auth_mappers]
 
         invalid_keys = opts.keys - valid_keys
 
@@ -31,6 +33,8 @@ module Foobara
 
         self.inputs = opts[:inputs] if opts.key?(:inputs)
         self.action = opts[:action] if opts.key?(:action)
+        self.auth_mappers = opts[:auth_mappers] if opts.key?(:auth_mappers)
+        self.authenticator = opts[:authenticator] if opts.key?(:authenticator)
         self.full_command_name = opts[:full_command_name] if opts.key?(:full_command_name)
         self.serializers = Util.array(opts[:serializers]) if opts.key?(:serializers)
       end
@@ -59,15 +63,6 @@ module Foobara
         end
       end
 
-      def authenticator
-        command_class.authenticator
-      end
-
-      def auth_mappers
-        # TODO: make this consistent?
-        command_connector.auth_map
-      end
-
       def auth_mapped_method?(method_name)
         auth_mappers&.key?(method_name)
       end
@@ -86,6 +81,20 @@ module Foobara
         else
           @auth_mapper_cache[name] = auth_mapper_for(name)&.process_value!(authenticated_user)
         end
+      end
+
+      def method_missing(method_name, ...)
+        if auth_mapped_method?(method_name)
+          auth_mapped_value_for(method_name)
+        else
+          # :nocov:
+          super
+          # :nocov:
+        end
+      end
+
+      def respond_to_missing?(method_name, private = false)
+        auth_mapped_method?(method_name) || super
       end
 
       def serializer

@@ -92,4 +92,27 @@ RSpec.describe Foobara::CommandConnector::Request do
       end
     end
   end
+
+  context "with an auth-mapped method" do
+    let(:command_class) do
+      stub_class("SomeCommand", Foobara::Command) do
+        def self.requires_authentication = true
+      end
+    end
+
+    let(:request) do
+      foo_mapper = Foobara::TypeDeclarations::TypedTransformer.subclass(to: :symbol) { :bar }.instance
+      # TODO: make a block form of this
+      authenticator = Foobara::CommandConnector.to_authenticator(-> { :some_user })
+
+      described_class.new(authenticator:, auth_mappers: { foo: foo_mapper }).tap do |request|
+        request.command_class = command_class
+        request.authenticate
+      end
+    end
+
+    it "can access the auth-mapped method" do
+      expect(request.foo).to eq(:bar)
+    end
+  end
 end

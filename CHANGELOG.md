@@ -1,3 +1,7 @@
+# [0.4.3] - 2026-01-19
+
+- Allow a request to handle auth mapper methods
+
 # [0.4.2] - 2026-01-15
 
 - Fix relaxed lookup bug for a symbol starting with a prefix

@@ -206,6 +206,7 @@ module Foobara
 
       self.authenticator = authenticator
       self.command_registry = CommandRegistry.new(authenticator:)
+
       self.capture_unknown_error = capture_unknown_error
       self.name = name
 
@@ -556,7 +557,7 @@ module Foobara
 
     def build_request(...)
       self.class::Request.new(...).tap do |request|
-        # TODO: feels like a smell
+        # TODO: feels like a smell? Can we deprecate this somehow? Request no longer calls command_connector it seems...
         request.command_connector = self
       end
     end
@@ -565,6 +566,14 @@ module Foobara
     def run_request(request)
       command_class = determine_command_class(request)
       request.command_class = command_class
+
+      if command_class.respond_to?(:requires_authentication) && command_class.requires_authentication
+        request.authenticator ||= command_class.authenticator || authenticator
+
+        if auth_map
+          request.auth_mappers ||= auth_map
+        end
+      end
 
       return build_response(request) unless command_class
 

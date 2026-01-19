@@ -2201,7 +2201,8 @@ RSpec.describe Foobara::CommandConnector do
         command_connector_b.connect(command_class, :auth)
         command_connector_c.connect(command_class, requires_authentication: true)
         command_connector_d.connect(command_class, requires_authentication: true)
-        command_connector_e.connect(command_class, requires_authentication: true, authenticator: [authenticator_e])
+        command_connector_e.connect(command_class, requires_authentication: true,
+                                                   authenticator: [authenticator_e])
 
         response = command_connector_a.run(full_command_name:, action:, inputs:)
         expect(response.status).to be(0)

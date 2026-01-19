@@ -9,7 +9,14 @@ module Foobara
 
           klass.to(to) if to
           klass.from(from) if from
-          klass.define_method(:transform, &map_proc) if map_proc
+
+          if map_proc
+            if map_proc.arity.zero?
+              klass.define_method(:transform) { |_ignored| map_proc.call }
+            else
+              klass.define_method(:transform, &map_proc)
+            end
+          end
 
           klass
         end
