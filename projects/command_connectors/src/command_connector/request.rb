@@ -150,8 +150,12 @@ module Foobara
       # TODO: move this to entity_plumbing
       def relevant_entity_classes
         if command_class.is_a?(::Class) && command_class < TransformedCommand
-          entity_classes = authenticator&.relevant_entity_classes(self)
-          [*entity_classes, *relevant_entity_classes_from_inputs_transformer]
+          if authenticator.respond_to?(:relevant_entity_classes)
+            entity_classes = authenticator.relevant_entity_classes(self)
+            [*entity_classes, *relevant_entity_classes_from_inputs_transformer]
+          else
+            relevant_entity_classes_from_inputs_transformer
+          end
         end || EMPTY_ARRAY
       end
 
