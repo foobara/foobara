@@ -1,3 +1,8 @@
+# [0.4.4] - 2026-01-20
+
+- Support authenticators that don't have relevant entity classes
+- Fix a bug where we don't look in the dependent domain for a model type to extend
+
 # [0.4.3] - 2026-01-19
 
 - Allow a request to handle auth mapper methods

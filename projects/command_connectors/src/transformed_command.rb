@@ -540,7 +540,7 @@ module Foobara
             Value::Transformer.create(transform: transformer)
           else
             # :nocov:
-            raise "Not sure how to apply #{inputs_transformer}"
+            raise "Not sure how to apply #{transformer}"
             # :nocov:
           end
         end

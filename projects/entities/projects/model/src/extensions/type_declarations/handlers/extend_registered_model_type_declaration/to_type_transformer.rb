@@ -16,8 +16,12 @@ module Foobara
 
           def declaration_to_type(strict_type_declaration)
             # TODO: cache this on a #base_type= helper
-            strict_type_declaration.type ||
-              lookup_type(strict_type_declaration[:type], mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE)
+            type = strict_type_declaration.type
+            return type if type
+
+            type_symbol = strict_type_declaration[:type]
+
+            lookup_type(type_symbol, mode: Namespace::LookupMode::ABSOLUTE)
           end
         end
       end

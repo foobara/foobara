@@ -11,6 +11,7 @@ module Foobara
 
             start = result.nil?
             result ||= Set.new
+
             return if result.include?(self)
 
             result << self
