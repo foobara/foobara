@@ -13,7 +13,7 @@ module Foobara
             command_class.foobara_manifest_reference
           end.sort
 
-          super.merge(commands:)
+          Util.sort_by_keys!(super.merge(commands:))
         end
       end
     end

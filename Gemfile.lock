@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    foobara (0.4.4)
+    foobara (0.4.5)
       bigdecimal
       foobara-lru-cache (< 2.0.0)
       foobara-util (< 2.0.0)
@@ -33,7 +33,7 @@ GEM
       rubocop-rspec
     foobara-spec-helpers (0.0.4)
       foobara-util
-    foobara-util (1.0.7)
+    foobara-util (1.0.8)
     formatador (1.2.3)
       reline
     guard (2.20.0)
@@ -173,6 +173,7 @@ DEPENDENCIES
   readline-ext
   rspec
   rspec-its
+  rubocop
   rubocop-rake
   rubocop-rspec
   ruby-prof

@@ -1,3 +1,7 @@
+# [0.4.5] - 2026-01-24
+
+- Makes sure domain manifest data is in a deterministic order
+
 # [0.4.4] - 2026-01-20
 
 - Support authenticators that don't have relevant entity classes

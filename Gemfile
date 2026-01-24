@@ -15,6 +15,7 @@ end
 group :development, :ci do
   gem "foobara-rubocop-rules", ">= 1.0.0" # , path: "../rubocop-rules"
   gem "rake"
+  gem "rubocop"
   gem "rubocop-rake"
   gem "rubocop-rspec"
 end
