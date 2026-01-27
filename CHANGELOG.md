@@ -1,3 +1,7 @@
+# [0.4.6] - 2026-01-27
+
+- Add BaseManifest#domain_reference
+
 # [0.4.5] - 2026-01-24
 
 - Makes sure domain manifest data is in a deterministic order

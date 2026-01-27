@@ -90,8 +90,9 @@ module Foobara
       end
 
       # TODO: this isn't quite right. If the thing is there but is nil or false, this should be truthy.
+      # TODO: counter-intuitive that it is not category, reference but reverse order
       def contains?(reference, category)
-        DataPath.value_at([category, reference], root_manifest)
+        !!DataPath.value_at([category, reference], root_manifest)
       end
 
       def lookup_path(category, reference)

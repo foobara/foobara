@@ -74,6 +74,10 @@ module Foobara
         Domain.new(root_manifest, [:domain, domain_reference])
       end
 
+      def domain_reference
+        self[:domain]
+      end
+
       def organization
         organization_reference = self[:organization]
 
