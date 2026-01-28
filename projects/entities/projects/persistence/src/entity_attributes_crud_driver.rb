@@ -107,7 +107,7 @@ module Foobara
 
         def initialize(entity_class, crud_driver, table_name = nil)
           if table_name.nil?
-            table_name = Util.underscore(entity_class.entity_name)
+            table_name = Util.underscore(entity_class.full_entity_name)
             table_name.gsub!(/^types::/, "")
             table_name.gsub!("::", "_")
           end

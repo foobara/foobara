@@ -1,3 +1,8 @@
+# [0.5.0] - 2026-01-27
+
+- Default crud driver table names to be fully qualified to fix bugs in RedisCrudDriver and LocalFilesCrudDriver
+  WARNING: this is a breaking change in that keys/files will have prefixes added to them
+
 # [0.4.6] - 2026-01-27
 
 - Add BaseManifest#domain_reference
