@@ -17,7 +17,10 @@ module Foobara
                 value = attributes_hash[attribute_name]
 
                 if value.nil?
-                  allow_nil = parent_declaration_data[:element_type_declarations][attribute_name][:allow_nil]
+                  attribute_type_declaration = parent_declaration_data[:element_type_declarations][attribute_name]
+                  allow_nil = if attribute_type_declaration.is_a?(::Hash)
+                                attribute_type_declaration[:allow_nil]
+                              end
 
                   unless allow_nil
                     to_apply[attribute_name] = default.is_a?(Proc) ? default.call : default

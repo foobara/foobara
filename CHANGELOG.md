@@ -1,3 +1,7 @@
+# [0.5.1] - 2026-01-29
+
+- Fix bug where checking defaults on a type reference explodes
+
 # [0.5.0] - 2026-01-27
 
 - Default crud driver table names to be fully qualified to fix bugs in RedisCrudDriver and LocalFilesCrudDriver
