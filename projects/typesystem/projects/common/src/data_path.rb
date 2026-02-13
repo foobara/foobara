@@ -221,6 +221,12 @@ module Foobara
       path.empty?
     end
 
+    def parent
+      if path.size > 1
+        DataPath.new(path[0..-2])
+      end
+    end
+
     private
 
     def normalize_all(key_parts)
