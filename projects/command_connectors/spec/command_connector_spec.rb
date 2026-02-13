@@ -1850,12 +1850,12 @@ RSpec.describe Foobara::CommandConnector do
             expect(JSON.parse(response.body)).to eq(
               "stuff2" => {
                 "things2" => [
-                  "user" => {
+                  { "user" => {
                     "id" => user_id,
                     "name" => "whatever",
                     "foo" => "bar",
                     "username" => "some_username"
-                  }
+                  } }
                 ]
               }
             )

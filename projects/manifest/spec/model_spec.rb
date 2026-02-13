@@ -71,4 +71,56 @@ RSpec.describe Foobara::Manifest do
       it { is_expected.to be(true) }
     end
   end
+
+  describe "#guaranteed_to_exist?" do
+    subject { model.guaranteed_to_exist?(attribute_name) }
+
+    let(:attribute_name) { :name }
+
+    context "when the model has no delegates" do
+      let(:some_model) do
+        stub_class "SomeModel", Foobara::Model do
+          attributes do
+            name :string
+          end
+        end
+      end
+
+      it { is_expected.to be(false) }
+    end
+
+    context "when it's nested attributes" do
+      let(:some_model) do
+        stub_class "SomeModel", Foobara::Model do
+          attributes do
+            name do
+              first :string
+              last :string
+            end
+          end
+
+          delegate_attribute :first, :name
+        end
+      end
+
+      it { is_expected.to be(false) }
+    end
+
+    context "when required all the way down" do
+      let(:some_model) do
+        stub_class "SomeModel", Foobara::Model do
+          attributes do
+            name_parts :required do
+              name :string, :required
+              surname :string
+            end
+          end
+
+          delegate_attribute :name, :name_parts
+        end
+      end
+
+      it { is_expected.to be(true) }
+    end
+  end
 end

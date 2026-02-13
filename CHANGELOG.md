@@ -1,3 +1,8 @@
+# [0.5.2] - 2026-02-23
+
+- Fix bug that results in duplicate required entries when merging declarations
+- Communicate which nested attributes are guaranteed to exist to help external generators
+
 # [0.5.1] - 2026-01-29
 
 - Fix bug where checking defaults on a type reference explodes

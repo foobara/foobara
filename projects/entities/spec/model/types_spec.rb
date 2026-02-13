@@ -49,7 +49,8 @@ RSpec.describe Foobara::Model do
         expect(manifest[:delegates]).to eq(
           username: {
             data_path: "auth_user.username"
-          }
+          },
+          guaranteed_to_exist: [:username]
         )
 
         expect(manifest[:declaration_data][:delegates]).to eq(
@@ -77,7 +78,8 @@ RSpec.describe Foobara::Model do
             username: {
               data_path: "auth_user.username",
               writer: true
-            }
+            },
+            guaranteed_to_exist: [:username]
           )
 
           expect(manifest[:declaration_data][:delegates]).to eq(
@@ -150,7 +152,8 @@ RSpec.describe Foobara::Model do
         expect(manifest[:delegates]).to eq(
           username: {
             data_path: "auth_user.username"
-          }
+          },
+          guaranteed_to_exist: [:username]
         )
 
         expect(manifest[:declaration_data][:delegates]).to eq(
@@ -206,7 +209,8 @@ RSpec.describe Foobara::Model do
             username: {
               data_path: "auth_user.username",
               writer: true
-            }
+            },
+            guaranteed_to_exist: [:username]
           )
 
           expect(manifest[:declaration_data][:delegates]).to eq(
