@@ -17,7 +17,7 @@ module Foobara
             end
 
             if type_required && !type_required.empty?
-              required += type_required
+              required |= type_required
             end
           end
 
