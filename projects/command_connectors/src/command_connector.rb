@@ -227,6 +227,10 @@ module Foobara
       end
     end
 
+    def register_allowed_rule(*ruleish_args)
+      command_registry.allowed_rule(*ruleish_args)
+    end
+
     # TODO: should this be the official way to connect a command instead of #connect ?
     def command(...) = connect(...)
 

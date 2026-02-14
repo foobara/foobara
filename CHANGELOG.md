@@ -1,4 +1,8 @@
-# [0.5.2] - 2026-02-23
+# [0.5.3] - 2026-02-12
+
+- Allow registering an allowed rule on an instance of a connector not just its class
+
+# [0.5.2] - 2026-02-13
 
 - Fix bug that results in duplicate required entries when merging declarations
 - Communicate which nested attributes are guaranteed to exist to help external generators
