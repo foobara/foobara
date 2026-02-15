@@ -488,6 +488,20 @@ RSpec.describe Foobara::CommandConnector do
       expect(response.body).to eq("8")
     end
 
+    context "when requires_allowed_rule" do
+      let(:command_connector) do
+        described_class.new(
+          authenticator:,
+          default_serializers:,
+          requires_allowed_rule: true
+        )
+      end
+
+      it "gives a relevant error" do
+        expect { response }.to raise_error(Foobara::CommandConnector::NoAllowedRuleGivenError)
+      end
+    end
+
     context "with default transformers" do
       before do
         identity = proc { |x| x }
@@ -2074,14 +2088,14 @@ RSpec.describe Foobara::CommandConnector do
       end
       let(:command_connector) do
         rule = allowed_rule_d
-        command_connector_class_d.new do
+        command_connector_class_d.new(requires_allowed_rule: true) do
           register_allowed_rule :d, rule
         end
       end
 
       it "puts the expected allowed rules on the command connector" do
         command_connector.connect(command_class, suffix: "A", allow_if: :a)
-        command_connector.connect(command_class, suffix: "B")
+        command_connector.connect(command_class, suffix: "B", allow_if: :always)
         command_connector.connect(command_class, suffix: "C", allowed_rule: :c)
         command_connector.connect(command_class, suffix: "D", allowed_rule: :d)
 
@@ -2091,7 +2105,7 @@ RSpec.describe Foobara::CommandConnector do
 
         response = command_connector.run(full_command_name: "ComputeExponentB", action:, inputs:)
         expect(response.status).to be(0)
-        expect(response.command.allowed_rule).to be_nil
+        expect(response.command.allowed_rule).to be(described_class.always_allowed_rule)
 
         response = command_connector.run(full_command_name: "ComputeExponentC", action:, inputs:)
         expect(response.status).to be(1)

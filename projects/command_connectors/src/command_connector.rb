@@ -178,10 +178,19 @@ module Foobara
       def build_auth_mapper(to_type, &)
         TypeDeclarations::TypedTransformer.subclass(to: to_type, &).instance
       end
+
+      def always_allowed_rule
+        # maybe move AllowedRule to CommandConnector:: instead of
+        # CommandRegistry:: which is more of an implementation detail?
+        @always_allowed_rule ||= CommandRegistry::AllowedRule.new(
+          symbol: :always,
+          explanation: "This always passes. Used to override allowed_rule_missing."
+        ) { true }
+      end
     end
 
     attr_accessor :command_registry, :authenticator, :capture_unknown_error, :name,
-                  :auth_map
+                  :auth_map, :requires_allowed_rule
 
     def initialize(name: nil,
                    authenticator: nil,
@@ -190,6 +199,7 @@ module Foobara
                    default_pre_commit_transformers: nil,
                    auth_map: nil,
                    current_user: nil,
+                   requires_allowed_rule: false,
                    &block)
       authenticator = self.class.to_authenticator(authenticator)
 
@@ -214,6 +224,11 @@ module Foobara
         add_default_serializer(serializer)
       end
 
+      if requires_allowed_rule
+        self.requires_allowed_rule = requires_allowed_rule
+        register_allowed_rule(CommandConnector.always_allowed_rule)
+      end
+
       Util.array(default_pre_commit_transformers).each do |pre_commit_transformer|
         add_default_pre_commit_transformer(pre_commit_transformer)
       end
@@ -232,6 +247,7 @@ module Foobara
     end
 
     # TODO: should this be the official way to connect a command instead of #connect ?
+    # Probably not. But what about #export instead?
     def command(...) = connect(...)
 
     def connect(*args, **opts)
@@ -615,6 +631,16 @@ module Foobara
 
     def run_command(request)
       command = request.command
+
+      if requires_allowed_rule
+        unless command.allowed_rule
+          raise NoAllowedRuleGivenError,
+                "Must connect #{command.full_command_name} with an `allowed_if:` " \
+                "because `requires_allowed_rule` is true. You can use `allow_if: :always` if want to always allow " \
+                "this command to be ran or you can also use `requires_allowed_rule: false` " \
+                "when creating the connector if you don't want to enforce allowed_if: for all connected commands."
+        end
+      end
 
       unless command.outcome
         command.run
