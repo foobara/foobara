@@ -1,3 +1,8 @@
+# [0.5.4] - 2026-02-16
+
+- Fix bug where adding a desugarizer to a subclass had no effect
+- Add support for requiring allow_if: by default
+
 # [0.5.3] - 2026-02-12
 
 - Allow registering an allowed rule on an instance of a connector not just its class

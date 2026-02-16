@@ -36,13 +36,13 @@ module Foobara
           end
 
           def desugarizers
-            @desugarizers ||= []
+            return @desugarizers if defined?(@desugarizers)
 
-            if superclass == Object
-              @desugarizers
-            else
-              @desugarizers + superclass.desugarizers
-            end
+            @desugarizers = if superclass == Object
+                              []
+                            else
+                              superclass.desugarizers.dup
+                            end
           end
         end
       end
