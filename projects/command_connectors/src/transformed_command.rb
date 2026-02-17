@@ -381,7 +381,7 @@ module Foobara
         end
 
         # TODO: This should support nil as an inputs_type but it breaks other projects for now
-        inputs_type = inputs_type_for_manifest&.reference_or_declaration_data ||
+        inputs_type = inputs_type_for_manifest&.reference_or_declaration_data_for_manifest ||
                       { type: :attributes, element_type_declarations: {} }
 
         # TODO: handle errors_types_depended_on!
@@ -390,7 +390,7 @@ module Foobara
           result_types_depended_on:,
           types_depended_on: types,
           inputs_type:,
-          result_type: result_type&.reference_or_declaration_data,
+          result_type: result_type&.reference_or_declaration_data_for_manifest,
           possible_errors: possible_errors_manifest,
           capture_unknown_error:,
           inputs_transformers:,

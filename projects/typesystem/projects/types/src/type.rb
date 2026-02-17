@@ -420,6 +420,10 @@ module Foobara
         scoped_full_name
       end
 
+      def reference_or_declaration_data_for_manifest
+        reference_or_declaration_data(declaration_data_for_manifest)
+      end
+
       def reference_or_declaration_data(declaration_data = self.declaration_data)
         remove_sensitive = TypeDeclarations.foobara_manifest_context_remove_sensitive?
 
@@ -435,6 +439,30 @@ module Foobara
         else
           declaration_data
         end
+      end
+
+      def declaration_data_for_manifest
+        data = declaration_data
+
+        if data.is_a?(::Hash) && data[:type] == :attributes
+          if data.key?(:defaults)
+            defaults = data[:defaults]
+
+            if defaults.is_a?(::Hash) && defaults.values.any? { it.is_a?(Proc) }
+              cleaned_defaults = defaults.transform_values do |value|
+                if value.is_a?(Proc)
+                  "[<Lazily Set>]"
+                else
+                  value
+                end
+              end
+
+              data = data.merge(defaults: cleaned_defaults)
+            end
+          end
+        end
+
+        data
       end
 
       # TODO: put this somewhere else
@@ -462,7 +490,7 @@ module Foobara
           [possible_error.key.to_s, possible_error.foobara_manifest]
         end.sort.to_h
 
-        declaration_data = self.declaration_data
+        declaration_data = declaration_data_for_manifest
 
         if remove_sensitive
           declaration_data = TypeDeclarations.remove_sensitive_types(declaration_data)

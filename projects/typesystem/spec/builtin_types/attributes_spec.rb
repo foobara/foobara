@@ -1,4 +1,6 @@
 RSpec.describe Foobara::BuiltinTypes::Attributes do
+  after { Foobara.reset_alls }
+
   let(:type) {
     Foobara::Domain.current.foobara_type_from_declaration(type_declaration)
   }
@@ -58,6 +60,26 @@ RSpec.describe Foobara::BuiltinTypes::Attributes do
           described_class::SupportedTransformers::Defaults::TypeDeclarationExtension::ExtendAttributesTypeDeclaration::
               TypeDeclarationValidators::HashWithSymbolicKeys::InvalidDefaultValuesGivenError
         )
+      end
+    end
+
+    context "when default is a proc" do
+      let(:type_declaration) do
+        {
+          type: :attributes,
+          element_type_declarations: {
+            a: :integer,
+            b: :integer
+          },
+          defaults: { a: -> { 10 }, b: 100 }
+        }
+      end
+
+      it "applies defaults and scrubs the value in the manifest data" do
+        expect(type.process_value!({})).to eq(a: 10, b: 100)
+
+        Foobara::GlobalDomain.foobara_register_type(:some_type, type)
+        expect(type.foobara_manifest[:declaration_data][:defaults]).to eq(a: "[<Lazily Set>]", b: 100)
       end
     end
 
