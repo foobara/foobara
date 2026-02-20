@@ -1,4 +1,4 @@
-RSpec.describe Foobara::CommandPatternImplementation::Concerns::Description do
+RSpec.describe Foobara::CommandPatternImplementation::Concerns::CommandData do
   describe ".description" do
     let(:command_class) do
       stub_class(:SomeCommand, Foobara::Command)

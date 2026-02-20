@@ -1,7 +1,7 @@
 module Foobara
   module CommandPatternImplementation
     module Concerns
-      module Description
+      module CommandData
         include Concern
 
         module ClassMethods
@@ -16,6 +16,20 @@ module Foobara
               # :nocov:
             end
           end
+
+          def is_query
+            @is_query = true
+          end
+
+          # rubocop:disable Naming/MemoizedInstanceVariableName
+          def query?
+            return @is_query if defined?(@is_query)
+
+            @is_query = if superclass.respond_to?(:query?)
+                          superclass.query?
+                        end
+          end
+          # rubocop:enable Naming/MemoizedInstanceVariableName
         end
       end
     end

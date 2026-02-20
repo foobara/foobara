@@ -1,3 +1,7 @@
+# [0.5.6] - 2026-02-20
+
+- Introduce an official Query concept
+
 # [0.5.5] - 2026-02-19
 
 - Fix bug where WeakObjectSet#delete could fail after deactivation

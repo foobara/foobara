@@ -68,6 +68,10 @@ module Foobara
                 ).declaration_data
             ).merge(description:)
 
+            if query?
+              h[:is_query] = true
+            end
+
             if result_type
               # TODO: find a way to represent literal types like "nil"
               h[:result_type] = result_type.reference_or_declaration_data_for_manifest

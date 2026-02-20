@@ -15,7 +15,7 @@ module Foobara
 
     include TruncatedInspect
 
-    include CommandPatternImplementation::Concerns::Description
+    include CommandPatternImplementation::Concerns::CommandData
     include CommandPatternImplementation::Concerns::Namespace
 
     include CommandPatternImplementation::Concerns::InputsType
