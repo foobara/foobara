@@ -45,7 +45,7 @@ module Foobara
           loop do
             object_id = queue.pop
             if object_id
-              weak_object_set.delete(object_id)
+              weak_object_set&.delete(object_id)
             elsif queue.closed?
               self.queue = nil
               break
