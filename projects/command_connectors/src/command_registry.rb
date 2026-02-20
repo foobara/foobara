@@ -263,7 +263,7 @@ module Foobara
         procs = rules.map(&:block)
 
         block = proc do
-          procs.any?(&:call)
+          procs.any? { |p| instance_exec(&p) }
         end
 
         allowed_rule = AllowedRule.new(&block)

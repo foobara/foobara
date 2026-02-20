@@ -1,3 +1,9 @@
+# [0.5.5] - 2026-02-19
+
+- Fix bug where WeakObjectSet#delete could fail after deactivation
+- Fix bug where arrays of allowed rules run in the wrong context
+- Remove awkward proc defaults from manifest
+
 # [0.5.4] - 2026-02-16
 
 - Fix bug where adding a desugarizer to a subclass had no effect
