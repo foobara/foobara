@@ -21,6 +21,10 @@ module Foobara
         scoped_full_name
       end
 
+      def query?
+        self[:is_query]
+      end
+
       def inputs_type
         Attributes.new(root_manifest, [*manifest_path, :inputs_type])
       end

@@ -71,7 +71,7 @@ RSpec.describe Foobara::Manifest do
       primary_key :id
     end
 
-    stub_class "SomeOrg::SomeDomain::QueryUser", Foobara::Command
+    stub_class "SomeOrg::SomeDomain::QueryUser", Foobara::Query
     stub_class "SomeOrg::SomeDomain::QueryUser::SomethingWentWrongError", Foobara::RuntimeError do
       class << self
         def context_type_declaration
@@ -259,8 +259,11 @@ RSpec.describe Foobara::Manifest do
     expect(attributes.sensitive).to be_falsey
     expect(attributes.sensitive_exposed).to be_falsey
 
+    expect(manifest.queries.map(&:command_name)).to contain_exactly("QueryUser")
+
     command = manifest.command_by_name("SomeOrg::SomeDomain::QueryUser")
 
+    expect(command).to be_query
     expect(command).to be_a(Foobara::Manifest::Command)
     expect(command.scoped_category).to eq(:command)
     expect(command.parent_category).to eq(:domain)

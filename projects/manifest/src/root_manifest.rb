@@ -25,6 +25,10 @@ module Foobara
         organizations.map(&:commands).flatten
       end
 
+      def queries
+        commands.select(&:query?)
+      end
+
       def types
         @types ||= DataPath.value_at(:type, root_manifest).keys.map do |reference|
           Type.new(root_manifest, [:type, reference])
