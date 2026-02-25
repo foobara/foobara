@@ -15,6 +15,8 @@ module Foobara
               Attributes.new(type_declaration.root_manifest, type_declaration.manifest_path)
             when :array
               Array.new(type_declaration.root_manifest, type_declaration.manifest_path)
+            when :tuple
+              Tuple.new(type_declaration.root_manifest, type_declaration.manifest_path)
             else
               type_declaration
             end
@@ -80,6 +82,14 @@ module Foobara
 
       def array?
         type.to_sym == :array
+      end
+
+      def tuple?
+        type.to_sym == :tuple
+      end
+
+      def associative_array?
+        type.to_sym == :associative_array
       end
 
       def model?

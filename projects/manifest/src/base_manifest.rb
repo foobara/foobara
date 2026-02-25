@@ -69,8 +69,6 @@ module Foobara
       end
 
       def domain
-        domain_reference = self[:domain]
-
         Domain.new(root_manifest, [:domain, domain_reference])
       end
 

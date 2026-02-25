@@ -38,6 +38,22 @@ module Foobara
         !builtin? && extends_symbol?(:model)
       end
 
+      def array?
+        !builtin? && extends_symbol?(:array)
+      end
+
+      def attributes?
+        !builtin? && extends_symbol?(:attributes)
+      end
+
+      def associative_array?
+        !builtin? && extends_symbol?(:associative_array)
+      end
+
+      def tuple?
+        !builtin? && extends_symbol?(:tuple)
+      end
+
       def base_type
         base_type_symbol = self[:base_type]
 
