@@ -1,3 +1,9 @@
+# [0.5.7] - 2026-02-25
+
+- Add a Manifest::Model.associations convenience method
+- Add Manifest::Tuple and various missing predicate methods
+- Add a query flag to the manifest
+
 # [0.5.6] - 2026-02-20
 
 - Introduce an official Query concept

@@ -251,13 +251,11 @@ module Foobara
                 contains_associations?(element_type, false)
               end
             elsif type.extends?(BuiltinTypes[:attributes])
-
               type.element_types&.values&.any? do |element_type|
                 if !remove_sensitive || !element_type.sensitive?
                   contains_associations?(element_type, false)
                 end
               end
-
             elsif type.extends?(BuiltinTypes[:associative_array])
               element_types = type.element_types
 
