@@ -276,8 +276,11 @@ RSpec.describe Foobara::Manifest do
     expect(command.command_manifest).to be_a(Hash)
     expect(command.inputs_type).to be_a(Foobara::Manifest::Attributes)
     expect(command.inputs_type.required).to be_nil
+    # Test the else branch when required is nil (line 13 in attributes.rb)
+    expect(command.inputs_type.required?("some_attribute")).to be_nil
     command = Foobara::Manifest::Command.new(raw_stringified_manifest, command.manifest_path)
     expect(command.inputs_type.required).to be_nil
+    expect(command.inputs_type.required?("some_attribute")).to be_nil
     some_other_user_declaration = command.inputs_type.attribute_declarations[:some_other_user]
     expect(command.domain.find_type(some_other_user_declaration)).to be_a(Foobara::Manifest::Entity)
     expect(command.types_depended_on).to include(entity)

@@ -225,4 +225,18 @@ RSpec.describe ":associative_array" do
       }
     end
   end
+
+  describe "Attributes::Casters::Array" do
+    let(:caster) { Foobara::BuiltinTypes::Attributes::Casters::Array.instance }
+
+    before { allow(caster).to receive(:applicable?).and_return(false) }
+
+    context "when super.applicable? returns false" do
+      it "returns false" do
+        # Tests the else branch when super returns false (line 7 in array.rb)
+        # Use a value that the parent caster doesn't accept
+        expect(caster.applicable?(Object.new)).to be(false)
+      end
+    end
+  end
 end

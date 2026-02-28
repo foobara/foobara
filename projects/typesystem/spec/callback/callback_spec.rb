@@ -45,6 +45,15 @@ RSpec.describe Foobara::Callback do
           end
         end
 
+        context "without a block for a callback type that does not allow a block" do
+          it "does not raise an error" do
+            # Tests the else branch when takes_block? is false (line 13 in block_parameter_not_allowed.rb)
+            expect {
+              registry.register_callback(:before, :walk) { nil }
+            }.to_not raise_error
+          end
+        end
+
         context "with block" do
           it "calls expected callbacks in order" do
             ran = false
