@@ -9,9 +9,10 @@ module Foobara
     # Should we support different authenticators for different commands?
     # Might be a smell of two domains co-habitating in one? Or maybe one is just
     # passing another through and we should support that?
-    def initialize(authenticator: nil)
+    def initialize(authenticator: nil, allow: nil)
       self.scoped_path = []
       self.authenticator = authenticator
+      self.allow allow if allow
 
       customized = [:command]
 
@@ -193,15 +194,29 @@ module Foobara
       foobara_all_command.size
     end
 
+    def allow(rules = (no_args = true))
+      @allow ||= {}
+
+      if no_args
+        @allow
+      else
+        @allow = @allow.merge(rules)
+      end
+    end
+
     private
 
-    def create_exposed_command(command_class, **)
+    def create_exposed_command(command_class, **opts)
       full_domain_name = command_class.domain.scoped_full_name
       exposed_domain = foobara_lookup_domain(full_domain_name,
                                              mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE) ||
                        build_and_register_exposed_domain(full_domain_name)
 
-      exposed_command = create_exposed_command_without_domain(command_class, **)
+      if !opts.key?(:allowed_rule) && allow&.key?(command_class)
+        opts = opts.merge(allowed_rule: allow[command_class])
+      end
+
+      exposed_command = create_exposed_command_without_domain(command_class, **opts)
 
       exposed_domain.foobara_register(exposed_command)
 
@@ -292,7 +307,7 @@ module Foobara
       errors_transformers: nil,
       pre_commit_transformers: nil,
       serializers: nil,
-      allowed_rule: default_allowed_rule,
+      allowed_rule: nil,
       authenticator: nil,
       **opts
     )

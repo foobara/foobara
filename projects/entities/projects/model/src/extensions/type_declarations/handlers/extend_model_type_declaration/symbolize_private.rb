@@ -18,7 +18,7 @@ module Foobara
           def desugarize(rawish_type_declaration)
             private = rawish_type_declaration[:private]
 
-            if private.any? { |key| key.is_a?(::String) }
+            if private.any?(::String)
               rawish_type_declaration[:private] = private.map(&:to_sym)
             end
 

@@ -83,9 +83,13 @@ module Foobara
     end
 
     def errors_hash
-      each_with_object({}) do |error, hash|
-        hash[error.key] = error.to_h
+      h = {}
+
+      each do |error|
+        h[error.key] = error.to_h
       end
+
+      h
     end
 
     def to_sentence

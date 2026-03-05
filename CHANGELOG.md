@@ -1,3 +1,7 @@
+# [0.5.8] - 2026-03-04
+
+- Provide a way for allowed rules to be declared independently of connecting commands
+
 # [0.5.7] - 2026-02-25
 
 - Add a Manifest::Model.associations convenience method

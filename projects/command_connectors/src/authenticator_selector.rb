@@ -9,7 +9,7 @@ module Foobara
       def initialize(authenticators:, symbol: nil, explanation: nil, &block)
         self.authenticators = authenticators
 
-        symbol ||= authenticators.map(&:symbol).map(&:to_s).join("_or_").to_sym
+        symbol ||= authenticators.map(&:symbol).join("_or_").to_sym
         explanation ||= authenticators.map(&:explanation).join(", or ")
 
         super(symbol:, explanation:)

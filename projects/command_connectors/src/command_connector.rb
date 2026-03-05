@@ -199,7 +199,10 @@ module Foobara
                    default_pre_commit_transformers: nil,
                    auth_map: nil,
                    current_user: nil,
+                   # TODO: let's default this to true
                    requires_allowed_rule: false,
+                   allowed_rules: nil,
+                   allow: nil,
                    &block)
       authenticator = self.class.to_authenticator(authenticator)
 
@@ -216,6 +219,8 @@ module Foobara
 
       self.authenticator = authenticator
       self.command_registry = CommandRegistry.new(authenticator:)
+      allowed_rules&.each_pair { |symbol, rule| register_allowed_rule(symbol, rule) }
+      self.allow allow if allow
 
       self.capture_unknown_error = capture_unknown_error
       self.name = name
@@ -240,6 +245,10 @@ module Foobara
       if block
         instance_eval(&block)
       end
+    end
+
+    def allow(rules)
+      command_registry.allow rules
     end
 
     def register_allowed_rule(*ruleish_args)
@@ -632,7 +641,7 @@ module Foobara
     def run_command(request)
       command = request.command
 
-      if requires_allowed_rule
+      if requires_allowed_rule && command.is_a?(TransformedCommand) && command.class.requires_authentication != false
         unless command.allowed_rule
           raise NoAllowedRuleGivenError,
                 "Must connect #{command.full_command_name} with an `allowed_if:` " \
