@@ -413,8 +413,6 @@ module Foobara
           raise NoCommandFoundError.new(message: "Could not find command registered for #{full_command_name}")
           # :nocov:
         end
-
-        transformed_command_class
       else
         action = case action
                  when "describe_type", "manifest", "describe_command"
@@ -433,8 +431,15 @@ module Foobara
         command_class = find_builtin_command_class(command_name)
         full_command_name = command_class.full_command_name
 
-        transformed_command_from_name(full_command_name) || transform_command_class(command_class)
+        transformed_command_class = transformed_command_from_name(full_command_name) ||
+                                    transform_command_class(command_class)
+
+        if transformed_command_class < TransformedCommand
+          transformed_command_class.builtin = true
+        end
       end
+
+      transformed_command_class
     end
 
     def request_to_command_inputs(request)
@@ -640,8 +645,14 @@ module Foobara
 
     def run_command(request)
       command = request.command
+      command_class = request.command_class
 
-      if requires_allowed_rule && command.is_a?(TransformedCommand) && command.class.requires_authentication != false
+      if requires_allowed_rule &&
+         command.is_a?(TransformedCommand) &&
+         # The != false looks odd and must be that we want to distinguish between the default (nil)
+         # and explicitly not requiring auth
+         command.class.requires_authentication != false &&
+         !command_class.builtin?
         unless command.allowed_rule
           raise NoAllowedRuleGivenError,
                 "Must connect #{command.full_command_name} with an `allowed_if:` " \

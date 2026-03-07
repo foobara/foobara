@@ -21,7 +21,8 @@ module Foobara
                     :requires_authentication,
                     :authenticator,
                     :subclassed_in_namespace,
-                    :suffix
+                    :suffix,
+                    :builtin
 
       def subclass(
         command_class,
@@ -544,6 +545,10 @@ module Foobara
             # :nocov:
           end
         end
+      end
+
+      def builtin?
+        builtin
       end
 
       private

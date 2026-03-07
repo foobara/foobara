@@ -1,3 +1,7 @@
+# [0.5.9] - 2026-03-06
+
+- Do not require an allowed rule for builtin-in commands when using requires_allowed_rule: true
+
 # [0.5.8] - 2026-03-04
 
 - Provide a way for allowed rules to be declared independently of connecting commands

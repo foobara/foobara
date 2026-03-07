@@ -12,7 +12,7 @@ module Foobara
               map = map.merge(possible_error.key.to_s => possible_error)
             end
 
-            if transformed_command.allowed_rule
+            if transformed_command.allowed_rule && transformed_command.allowed_rule.symbol != :always
               possible_error = PossibleError.new(CommandConnector::NotAllowedError)
               map = map.merge(possible_error.key.to_s => possible_error)
             end
