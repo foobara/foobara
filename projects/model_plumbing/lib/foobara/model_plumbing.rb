@@ -5,6 +5,7 @@ module Foobara
         Model.on_reregister do
           GlobalDomain.foobara_each_command(&:handle_reregistered_types!)
         end
+        Foobara::DomainMapper.singleton_class.prepend(Foobara::ModelPlumbing::DomainMapperExtension)
       end
     end
   end

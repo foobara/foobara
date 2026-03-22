@@ -95,9 +95,7 @@ module Foobara
       def object_to_type(object)
         if object
           if object.is_a?(::Class)
-            if object < Foobara::Model
-              object.model_type
-            elsif object < Foobara::Command
+            if object < Foobara::Command
               object.inputs_type
             else
               domain.foobara_type_from_declaration(object)
