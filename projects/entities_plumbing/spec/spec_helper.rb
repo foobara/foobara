@@ -23,6 +23,7 @@ SimpleCov.start do
 end
 
 require "foobara/all"
+require "foobara/command_connectors"
 require "foobara/entities_plumbing"
 
 RSpec.configure do |config|

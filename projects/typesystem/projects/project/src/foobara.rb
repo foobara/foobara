@@ -41,6 +41,10 @@ module Foobara
       end
     end
 
+    def project_installed?(project_symbol)
+      all_projects.key?(project_symbol)
+    end
+
     def install!
       self.is_installed = true
       all_projects.each_value(&:install!)

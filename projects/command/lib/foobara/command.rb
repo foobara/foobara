@@ -1,3 +1,5 @@
+require "foobara/common"
+
 module Foobara
   class Command
     class << self

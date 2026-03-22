@@ -23,6 +23,7 @@ SimpleCov.start do
 end
 
 require "foobara/all"
+require "foobara/command_connectors"
 
 RSpec.configure do |config|
   # Need to do :all instead of :each because for specs that use .around,
