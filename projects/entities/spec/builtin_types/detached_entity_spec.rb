@@ -73,6 +73,52 @@ RSpec.describe ":detached_entity" do
     expect(type.declaration_data[:model_base_class]).to eq("Foobara::DetachedEntity")
   end
 
+  describe ".foobara_manifest" do
+    it "handles superclass without foobara_manifest" do
+      # Tests the else branch when superclass.respond_to?(:foobara_manifest) is false (line 35 in reflection.rb)
+      # Create a class that doesn't have foobara_manifest
+      base_class = Class.new do
+        def self.respond_to?(method)
+          method == :foobara_manifest ? false : super
+        end
+      end
+      subclass = Class.new(base_class) do
+        include Foobara::DetachedEntity::Concerns::Reflection
+
+        def self.foobara_model_name
+          "TestEntity"
+        end
+
+        def self.foobara_associations
+          {}
+        end
+
+        def self.foobara_deep_associations
+          {}
+        end
+
+        def self.foobara_depends_on
+          []
+        end
+
+        def self.foobara_deep_depends_on
+          []
+        end
+
+        def self.foobara_attributes_type
+          Foobara::Domain.current.foobara_type_from_declaration(type: :attributes, element_type_declarations: {})
+        end
+
+        def self.foobara_primary_key_attribute
+          :id
+        end
+      end
+      manifest = subclass.foobara_manifest
+      expect(manifest).to be_a(Hash)
+      expect(manifest[:entity_name]).to eq("TestEntity")
+    end
+  end
+
   context "when primary key doesn't point at a real attribute" do
     let(:primary_key) { :not_a_valid_attribute }
 

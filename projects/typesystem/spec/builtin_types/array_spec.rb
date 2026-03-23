@@ -95,6 +95,17 @@ RSpec.describe ":array" do
       Foobara::Domain.current.foobara_type_from_declaration(type_declaration)
     end
 
+    context "when array type without element_type_declaration" do
+      let(:type_declaration) do
+        { type: :array }
+      end
+
+      it "resolves element_type to nil" do
+        # Tests the else branch when element_type_declaration is nil
+        expect(type.element_type).to be_nil
+      end
+    end
+
     context "when extending with an array literal and a description" do
       let(:type_declaration) do
         { type: [:string], description: "An array of strings", sensitive: true, sensitive_exposed: true }
