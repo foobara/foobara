@@ -132,4 +132,23 @@ RSpec.describe Foobara::Model do
       end
     end
   end
+
+  describe ".foobara_manifest" do
+    it "includes model information" do
+      manifest = model_class.foobara_manifest
+
+      expect(manifest[:model_name]).to eq("SomeModel")
+      expect(manifest[:attributes_type]).to be_a(Hash)
+    end
+
+    context "when remove_sensitive is false" do
+      it "does not remove sensitive types" do
+        # Tests the else branch when remove_sensitive is false (line 13)
+        allow(Foobara::TypeDeclarations).to receive(:foobara_manifest_context_remove_sensitive?).and_return(false)
+        manifest = model_class.foobara_manifest
+        expect(manifest).to be_a(Hash)
+        expect(manifest[:model_name]).to eq("SomeModel")
+      end
+    end
+  end
 end
