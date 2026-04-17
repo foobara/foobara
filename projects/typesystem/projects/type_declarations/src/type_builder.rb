@@ -15,9 +15,23 @@ module Foobara
             type_declaration.is_deep_duped = true
             type_declaration
           else
-            # :nocov:
-            raise ArgumentError, "Cannot provide both block and declaration of #{args}"
-            # :nocov:
+            args -= [:attributes]
+            supported_processor_symbols = BuiltinTypes[:attributes].all_supported_processor_classes.map(&:symbol)
+
+            if args.all? { supported_processor_symbols.include?(it) }
+              handler = Foobara::GlobalDomain.foobara_type_builder.handler_for_class(
+                TypeDeclarations::Handlers::ExtendAttributesTypeDeclaration
+              )
+              type_declaration = handler.desugarize(TypeDeclaration.new(block))
+
+              args.each { |processor_symbol| type_declaration[processor_symbol] = true }
+
+              type_declaration
+            else
+              # :nocov:
+              raise ArgumentError, "Cannot provide both block and declaration of #{args}"
+              # :nocov:
+            end
           end
         else
           case args.size

@@ -472,4 +472,19 @@ RSpec.describe Foobara::BuiltinTypes::Attributes do
       end
     end
   end
+
+  describe "ignore_unexpected_attributes" do
+    let(:type) do
+      Foobara::Domain.current.foobara_type_from_declaration :ignore_unexpected_attributes do
+        a :integer, :required
+        b :string
+      end
+    end
+
+    it "excludes unexpected attributes" do
+      h = { a: "1", b: "2", c: "3" }
+
+      expect(type.process_value!(h)).to eq(a: 1, b: "2")
+    end
+  end
 end

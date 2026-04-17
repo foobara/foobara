@@ -1,3 +1,7 @@
+# [0.5.10] - 2026-04-17
+
+- Add a ignore_unexpected_attributes transformer to builtin attributes type
+
 # [0.5.9] - 2026-03-06
 
 - Do not require an allowed rule for builtin-in commands when using requires_allowed_rule: true
