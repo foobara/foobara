@@ -45,6 +45,13 @@ RSpec.describe Foobara::Command do
           expect(outcome).to be_success
           expect(result).to eq(64)
         end
+
+        it "validates max correctly when value <= max" do
+          # Tests the else branch when value <= max (line 22 in max.rb)
+          # This ensures the validator doesn't return an error when value is within limit
+          expect(exponent).to be <= 10
+          expect(outcome).to be_success
+        end
       end
 
       context "when input requirements not met" do
