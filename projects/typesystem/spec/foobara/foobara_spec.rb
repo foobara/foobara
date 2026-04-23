@@ -1,14 +1,24 @@
 RSpec.describe Foobara do
   describe ".raise_if_production!" do
-    let(:method_name) { "reset_alls" }
+    def my_reset_method
+      described_class.raise_if_production!
+    end
 
     context "when FOOBARA_ENV is nil" do
       stub_env_var("FOOBARA_ENV", nil)
 
-      it "raises MethodCantBeCalledInProductionError" do
+      it "raises MethodCantBeCalledInProductionError and infers method name" do
         expect {
-          described_class.raise_if_production!(method_name)
-        }.to raise_error(Foobara::MethodCantBeCalledInProductionError)
+          my_reset_method
+        }.to raise_error(Foobara::MethodCantBeCalledInProductionError, /my_reset_method/)
+      end
+
+      it "prints a deprecation warning if method name is passed explicitly" do
+        expect {
+          expect {
+            described_class.raise_if_production!("some_method")
+          }.to raise_error(Foobara::MethodCantBeCalledInProductionError, "some_method")
+        }.to output(/DEPRECATION WARNING/).to_stderr
       end
     end
 
@@ -17,8 +27,8 @@ RSpec.describe Foobara do
 
       it "raises MethodCantBeCalledInProductionError" do
         expect {
-          described_class.raise_if_production!(method_name)
-        }.to raise_error(Foobara::MethodCantBeCalledInProductionError)
+          my_reset_method
+        }.to raise_error(Foobara::MethodCantBeCalledInProductionError, /my_reset_method/)
       end
     end
 
@@ -27,7 +37,7 @@ RSpec.describe Foobara do
 
       it "doesn't raise MethodCantBeCalledInProductionError" do
         expect {
-          described_class.raise_if_production!(method_name)
+          my_reset_method
         }.to_not raise_error
       end
     end
@@ -37,7 +47,7 @@ RSpec.describe Foobara do
 
       it "doesn't raise MethodCantBeCalledInProductionError" do
         expect {
-          described_class.raise_if_production!(method_name)
+          my_reset_method
         }.to_not raise_error
       end
     end

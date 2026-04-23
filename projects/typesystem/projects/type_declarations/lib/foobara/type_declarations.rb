@@ -5,7 +5,7 @@ module Foobara
     class << self
       def reset_all(skip_check: nil)
         unless skip_check
-          Foobara.raise_if_production!("reset_all")
+          Foobara.raise_if_production!
         end
 
         Util.descendants(Error).each do |error_class|

@@ -51,13 +51,19 @@ module Foobara
     end
 
     def reset_alls
-      raise_if_production!("reset_alls")
+      raise_if_production!
       all_projects.each_value(&:reset_all)
     end
 
-    def raise_if_production!(*)
+    def raise_if_production!(method_name = nil)
+      if method_name
+        warn "DEPRECATION WARNING: Passing method_name is deprecated."
+      else
+        method_name = caller_locations.map(&:label).find { |label| !label.start_with?("block in") }
+      end
+
       if ENV["FOOBARA_ENV"].nil? || ENV["FOOBARA_ENV"] == "production"
-        raise MethodCantBeCalledInProductionError
+        raise MethodCantBeCalledInProductionError, method_name
       end
     end
   end

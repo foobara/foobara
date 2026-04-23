@@ -67,7 +67,7 @@ module Foobara
       end
 
       def reset_all
-        Foobara.raise_if_production!("reset_all")
+        Foobara.raise_if_production!
 
         builtin_types.each do |builtin_type|
           builtin_type.foobara_each do |scoped|
