@@ -3,7 +3,7 @@ module Foobara
     class RequestMutator < Foobara::Value::Mutator
       def inputs_type_declaration_from(_inputs_type)
         # :nocov:
-        raise "subclass responsibility"
+        raise NotImplementedError
         # :nocov:
       end
 
@@ -14,7 +14,7 @@ module Foobara
 
       def mutate
         # :nocov:
-        raise "subclass responsibility"
+        raise NotImplementedError
         # :nocov:
       end
 

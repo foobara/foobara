@@ -122,13 +122,13 @@ module Foobara
         # CRUD
         def select(_query_declaration)
           # :nocov:
-          raise "subclass responsibility"
+          raise NotImplementedError
           # :nocov:
         end
 
         def all(page_size: nil)
           # :nocov:
-          raise "subclass responsibility"
+          raise NotImplementedError
           # :nocov:
         end
 
@@ -138,7 +138,7 @@ module Foobara
 
         def find(_record_id)
           # :nocov:
-          raise "subclass responsibility"
+          raise NotImplementedError
           # :nocov:
         end
 
@@ -229,7 +229,7 @@ module Foobara
 
         def insert(_attributes)
           # :nocov:
-          raise "subclass responsibility"
+          raise NotImplementedError
           # :nocov:
         end
 
@@ -244,13 +244,13 @@ module Foobara
 
         def update(_record)
           # :nocov:
-          raise "subclass responsibility"
+          raise NotImplementedError
           # :nocov:
         end
 
         def hard_delete(_record_id)
           # :nocov:
-          raise "subclass responsibility"
+          raise NotImplementedError
           # :nocov:
         end
 
@@ -265,13 +265,13 @@ module Foobara
 
         def hard_delete_all!
           # :nocov:
-          raise "subclass responsibility"
+          raise NotImplementedError
           # :nocov:
         end
 
         def count
           # :nocov:
-          raise "subclass responsibility"
+          raise NotImplementedError
           # :nocov:
         end
 

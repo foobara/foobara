@@ -22,13 +22,13 @@ module Foobara
 
         def specific_callback_set_for(*_args, **_opts)
           # :nocov:
-          raise "subclass responsibility"
+          raise NotImplementedError
           # :nocov:
         end
 
         def unioned_callback_set_for(*_args, **_opts)
           # :nocov:
-          raise "subclass responsibility"
+          raise NotImplementedError
           # :nocov:
         end
 

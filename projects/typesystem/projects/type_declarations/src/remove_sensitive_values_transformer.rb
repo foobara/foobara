@@ -13,7 +13,7 @@ module Foobara
 
       def transform(_value)
         # :nocov:
-        raise "subclass responsibility"
+        raise NotImplementedError
         # :nocov:
       end
 

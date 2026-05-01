@@ -100,7 +100,7 @@ module Foobara
 
       def applicable?(_sugary_type_declaration)
         # :nocov:
-        raise "subclass responsibility"
+        raise NotImplementedError
         # :nocov:
       end
 

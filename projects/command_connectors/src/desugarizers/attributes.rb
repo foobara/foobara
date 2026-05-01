@@ -6,13 +6,13 @@ module Foobara
       class Attributes < Desugarizer
         def desugarizer_symbol
           # :nocov:
-          raise "subclass responsibility"
+          raise NotImplementedError
           # :nocov:
         end
 
         def opts_key
           # :nocov:
-          raise "subclass responsibility"
+          raise NotImplementedError
           # :nocov:
         end
 

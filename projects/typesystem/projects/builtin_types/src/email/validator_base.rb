@@ -29,7 +29,7 @@ module Foobara
 
         def regex
           # :nocov:
-          raise "subclass responsibility"
+          raise NotImplementedError
           # :nocov:
         end
 
