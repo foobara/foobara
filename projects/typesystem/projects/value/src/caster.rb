@@ -60,13 +60,13 @@ module Foobara
 
       def applicable?(_value)
         # :nocov:
-        raise "subclass responsibility"
+        raise NotImplementedError
         # :nocov:
       end
 
       def applies_message
         # :nocov:
-        raise "subclass responsibility"
+        raise NotImplementedError
         # :nocov:
       end
 
@@ -76,7 +76,7 @@ module Foobara
 
       def cast(_value)
         # :nocov:
-        raise "subclass responsibility"
+        raise NotImplementedError
         # :nocov:
       end
     end

@@ -122,7 +122,7 @@ module Foobara
 
     def map
       # :nocov:
-      raise "subclass responsibility"
+      raise NotImplementedError
       # :nocov:
     end
   end

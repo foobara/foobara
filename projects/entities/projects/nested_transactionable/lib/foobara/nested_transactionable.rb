@@ -35,7 +35,7 @@ module Foobara
 
     def relevant_entity_classes
       # :nocov:
-      raise "subclass responsibility"
+      raise NotImplementedError
       # :nocov:
     end
 

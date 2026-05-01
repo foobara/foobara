@@ -3,7 +3,7 @@ module Foobara
     class ResponseMutator < Foobara::Value::Mutator
       def result_type_declaration_from(_result_type)
         # :nocov:
-        raise "subclass responsibility"
+        raise NotImplementedError
         # :nocov:
       end
 
@@ -14,7 +14,7 @@ module Foobara
 
       def mutate
         # :nocov:
-        raise "subclass responsibility"
+        raise NotImplementedError
         # :nocov:
       end
 
