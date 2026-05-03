@@ -61,7 +61,7 @@ module Foobara
                 model_module = Util.make_module_p(model_module_name, tag: true)
               end
 
-              const_name = model_name.split("::").last
+              const_name = model_name.split("::")[-1]
 
               model_module.const_set(const_name, anonymous_model_class)
 

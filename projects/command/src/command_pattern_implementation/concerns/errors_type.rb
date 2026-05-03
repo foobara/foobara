@@ -26,7 +26,7 @@ module Foobara
           def possible_error(*args)
             possible_error = case args.size
                              when 1
-                               arg = args.first
+                               arg = args[0]
 
                                if arg.is_a?(PossibleError)
                                  # TODO: test this code path

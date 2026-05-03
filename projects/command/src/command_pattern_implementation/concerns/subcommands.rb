@@ -74,7 +74,7 @@ module Foobara
             end
 
             if subcommand_classes.length == 1
-              subcommand_classes = Util.array(subcommand_classes.first)
+              subcommand_classes = Util.array(subcommand_classes[0])
             end
 
             subcommand_classes.each do |subcommand_class|

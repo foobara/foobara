@@ -125,7 +125,7 @@ module Foobara
             # :nocov:
           end
 
-          @error_class = error_classes.first
+          @error_class = error_classes[0]
         end
 
         def symbol
@@ -164,7 +164,7 @@ module Foobara
         end
 
         if requires_parent_declaration_data?
-          self.parent_declaration_data = args.first
+          self.parent_declaration_data = args[0]
         end
       end
 

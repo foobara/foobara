@@ -447,7 +447,7 @@ module Foobara
         end
 
         @inputs_transformer = if transformers.size == 1
-                                transformers.first
+                                transformers[0]
                               else
                                 Value::Processor::Pipeline.new(processors: transformers)
                               end
@@ -468,7 +468,7 @@ module Foobara
           transformers = transformers_to_processors(response_mutators, result_type_from_transformers, direction: :from)
 
           if transformers.size == 1
-            transformers.first
+            transformers[0]
           else
             Value::Processor::Pipeline.new(processors: transformers)
           end
@@ -490,7 +490,7 @@ module Foobara
           transformers = transformers_to_processors(request_mutators, inputs_type_from_transformers, direction: :to)
 
           if transformers.size == 1
-            transformers.first
+            transformers[0]
           else
             Value::Processor::Pipeline.new(processors: transformers)
           end
@@ -515,7 +515,7 @@ module Foobara
           transformers = transformers_to_processors(result_transformers, command_class.result_type, direction: :from)
 
           if transformers.size == 1
-            transformers.first
+            transformers[0]
           else
             Value::Processor::Pipeline.new(processors: transformers)
           end
@@ -729,7 +729,7 @@ module Foobara
       transformers = self.class.transformers_to_processors(serializers, nil, declaration_data: self)
 
       if transformers.size == 1
-        transformers.first
+        transformers[0]
       else
         Value::Processor::Pipeline.new(processors: transformers)
       end
@@ -742,7 +742,7 @@ module Foobara
                                                                                      declaration_data: self)
 
       if transformers.size == 1
-        transformers.first
+        transformers[0]
       else
         Value::Processor::Pipeline.new(processors: transformers)
       end
@@ -759,7 +759,7 @@ module Foobara
       )
 
       if transformers.size == 1
-        transformers.first
+        transformers[0]
       else
         Value::Processor::Pipeline.new(processors: transformers)
       end

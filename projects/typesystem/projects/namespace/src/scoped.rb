@@ -62,7 +62,7 @@ module Foobara
     end
 
     def scoped_short_name
-      @scoped_short_name ||= scoped_path.last
+      @scoped_short_name ||= scoped_path[-1]
     end
 
     def scoped_short_path

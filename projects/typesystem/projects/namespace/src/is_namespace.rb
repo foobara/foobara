@@ -187,7 +187,7 @@ module Foobara
             # :nocov:
           end
 
-          scoped = candidates.first ||
+          scoped = candidates[0] ||
                    foobara_parent_namespace&.foobara_lookup_without_cache(path, filter:, mode:, visited:)
 
           scoped ||= foobara_lookup_without_cache(
@@ -295,7 +295,7 @@ module Foobara
           # :nocov:
         end
 
-        candidates.first || partial
+        candidates[0] || partial
       end
 
       def foobara_parent_namespace

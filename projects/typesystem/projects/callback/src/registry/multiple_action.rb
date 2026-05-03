@@ -73,7 +73,7 @@ module Foobara
           when 0
             nil
           when 1
-            action = actions.first
+            action = actions[0]
             validate_action!(action)
             action
           else
@@ -84,7 +84,7 @@ module Foobara
         end
 
         def normalize_actions(actions, validate = true)
-          first = actions.first
+          first = actions[0]
 
           if first.is_a?(Array)
             if actions.size == 1

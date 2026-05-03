@@ -65,7 +65,7 @@ module Foobara
                 end
 
                 unless values.empty?
-                  values.first
+                  values[0]
                 end
               end
             end
@@ -73,7 +73,7 @@ module Foobara
 
           def association_for(association_filters)
             if association_filters.size == 1
-              data_path = association_filters.first.to_s
+              data_path = association_filters[0].to_s
 
               if deep_associations.key?(data_path)
                 return data_path
@@ -93,7 +93,7 @@ module Foobara
               raise "Multiple associations matched by #{association_filters}"
               # :nocov:
             else
-              result.first
+              result[0]
             end
           end
 

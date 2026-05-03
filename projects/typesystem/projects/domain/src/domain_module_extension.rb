@@ -20,7 +20,7 @@ module Foobara
         def foobara_domain_map(*args, to: nil, strict: false, criteria: nil, should_raise: false, **opts)
           case args.size
           when 1
-            value = args.first
+            value = args[0]
           when 0
             if opts.empty?
               # :nocov:
@@ -110,8 +110,8 @@ module Foobara
         end
 
         def foobara_type_from_declaration(*args, **opts, &block)
-          if opts.empty? && block.nil? && args.size == 1 && args.first.is_a?(Types::Type)
-            return args.first
+          if opts.empty? && block.nil? && args.size == 1 && args[0].is_a?(Types::Type)
+            return args[0]
           end
 
           Foobara::Namespace.use self do
@@ -132,8 +132,8 @@ module Foobara
         end
 
         def foobara_register_type(type_symbol, *type_declaration_bits, &block)
-          type = if block.nil? && type_declaration_bits.size == 1 && type_declaration_bits.first.is_a?(Types::Type)
-                   type_declaration_bits.first
+          type = if block.nil? && type_declaration_bits.size == 1 && type_declaration_bits[0].is_a?(Types::Type)
+                   type_declaration_bits[0]
                  else
                    foobara_type_from_declaration(*type_declaration_bits, &block)
                  end
@@ -201,7 +201,7 @@ module Foobara
           end
 
           if domains.length == 1
-            domains = Util.array(domains.first)
+            domains = Util.array(domains[0])
           end
 
           domains.each do |domain|

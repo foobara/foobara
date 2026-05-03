@@ -50,7 +50,7 @@ module Foobara
       end
 
       def takes_block?
-        @takes_block ||= original_block.parameters.last&.first&.==(:block) || false
+        @takes_block ||= original_block.parameters[-1]&.[](0)&.==(:block) || false
       end
 
       def has_one_or_zero_positional_args?

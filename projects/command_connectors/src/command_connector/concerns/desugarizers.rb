@@ -28,7 +28,7 @@ module Foobara
             when 1
               # TODO: test this code path by removing all desugarizers in a spec.
               # :nocov:
-              processors.first
+              processors[0]
               # :nocov:
             else
               Value::Processor::Pipeline.new(processors:)

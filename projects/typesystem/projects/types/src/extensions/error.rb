@@ -3,7 +3,7 @@ module Foobara
     class << self
       def types_depended_on(*args)
         if args.size == 1
-          context_type.types_depended_on(args.first)
+          context_type.types_depended_on(args[0])
         elsif args.empty?
           begin
             if context_type

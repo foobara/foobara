@@ -86,7 +86,7 @@ module Foobara
       # TODO: should this be somewhere more general-purpose?
       def args_to_type(*args, **opts, &block)
         if args.size == 1 && opts.empty? && block.nil?
-          object_to_type(args.first)
+          object_to_type(args[0])
         else
           domain.foobara_type_from_declaration(*args, **opts, &block)
         end

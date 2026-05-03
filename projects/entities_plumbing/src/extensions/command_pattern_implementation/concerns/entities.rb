@@ -64,7 +64,7 @@ module Foobara
           begin
             # here... filter out created entities...
             if thunks_to_load.size == 1
-              entity_class.load(thunks_to_load.first)
+              entity_class.load(thunks_to_load[0])
             else
               entity_class.load_many(thunks_to_load)
             end

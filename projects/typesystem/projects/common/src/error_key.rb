@@ -74,7 +74,7 @@ module Foobara
 
     def prepend_path!(*prepend_parts)
       if prepend_parts.size == 1
-        arg = prepend_parts.first
+        arg = prepend_parts[0]
 
         if arg.is_a?(Array)
           prepend_parts = arg

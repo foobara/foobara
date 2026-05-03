@@ -72,7 +72,7 @@ module Foobara
         elsif args.size > 1
           initialize(args)
         else
-          symbol_map = args.first
+          symbol_map = args[0]
 
           case symbol_map
           when ::Hash

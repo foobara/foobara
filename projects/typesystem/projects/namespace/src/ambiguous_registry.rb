@@ -82,7 +82,7 @@ module Foobara
                   "Ambiguous match for #{path.inspect}. Matches the following: #{candidates.inspect}"
           end
 
-          candidates.first
+          candidates[0]
         end
       end
 

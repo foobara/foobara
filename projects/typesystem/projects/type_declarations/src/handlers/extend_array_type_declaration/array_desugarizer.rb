@@ -20,7 +20,7 @@ module Foobara
             strict_type_declaration.is_absolutified = true
 
             unless sugary_type_declaration.empty?
-              element_type_declaration = sugary_type_declaration.first
+              element_type_declaration = sugary_type_declaration[0]
 
               element_type_declaration = if element_type_declaration.is_a?(Types::Type)
                                            element_type_declaration.reference_or_declaration_data

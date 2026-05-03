@@ -198,7 +198,7 @@ module Foobara
           # :nocov:
         end
 
-        target_classes.first
+        target_classes[0]
       end
 
       def extends?(type)

@@ -51,7 +51,7 @@ module Foobara
       def to_authenticator(*args)
         symbol, object = case args.size
                          when 1
-                           [nil, args.first]
+                           [nil, args[0]]
                          when 2
                            args
                          else
@@ -97,7 +97,7 @@ module Foobara
             nil
             # :nocov:
           when 1
-            to_authenticator(object.first)
+            to_authenticator(object[0])
           else
             authenticators = object.map { |authenticatorish| to_authenticator(authenticatorish) }
             AuthenticatorSelector.new(authenticators:, symbol:)
@@ -133,13 +133,13 @@ module Foobara
             size = element_types.size
 
             first_required_input = if size == 1
-                                     element_types.keys.first
+                                     element_types.keys[0]
                                    elsif size > 1
                                      declaration = inputs_type&.declaration_data
                                      required_attribute_names = declaration&.[](:required) || EMPTY_ARRAY
 
                                      if required_attribute_names.size == 1
-                                       required_attribute_names.first
+                                       required_attribute_names[0]
                                      else
                                        # :nocov:
                                        raise ArgumentError,
@@ -262,7 +262,7 @@ module Foobara
     def connect(*args, **opts)
       args, opts = desugarize_connect_args(args, opts)
 
-      registerable = args.first
+      registerable = args[0]
 
       if opts.key?(:authenticator)
         authenticator = opts[:authenticator]
