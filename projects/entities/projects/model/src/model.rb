@@ -18,7 +18,7 @@ module Foobara
         when 0
           @description
         when 1
-          @description = args.first
+          @description = args[0]
         else
           # :nocov:
           raise ArgumentError, "expected 0 or 1 argument, got #{args.size}"
@@ -111,7 +111,7 @@ module Foobara
         if foobara_type&.scoped_path_set?
           foobara_type.scoped_name
         else
-          Util.non_full_name(self) || model_name&.split("::")&.last
+          Util.non_full_name(self) || model_name&.split("::")&.[](-1)
         end
       end
 

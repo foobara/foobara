@@ -108,7 +108,7 @@ module Foobara
         actual_serializers = objects_to_serializers(serializers)
 
         @serializer = if actual_serializers.size == 1
-                        actual_serializers.first
+                        actual_serializers[0]
                       else
                         Value::Processor::Pipeline.new(processors: actual_serializers)
                       end

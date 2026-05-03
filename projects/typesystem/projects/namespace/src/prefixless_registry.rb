@@ -33,7 +33,7 @@ module Foobara
 
       def lookup(path, filter = nil)
         if path.size == 1
-          apply_filter(registry[path.first], filter)
+          apply_filter(registry[path[0]], filter)
         end
       end
 

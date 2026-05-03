@@ -27,7 +27,7 @@ module Foobara
         when 0
           Util.non_full_name_underscore(self).gsub(/_error$/, "").to_sym
         when 1
-          arg = args.first
+          arg = args[0]
           singleton_class.define_method :symbol do
             arg
           end
@@ -58,7 +58,7 @@ module Foobara
         when 0
           Util.humanize(symbol.to_s)
         when 1
-          arg = args.first
+          arg = args[0]
           singleton_class.define_method :message do
             arg
           end
@@ -79,7 +79,7 @@ module Foobara
         when 0
           {}
         when 1
-          arg = args.first
+          arg = args[0]
           singleton_class.define_method :context_type_declaration do
             arg
           end

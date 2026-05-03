@@ -103,7 +103,7 @@ module Foobara
 
     def prepend!(*prepend_parts)
       if prepend_parts.size == 1
-        arg = prepend_parts.first
+        arg = prepend_parts[0]
 
         if arg.is_a?(Array)
           prepend_parts = arg
@@ -122,7 +122,7 @@ module Foobara
 
     def append!(*append_parts)
       if append_parts.size == 1
-        arg = append_parts.first
+        arg = append_parts[0]
 
         if arg.is_a?(Array)
           append_parts = arg
@@ -174,12 +174,12 @@ module Foobara
         raise TooManyValuesAtPathError.new(path, values)
       end
 
-      values.first
+      values[0]
     end
 
     def set_value_at(object, value, parts = path)
       owner = value_at(object, parts[0..-2])
-      index = parts.last
+      index = parts[-1]
 
       if owner.is_a?(::Hash)
         if owner.key?(index.to_s)
@@ -206,7 +206,7 @@ module Foobara
     # Helper method that determines if the path points to an array and none of the atoms along the way are also arrays.
     # And that there's at least one atom (we are going to consider a collection to be "named" not an anonymous array.)
     def simple_collection?
-      path.size > 1 && path.last == :"#" && path[0..-2].none? { |part| part == :"#" }
+      path.size > 1 && path[-1] == :"#" && path[0..-2].none? { |part| part == :"#" }
     end
 
     def ==(other)
@@ -214,7 +214,7 @@ module Foobara
     end
 
     def last
-      path.last
+      path[-1]
     end
 
     def empty?

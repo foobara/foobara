@@ -3,7 +3,7 @@ module Foobara
     module Desugarizers
       class Auth < Desugarizer
         def applicable?(args_and_opts)
-          args_and_opts.last.key?(:auth)
+          args_and_opts[-1].key?(:auth)
         end
 
         def desugarize(args_and_opts)

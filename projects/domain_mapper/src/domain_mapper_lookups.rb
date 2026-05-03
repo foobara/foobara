@@ -83,7 +83,7 @@ module Foobara
           end
         end
 
-        value = candidates.first
+        value = candidates[0]
 
         return value if value
 

@@ -61,7 +61,7 @@ module Foobara
                           )
                         end
 
-                        applicable_processors.first
+                        applicable_processors[0]
                       else
                         processors.find { |processor| processor.applicable?(value) }
                       end

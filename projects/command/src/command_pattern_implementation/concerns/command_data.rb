@@ -9,7 +9,7 @@ module Foobara
             if args.empty?
               @description
             elsif args.size == 1
-              @description = args.first
+              @description = args[0]
             else
               # :nocov:
               raise ArgumentError, "wrong number of arguments (#{args.size} for 0 or 1)"

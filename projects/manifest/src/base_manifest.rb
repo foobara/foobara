@@ -91,11 +91,11 @@ module Foobara
       end
 
       def parent_category
-        self[:parent]&.first
+        self[:parent]&.[](0)
       end
 
       def parent_name
-        self[:parent]&.last
+        self[:parent]&.[](-1)
       end
 
       def scoped_category
@@ -103,7 +103,7 @@ module Foobara
       end
 
       def relevant_manifest
-        @relevant_manifest ||= Foobara::DataPath.values_at(manifest_path, root_manifest).first
+        @relevant_manifest ||= Foobara::DataPath.values_at(manifest_path, root_manifest)[0]
       end
 
       def find_type(type_declaration)

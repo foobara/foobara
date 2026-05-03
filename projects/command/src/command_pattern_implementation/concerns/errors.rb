@@ -66,7 +66,7 @@ module Foobara
 
         def add_input_error(*args, **opts)
           error = if args.size == 1 && opts.empty?
-                    error = args.first
+                    error = args[0]
 
                     unless error.is_a?(Value::DataError)
                       # :nocov:
@@ -75,8 +75,8 @@ module Foobara
                     end
 
                     error
-                  elsif args.empty? || (args.size == 1 && args.first.is_a?(Hash))
-                    error_args = opts.merge(args.first || {})
+                  elsif args.empty? || (args.size == 1 && args[0].is_a?(Hash))
+                    error_args = opts.merge(args[0] || {})
                     symbol = error_args[:symbol]
                     path = error_args[:input] || error_args[:path]
 
@@ -126,9 +126,9 @@ module Foobara
 
         def add_runtime_error(*args, halt: true, **opts)
           error = if args.size == 1 && opts.empty? && (
-            args.first.is_a?(::Class) || args.first.is_a?(Foobara::RuntimeError)
+            args[0].is_a?(::Class) || args[0].is_a?(Foobara::RuntimeError)
           )
-                    error = args.first
+                    error = args[0]
 
                     if error.is_a?(::Class) && error < Foobara::RuntimeError
                       error = error.new
@@ -142,8 +142,8 @@ module Foobara
                     end
 
                     error
-                  elsif args.empty? || (args.size == 1 && args.first.is_a?(Hash))
-                    error_args = opts.merge(args.first || {})
+                  elsif args.empty? || (args.size == 1 && args[0].is_a?(Hash))
+                    error_args = opts.merge(args[0] || {})
                     symbol = error_args[:symbol]
 
                     unless symbol

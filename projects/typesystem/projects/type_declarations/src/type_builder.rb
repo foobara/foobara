@@ -40,7 +40,7 @@ module Foobara
             raise ArgumentError, "expected 1 argument or a block but got 0 arguments and no block"
             # :nocov:
           when 1
-            arg = args.first
+            arg = args[0]
 
             if arg.is_a?(TypeDeclaration)
               arg

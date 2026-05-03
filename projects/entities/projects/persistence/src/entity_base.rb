@@ -10,7 +10,7 @@ module Foobara
           if existing_transactions.empty?
             block.call
           elsif existing_transactions.size == 1
-            existing_transaction = existing_transactions.first
+            existing_transaction = existing_transactions[0]
 
             existing_transaction.entity_base.using_transaction(existing_transaction, &block)
           else

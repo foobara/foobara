@@ -34,7 +34,7 @@ module Foobara
                                             when 1, 2
                                               arg, other = args
 
-                                              if args.first.is_a?(::String)
+                                              if args[0].is_a?(::String)
                                                 [other, arg]
                                               else
                                                 args
@@ -59,7 +59,7 @@ module Foobara
             attributes_type = handler.type_for_declaration(attributes_type_declaration)
 
             # TODO: reuse the model_base_class primary key if it has one...
-            primary_key = attributes_type.element_types.keys.first
+            primary_key = attributes_type.element_types.keys[0]
 
             model_module = unless scoped_full_path.empty?
                              scoped_full_name

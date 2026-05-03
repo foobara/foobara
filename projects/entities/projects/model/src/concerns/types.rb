@@ -28,7 +28,7 @@ module Foobara
                 end
               end
             when 1
-              @mutable_override = args.first
+              @mutable_override = args[0]
               set_model_type
             else
               # :nocov:

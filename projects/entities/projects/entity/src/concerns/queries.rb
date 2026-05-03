@@ -57,7 +57,7 @@ module Foobara
 
             if load_paths
               if load_paths.is_a?(::Array)
-                first = load_paths.first
+                first = load_paths[0]
 
                 if first.is_a?(::Symbol) || (first.is_a?(::String) && !first.include?("."))
                   load_paths = [load_paths]
@@ -99,8 +99,8 @@ module Foobara
           end
 
           def load_many(*record_ids)
-            if record_ids.size == 1 && record_ids.first.is_a?(::Array)
-              record_ids = record_ids.first
+            if record_ids.size == 1 && record_ids[0].is_a?(::Array)
+              record_ids = record_ids[0]
             end
 
             current_transaction_table.load_many(record_ids)
@@ -125,7 +125,7 @@ module Foobara
 
             unless containing_records.empty?
               if containing_records.size == 1
-                containing_records.first
+                containing_records[0]
               else
                 # :nocov:
                 raise "Expected only one record to own #{record} but found #{containing_records.size}"
@@ -155,7 +155,7 @@ module Foobara
             end until owning_entity_class
 
             if attribute_path.size == 1
-              attribute_path = attribute_path.first
+              attribute_path = attribute_path[0]
             end
 
             if owning_entity_class == self

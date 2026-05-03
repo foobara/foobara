@@ -88,7 +88,7 @@ module Foobara
     def raise!
       return if success?
 
-      error = error_collection.first
+      error = error_collection[0]
       original_backtrace = error.backtrace_when_initialized
 
       if error_collection.size > 1

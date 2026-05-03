@@ -15,7 +15,7 @@ module Foobara
       def attribute_name
         # TODO: feels awkward... something is not right
         # how is path actually set?
-        path.last || context[:attribute_name]
+        path[-1] || context[:attribute_name]
       end
 
       def eql?(other)

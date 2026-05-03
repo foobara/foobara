@@ -65,7 +65,7 @@ module Foobara
             if block
               # TODO: technically, current namespace might have an overridden :array type so instead we
               # should lookup :array he to see if we get BuiltinTypes[:array] or not (or "::array" or not)
-              if processor_symbols.first == :array
+              if processor_symbols[0] == :array
                 type, *processor_symbols = processor_symbols
               end
             else

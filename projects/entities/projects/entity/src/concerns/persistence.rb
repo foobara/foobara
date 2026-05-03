@@ -62,7 +62,7 @@ module Foobara
 
           attribute_name = if attribute_name_or_attributes.is_a?(::Hash)
                              if attribute_name_or_attributes.keys.size == 1
-                               attribute_name_or_attributes.keys.first.to_sym
+                               attribute_name_or_attributes.keys[0].to_sym
                              end
                            elsif attribute_name_or_attributes
                              attribute_name_or_attributes.to_sym

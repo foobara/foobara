@@ -46,7 +46,7 @@ module Foobara
             end
           end
 
-          transformers = transformers.first unless is_array
+          transformers = transformers[0] unless is_array
 
           opts = opts.merge(opts_key => transformers)
 

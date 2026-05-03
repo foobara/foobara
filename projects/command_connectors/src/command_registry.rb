@@ -226,7 +226,7 @@ module Foobara
     def to_allowed_rule(*args)
       symbol, object = case args.size
                        when 1
-                         [nil, args.first]
+                         [nil, args[0]]
                        when 2
                          args
                        else

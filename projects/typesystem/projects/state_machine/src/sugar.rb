@@ -85,7 +85,7 @@ module Foobara
               } but should have been one of #{states}"
             end
           else
-            self.initial_state = states.first
+            self.initial_state = states[0]
           end
         end
 

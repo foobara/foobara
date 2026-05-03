@@ -148,7 +148,7 @@ module Foobara
         end
 
         def load_aggregate(record)
-          load_aggregates([record]).first
+          load_aggregates([record])[0]
         end
 
         def track_unloaded_thunk(entity)

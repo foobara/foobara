@@ -38,7 +38,7 @@ module Foobara
         end
 
         if bases.size == 1
-          bases.first.transaction(mode, &)
+          bases[0].transaction(mode, &)
         else
           Foobara::TransactionGroup.run(bases:, mode:, &)
         end
@@ -86,7 +86,7 @@ module Foobara
           # :nocov:
         end
 
-        bases.first
+        bases[0]
       end
 
       def to_bases(object)
@@ -157,7 +157,7 @@ module Foobara
       def register_base(*args, name: nil, table_prefix: nil)
         base = case args
                in [EntityBase]
-                 args.first
+                 args[0]
                in [Class => crud_driver_class, *rest] if crud_driver_class < EntityAttributesCrudDriver
                  unless name
                    # :nocov:
