@@ -23,7 +23,7 @@ RSpec.describe Foobara::BuiltinTypes::Duck::SupportedValidators::OneOf do
       expect(errors.size).to eq(1)
       error = errors.first
       expect(error).to be_a(Foobara::BuiltinTypes::Duck::SupportedValidators::InstanceOf::NotInstanceOfError)
-      expect(error.message).to match(/is not an instance of Foo/)
+      expect(error.message).to include('is not an instance of Foo')
     end
   end
 

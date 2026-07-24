@@ -184,9 +184,7 @@ module Foobara
 
         def find_all_by_attribute_containing_any_of(attribute_name, values)
           all.select do |attributes|
-            attributes[attribute_name]&.any? do |attribute_value|
-              values.include?(attribute_value)
-            end
+            attributes[attribute_name]&.intersect?(values)
           end
         end
 

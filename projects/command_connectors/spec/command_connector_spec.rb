@@ -1576,7 +1576,7 @@ RSpec.describe Foobara::CommandConnector do
 
         it "gives some help" do
           expect(response.status).to be(0)
-          expect(response.body).to match(/HELP!!!/)
+          expect(response.body).to include('HELP!!!')
         end
 
         context "when asking for help with a specific element" do
@@ -1585,7 +1585,7 @@ RSpec.describe Foobara::CommandConnector do
 
           it "gives some help" do
             expect(response.status).to be(0)
-            expect(response.body).to match(/HELP!!!/)
+            expect(response.body).to include('HELP!!!')
           end
         end
 

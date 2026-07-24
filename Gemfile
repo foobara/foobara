@@ -42,5 +42,6 @@ group :test, :ci do
   gem "foobara-crud-driver-spec-helpers", "< 2.0.0" # , path: "../crud-driver-spec-helpers"
   gem "foobara-spec-helpers", "< 2.0.0" # , path: "../spec-helpers"
   gem "rspec-its"
-  gem "simplecov"
+  # TODO: remove "< 1.0" and fix deprecation warnings
+  gem "simplecov", "< 1.0"
 end
