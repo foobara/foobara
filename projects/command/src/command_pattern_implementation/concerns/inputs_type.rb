@@ -12,10 +12,6 @@ module Foobara
               unregister_possible_error_if_registered(possible_error)
             end
 
-            if defined?(@inputs_association_paths)
-              remove_instance_variable(:@inputs_association_paths)
-            end
-
             if defined?(@entity_class_paths)
               remove_instance_variable(:@entity_class_paths)
             end
