@@ -29,7 +29,6 @@ module Foobara
     include CommandPatternImplementation::Concerns::Runtime
     include CommandPatternImplementation::Concerns::Callbacks
     include CommandPatternImplementation::Concerns::StateMachine
-    include CommandPatternImplementation::Concerns::Transactions
     include CommandPatternImplementation::Concerns::Subcommands
     include CommandPatternImplementation::Concerns::DomainMappers
     include CommandPatternImplementation::Concerns::Reflection

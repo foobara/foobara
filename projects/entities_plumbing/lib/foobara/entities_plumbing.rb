@@ -2,6 +2,7 @@ module Foobara
   module EntitiesPlumbing
     class << self
       def install!
+        CommandPatternImplementation.include CommandPatternImplementation::Concerns::Transactions
         CommandPatternImplementation.include CommandPatternImplementation::Concerns::Entities
 
         if Foobara.project_installed?("command_connectors")
