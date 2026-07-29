@@ -9,7 +9,8 @@ module Foobara
                   :is_absolutified,
                   :reference_checked,
                   :type,
-                  :base_type
+                  :base_type,
+                  :is_claimed_but_error
 
     # TODO: we should be able to delete absolutified opt once strict declarations
     # use `:ref` instead of `{type: :ref}` format.
@@ -289,10 +290,15 @@ module Foobara
       strict? && declaration_data.is_a?(::Symbol)
     end
 
+    def claimed_but_error!
+      self.is_claimed_but_error = true
+    end
+
     alias absolutified? is_absolutified
     alias duped? is_duped
     alias deep_duped? is_deep_duped
     alias strict? is_strict
     alias reference_checked? reference_checked
+    alias claimed_but_error? is_claimed_but_error
   end
 end

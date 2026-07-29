@@ -3,7 +3,6 @@ require_relative "../type_declaration_handler"
 module Foobara
   module TypeDeclarations
     module Handlers
-      # TODO: we should just use the symbol instead of {type: symbol} to save space and simplify some stuff...
       class RegisteredTypeDeclaration < TypeDeclarationHandler
         def applicable?(sugary_type_declaration)
           return true if sugary_type_declaration.type
@@ -18,6 +17,8 @@ module Foobara
                                     else
                                       desugarize(sugary_type_declaration.clone)
                                     end
+
+          return true if strict_type_declaration.claimed_but_error?
 
           if strict_type_declaration.reference?
             unless strict_type_declaration.type
