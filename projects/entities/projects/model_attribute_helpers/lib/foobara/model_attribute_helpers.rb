@@ -8,8 +8,6 @@ module Foobara
       def install!
         Model.include Concerns::AttributeHelpers
         Model.include Concerns::AttributeHelperAliases
-        Entity.include Concerns::AttributeHelpers
-        Entity.include Concerns::AttributeHelperAliases
       end
     end
   end
