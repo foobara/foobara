@@ -4,6 +4,8 @@ module Foobara
       def install!
         CommandPatternImplementation.include CommandPatternImplementation::Concerns::Transactions
         CommandPatternImplementation.include CommandPatternImplementation::Concerns::Entities
+        CommandPatternImplementation.include CommandPatternImplementation::Concerns::EntityInputs
+        CommandPatternImplementation.include CommandPatternImplementation::Concerns::EntityErrorsType
 
         if Foobara.project_installed?("command_connectors")
           # :nocov:

@@ -111,10 +111,6 @@ module Foobara
                                         map
                                       end
 
-            inputs_association_paths&.each do |data_path|
-              possible_input_error(data_path.to_sym, CommandPatternImplementation::NotFoundError)
-            end
-
             @error_context_type_map
           end
 
