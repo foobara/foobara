@@ -5,6 +5,14 @@ module Foobara
         include Concern
 
         module ClassMethods
+          def inputs(...)
+            if defined?(@entity_class_paths)
+              remove_instance_variable(:@entity_class_paths)
+            end
+
+            super
+          end
+
           # Only needed for entities not discoverable through the inputs
           def depends_on_entities(*entities_to_add)
             if entities_to_add.empty?
