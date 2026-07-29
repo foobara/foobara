@@ -5,14 +5,6 @@ module Foobara
         include Concern
 
         module ClassMethods
-          def inputs(...)
-            if defined?(@inputs_association_paths)
-              remove_instance_variable(:@inputs_association_paths)
-            end
-
-            super
-          end
-
           def error_context_type_map
             return @error_context_type_map if defined?(@error_context_type_map)
 

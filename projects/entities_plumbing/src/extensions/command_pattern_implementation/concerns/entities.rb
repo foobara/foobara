@@ -10,6 +10,10 @@ module Foobara
               remove_instance_variable(:@entity_class_paths)
             end
 
+            if defined?(@inputs_association_paths)
+              remove_instance_variable(:@inputs_association_paths)
+            end
+
             super
           end
 
