@@ -10,23 +10,19 @@ module Foobara
           def desugarize(declaration)
             model_class = declaration.declaration_data
 
-            declaration.declaration_data = model_class.model_type.foobara_manifest_reference.to_sym
-
             type = model_class.model_type
 
             if type
+              declaration.declaration_data = type.foobara_manifest_reference.to_sym
               declaration.type = type
               declaration.reference_checked = true
+              declaration.is_absolutified = true
+              declaration.is_strict = true
+              declaration.is_duped = true
+              declaration.is_deep_duped = true
             else
-              # :nocov:
-              declaration.reference_checked = false
-              # :nocov:
+              declaration.claimed_but_error!
             end
-
-            declaration.is_absolutified = true
-            declaration.is_strict = true
-            declaration.is_duped = true
-            declaration.is_deep_duped = true
 
             declaration
           end
