@@ -1,21 +1,24 @@
 module Foobara
   module CommandPatternImplementation
+    class BadCommandInputsError < StandardError; end
+
     module Concerns
       module InputsType
         include Concern
 
         module ClassMethods
           def inputs(...)
+            type = type_for_declaration(...)
+
+            unless type.extends?(BuiltinTypes[:attributes])
+              raise BadCommandInputsError, "Expected attributes or something unambiguously convertable to attributes " \
+                                           "but got #{type}"
+            end
+
             old_inputs_type = inputs_type
 
             old_inputs_type&.possible_errors&.each do |possible_error|
               unregister_possible_error_if_registered(possible_error)
-            end
-
-            type = type_for_declaration(...)
-
-            if type.extends?(BuiltinTypes[:model]) && !type.extends?(BuiltinTypes[:entity])
-              type = type.element_types
             end
 
             @inputs_type = type

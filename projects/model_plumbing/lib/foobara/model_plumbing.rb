@@ -6,6 +6,7 @@ module Foobara
           GlobalDomain.foobara_each_command(&:handle_reregistered_types!)
         end
 
+        CommandPatternImplementation.include Foobara::CommandPatternImplementation::Concerns::ModelInputsType
         Foobara::DomainMapper.singleton_class.prepend(Foobara::ModelPlumbing::DomainMapperExtension)
       end
     end

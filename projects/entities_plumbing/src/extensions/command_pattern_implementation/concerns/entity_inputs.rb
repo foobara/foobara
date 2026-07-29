@@ -22,6 +22,10 @@ module Foobara
                                           end
                                         end
           end
+
+          def skip_model_to_attributes_conversion?(type)
+            super || type.extends?(BuiltinTypes[:entity])
+          end
         end
       end
     end
