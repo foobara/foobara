@@ -20,7 +20,7 @@ module Foobara
           case object
           when Entity
             object.class.delegates.each_key do |delegated_attribute_name|
-              object.send(delegated_attribute_name)
+              object.__send__(delegated_attribute_name)
             end
           when Array
             object.each do |element|

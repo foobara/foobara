@@ -192,7 +192,7 @@ module Foobara
       else
         method = "#{index}="
         if owner.respond_to?(method)
-          owner.send(method, value)
+          owner.__send__(method, value)
         else
           # :nocov:
           raise BadPathError, "Bad path: #{parts}"
@@ -274,7 +274,7 @@ module Foobara
                         object[path_part]
                       end
                     else
-                      object.send(path_part)
+                      object.__send__(path_part)
                     end
                   end
                 when Integer

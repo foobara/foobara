@@ -40,7 +40,7 @@ module Foobara
           transformers = transformers.map do |transformer|
             if transformer.is_a?(::Hash) && transformer.key?(desugarizer_symbol)
               params = transformer[desugarizer_symbol]
-              AttributesTransformers.send(transformer_method, *params)
+              AttributesTransformers.__send__(transformer_method, *params)
             else
               transformer
             end

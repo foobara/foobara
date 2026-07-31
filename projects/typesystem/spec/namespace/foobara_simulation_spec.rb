@@ -1,6 +1,6 @@
 RSpec.describe Foobara::Namespace do
   after do
-    Object.send(:remove_const, :FoobaraSimulation)
+    Object.__send__(:remove_const, :FoobaraSimulation)
   end
 
   before do

@@ -12,7 +12,7 @@ module Foobara
           def cast(attributes)
             symbolized_attributes = super
 
-            model_class.send(build_method(symbolized_attributes), symbolized_attributes)
+            model_class.__send__(build_method(symbolized_attributes), symbolized_attributes)
           end
 
           def model_class

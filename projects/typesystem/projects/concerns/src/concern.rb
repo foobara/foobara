@@ -56,7 +56,7 @@ module Foobara
               if instance_variable_defined?(var_name)
                 instance_variable_get(var_name)
               else
-                superclass.send(name)
+                superclass.__send__(name)
               end
             end
 

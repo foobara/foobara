@@ -196,7 +196,7 @@ module Foobara
               target_class = type.target_class
 
               method = target_class.respond_to?(:foobara_attributes_type) ? :foobara_attributes_type : :attributes_type
-              attributes_type = target_class.send(method)
+              attributes_type = target_class.__send__(method)
 
               if !remove_sensitive || !attributes_type.sensitive?
                 construct_associations(attributes_type, path, result, initial: false)

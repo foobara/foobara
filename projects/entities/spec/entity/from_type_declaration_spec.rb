@@ -3,7 +3,7 @@ RSpec.describe Foobara::Entity do
     after do
       Foobara.reset_alls
 
-      Object.send(:remove_const, :User) if Object.const_defined?(:User)
+      Object.__send__(:remove_const, :User) if Object.const_defined?(:User)
     end
 
     let(:declaration_data) do

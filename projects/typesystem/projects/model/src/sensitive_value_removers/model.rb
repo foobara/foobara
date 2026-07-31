@@ -12,7 +12,7 @@ module Foobara
           end
 
           Namespace.use(to_type.created_in_namespace) do
-            to_type.target_class.send(build_method, sanitized_attributes)
+            to_type.target_class.__send__(build_method, sanitized_attributes)
           end
         end
 

@@ -63,7 +63,7 @@ module Foobara
 
     def current_state
       if target_attribute
-        owner.send(target_attribute) || self.class.initial_state
+        owner.__send__(target_attribute) || self.class.initial_state
       else
         @current_state
       end
@@ -71,7 +71,7 @@ module Foobara
 
     def current_state=(state)
       if target_attribute
-        owner.send("#{target_attribute}=", state)
+        owner.__send__("#{target_attribute}=", state)
       else
         @current_state = state
       end

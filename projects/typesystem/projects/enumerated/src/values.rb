@@ -127,7 +127,7 @@ module Foobara
 
         [:all, :all_names, :all_values, :value?].each do |method_name|
           mod.singleton_class.define_method method_name do |*args, **opts, &block|
-            enumerated.send(method_name, *args, **opts, &block)
+            enumerated.__send__(method_name, *args, **opts, &block)
           end
         end
 

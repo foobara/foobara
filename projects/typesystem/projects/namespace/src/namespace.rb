@@ -60,7 +60,7 @@ module Foobara
 
       def fire_changed!
         @on_change&.each_pair do |object, method_name|
-          object.send(method_name)
+          object.__send__(method_name)
         end
       end
 

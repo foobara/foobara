@@ -46,7 +46,7 @@ module Foobara
         end
 
         def validation_errors(email)
-          build_error if email.send(negate_regex? ? :=~ : :!~, regex)
+          build_error if email.__send__(negate_regex? ? :=~ : :!~, regex)
         end
       end
 

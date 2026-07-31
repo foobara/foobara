@@ -114,7 +114,7 @@ module Foobara
             transition = transition_or_transitions
 
             state_machine.perform_transition!(transition) do
-              result = send(transition)
+              result = __send__(transition)
               halt! if has_errors?
             end
           end

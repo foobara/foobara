@@ -47,7 +47,7 @@ RSpec.describe Foobara::StateMachine::Callbacks do
                 record_call
               end
 
-      state_machine.send(callback_name, &block)
+      state_machine.__send__(callback_name, &block)
     end
 
     it "calls them all" do

@@ -171,7 +171,7 @@ module Foobara
 
         if existing_object
           if key_method
-            key = object.send(key_method)
+            key = object.__send__(key_method)
             old_key = object_id_to_key[object_id]
 
             if key != old_key
@@ -189,7 +189,7 @@ module Foobara
           garbage_cleaner.track(object)
 
           if key_method
-            key = object.send(key_method)
+            key = object.__send__(key_method)
 
             if key
               existing_record_object_id = key_to_object_id[key]

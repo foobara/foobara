@@ -261,7 +261,7 @@ module Foobara
 
     def attributes_with_delegates
       h = self.class.delegates.keys.to_h do |delegated_attribute_name|
-        [delegated_attribute_name, send(delegated_attribute_name)]
+        [delegated_attribute_name, __send__(delegated_attribute_name)]
       end
 
       attributes.merge(h)

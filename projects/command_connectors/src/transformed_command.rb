@@ -790,7 +790,7 @@ module Foobara
       if auth_mapped_method?(method_name)
         auth_mapped_value_for(method_name)
       elsif command.respond_to?(method_name)
-        command.send(method_name, ...)
+        command.__send__(method_name, ...)
       else
         # :nocov:
         super
