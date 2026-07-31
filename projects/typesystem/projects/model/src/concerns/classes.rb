@@ -42,7 +42,7 @@ module Foobara
                 if existing_class.instance_variable_get(:@foobara_created_via_make_class)
                   existing_module_to_copy_over = existing_class
                   parent_mod = Util.module_for(existing_class)
-                  parent_mod.send(:remove_const, Util.non_full_name(existing_class))
+                  parent_mod.__send__(:remove_const, Util.non_full_name(existing_class))
                 else
                   # :nocov:
                   return existing_class

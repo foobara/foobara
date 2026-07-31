@@ -2,7 +2,7 @@ RSpec.describe Foobara::Model do
   after do
     Foobara.reset_alls
     if Object.const_defined?(:User)
-      Object.send(:remove_const, :User)
+      Object.__send__(:remove_const, :User)
     end
   end
 

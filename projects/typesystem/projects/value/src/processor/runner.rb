@@ -11,7 +11,7 @@ module Foobara
                 if instance_variables.include?(instance_variable)
                   instance_variable_get(instance_variable)
                 else
-                  instance_variable_set(instance_variable, processor.send(method_name, value))
+                  instance_variable_set(instance_variable, processor.__send__(method_name, value))
                 end
               end
             end

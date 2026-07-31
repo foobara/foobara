@@ -356,7 +356,7 @@ module Foobara
 
         if filter
           method = "foobara_#{method}#{"!" if bang}"
-          send(method, *, **, filter:, &)
+          __send__(method, *, **, filter:, &)
         else
           # :nocov:
           super

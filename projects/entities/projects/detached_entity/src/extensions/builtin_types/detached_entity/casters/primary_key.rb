@@ -26,7 +26,7 @@ module Foobara
           end
 
           def transform(primary_key)
-            entity_class.send(build_method, primary_key)
+            entity_class.__send__(build_method, primary_key)
           end
 
           def applies_message

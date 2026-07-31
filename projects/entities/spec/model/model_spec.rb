@@ -6,7 +6,7 @@ RSpec.describe Foobara::Model do
       :SomeEntity,
       :Foo
     ].each do |const|
-      Object.send(:remove_const, const) if Object.const_defined?(const)
+      Object.__send__(:remove_const, const) if Object.const_defined?(const)
     end
   end
 
@@ -117,7 +117,7 @@ RSpec.describe Foobara::Model do
 
       after do
         if Object.const_defined?(:Foo)
-          Object.send(:remove_const, :Foo)
+          Object.__send__(:remove_const, :Foo)
         end
       end
 

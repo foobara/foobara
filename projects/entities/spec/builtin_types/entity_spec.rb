@@ -7,7 +7,7 @@ RSpec.describe ":entity" do
       :SomeOrg,
       :SomeDomain
     ].each do |const|
-      Object.send(:remove_const, const) if Object.const_defined?(const)
+      Object.__send__(:remove_const, const) if Object.const_defined?(const)
     end
   end
 

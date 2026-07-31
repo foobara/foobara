@@ -20,7 +20,7 @@ module Foobara
             :type_declaration_value_at
           ].each do |method_name|
             define_method method_name do |*args, **opts, &block|
-              send("foobara_#{method_name}", *args, **opts, &block)
+              __send__("foobara_#{method_name}", *args, **opts, &block)
             end
           end
         end

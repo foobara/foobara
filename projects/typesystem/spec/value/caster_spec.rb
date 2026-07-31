@@ -11,7 +11,7 @@ RSpec.describe Foobara::Value::Caster do
     end
 
     after do
-      described_class.send(:remove_const, :Always1000)
+      described_class.__send__(:remove_const, :Always1000)
     end
 
     it "creates caster instance with desired behavior" do

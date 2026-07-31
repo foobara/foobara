@@ -84,7 +84,7 @@ module Foobara
           if new_class.const_defined?(const_name)
             to_replace = new_class.const_get(const_name)
             if to_replace != value
-              new_class.send(:remove_const, const_name)
+              new_class.__send__(:remove_const, const_name)
               new_class.const_set(const_name, value)
             end
           else

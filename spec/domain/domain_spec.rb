@@ -98,7 +98,7 @@ RSpec.describe Foobara::Domain do
 
   describe ".create" do
     after do
-      Object.send(:remove_const, "SomeOrg")
+      Object.__send__(:remove_const, "SomeOrg")
     end
 
     it "creates a domain and its org" do
@@ -124,7 +124,7 @@ RSpec.describe Foobara::Domain do
 
   describe "Organization.create" do
     after do
-      Object.send(:remove_const, "A") if Object.const_defined?("A")
+      Object.__send__(:remove_const, "A") if Object.const_defined?("A")
     end
 
     context "when organization parent modules don't exist" do

@@ -7,7 +7,7 @@ module Foobara
         self.callbacks = {}
 
         callback_hash.each do |type, blocks|
-          send("#{type}=", blocks.dup)
+          __send__("#{type}=", blocks.dup)
         end
       end
 
@@ -33,7 +33,7 @@ module Foobara
       end
 
       def [](type)
-        send(type)
+        __send__(type)
       end
 
       Block.types.each do |type|
@@ -46,11 +46,11 @@ module Foobara
         end
 
         define_method "each_#{type}" do |&block|
-          send(type).each(&block)
+          __send__(type).each(&block)
         end
 
         define_method "has_#{type}_callbacks?" do
-          !send(type).empty?
+          !__send__(type).empty?
         end
       end
     end
