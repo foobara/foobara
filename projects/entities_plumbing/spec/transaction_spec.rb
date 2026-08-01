@@ -175,7 +175,7 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Entities do
     end
 
     context "when given primary key for record that doesnt exist" do
-      it "is not success" do
+      it "is not success", :focus do
         outcome = read_command.run(employee: 100)
         expect(outcome).to_not be_success
 

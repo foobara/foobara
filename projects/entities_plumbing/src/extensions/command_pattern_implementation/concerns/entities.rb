@@ -38,8 +38,6 @@ module Foobara
             ).transform_values(&:target_class)
           end
 
-          # TODO: move to better concern!
-          # TODO: make work with inheritance
           def to_load(*paths)
             h = @to_load_paths_and_error_classes || {}
 
@@ -83,7 +81,13 @@ module Foobara
 
             thunks_to_load
           rescue Entity::NotFoundError => e
-            add_runtime_error(error_class.for(e.criteria))
+            error_data_path = DataPath.new(e.data_path)
+            error_data_path.prepend!(data_path)
+
+            error = error_class.for(e.criteria, data_path: error_data_path.to_s)
+            add_input_error(error)
+
+            halt!
           end
         end
 
