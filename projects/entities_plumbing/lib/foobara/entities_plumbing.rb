@@ -6,6 +6,7 @@ module Foobara
         CommandPatternImplementation.include CommandPatternImplementation::Concerns::Entities
         CommandPatternImplementation.include CommandPatternImplementation::Concerns::EntityInputs
         CommandPatternImplementation.include CommandPatternImplementation::Concerns::EntityErrorsType
+        CommandPatternImplementation.include CommandPatternImplementation::Concerns::EntityReflection
 
         if Foobara.project_installed?("command_connectors")
           # :nocov:

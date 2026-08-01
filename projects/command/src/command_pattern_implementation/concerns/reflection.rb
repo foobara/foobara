@@ -88,28 +88,15 @@ module Foobara
             remove_sensitive = TypeDeclarations.foobara_manifest_context_remove_sensitive?
 
             if defined?(@types_depended_on) && @types_depended_on.key?(remove_sensitive)
+              # :nocov:
               return @types_depended_on[remove_sensitive]
+              # :nocov:
             end
 
             @types_depended_on ||= {}
-            @types_depended_on[remove_sensitive] = begin
-              types = inputs_types_depended_on |
-                      result_types_depended_on |
-                      errors_types_depended_on
-
-              unless depends_on_entities.empty?
-                entity_types = depends_on_entities.map(&:entity_type)
-
-                if remove_sensitive
-                  entity_types = entity_types.reject(&:sensitive?)
-                end
-
-                types |= entity_types
-                types |= entity_types.map(&:types_depended_on).inject(:|)
-              end
-
-              types
-            end
+            @types_depended_on[remove_sensitive] = inputs_types_depended_on |
+                                                   result_types_depended_on |
+                                                   errors_types_depended_on
           end
 
           def inputs_types_depended_on
