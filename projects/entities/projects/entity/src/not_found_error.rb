@@ -1,6 +1,6 @@
 module Foobara
   class Entity < DetachedEntity
-    class NotFoundError < Foobara::RuntimeError
+    class NotFoundError < Foobara::DataError
       class << self
         def not_found_error_class_name(data_path)
           error_class_name = data_path.path.map { |part| part == :"#" ? "Collection" : Util.classify(part) }.join
@@ -13,8 +13,8 @@ module Foobara
           # TODO: how would we avoid name collisions here??
           Util.make_class("#{mod.name}::#{error_class_name}", self) do
             # TODO: use Concern to change these into attr_accessor instead
-            singleton_class.define_method :data_path do
-              data_path
+            singleton_class.define_method :symbol do
+              :not_found
             end
 
             singleton_class.define_method :entity_class do
@@ -39,7 +39,7 @@ module Foobara
             data_path: data_path.to_s
           }
 
-          new(context:, message:)
+          new(context:, message:, path: data_path)
         end
 
         def data_path

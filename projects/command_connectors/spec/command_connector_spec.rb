@@ -1129,7 +1129,7 @@ RSpec.describe Foobara::CommandConnector do
             errors = JSON.parse(response.body)
 
             expect(errors.size).to eq(1)
-            expect(errors.map { |e| e["key"] }).to include("runtime.user_not_found")
+            expect(errors.map { |e| e["key"] }).to include("data.user.not_found")
           end
         end
 
