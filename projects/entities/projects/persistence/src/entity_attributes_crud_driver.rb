@@ -103,6 +103,8 @@ module Foobara
         class CannotUpdateError < CannotCrudError; end
         class CannotDeleteError < CannotCrudError; end
 
+        class CannotRenameColumnError < StandardError; end
+
         attr_accessor :table_name, :entity_class, :raw_connection, :crud_driver
 
         def initialize(entity_class, crud_driver, table_name = nil)
