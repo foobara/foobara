@@ -37,6 +37,8 @@ module Foobara
             end
 
             unless error_context_type_map.key?(key)
+              # Hmmm... the keys really don't look good here wtf... fix this...
+              # binding.pry
               # :nocov:
               raise "No error class was registered for #{key}"
               # :nocov:

@@ -7,13 +7,6 @@ module Foobara
         class CannotHaltWithoutAddingErrors < StandardError; end
         class Halt < StandardError; end
 
-        class NotFoundError < Foobara::DataError
-          context do
-            entity_class :string, :required
-            criteria :duck
-          end
-        end
-
         module ClassMethods
           def run(...)
             new(...).run

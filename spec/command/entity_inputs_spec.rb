@@ -151,8 +151,8 @@ RSpec.describe "Entity inputs for commands" do
         "data.attrs.duckfoo.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
         "data.attrs.duckbar.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
         "data.attrs.duckbar.#.cannot_cast": Foobara::Value::Processor::Casting::CannotCastError,
-        "data.fan_of.#.not_found": Foobara::CommandPatternImplementation::Concerns::Runtime::NotFoundError,
-        "data.owner.not_found": Foobara::CommandPatternImplementation::Concerns::Runtime::NotFoundError
+        "data.fan_of.#.not_found": Foobara::Entity::NotFoundError,
+        "data.owner.not_found": Foobara::Entity::NotFoundError
       )
     end
   end

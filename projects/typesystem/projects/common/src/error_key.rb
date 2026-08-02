@@ -78,6 +78,8 @@ module Foobara
 
         if arg.is_a?(Array)
           prepend_parts = arg
+        elsif arg.is_a?(DataPath)
+          prepend_parts = arg.path
         end
       end
 

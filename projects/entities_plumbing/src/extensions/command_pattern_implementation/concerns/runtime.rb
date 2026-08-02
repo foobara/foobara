@@ -12,12 +12,10 @@ module Foobara
                   begin
                     record.class.load(record)
                   rescue Foobara::Entity::NotFoundError => e
-                    add_input_error(
-                      [*data_path.path[..-2], index],
-                      CommandPatternImplementation::NotFoundError,
-                      criteria: e.criteria,
-                      entity_class: record.class.model_type.scoped_full_name
-                    )
+                    e.prepend_path!(index)
+                    e.prepend_path!(data_path.path[..-2])
+
+                    add_input_error(e)
                   end
                 end
               end
@@ -28,12 +26,8 @@ module Foobara
                 begin
                   record.class.load(record)
                 rescue Foobara::Entity::NotFoundError => e
-                  add_input_error(
-                    data_path.to_s,
-                    CommandPatternImplementation::NotFoundError,
-                    criteria: e.criteria,
-                    entity_class: record.class.model_type.scoped_full_name
-                  )
+                  e.prepend_path!(data_path)
+                  add_input_error(e)
                 end
               end
             end
