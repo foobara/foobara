@@ -273,6 +273,32 @@ module Foobara
           # :nocov:
         end
 
+        # Schema manipulation methods
+
+        def rename_column(_old_name, _new_name)
+          # :nocov:
+          raise NotImplementedError
+          # :nocov:
+        end
+
+        def add_column(_name, type: nil)
+          # :nocov:
+          raise NotImplementedError
+          # :nocov:
+        end
+
+        def drop_column(_name)
+          # :nocov:
+          raise NotImplementedError
+          # :nocov:
+        end
+
+        def column_names
+          # :nocov:
+          raise NotImplementedError
+          # :nocov:
+        end
+
         def exists?(record_id)
           !!find(record_id)
         end
