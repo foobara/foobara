@@ -32,6 +32,13 @@ RSpec.describe Foobara::Persistence::CrudDrivers::InMemoryMinimal do
       it "returns the column names of the table" do
         expect(table.column_names).to contain_exactly(:id, :name, :email)
       end
+
+      it "returns union of all record keys when records have diverged columns" do
+        table.records[1][:phone] = "555-1234"
+        table.records[2][:address] = "123 Main St"
+
+        expect(table.column_names).to contain_exactly(:id, :name, :email, :phone, :address)
+      end
     end
 
     describe "#rename_column" do
@@ -67,6 +74,14 @@ RSpec.describe Foobara::Persistence::CrudDrivers::InMemoryMinimal do
 
         expect(found).to have_key(:email_address)
         expect(found).not_to have_key(:email)
+      end
+
+      it "raises CannotRenameColumnError when new_name already exists" do
+        table.insert(id: nil, name: "Charlie", email: "c@example.com", phone: "555")
+
+        expect {
+          table.rename_column(:name, :phone)
+        }.to raise_error(Foobara::Persistence::EntityAttributesCrudDriver::Table::CannotRenameColumnError)
       end
     end
 
