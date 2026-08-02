@@ -79,6 +79,10 @@ module Foobara
             old_name = old_name.to_sym
             new_name = new_name.to_sym
 
+            if records.any? { |_, attrs| attrs.key?(new_name) }
+              raise CannotRenameColumnError.new(old_name, "column #{new_name.inspect} already exists")
+            end
+
             records.each_value do |attributes|
               if attributes.key?(old_name)
                 attributes[new_name] = attributes.delete(old_name)
@@ -111,7 +115,9 @@ module Foobara
           def column_names
             return [] if records.empty?
 
-            records.values.first.keys
+            records.each_value.with_object(Set.new) do |attrs, keys|
+              keys.merge(attrs.keys)
+            end.to_a
           end
 
           private
