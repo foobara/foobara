@@ -46,7 +46,7 @@ module Foobara
               entity_class = entity_class_paths[path.to_s]
               error_class = Entity::NotFoundError.subclass(self, entity_class, path)
               h[path.to_s] = error_class
-              possible_error(error_class)
+              possible_input_error(path, error_class)
             end
 
             @to_load_paths_and_error_classes = h.sort_by do |path, _error_class|

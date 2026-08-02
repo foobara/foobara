@@ -175,7 +175,7 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Entities do
     end
 
     context "when given primary key for record that doesnt exist" do
-      it "is not success", :focus do
+      it "is not success" do
         outcome = read_command.run(employee: 100)
         expect(outcome).to_not be_success
 
@@ -186,9 +186,9 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Entities do
         error = errors.first
 
         expect(error.class.name).to eq("ReadEmployee::EmployeeNotFoundError")
-        expect(error.key).to eq("runtime.employee_not_found")
+        expect(error.key).to eq("data.employee.not_found")
 
-        expect(error.symbol).to be(:employee_not_found)
+        expect(error.symbol).to be(:not_found)
 
         context = error.context
 
