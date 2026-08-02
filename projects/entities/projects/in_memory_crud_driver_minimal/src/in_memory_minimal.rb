@@ -73,6 +73,47 @@ module Foobara
             self.records = {}
           end
 
+          # Schema manipulation
+
+          def rename_column(old_name, new_name)
+            old_name = old_name.to_sym
+            new_name = new_name.to_sym
+
+            records.each_value do |attributes|
+              if attributes.key?(old_name)
+                attributes[new_name] = attributes.delete(old_name)
+              end
+            end
+          end
+
+          def add_column(name, type: nil)
+            name = name.to_sym
+            default_value = nil
+
+            if type
+              outcome = type.process_value(default_value)
+              default_value = outcome.result if outcome.success?
+            end
+
+            records.each_value do |attributes|
+              attributes[name] = default_value unless attributes.key?(name)
+            end
+          end
+
+          def drop_column(name)
+            name = name.to_sym
+
+            records.each_value do |attributes|
+              attributes.delete(name)
+            end
+          end
+
+          def column_names
+            return [] if records.empty?
+
+            records.values.first.keys
+          end
+
           private
 
           def get_id
