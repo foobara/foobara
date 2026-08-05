@@ -29,9 +29,9 @@ module Foobara
         end
 
         def respond_to_missing?(...)
-          # :nocov:
+          # simplecov:disable
           false
-          # :nocov:
+          # simplecov:enable
         end
       end
 
@@ -54,9 +54,9 @@ module Foobara
 
         def method_missing(attribute_name, *processor_symbols, **declaration, &block)
           unless respond_to_missing?(attribute_name)
-            # :nocov:
+            # simplecov:disable
             return super
-            # :nocov:
+            # simplecov:enable
           end
 
           _disable_method_missing do
@@ -89,19 +89,19 @@ module Foobara
                 description = processor_symbol
 
                 if declaration.key?(:description)
-                  # :nocov:
+                  # simplecov:disable
                   ::Kernel.raise ArgumentError, "Expected only one description but " \
                                                 "got #{description.inspect} and #{declaration[:description].inspect}"
-                  # :nocov:
+                  # simplecov:enable
                 end
 
                 declaration[:description] = description
               when ::Symbol
                 declaration[processor_symbol] = true
               else
-                # :nocov:
+                # simplecov:disable
                 ::Kernel.raise ArgumentError, "expected a Symbol, got #{processor_symbol.inspect}"
-                # :nocov:
+                # simplecov:enable
               end
             end
 

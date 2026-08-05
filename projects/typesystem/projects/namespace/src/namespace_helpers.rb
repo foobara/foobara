@@ -60,9 +60,9 @@ module Foobara
           if Foobara::Util.super_method_takes_parameters?(self, AutoRegisterInstances, __method__)
             super
           else
-            # :nocov:
+            # simplecov:disable
             super()
-            # :nocov:
+            # simplecov:enable
           end
 
           ns = scoped_namespace || self.class.scoped_default_namespace
@@ -77,9 +77,9 @@ module Foobara
 
         def initialize(*, **, &)
           if Foobara::Util.super_method_takes_parameters?(self, InstancesAreNamespaces, __method__)
-            # :nocov:
+            # simplecov:disable
             super
-            # :nocov:
+            # simplecov:enable
           else
             super()
           end

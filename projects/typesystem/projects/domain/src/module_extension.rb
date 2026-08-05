@@ -12,9 +12,9 @@ module Foobara
 
       def foobara_domain!
         if foobara_organization?
-          # :nocov:
+          # simplecov:disable
           raise CannotBeOrganizationAndDomainAtSameTime
-          # :nocov:
+          # simplecov:enable
         end
 
         unless is_a?(Namespace::IsNamespace)
@@ -30,9 +30,9 @@ module Foobara
 
       def foobara_organization!
         if foobara_domain?
-          # :nocov:
+          # simplecov:disable
           raise CannotBeOrganizationAndDomainAtSameTime
-          # :nocov:
+          # simplecov:enable
         end
 
         include(OrganizationModuleExtension)

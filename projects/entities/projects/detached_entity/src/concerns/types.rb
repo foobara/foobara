@@ -5,9 +5,9 @@ module Foobara
         include Concern
 
         def full_entity_name
-          # :nocov:
+          # simplecov:disable
           self.class.full_entity_name
-          # :nocov:
+          # simplecov:enable
         end
 
         def entity_name

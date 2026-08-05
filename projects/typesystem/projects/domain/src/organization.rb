@@ -12,9 +12,9 @@ module Foobara
           organization = Namespace.global.foobara_lookup_organization(object)
 
           unless organization
-            # :nocov:
+            # simplecov:disable
             raise NoSuchOrganization, "Couldn't determine organization for #{object}"
-            # :nocov:
+            # simplecov:enable
           end
 
           organization
@@ -31,17 +31,17 @@ module Foobara
             end
           end
         else
-          # :nocov:
+          # simplecov:disable
           raise NoSuchOrganization, "Couldn't determine organization for #{object}"
-          # :nocov:
+          # simplecov:enable
         end
       end
 
       def create(full_organization_name)
         if Organization.to_organization(full_organization_name)
-          # :nocov:
+          # simplecov:disable
           raise OrganizationAlreadyExistsError, "Organization #{full_organization_name} already exists"
-          # :nocov:
+          # simplecov:enable
         end
       rescue Organization::NoSuchOrganization
         Util.make_module_p(full_organization_name) { foobara_organization! }

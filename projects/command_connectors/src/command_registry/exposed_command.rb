@@ -196,10 +196,10 @@ module Foobara
         if result_type.nil?
           false
         elsif result_type.sensitive?
-          # :nocov:
+          # simplecov:disable
           # TODO: we should convert it to nil I suppose
           raise "Not sure yet how to handle a sensitive result type hmmmm..."
-          # :nocov:
+          # simplecov:enable
         else
           command_class.result_type.has_sensitive_types?
         end

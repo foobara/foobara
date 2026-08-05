@@ -50,9 +50,9 @@ module Foobara
             record_id = record_id_for(attributes)
 
             unless exists?(record_id)
-              # :nocov:
+              # simplecov:disable
               raise CannotUpdateError.new(record_id, "does not exist")
-              # :nocov:
+              # simplecov:enable
             end
 
             records[record_id] = Util.deep_dup(attributes)
@@ -61,9 +61,9 @@ module Foobara
 
           def hard_delete(record_id)
             unless exists?(record_id)
-              # :nocov:
+              # simplecov:disable
               raise CannotUpdateError.new(record_id, "does not exist")
-              # :nocov:
+              # simplecov:enable
             end
 
             records.delete(record_id)

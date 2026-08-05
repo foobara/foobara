@@ -13,9 +13,9 @@ module Foobara
 
       # Should a Validator only return one type of error?
       def validation_errors(_value)
-        # :nocov:
+        # simplecov:disable
         raise NotImplementedError
-        # :nocov:
+        # simplecov:enable
       end
 
       def process_value(value)

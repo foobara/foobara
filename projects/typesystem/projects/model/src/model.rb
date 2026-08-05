@@ -20,9 +20,9 @@ module Foobara
         when 1
           @description = args[0]
         else
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "expected 0 or 1 argument, got #{args.size}"
-          # :nocov:
+          # simplecov:enable
         end
       end
 
@@ -186,9 +186,9 @@ module Foobara
       invalid_options = options.keys - ALLOWED_OPTIONS
 
       unless invalid_options.empty?
-        # :nocov:
+        # simplecov:disable
         raise ArgumentError, "Invalid options #{invalid_options} expected only #{ALLOWED_OPTIONS}"
-        # :nocov:
+        # simplecov:enable
       end
 
       self.skip_validations = options[:skip_validations]
@@ -204,9 +204,9 @@ module Foobara
 
       if attributes.nil?
         if validate
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "Cannot use validate option without attributes"
-          # :nocov:
+          # simplecov:enable
         end
       else
         if Thread.inheritable_thread_local_var_get(:foobara_ignore_unexpected_attributes)
@@ -246,9 +246,9 @@ module Foobara
     end
 
     def valid_attribute_name?(attribute_name)
-      # :nocov:
+      # simplecov:disable
       self.class.valid_attribute_name?(attribute_name)
-      # :nocov:
+      # simplecov:enable
     end
 
     def validate_attribute_name!(attribute_name)
@@ -274,9 +274,9 @@ module Foobara
         outcome = cast_attribute(attribute_name, value)
         attributes[attribute_name] = outcome.success? ? outcome.result : value
       else
-        # :nocov:
+        # simplecov:disable
         raise AttributeIsImmutableError, "Cannot write attribute #{attribute_name} because it is not mutable"
-        # :nocov:
+        # simplecov:enable
       end
     end
 

@@ -8,15 +8,15 @@ module Foobara
     def scoped_path
       if scoped_unregistered?
         # TODO: can probably delete this defensive check
-        # :nocov:
+        # simplecov:disable
         raise "Cannot use unregistered Scoped object"
-        # :nocov:
+        # simplecov:enable
       end
 
       unless defined?(@scoped_path)
-        # :nocov:
+        # simplecov:disable
         raise NoScopedPathSetError, "No scoped path set. Explicitly set it to nil if that's what you want."
-        # :nocov:
+        # simplecov:enable
       end
 
       @scoped_path
@@ -90,9 +90,9 @@ module Foobara
     def foobara_manifest_reference
       if scoped_unregistered?
         # TODO: can probably delete this defensive check
-        # :nocov:
+        # simplecov:disable
         raise "Cannot use unregistered Scoped object"
-        # :nocov:
+        # simplecov:enable
       end
 
       @foobara_manifest_reference ||= scoped_full_name

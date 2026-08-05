@@ -63,15 +63,15 @@ module Foobara
       end
 
       def domain
-        # :nocov:
+        # simplecov:disable
         command_class.domain
-        # :nocov:
+        # simplecov:enable
       end
 
       def organization
-        # :nocov:
+        # simplecov:disable
         command_class.organization
-        # :nocov:
+        # simplecov:enable
       end
 
       def description
@@ -307,9 +307,9 @@ module Foobara
             if type.registered?
               # TODO: if we ever change from attributes-only inputs type
               # then this will be handy
-              # :nocov:
+              # simplecov:disable
               types |= [type]
-              # :nocov:
+              # simplecov:enable
             end
 
             types |= type.types_depended_on
@@ -321,9 +321,9 @@ module Foobara
             if type.registered?
               # TODO: if we ever change from attributes-only inputs type
               # then this will be handy
-              # :nocov:
+              # simplecov:disable
               types |= [type]
-              # :nocov:
+              # simplecov:enable
             end
 
             types |= type.types_depended_on
@@ -540,9 +540,9 @@ module Foobara
           elsif transformer.respond_to?(:call)
             Value::Transformer.create(transform: transformer)
           else
-            # :nocov:
+            # simplecov:disable
             raise "Not sure how to apply #{transformer}"
-            # :nocov:
+            # simplecov:enable
           end
         end
       end
@@ -575,7 +575,7 @@ module Foobara
               klass.foobara_manifest_reference
               # TODO: Delete this nocov block
               # TODO: make anonymous scoped path's have better names instead of random hexadecimal
-              # :nocov:
+              # simplecov:disable
             elsif processor.respond_to?(:symbol) && processor.symbol
               processor.symbol
             else
@@ -587,14 +587,14 @@ module Foobara
               end
 
               "Anonymous#{Util.non_full_name(name)}"
-              # :nocov:
+              # simplecov:enable
             end
           elsif processor.is_a?(::Proc)
             "Proc"
           else
-            # :nocov:
+            # simplecov:disable
             "Unknown"
-            # :nocov:
+            # simplecov:enable
           end
         end
       end
@@ -610,15 +610,15 @@ module Foobara
     end
 
     def full_command_name
-      # :nocov:
+      # simplecov:disable
       self.class.full_command_name
-      # :nocov:
+      # simplecov:enable
     end
 
     def command_name
-      # :nocov:
+      # simplecov:disable
       self.class.command_name
-      # :nocov:
+      # simplecov:enable
     end
 
     def command_class
@@ -630,15 +630,15 @@ module Foobara
     end
 
     def inputs_transformers
-      # :nocov:
+      # simplecov:disable
       self.class.inputs_transformers
-      # :nocov:
+      # simplecov:enable
     end
 
     def result_transformers
-      # :nocov:
+      # simplecov:disable
       self.class.result_transformers
-      # :nocov:
+      # simplecov:enable
     end
 
     def errors_transformers
@@ -792,9 +792,9 @@ module Foobara
       elsif command.respond_to?(method_name)
         command.__send__(method_name, ...)
       else
-        # :nocov:
+        # simplecov:disable
         super
-        # :nocov:
+        # simplecov:enable
       end
     end
 
@@ -851,9 +851,9 @@ module Foobara
               source = if allowed_rule.block.respond_to?("source") && defined?(MethodSource)
                          begin
                            # This only works when pry is loaded
-                           # :nocov:
+                           # simplecov:disable
                            allowed_rule.block.source
-                           # :nocov:
+                           # simplecov:enable
                          rescue MethodSource::SourceNotFoundError
                            # This path is hit if the way the source code is extracted
                            # doesn't result in valid Ruby, for example, as part of a hash such as:
@@ -900,9 +900,9 @@ module Foobara
       if capture_unknown_error
         self.outcome = Outcome.error(CommandConnector::UnknownError.for(e))
       else
-        # :nocov:
+        # simplecov:disable
         raise
-        # :nocov:
+        # simplecov:enable
       end
     end
 

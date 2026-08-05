@@ -54,15 +54,15 @@ module Foobara
       end
 
       def primary_key_attribute
-        # :nocov:
+        # simplecov:disable
         entity_class.primary_key_attribute
-        # :nocov:
+        # simplecov:enable
       end
 
       def full_entity_name
-        # :nocov:
+        # simplecov:disable
         entity_class.full_entity_name
-        # :nocov:
+        # simplecov:enable
       end
 
       def criteria

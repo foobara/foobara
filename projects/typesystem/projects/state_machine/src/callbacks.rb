@@ -12,39 +12,39 @@ module Foobara
       end
 
       def callbacks_for(*, **)
-        # :nocov:
+        # simplecov:disable
         callback_registry.callbacks_for(*, **)
-        # :nocov:
+        # simplecov:enable
       end
 
       def has_callbacks?(*, **)
-        # :nocov:
+        # simplecov:disable
         callback_registry.has_callbacks?(*, **)
-        # :nocov:
+        # simplecov:enable
       end
 
       def has_before_callbacks?(*, **)
-        # :nocov:
+        # simplecov:disable
         callback_registry.has_before_callbacks?(*, **)
-        # :nocov:
+        # simplecov:enable
       end
 
       def has_after_callbacks?(*, **)
-        # :nocov:
+        # simplecov:disable
         callback_registry.has_after_callbacks?(*, **)
-        # :nocov:
+        # simplecov:enable
       end
 
       def has_around_callbacks?(*, **)
-        # :nocov:
+        # simplecov:disable
         callback_registry.has_around_callbacks?(*, **)
-        # :nocov:
+        # simplecov:enable
       end
 
       def has_error_callbacks?(*, **)
-        # :nocov:
+        # simplecov:disable
         callback_registry.has_error_callbacks?(*, **)
-        # :nocov:
+        # simplecov:enable
       end
 
       def register_transition_callback(type, **, &)
@@ -79,9 +79,9 @@ module Foobara
         # 6 before_<transition>_transition_from_<state>
         def create_register_callback_methods
           if register_callback_methods
-            # :nocov:
+            # simplecov:disable
             raise "Do not create register callback methods twice"
-            # :nocov:
+            # simplecov:enable
           end
 
           callback_methods = @register_callback_methods = []

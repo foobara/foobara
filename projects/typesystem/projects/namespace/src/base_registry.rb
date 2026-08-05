@@ -7,9 +7,9 @@ module Foobara
       class NotRegisteredError < StandardError; end
 
       def register(_scoped)
-        # :nocov:
+        # simplecov:disable
         raise "Subclass responsibility"
-        # :nocov:
+        # simplecov:enable
       end
 
       def registered?(path)
@@ -17,15 +17,15 @@ module Foobara
       end
 
       def unregister(_scoped)
-        # :nocov:
+        # simplecov:disable
         raise "Subclass responsibility"
-        # :nocov:
+        # simplecov:enable
       end
 
       def lookup(_path, filter: nil)
-        # :nocov:
+        # simplecov:disable
         raise "Subclass responsibility"
-        # :nocov:
+        # simplecov:enable
       end
 
       # TODO: should return an enumerator
@@ -45,9 +45,9 @@ module Foobara
       end
 
       def each_scoped_without_filter(&)
-        # :nocov:
+        # simplecov:disable
         raise "Subclass responsibility"
-        # :nocov:
+        # simplecov:enable
       end
 
       def apply_filter(object, filter)

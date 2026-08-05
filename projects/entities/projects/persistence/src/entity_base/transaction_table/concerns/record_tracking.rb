@@ -16,9 +16,9 @@ module Foobara
 
             def loading(record)
               if loading?(record)
-                # :nocov:
+                # simplecov:disable
                 raise "Already loading #{record}"
-                # :nocov:
+                # simplecov:enable
               end
 
               begin
@@ -69,9 +69,9 @@ module Foobara
 
               # TODO: is this check redundant? Maybe have the entity explode directly instead?
               if hard_deleted?(record)
-                # :nocov:
+                # simplecov:disable
                 raise "Cannot update a hard deleted record"
-                # :nocov:
+                # simplecov:enable
               end
 
               unless created?(record)

@@ -81,10 +81,10 @@ module Foobara
               subcommand_name = subcommand_class.scoped_full_name.to_sym
 
               if depends_on.include?(subcommand_name)
-                # :nocov:
+                # simplecov:disable
                 raise AlreadyRegisteredSubcommand,
                       "Already registered #{subcommand_class} as a dependency of #{self}"
-                # :nocov:
+                # simplecov:enable
               end
 
               depends_on << subcommand_name
@@ -99,9 +99,9 @@ module Foobara
             end
 
             unless depends_on?(subcommand_class)
-              # :nocov:
+              # simplecov:disable
               raise SubcommandNotRegistered, "Need to declare #{subcommand_class} on #{self} with .depends_on"
-              # :nocov:
+              # simplecov:enable
             end
           end
 

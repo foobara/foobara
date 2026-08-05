@@ -53,9 +53,9 @@ module Foobara
           invalid_keys = rest.keys - allowed_keys
 
           unless invalid_keys.empty?
-            # :nocov:
+            # simplecov:disable
             raise ArgumentError, "Invalid keys: #{invalid_keys.join(", ")} expected one of #{allowed_keys.join(", ")}"
-            # :nocov:
+            # simplecov:enable
           end
 
           args = []
@@ -83,9 +83,9 @@ module Foobara
         def instance
           @instance ||= begin
             if requires_parent_declaration_data?
-              # :nocov:
+              # simplecov:disable
               raise "Cannot treat processors dependent on parent declaration data as singletons"
-              # :nocov:
+              # simplecov:enable
             end
 
             requires_declaration_data? ? new(default_declaration_data) : new
@@ -103,9 +103,9 @@ module Foobara
                              end
 
             if error_klasses.sort_by(&:name) != error_klasses2.sort_by(&:name)
-              # :nocov:
+              # simplecov:disable
               raise "Expected #{error_klasses} to equal #{error_klasses2} for #{name}"
-              # :nocov:
+              # simplecov:enable
             end
 
             if superclass < Processor
@@ -120,9 +120,9 @@ module Foobara
           return @error_class if defined?(@error_class)
 
           unless error_classes.size == 1
-            # :nocov:
+            # simplecov:disable
             raise "Expected exactly one error class to be defined for #{name} but has #{error_classes.size}"
-            # :nocov:
+            # simplecov:enable
           end
 
           @error_class = error_classes[0]
@@ -154,9 +154,9 @@ module Foobara
         expected_arg_count += 1 if requires_parent_declaration_data?
 
         unless expected_arg_count == args.count
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "#{name} expected #{expected_arg_count} received #{args.count}"
-          # :nocov:
+          # simplecov:enable
         end
 
         if requires_declaration_data?
@@ -231,9 +231,9 @@ module Foobara
       end
 
       def process_value(_value)
-        # :nocov:
+        # simplecov:disable
         raise NotImplementedError
-        # :nocov:
+        # simplecov:enable
       end
 
       def process_value!(value)
@@ -264,9 +264,9 @@ module Foobara
         **
       )
         unless error_classes.include?(error_class)
-          # :nocov:
+          # simplecov:disable
           raise "invalid error"
-          # :nocov:
+          # simplecov:enable
         end
 
         error_class.new(
@@ -299,9 +299,9 @@ module Foobara
         invalid_opts = opts.keys - valid_opts
 
         unless invalid_opts.empty?
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "Invalid opts #{invalid_opts.inspect} expected only #{valid_opts.inspect}"
-          # :nocov:
+          # simplecov:enable
         end
 
         declaration_data = if opts.key?(:declaration_data)
@@ -322,9 +322,9 @@ module Foobara
         s = super
 
         if s.size > 400
-          # :nocov:
+          # simplecov:disable
           s = "#{s[0..400]}..."
-          # :nocov:
+          # simplecov:enable
         end
 
         s
@@ -363,9 +363,9 @@ module Foobara
         if method == symbol
           declaration_data
         else
-          # :nocov:
+          # simplecov:disable
           super
-          # :nocov:
+          # simplecov:enable
         end
       end
 

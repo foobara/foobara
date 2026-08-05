@@ -30,9 +30,9 @@ module Foobara
               AttributesTransformers.set(transformer[:set])
             else
               # TODO: add a test for this
-              # :nocov:
+              # simplecov:disable
               transformer
-              # :nocov:
+              # simplecov:enable
             end
           end
 

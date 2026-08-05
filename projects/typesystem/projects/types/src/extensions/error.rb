@@ -15,16 +15,16 @@ module Foobara
             if abstract?
               []
             else
-              # :nocov:
+              # simplecov:disable
               raise
-              # :nocov:
+              # simplecov:enable
             end
           end
 
         else
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "Too many arguments #{args}"
-          # :nocov:
+          # simplecov:enable
         end
       end
     end

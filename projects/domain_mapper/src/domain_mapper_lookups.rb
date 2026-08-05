@@ -8,9 +8,9 @@ module Foobara
         invalid_keys = opts.keys - [:value]
 
         if invalid_keys.any?
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "Invalid keys: #{invalid_keys.join(", ")}. expected one of: #{valid_keys.join(", ")}"
-          # :nocov:
+          # simplecov:enable
         end
 
         if opts.key?(:value)

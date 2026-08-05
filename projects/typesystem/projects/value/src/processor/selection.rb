@@ -10,9 +10,9 @@ module Foobara
 
         class << self
           def foobara_manifest
-            # :nocov:
+            # simplecov:disable
             super.merge(processor_type: :selection)
-            # :nocov:
+            # simplecov:enable
           end
         end
 

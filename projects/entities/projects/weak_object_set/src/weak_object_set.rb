@@ -16,9 +16,9 @@ module Foobara
 
       def cleanup_proc
         if deactivated?
-          # :nocov:
+          # simplecov:disable
           raise "GarbageCleaner has been deactivated"
-          # :nocov:
+          # simplecov:enable
         end
 
         @cleanup_proc ||= begin
@@ -29,9 +29,9 @@ module Foobara
               begin
                 queue.push(object_id)
               rescue ClosedQueueError
-                # :nocov:
+                # simplecov:disable
                 deactivate
-                # :nocov:
+                # simplecov:enable
               end
             end
           end
@@ -50,9 +50,9 @@ module Foobara
               self.queue = nil
               break
             else
-              # :nocov:
+              # simplecov:disable
               raise "Unexpected nil value in the queue"
-              # :nocov:
+              # simplecov:enable
             end
           end
         end
@@ -101,9 +101,9 @@ module Foobara
         object = begin
           ref&.__getobj__
         rescue WeakRef::RefError
-          # :nocov:
+          # simplecov:disable
           nil
-          # :nocov:
+          # simplecov:enable
         end
 
         if ref&.weakref_alive?
@@ -159,9 +159,9 @@ module Foobara
 
     def <<(object)
       if closed?
-        # :nocov:
+        # simplecov:disable
         raise "Cannot add objects to a closed WeakObjectSet"
-        # :nocov:
+        # simplecov:enable
       end
 
       object_id = object.object_id
@@ -197,9 +197,9 @@ module Foobara
               if existing_record_object_id
                 # Sometimes this path is hit in the test suite and sometimes not, depending on
                 # non-deterministic behavior of the garbage collector
-                # :nocov:
+                # simplecov:disable
                 delete(existing_record_object_id)
-                # :nocov:
+                # simplecov:enable
               end
 
               key_to_object_id[key] = object_id
@@ -237,9 +237,9 @@ module Foobara
     def find_by_key(key)
       monitor.synchronize do
         unless key_method
-          # :nocov:
+          # simplecov:disable
           raise "Cannot find by key if there was no key_method given."
-          # :nocov:
+          # simplecov:enable
         end
 
         object_id = key_to_object_id[key]

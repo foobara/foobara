@@ -11,9 +11,9 @@ module Foobara
           domain = Namespace.global.foobara_lookup_domain(object)
 
           unless domain
-            # :nocov:
+            # simplecov:disable
             raise NoSuchDomain, "Couldn't determine domain for #{object}"
-            # :nocov:
+            # simplecov:enable
           end
 
           domain
@@ -28,9 +28,9 @@ module Foobara
             to_domain(object.scoped_namespace)
           end
         else
-          # :nocov:
+          # simplecov:disable
           raise NoSuchDomain, "Couldn't determine domain for #{object}"
-          # :nocov:
+          # simplecov:enable
         end
       end
 

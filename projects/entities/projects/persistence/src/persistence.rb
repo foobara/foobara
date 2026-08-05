@@ -8,9 +8,9 @@ module Foobara
 
       def default_crud_driver=(crud_driver)
         if default_crud_driver
-          # :nocov:
+          # simplecov:disable
           raise "Default crud driver already set."
-          # :nocov:
+          # simplecov:enable
         end
 
         @default_crud_driver = crud_driver
@@ -32,9 +32,9 @@ module Foobara
         bases = objects_to_bases(objects)
 
         if bases.empty?
-          # :nocov:
+          # simplecov:disable
           raise "No bases found for #{objects}"
-          # :nocov:
+          # simplecov:enable
         end
 
         if bases.size == 1
@@ -55,9 +55,9 @@ module Foobara
         tx = base.current_transaction
 
         unless tx
-          # :nocov:
+          # simplecov:disable
           raise NoTransactionOpenError
-          # :nocov:
+          # simplecov:enable
         end
 
         tx
@@ -75,15 +75,15 @@ module Foobara
         bases = to_bases(object)
 
         if bases.empty?
-          # :nocov:
+          # simplecov:disable
           raise "Could not find a base for #{object}"
-          # :nocov:
+          # simplecov:enable
         end
 
         if bases.size > 1
-          # :nocov:
+          # simplecov:disable
           raise "Expected to only find 1 base for #{object} but found #{bases.size}"
-          # :nocov:
+          # simplecov:enable
         end
 
         bases[0]
@@ -118,9 +118,9 @@ module Foobara
         when Entity
           base_for_entity_class(object.class)
         else
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "Not able to convert #{object} to an entity base"
-          # :nocov:
+          # simplecov:enable
         end
       end
 
@@ -147,10 +147,10 @@ module Foobara
           base.register_table(table)
           tables_for_entity_class_name[entity_class_name] = table
         else
-          # :nocov:
+          # simplecov:disable
           raise NoTableOrCrudDriverError,
                 "Can't find table for #{entity_class_name} and can't dynamically build one without default crud driver."
-          # :nocov:
+          # simplecov:enable
         end
       end
 
@@ -160,17 +160,17 @@ module Foobara
                  args[0]
                in [Class => crud_driver_class, *rest] if crud_driver_class < EntityAttributesCrudDriver
                  unless name
-                   # :nocov:
+                   # simplecov:disable
                    raise ArgumentError, "Must provide name: when registering a base with a crud driver class"
-                   # :nocov:
+                   # simplecov:enable
                  end
 
                  crud_args, opts = case rest
                                    in [Hash]
                                      # TODO: test this code path
-                                     # :nocov:
+                                     # simplecov:disable
                                      [[], rest]
-                                     # :nocov:
+                                     # simplecov:enable
                                    in [] | [Array] | [Array, Hash]
                                      rest
                                    in Array
@@ -197,9 +197,9 @@ module Foobara
         missing = bases - sorted_bases
 
         unless missing.empty?
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "Missing bases: #{missing} are the not registered or something?"
-          # :nocov:
+          # simplecov:enable
           # sorted_bases = [*missing, *sorted_bases]
         end
 

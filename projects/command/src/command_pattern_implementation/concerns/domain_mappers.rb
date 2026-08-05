@@ -63,9 +63,9 @@ module Foobara
 
         def run_mapped_subcommand!(subcommand_class, unmapped_inputs = {}, to = nil)
           unless subcommand_class
-            # :nocov:
+            # simplecov:disable
             raise ArgumentError, "subcommand_class is required"
-            # :nocov:
+            # simplecov:enable
           end
 
           mapped_something = false

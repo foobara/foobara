@@ -64,9 +64,9 @@ module Foobara
 
       def target_class
         if target_classes.size != 1
-          # :nocov:
+          # simplecov:disable
           raise "Can only use #target_class for types with one target class but #{name} has #{target_classes.size}"
-          # :nocov:
+          # simplecov:enable
         end
 
         target_classes[0]

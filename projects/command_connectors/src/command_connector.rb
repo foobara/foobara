@@ -39,9 +39,9 @@ module Foobara
         authenticator = to_authenticator(*authenticatorish_args)
 
         unless authenticator.symbol
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "Expected authenticator to have a symbol"
-          # :nocov:
+          # simplecov:enable
         end
 
         authenticator_registry[authenticator.symbol] = authenticator
@@ -55,9 +55,9 @@ module Foobara
                          when 2
                            args
                          else
-                           # :nocov:
+                           # simplecov:disable
                            raise ArgumentError, "Expected 1 or 2 arguments, got #{args.size}"
-                           # :nocov:
+                           # simplecov:enable
                          end
 
         case object
@@ -65,17 +65,17 @@ module Foobara
           if object < Authenticator
             object.instance
           else
-            # :nocov:
+            # simplecov:disable
             raise ArgumentError, "Expected a class that inherits from Authenticator"
-            # :nocov:
+            # simplecov:enable
           end
         when Authenticator, nil
           object
         when ::String
           if symbol
-            # :nocov:
+            # simplecov:disable
             raise ArgumentError, "Was not expecting a symbol and a string"
-            # :nocov:
+            # simplecov:enable
           end
 
           to_authenticator(object.to_sym)
@@ -83,9 +83,9 @@ module Foobara
           authenticator = authenticator_registry[object]
 
           unless authenticator
-            # :nocov:
+            # simplecov:disable
             raise "No authenticator found for #{object}"
-            # :nocov:
+            # simplecov:enable
           end
 
           authenticator
@@ -93,9 +93,9 @@ module Foobara
           case object.size
           when 0
             # TODO: test this
-            # :nocov:
+            # simplecov:disable
             nil
-            # :nocov:
+            # simplecov:enable
           when 1
             to_authenticator(object[0])
           else
@@ -106,9 +106,9 @@ module Foobara
           if object.respond_to?(:call)
             Authenticator.new(symbol:, &object)
           else
-            # :nocov:
+            # simplecov:disable
             raise "Not sure how to convert #{object} into an AllowedRule object"
-            # :nocov:
+            # simplecov:enable
           end
         end.tap do |resolved_authenticator|
           if resolved_authenticator
@@ -141,25 +141,25 @@ module Foobara
                                      if required_attribute_names.size == 1
                                        required_attribute_names[0]
                                      else
-                                       # :nocov:
+                                       # simplecov:disable
                                        raise ArgumentError,
                                              "Ambiguous inputs when trying to use #{object} as a mapper. " \
                                              "Should have either only 1 input or only 1 required input."
-                                       # :nocov:
+                                       # simplecov:enable
                                      end
                                    else
-                                     # :nocov:
+                                     # simplecov:disable
                                      raise ArgumentError, "To use a command as a mapper it must take an input to map"
-                                     # :nocov:
+                                     # simplecov:enable
                                    end
 
             build_auth_mapper(object.result_type) do |authenticated_user|
               object.run!(first_required_input => authenticated_user)
             end
           else
-            # :nocov:
+            # simplecov:disable
             raise ArgumentError, "not sure how to convert a #{object} to an auth mapper"
-            # :nocov:
+            # simplecov:enable
           end
         when ::Hash
           object => { to:, map: }
@@ -168,9 +168,9 @@ module Foobara
           object => [to, map]
           build_auth_mapper(to, &map)
         else
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "Not sure how to convert #{object} to an auth mapper"
-          # :nocov:
+          # simplecov:enable
         end
       end
 
@@ -273,9 +273,9 @@ module Foobara
       case registerable
       when Class
         unless registerable < Command
-          # :nocov:
+          # simplecov:disable
           raise "Don't know how to register #{registerable} (#{registerable.class})"
-          # :nocov:
+          # simplecov:enable
         end
 
         command_registry.register(*args, **opts)
@@ -299,16 +299,16 @@ module Foobara
 
           connected.flatten
         else
-          # :nocov:
+          # simplecov:disable
           raise "Don't know how to register #{registerable} (#{registerable.class})"
-          # :nocov:
+          # simplecov:enable
         end
       when Symbol, String
         connect_delayed(*args, **opts)
       else
-        # :nocov:
+        # simplecov:disable
         raise "Don't know how to register #{registerable} (#{registerable.class})"
-        # :nocov:
+        # simplecov:enable
       end
     end
 
@@ -346,15 +346,15 @@ module Foobara
     end
 
     def add_default_response_mutator(mutator)
-      # :nocov:
+      # simplecov:disable
       command_registry.add_default_response_mutator(mutator)
-      # :nocov:
+      # simplecov:enable
     end
 
     def allowed_rule(*)
-      # :nocov:
+      # simplecov:disable
       command_registry.allowed_rule(*)
-      # :nocov:
+      # simplecov:enable
     end
 
     def allowed_rules(*)
@@ -366,9 +366,9 @@ module Foobara
     end
 
     def each_transformed_command_class(&)
-      # :nocov:
+      # simplecov:disable
       command_registry.each_transformed_command_class(&)
-      # :nocov:
+      # simplecov:enable
     end
 
     def all_transformed_command_classes
@@ -409,9 +409,9 @@ module Foobara
         transformed_command_class = transformed_command_from_name(full_command_name)
 
         unless transformed_command_class
-          # :nocov:
+          # simplecov:disable
           raise NoCommandFoundError.new(message: "Could not find command registered for #{full_command_name}")
-          # :nocov:
+          # simplecov:enable
         end
       else
         action = case action
@@ -422,9 +422,9 @@ module Foobara
                  when "list"
                    "list_commands"
                  else
-                   # :nocov:
+                   # simplecov:disable
                    raise InvalidContextError.new(message: "Not sure what to do with #{action}")
-                   # :nocov:
+                   # simplecov:enable
                  end
 
         command_name = Util.classify(action)
@@ -456,11 +456,11 @@ module Foobara
                        end
 
         unless manifestable
-          # :nocov:
+          # simplecov:disable
           raise NoCommandOrTypeFoundError.new(
             message: "Could not find command or type registered for #{manifestable_name}"
           )
-          # :nocov:
+          # simplecov:enable
         end
 
         request.inputs.merge(manifestable:, request:)
@@ -468,9 +468,9 @@ module Foobara
         transformed_command_class = transformed_command_from_name(full_command_name)
 
         unless transformed_command_class
-          # :nocov:
+          # simplecov:disable
           raise NoCommandFoundError.new(message: "Could not find command registered for #{full_command_name}")
-          # :nocov:
+          # simplecov:enable
         end
 
         request.inputs.merge(manifestable: transformed_command_class, request:)
@@ -478,9 +478,9 @@ module Foobara
         type = type_from_name(full_command_name)
 
         unless type
-          # :nocov:
+          # simplecov:disable
           raise NoTypeFoundError.new(message: "Could not find type registered for #{full_command_name}")
-          # :nocov:
+          # simplecov:enable
         end
 
         request.inputs.merge(manifestable: type, request:)
@@ -493,9 +493,9 @@ module Foobara
       when "list"
         request.inputs.merge(request:)
       else
-        # :nocov:
+        # simplecov:disable
         raise InvalidContextError.new(message: "Not sure what to do with #{action}")
-        # :nocov:
+        # simplecov:enable
       end
     end
 
@@ -552,9 +552,9 @@ module Foobara
       key = registerable_name.to_s
 
       if delayed_connections.key?(key)
-        # :nocov:
+        # simplecov:disable
         raise AlreadyConnectedError, "Already connected #{key}"
-        # :nocov:
+        # simplecov:enable
       else
         delayed_connections[key] = { args:, opts: }
       end
@@ -583,9 +583,9 @@ module Foobara
         self.class.desugarizer.process_value!([args, opts])
       else
         # TODO: test this code path by removing all desugarizers in a spec.
-        # :nocov:
+        # simplecov:disable
         [args, opts]
-        # :nocov:
+        # simplecov:enable
       end
     end
 
@@ -625,10 +625,10 @@ module Foobara
           unless request.error
             if command
               run_command(request)
-              # :nocov:
+              # simplecov:disable
             else
               raise "No command returned from #request_to_command"
-              # :nocov:
+              # simplecov:enable
             end
           end
         end

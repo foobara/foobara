@@ -78,9 +78,9 @@ module Foobara
             match = /^Cannot(\w+)Error$/.match(Util.non_full_name(self.class))
 
             unless match
-              # :nocov:
+              # simplecov:disable
               raise "Bad error name for #{self.class.name}"
-              # :nocov:
+              # simplecov:enable
             end
 
             Util.underscore(match[1])
@@ -121,15 +121,15 @@ module Foobara
 
         # CRUD
         def select(_query_declaration)
-          # :nocov:
+          # simplecov:disable
           raise NotImplementedError
-          # :nocov:
+          # simplecov:enable
         end
 
         def all(page_size: nil)
-          # :nocov:
+          # simplecov:disable
           raise NotImplementedError
-          # :nocov:
+          # simplecov:enable
         end
 
         def first
@@ -137,9 +137,9 @@ module Foobara
         end
 
         def find(_record_id)
-          # :nocov:
+          # simplecov:disable
           raise NotImplementedError
-          # :nocov:
+          # simplecov:enable
         end
 
         def find!(record_id)
@@ -226,51 +226,51 @@ module Foobara
         end
 
         def insert(_attributes)
-          # :nocov:
+          # simplecov:disable
           raise NotImplementedError
-          # :nocov:
+          # simplecov:enable
         end
 
         def insert_many(attributes_array)
           # TODO: add a test for a driver that doesn't override this and remove these :nocov: comments
-          # :nocov:
+          # simplecov:disable
           attributes_array.each.lazy.map do |attributes|
             insert(attributes)
           end
-          # :nocov:
+          # simplecov:enable
         end
 
         def update(_record)
-          # :nocov:
+          # simplecov:disable
           raise NotImplementedError
-          # :nocov:
+          # simplecov:enable
         end
 
         def hard_delete(_record_id)
-          # :nocov:
+          # simplecov:disable
           raise NotImplementedError
-          # :nocov:
+          # simplecov:enable
         end
 
         def hard_delete_many(record_ids)
           # TODO: add a test for a driver that doesn't override this and remove these :nocov: comments
-          # :nocov:
+          # simplecov:disable
           record_ids.each.lazy.map do |record_id|
             delete(record_id)
           end
-          # :nocov:
+          # simplecov:enable
         end
 
         def hard_delete_all!
-          # :nocov:
+          # simplecov:disable
           raise NotImplementedError
-          # :nocov:
+          # simplecov:enable
         end
 
         def count
-          # :nocov:
+          # simplecov:disable
           raise NotImplementedError
-          # :nocov:
+          # simplecov:enable
         end
 
         def exists?(record_id)
@@ -299,12 +299,12 @@ module Foobara
             end
           elsif type.extends?(BuiltinTypes[:tuple])
             # TODO: test this code path
-            # :nocov:
+            # simplecov:disable
             object.map.with_index do |value, index|
               element_type = type.element_types[index]
               restore_attributes(value, element_type)
             end
-            # :nocov:
+            # simplecov:enable
           elsif type.extends?(BuiltinTypes[:array])
             element_type = type.element_type
             object.map { |value| restore_attributes(value, element_type) }
@@ -331,9 +331,9 @@ module Foobara
               outcome.result
             else
               # TODO: figure out how to test this code path
-              # :nocov:
+              # simplecov:disable
               object
-              # :nocov:
+              # simplecov:enable
             end
           end
         end

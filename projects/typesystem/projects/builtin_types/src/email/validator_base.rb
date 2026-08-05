@@ -28,9 +28,9 @@ module Foobara
         end
 
         def regex
-          # :nocov:
+          # simplecov:disable
           raise NotImplementedError
-          # :nocov:
+          # simplecov:enable
         end
 
         def negate_regex?

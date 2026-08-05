@@ -26,9 +26,9 @@ module Foobara
         end
 
         def transform(_request)
-          # :nocov:
+          # simplecov:disable
           raise "Not expected to be called"
-          # :nocov:
+          # simplecov:enable
         end
       end
     end

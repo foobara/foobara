@@ -44,9 +44,9 @@ module Foobara
                   parent_mod = Util.module_for(existing_class)
                   parent_mod.__send__(:remove_const, Util.non_full_name(existing_class))
                 else
-                  # :nocov:
+                  # simplecov:disable
                   return existing_class
-                  # :nocov:
+                  # simplecov:enable
                 end
               end
 

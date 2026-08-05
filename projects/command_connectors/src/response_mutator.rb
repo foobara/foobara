@@ -2,9 +2,9 @@ module Foobara
   module CommandConnectors
     class ResponseMutator < Foobara::Value::Mutator
       def result_type_declaration_from(_result_type)
-        # :nocov:
+        # simplecov:disable
         raise NotImplementedError
-        # :nocov:
+        # simplecov:enable
       end
 
       def result_type_from(result_type)
@@ -13,9 +13,9 @@ module Foobara
       end
 
       def mutate
-        # :nocov:
+        # simplecov:disable
         raise NotImplementedError
-        # :nocov:
+        # simplecov:enable
       end
 
       alias response declaration_data

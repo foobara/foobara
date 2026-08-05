@@ -28,14 +28,14 @@ module Foobara
             type.attribute_declarations.each_pair do |attribute_name, element_type|
               associations(element_type, path.append(attribute_name), result, initial: false)
             end
-          # :nocov:
+          # simplecov:disable
           elsif type.associative_array?
             if contains_associations?(type)
               raise "Associative array types with associations in them are not currently supported. " \
                     "Use attributes type if you can or set the key_type and/or value_type to duck type"
             end
           end
-          # :nocov:
+          # simplecov:enable
 
           result
         end
@@ -87,9 +87,9 @@ module Foobara
         when Type
           type.entity?
         else
-          # :nocov:
+          # simplecov:disable
           raise "not sure how to proceed with #{type}"
-          # :nocov:
+          # simplecov:enable
         end
       end
     end

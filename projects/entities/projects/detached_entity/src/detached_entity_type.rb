@@ -28,18 +28,18 @@ module Foobara
           # TODO: No longer is hit in this test suite but ActiveRecordType needs this class
           # and potentially this snippet of code in order to do the right thing.
           # TODO: test that out and delete this method if possible.
-          # :nocov:
+          # simplecov:disable
           declaration_data = declaration_data.merge(type: :detached_entity)
-          # :nocov:
+          # simplecov:enable
         end
 
         if self.class.model_base_class_requires_conversion?(declaration_data[:model_base_class])
           # TODO: No longer is hit in this test suite but ActiveRecordType needs this class
           # and potentially this snippet of code in order to do the right thing.
           # TODO: test that out and delete this method if possible.
-          # :nocov:
+          # simplecov:disable
           declaration_data = declaration_data.merge(model_base_class: "Foobara::DetachedEntity")
-          # :nocov:
+          # simplecov:enable
         end
 
         # TODO: remove private attributes, add delegated attributes

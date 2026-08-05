@@ -31,9 +31,9 @@ module Foobara
               @mutable_override = args[0]
               set_model_type
             else
-              # :nocov:
+              # simplecov:disable
               raise ArgumentError, "Expected 0 or 1 arguments but got #{args_size}"
-              # :nocov:
+              # simplecov:enable
             end
           end
 
@@ -226,9 +226,9 @@ module Foobara
 
               if method_defined?(method)
                 # TODO: test this code path
-                # :nocov:
+                # simplecov:disable
                 remove_method method
-                # :nocov:
+                # simplecov:enable
               end
             end
 

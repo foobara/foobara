@@ -47,10 +47,10 @@ module Foobara
           return outcome if state_machine.currently_errored?
 
           if error_collection.empty?
-            # :nocov:
+            # simplecov:disable
             raise CannotHaltWithoutAddingErrors, "Cannot halt without adding errors first. " \
                                                  "Either add errors or use error! transition instead."
-            # :nocov:
+            # simplecov:enable
           end
 
           state_machine.fail!

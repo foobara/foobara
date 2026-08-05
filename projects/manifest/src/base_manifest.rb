@@ -55,17 +55,17 @@ module Foobara
         self.manifest_path = manifest_path
 
         if relevant_manifest.nil?
-          # :nocov:
+          # simplecov:disable
           raise InvalidPath, "invalid path #{manifest_path}"
-          # :nocov:
+          # simplecov:enable
         end
       end
 
       def path
-        # :nocov:
+        # simplecov:disable
         warn "[DEPRECATION] `path` is deprecated. Please use `manifest_path` instead."
         manifest_path
-        # :nocov:
+        # simplecov:enable
       end
 
       def domain
@@ -126,9 +126,9 @@ module Foobara
         elsif optional_key?(method_name)
           self.class.optional_key_defaults[method_name.to_sym]
         else
-          # :nocov:
+          # simplecov:disable
           super
-          # :nocov:
+          # simplecov:enable
         end
       end
 

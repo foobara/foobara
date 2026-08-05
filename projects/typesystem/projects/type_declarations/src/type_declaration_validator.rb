@@ -5,9 +5,9 @@ module Foobara
 
       class << self
         def foobara_manifest
-          # :nocov:
+          # simplecov:disable
           super.merge(processor_type: :type_declaration_validator)
-          # :nocov:
+          # simplecov:enable
         end
       end
 

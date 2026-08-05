@@ -38,9 +38,9 @@ module Foobara
 
         def validate_conditions!(**conditions)
           unless conditions.is_a?(Hash)
-            # :nocov:
+            # simplecov:disable
             raise InvalidConditions, "Expected a hash"
-            # :nocov:
+            # simplecov:enable
           end
 
           conditions.each_pair do |condition_name, condition_value|

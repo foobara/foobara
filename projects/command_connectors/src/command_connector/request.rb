@@ -26,9 +26,9 @@ module Foobara
         invalid_keys = opts.keys - valid_keys
 
         unless invalid_keys.empty?
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "invalid keys: #{invalid_keys} expected only #{valid_keys}"
-          # :nocov:
+          # simplecov:enable
         end
 
         self.inputs = opts[:inputs] if opts.key?(:inputs)
@@ -87,9 +87,9 @@ module Foobara
         if auth_mapped_method?(method_name)
           auth_mapped_value_for(method_name)
         else
-          # :nocov:
+          # simplecov:disable
           super
-          # :nocov:
+          # simplecov:enable
         end
       end
 
@@ -191,9 +191,9 @@ module Foobara
             klass = Foobara::CommandConnectors::Serializer.serializer_from_symbol(object)
 
             unless klass
-              # :nocov:
+              # simplecov:disable
               raise "Could not find serializer for #{object}"
-              # :nocov:
+              # simplecov:enable
             end
 
             klass.new(self)
@@ -201,9 +201,9 @@ module Foobara
             if object.respond_to?(:call)
               Value::Transformer.create(transform: object)
             else
-              # :nocov:
+              # simplecov:disable
               raise "Not sure how to convert #{object} into a serializer"
-              # :nocov:
+              # simplecov:enable
             end
           end
         end

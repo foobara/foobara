@@ -23,9 +23,9 @@ module Foobara
 
         class << self
           def foobara_manifest
-            # :nocov:
+            # simplecov:disable
             super.merge(processor_type: :casting)
-            # :nocov:
+            # simplecov:enable
           end
 
           def error_classes
@@ -99,9 +99,9 @@ module Foobara
           if error_class == NoApplicableProcessorError
             build_error(*args)
           elsif error_class == MoreThanOneApplicableProcessorError
-            # :nocov:
+            # simplecov:disable
             raise "Matched too many casters for #{args.map(&:inspect).join(",")} with #{opts.inspect}"
-            # :nocov:
+            # simplecov:enable
           else
             super
           end
@@ -110,9 +110,9 @@ module Foobara
         def cast_to
           # TODO: isn't there a way to declare declaration_data_type so we don't have to validate here??
           unless declaration_data.key?(:cast_to)
-            # :nocov:
+            # simplecov:disable
             raise "Missing cast_to"
-            # :nocov:
+            # simplecov:enable
           end
 
           declaration_data[:cast_to]

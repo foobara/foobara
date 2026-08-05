@@ -32,10 +32,10 @@ module Foobara
               end
               entity_attributes_crud_driver.flush_transaction(raw_tx)
             rescue => e
-              # :nocov:
+              # simplecov:disable
               rollback!(e)
               raise
-              # :nocov:
+              # simplecov:enable
             end
 
             # Should communicate somehow that this is only in-memory.
@@ -46,10 +46,10 @@ module Foobara
               end
               entity_attributes_crud_driver.revert_transaction(raw_tx)
             rescue => e
-              # :nocov:
+              # simplecov:disable
               rollback!(e)
               raise
-              # :nocov:
+              # simplecov:enable
             end
 
             def commit!
@@ -62,10 +62,10 @@ module Foobara
                 each_table(&:transaction_closed)
               end
             rescue => e
-              # :nocov:
+              # simplecov:disable
               rollback!(e)
               raise
-              # :nocov:
+              # simplecov:enable
             end
 
             def commit_nested!
@@ -75,10 +75,10 @@ module Foobara
                 each_table(&:transaction_closed)
               end
             rescue => e
-              # :nocov:
+              # simplecov:disable
               rollback!(e)
               raise
-              # :nocov:
+              # simplecov:enable
             end
 
             # TODO: this belongs elsewhere

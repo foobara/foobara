@@ -46,14 +46,14 @@ module Foobara
         else
           # TODO: raise better errors
           if callback_set.has_before_callbacks?
-            # :nocov:
+            # simplecov:disable
             raise
-            # :nocov:
+            # simplecov:enable
           end
           if callback_set.has_around_callbacks?
-            # :nocov:
+            # simplecov:disable
             raise
-            # :nocov:
+            # simplecov:enable
           end
         end
 

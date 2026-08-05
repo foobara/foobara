@@ -19,10 +19,10 @@ module Foobara
 
             if sugary_type_declaration.deep_duped?
               # TODO: probably not worth directly testing this path
-              # :nocov:
+              # simplecov:disable
               declaration.is_duped = true
               declaration.is_deep_duped = true
-              # :nocov:
+              # simplecov:enable
             end
 
             declaration = handler.desugarize(declaration)

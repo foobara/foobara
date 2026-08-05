@@ -58,9 +58,9 @@ module Foobara
           end
 
           unless entity_base == entity_class.entity_base
-            # :nocov:
+            # simplecov:disable
             raise "#{entity_class} is from a different entity base! Cannot proceed."
-            # :nocov:
+            # simplecov:enable
           end
 
           table = tables[entity_class]
@@ -70,9 +70,9 @@ module Foobara
           else
             if defined?(@ordered_tables)
               # TODO: test this path
-              # :nocov:
+              # simplecov:disable
               remove_instance_variable(:@ordered_tables)
-              # :nocov:
+              # simplecov:enable
             end
 
             tables[entity_class] = TransactionTable.new(self, entity_class)
@@ -102,17 +102,17 @@ module Foobara
         def load(record_or_entity_class, record_id = nil)
           entity_or_id = if record_or_entity_class.is_a?(Entity)
                            if record_id
-                             # :nocov:
+                             # simplecov:disable
                              raise ArgumentError, "Do not give a record_id when also giving a record"
-                             # :nocov:
+                             # simplecov:enable
                            end
 
                            record_or_entity_class
                          else
                            unless record_id
-                             # :nocov:
+                             # simplecov:disable
                              raise ArgumentError, "Must give a record_id when passing in an entity class"
-                             # :nocov:
+                             # simplecov:enable
                            end
 
                            record_id

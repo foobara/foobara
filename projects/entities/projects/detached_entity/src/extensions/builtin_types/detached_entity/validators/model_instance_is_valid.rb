@@ -26,9 +26,9 @@ module Foobara
               model_type = type_for_declaration(parent_declaration_data[:type])
               model_type.target_class
             else
-              # :nocov:
+              # simplecov:disable
               raise "Missing :model_class in parent_declaration_data for #{parent_declaration_data}"
-              # :nocov:
+              # simplecov:enable
             end
           end
 

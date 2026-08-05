@@ -6,9 +6,9 @@ module Foobara
       class Pipeline < Multi
         class << self
           def foobara_manifest
-            # :nocov:
+            # simplecov:disable
             super.merge(processor_type: :pipeline)
-            # :nocov:
+            # simplecov:enable
           end
         end
 

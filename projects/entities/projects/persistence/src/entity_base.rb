@@ -127,9 +127,9 @@ module Foobara
 
       def transaction(mode = nil, existing_transaction: nil)
         unless VALID_MODES.include?(mode)
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "Mode was #{mode} but expected one of #{VALID_MODES}"
-          # :nocov:
+          # simplecov:enable
         end
 
         old_transaction = current_transaction
@@ -151,16 +151,16 @@ module Foobara
             open_nested = true
           elsif mode == :open_new
             if existing_transaction
-              # :nocov:
+              # simplecov:disable
               raise ArgumentError, "Cannot use mode :open_new with existing_transaction:"
-              # :nocov:
+              # simplecov:enable
             end
           else
-            # :nocov:
+            # simplecov:disable
             raise "Transaction already open. " \
                   "Use mode :use_existing if you want to make use of the existing transaction. " \
                   "Use mode :open_nested if you are actually trying to nest transactions."
-            # :nocov:
+            # simplecov:enable
           end
         end
 

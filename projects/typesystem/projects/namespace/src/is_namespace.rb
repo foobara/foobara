@@ -12,9 +12,9 @@ module Foobara
 
         if defined?(@foobara_categories)
           if @foobara_categories.empty?
-            # :nocov:
+            # simplecov:disable
             remove_instance_variable(:@foobara_categories)
-            # :nocov:
+            # simplecov:enable
           elsif scoped_namespace
             @foobara_categories = scoped_namespace.foobara_categories.merge(@foobara_categories)
           end
@@ -26,9 +26,9 @@ module Foobara
 
         if namespace
           if namespace.foobara_children.include?(self)
-            # :nocov:
+            # simplecov:disable
             raise "Already registered on parent"
-            # :nocov:
+            # simplecov:enable
           end
 
           namespace.foobara_children << self
@@ -88,9 +88,9 @@ module Foobara
           scopedish = foobara_lookup(scopedish)
 
           unless scopedish
-            # :nocov:
+            # simplecov:disable
             raise ArgumentError, "Cannot unregister non-existent #{scopedish}"
-            # :nocov:
+            # simplecov:enable
           end
         end
 
@@ -181,10 +181,10 @@ module Foobara
           end.compact
 
           if candidates.size > 1
-            # :nocov:
+            # simplecov:disable
             raise AmbiguousLookupError,
                   "#{path} is ambiguous. Matches the following: #{candidates.map(&:scoped_full_name)}"
-            # :nocov:
+            # simplecov:enable
           end
 
           scoped = candidates[0] ||
@@ -290,9 +290,9 @@ module Foobara
         end.compact
 
         if candidates.size > 1
-          # :nocov:
+          # simplecov:disable
           raise AmbiguousLookupError, "Multiple things matched #{path}"
-          # :nocov:
+          # simplecov:enable
         end
 
         candidates[0] || partial
@@ -306,9 +306,9 @@ module Foobara
         object = foobara_lookup(name, **)
 
         unless object
-          # :nocov:
+          # simplecov:disable
           raise NotFoundError, "Could not find #{name}"
-          # :nocov:
+          # simplecov:enable
         end
 
         object
@@ -358,9 +358,9 @@ module Foobara
           method = "foobara_#{method}#{"!" if bang}"
           __send__(method, *, **, filter:, &)
         else
-          # :nocov:
+          # simplecov:disable
           super
-          # :nocov:
+          # simplecov:enable
         end
       end
 
@@ -405,9 +405,9 @@ module Foobara
                              when Foobara::Namespace::BaseRegistry::WouldMakeRegistryAmbiguousError
                                Foobara::Namespace::AmbiguousRegistry
                              else
-                               # :nocov:
+                               # simplecov:disable
                                raise ArgumentError, "Not sure how to upgrade a #{error.class}"
-                               # :nocov:
+                               # simplecov:enable
                              end
 
         old_registry = foobara_registry

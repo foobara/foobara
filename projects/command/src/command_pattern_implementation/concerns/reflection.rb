@@ -88,9 +88,9 @@ module Foobara
             remove_sensitive = TypeDeclarations.foobara_manifest_context_remove_sensitive?
 
             if defined?(@types_depended_on) && @types_depended_on.key?(remove_sensitive)
-              # :nocov:
+              # simplecov:disable
               return @types_depended_on[remove_sensitive]
-              # :nocov:
+              # simplecov:enable
             end
 
             @types_depended_on ||= {}
@@ -111,13 +111,13 @@ module Foobara
                                                             if inputs_type.registered?
                                                               # TODO: if we ever change from attributes-only inputs type
                                                               # then this will be handy
-                                                              # :nocov:
+                                                              # simplecov:disable
                                                               if !remove_sensitive || !inputs_type.sensitive?
                                                                 Set[inputs_type]
                                                               else
                                                                 Set.new
                                                               end
-                                                              # :nocov:
+                                                              # simplecov:enable
                                                             else
                                                               inputs_type.types_depended_on
                                                             end

@@ -23,25 +23,25 @@ module Foobara
             value = args[0]
           when 0
             if opts.empty?
-              # :nocov:
+              # simplecov:disable
               raise ArgumentError, "Expected at least one argument"
-              # :nocov:
+              # simplecov:enable
             else
               value = opts
               opts = {}
             end
           else
-            # :nocov:
+            # simplecov:disable
             raise ArgumentError, "Expected 1 argument but got #{args.size}"
-            # :nocov:
+            # simplecov:enable
           end
 
           invalid_keys = opts.keys - [:from]
 
           if invalid_keys.any?
-            # :nocov:
+            # simplecov:disable
             raise ArgumentError, "Invalid options: #{invalid_keys.join(", ")}"
-            # :nocov:
+            # simplecov:enable
           end
 
           from = if opts.key?(:from)
@@ -91,9 +91,9 @@ module Foobara
             return parent if parent&.foobara_organization?
 
             # TODO: we really should test this path
-            # :nocov:
+            # simplecov:disable
             parent = parent.foobara_parent_namespace
-            # :nocov:
+            # simplecov:enable
           end || GlobalOrganization
         end
 
@@ -157,12 +157,12 @@ module Foobara
               type.type_symbol = new_type_symbol
 
               foobara_register(type)
-              # :nocov:
+              # simplecov:disable
             elsif old_type != type
               # TODO: delete this check if it's not really helping
 
               raise "Didn't expect to find an old type"
-              # :nocov:
+              # simplecov:enable
             end
           else
             type.scoped_path = new_scoped_path
@@ -172,16 +172,16 @@ module Foobara
 
             if old_type && old_type != type
               # TODO: delete this check if it's not really helping
-              # :nocov:
+              # simplecov:disable
               raise "Didn't expect to find an old type"
-              # :nocov:
+              # simplecov:enable
             end
 
             if foobara_registered?(type, mode: Namespace::LookupMode::DIRECT)
               # TODO: delete this check if it's not really helping
-              # :nocov:
+              # simplecov:disable
               raise "Already registered: #{type.inspect}"
-              # :nocov:
+              # simplecov:enable
             end
 
             foobara_register(type)
@@ -210,9 +210,9 @@ module Foobara
             domain_name = domain.foobara_full_domain_name
 
             if foobara_depends_on.include?(domain_name)
-              # :nocov:
+              # simplecov:disable
               raise AlreadyRegisteredDomainDependency, "Already registered #{domain_name} as a dependency of #{self}"
-              # :nocov:
+              # simplecov:enable
             end
 
             foobara_depends_on_namespaces << domain

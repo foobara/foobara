@@ -11,9 +11,9 @@ module Foobara
             elsif args.size == 1
               @description = args[0]
             else
-              # :nocov:
+              # simplecov:disable
               raise ArgumentError, "wrong number of arguments (#{args.size} for 0 or 1)"
-              # :nocov:
+              # simplecov:enable
             end
           end
 

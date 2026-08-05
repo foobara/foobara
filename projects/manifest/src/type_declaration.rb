@@ -130,9 +130,9 @@ module Foobara
         raise "not an detached_entity" unless detached_entity?
 
         if to_type.primitive?
-          # :nocov:
+          # simplecov:disable
           raise "detached_entity extension instead of an detached_entity"
-          # :nocov:
+          # simplecov:enable
         end
 
         type = to_type
@@ -152,9 +152,9 @@ module Foobara
         raise "not an entity" unless entity?
 
         if to_type.primitive?
-          # :nocov:
+          # simplecov:disable
           raise "entity extension instead of an entity"
-          # :nocov:
+          # simplecov:enable
         end
 
         type = to_type

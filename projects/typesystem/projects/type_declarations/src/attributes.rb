@@ -43,9 +43,9 @@ module Foobara
           invalid_keys = keys_to_keep - valid_keys
 
           if invalid_keys.any?
-            # :nocov:
+            # simplecov:disable
             raise ArgumentError, "Invalid keys: #{invalid_keys} expected only #{valid_keys}"
-            # :nocov:
+            # simplecov:enable
           end
 
           keys_to_reject = valid_keys - keys_to_keep

@@ -64,11 +64,11 @@ module Foobara
 
       domain_module.foobara_depends_on.each do |domain_name|
         # TODO: test this code path!!
-        # :nocov:
+        # simplecov:disable
         unless foobara_domain_registered?(domain_name)
           build_and_register_exposed_domain(domain_name)
         end
-        # :nocov:
+        # simplecov:enable
       end
 
       exposed_domain
@@ -81,10 +81,10 @@ module Foobara
 
     def global_organization
       # TODO: test this
-      # :nocov:
+      # simplecov:disable
       foobara_lookup_organization("", mode: Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE) ||
         build_and_register_exposed_organization("")
-      # :nocov:
+      # simplecov:enable
     end
 
     def build_and_register_exposed_organization(full_organization_name)
@@ -121,9 +121,9 @@ module Foobara
       allowed_rule = to_allowed_rule(*)
 
       unless allowed_rule.symbol
-        # :nocov:
+        # simplecov:disable
         raise "Cannot register a rule without a symbol"
-        # :nocov:
+        # simplecov:enable
       end
 
       allowed_rule_registry[allowed_rule.symbol] = allowed_rule
@@ -230,9 +230,9 @@ module Foobara
                        when 2
                          args
                        else
-                         # :nocov:
+                         # simplecov:disable
                          raise ArgumentError, "Expected 1 or 2 arguments, got #{args.size}"
-                         # :nocov:
+                         # simplecov:enable
                        end
 
       case object
@@ -240,9 +240,9 @@ module Foobara
         object
       when ::String
         if symbol
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "Was not expecting a symbol and a string"
-          # :nocov:
+          # simplecov:enable
         end
 
         to_allowed_rule(object.to_sym)
@@ -250,9 +250,9 @@ module Foobara
         allowed_rule = allowed_rule_registry[object]
 
         unless allowed_rule
-          # :nocov:
+          # simplecov:disable
           raise "No allowed rule found for #{object}"
-          # :nocov:
+          # simplecov:enable
         end
 
         allowed_rule
@@ -292,9 +292,9 @@ module Foobara
         if object.respond_to?(:call)
           AllowedRule.new(symbol:, &object)
         else
-          # :nocov:
+          # simplecov:disable
           raise "Not sure how to convert #{object} into an AllowedRule object"
-          # :nocov:
+          # simplecov:enable
         end
       end.tap do |rule|
         rule.symbol ||= symbol

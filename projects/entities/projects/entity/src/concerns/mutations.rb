@@ -50,13 +50,13 @@ module Foobara
 
               object
             elsif type.extends?(BuiltinTypes[:tuple])
-              # :nocov:
+              # simplecov:disable
               raise "Tuple not yet supported"
-              # :nocov:
+              # simplecov:enable
             elsif type.extends?(BuiltinTypes[:associative_array])
-              # :nocov:
+              # simplecov:disable
               raise "Associated array not yet supported"
-              # :nocov:
+              # simplecov:enable
             elsif type.extends?(BuiltinTypes[:array])
               element_type = type.element_type
 

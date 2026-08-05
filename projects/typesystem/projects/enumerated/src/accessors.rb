@@ -18,10 +18,10 @@ module Foobara
             values_source = begin
               Util.const_get_up_hierarchy(self, module_name)
             rescue NameError
-              # :nocov:
+              # simplecov:disable
               raise CannotDetermineModuleAutomatically,
                     "could not find a module for #{module_name}. Maybe consider passing it in explicitly."
-              # :nocov:
+              # simplecov:enable
             end
           end
 
@@ -29,9 +29,9 @@ module Foobara
 
           attribute_name = attribute_name.to_sym
 
-          # :nocov:
+          # simplecov:disable
           unless respond_to?(:enumerated_type_metadata)
-            # :nocov:
+            # simplecov:enable
             class << self
               attr_accessor :enumerated_type_metadata
             end

@@ -38,15 +38,15 @@ module Foobara
 
           def register_supported_processor_class(processor_class, symbol: processor_class.symbol)
             unless symbol.is_a?(Symbol)
-              # :nocov:
+              # simplecov:disable
               raise "Invalid symbol value #{symbol.inspect}. Should instead be a symbol but was a #{symbol.class.name}"
-              # :nocov:
+              # simplecov:enable
             end
 
             if supported_processor_classes.key?(symbol)
-              # :nocov:
+              # simplecov:disable
               raise "There's already a processor registered for #{symbol}"
-              # :nocov:
+              # simplecov:enable
             end
 
             supported_processor_classes[symbol] = processor_class

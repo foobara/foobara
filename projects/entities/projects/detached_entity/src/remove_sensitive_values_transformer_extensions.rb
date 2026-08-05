@@ -44,9 +44,9 @@ module Foobara
               already_sanitized << existing_type
               next
             else
-              # :nocov:
+              # simplecov:disable
               raise "Did not expect to be re-sanitizing #{entity_type.full_type_symbol}"
-              # :nocov:
+              # simplecov:enable
             end
 
           end

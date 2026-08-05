@@ -34,9 +34,9 @@ module Foobara
     end
 
     def relevant_entity_classes
-      # :nocov:
+      # simplecov:disable
       raise NotImplementedError
-      # :nocov:
+      # simplecov:enable
     end
 
     def transactions
@@ -118,9 +118,9 @@ module Foobara
         if transaction.currently_open?
           # Hard to test this because halting and other exceptions rollback the transactions via
           # block form but to be safe keeping this
-          # :nocov:
+          # simplecov:disable
           transaction.rollback!
-          # :nocov:
+          # simplecov:enable
         end
       end
     end

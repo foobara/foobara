@@ -19,31 +19,31 @@ module Foobara
     end
 
     def errors
-      # :nocov:
+      # simplecov:disable
       warn "DEPRECATED: Do not call ErrorCollection#errors instead just use the collection directly."
       self
-      # :nocov:
+      # simplecov:enable
     end
 
     def error_array
-      # :nocov:
+      # simplecov:disable
       warn "DEPRECATED: Do not call ErrorCollection#error_array instead just use the collection directly."
       self
-      # :nocov:
+      # simplecov:enable
     end
 
     def each_error(&)
-      # :nocov:
+      # simplecov:disable
       warn "DEPRECATED: This method will be deprecated in the coming version"
       each(&)
-      # :nocov:
+      # simplecov:enable
     end
 
     def has_error?(error)
       unless error.is_a?(Error)
-        # :nocov:
+        # simplecov:disable
         raise ArgumentError, "Can only check if an Error instance is in the collection"
-        # :nocov:
+        # simplecov:enable
       end
 
       include?(error)
@@ -58,17 +58,17 @@ module Foobara
                    error_or_collection_or_error_hash.key?(:message)
                   Error.new(**error_or_collection_or_error_hash)
                 else
-                  # :nocov:
+                  # simplecov:disable
                   raise ArgumentError,
                         "if passing a hash of error args it must include symbol and message at least"
-                  # :nocov:
+                  # simplecov:enable
                 end
               else
-                # :nocov:
+                # simplecov:disable
                 raise ArgumentError, "Not sure how to convert #{error_or_collection_or_error_hash.inspect} " \
                                      "into an error. Can handle a hash of error " \
                                      "args or 3 arguments for symbol, message, and context, or, of course, an Error"
-                # :nocov:
+                # simplecov:enable
               end
 
       if has_error?(error)
@@ -101,10 +101,10 @@ module Foobara
     end
 
     def to_h
-      # :nocov:
+      # simplecov:disable
       warn "DEPRECATED: Use #errors_hash instead"
       errors_hash
-      # :nocov:
+      # simplecov:enable
     end
   end
 end

@@ -8,9 +8,9 @@ module Foobara
 
       def set(attribute_names_to_values)
         if attribute_names_to_values.empty?
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "You must specify at least one attribute name/value pair"
-          # :nocov:
+          # simplecov:enable
         end
 
         symbol = symbol_for_attribute_names([*attribute_names_to_values.keys, next_index.to_s.to_sym])
@@ -45,12 +45,12 @@ module Foobara
 
       def to_type_declaration
         # TODO: test this
-        # :nocov:
+        # simplecov:disable
         if from_type
           from_declaration = from_type.declaration_data
           TypeDeclarations::Attributes.reject(from_declaration, *self.class.attribute_names_to_values.keys)
         end
-        # :nocov:
+        # simplecov:enable
       end
 
       def from_type_declaration

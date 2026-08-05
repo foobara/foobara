@@ -28,17 +28,17 @@ module Foobara
 
               type_declaration
             else
-              # :nocov:
+              # simplecov:disable
               raise ArgumentError, "Cannot provide both block and declaration of #{args}"
-              # :nocov:
+              # simplecov:enable
             end
           end
         else
           case args.size
           when 0
-            # :nocov:
+            # simplecov:disable
             raise ArgumentError, "expected 1 argument or a block but got 0 arguments and no block"
-            # :nocov:
+            # simplecov:enable
           when 1
             arg = args[0]
 

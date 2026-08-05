@@ -8,9 +8,9 @@ module Foobara
 
         def register_callback(type, *, **, &callback_block)
           unless block_given?
-            # :nocov:
+            # simplecov:disable
             raise ArgumentError, "Must provide a callback block to register"
-            # :nocov:
+            # simplecov:enable
           end
 
           validate_type!(type)
@@ -21,15 +21,15 @@ module Foobara
         end
 
         def specific_callback_set_for(*_args, **_opts)
-          # :nocov:
+          # simplecov:disable
           raise NotImplementedError
-          # :nocov:
+          # simplecov:enable
         end
 
         def unioned_callback_set_for(*_args, **_opts)
-          # :nocov:
+          # simplecov:disable
           raise NotImplementedError
-          # :nocov:
+          # simplecov:enable
         end
 
         def before(...)
@@ -79,9 +79,9 @@ module Foobara
         def validate_type!(type)
           unless allowed_types.include?(type)
             # TODO: raise a real error
-            # :nocov:
+            # simplecov:disable
             raise "bad type #{type} expected one of #{allowed_types}"
-            # :nocov:
+            # simplecov:enable
           end
         end
       end

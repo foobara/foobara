@@ -6,10 +6,10 @@ module Foobara
   class << self
     # TODO: let's eliminate this method
     def require_project_file(project, path)
-      # :nocov:
+      # simplecov:disable
       warn "DEPRECATION WARNING: require_project_file is deprecated. Use require_relative instead."
       require_relative("../../#{project}/src/#{path}")
-      # :nocov:
+      # simplecov:enable
     end
 
     attr_accessor :is_installed
@@ -20,9 +20,9 @@ module Foobara
 
     def project(symbol, project_path: nil)
       if all_projects.key?(symbol)
-        # :nocov:
+        # simplecov:disable
         raise ArgumentError, "Project #{symbol} already loaded"
-        # :nocov:
+        # simplecov:enable
       end
 
       project = Project.new(symbol, project_path:)

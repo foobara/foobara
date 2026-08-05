@@ -127,9 +127,9 @@ module Foobara
               if containing_records.size == 1
                 containing_records[0]
               else
-                # :nocov:
+                # simplecov:disable
                 raise "Expected only one record to own #{record} but found #{containing_records.size}"
-                # :nocov:
+                # simplecov:enable
               end
             end
           end

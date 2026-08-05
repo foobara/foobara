@@ -48,9 +48,9 @@ module Foobara
       class << self
         def validate!(mode)
           unless ALL.include?(mode)
-            # :nocov:
+            # simplecov:disable
             raise ArgumentError, "Expected #{mode} to be one of #{ALL.map(&:inspect).join(",")}"
-            # :nocov:
+            # simplecov:enable
           end
         end
       end

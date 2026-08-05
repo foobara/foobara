@@ -22,9 +22,9 @@ module Foobara
 
           if strict_type_declaration.reference?
             unless strict_type_declaration.type
-              # :nocov:
+              # simplecov:disable
               strict_type_declaration.handle_symbolic_declaration
-              # :nocov:
+              # simplecov:enable
             end
 
             unless sugary_type_declaration.equal?(strict_type_declaration)

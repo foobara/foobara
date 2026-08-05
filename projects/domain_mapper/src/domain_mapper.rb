@@ -121,9 +121,9 @@ module Foobara
     end
 
     def map
-      # :nocov:
+      # simplecov:disable
       raise NotImplementedError
-      # :nocov:
+      # simplecov:enable
     end
   end
 end

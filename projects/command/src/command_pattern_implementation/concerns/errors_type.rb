@@ -30,18 +30,18 @@ module Foobara
 
                                if arg.is_a?(PossibleError)
                                  # TODO: test this code path
-                                 # :nocov:
+                                 # simplecov:disable
                                  arg
-                                 # :nocov:
+                                 # simplecov:enable
                                elsif arg.is_a?(::Class) && arg < Foobara::Error
                                  PossibleError.new(arg)
                                elsif arg.is_a?(::Symbol)
                                  error_class = Foobara::RuntimeError.subclass(mod: self, symbol: arg)
                                  PossibleError.new(error_class, symbol: arg)
                                else
-                                 # :nocov:
+                                 # simplecov:disable
                                  raise ArgumentError, "Expected a PossibleError or an Error but got #{arg}"
-                                 # :nocov:
+                                 # simplecov:enable
                                end
                              when 2
                                symbol, subclass_parameters, data = args
@@ -54,9 +54,9 @@ module Foobara
 
                                PossibleError.new(error_class, symbol:, data:)
                              else
-                               # :nocov:
+                               # simplecov:disable
                                raise ArgumentError, "Expected an error or a symbol and error context type declaration"
-                               # :nocov:
+                               # simplecov:enable
                              end
 
             register_possible_error_class(possible_error)

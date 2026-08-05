@@ -17,9 +17,9 @@ module Foobara
           if respond_to_missing_for_inputs?(method_name)
             inputs[method_name]
           else
-            # :nocov:
+            # simplecov:disable
             super
-            # :nocov:
+            # simplecov:enable
           end
         end
 
@@ -46,9 +46,9 @@ module Foobara
               if error.is_a?(Value::DataError)
                 add_input_error(error)
               else
-                # :nocov:
+                # simplecov:disable
                 raise UnexpectedInputValidationError, "Unexpected input validation error: #{error}"
-                # :nocov:
+                # simplecov:enable
               end
             end
           end

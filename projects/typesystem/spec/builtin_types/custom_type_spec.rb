@@ -135,10 +135,10 @@ RSpec.describe "custom types" do
         end
 
         def validation_errors(complex)
-          # :nocov:
+          # simplecov:disable
           return unless be_pointless == :true_symbol
 
-          # :nocov:
+          # simplecov:enable
 
           if complex.real == complex.imaginary
             build_error

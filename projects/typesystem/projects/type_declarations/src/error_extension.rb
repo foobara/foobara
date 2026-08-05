@@ -40,17 +40,17 @@ module Foobara
             if abstract?
               nil
             else
-              # :nocov:
+              # simplecov:disable
               raise
-              # :nocov:
+              # simplecov:enable
             end
           end
         end
 
         def context_type_declaration
-          # :nocov:
+          # simplecov:disable
           raise NoContextTypeSetError
-          # :nocov:
+          # simplecov:enable
         end
       end
 
@@ -72,9 +72,9 @@ module Foobara
       end
 
       def context_type_declaration
-        # :nocov:
+        # simplecov:disable
         self.class.context_type_declaration
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

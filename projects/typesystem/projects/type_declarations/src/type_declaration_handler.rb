@@ -7,9 +7,9 @@ module Foobara
     class TypeDeclarationHandler < Value::Processor::Pipeline
       class << self
         def foobara_manifest
-          # :nocov:
+          # simplecov:disable
           super.merge(processor_type: :type_declaration_handler)
-          # :nocov:
+          # simplecov:enable
         end
 
         def starting_desugarizers
@@ -51,9 +51,9 @@ module Foobara
         **opts
       )
         if processors && !processors.empty?
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "Cannot set processors directly for a type declaration handler"
-          # :nocov:
+          # simplecov:enable
         end
 
         self.desugarizers = Util.array(desugarizers)
@@ -67,15 +67,15 @@ module Foobara
       end
 
       def starting_desugarizers_with_inherited
-        # :nocov:
+        # simplecov:disable
         self.class.starting_desugarizers_with_inherited
-        # :nocov:
+        # simplecov:enable
       end
 
       def starting_desugarizers_without_inherited
-        # :nocov:
+        # simplecov:disable
         self.class.starting_desugarizers_without_inherited
-        # :nocov:
+        # simplecov:enable
       end
 
       def starting_type_declaration_validators
@@ -87,7 +87,7 @@ module Foobara
       end
 
       def inspect
-        # :nocov:
+        # simplecov:disable
         s = super
 
         if s.size > 400
@@ -95,13 +95,13 @@ module Foobara
         end
 
         s
-        # :nocov:
+        # simplecov:enable
       end
 
       def applicable?(_sugary_type_declaration)
-        # :nocov:
+        # simplecov:disable
         raise NotImplementedError
-        # :nocov:
+        # simplecov:enable
       end
 
       def processors

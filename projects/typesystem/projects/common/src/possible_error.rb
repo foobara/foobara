@@ -70,10 +70,10 @@ module Foobara
           if processor.scoped_path_set?
             # Unclear why nothing in the test suite passes through here.
             # TODO: either test this or delete it.
-            # :nocov:
+            # simplecov:disable
             to_include << processor
             processor_reference = processor.foobara_manifest_reference
-            # :nocov:
+            # simplecov:enable
           end
         end
 

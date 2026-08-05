@@ -170,9 +170,9 @@ module Foobara
                 )
               end
             else
-              # :nocov:
+              # simplecov:disable
               raise "Bad path part #{path_part}"
-              # :nocov:
+              # simplecov:enable
             end
           end
         end

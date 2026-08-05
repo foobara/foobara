@@ -77,9 +77,9 @@ module Foobara
             validate_action!(action)
             action
           else
-            # :nocov:
+            # simplecov:disable
             raise ArgumentError, "Can either pass an action or not but can't pass multiple"
-            # :nocov:
+            # simplecov:enable
           end
         end
 
@@ -90,9 +90,9 @@ module Foobara
             if actions.size == 1
               normalize_actions(first, validate)
             else
-              # :nocov:
+              # simplecov:disable
               raise ArgumentError, "Not expecting an array of arrays, expected an array of actions"
-              # :nocov:
+              # simplecov:enable
             end
           elsif actions.empty?
             [nil]

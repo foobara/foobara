@@ -75,9 +75,9 @@ module Foobara
               attributes_type = to_type.target_class.attributes_type
               EntityToPrimaryKeyInputsTransformer.new(to: attributes_type).from_type_declaration
             else
-              # :nocov:
+              # simplecov:disable
               raise "Not sure how to handle #{to_type}"
-              # :nocov:
+              # simplecov:enable
             end
           else
             to_type

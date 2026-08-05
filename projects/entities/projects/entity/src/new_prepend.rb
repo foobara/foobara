@@ -11,9 +11,9 @@ module Foobara
 
       # rubocop:disable Lint/DuplicateMethods
       def new(...)
-        # :nocov:
+        # simplecov:disable
         raise "Cannot initialize a #{name}. Use .create, .thunk, .loaded, or .build instead."
-        # :nocov:
+        # simplecov:enable
       end
       # rubocop:enable Lint/DuplicateMethods
     end

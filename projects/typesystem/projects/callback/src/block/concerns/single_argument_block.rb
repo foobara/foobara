@@ -9,10 +9,10 @@ module Foobara
             super
 
             if has_keyword_args?
-              # :nocov:
+              # simplecov:disable
               raise ArgumentError,
                     "Expect #{type} block to only receive one or zero arguments. It cannot take keyword arguments."
-              # :nocov:
+              # simplecov:enable
             end
           end
         end

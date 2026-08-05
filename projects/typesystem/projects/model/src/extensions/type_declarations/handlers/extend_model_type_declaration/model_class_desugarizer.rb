@@ -27,9 +27,9 @@ module Foobara
                 when ::String, nil
                   model_module
                 else
-                  # :nocov:
+                  # simplecov:disable
                   raise ArgumentError, "expected #{model_module} to be a module or module name"
-                  # :nocov:
+                  # simplecov:enable
                 end
             end
 
@@ -53,9 +53,9 @@ module Foobara
                                  elsif klass.is_a?(::String)
                                    klass
                                  else
-                                   # :nocov:
+                                   # simplecov:disable
                                    raise ArgumentError, "expected #{klass} to be a class or class name"
-                                   # :nocov:
+                                   # simplecov:enable
                                  end
 
               strictish_type_declaration[:model_class] = model_class_name
@@ -70,9 +70,9 @@ module Foobara
               when ::String
                 model_base_class
               else
-                # :nocov:
+                # simplecov:disable
                 raise ArgumentError, "expected #{model_base_class} to be a class or class name"
-                # :nocov:
+                # simplecov:enable
               end
 
             if strictish_type_declaration[:name].is_a?(::Symbol)

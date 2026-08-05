@@ -157,9 +157,9 @@ module Foobara
       when String
         key_parts.to_sym
       else
-        # :nocov:
+        # simplecov:disable
         raise ArgumentError, "expected nil, a symbol, or a string, an integer, or an array of such values "
-        # :nocov:
+        # simplecov:enable
       end
     end
   end

@@ -19,9 +19,9 @@ module Foobara
         if left.is_a?(::Hash) && right.is_a?(::Hash)
           # TODO: remove :nocov: once we have an only: and/or reject: desugarizer with a test that
           # merges them together.
-          # :nocov:
+          # simplecov:disable
           left.merge(right)
-          # :nocov:
+          # simplecov:enable
         else
           Util.array(left) + Util.array(right)
         end

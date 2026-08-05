@@ -37,9 +37,9 @@ module Foobara
                            element_processors
                          else
                            # TODO: add validator that these are all fine so we don't have to bother here...
-                           # :nocov:
+                           # simplecov:disable
                            raise "Not sure where to put #{processor}"
-                           # :nocov:
+                           # simplecov:enable
                          end
 
               category << processor

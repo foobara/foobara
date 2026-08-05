@@ -12,9 +12,9 @@ module Foobara
       end
 
       def transform(_value)
-        # :nocov:
+        # simplecov:disable
         raise NotImplementedError
-        # :nocov:
+        # simplecov:enable
       end
 
       def sanitize_value(type, value)

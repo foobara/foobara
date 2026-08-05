@@ -25,9 +25,9 @@ module Foobara
                             when Type
                               if remove_sensitive && element_types.sensitive?
                                 # TODO: test this code path
-                                # :nocov:
+                                # simplecov:disable
                                 []
-                                # :nocov:
+                                # simplecov:enable
                               else
                                 [element_types]
                               end
@@ -44,9 +44,9 @@ module Foobara
                                 element_types
                               end
                             else
-                              # :nocov:
+                              # simplecov:disable
                               raise "Not sure how to find dependent types for #{element_types}"
-                              # :nocov:
+                              # simplecov:enable
                             end
             end
 
@@ -99,9 +99,9 @@ module Foobara
             next_type = case path_part
                         when :"#"
                           unless element_type
-                            # :nocov:
+                            # simplecov:disable
                             raise "Expected element_type to be set but is not"
-                            # :nocov:
+                            # simplecov:enable
                           end
 
                           element_type
@@ -109,29 +109,29 @@ module Foobara
                           case element_types
                           when ::Hash
                             unless element_types.key?(path_part)
-                              # :nocov:
+                              # simplecov:disable
                               raise "Expected element type to have key #{path_part} but does not"
-                              # :nocov:
+                              # simplecov:enable
                             end
 
                             element_types[path_part]
                           when Types::Type
                             unless element_types.extends?(BuiltinTypes[:attributes])
-                              # :nocov:
+                              # simplecov:disable
                               raise "Expected element type to be a Type but is not"
-                              # :nocov:
+                              # simplecov:enable
                             end
 
                             # TODO: We assume it's attributes here but maybe we should assert that
                             element_types.element_types[path_part]
                           when nil
-                            # :nocov:
+                            # simplecov:disable
                             raise "Expected element_types to be set but is not"
-                            # :nocov:
+                            # simplecov:enable
                           else
-                            # :nocov:
+                            # simplecov:disable
                             raise "Unsure how to handle path part #{path_part}"
-                            # :nocov:
+                            # simplecov:enable
                           end
                         when Integer
                           if extends?(BuiltinTypes[:tuple])
@@ -139,20 +139,20 @@ module Foobara
                           elsif extends?(BuiltinTypes[:array])
                             element_type
                           else
-                            # :nocov:
+                            # simplecov:disable
                             raise "Unsure how to handle path part #{path_part}"
-                            # :nocov:
+                            # simplecov:enable
                           end
                         else
-                          # :nocov:
+                          # simplecov:disable
                           raise "Bad path part #{path_part}"
-                          # :nocov:
+                          # simplecov:enable
                         end
 
             unless next_type
-              # :nocov:
+              # simplecov:disable
               raise "Expected to find a type at #{path_part}"
-              # :nocov:
+              # simplecov:enable
             end
 
             if path_parts.empty?
@@ -163,7 +163,7 @@ module Foobara
           end
 
           def inspect
-            # :nocov:
+            # simplecov:disable
             name = if scoped_path_set?
                      scoped_full_name
                    else
@@ -171,7 +171,7 @@ module Foobara
                    end
 
             "#<Type:#{name}:0x#{object_id.to_s(16)} #{declaration_data}>"
-            # :nocov:
+            # simplecov:enable
           end
         end
       end

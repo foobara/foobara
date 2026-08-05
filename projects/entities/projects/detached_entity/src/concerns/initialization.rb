@@ -20,9 +20,9 @@ module Foobara
           invalid_options = options.keys - ALLOWED_OPTIONS
 
           unless invalid_options.empty?
-            # :nocov:
+            # simplecov:disable
             raise ArgumentError, "Invalid options #{invalid_options} expected only #{ALLOWED_OPTIONS}"
-            # :nocov:
+            # simplecov:enable
           end
 
           if options[:unloaded]

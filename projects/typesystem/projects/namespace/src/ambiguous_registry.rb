@@ -22,15 +22,15 @@ module Foobara
         entry = registry[short_name]
 
         unless entry
-          # :nocov:
+          # simplecov:disable
           raise NotRegisteredError, "Not registered: #{short_name.inspect}"
-          # :nocov:
+          # simplecov:enable
         end
 
         unless entry.delete(scoped)
-          # :nocov:
+          # simplecov:disable
           raise NotRegisteredError, "Not registered: #{short_name.inspect}"
-          # :nocov:
+          # simplecov:enable
         end
       end
 

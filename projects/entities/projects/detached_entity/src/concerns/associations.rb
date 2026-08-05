@@ -59,9 +59,9 @@ module Foobara
                 values
               else
                 if values.size > 1
-                  # :nocov:
+                  # simplecov:disable
                   raise "Multiple records found for #{name} association but only expected 0 or 1."
-                  # :nocov:
+                  # simplecov:enable
                 end
 
                 unless values.empty?
@@ -85,13 +85,13 @@ module Foobara
             end
 
             if result.empty?
-              # :nocov:
+              # simplecov:disable
               raise "Could not find association matching #{association_filters}"
-              # :nocov:
+              # simplecov:enable
             elsif result.size > 1
-              # :nocov:
+              # simplecov:disable
               raise "Multiple associations matched by #{association_filters}"
-              # :nocov:
+              # simplecov:enable
             else
               result[0]
             end
@@ -121,9 +121,9 @@ module Foobara
                 entity_class == filter || entity_class < filter
               end
             else
-              # :nocov:
+              # simplecov:disable
               raise "Not sure how to apply filter #{filter}"
-              # :nocov:
+              # simplecov:enable
             end
           end
 
@@ -168,9 +168,9 @@ module Foobara
 
               if remove_sensitive
                 # TODO: test this code path
-                # :nocov:
+                # simplecov:disable
                 element_types = element_types&.reject(&:sensitive?)
-                # :nocov:
+                # simplecov:enable
               end
 
               element_types&.each&.with_index do |element_type, index|
@@ -203,12 +203,12 @@ module Foobara
               end
             elsif type.extends?(BuiltinTypes[:associative_array])
               # not going to bother testing this for now
-              # :nocov:
+              # simplecov:disable
               if contains_associations?(type)
                 raise "Associative array types with associations in them are not currently supported. " \
                       "Use attributes type if you can or set the key_type and/or value_type to duck type"
               end
-              # :nocov:
+              # simplecov:enable
             end
 
             result
@@ -228,9 +228,9 @@ module Foobara
 
               if remove_sensitive
                 # TODO: test this code path
-                # :nocov:
+                # simplecov:disable
                 element_types = element_types&.reject(&:sensitive?)
-                # :nocov:
+                # simplecov:enable
               end
 
               contains_associations?(element_types, false)

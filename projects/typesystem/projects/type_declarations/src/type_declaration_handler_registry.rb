@@ -3,9 +3,9 @@ module Foobara
     class TypeDeclarationHandlerRegistry < Value::Processor::Selection
       class << self
         def foobara_manifest
-          # :nocov:
+          # simplecov:disable
           super.merge(processor_type: :type_declaration_handler_registry)
-          # :nocov:
+          # simplecov:enable
         end
       end
 

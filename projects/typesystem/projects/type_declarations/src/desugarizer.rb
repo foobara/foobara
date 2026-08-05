@@ -11,9 +11,9 @@ module Foobara
         end
 
         def foobara_manifest
-          # :nocov:
+          # simplecov:disable
           super.merge(processor_type: :desugarizer)
-          # :nocov:
+          # simplecov:enable
         end
       end
 

@@ -29,9 +29,9 @@ module Foobara
 
             # TODO: is this possible?
             if record_id.nil?
-              # :nocov:
+              # simplecov:disable
               raise ArgumentError, "Primary key cannot be blank"
-              # :nocov:
+              # simplecov:enable
             end
 
             # check if tracked already...
@@ -58,9 +58,9 @@ module Foobara
             record = current_transaction_table.find_tracked(record_id)
 
             if record&.loaded?
-              # :nocov:
+              # simplecov:disable
               raise "Already loaded for #{attributes}. Bug maybe?"
-              # :nocov:
+              # simplecov:enable
             end
 
             record = __private_new__
@@ -68,9 +68,9 @@ module Foobara
             record.successfully_loaded(attributes)
 
             unless record.primary_key
-              # :nocov:
+              # simplecov:disable
               raise "Expected primary key #{primary_key_attribute} to be present!"
-              # :nocov:
+              # simplecov:enable
             end
 
             record.fire(:initialized)
@@ -104,9 +104,9 @@ module Foobara
 
         def successfully_loaded(attributes)
           if hard_deleted?
-            # :nocov:
+            # simplecov:disable
             raise "Not expecting to load a hard deleted record"
-            # :nocov:
+            # simplecov:enable
           end
 
           # TODO: why would we proceed if this is the case? Maybe raise?

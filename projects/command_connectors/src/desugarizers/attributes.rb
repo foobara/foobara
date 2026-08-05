@@ -5,15 +5,15 @@ module Foobara
     module Desugarizers
       class Attributes < Desugarizer
         def desugarizer_symbol
-          # :nocov:
+          # simplecov:disable
           raise NotImplementedError
-          # :nocov:
+          # simplecov:enable
         end
 
         def opts_key
-          # :nocov:
+          # simplecov:disable
           raise NotImplementedError
-          # :nocov:
+          # simplecov:enable
         end
 
         def applicable?(args_and_opts)

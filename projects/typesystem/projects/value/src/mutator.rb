@@ -12,9 +12,9 @@ module Foobara
       end
 
       def mutate(_value)
-        # :nocov:
+        # simplecov:disable
         raise NotImplementedError
-        # :nocov:
+        # simplecov:enable
       end
 
       def process_value(value)

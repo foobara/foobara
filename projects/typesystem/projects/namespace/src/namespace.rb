@@ -15,9 +15,9 @@ module Foobara
 
       def use(namespace)
         unless namespace.is_a?(Namespace::IsNamespace)
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "Expected #{namespace} to be a namespace"
-          # :nocov:
+          # simplecov:enable
         end
 
         old_namespace = current
@@ -46,9 +46,9 @@ module Foobara
         when Foobara::Scoped
           object.scoped_path
         else
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "Expected #{object} to be a string, symbol, array, or Foobara::IsScoped"
-          # :nocov:
+          # simplecov:enable
         end
       end
 

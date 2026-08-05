@@ -9,9 +9,9 @@ module Foobara
         CommandPatternImplementation.include CommandPatternImplementation::Concerns::EntityReflection
 
         if Foobara.project_installed?("command_connectors")
-          # :nocov:
+          # simplecov:disable
           install_command_connector_extension
-          # :nocov:
+          # simplecov:enable
         end
       end
 

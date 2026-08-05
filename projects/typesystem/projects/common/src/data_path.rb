@@ -194,9 +194,9 @@ module Foobara
         if owner.respond_to?(method)
           owner.__send__(method, value)
         else
-          # :nocov:
+          # simplecov:disable
           raise BadPathError, "Bad path: #{parts}"
-          # :nocov:
+          # simplecov:enable
         end
       end
 
@@ -250,10 +250,10 @@ module Foobara
           key_parts.to_sym
         end
       else
-        # :nocov:
+        # simplecov:disable
         raise ArgumentError,
               "expected nil, a symbol, or a string, an integer, or an array of such values but was a #{key_parts.class}"
-        # :nocov:
+        # simplecov:enable
       end
     end
 
@@ -280,9 +280,9 @@ module Foobara
                 when Integer
                   objects.map { |value| value[path_part] }
                 else
-                  # :nocov:
+                  # simplecov:disable
                   raise "Bad path part: #{path_part.inspect}"
-                  # :nocov:
+                  # simplecov:enable
                 end.compact
 
       _values_at(objects, parts)

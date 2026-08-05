@@ -40,9 +40,9 @@ module Foobara
                                                 args
                                               end
                                             else
-                                              # :nocov:
+                                              # simplecov:disable
                                               raise ArgumentError, "Too many arguments"
-                                              # :nocov:
+                                              # simplecov:enable
                                             end
 
             if model_base_class

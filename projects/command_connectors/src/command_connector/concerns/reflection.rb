@@ -71,11 +71,11 @@ module Foobara
                     end
                   elsif o.is_a?(Types::Type)
                     if o.sensitive?
-                      # :nocov:
+                      # simplecov:disable
                       raise UnexpectedSensitiveTypeInManifestError,
                             "Unexpected sensitive type in manifest: #{o.scoped_full_path}. " \
                             "Make sure these are not included."
-                      # :nocov:
+                      # simplecov:enable
                     else
 
                       mode = Namespace::LookupMode::ABSOLUTE_SINGLE_NAMESPACE
@@ -113,9 +113,9 @@ module Foobara
               category_symbol = command_registry.foobara_category_symbol_for(object)
 
               unless category_symbol
-                # :nocov:
+                # simplecov:disable
                 raise "no category symbol for #{object}"
-                # :nocov:
+                # simplecov:enable
               end
 
               namespace = if object.is_a?(Types::Type)

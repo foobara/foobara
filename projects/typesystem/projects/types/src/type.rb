@@ -185,17 +185,17 @@ module Foobara
 
       def target_class
         if target_classes.empty?
-          # :nocov:
+          # simplecov:disable
           # TODO: We really need a better error message when we hit this point in the code path.
           # One thing that can cause this is if you create a custom type called :model but it isn't loaded
           # yet and we accidentally are referring to the builtin :model type.  This error message doesn't reveal
           # that you need to require the custom :model.
           raise "No target classes"
-          # :nocov:
+          # simplecov:enable
         elsif target_classes.size > 1
-          # :nocov:
+          # simplecov:disable
           raise "Cannot use #target_class because this type has multiple target_classes"
-          # :nocov:
+          # simplecov:enable
         end
 
         target_classes[0]
@@ -208,16 +208,16 @@ module Foobara
         when Symbol, String
           concrete_type = created_in_namespace.foobara_lookup_type(type)
           if concrete_type.nil?
-            # :nocov:
+            # simplecov:disable
             raise "No type found for #{type}"
-            # :nocov:
+            # simplecov:enable
           end
 
           extends_type?(concrete_type)
         else
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "Expected a Type or a Symbol/String, but got #{type.inspect}"
-          # :nocov:
+          # simplecov:enable
         end
       end
 
@@ -229,16 +229,16 @@ module Foobara
           concrete_type = created_in_namespace.foobara_lookup_type(type)
 
           if concrete_type.nil?
-            # :nocov:
+            # simplecov:disable
             raise "No type found for #{type}"
-            # :nocov:
+            # simplecov:enable
           end
 
           extends_directly?(concrete_type)
         else
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "Expected a Type or a Symbol/String, but got #{type.inspect}"
-          # :nocov:
+          # simplecov:enable
         end
       end
 
@@ -246,9 +246,9 @@ module Foobara
         return true if self == type
 
         unless type
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "Expected a type but got nil"
-          # :nocov:
+          # simplecov:enable
         end
 
         if registered?
@@ -555,22 +555,22 @@ module Foobara
                      when Value::Caster
                        casters
                      when Value::Validator
-                       # :nocov:
+                       # simplecov:disable
                        validators
-                       # :nocov:
+                       # simplecov:enable
                      when Value::Transformer
-                       # :nocov:
+                       # simplecov:disable
                        transformers
-                       # :nocov:
+                       # simplecov:enable
                      when Types::ElementProcessor
-                       # :nocov:
+                       # simplecov:disable
                        element_processors
-                       # :nocov:
+                       # simplecov:enable
                      else
                        # TODO: add validator that these are all fine so we don't have to bother here...
-                       # :nocov:
+                       # simplecov:disable
                        raise "Not sure where to put #{processor}"
-                       # :nocov:
+                       # simplecov:enable
                      end
 
           symbol = processor.symbol
@@ -598,9 +598,9 @@ module Foobara
                   processor_group.delete(member)
                 end
               else
-                # :nocov:
+                # simplecov:disable
                 raise "Type #{name} has multiple processors with symbol #{symbol}"
-                # :nocov:
+                # simplecov:enable
               end
             end
           end

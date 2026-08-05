@@ -77,9 +77,9 @@ module Foobara
 
       def foobara_class_methods_module_for(klass)
         unless klass.name
-          # :nocov:
+          # simplecov:disable
           raise "This does not work with anonymous classes"
-          # :nocov:
+          # simplecov:enable
         end
 
         if klass.const_defined?(:ClassMethods, false)

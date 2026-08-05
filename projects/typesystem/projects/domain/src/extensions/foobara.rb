@@ -13,27 +13,27 @@ module Foobara
           to_include.delete(object)
 
           unless object.scoped_path_set?
-            # :nocov:
+            # simplecov:disable
             raise "no scoped path set for #{object}"
-            # :nocov:
+            # simplecov:enable
           end
 
           manifest_reference = object.foobara_manifest_reference.to_sym
           category_symbol = Namespace.global.foobara_category_symbol_for(object)
 
           unless category_symbol
-            # :nocov:
+            # simplecov:disable
             raise "no category symbol for #{object}"
-            # :nocov:
+            # simplecov:enable
           end
 
           if included.key?(manifest_reference)
             if included[manifest_reference] == category_symbol
               next
             else
-              # :nocov:
+              # simplecov:disable
               raise "Collision for #{manifest_reference}: #{included[manifest_reference]} and #{category_symbol}"
-              # :nocov:
+              # simplecov:enable
             end
           end
 

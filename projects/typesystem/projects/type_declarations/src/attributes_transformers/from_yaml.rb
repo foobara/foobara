@@ -4,9 +4,9 @@ module Foobara
       # TODO: dry this up with a .subclass method in AttributesTransformers?
       def from_yaml(*attribute_names)
         if attribute_names.empty?
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "You must specify at least one attribute name"
-          # :nocov:
+          # simplecov:enable
         end
 
         symbol = symbol_for_attribute_names(attribute_names)

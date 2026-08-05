@@ -19,9 +19,9 @@ module Foobara
                     rawish_type_declaration[:one_of] = begin
                       one_of.sort
                     rescue
-                      # :nocov:
+                      # simplecov:disable
                       one_of.sort_by(&:inspect)
-                      # :nocov:
+                      # simplecov:enable
                     end
 
                     rawish_type_declaration

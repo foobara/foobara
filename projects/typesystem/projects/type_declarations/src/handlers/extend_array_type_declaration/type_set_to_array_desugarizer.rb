@@ -26,10 +26,10 @@ module Foobara
 
             if sugary_type_declaration.deep_duped?
               # TODO: probably not worth testing this path
-              # :nocov:
+              # simplecov:disable
               strict_type_declaration.is_deep_duped = true
               strict_type_declaration.is_duped = true
-              # :nocov:
+              # simplecov:enable
             end
 
             strict_type_declaration = super(strict_type_declaration)

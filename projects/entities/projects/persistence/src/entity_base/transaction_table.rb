@@ -32,21 +32,21 @@ module Foobara
 
         def find_tracked(record_id)
           unless record_id
-            # :nocov:
+            # simplecov:disable
             raise ArgumentError, "Cannot use a blank primary key value"
-            # :nocov:
+            # simplecov:enable
           end
 
           if record_id.is_a?(::String) && record_id.empty?
-            # :nocov:
+            # simplecov:disable
             raise ArgumentError, "Cannot use a blank primary key value"
-            # :nocov:
+            # simplecov:enable
           end
 
           if record_id.is_a?(::Symbol) && record_id.to_s.empty?
-            # :nocov:
+            # simplecov:disable
             raise ArgumentError, "Cannot use a blank primary key value"
-            # :nocov:
+            # simplecov:enable
           end
 
           tracked_records.find_by_key(record_id)
@@ -66,33 +66,33 @@ module Foobara
 
         def load(entity_or_record_id)
           if entity_or_record_id.nil?
-            # :nocov:
+            # simplecov:disable
             raise "Expected a record or record primary key but received nil"
-            # :nocov:
+            # simplecov:enable
           end
 
           if entity_or_record_id.is_a?(Entity)
             entity = if entity_or_record_id.persisted?
                        unless entity_or_record_id.primary_key
-                         # :nocov:
+                         # simplecov:disable
                          raise "Did not expect a record to be persisted but have no primary key"
-                         # :nocov:
+                         # simplecov:enable
                        end
 
                        tracked_records.find_by_key(entity_or_record_id.primary_key)
                      else
-                       # :nocov:
+                       # simplecov:disable
                        raise "Cannot load an unpersisted record!"
-                       # :nocov:
+                       # simplecov:enable
                      end
 
             # rubocop:disable Lint/IdentityComparison
             if entity &&
                (!entity.equal?(entity_or_record_id) || entity.object_id != entity_or_record_id.object_id)
-              # :nocov:
+              # simplecov:disable
               raise "This transaction is already tracking a different entity with the same primary key." \
                     "Try passing in the primary key instead of constructing an unloaded entity to pass in."
-              # :nocov:
+              # simplecov:enable
             end
             # rubocop:enable Lint/IdentityComparison
 
@@ -101,27 +101,27 @@ module Foobara
             record_id = entity_or_record_id
 
             if record_id.is_a?(::Hash)
-              # :nocov:
+              # simplecov:disable
               raise ArgumentError, "Unlikely that you meant to use a hash as a primary key"
-              # :nocov:
+              # simplecov:enable
             end
 
             unless record_id
-              # :nocov:
+              # simplecov:disable
               raise ArgumentError, "Cannot use a blank primary key value"
-              # :nocov:
+              # simplecov:enable
             end
 
             if record_id.is_a?(::String) && record_id.empty?
-              # :nocov:
+              # simplecov:disable
               raise ArgumentError, "Cannot use a blank primary key value"
-              # :nocov:
+              # simplecov:enable
             end
 
             if record_id.is_a?(::Symbol) && record_id.to_s.empty?
-              # :nocov:
+              # simplecov:disable
               raise ArgumentError, "Cannot use a blank primary key value"
-              # :nocov:
+              # simplecov:enable
             end
 
             entity = tracked_records.find_by_key(record_id)
@@ -136,9 +136,9 @@ module Foobara
               attributes = normalize_attributes(entity_attributes_crud_driver_table.find!(record_id))
 
               unless attributes
-                # :nocov:
+                # simplecov:disable
                 raise NoRecordFound, "could not find record for #{entity_class.full_entity_name}:#{record_id}"
-                # :nocov:
+                # simplecov:enable
               end
 
               entity.successfully_loaded(attributes)
@@ -147,9 +147,9 @@ module Foobara
             attributes = normalize_attributes(entity_attributes_crud_driver_table.find!(record_id))
 
             unless attributes
-              # :nocov:
+              # simplecov:disable
               raise NoRecordFound, "could not find record for #{entity_class.full_entity_name}:#{record_id}"
-              # :nocov:
+              # simplecov:enable
             end
 
             transaction.loaded(entity_class, attributes)
@@ -168,23 +168,23 @@ module Foobara
 
               entity = if entity_or_record_id.persisted?
                          unless entity_or_record_id.primary_key
-                           # :nocov:
+                           # simplecov:disable
                            raise "Did not expect a record to be persisted but have no primary key"
-                           # :nocov:
+                           # simplecov:enable
                          end
 
                          tracked_records.find_by_key(entity_or_record_id.primary_key)
                        else
-                         # :nocov:
+                         # simplecov:disable
                          raise "Cannot load an unpersisted record!"
-                         # :nocov:
+                         # simplecov:enable
                        end
 
               if entity && !entity.equal?(entity_or_record_id)
-                # :nocov:
+                # simplecov:disable
                 raise "This transaction is already tracking a different entity with the same primary key." \
                       "Try passing in the primary key instead of constructing an unloaded entity to pass in."
-                # :nocov:
+                # simplecov:enable
               end
 
               record_id = entity.primary_key
@@ -194,28 +194,28 @@ module Foobara
               record_id = entity_or_record_id
 
               if record_id.is_a?(::Hash)
-                # :nocov:
+                # simplecov:disable
                 raise ArgumentError, "Unlikely that you meant to use a hash as a primary key"
-                # :nocov:
+                # simplecov:enable
               end
 
               # TODO: encapsulate this record_id verification
               unless record_id
-                # :nocov:
+                # simplecov:disable
                 raise ArgumentError, "Cannot use a blank primary key value"
-                # :nocov:
+                # simplecov:enable
               end
 
               if record_id.is_a?(::String) && record_id.empty?
-                # :nocov:
+                # simplecov:disable
                 raise ArgumentError, "Cannot use a blank primary key value"
-                # :nocov:
+                # simplecov:enable
               end
 
               if record_id.is_a?(::Symbol) && record_id.to_s.empty?
-                # :nocov:
+                # simplecov:disable
                 raise ArgumentError, "Cannot use a blank primary key value"
-                # :nocov:
+                # simplecov:enable
               end
 
               entity = tracked_records.find_by_key(record_id)
@@ -323,9 +323,9 @@ module Foobara
                 # was already considered among tracked records if loaded? is true so do not return it as
                 # it has changed and no longer matches
                 # TODO: figure out how to test this code path
-                # :nocov:
+                # simplecov:disable
                 record = nil
-                # :nocov:
+                # simplecov:enable
               else
                 loading(record) do
                   record.successfully_loaded(found_attributes)
@@ -356,9 +356,9 @@ module Foobara
             when ::Array, Value::DataPath
               path_filters[attribute_name_or_path] = value
             else
-              # :nocov:
+              # simplecov:disable
               raise "Unexpected filter type: #{attribute_name_or_path.class}"
-              # :nocov:
+              # simplecov:enable
             end
           end
 
@@ -397,9 +397,9 @@ module Foobara
                   # was already considered among tracked records if loaded? is true so do not return it as
                   # it has changed and no longer matches
                   # TODO: figure out how to test this code path
-                  # :nocov:
+                  # simplecov:disable
                   record = nil
-                  # :nocov:
+                  # simplecov:enable
                 else
                   loading(record) do
                     record.successfully_loaded(found_attributes)
@@ -462,7 +462,7 @@ module Foobara
 
               if record
                 # TODO: test this code path
-                # :nocov:
+                # simplecov:disable
                 if record.loaded?
                   # was already considered among tracked records if loaded? is true so do not return it as
                   # it has changed and no longer matches
@@ -472,7 +472,7 @@ module Foobara
                     record.successfully_loaded(found_attributes)
                   end
                 end
-                # :nocov:
+                # simplecov:enable
               else
                 record = entity_class.loaded(found_attributes)
               end
@@ -526,7 +526,7 @@ module Foobara
 
               if record
                 # TODO: test this code path
-                # :nocov:
+                # simplecov:disable
                 if record.loaded?
                   # was already considered among tracked records if loaded? is true so do not return it as
                   # it has changed and no longer matches
@@ -536,7 +536,7 @@ module Foobara
                     record.successfully_loaded(found_attributes)
                   end
                 end
-                # :nocov:
+                # simplecov:enable
               else
                 record = entity_class.loaded(found_attributes)
               end
@@ -554,9 +554,9 @@ module Foobara
 
         def track_created(entity)
           if entity.persisted?
-            # :nocov:
+            # simplecov:disable
             raise "Cannot insert #{entity} because it's already persisted."
-            # :nocov:
+            # simplecov:enable
           end
 
           created(entity)

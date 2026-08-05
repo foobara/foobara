@@ -6,9 +6,9 @@ module Foobara
       class ExtendRegisteredTypeDeclaration < RegisteredTypeDeclaration
         def applicable?(sugary_type_declaration)
           strict_type_declaration = if sugary_type_declaration.strict?
-                                      # :nocov:
+                                      # simplecov:disable
                                       sugary_type_declaration
-                                      # :nocov:
+                                      # simplecov:enable
                                     else
                                       desugarize(sugary_type_declaration.clone)
                                     end

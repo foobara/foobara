@@ -32,9 +32,9 @@ module Foobara
             arg
           end
         else
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "expected 0 or 1 argument, got #{args_size}"
-          # :nocov:
+          # simplecov:enable
         end
       end
 
@@ -63,9 +63,9 @@ module Foobara
             arg
           end
         else
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "expected 0 or 1 argument, got #{args_size}"
-          # :nocov:
+          # simplecov:enable
         end
       end
 
@@ -84,9 +84,9 @@ module Foobara
             arg
           end
         else
-          # :nocov:
+          # simplecov:disable
           raise ArgumentError, "expected 0 or 1 argument, got #{args_size}"
-          # :nocov:
+          # simplecov:enable
         end
       end
 
@@ -249,9 +249,9 @@ module Foobara
       self.is_fatal = is_fatal
 
       if !self.message.is_a?(String) || self.message.empty?
-        # :nocov:
+        # simplecov:disable
         raise "Bad error message, expected a string"
-        # :nocov:
+        # simplecov:enable
       end
 
       backtrace_when_initialized = caller[1..]

@@ -23,9 +23,9 @@ module Foobara
         errors = errors.flatten
 
         if errors.empty?
-          # :nocov:
+          # simplecov:disable
           raise "No errors given"
-          # :nocov:
+          # simplecov:enable
         end
 
         new.tap do |outcome|
@@ -56,9 +56,9 @@ module Foobara
     end
 
     def has_error
-      # :nocov:
+      # simplecov:disable
       error_collection.has_error
-      # :nocov:
+      # simplecov:enable
     end
 
     def add_errors(*errors)

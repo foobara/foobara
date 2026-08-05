@@ -9,9 +9,9 @@ module Foobara
             super
 
             unless takes_block?
-              # :nocov:
+              # simplecov:disable
               raise ArgumentError, "#{type} callback must take a block argument"
-              # :nocov:
+              # simplecov:enable
             end
           end
         end

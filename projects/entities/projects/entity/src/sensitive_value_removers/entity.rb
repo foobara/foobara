@@ -16,18 +16,18 @@ module Foobara
             thunkish.mutable = false
             thunkish
           else
-            # :nocov:
+            # simplecov:disable
             raise "Not sure what to do with a record that isn't loaded, created, or persisted"
-            # :nocov:
+            # simplecov:enable
           end
         end
 
         def build_method
           if to_type.extends?(BuiltinTypes[:entity])
             # TODO: figure out a way to test this path
-            # :nocov:
+            # simplecov:disable
             :build
-            # :nocov:
+            # simplecov:enable
           else
             :new
           end

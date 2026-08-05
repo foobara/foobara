@@ -11,15 +11,15 @@ module Foobara
         module ClassMethods
           def primary_key(attribute_name)
             if primary_key_attribute
-              # :nocov:
+              # simplecov:disable
               raise "Primary key already set to #{primary_key_attribute}"
-              # :nocov:
+              # simplecov:enable
             end
 
             if attribute_name.nil? || attribute_name.empty?
-              # :nocov:
+              # simplecov:disable
               raise ArgumentError, "Primary key can't be blank"
-              # :nocov:
+              # simplecov:enable
             end
 
             @foobara_primary_key_attribute = attribute_name.to_sym

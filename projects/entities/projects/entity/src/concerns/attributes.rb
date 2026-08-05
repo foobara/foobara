@@ -26,21 +26,21 @@ module Foobara
 
             if attribute_name == primary_key_attribute
               if value.nil?
-                # :nocov:
+                # simplecov:disable
                 raise "Primary key cannot be set to a blank value"
-                # :nocov:
+                # simplecov:enable
               end
 
               if value.is_a?(::String) && value.empty?
-                # :nocov:
+                # simplecov:disable
                 raise "Primary key cannot be set to a blank value"
-                # :nocov:
+                # simplecov:enable
               end
 
               if value.is_a?(::Symbol) && value.to_s.empty?
-                # :nocov:
+                # simplecov:disable
                 raise "Primary key cannot be set to a blank value"
-                # :nocov:
+                # simplecov:enable
               end
 
               write_attribute!(attribute_name, value)

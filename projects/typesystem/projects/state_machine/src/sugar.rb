@@ -23,9 +23,9 @@ module Foobara
                 transitions_for_state = transition_map[state] ||= {}
 
                 if transitions_for_state.key?(transition)
-                  # :nocov:
+                  # simplecov:disable
                   raise TransitionAlreadyDefinedError, "There's already a #{transition} for #{state}"
-                  # :nocov:
+                  # simplecov:enable
                 end
 
                 transitions_for_state[transition] = next_state

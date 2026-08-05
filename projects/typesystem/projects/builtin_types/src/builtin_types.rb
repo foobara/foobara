@@ -42,9 +42,9 @@ module Foobara
         transformers = []
         transformer_classes&.each do |transformer_class|
           if transformer_class.respond_to?(:requires_type?) && transformer_class.requires_type?
-            # :nocov:
+            # simplecov:disable
             processor_classes_requiring_type << transformer_class
-            # :nocov:
+            # simplecov:enable
           else
             transformers << transformer_class.new_with_agnostic_args(parent_declaration_data: declaration_data)
           end
@@ -57,9 +57,9 @@ module Foobara
         validators = []
         validator_classes&.each do |validator_class|
           if validator_class.respond_to?(:requires_type?) && validator_class.requires_type?
-            # :nocov:
+            # simplecov:disable
             processor_classes_requiring_type << validator_class
-            # :nocov:
+            # simplecov:enable
           else
             validators << validator_class.new_with_agnostic_args(parent_declaration_data: declaration_data)
           end
@@ -164,9 +164,9 @@ module Foobara
           handler_class_to_extend = TypeDeclarations::Handlers.const_get(handler_name)
 
           unless handler_class_to_extend
-            # :nocov:
+            # simplecov:disable
             raise "Couldn't find handler class for #{handler_name}"
-            # :nocov:
+            # simplecov:enable
           end
 
           handler_to_extend = global_type_declaration_handler_registry.type_declaration_handler_for_handler_class(
@@ -174,9 +174,9 @@ module Foobara
           )
 
           unless handler_to_extend
-            # :nocov:
+            # simplecov:disable
             raise "Could not find a handler for #{handler_class_to_extend}"
-            # :nocov:
+            # simplecov:enable
           end
 
           desugarizer_module = Util.constant_value(handler_module, :Desugarizers)

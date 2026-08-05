@@ -10,9 +10,9 @@ module Foobara
             key = key.to_s_type
 
             unless error_context_type_map.key?(key)
-              # :nocov:
+              # simplecov:disable
               raise "No error class was registered for #{key}"
-              # :nocov:
+              # simplecov:enable
             end
 
             error_context_type_map[key].error_class
@@ -23,9 +23,9 @@ module Foobara
             key = key.to_s_type
 
             unless error_context_type_map.key?(key)
-              # :nocov:
+              # simplecov:disable
               raise "No error class was registered for #{key}"
-              # :nocov:
+              # simplecov:enable
             end
 
             error_context_type_map[key].error_class
@@ -37,9 +37,9 @@ module Foobara
             end
 
             unless error_context_type_map.key?(key)
-              # :nocov:
+              # simplecov:disable
               raise "No error class was registered for #{key}"
-              # :nocov:
+              # simplecov:enable
             end
 
             error_context_type_map[key].error_class
@@ -69,9 +69,9 @@ module Foobara
                     error = args[0]
 
                     unless error.is_a?(Value::DataError)
-                      # :nocov:
+                      # simplecov:disable
                       raise ArgumentError, "expected an DataError or keyword arguments to construct one"
-                      # :nocov:
+                      # simplecov:enable
                     end
 
                     error
@@ -83,15 +83,15 @@ module Foobara
                     error_args = error_args.except(:input)
 
                     unless symbol
-                      # :nocov:
+                      # simplecov:disable
                       raise ArgumentError, "missing error symbol"
-                      # :nocov:
+                      # simplecov:enable
                     end
 
                     unless path
-                      # :nocov:
+                      # simplecov:disable
                       raise ArgumentError, "missing input"
-                      # :nocov:
+                      # simplecov:enable
                     end
 
                     error_class = self.class.lookup_input_error_class(symbol, path)
@@ -109,10 +109,10 @@ module Foobara
 
                     error_class.new(path: input, symbol:, context:, message:)
                   else
-                    # :nocov:
+                    # simplecov:disable
                     raise ArgumentError,
                           "Invalid arguments given. Expected an error or args for an error"
-                    # :nocov:
+                    # simplecov:enable
                   end
 
           add_error(error)
@@ -135,10 +135,10 @@ module Foobara
                     end
 
                     unless error.is_a?(Foobara::RuntimeError)
-                      # :nocov:
+                      # simplecov:disable
                       raise ArgumentError,
                             "expected a Foobara::RuntimeError or keyword arguments to construct one"
-                      # :nocov:
+                      # simplecov:enable
                     end
 
                     error
@@ -147,9 +147,9 @@ module Foobara
                     symbol = error_args[:symbol]
 
                     unless symbol
-                      # :nocov:
+                      # simplecov:disable
                       raise ArgumentError, "missing error symbol"
-                      # :nocov:
+                      # simplecov:enable
                     end
 
                     error_class = self.class.lookup_runtime_error_class(symbol)
@@ -161,9 +161,9 @@ module Foobara
                     error_class = self.class.lookup_runtime_error_class(symbol)
                     error_class.new(symbol:, context:, message:)
                   else
-                    # :nocov:
+                    # simplecov:disable
                     raise ArgumentError, "Invalid arguments given. Expected an error or args/opts to build error"
-                    # :nocov:
+                    # simplecov:enable
                   end
 
           add_error(error)

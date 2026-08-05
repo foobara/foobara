@@ -31,9 +31,9 @@ module Foobara
           invalid_options = options.keys - allowed
 
           unless invalid_options.empty?
-            # :nocov:
+            # simplecov:disable
             raise ArgumentError, "Invalid options #{invalid_options} expected only #{allowed}"
-            # :nocov:
+            # simplecov:enable
           end
 
           name ||= "#{self.name}::Anon#{SecureRandom.hex}"
@@ -67,9 +67,9 @@ module Foobara
       end
 
       def transform(_value)
-        # :nocov:
+        # simplecov:disable
         raise NotImplementedError
-        # :nocov:
+        # simplecov:enable
       end
 
       def process_value(value)

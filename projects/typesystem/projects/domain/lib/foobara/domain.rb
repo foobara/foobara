@@ -3,9 +3,9 @@ module Foobara
     class << self
       def install!
         if @installed
-          # :nocov:
+          # simplecov:disable
           raise "Already registered Domain"
-          # :nocov:
+          # simplecov:enable
         end
 
         # TODO: delete this?

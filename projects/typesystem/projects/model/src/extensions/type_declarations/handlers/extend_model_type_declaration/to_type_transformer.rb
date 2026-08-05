@@ -17,9 +17,9 @@ module Foobara
               if model_type
                 if model_type.foobara_root_namespace == Foobara::Namespace.current.foobara_root_namespace
                   # TODO: test this code path
-                  # :nocov:
+                  # simplecov:disable
                   existing_class
-                  # :nocov:
+                  # simplecov:enable
                 end
               end
             else
@@ -83,9 +83,9 @@ module Foobara
                 existing_model_type = model_class.model_type
 
                 if existing_model_type
-                  # :nocov:
+                  # simplecov:disable
                   raise "Did not expect #{type.declaration_data[:name]} to already exist"
-                  # :nocov:
+                  # simplecov:enable
                 else
                   model_class.model_type = type
 
