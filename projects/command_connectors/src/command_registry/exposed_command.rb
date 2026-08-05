@@ -16,6 +16,7 @@ module Foobara
                     :response_mutators,
                     :allowed_rule,
                     :requires_authentication,
+                    :authentication_optional,
                     :authenticator,
                     :scoped_path
 
@@ -33,6 +34,7 @@ module Foobara
         serializers: nil,
         allowed_rule: nil,
         requires_authentication: nil,
+        authentication_optional: nil,
         authenticator: nil,
         aggregate_entities: nil,
         atomic_entities: nil
@@ -103,6 +105,7 @@ module Foobara
         self.serializers = serializers
         self.allowed_rule = allowed_rule
         self.requires_authentication = requires_authentication
+        self.authentication_optional = authentication_optional
         self.authenticator = authenticator
 
         # A bit hacky... we should check if we need to shim in a LoadDelegatedAttributesEntitiesPreCommitTransformer
@@ -161,6 +164,7 @@ module Foobara
             serializers,
             allowed_rule,
             requires_authentication,
+            authentication_optional,
             authenticator,
             result_has_sensitive_types?
           ]
@@ -182,6 +186,7 @@ module Foobara
                                            serializers:,
                                            allowed_rule:,
                                            requires_authentication:,
+                                           authentication_optional:,
                                            authenticator:
                                          )
                                        end

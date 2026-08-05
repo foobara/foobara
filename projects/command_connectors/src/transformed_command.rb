@@ -19,6 +19,7 @@ module Foobara
                     :request_mutators,
                     :allowed_rule,
                     :requires_authentication,
+                    :authentication_optional,
                     :authenticator,
                     :subclassed_in_namespace,
                     :suffix,
@@ -39,6 +40,7 @@ module Foobara
         allowed_rule:,
         requires_authentication:,
         authenticator:,
+        authentication_optional: nil,
         suffix: nil,
         capture_unknown_error: false
       )
@@ -56,6 +58,7 @@ module Foobara
           klass.request_mutators = Util.array(request_mutators)
           klass.allowed_rule = allowed_rule
           klass.requires_authentication = requires_authentication
+          klass.authentication_optional = authentication_optional
           klass.authenticator = authenticator
           klass.subclassed_in_namespace = scoped_namespace
           klass.suffix = suffix

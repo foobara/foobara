@@ -83,6 +83,7 @@ RSpec.describe Foobara::CommandConnector do
   let(:allowed_rule) { nil }
   let(:allowed_rules) { nil }
   let(:requires_authentication) { nil }
+  let(:authentication_optional) { nil }
   let(:capture_unknown_error) { false }
   let(:aggregate_entities) { nil }
   let(:atomic_entities) { nil }
@@ -473,6 +474,7 @@ RSpec.describe Foobara::CommandConnector do
         request: request_mutators,
         allowed_rule:,
         requires_authentication:,
+        authentication_optional:,
         pre_commit_transformers:,
         capture_unknown_error:,
         aggregate_entities:,
@@ -1063,6 +1065,73 @@ RSpec.describe Foobara::CommandConnector do
             expect(response.status).to be(0)
             expect(JSON.parse(response.body)).to eq(8)
           end
+        end
+      end
+
+      context "when authentication is optional" do
+        let(:requires_authentication) { nil }
+        let(:authentication_optional) { true }
+        let(:authenticator) { proc { "some-user" } }
+
+        it "authenticates, so the command can tell who is calling" do
+          expect(response.status).to be(0)
+          expect(response.authenticated_user).to eq("some-user")
+        end
+
+        context "when the authenticator finds nobody" do
+          let(:authenticator) { proc {} }
+
+          it "is not an error" do
+            # Only requires_authentication refuses for this. Asking to identify
+            # the caller is not asking to insist there is one.
+            expect(response.status).to be(0)
+            expect(response.authenticated_user).to be_nil
+          end
+        end
+      end
+
+      context "when authentication is asked for but no authenticator is configured" do
+        # Asking to authenticate with nothing that can authenticate is a
+        # misconfiguration, and it blows up either way. Required must fail
+        # loudly rather than let a caller through, which is what it did before
+        # this option existed. Optional is held to the same rule deliberately:
+        # proceeding anonymously would hide the mistake, and a command that
+        # never sees a caller it was written to recognise is a quiet bug.
+        let(:authenticator) { nil }
+
+        context "when it is required" do
+          let(:requires_authentication) { true }
+          let(:authentication_optional) { nil }
+
+          it "blows up rather than running the command unauthenticated" do
+            expect {
+              response
+            }.to raise_error(Foobara::CommandConnector::NoAuthenticatorGivenError, /requires_authentication/)
+          end
+        end
+
+        context "when it is optional" do
+          let(:requires_authentication) { nil }
+          let(:authentication_optional) { true }
+
+          it "blows up rather than running the command anonymously" do
+            expect {
+              response
+            }.to raise_error(Foobara::CommandConnector::NoAuthenticatorGivenError, /authentication_optional/)
+          end
+        end
+      end
+
+      context "when neither is asked for" do
+        let(:requires_authentication) { nil }
+        let(:authentication_optional) { nil }
+        let(:authenticator) { proc { "some-user" } }
+
+        it "does not authenticate at all" do
+          # The opt-in matters: an authenticator can be expensive, and a command
+          # that wants nothing to do with identity should not pay for it.
+          expect(response.status).to be(0)
+          expect(response.authenticated_user).to be_nil
         end
       end
 
