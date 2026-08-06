@@ -601,7 +601,7 @@ module Foobara
       command_class = determine_command_class(request)
       request.command_class = command_class
 
-      if command_class.respond_to?(:requires_authentication) && command_class.requires_authentication
+      if request.requires_authentication?
         request.authenticator ||= command_class.authenticator || authenticator
 
         if auth_map

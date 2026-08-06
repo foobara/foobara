@@ -48,9 +48,16 @@ module Foobara
         end
       end
 
+      # respond_to? rather than `command_class < TransformedCommand`: it is nil
+      # until determine_command_class has run and stays nil when the request
+      # already failed, and Request does not require a TransformedCommand.
+      def requires_authentication?
+        command_class.respond_to?(:requires_authentication) && command_class.requires_authentication
+      end
+
       def authenticate
         return if error
-        return unless command_class.respond_to?(:requires_authentication) && command_class.requires_authentication
+        return unless requires_authentication?
 
         authenticated_user, authenticated_credential = authenticator.authenticate(self)
 
