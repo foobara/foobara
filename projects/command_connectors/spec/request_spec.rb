@@ -3,6 +3,26 @@ RSpec.describe Foobara::CommandConnector::Request do
     described_class.new
   end
 
+  describe "#requires_authentication?" do
+    it "is false when no command class has been determined yet" do
+      # run_request asks this before it checks whether a command was found at
+      # all, so nil has to be an answer rather than an exception.
+      expect(request.requires_authentication?).to be false
+    end
+
+    it "is false for a command class that says nothing about authentication" do
+      request.command_class = Class.new
+
+      expect(request.requires_authentication?).to be false
+    end
+
+    it "is true when the command class requires it" do
+      request.command_class = Class.new { def self.requires_authentication = true }
+
+      expect(request.requires_authentication?).to be true
+    end
+  end
+
   describe "#serializer" do
     before do
       request.serializers = serializers
