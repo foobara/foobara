@@ -5,10 +5,6 @@ module Foobara
                     :status,
                     :body
 
-      # Who the request authenticated, if anyone. Nil when nothing identified a
-      # caller, and also when the command asked for no authentication at all.
-      def authenticated_user = request.authenticated_user
-
       def initialize(request:, status: nil, body: nil)
         self.request = request
         self.status = status
@@ -30,6 +26,8 @@ module Foobara
       def outcome
         request.outcome
       end
+
+      def authenticated_user = request.authenticated_user
     end
   end
 end

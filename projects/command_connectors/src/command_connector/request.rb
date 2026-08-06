@@ -48,29 +48,14 @@ module Foobara
         end
       end
 
-      # ESTABLISHING who the caller is and REQUIRING that they be someone are
-      # different things, and both are authentication. `requires_authentication`
-      # asks for both. `authentication_optional` asks for only the first:
-      # identify the caller if you can, but do not insist.
-      #
-      # A command can want exactly that. One readable anonymously may still show
-      # more, or differently, to a caller it recognises — a feed marking your own
-      # posts as editable. Without this such a command sees authenticated_user as
-      # nil and nothing can populate it.
       def authenticate
         return if error
         return unless requires_authentication? || authentication_optional?
 
         unless authenticator
-          # Both flags are held to this. Requiring authentication must fail
-          # rather than let a caller through; optional authentication could
-          # proceed anonymously, but that would quietly hide the mistake from a
-          # command written to recognise callers.
-          asked_by = requires_authentication? ? "requires_authentication" : "authentication_optional"
-
           raise CommandConnector::NoAuthenticatorGivenError,
-                "#{command_class.full_command_name} sets #{asked_by} but no authenticator was given. " \
-                "Pass authenticator: when creating the connector or when connecting the command."
+                "Running a #{command_class.full_command_name} via #{command_connector} " \
+                "requires an authenticator but this connector does not have one"
         end
 
         authenticated_user, authenticated_credential = authenticator.authenticate(self)

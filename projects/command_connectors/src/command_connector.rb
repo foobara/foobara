@@ -2,7 +2,6 @@ module Foobara
   class CommandConnector
     class UnexpectedSensitiveTypeInManifestError < StandardError; end
     class AlreadyConnectedError < StandardError; end
-    # A command asked to be authenticated and nothing can do it.
     class NoAuthenticatorGivenError < StandardError; end
 
     include Concerns::Desugarizers
