@@ -75,12 +75,12 @@ module Foobara
 
           # Schema manipulation
 
-          def rename_column(old_name, new_name)
+          def rename_attribute(old_name, new_name)
             old_name = old_name.to_sym
             new_name = new_name.to_sym
 
             if records.any? { |_, attrs| attrs.key?(new_name) }
-              raise CannotRenameColumnError.new(old_name, "column #{new_name.inspect} already exists")
+              raise CannotRenameAttributeError.new(old_name, "attribute #{new_name.inspect} already exists")
             end
 
             records.each_value do |attributes|
@@ -90,7 +90,7 @@ module Foobara
             end
           end
 
-          def add_column(name, type: nil)
+          def add_attribute(name, type: nil)
             name = name.to_sym
             default_value = nil
 
@@ -104,7 +104,7 @@ module Foobara
             end
           end
 
-          def drop_column(name)
+          def drop_attribute(name)
             name = name.to_sym
 
             records.each_value do |attributes|
@@ -112,7 +112,7 @@ module Foobara
             end
           end
 
-          def column_names
+          def attribute_names
             return [] if records.empty?
 
             records.each_value.with_object(Set.new) do |attrs, keys|

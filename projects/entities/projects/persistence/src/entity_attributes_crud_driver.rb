@@ -103,7 +103,7 @@ module Foobara
         class CannotUpdateError < CannotCrudError; end
         class CannotDeleteError < CannotCrudError; end
 
-        class CannotRenameColumnError < StandardError; end
+        class CannotRenameAttributeError < StandardError; end
 
         attr_accessor :table_name, :entity_class, :raw_connection, :crud_driver
 
@@ -277,25 +277,25 @@ module Foobara
 
         # Schema manipulation methods
 
-        def rename_column(_old_name, _new_name)
+        def rename_attribute(_old_name, _new_name)
           # :nocov:
           raise NotImplementedError
           # :nocov:
         end
 
-        def add_column(_name, type: nil)
+        def add_attribute(_name, type: nil)
           # :nocov:
           raise NotImplementedError
           # :nocov:
         end
 
-        def drop_column(_name)
+        def drop_attribute(_name)
           # :nocov:
           raise NotImplementedError
           # :nocov:
         end
 
-        def column_names
+        def attribute_names
           # :nocov:
           raise NotImplementedError
           # :nocov:
