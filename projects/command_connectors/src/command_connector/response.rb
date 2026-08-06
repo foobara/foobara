@@ -26,6 +26,8 @@ module Foobara
       def outcome
         request.outcome
       end
+
+      def authenticated_user = request.authenticated_user
     end
   end
 end

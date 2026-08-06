@@ -2,6 +2,7 @@ module Foobara
   class CommandConnector
     class UnexpectedSensitiveTypeInManifestError < StandardError; end
     class AlreadyConnectedError < StandardError; end
+    class NoAuthenticatorGivenError < StandardError; end
 
     include Concerns::Desugarizers
     include Concerns::Reflection
@@ -601,7 +602,10 @@ module Foobara
       command_class = determine_command_class(request)
       request.command_class = command_class
 
-      if command_class.respond_to?(:requires_authentication) && command_class.requires_authentication
+      requires_auth = command_class.respond_to?(:requires_authentication) && command_class.requires_authentication
+      optional_auth = command_class.respond_to?(:authentication_optional) && command_class.authentication_optional
+
+      if requires_auth || optional_auth
         request.authenticator ||= command_class.authenticator || authenticator
 
         if auth_map

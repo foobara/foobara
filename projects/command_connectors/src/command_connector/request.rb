@@ -50,7 +50,13 @@ module Foobara
 
       def authenticate
         return if error
-        return unless command_class.respond_to?(:requires_authentication) && command_class.requires_authentication
+        return unless requires_authentication? || authentication_optional?
+
+        unless authenticator
+          raise CommandConnector::NoAuthenticatorGivenError,
+                "Running a #{command_class.full_command_name} via #{command_connector} " \
+                "requires an authenticator but this connector does not have one"
+        end
 
         authenticated_user, authenticated_credential = authenticator.authenticate(self)
 
@@ -58,9 +64,19 @@ module Foobara
         self.authenticated_user = authenticated_user
         self.authenticated_credential = authenticated_credential
 
+        return unless requires_authentication?
+
         unless authenticated_user
           self.error = CommandConnector::UnauthenticatedError.new
         end
+      end
+
+      def authentication_optional?
+        command_class.respond_to?(:authentication_optional) && command_class.authentication_optional
+      end
+
+      def requires_authentication?
+        command_class.respond_to?(:requires_authentication) && command_class.requires_authentication
       end
 
       def auth_mapped_method?(method_name)
