@@ -1,3 +1,16 @@
+# [0.6.0] - 2026-08-06
+
+- Give a way to authenticate if possible without requiring it (:authentication_optional)
+- Convert NotFoundError into a data error
+- Progress on getting closer to decoupling persistence
+- Raise an error if non-attributes-like type is used for inputs
+- Improve error message when using an entity that has no primary key as a type
+- Support concept of a type declaration being claimed but errored
+- Combine some entities cache-busting code
+- Move model project out of entities project and into typesystem
+- Raise with NotImplementedError where applicable instead of StandardError
+- Simplify raise_if_production! interface
+
 # [0.5.10] - 2026-04-17
 
 - Add a ignore_unexpected_attributes transformer to builtin attributes type
