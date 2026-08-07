@@ -103,6 +103,8 @@ module Foobara
         class CannotUpdateError < CannotCrudError; end
         class CannotDeleteError < CannotCrudError; end
 
+        class CannotRenameAttributeError < StandardError; end
+
         attr_accessor :table_name, :entity_class, :raw_connection, :crud_driver
 
         def initialize(entity_class, crud_driver, table_name = nil)
@@ -271,6 +273,32 @@ module Foobara
           # simplecov:disable
           raise NotImplementedError
           # simplecov:enable
+        end
+
+        # Schema manipulation methods
+
+        def rename_attribute(_old_name, _new_name)
+          # :nocov:
+          raise NotImplementedError
+          # :nocov:
+        end
+
+        def add_attribute(_name, type: nil)
+          # :nocov:
+          raise NotImplementedError
+          # :nocov:
+        end
+
+        def drop_attribute(_name)
+          # :nocov:
+          raise NotImplementedError
+          # :nocov:
+        end
+
+        def attribute_names
+          # :nocov:
+          raise NotImplementedError
+          # :nocov:
         end
 
         def exists?(record_id)

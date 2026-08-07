@@ -73,6 +73,53 @@ module Foobara
             self.records = {}
           end
 
+          # Schema manipulation
+
+          def rename_attribute(old_name, new_name)
+            old_name = old_name.to_sym
+            new_name = new_name.to_sym
+
+            if records.any? { |_, attrs| attrs.key?(new_name) }
+              raise CannotRenameAttributeError.new(old_name, "attribute #{new_name.inspect} already exists")
+            end
+
+            records.each_value do |attributes|
+              if attributes.key?(old_name)
+                attributes[new_name] = attributes.delete(old_name)
+              end
+            end
+          end
+
+          def add_attribute(name, type: nil)
+            name = name.to_sym
+            default_value = nil
+
+            if type
+              outcome = type.process_value(default_value)
+              default_value = outcome.result if outcome.success?
+            end
+
+            records.each_value do |attributes|
+              attributes[name] = default_value unless attributes.key?(name)
+            end
+          end
+
+          def drop_attribute(name)
+            name = name.to_sym
+
+            records.each_value do |attributes|
+              attributes.delete(name)
+            end
+          end
+
+          def attribute_names
+            return [] if records.empty?
+
+            records.each_value.with_object(Set.new) do |attrs, keys|
+              keys.merge(attrs.keys)
+            end.to_a
+          end
+
           private
 
           def get_id
