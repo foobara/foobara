@@ -1,3 +1,7 @@
+# [0.6.1] - 2026-08-08
+
+- Reduce gem size by excluding non-production code/artifacts from sub-projects
+
 # [0.6.0] - 2026-08-06
 
 - Give a way to authenticate if possible without requiring it (:authentication_optional)

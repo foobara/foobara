@@ -19,7 +19,10 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir[
     "lib/**/*",
-    "projects/**/*",
+    "projects/*/lib/**/*",
+    "projects/*/src/**/*",
+    "projects/*/projects/*/lib/**/*",
+    "projects/*/projects/*/src/**/*",
     "version.rb",
     "LICENSE*.txt",
     "README.md",
