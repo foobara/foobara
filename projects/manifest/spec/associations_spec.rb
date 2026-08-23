@@ -43,24 +43,41 @@ RSpec.describe Foobara::Manifest::Model do
         end
       end
 
-      it "can reproduce association info from the underlying associations in the types" do
-        raw_manifest = Foobara.manifest
+      context "when present in a manifest" do
+        let(:command_class) do
+          stub_class("SomeCommand", Foobara::Command) do
+            inputs { some_object :some_type }
+            result :some_type
 
-        root_manifest = Foobara::Manifest::RootManifest.new(raw_manifest)
+            def execute = some_object
+          end
+        end
 
-        manifest_type = root_manifest.type_by_name(:some_type)
+        let(:connector) do
+          command_class
+          Foobara::CommandConnector.new.tap do |connector|
+            connector.connect(SomeCommand)
+          end
+        end
+        let(:raw_manifest) { connector.foobara_manifest }
 
-        expect(manifest_type).to be_a(Foobara::Manifest::Type)
+        it "can reproduce association info from the underlying associations in the types" do
+          root_manifest = Foobara::Manifest::RootManifest.new(raw_manifest)
 
-        associations = described_class.associations(manifest_type)
+          manifest_type = root_manifest.type_by_name(:some_type)
 
-        expect(associations.keys).to contain_exactly(
-          "some_array.#",
-          "some_inner_model.some_inner_inner_entities.0",
-          "some_inner_model.some_inner_inner_entities.1"
-        )
+          expect(manifest_type).to be_a(Foobara::Manifest::Type)
 
-        expect(associations.values).to all be_a(Foobara::Manifest::Entity)
+          associations = described_class.associations(manifest_type)
+
+          expect(associations.keys).to contain_exactly(
+            "some_array.#",
+            "some_inner_model.some_inner_inner_entities.0",
+            "some_inner_model.some_inner_inner_entities.1"
+          )
+
+          expect(associations.values).to all be_a(Foobara::Manifest::Entity)
+        end
       end
     end
   end

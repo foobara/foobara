@@ -10,8 +10,26 @@ RSpec.describe Foobara::Manifest do
     some_model
   end
 
+  let(:command_class) do
+    stub_class("SomeCommand", Foobara::Command) do
+      inputs do
+        user_entity :User
+        some_model :SomeModel
+      end
+      result [:User, :SomeModel]
+
+      def execute = some_object
+    end
+  end
+
+  let(:connector) do
+    command_class
+    Foobara::CommandConnector.new.tap do |connector|
+      connector.connect(SomeCommand)
+    end
+  end
+  let(:raw_manifest) { connector.foobara_manifest }
   let(:manifest) { Foobara::Manifest::RootManifest.new(raw_manifest) }
-  let(:raw_manifest) { Foobara.manifest }
   let(:user_entity) do
     stub_class "User", Foobara::Entity do
       attributes do

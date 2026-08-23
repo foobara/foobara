@@ -327,6 +327,12 @@ RSpec.describe ":model" do
       expect(namespace.type_for_declaration(:SomeModel)).to be(type)
     end
 
+    describe "#foobara_manifest" do
+      it "contains the type for the model" do
+        expect(type.foobara_manifest[:declaration_data][:name]).to eq("SomeModel")
+      end
+    end
+
     context "when used as attribute type" do
       let(:new_type) do
         namespace.type_for_declaration(
@@ -355,13 +361,6 @@ RSpec.describe ":model" do
         expect(actual_value).to_not be(expected_value)
         expect(actual_value.hash).to eq(expected_value.hash)
         expect(actual_value.eql?(expected_value)).to be(true)
-      end
-
-      describe "Foobara.manifest" do
-        it "contains the type for the model" do
-          type_manifest = Foobara.manifest[:type][:SomeModel]
-          expect(type_manifest[:declaration_data][:name]).to eq("SomeModel")
-        end
       end
     end
   end

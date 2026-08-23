@@ -200,6 +200,12 @@ RSpec.describe ":detached_entity" do
       expect(domain.foobara_lookup_type!(:SomeEntity).target_class).to eq(SomeEntity)
     end
 
+    describe "#foobara_manifest" do
+      it "contains the type for the model" do
+        expect(type.foobara_manifest[:declaration_data][:name]).to eq("SomeEntity")
+      end
+    end
+
     context "when used as attribute type" do
       let(:new_type) do
         type
@@ -227,13 +233,6 @@ RSpec.describe ":detached_entity" do
         expect(actual_value).to_not be(expected_value)
         expect(actual_value.hash).to eq(expected_value.hash)
         expect(actual_value.eql?(expected_value)).to be(true)
-      end
-
-      describe "Foobara.manifest" do
-        it "contains the type for the model" do
-          type
-          expect(Foobara.manifest[:type][:SomeEntity][:declaration_data][:name]).to eq("SomeEntity")
-        end
       end
     end
   end

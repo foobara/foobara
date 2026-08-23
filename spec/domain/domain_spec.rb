@@ -431,7 +431,7 @@ RSpec.describe Foobara::Domain do
       # TODO: belongs elsewhere
       describe "#manifest" do
         it "gives a whole manifest of everything" do
-          manifest = Foobara.manifest[:command][:"SomeOrg::SomeDomain::SomeCommand"]
+          manifest = Foobara.__send__(:debug_manifest)[:command][:"SomeOrg::SomeDomain::SomeCommand"]
           expect(manifest[:result_type][:element_type_declarations][:bar]).to eq(:integer)
 
           expect(Foobara.all_organizations).to include(organization)
@@ -466,9 +466,9 @@ RSpec.describe Foobara::Domain do
       expect(Foobara.all_types).to include(type)
     end
 
-    # TODO: this belongs elsewhere"
+    # TODO: Delete this if no concrete use-case surfaces
     describe ".manifest" do
-      let(:manifest) { Foobara.manifest }
+      let(:manifest) { Foobara.__send__(:debug_manifest) }
 
       it "gives a whole manifest of everything" do
         expect(manifest).to be_a(Hash)

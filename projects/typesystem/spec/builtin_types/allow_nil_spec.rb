@@ -127,10 +127,10 @@ RSpec.describe Foobara::BuiltinTypes::Duck::SupportedCasters::AllowNil do
       end
 
       it "shows up in the manifest" do
-        manifest = Foobara.manifest
+        manifest = type.foobara_manifest
 
         expect(
-          manifest[:type][:some_type][:declaration_data][:element_type_declarations][:implicit_true][:allow_nil]
+          manifest[:declaration_data][:element_type_declarations][:implicit_true][:allow_nil]
         ).to be(true)
       end
     end

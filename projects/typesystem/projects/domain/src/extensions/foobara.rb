@@ -1,6 +1,14 @@
 module Foobara
   class << self
     def manifest
+      # simplecov:disable
+      warn "Foobara.manifest is deprecated in favor of CommandConnector#foobara_manifest" \
+           "\nIf this breaks a legit use case for Foobara.manifest please let us know and we will consider keeping it!"
+      debug_manifest
+      # simplecov:enable
+    end
+
+    private def debug_manifest
       to_include = Namespace.global.foobara_all_organization.to_set
 
       TypeDeclarations.with_manifest_context(to_include:) do

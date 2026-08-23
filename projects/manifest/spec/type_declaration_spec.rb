@@ -12,6 +12,7 @@ RSpec.describe Foobara::Manifest do
   end
 
   let(:command_class) do
+    model_class
     stub_class("SomeCommand", Foobara::Command) do
       inputs do
         some_model SomeModel, :allow_nil
@@ -21,9 +22,10 @@ RSpec.describe Foobara::Manifest do
 
   let(:root_manifest) { Foobara::Manifest::RootManifest.new(raw_manifest) }
   let(:raw_manifest) do
-    model_class
-    command_class
-    Foobara.manifest
+    connector = Foobara::CommandConnector.new
+    connector.connect(command_class)
+
+    connector.foobara_manifest
   end
 
   describe "#to_model" do

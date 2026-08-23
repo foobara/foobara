@@ -22,3 +22,7 @@ Naming/FileName:
 # Disabling because default_declaration_data isn't a proper predicate and too lazy to wrap it in disable comments
 Naming/PredicateMethod:
   Enabled: false
+
+
+Style/AccessModifierDeclarations:
+  Enabled: false

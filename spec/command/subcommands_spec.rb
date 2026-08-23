@@ -100,10 +100,10 @@ RSpec.describe Foobara::Command do
         expect(result).to eq(100)
       end
 
-      # TODO: this belongs elsewhere
-      describe ".foobara_manifest" do
+      # TODO: this belongs elsewhere?
+      describe "Command.foobara_manifest" do
         it "contains the depends_on information for the commands" do
-          command_manifest = Foobara.manifest[:command][:"SomeDomain1::SomeCommand1"]
+          command_manifest = SomeDomain1::SomeCommand1.foobara_manifest
 
           expect(command_manifest[:depends_on]).to eq(["SomeDomain1::SomeCommand2"])
         end
@@ -167,7 +167,7 @@ RSpec.describe Foobara::Command do
       # TODO: this belongs elsewhere
       describe ".manifest" do
         it "contains the depends_on information for the commands" do
-          depends_on = Foobara.manifest[:domain][:SomeDomain1][:depends_on]
+          depends_on = SomeDomain1.foobara_manifest[:depends_on]
 
           expect(depends_on).to contain_exactly("SomeDomain2", "SomeDomain3")
         end

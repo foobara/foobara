@@ -270,7 +270,7 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Entities do
 
     describe "manifest" do
       it "includes entity dependencies" do
-        expect(Foobara.manifest[:type][:Employee][:deep_depends_on]).to eq(
+        expect(Employee.foobara_manifest[:deep_depends_on]).to eq(
           [
             "Assignment",
             "User",
