@@ -26,13 +26,7 @@ module Foobara
 
         def run
           Foobara::Namespace.use self.class do
-            invoke_with_callbacks_and_transition(:open_transaction)
-
-            Persistence::EntityBase.using_transactions(transactions) do
-              _run_all_steps
-            end
-
-            invoke_with_callbacks_and_transition(:succeed)
+            _run_all_steps
           end
 
           @outcome
@@ -69,14 +63,17 @@ module Foobara
         private
 
         def _run_all_steps
+          # TODO: start moving tests that depend on entities_plumbing into entities_plumbing
+          # so that we can hit this codepath naturally by not requiring entities_plumbing
+          # in this project
+          # simplecov:disable
           invoke_with_callbacks_and_transition([
                                                  :cast_and_validate_inputs,
-                                                 :load_records,
-                                                 :validate_records,
                                                  :validate,
                                                  :run_execute,
-                                                 :commit_transaction
+                                                 :succeed
                                                ])
+          # simplecov:enable
         end
 
         def run_execute
