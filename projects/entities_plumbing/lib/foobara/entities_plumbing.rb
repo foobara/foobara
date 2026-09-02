@@ -63,6 +63,7 @@ module Foobara
         )
 
         CommandConnector::Authenticator.include CommandConnector::AuthenticatorMethods
+        CommandConnector::Request.include NestedTransactionable
       end
     end
 
