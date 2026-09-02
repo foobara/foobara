@@ -68,6 +68,7 @@ module Foobara
 
         project_path = "#{__dir__}/../.."
 
+        Util.require_directory("#{project_path}/src/extensions/command_connector")
         Util.require_directory("#{project_path}/src/serializers")
         Util.require_directory("#{project_path}/src/transformers")
       end
@@ -82,6 +83,8 @@ module Foobara
                   project_path:,
                   eager_load_src: false)
 
-  Util.require_directory("#{project_path}/src/extensions")
+  Util.require_directory("#{project_path}/src/extensions/command_pattern_implementation")
+  Util.require_directory("#{project_path}/src/extensions/command_registry")
+  Util.require_pattern("#{project_path}/src/extensions/authenticator_methods.rb")
   Util.require_pattern("#{project_path}/src/command_connectors_extension.rb")
 end
