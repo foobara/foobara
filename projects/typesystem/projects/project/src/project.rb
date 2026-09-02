@@ -1,8 +1,9 @@
 module Foobara
   class Project
-    attr_accessor :symbol, :project_path
+    attr_accessor :symbol, :project_path, :eager_load_src
 
-    def initialize(symbol, project_path: nil)
+    def initialize(symbol, project_path: nil, eager_load_src: true)
+      self.eager_load_src = eager_load_src
       self.symbol = symbol
       self.project_path = project_path || "#{__dir__}/../../#{symbol}"
     end
@@ -22,10 +23,12 @@ module Foobara
     def load
       require require_path
 
-      src_dir = "#{project_path}/src"
+      if eager_load_src
+        src_dir = "#{project_path}/src"
 
-      if Dir.exist?(src_dir)
-        Util.require_directory(src_dir)
+        if Dir.exist?(src_dir)
+          Util.require_directory(src_dir)
+        end
       end
     end
 

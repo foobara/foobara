@@ -11,14 +11,14 @@ module Foobara
 
         if Foobara.project_installed?("command_connectors")
           # simplecov:disable
-          install_command_connector_extension
+          install_command_connector_extensions
           # simplecov:enable
         end
       end
 
       def new_project_added(new_project)
         if new_project.symbol == "command_connectors"
-          install_command_connector_extension
+          install_command_connector_extensions
         end
       end
 
@@ -57,7 +57,7 @@ module Foobara
         )
       end
 
-      def install_command_connector_extension
+      def install_command_connector_extensions
         CommandConnector.singleton_class.prepend(
           Foobara::EntitiesPlumbing::CommandConnectorsExtension::ClassMethods
         )
@@ -65,11 +65,23 @@ module Foobara
         CommandConnector::Authenticator.include CommandConnector::AuthenticatorMethods
         CommandConnector::Request.include NestedTransactionable
         CommandRegistry::ExposedCommand.prepend CommandRegistry::ExposedCommandEntities
+
+        project_path = "#{__dir__}/../.."
+
+        Util.require_directory("#{project_path}/src/serializers")
+        Util.require_directory("#{project_path}/src/transformers")
       end
     end
 
     add_persistence_states_and_transitions
   end
-end
 
-Foobara.project("entities_plumbing", project_path: "#{__dir__}/../..")
+  project_path = "#{__dir__}/../.."
+
+  Foobara.project("entities_plumbing",
+                  project_path:,
+                  eager_load_src: false)
+
+  Util.require_directory("#{project_path}/src/extensions")
+  Util.require_pattern("#{project_path}/src/command_connectors_extension.rb")
+end

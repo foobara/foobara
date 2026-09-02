@@ -1,5 +1,3 @@
-require_relative "success_serializer"
-
 module Foobara
   module CommandConnectors
     module Serializers

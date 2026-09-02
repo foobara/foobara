@@ -18,14 +18,14 @@ module Foobara
       @all_projects ||= {}
     end
 
-    def project(symbol, project_path: nil)
+    def project(symbol, project_path: nil, eager_load_src: true)
       if all_projects.key?(symbol)
         # simplecov:disable
         raise ArgumentError, "Project #{symbol} already loaded"
         # simplecov:enable
       end
 
-      project = Project.new(symbol, project_path:)
+      project = Project.new(symbol, project_path:, eager_load_src:)
       project.load
 
       all_projects[symbol] = project
