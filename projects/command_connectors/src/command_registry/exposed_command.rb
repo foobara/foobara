@@ -35,9 +35,7 @@ module Foobara
         allowed_rule: nil,
         requires_authentication: nil,
         authentication_optional: nil,
-        authenticator: nil,
-        aggregate_entities: nil,
-        atomic_entities: nil
+        authenticator: nil
       )
         if allowed_rule && authenticator && requires_authentication.nil?
           requires_authentication = true
@@ -57,42 +55,6 @@ module Foobara
                           command_class.scoped_path
                         end
 
-        if aggregate_entities
-          pre_commit_transformers = [
-            *pre_commit_transformers,
-            CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer
-          ]
-
-          pre_commit_transformers.uniq!
-          pre_commit_transformers.delete(CommandConnectors::Transformers::LoadAtomsPreCommitTransformer)
-
-          serializers = [*serializers, CommandConnectors::Serializers::AggregateSerializer]
-
-          serializers.uniq!
-          serializers.delete(Foobara::CommandConnectors::Serializers::AtomicSerializer)
-        # TODO: either both should have special behavior for false or neither should
-        elsif aggregate_entities == false
-          pre_commit_transformers = pre_commit_transformers&.reject do |t|
-            t == Foobara::CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer
-          end
-          serializers = serializers&.reject do |s|
-            s == Foobara::CommandConnectors::Serializers::AggregateSerializer
-          end
-        elsif atomic_entities
-          pre_commit_transformers = [
-            *pre_commit_transformers,
-            CommandConnectors::Transformers::LoadAtomsPreCommitTransformer
-          ]
-
-          pre_commit_transformers.uniq!
-          pre_commit_transformers.delete(CommandConnectors::Transformers::LoadAggregatesPreCommitTransformer)
-
-          serializers = [*serializers, Foobara::CommandConnectors::Serializers::AtomicSerializer]
-
-          serializers.uniq!
-          serializers.delete(CommandConnectors::Serializers::AggregateSerializer)
-        end
-
         self.command_class = command_class
         self.scoped_path = scoped_path
         self.capture_unknown_error = capture_unknown_error
@@ -107,20 +69,6 @@ module Foobara
         self.requires_authentication = requires_authentication
         self.authentication_optional = authentication_optional
         self.authenticator = authenticator
-
-        # A bit hacky... we should check if we need to shim in a LoadDelegatedAttributesEntitiesPreCommitTransformer
-        unless aggregate_entities
-          # It's possible delegates have been added or removed via the result transformers...
-          # We should figure out a way to check the transformed result type instead.
-          if _has_delegated_attributes?(command_class.result_type)
-            self.pre_commit_transformers = [
-              *self.pre_commit_transformers,
-              CommandConnectors::Transformers::LoadDelegatedAttributesEntitiesPreCommitTransformer
-            ]
-
-            pre_commit_transformers.uniq!
-          end
-        end
 
         Namespace.on_change(self, :clear_caches)
       end

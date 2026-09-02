@@ -64,6 +64,7 @@ module Foobara
 
         CommandConnector::Authenticator.include CommandConnector::AuthenticatorMethods
         CommandConnector::Request.include NestedTransactionable
+        CommandRegistry::ExposedCommand.prepend CommandRegistry::ExposedCommandEntities
       end
     end
 
