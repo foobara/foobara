@@ -70,6 +70,10 @@ module Foobara
 
         attr_reader :register_callback_methods
 
+        def allow_recreating_callback_methods
+          @register_callback_methods = nil
+        end
+
         # 0 before_any_transition
         # 1 before_transition_to_<state>
         # 2 before_transition_from_<state>

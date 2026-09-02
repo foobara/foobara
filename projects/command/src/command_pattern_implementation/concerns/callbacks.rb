@@ -31,6 +31,12 @@ module Foobara
           end
         end
 
+        def state_machine_callback_registry = state_machine.callback_registry
+      end
+    end
+
+    class << self
+      def install_state_machine_callback_methods
         [self, ClassMethods].each do |target|
           [:before, :after].each do |type|
             target.define_method "#{type}_any_transition" do |&block|
@@ -83,10 +89,6 @@ module Foobara
               end
             end
           end
-        end
-
-        def state_machine_callback_registry
-          state_machine.callback_registry
         end
       end
     end

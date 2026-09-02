@@ -9,6 +9,8 @@ module Foobara
         Domain::DomainModuleExtension::ClassMethods.prepend(
           DomainModuleExtensionExtension::ClassMethods
         )
+
+        CommandPatternImplementation.install_state_machine_callback_methods
       end
     end
   end
