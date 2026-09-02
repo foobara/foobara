@@ -1,0 +1,20 @@
+AllCops:
+  TargetRubyVersion: 4.0
+  NewCops: enable
+
+inherit_gem:
+  foobara-rubocop-rules:
+    - rules/*
+
+Naming/FileName:
+  ExpectMatchingDefinition: true
+  CheckDefinitionPathHierarchy: false
+  Exclude:
+    - spec/lib/**/*
+    - spec/**/*
+    - bin/*
+  CheckDefinitionPathHierarchyRoots:
+    - src
+    - extensions
+    - spec
+  IgnoreExecutableScripts: true

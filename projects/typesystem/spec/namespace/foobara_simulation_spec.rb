@@ -4,7 +4,7 @@ RSpec.describe Foobara::Namespace do
   end
 
   before do
-    # rubocop:disable Lint/ConstantDefinitionInBlock, RSpec/LeakyConstantDeclaration
+    # rubocop:disable-next Lint/ConstantDefinitionInBlock, RSpec/LeakyConstantDeclaration
     module FoobaraSimulation
       module Foobara
         foobara_root_namespace!(ignore_modules: FoobaraSimulation)
@@ -140,7 +140,6 @@ RSpec.describe Foobara::Namespace do
         end
       end
     end
-    # rubocop:enable Lint/ConstantDefinitionInBlock, RSpec/LeakyConstantDeclaration
   end
 
   describe "#lookup_*" do

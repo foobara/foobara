@@ -86,7 +86,7 @@ module Foobara
                        # simplecov:enable
                      end
 
-            # rubocop:disable Lint/IdentityComparison
+            # rubocop:disable-next Lint/IdentityComparison
             if entity &&
                (!entity.equal?(entity_or_record_id) || entity.object_id != entity_or_record_id.object_id)
               # simplecov:disable
@@ -94,7 +94,6 @@ module Foobara
                     "Try passing in the primary key instead of constructing an unloaded entity to pass in."
               # simplecov:enable
             end
-            # rubocop:enable Lint/IdentityComparison
 
             record_id = entity.primary_key
           else

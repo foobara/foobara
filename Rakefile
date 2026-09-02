@@ -59,7 +59,7 @@ task "suite:all:serial" => [*spec_tasks, *depends_on_spec_tasks, *non_spec_tasks
 task "suite:all:parallel" do
   require "pty"
 
-  # rubocop:disable Lint/ConstantDefinitionInBlock, Rake/ClassDefinitionInTask
+  # rubocop:disable-next Lint/ConstantDefinitionInBlock, Rake/ClassDefinitionInTask
   class FoobaraSuiteTaskRunner
     class << self
       def run!(spec_tasks:, depends_on_spec_tasks:, non_spec_tasks:)
@@ -170,7 +170,6 @@ task "suite:all:parallel" do
       writing_thread
     end
   end
-  # rubocop:enable Lint/ConstantDefinitionInBlock, Rake/ClassDefinitionInTask
 
   FoobaraSuiteTaskRunner.run!(spec_tasks:, depends_on_spec_tasks:, non_spec_tasks:)
 end

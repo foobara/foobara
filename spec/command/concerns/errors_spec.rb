@@ -64,7 +64,7 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Errors do
         end
       end
 
-      context  "when input requirements met" do
+      context "when input requirements met" do
         it "is success" do
           expect(outcome).to be_success
           expect(result).to eq(64)
@@ -218,7 +218,7 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Errors do
         end
       end
 
-      context  "when no error" do
+      context "when no error" do
         it "is success" do
           expect(outcome).to be_success
           expect(result).to eq(64)
@@ -254,7 +254,7 @@ RSpec.describe Foobara::CommandPatternImplementation::Concerns::Errors do
         end
       end
 
-      context  "when no error" do
+      context "when no error" do
         it "is success" do
           expect(outcome).to be_success
           expect(result).to eq(64)

@@ -22,7 +22,7 @@ module Foobara
             end
           end
 
-          def error_context(_value) ={}
+          def error_context(_value) = {}
         end
       end
     end

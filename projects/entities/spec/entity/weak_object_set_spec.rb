@@ -17,9 +17,8 @@ RSpec.describe Foobara::WeakObjectSet do
         # it acts up in other environments.
         expect(set.size).to eq(1)
 
-        # rubocop:disable Lint/UselessAssignment
+        # rubocop:disable-next Lint/UselessAssignment
         some_object = nil
-        # rubocop:enable Lint/UselessAssignment
         GC.start
 
         expect(set.size).to eq(0)
@@ -47,9 +46,8 @@ RSpec.describe Foobara::WeakObjectSet do
 
         expect(set.to_a.map(&:object_id)).to eq([some_object_id])
 
-        # rubocop:disable Lint/UselessAssignment
+        # rubocop:disable-next Lint/UselessAssignment
         some_object = nil
-        # rubocop:enable Lint/UselessAssignment
         GC.start
 
         expect(set).to be_empty

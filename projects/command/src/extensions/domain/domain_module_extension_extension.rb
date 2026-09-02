@@ -1,4 +1,3 @@
-# rubocop:disable Naming/FileName
 module Foobara
   class Command
     module DomainModuleExtensionExtension
@@ -19,4 +18,3 @@ module Foobara
     end
   end
 end
-# rubocop:enable Naming/FileName

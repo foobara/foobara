@@ -1,6 +1,6 @@
 require "foobara/spec_helpers/it_behaves_like_a_crud_driver"
 
-# rubocop:disable RSpec/EmptyExampleGroup
+# rubocop:disable-next RSpec/EmptyExampleGroup
 RSpec.describe Foobara::Persistence::CrudDrivers::InMemoryMinimal do
   after { Foobara.reset_alls }
 
@@ -10,4 +10,3 @@ RSpec.describe Foobara::Persistence::CrudDrivers::InMemoryMinimal do
 
   it_behaves_like_a_crud_driver
 end
-# rubocop:enable RSpec/EmptyExampleGroup

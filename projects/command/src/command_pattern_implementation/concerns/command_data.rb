@@ -21,7 +21,7 @@ module Foobara
             @is_query = true
           end
 
-          # rubocop:disable Naming/MemoizedInstanceVariableName
+          # rubocop:disable-next Naming/MemoizedInstanceVariableName
           def query?
             return @is_query if defined?(@is_query)
 
@@ -29,7 +29,6 @@ module Foobara
                           superclass.query?
                         end
           end
-          # rubocop:enable Naming/MemoizedInstanceVariableName
         end
       end
     end
