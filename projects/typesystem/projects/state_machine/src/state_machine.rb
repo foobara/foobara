@@ -4,8 +4,6 @@ module Foobara
   require_relative "validations"
   require_relative "transitions"
 
-  # TODO: allow quick creation of a statemachine either through better options to #initialize or a
-  # .for method.
   class StateMachine
     include Sugar
     include Callbacks

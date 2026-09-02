@@ -28,14 +28,9 @@ module Foobara
           Foobara::Namespace.use self.class do
             invoke_with_callbacks_and_transition(:open_transaction)
 
-            invoke_with_callbacks_and_transition_in_transaction([
-                                                                  :cast_and_validate_inputs,
-                                                                  :load_records,
-                                                                  :validate_records,
-                                                                  :validate,
-                                                                  :run_execute,
-                                                                  :commit_transaction
-                                                                ])
+            Persistence::EntityBase.using_transactions(transactions) do
+              _run_all_steps
+            end
 
             invoke_with_callbacks_and_transition(:succeed)
           end
@@ -73,6 +68,17 @@ module Foobara
 
         private
 
+        def _run_all_steps
+          invoke_with_callbacks_and_transition([
+                                                 :cast_and_validate_inputs,
+                                                 :load_records,
+                                                 :validate_records,
+                                                 :validate,
+                                                 :run_execute,
+                                                 :commit_transaction
+                                               ])
+        end
+
         def run_execute
           self.raw_result = execute
           result = process_result_using_result_type(raw_result)
@@ -88,12 +94,6 @@ module Foobara
 
         def validate
           # can override if desired, default is a no-op
-        end
-
-        def invoke_with_callbacks_and_transition_in_transaction(transition_or_transitions)
-          Persistence::EntityBase.using_transactions(transactions) do
-            invoke_with_callbacks_and_transition(transition_or_transitions)
-          end
         end
 
         def invoke_with_callbacks_and_transition(transition_or_transitions)
