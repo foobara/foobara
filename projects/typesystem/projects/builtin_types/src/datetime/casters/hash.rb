@@ -43,7 +43,8 @@ module Foobara
               day: { type: :integer, min: 1, max: 31 },
               hours: { type: :integer, min: 0, max: 23, required: false, default: 0 },
               minutes: { type: :integer, min: 0, max: 59, required: false, default: 0 },
-              seconds: { type: :big_decimal, min: 0, max: 59, required: false, default: 0 },
+              # TODO: add a :rational foobara type
+              seconds: { type: :duck, required: false, default: 0 },
               milliseconds: { type: :integer, min: 0, max: 1000, required: false },
               zone: { type: :string, required: false }
             )
