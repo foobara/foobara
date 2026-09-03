@@ -45,5 +45,19 @@ RSpec.describe ":datetime" do
 
       it { is_expected_to_raise(Foobara::Value::Processor::Casting::CannotCastError) }
     end
+
+    # this test is here until there's a built-in Rational type
+    context "when seconds is a Rational" do
+      let(:value) { { year: "2020", month: 1, day: 2, hours: 3, minutes: 4, seconds: Rational(11, 2) } }
+
+      it { is_expected.to eq(Time.new(2020, 1, 2, 3, 4, 5.5)) }
+    end
+
+    # this test is here until there's a built-in Rational type
+    context "when seconds is a Float" do
+      let(:value) { { year: "2020", month: 1, day: 2, hours: 3, minutes: 4, seconds: 5.25 } }
+
+      it { is_expected.to eq(Time.new(2020, 1, 2, 3, 4, 5.25)) }
+    end
   end
 end
