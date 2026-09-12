@@ -7,7 +7,7 @@ RSpec.describe Foobara::WeakObjectSet do
   describe "auto-removal of garbage collected records" do
     context "without key_method" do
       it "automatically removes records that have been garbage collected" do
-        some_object = "asdf"
+        some_object = +"asdf"
         set << some_object
 
         # Deleting this line breaks the spec for mysterious reasons. Without this line, GC.start doesn't
@@ -78,7 +78,7 @@ RSpec.describe Foobara::WeakObjectSet do
 
   describe "#delete" do
     it "removes the object being deleted" do
-      some_object = "asdf"
+      some_object = +"asdf"
       set << some_object
 
       expect {

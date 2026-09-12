@@ -1,3 +1,9 @@
+# [0.6.3] - 2026-09-11
+
+- Eliminate usage of removed JSON.fast_generate
+- A lot of persistence stuff relocated into entities_plumbing project
+- Allow :datetime to handle fractional seconds
+
 # [0.6.2] - 2026-08-24
 
 - Eliminate all direct uses of Foobara.manifest in the test suite and deprecate it

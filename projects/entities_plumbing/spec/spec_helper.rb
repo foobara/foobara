@@ -1,6 +1,7 @@
 ENV["FOOBARA_ENV"] = "test"
 
 require "bundler/setup"
+Warning[:deprecated] = true
 
 if ENV["RUBY_DEBUG"] == "true"
   require "debug"
