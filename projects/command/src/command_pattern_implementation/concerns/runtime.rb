@@ -31,8 +31,6 @@ module Foobara
 
           @outcome
         rescue Halt
-          rollback_transaction
-
           return outcome if state_machine.currently_errored?
 
           if error_collection.empty?
@@ -64,7 +62,7 @@ module Foobara
 
         def _run_all_steps
           # TODO: start moving tests that depend on entities_plumbing into entities_plumbing
-          # so that we can hit this codepath naturally by not requiring entities_plumbing
+          # so that we can hit this code path naturally by not requiring entities_plumbing
           # in this project
           # simplecov:disable
           invoke_with_callbacks_and_transition([
