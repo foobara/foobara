@@ -46,6 +46,12 @@ module Foobara
     end
 
     def install!
+      # simplecov:disable
+      if is_installed
+        raise "Foobara.install! was already invoked"
+      end
+      # simplecov:enable
+
       self.is_installed = true
       all_projects.each_value(&:install!)
     end

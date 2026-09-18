@@ -14,8 +14,6 @@ module Foobara
   require "foobara/delegate"
   require "foobara/state_machine"
   require "foobara/builtin_types"
-  # TODO: make this optional
-  require "foobara/big_decimal"
   require "foobara/domain"
   require "foobara/command"
   require "foobara/domain_mapper"

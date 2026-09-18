@@ -28,8 +28,6 @@ end
 require "foobara/delegate"
 require "foobara/state_machine"
 require "foobara/builtin_types"
-# TODO: get this out of here
-require "foobara/big_decimal"
 
 Foobara.install!
 

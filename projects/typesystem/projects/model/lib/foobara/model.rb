@@ -2,7 +2,6 @@ require "foobara/builtin_types"
 
 require "date"
 require "time"
-require "bigdecimal"
 
 module Foobara
   class Model

@@ -23,6 +23,7 @@ task "spec:coverage" do
 end
 
 spec_names = [
+  "big_decimal",
   "entities_plumbing",
   "manifest",
   "typesystem",
