@@ -2,8 +2,6 @@ require "foobara/type_declarations"
 
 require "date"
 require "time"
-# TODO: get this out of here
-require "bigdecimal"
 
 module Foobara
   # TODO: rename this to PrimitiveTypes and deprecate the name BuiltinTypes
@@ -46,7 +44,6 @@ module Foobara
         number = build_and_register!(:number, atomic_duck, ::Object)
         build_and_register!(:integer, number)
         build_and_register!(:float, number)
-        build_and_register!(:big_decimal, number)
         # Let's skip these for now since they rarely come up in business contexts and both could be
         # represented by a tuple of numbers.
         # build_and_register!(:rational, number)
