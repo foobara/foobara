@@ -1,3 +1,5 @@
+require "foobara/project"
+
 module Foobara
   module Types
     class << self

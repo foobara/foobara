@@ -14,8 +14,8 @@ require "rspec/its"
 require "simplecov"
 
 SimpleCov.root "#{__dir__}/../../../"
-SimpleCov.command_name "typesystem"
-SimpleCov.coverage_dir "coverage/typesystem"
+SimpleCov.command_name "big_decimal"
+SimpleCov.coverage_dir "coverage/big_decimal"
 
 SimpleCov.start do
   skip "spec/support/"
@@ -24,10 +24,7 @@ SimpleCov.start do
   formatter Class.new { def format(_result) = nil }
 end
 
-# TODO: we should be able to remove these once all projects are separated
-require "foobara/delegate"
-require "foobara/state_machine"
-require "foobara/builtin_types"
+require "foobara/big_decimal"
 
 Foobara.install!
 

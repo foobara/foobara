@@ -12,7 +12,7 @@ RSpec.describe ":tuple" do
   let(:result) { outcome.result! }
 
   let(:type_declaration) do
-    [:big_decimal, { a: :integer }]
+    [:float, { a: :integer }]
   end
 
   context "when using array sugar" do
@@ -21,7 +21,7 @@ RSpec.describe ":tuple" do
         expect(type.declaration_data).to eq(
           type: :tuple,
           element_type_declarations: [
-            :big_decimal,
+            :float,
             { type: :attributes, element_type_declarations: { a: :integer } }
           ],
           size: 2
@@ -61,7 +61,7 @@ RSpec.describe ":tuple" do
       {
         type: :tuple,
         element_type_declarations: [
-          { type: :big_decimal },
+          { type: :float },
           { type: :attributes, element_type_declarations: { a: { type: :integer } } }
         ]
       }
@@ -73,7 +73,7 @@ RSpec.describe ":tuple" do
       context "when valid value" do
         let(:value) { ["3", { a: "2" }] }
 
-        it { is_expected.to eq([BigDecimal(3), { a: 2 }]) }
+        it { is_expected.to eq([3, { a: 2 }]) }
       end
 
       context "when value has too many elements" do
