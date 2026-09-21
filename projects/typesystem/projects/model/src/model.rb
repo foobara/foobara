@@ -200,6 +200,10 @@ module Foobara
         end
       end
 
+      if Thread.inheritable_thread_local_var_get(:foobara_ignore_unexpected_attributes)
+        @ignore_unexpected_attributes = true
+      end
+
       validate = options[:validate]
 
       if attributes.nil?
@@ -240,6 +244,8 @@ module Foobara
 
       validate! if validate # TODO: test this code path
     end
+
+    def ignore_unexpected_attributes? = @ignore_unexpected_attributes
 
     def model_name
       self.class.model_name
@@ -333,7 +339,16 @@ module Foobara
     end
 
     def validation_errors
-      attributes_type.process_value(attributes).error_collection
+      errors = attributes_type.process_value(attributes).error_collection
+
+      unexpected_attributes_class =
+        BuiltinTypes::Attributes::SupportedProcessors::ElementTypeDeclarations::UnexpectedAttributesError
+
+      if ignore_unexpected_attributes?
+        errors.reject { unexpected_attributes_class === it }
+      else
+        errors
+      end
     end
 
     def validate!

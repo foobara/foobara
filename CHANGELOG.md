@@ -1,3 +1,7 @@
+# [0.6.4] - 2026-09-11
+
+- Track which models instances ignore unsupported attributes to prevent various issues, including breaking domain mappers
+
 # [0.6.3] - 2026-09-11
 
 - Eliminate usage of removed JSON.fast_generate

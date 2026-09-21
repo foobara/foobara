@@ -63,7 +63,7 @@ module Foobara
 
     def raise_if_production!(method_name = nil)
       if method_name
-        warn "DEPRECATION WARNING: Passing method_name is deprecated."
+        warn "DEPRECATION WARNING: Passing a method_name to Foobara.raise_if_production is deprecated."
       else
         method_name = caller_locations.map(&:label).find { |label| !label.start_with?("block in") }
       end
