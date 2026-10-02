@@ -4,7 +4,15 @@ module Foobara
       module Result
         include Concern
 
-        class CouldNotProcessResult < Outcome::UnsuccessfulOutcomeError; end
+        class CouldNotProcessResult < Outcome::UnsuccessfulOutcomeError;
+          attr_accessor :command
+
+          def initialize(command, errors)
+            self.command = command
+
+            super(errors, prefix: command.class.full_command_name)
+          end
+        end
 
         private
 
@@ -16,7 +24,7 @@ module Foobara
           if outcome.success?
             outcome.result
           else
-            raise CouldNotProcessResult, outcome.errors
+            raise CouldNotProcessResult.new(self, outcome.errors)
           end
         end
       end

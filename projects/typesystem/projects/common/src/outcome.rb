@@ -3,10 +3,12 @@ module Foobara
     class UnsuccessfulOutcomeError < StandardError
       attr_accessor :errors, :backtrace_when_raised
 
-      def initialize(errors)
+      def initialize(errors, message: errors.map(&:message).join(", "), prefix: nil)
         self.errors = errors
 
-        message = errors.map(&:message).join(", ")
+        if prefix
+          message = "#{prefix}: #{message}"
+        end
 
         super(message)
       end
