@@ -21,7 +21,7 @@ RSpec.describe Foobara::TypeDeclarations::Dsl::Attributes do
           nested: {
             type: :attributes,
             element_type_declarations: {
-              foo: [:integer],
+              foo: { element_type_declaration: :integer, type: :array },
               bar: :float
             },
             defaults: {

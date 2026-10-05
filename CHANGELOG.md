@@ -1,3 +1,8 @@
+# [0.6.5] - 2026-10-04
+
+- Fix a problem where some nested sugary types don't expand correctly when using attributes dsl
+- Add command name to error message when a result can't be cast to the result type
+
 # [0.6.4] - 2026-09-11
 
 - Track which models instances ignore unsupported attributes to prevent various issues, including breaking domain mappers

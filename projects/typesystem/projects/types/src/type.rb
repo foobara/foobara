@@ -428,16 +428,21 @@ module Foobara
         remove_sensitive = TypeDeclarations.foobara_manifest_context_remove_sensitive?
 
         if registered?
-          # TODO: we should just use the symbol and nothing else in this context instead of a hash with 1 element.
-          if scoped_unregistered?
-            unregistered_foobara_manifest_reference.to_sym
-          else
-            foobara_manifest_reference.to_sym
-          end
+          reference_symbol
         elsif remove_sensitive
           TypeDeclarations.remove_sensitive_types(declaration_data)
         else
           declaration_data
+        end
+      end
+
+      def reference_symbol
+        raise "Not registered so no reference symbol" unless registered?
+
+        if scoped_unregistered?
+          unregistered_foobara_manifest_reference.to_sym
+        else
+          foobara_manifest_reference.to_sym
         end
       end
 

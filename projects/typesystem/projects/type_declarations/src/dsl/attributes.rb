@@ -83,6 +83,17 @@ module Foobara
               end
             end
 
+            if type && !type.is_a?(::Symbol)
+              type = Domain.current.foobara_type_from_declaration(type)
+
+              type = if type.registered?
+                       type.reference_symbol
+                     else
+                       declaration = type.declaration_data.merge(declaration)
+                       declaration[:type]
+                     end
+            end
+
             processor_symbols.each do |processor_symbol|
               case processor_symbol
               when ::String
