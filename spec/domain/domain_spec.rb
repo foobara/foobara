@@ -64,7 +64,7 @@ RSpec.describe Foobara::Domain do
       end
     end
 
-    context "when non-organization scoped to a organization" do
+    context "when non-organization/non-domain is scoped to a organization" do
       before do
         stub_module "SomeOrganization" do
           foobara_organization!
@@ -72,8 +72,10 @@ RSpec.describe Foobara::Domain do
         stub_class "SomeOrganization::SomeError", Foobara::RuntimeError
       end
 
-      it "returns that organization" do
-        expect(Foobara::Organization.to_organization(SomeOrganization::SomeError)).to be(SomeOrganization)
+      it "returns the global organization because the parent must be GlobalDomain" do
+        expect(
+          Foobara::Organization.to_organization(SomeOrganization::SomeError)
+        ).to be(Foobara::GlobalOrganization)
       end
 
       context "when lookup by symbol" do

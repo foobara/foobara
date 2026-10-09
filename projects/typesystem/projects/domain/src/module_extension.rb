@@ -17,6 +17,8 @@ module Foobara
           # simplecov:enable
         end
 
+        include DomainModuleExtension
+
         unless is_a?(Namespace::IsNamespace)
           foobara_namespace!
           foobara_autoset_namespace!(default_namespace: Foobara::GlobalOrganization)
@@ -24,8 +26,6 @@ module Foobara
 
           foobara_parent_namespace.foobara_register(self)
         end
-
-        include(DomainModuleExtension)
       end
 
       def foobara_organization!

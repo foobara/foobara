@@ -155,11 +155,15 @@ module Foobara
 
           while parent_mod
             if parent_mod.is_a?(Foobara::Namespace::IsNamespace)
-              mod.scoped_namespace = parent_mod
-              return
-            else
-              parent_mod = Util.module_for(parent_mod)
+              # Only domains can have an org as its parent
+              # Important that Foobara::GlobalOrganization's parent is Foobara or it breaks categories
+              if mod.foobara_organization? || mod.foobara_domain? || !parent_mod.foobara_organization?
+                mod.scoped_namespace = parent_mod
+                return
+              end
             end
+
+            parent_mod = Util.module_for(parent_mod)
           end
 
           mod.scoped_namespace = default_namespace if default_namespace
@@ -214,6 +218,13 @@ module Foobara
             end
 
             adjusted_scoped_path << path_part unless mod.scoped_namespace&.scoped_ignore_module?(next_mod)
+          end
+
+          if parent&.foobara_organization?
+            if !mod.foobara_domain? && !mod.foobara_organization?
+              parent = Foobara::GlobalDomain
+              adjusted_scoped_path = mod_name.split("::")
+            end
           end
 
           mod.scoped_path_autoset = true
