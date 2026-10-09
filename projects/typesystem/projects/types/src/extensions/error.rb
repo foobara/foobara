@@ -5,22 +5,11 @@ module Foobara
         if args.size == 1
           context_type.types_depended_on(args[0])
         elsif args.empty?
-          begin
-            if context_type
-              context_type.types_depended_on
-            else
-              raise Foobara::TypeDeclarations::ErrorExtension::NoContextTypeSetError
-            end
-          rescue Foobara::TypeDeclarations::ErrorExtension::NoContextTypeSetError
-            if abstract?
-              []
-            else
-              # simplecov:disable
-              raise
-              # simplecov:enable
-            end
+          if abstract?
+            []
+          else
+            context_type.types_depended_on
           end
-
         else
           # simplecov:disable
           raise ArgumentError, "Too many arguments #{args}"

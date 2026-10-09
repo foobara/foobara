@@ -101,11 +101,15 @@ module Foobara
           }
         end
 
-        Value::DataError.singleton_class.define_method :context_type_declaration do
-          {
-            attribute_name: :symbol,
-            value: :duck
-          }
+        ::Foobara::Value::DataError.instance_exec do
+          class << self
+            def context_type_declaration
+              {
+                attribute_name: :symbol,
+                value: :duck
+              }.freeze
+            end
+          end
         end
       end
 
