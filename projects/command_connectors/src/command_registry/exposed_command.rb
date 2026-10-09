@@ -11,6 +11,8 @@ module Foobara
                     :result_transformers,
                     :errors_transformers,
                     :pre_commit_transformers,
+                    # Should we have separate success and error serializers so that serializers can be
+                    # more reusable?
                     :serializers,
                     :request_mutators,
                     :response_mutators,

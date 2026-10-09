@@ -1,6 +1,10 @@
 module Foobara
   module CommandConnectors
     module Serializers
+      # TODO: put an entity-free version of this in model_plumbing!
+      # TODO: can't this just inherit from Serializer??
+      # TODO: shouldn't this be a transformer? It's not really serializing anything
+      #       just preparing the data for serialization.
       class AggregateSerializer < SuccessSerializer
         def serialize(object)
           case object
