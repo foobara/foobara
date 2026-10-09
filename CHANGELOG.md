@@ -1,3 +1,8 @@
+# [0.7.0] - 2026-10-09
+
+- Do not allow anything but domains (and orgs as a hack) to be children of orgs
+- Eliminate NoContextTypeSetError and add default context type of {}
+
 # [0.6.5] - 2026-10-04
 
 - Fix a problem where some nested sugary types don't expand correctly when using attributes dsl

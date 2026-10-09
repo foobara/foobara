@@ -82,7 +82,6 @@ module Foobara
         using_mode(Mode::STRINGIFIED, &)
       end
 
-      # TODO: use manifest context instead
       def using_mode(new_mode, &)
         with_manifest_context(mode: new_mode, &)
       end
@@ -116,8 +115,17 @@ module Foobara
         Thread.inheritable_thread_local_var_get("foobara_manifest_context")
       end
 
-      allowed_context_keys = [:detached, :to_include, :mode, :remove_sensitive, :include_processors]
-      booleans = [:detached, :remove_sensitive, :include_processors]
+      allowed_context_keys = [
+        :detached,
+        :to_include,
+        :mode,
+        :remove_sensitive,
+        :include_processors,
+        # This is just a flag to allow the deprecated Foobara.manifest to include
+        # everything without risk of breaking something in command connector manifests
+        :include_unreachable
+      ]
+      booleans = [:detached, :remove_sensitive, :include_processors, :include_unreachable]
 
       booleans.each do |context_item|
         define_method "foobara_manifest_context_#{context_item}?" do

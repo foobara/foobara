@@ -11,7 +11,7 @@ module Foobara
     private def debug_manifest
       to_include = Namespace.global.foobara_all_organization.to_set
 
-      TypeDeclarations.with_manifest_context(to_include:) do
+      TypeDeclarations.with_manifest_context(to_include:, include_unreachable: true) do
         included = {}
 
         h = {}

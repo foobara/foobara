@@ -234,12 +234,23 @@ module Foobara
             domain.foobara_manifest_reference
           end.sort
 
-          types = foobara_all_type(mode: Namespace::LookupMode::DIRECT).map do |type|
-            if to_include
-              to_include << type
+          types = []
+
+          # Using this to support deprecated Foobara.manifest without risking
+          # breakage elsewhere
+          if TypeDeclarations.foobara_manifest_context_include_unreachable?
+            foobara_all(mode: Namespace::LookupMode::DIRECT).each do |scoped|
+              to_include << scoped if to_include
+              types << scoped.foobara_manifest_reference if scoped.scoped_category == :type
             end
-            type.foobara_manifest_reference
-          end.sort
+          else
+            foobara_all_type(mode: Namespace::LookupMode::DIRECT).each do |scoped|
+              to_include << scoped if to_include
+              types << scoped.foobara_manifest_reference
+            end
+          end
+
+          types.sort!
 
           manifest = super.merge(types:)
 
