@@ -17,35 +17,56 @@ module Foobara
         [
           :@foobara_children,
           :@foobara_registry,
-          :@foobara_type_builder
+          :@foobara_type_builder,
+          :@lru_cache
         ].each do |var_name|
-          # Don't we only have to do this for Foobara and not all of these??
-          [
-            Namespace.global,
-            Foobara::GlobalOrganization,
-            Foobara::GlobalDomain,
-            Domain,
-            Types::Type,
-            Value::Processor,
-            Error
-          ].each do |klass|
+          namespaces_to_reset.each do |klass|
             if klass.instance_variable_defined?(var_name)
               klass.remove_instance_variable(var_name)
             end
           end
         end
 
-        @original_scoped.each do |scoped|
-          Namespace.global.foobara_register(scoped)
+        Namespace.clear_lru_cache!
+
+        @original_scoped.each_key do |namespace|
+          scoped = @original_scoped[namespace]
+          to_remove = []
+
+          scoped.each do |child|
+            if child.scoped_unregistered?
+              to_remove << child
+              next
+            end
+
+            unless namespace.foobara_registered?(child, mode: Namespace::LookupMode::DIRECT)
+              namespace.foobara_register(child)
+            end
+          end
+
+          children = namespace.foobara_children
+
+          to_remove.each do |child|
+            children.delete(child)
+            scoped.delete(child)
+          end
+
+          to_remove.clear
+
+          @original_children[namespace].each do |child|
+            if child.scoped_unregistered?
+              to_remove << child
+              next
+            end
+            children << child unless children.include?(child)
+          end
+
+          to_remove.each do |child|
+            @original_children[namespace].delete(child)
+          end
         end
 
-        children = Namespace.global.foobara_children
-
-        @original_children.each do |child|
-          children.foobara_children << child unless children.include?(child)
-        end
-
-        GlobalOrganization.foobara_register(GlobalDomain)
+        Namespace.clear_lru_cache!
 
         register_type_declaration(Handlers::RegisteredTypeDeclaration.new)
         register_type_declaration(Handlers::ExtendRegisteredTypeDeclaration.new)
@@ -117,11 +138,33 @@ module Foobara
         capture_current_namespaces
       end
 
+      private
+
       def capture_current_namespaces
         # TODO: this feels like the wrong place to do this but doing it here for now to make sure it's done when
         # most important
-        @original_scoped = Namespace.global.foobara_registry.all_scoped.dup
-        @original_children = Namespace.global.foobara_children.dup
+        @original_scoped = {}
+        @original_children = {}
+
+        namespaces_to_reset.each do |namespace|
+          next unless namespace.is_a?(Namespace::IsNamespace)
+
+          @original_scoped[namespace] = namespace.foobara_registry.all_scoped.dup
+          @original_children[namespace] = namespace.foobara_children.dup
+        end
+      end
+
+      def namespaces_to_reset
+        [
+          Foobara::GlobalDomain,
+          Foobara::GlobalOrganization,
+          Value::Processor,
+          Types::Type,
+          Domain,
+          Error,
+          Foobara,
+          Namespace.global
+        ]
       end
     end
   end

@@ -7,7 +7,6 @@ module Foobara
 
     def scoped_path
       if scoped_unregistered?
-        # TODO: can probably delete this defensive check
         # simplecov:disable
         raise "Cannot use unregistered Scoped object"
         # simplecov:enable

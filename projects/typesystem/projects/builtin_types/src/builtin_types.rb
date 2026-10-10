@@ -5,6 +5,8 @@ module Foobara
 
   module BuiltinTypes
     class << self
+      attr_accessor :needs_to_handle_reregistered_types
+
       # TODO: break this up
       # TODO: much of this behavior is helpful to non-builtin types as well.
       def build_and_register!(
@@ -86,7 +88,17 @@ module Foobara
 
         # TODO: really need to encapsulate this somehow...
         type.type_symbol = type_symbol
-        (type.foobara_parent_namespace || GlobalDomain).foobara_register(type)
+
+        domain = type.foobara_parent_namespace || GlobalDomain
+        mode = Namespace::LookupMode::DIRECT
+
+        exists = domain.foobara_registered?(type_symbol, mode:)
+        if exists
+          domain.foobara_unregister(domain.foobara_lookup_type(type_symbol, mode:))
+          self.needs_to_handle_reregistered_types = true
+        end
+
+        domain.foobara_register(type)
 
         supported_casters_module = Util.constant_value(builtin_type_module, :SupportedCasters)
         supported_caster_classes = if supported_casters_module

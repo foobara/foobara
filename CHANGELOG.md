@@ -1,3 +1,7 @@
+# [0.7.1] - 2026-10-09
+
+- Fix bug that removes Foobara::RuntimeError from GlobalDomain during type declaration init
+
 # [0.7.0] - 2026-10-09
 
 - Do not allow anything but domains (and orgs as a hack) to be children of orgs

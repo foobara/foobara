@@ -57,6 +57,8 @@ module Foobara
             if result_type
               result result_type.reference_or_declaration_data
             end
+
+            # TODO: We don't have to clear out possible error types??
           end
         end
       end
