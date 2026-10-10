@@ -65,6 +65,7 @@ module Foobara
     def reset_alls
       raise_if_production!
       all_projects.each_value(&:reset_all)
+      all_projects.each_value(&:reset_completed)
     end
 
     def raise_if_production!(method_name = nil)

@@ -43,6 +43,11 @@ module Foobara
       mod.start! if mod.respond_to?(:start!)
     end
 
+    def reset_completed
+      mod = self.module
+      mod.reset_completed if mod.respond_to?(:reset_completed)
+    end
+
     def reset_all
       Foobara.raise_if_production!
 
