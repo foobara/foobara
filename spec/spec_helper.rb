@@ -52,3 +52,5 @@ end
 
 require "foobara/spec_helpers/all"
 Dir["#{__dir__}/support/**/*.rb"].each { |f| require f }
+
+Foobara.start!

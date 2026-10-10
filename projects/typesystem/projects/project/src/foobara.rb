@@ -56,6 +56,12 @@ module Foobara
       all_projects.each_value(&:install!)
     end
 
+    def start!
+      install! unless is_installed
+
+      all_projects.each_value(&:start!)
+    end
+
     def reset_alls
       raise_if_production!
       all_projects.each_value(&:reset_all)

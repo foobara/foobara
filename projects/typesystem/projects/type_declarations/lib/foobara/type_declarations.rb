@@ -138,6 +138,8 @@ module Foobara
         capture_current_namespaces
       end
 
+      def start! = capture_current_namespaces
+
       private
 
       def capture_current_namespaces

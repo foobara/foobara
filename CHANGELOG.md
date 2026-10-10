@@ -1,3 +1,7 @@
+# [0.7.2] - 2026-10-10
+
+- Add `Foobara.start!` to allow post-install commands to survive reset
+
 # [0.7.1] - 2026-10-09
 
 - Fix bug that removes Foobara::RuntimeError from GlobalDomain during type declaration init

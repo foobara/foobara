@@ -459,10 +459,8 @@ RSpec.describe Foobara::Persistence::EntityBase::Transaction do
       end
 
       it "writes the records to disk using primary keys" do
-        some_entity2 = nil
-
         some_entity1 = entity_class.transaction do
-          some_entity2 = entity_class.create(foo: 11, bar: :baz)
+          entity_class.create(foo: 11, bar: :baz)
           entity_class.create(foo: 11, bar: :baz, pk: 101)
         end
 

@@ -38,6 +38,11 @@ module Foobara
       end
     end
 
+    def start!
+      mod = self.module
+      mod.start! if mod.respond_to?(:start!)
+    end
+
     def reset_all
       Foobara.raise_if_production!
 
