@@ -62,11 +62,6 @@ module Foobara
         associative_array = build_and_register!(:associative_array, duckture, ::Hash)
         # TODO: uh oh... we do some translations in the casting here...
         build_and_register!(:attributes, associative_array, nil)
-
-        if needs_to_handle_reregistered_types
-          GlobalDomain.foobara_each_command(&:handle_reregistered_types!)
-          self.needs_to_handle_reregistered_types = false
-        end
       end
 
       def reset_all
@@ -83,6 +78,21 @@ module Foobara
         builtin_types.clear
 
         install!
+      end
+
+      def reset_completed
+        if needs_to_handle_reregistered_types
+          seen = Set.new
+
+          Namespace.global.foobara_each do |scoped|
+            if scoped.respond_to?(:handle_reregistered_types!)
+              scoped.handle_reregistered_types!(seen)
+            end
+          end
+
+          self.needs_to_handle_reregistered_types = false
+          Namespace.clear_lru_cache!
+        end
       end
     end
   end

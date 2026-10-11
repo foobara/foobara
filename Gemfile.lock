@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    foobara (0.7.2)
+    foobara (0.7.3)
       bigdecimal
       foobara-lru-cache (< 2.0.0)
       foobara-util (< 2.0.0)
@@ -215,7 +215,7 @@ CHECKSUMS
   ffi (1.17.4-x86_64-darwin) sha256=aa70390523cf3235096cf64962b709b4cfbd5c082a2cb2ae714eb0fe2ccda496
   ffi (1.17.4-x86_64-linux-gnu) sha256=9d3db14c2eae074b382fa9c083fe95aec6e0a1451da249eab096c34002bc752d
   ffi (1.17.4-x86_64-linux-musl) sha256=3fdf9888483de005f8ef8d1cf2d3b20d86626af206cbf780f6a6a12439a9c49e
-  foobara (0.7.2)
+  foobara (0.7.3)
   foobara-crud-driver-spec-helpers (1.1.2) sha256=f5daacc334dae58e0077e06a9e6875c7fc31f973ef1a81500224fb72fcf48570
   foobara-lru-cache (1.0.0) sha256=ff9716e011a4642382dc0e1fd7a80751134b1fbf97d180fd333472a5d20f2029
   foobara-rubocop-rules (1.1.1) sha256=af7000f0c1dbf9a97dde78207c04a2a2b1b11726e616fe88ad223302e47b7b8f

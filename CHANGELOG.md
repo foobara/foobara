@@ -1,3 +1,8 @@
+# [0.7.3] - 2026-10-10
+
+- More aggressively hunt down and fix types with unregistered base types
+- Add a Project#reset_completed to take action after a .reset_alls in test suites
+
 # [0.7.2] - 2026-10-10
 
 - Add `Foobara.start!` to allow post-install commands to survive reset

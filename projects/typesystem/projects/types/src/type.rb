@@ -549,6 +549,39 @@ module Foobara
         !!type_symbol
       end
 
+      def handle_reregistered_types!(seen)
+        seen << self
+
+        if base_type&.scoped_unregistered?
+          self.base_type = base_type.created_in_namespace.foobara_lookup_type!(
+            base_type.type_symbol
+          )
+        end
+
+        if target_classes.size == 1 && target_class.respond_to?(:handle_reregistered_types!)
+          unless seen.include?(target_class)
+            target_class.handle_reregistered_types!(seen)
+          end
+        end
+
+        case element_types
+        when Hash
+          element_types.each_value do |child|
+            child.handle_reregistered_types!(seen) unless seen.include?(child)
+          end
+        when Array
+          element_types.each do |child|
+            child.handle_reregistered_types!(seen) unless seen.include?(child)
+          end
+        when Type
+          element_types.handle_reregistered_types!(seen) unless seen.include?(element_types)
+        end
+
+        if element_type
+          element_type.handle_reregistered_types!(seen) unless seen.include?(element_type)
+        end
+      end
+
       private
 
       def apply_all_processors_needing_type!

@@ -163,6 +163,14 @@ module Foobara
         end
       end
 
+      def handle_reregistered_types!(seen)
+        seen << self
+
+        if instance_variable_defined?(:@attributes_type)
+          remove_instance_variable(:@attributes_type)
+        end
+      end
+
       # Why aren't we using the callbacks project for this?
       def on_reregister(&block)
         @on_reregister ||= []
