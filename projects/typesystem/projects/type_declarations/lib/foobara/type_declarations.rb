@@ -139,6 +139,7 @@ module Foobara
       end
 
       def start! = capture_current_namespaces
+      def add_namespace_to_reset(namespace) = namespaces_to_reset << namespace
 
       private
 
@@ -156,8 +157,9 @@ module Foobara
         end
       end
 
+      # Is this really the right place to put this??
       def namespaces_to_reset
-        [
+        @namespaces_to_reset ||= [
           Foobara::GlobalDomain,
           Foobara::GlobalOrganization,
           Value::Processor,

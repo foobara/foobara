@@ -1,3 +1,8 @@
+# [0.7.4] - 2026-10-20
+
+- Provide a way to register new namespaces to be reset in test suites.
+  Just a tiny tweak that gives a way to fix some busted external test suites.
+
 # [0.7.3] - 2026-10-10
 
 - More aggressively hunt down and fix types with unregistered base types
