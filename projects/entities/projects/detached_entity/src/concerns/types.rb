@@ -47,6 +47,24 @@ module Foobara
             @foobara_primary_key_type ||= attributes_type.element_types[primary_key_attribute]
           end
 
+          def handle_reregistered_types!(seen)
+            return if seen.include?(self)
+
+            seen << self
+
+            if attributes_type
+              return if seen.include?(attributes_type)
+
+              attributes_type.handle_reregistered_types!(seen)
+
+              attributes attributes_type.reference_or_declaration_data
+
+              @foobara_primary_key_type = nil
+            end
+
+            super
+          end
+
           alias primary_key_type foobara_primary_key_type
 
           def full_entity_name

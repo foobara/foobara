@@ -1,3 +1,7 @@
+# [0.7.5] - 2026-10-20
+
+- Make sure DetachedEntity handle reregistered types properly
+
 # [0.7.4] - 2026-10-20
 
 - Provide a way to register new namespaces to be reset in test suites.
