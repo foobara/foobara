@@ -1,15 +1,12 @@
 module Foobara
   class Project
-    attr_accessor :symbol, :project_path, :eager_load_src
+    attr_accessor :symbol, :project_path, :eager_load_src, :require_path
 
-    def initialize(symbol, project_path: nil, eager_load_src: true)
+    def initialize(symbol, project_path: nil, eager_load_src: true, require_path: nil)
+      self.require_path = require_path || "foobara/#{symbol}"
       self.eager_load_src = eager_load_src
       self.symbol = symbol
       self.project_path = project_path || "#{__dir__}/../../#{symbol}"
-    end
-
-    def require_path
-      "foobara/#{symbol}"
     end
 
     def module_name
