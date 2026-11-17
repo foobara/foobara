@@ -1,3 +1,7 @@
+# [0.8.0] - 2026-11-17
+
+- Eliminate dependency on the bigdecimal gem and relocate it to foobara-big-decimal-type
+
 # [0.7.5] - 2026-10-20
 
 - Make sure DetachedEntity handle reregistered types properly

@@ -37,7 +37,6 @@ Gem::Specification.new do |spec|
     *Dir.glob("projects/*/lib", base: __dir__)
   ]
 
-  spec.add_dependency "bigdecimal"
   spec.add_dependency "foobara-lru-cache", "< 2.0.0"
   spec.add_dependency "foobara-util", "< 2.0.0"
   spec.add_dependency "inheritable-thread-vars", "< 2.0.0"
