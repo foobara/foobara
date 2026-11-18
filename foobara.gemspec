@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/foobara/foobara"
   spec.metadata["changelog_uri"] = "#{spec.metadata["source_code_uri"]}/blob/main/CHANGELOG.md"
-  spec.metadata["mailing_list_uri"]   = "https://www.rubyforum.org/tag/foobara"
+  spec.metadata["mailing_list_uri"] = "https://www.rubyforum.org/tag/foobara"
 
   spec.files = Dir[
     "lib/**/*",
