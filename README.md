@@ -1,5 +1,7 @@
 Foobara is a software framework that is command-centric and discoverable.
 
+[![Ruby Users Forum](https://img.shields.io/discourse/topics?server=https%3A%2F%2Fwww.rubyforum.org&style=flat&logo=discourse&label=Ruby%20Users%20Forum)](https://www.rubyforum.org/tag/foobara)
+
 Domain operations are
 encapsulated in commands, which serve as the public interface to systems, and which automatically
 provide machine-readable formal metadata about those commands.
@@ -2127,6 +2129,8 @@ TODO: give some code examples
 # Help
 
 Are you actually trying to build something with Foobara? Happy to help! miles@foobara.org
+
+You can also use the `foobara` tag on the [Ruby Users Forum](https://www.rubyforum.org/tag/foobara/129)
 
 # Contributing
 
