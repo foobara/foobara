@@ -214,25 +214,15 @@ module Foobara
 
       validate = options[:validate]
 
-      if attributes.nil?
-        if validate
-          # simplecov:disable
-          raise ArgumentError, "Cannot use validate option without attributes"
-          # simplecov:enable
-        end
-      else
-        if Thread.inheritable_thread_local_var_get(:foobara_ignore_unexpected_attributes)
-          outcome = attributes_type.process_value(attributes)
+      outcome = attributes_type.process_value(attributes || {})
 
-          if outcome.success?
-            attributes = outcome.result
-          end
-        end
+      if outcome.success?
+        attributes = outcome.result
+      end
 
-        self.mutable = true
-        attributes.each_pair do |attribute_name, value|
-          write_attribute(attribute_name, value)
-        end
+      self.mutable = true
+      attributes&.each_pair do |attribute_name, value|
+        write_attribute(attribute_name, value)
       end
 
       mutable = if options.key?(:mutable)

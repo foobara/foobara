@@ -28,8 +28,9 @@ end
 require "foobara/delegate"
 require "foobara/state_machine"
 require "foobara/builtin_types"
+require "foobara/model"
 
-Foobara.install!
+Foobara.start!
 
 RSpec.configure do |config|
   config.filter_run_when_matching :focus

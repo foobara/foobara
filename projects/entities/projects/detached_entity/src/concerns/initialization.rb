@@ -47,8 +47,8 @@ module Foobara
             super
             self.is_loaded = false
           else
-            super
             self.is_loaded = true
+            super
           end
         end
       end
